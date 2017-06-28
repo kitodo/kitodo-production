@@ -190,7 +190,7 @@ public class ExportXmlLog implements IProcessDataExport {
         }
         // process information
 
-        ArrayList<Element> processElements = new ArrayList<Element>();
+        ArrayList<Element> processElements = new ArrayList<>();
         Element processTitle = new Element("title", xmlns);
         processTitle.setText(process.getTitle());
         processElements.add(processTitle);
@@ -229,7 +229,7 @@ public class ExportXmlLog implements IProcessDataExport {
             processElements.add(batch);
         }
 
-        ArrayList<Element> processProperties = new ArrayList<Element>();
+        ArrayList<Element> processProperties = new ArrayList<>();
         for (Property prop : process.getProperties()) {
             Element property = new Element("property", xmlns);
             property.setAttribute("propertyIdentifier", prop.getTitle());
@@ -253,7 +253,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
         // step information
         Element steps = new Element("steps", xmlns);
-        ArrayList<Element> stepElements = new ArrayList<Element>();
+        ArrayList<Element> stepElements = new ArrayList<>();
         for (Task s : process.getTasks()) {
             Element stepElement = new Element("step", xmlns);
             stepElement.setAttribute("stepID", String.valueOf(s.getId()));
@@ -292,12 +292,12 @@ public class ExportXmlLog implements IProcessDataExport {
 
         // template information
         Element templates = new Element("originals", xmlns);
-        ArrayList<Element> templateElements = new ArrayList<Element>();
+        ArrayList<Element> templateElements = new ArrayList<>();
         for (Template v : process.getTemplates()) {
             Element template = new Element("original", xmlns);
             template.setAttribute("originalID", String.valueOf(v.getId()));
 
-            ArrayList<Element> templateProperties = new ArrayList<Element>();
+            ArrayList<Element> templateProperties = new ArrayList<>();
             for (Property prop : v.getProperties()) {
                 Element property = new Element("property", xmlns);
                 property.setAttribute("propertyIdentifier", prop.getTitle());
@@ -337,12 +337,12 @@ public class ExportXmlLog implements IProcessDataExport {
 
         // digital document information
         Element digdoc = new Element("digitalDocuments", xmlns);
-        ArrayList<Element> docElements = new ArrayList<Element>();
+        ArrayList<Element> docElements = new ArrayList<>();
         for (Workpiece w : process.getWorkpieces()) {
             Element dd = new Element("digitalDocument", xmlns);
             dd.setAttribute("digitalDocumentID", String.valueOf(w.getId()));
 
-            ArrayList<Element> docProperties = new ArrayList<Element>();
+            ArrayList<Element> docProperties = new ArrayList<>();
             for (Property prop : w.getProperties()) {
                 Element property = new Element("property", xmlns);
                 property.setAttribute("propertyIdentifier", prop.getTitle());
@@ -370,20 +370,19 @@ public class ExportXmlLog implements IProcessDataExport {
 
         // METS information
         Element metsElement = new Element("metsInformation", xmlns);
-        ArrayList<Element> metadataElements = new ArrayList<Element>();
+        ArrayList<Element> metadataElements = new ArrayList<>();
 
         try {
             URI filename = serviceManager.getFileService().getMetadataFilePath(process);
             Document metsDoc = new SAXBuilder().build(filename.toString());
             Document anchorDoc = null;
-            URI anchorfilename = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
+            URI anchorFileName = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
                     .replace("meta.xml", "meta_anchor.xml"));
-            URI anchorFile = anchorfilename;
-            if (serviceManager.getFileService().fileExist(anchorFile)
-                    && serviceManager.getFileService().canRead(anchorFile)) {
-                anchorDoc = new SAXBuilder().build(anchorfilename.toString());
+            if (serviceManager.getFileService().fileExist(anchorFileName)
+                    && serviceManager.getFileService().canRead(anchorFileName)) {
+                anchorDoc = new SAXBuilder().build(anchorFileName.toString());
             }
-            HashMap<String, Namespace> namespaces = new HashMap<String, Namespace>();
+            HashMap<String, Namespace> namespaces = new HashMap<>();
 
             HashMap<String, String> names = getNamespacesFromConfig();
             for (String key : names.keySet()) {
@@ -417,15 +416,11 @@ public class ExportXmlLog implements IProcessDataExport {
             metsElement.addContent(metadataElements);
             processElements.add(metsElement);
 
-        } catch (IOException | JDOMException e) {
-            logger.error(e);
-        } catch (JaxenException e) {
+        } catch (IOException | JDOMException | JaxenException e) {
             logger.error(e);
         }
-
         processElm.setContent(processElements);
         return doc;
-
     }
 
     /**
@@ -507,7 +502,7 @@ public class ExportXmlLog implements IProcessDataExport {
             xmlpath = "anchor.property";
         }
 
-        HashMap<String, String> fields = new HashMap<String, String>();
+        HashMap<String, String> fields = new HashMap<>();
         try {
             File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
@@ -523,13 +518,13 @@ public class ExportXmlLog implements IProcessDataExport {
                 }
             }
         } catch (Exception e) {
-            fields = new HashMap<String, String>();
+            fields = new HashMap<>();
         }
         return fields;
     }
 
     private HashMap<String, String> getNamespacesFromConfig() {
-        HashMap<String, String> nss = new HashMap<String, String>();
+        HashMap<String, String> nss = new HashMap<>();
         try {
             File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
@@ -545,7 +540,7 @@ public class ExportXmlLog implements IProcessDataExport {
                 }
             }
         } catch (Exception e) {
-            nss = new HashMap<String, String>();
+            nss = new HashMap<>();
         }
         return nss;
 

@@ -83,7 +83,7 @@ public class RenderableDropDownList extends RenderableMetadatum
      * @return the items to choose from
      */
     public Collection<SelectItem> getItems() {
-        ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
+        ArrayList<SelectItem> result = new ArrayList<>(items.size());
         for (Item item : items) {
             result.add(new SelectItem(item.getValue(), item.getLabel()));
         }
@@ -143,7 +143,7 @@ public class RenderableDropDownList extends RenderableMetadatum
      */
     @Override
     public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<Metadata>(1);
+        List<Metadata> result = new ArrayList<>(1);
         for (Item item : items) {
             if (item.getIsSelected()) {
                 result.add(getMetadata(item.getValue()));

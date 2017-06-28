@@ -222,7 +222,7 @@ public class MetadatenHelper implements Comparator<Object> {
              */
             try {
                 if (parent.getNextChild(tempDS) == inStruct) {
-                    alleDS = new ArrayList<DocStruct>();
+                    alleDS = new ArrayList<>();
                 }
             } catch (Exception e) {
             }
@@ -261,7 +261,7 @@ public class MetadatenHelper implements Comparator<Object> {
         if (parent == null) {
             return;
         }
-        List<DocStruct> alleDS = new ArrayList<DocStruct>();
+        List<DocStruct> alleDS = new ArrayList<>();
 
         /* alle Elemente des Parents durchlaufen */
         // TODO: get rid of Iterators, use a for Loop instead
@@ -314,7 +314,7 @@ public class MetadatenHelper implements Comparator<Object> {
             return myTypes;
         }
 
-        List<DocStructType> newTypes = new ArrayList<DocStructType>();
+        List<DocStructType> newTypes = new ArrayList<>();
         for (String tempTitel : types) {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(tempTitel);
             if (dst != null) {
@@ -489,7 +489,7 @@ public class MetadatenHelper implements Comparator<Object> {
     private List<Metadata> getAllVisibleMetadataHack(DocStruct inStruct) {
 
         // Start with the list of all metadata.
-        List<Metadata> result = new LinkedList<Metadata>();
+        List<Metadata> result = new LinkedList<>();
 
         // Iterate over all metadata.
         if (inStruct.getAllMetadata() != null) {
@@ -514,7 +514,7 @@ public class MetadatenHelper implements Comparator<Object> {
         /*
          * Typen und Suchbegriffe festlegen
          */
-        HashMap<String, String> types = new HashMap<String, String>();
+        HashMap<String, String> types = new HashMap<>();
         types.put("metsmods", "ugh.fileformats.mets.MetsModsImportExport".toLowerCase());
         types.put("mets", "www.loc.gov/METS/".toLowerCase());
         types.put("rdf", "<RDF:RDF ".toLowerCase());
@@ -621,13 +621,13 @@ public class MetadatenHelper implements Comparator<Object> {
      *            übernommen wird
      */
     public ArrayList<SelectItem> getAddablePersonRoles(DocStruct myDocStruct, String inRoleName) {
-        ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
+        ArrayList<SelectItem> myList = new ArrayList<>();
         /*
          * zuerst mal alle addierbaren Metadatentypen ermitteln
          */
         List<MetadataType> types = myDocStruct.getPossibleMetadataTypes();
         if (types == null) {
-            types = new ArrayList<MetadataType>();
+            types = new ArrayList<>();
         }
         if (inRoleName != null && inRoleName.length() > 0) {
             boolean addRole = true;
@@ -645,7 +645,7 @@ public class MetadatenHelper implements Comparator<Object> {
          * alle Metadatentypen, die keine Person sind, oder mit einem
          * Unterstrich anfangen rausnehmen
          */
-        for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
+        for (MetadataType mdt : new ArrayList<>(types)) {
             if (!mdt.getIsPerson()) {
                 types.remove(mdt);
             }

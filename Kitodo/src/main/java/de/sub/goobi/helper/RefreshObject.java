@@ -51,7 +51,7 @@ public class RefreshObject {
             }
 
             logger.debug("created a new session");
-            Process o = (Process) session.get(Process.class, Integer.valueOf(processID));
+            Process o = (Process) session.get(Process.class, processID);
             logger.debug("loaded process");
             session.refresh(o);
             logger.debug("refreshed process");

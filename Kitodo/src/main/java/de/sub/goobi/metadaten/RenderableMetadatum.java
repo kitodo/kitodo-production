@@ -290,7 +290,7 @@ public abstract class RenderableMetadatum {
     protected final Collection<Item> getItems(String projectName, DisplayType type) {
         ArrayList<Item> prototypes = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
                 metadataType.getName(), type);
-        ArrayList<Item> result = new ArrayList<Item>(prototypes.size());
+        ArrayList<Item> result = new ArrayList<>(prototypes.size());
         for (Item item : prototypes) {
             result.add(new Item(item.getLabel(), item.getValue(), item.getIsSelected()));
         }

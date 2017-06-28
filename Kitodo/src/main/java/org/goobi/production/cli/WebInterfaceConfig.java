@@ -31,7 +31,7 @@ public class WebInterfaceConfig {
      * @return list of Strings
      */
     public static List<String> getCredentials(String requestIp, String requestPassword) {
-        ArrayList<String> allowed = new ArrayList<String>();
+        ArrayList<String> allowed = new ArrayList<>();
         try {
             XMLConfiguration config = new XMLConfiguration(ConfigCore.getKitodoConfigDirectory() + "kitodo_webapi.xml");
             config.setListDelimiter('&');
@@ -50,7 +50,7 @@ public class WebInterfaceConfig {
                 }
             }
         } catch (Exception e) {
-            allowed = new ArrayList<String>();
+            allowed = new ArrayList<>();
         }
         return allowed;
 

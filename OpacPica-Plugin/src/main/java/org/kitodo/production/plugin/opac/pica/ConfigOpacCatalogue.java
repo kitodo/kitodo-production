@@ -12,7 +12,6 @@
 package org.kitodo.production.plugin.opac.pica;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -137,7 +136,7 @@ class ConfigOpacCatalogue {
     private void executeBeautifierForElement(Element el) {
         for (ConfigOpacCatalogueBeautifier beautifier : this.beautifySetList) {
             int moreOccurrences;
-            HashSet<Element> processed = new HashSet<Element>();
+            HashSet<Element> processed = new HashSet<>();
             do {
                 Element elementToChange = null;
                 Element tagged = null;
@@ -287,8 +286,6 @@ class ConfigOpacCatalogue {
             XMLOutputter outputter = new XMLOutputter();
             Document tempDoc = new DOMBuilder().build(inNode.getOwnerDocument());
             outputter.output(tempDoc.getRootElement(), output);
-        } catch (FileNotFoundException e) {
-            logger.error("debugMyNode(Node, String)", e);
         } catch (IOException e) {
             logger.error("debugMyNode(Node, String)", e);
         }

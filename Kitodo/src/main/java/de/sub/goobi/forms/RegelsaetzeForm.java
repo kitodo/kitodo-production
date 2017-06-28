@@ -96,10 +96,7 @@ public class RegelsaetzeForm extends BasisForm {
 
     private boolean hasAssignedProcesses(Ruleset r) throws DataException {
         Integer number = serviceManager.getProcessService().findByRuleset(r).size();
-        if (number != null && number > 0) {
-            return true;
-        }
-        return false;
+        return number != null && number > 0;
     }
 
     /**

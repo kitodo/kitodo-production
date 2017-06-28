@@ -149,8 +149,9 @@ public class FolderInformation {
 
             URI origOrdner = null;
             ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
-            for (int i = 0; i < verzeichnisse.size(); i++) {
-                origOrdner = verzeichnisse.get(i);
+            // TODO: does it actually make sense?
+            for (URI directory : verzeichnisse) {
+                origOrdner = directory;
             }
             if (origOrdner == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
@@ -185,9 +186,7 @@ public class FolderInformation {
                 origOrdner = URI.create(DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX);
             }
 
-            URI rueckgabe = getImagesDirectory().resolve(origOrdner + File.separator);
-
-            return rueckgabe;
+            return getImagesDirectory().resolve(origOrdner + File.separator);
         } else {
             return getImagesTifDirectory(useFallBack);
         }
@@ -199,9 +198,7 @@ public class FolderInformation {
      * @return path
      */
     public URI getImagesDirectory() {
-        URI pfad = getProcessDataDirectory().resolve("images" + File.separator);
-
-        return pfad;
+        return getProcessDataDirectory().resolve("images" + File.separator);
     }
 
     /**
@@ -263,13 +260,8 @@ public class FolderInformation {
             method = this.getClass().getMethod(methodName);
             Object o = method.invoke(this);
             return (String) o;
-        } catch (SecurityException e) {
-
-        } catch (NoSuchMethodException e) {
-
-        } catch (IllegalArgumentException e) {
-        } catch (IllegalAccessException e) {
-        } catch (InvocationTargetException e) {
+        } catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException
+                | InvocationTargetException e) {
         }
         String folder = this.getImagesTifDirectory(false).toString();
         folder = folder.substring(0, folder.lastIndexOf("_"));
@@ -296,9 +288,7 @@ public class FolderInformation {
         ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, dir);
         ArrayList<URI> dataList = new ArrayList<>();
         if (dateien != null && dateien.size() > 0) {
-            for (URI s : dateien) {
-                dataList.add(s);
-            }
+            dataList.addAll(dateien);
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
                 Collections.sort(dataList, new GoobiImageURIComparator());

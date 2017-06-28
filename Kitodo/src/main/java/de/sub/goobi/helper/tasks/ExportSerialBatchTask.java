@@ -90,7 +90,7 @@ public class ExportSerialBatchTask extends EmptyTask {
         super(batch.getLabel());
         this.batch = batch;
         int batchSize = batch.getProcesses().size();
-        pointers = new ArrayList<String>(batchSize);
+        pointers = new ArrayList<>(batchSize);
         stepcounter = 0;
         processesIterator = null;
         maxsize = batchSize + 1;

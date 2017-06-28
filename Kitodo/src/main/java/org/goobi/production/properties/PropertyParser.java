@@ -41,7 +41,7 @@ public class PropertyParser {
         Hibernate.initialize(mySchritt.getProcess().getProject());
         String stepTitle = mySchritt.getTitle();
         String projectTitle = mySchritt.getProcess().getProject().getTitle();
-        ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
+        ArrayList<ProcessProperty> properties = new ArrayList<>();
 
         if (mySchritt.getProcess().isTemplate()) {
             return properties;
@@ -124,7 +124,7 @@ public class PropertyParser {
         // add existing 'eigenschaften' to properties from config, so we have
         // all properties from config and
         // some of them with already existing 'eigenschaften'
-        ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
+        ArrayList<ProcessProperty> listClone = new ArrayList<>(properties);
         List<Property> propertyList = mySchritt.getProcess().getProperties();
         for (Property processProperty : propertyList) {
 
@@ -164,7 +164,7 @@ public class PropertyParser {
     public static ArrayList<ProcessProperty> getPropertiesForProcess(Process process) {
         Hibernate.initialize(process.getProject());
         String projectTitle = process.getProject().getTitle();
-        ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
+        ArrayList<ProcessProperty> properties = new ArrayList<>();
         if (process.isTemplate()) {
             List<Property> propertyList = process.getProperties();
             for (Property processProperty : propertyList) {
@@ -228,7 +228,7 @@ public class PropertyParser {
         } // add existing 'eigenschaften' to properties from config, so we have
           // all properties from config and some
           // of them with already existing 'eigenschaften'
-        List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
+        List<ProcessProperty> listClone = new ArrayList<>(properties);
         List<Property> propertyList = process.getProperties();
         for (Property processProperty : propertyList) {
 

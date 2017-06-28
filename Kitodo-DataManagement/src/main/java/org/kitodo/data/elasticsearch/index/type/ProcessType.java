@@ -11,14 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 
 /**

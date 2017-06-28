@@ -211,12 +211,12 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process)
             throws IllegalArgumentException {
 
-        HashSet<String> possibleCollections = new HashSet<String>(process.getPossibleDigitalCollections());
+        HashSet<String> possibleCollections = new HashSet<>(process.getPossibleDigitalCollections());
         if (!possibleCollections.containsAll(collections)) {
             throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not "
                     + "available for template \"" + process.getProzessVorlage().getTitle() + "\".");
         }
-        return new ArrayList<String>(collections);
+        return new ArrayList<>(collections);
     }
 
     /**

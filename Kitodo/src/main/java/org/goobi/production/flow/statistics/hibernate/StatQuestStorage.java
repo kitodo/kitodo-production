@@ -64,9 +64,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
      */
     @Override
     public List<DataTable> getDataTables(IDataSource dataSource) {
-
-        List<DataTable> allTables = new ArrayList<DataTable>();
-
+        List<DataTable> allTables = new ArrayList<>();
         IEvaluableFilter originalFilter;
 
         if (dataSource instanceof IEvaluableFilter) {

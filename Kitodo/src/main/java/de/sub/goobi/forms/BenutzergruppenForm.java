@@ -73,7 +73,7 @@ public class BenutzergruppenForm extends BasisForm {
                 for (User b : this.myBenutzergruppe.getUsers()) {
                     b.getUserGroups().remove(this.myBenutzergruppe);
                 }
-                this.myBenutzergruppe.setUsers(new ArrayList<User>());
+                this.myBenutzergruppe.setUsers(new ArrayList<>());
                 this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
             }
             if (this.myBenutzergruppe.getTasks().size() > 0) {

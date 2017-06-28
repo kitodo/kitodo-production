@@ -284,8 +284,7 @@ public class RequestControlFilter implements Filter {
             if (m.matches()) {
                 // this pattern matches. At most, how long can this request
                 // wait?
-                Long maxDuration = this.maxWaitDurations.get(p);
-                return maxDuration.longValue();
+                return this.maxWaitDurations.get(p);
             }
         }
 

@@ -67,7 +67,7 @@ public class ConfigOpac {
      * @return all catalogue titles
      */
     public static ArrayList<String> getAllCatalogueTitles() {
-        ArrayList<String> myList = new ArrayList<String>();
+        ArrayList<String> myList = new ArrayList<>();
         try {
             int countCatalogues = getConfig().getMaxIndex("catalogue");
             for (int i = 0; i <= countCatalogues; i++) {
@@ -85,7 +85,7 @@ public class ConfigOpac {
      * return all configured Doctype-Titles from Configfile.
      */
     private static ArrayList<String> getAllDoctypeTitles() {
-        ArrayList<String> myList = new ArrayList<String>();
+        ArrayList<String> myList = new ArrayList<>();
         try {
             int countTypes = getConfig().getMaxIndex("doctypes.type");
             for (int i = 0; i <= countTypes; i++) {
@@ -105,7 +105,7 @@ public class ConfigOpac {
      * @return all media types
      */
     public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
-        ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
+        ArrayList<ConfigOpacDoctype> myList = new ArrayList<>();
         try {
             for (String title : getAllDoctypeTitles()) {
                 myList.add(getDoctypeByName(title));
@@ -127,7 +127,7 @@ public class ConfigOpac {
             String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
             if (title.equals(inTitle)) {
                 /* Sprachen erfassen */
-                HashMap<String, String> labels = new HashMap<String, String>();
+                HashMap<String, String> labels = new HashMap<>();
                 int countLabels = getConfig().getMaxIndex("doctypes.type(" + i + ").label");
                 for (int j = 0; j <= countLabels; j++) {
                     String language = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")[@language]");
@@ -148,9 +148,8 @@ public class ConfigOpac {
                 ArrayList<String> mappings = (ArrayList<String>) getConfig()
                         .getList("doctypes.type(" + i + ").mapping");
 
-                ConfigOpacDoctype cod = new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical,
-                        multiVolume, containedWork, newspaper, labels, mappings);
-                return cod;
+                return new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical, multiVolume,
+                        containedWork, newspaper, labels, mappings);
             }
         }
         return null;
@@ -173,7 +172,7 @@ public class ConfigOpac {
      * @return List
      */
     public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
-        List<String> result = new LinkedList<String>();
+        List<String> result = new LinkedList<>();
         @SuppressWarnings("unchecked")
         List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt("catalogue");
         for (HierarchicalConfiguration catalogue : catalogues) {

@@ -66,14 +66,14 @@ public class GoobiScript {
      * Starten des Scripts.
      */
     public void execute(List<Process> inProzesse, String inScript) throws DataException {
-        this.myParameters = new HashMap<String, String>();
+        this.myParameters = new HashMap<>();
         /*
          * alle Suchparameter zerlegen und erfassen
          */
         StrTokenizer tokenizer = new StrTokenizer(inScript, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
-            if (tok.indexOf(":") == -1) {
+            if (!tok.contains(":")) {
                 Helper.setFehlerMeldung("kitodoScriptfield", "missing delimiter / unknown parameter: ", tok);
             } else {
                 String myKey = tok.substring(0, tok.indexOf(":"));
@@ -253,20 +253,20 @@ public class GoobiScript {
             for (Process p : inProzesse) {
                 URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, p);
                 if (fileService.getSubUris(imagesFolder).size() > 0) {
-                    Helper.setFehlerMeldung("kitodoScriptfield", "", "The process " + p.getTitle() + " ["
-                            + p.getId().intValue() + "] has already data in image folder");
+                    Helper.setFehlerMeldung("kitodoScriptfield", "",
+                            "The process " + p.getTitle() + " [" + p.getId() + "] has already data in image folder");
                 } else {
                     URI sourceFolderProzess = fileService.createResource(sourceFolder, p.getTitle());
                     if (!fileService.isDirectory(sourceFolder)) {
-                        Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
-                                + " [" + p.getId().intValue() + "] is not existing");
+                        Helper.setFehlerMeldung("kitodoScriptfield", "",
+                                "The directory for process " + p.getTitle() + " [" + p.getId() + "] is not existing");
                     } else {
                         fileService.copyDirectory(sourceFolderProzess, imagesFolder);
-                        Helper.setMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle() + " ["
-                                + p.getId().intValue() + "] is copied");
+                        Helper.setMeldung("kitodoScriptfield", "",
+                                "The directory for process " + p.getTitle() + " [" + p.getId() + "] is copied");
                     }
                     Helper.setMeldung("kitodoScriptfield", "",
-                            "The process " + p.getTitle() + " [" + p.getId().intValue() + "] is copied");
+                            "The process " + p.getTitle() + " [" + p.getId() + "] is copied");
                 }
             }
         } catch (Exception e) {
@@ -447,7 +447,7 @@ public class GoobiScript {
             s.setOrdering(Integer.parseInt(this.myParameters.get("number")));
             s.setProcess(proz);
             if (proz.getTasks() == null) {
-                proz.setTasks(new ArrayList<Task>());
+                proz.setTasks(new ArrayList<>());
             }
             proz.getTasks().add(s);
             try {

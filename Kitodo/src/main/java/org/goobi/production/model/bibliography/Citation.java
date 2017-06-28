@@ -80,12 +80,12 @@ public class Citation {
      * The field contributors holds the list of editors, compilers, translators,
      * … of the anthology.
      */
-    private final List<String> contributors = new ArrayList<String>();
+    private final List<String> contributors = new ArrayList<>();
 
     /**
      * The field creators holds the list of creators of the work.
      */
-    private final List<String> creators = new ArrayList<String>();
+    private final List<String> creators = new ArrayList<>();
 
     /**
      * The field department holds the department of the author.
@@ -191,9 +191,7 @@ public class Citation {
         Type type;
         try {
             type = Type.valueOf(format.toUpperCase());
-        } catch (IllegalArgumentException formatCodeUnknown) {
-            type = Type.MONOGRAPH;
-        } catch (NullPointerException formatIsNull) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             type = Type.MONOGRAPH;
         }
         style = type;
@@ -240,7 +238,7 @@ public class Citation {
         if (list == null || list.trim().length() == 0) {
             return;
         }
-        while (list.indexOf(separator) > -1) {
+        while (list.contains(separator)) {
             if (list.substring(0, list.indexOf(separator)).trim().length() > 0) {
                 destination.add(list.substring(0, list.indexOf(separator)).trim());
             }
@@ -756,7 +754,7 @@ public class Citation {
     private String formatName(String name, boolean colon) {
         String lastname = name;
         String firstname = "";
-        if (name.indexOf(",") > -1) {
+        if (name.contains(",")) {
             lastname = name.substring(0, name.indexOf(",")).trim();
             firstname = name.substring(name.indexOf(",") + 1).trim();
         }

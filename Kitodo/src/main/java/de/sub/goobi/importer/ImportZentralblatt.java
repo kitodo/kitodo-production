@@ -81,7 +81,7 @@ public class ImportZentralblatt {
         this.separator = ":";
         boolean istAbsatz = false;
         boolean istErsterTitel = true;
-        LinkedList<DocStruct> listArtikel = new LinkedList<DocStruct>();
+        LinkedList<DocStruct> listArtikel = new LinkedList<>();
 
         /*
          * Vorbereitung der Dokumentenstruktur
@@ -568,7 +568,7 @@ public class ImportZentralblatt {
                 Person p = new Person(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
                 String myTok = tokenizer.nextToken();
 
-                if (myTok.indexOf(",") == -1) {
+                if (!myTok.contains(",")) {
                     throw new WrongImportFileException(
                             "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
                 }
@@ -590,7 +590,7 @@ public class ImportZentralblatt {
                 Person p = new Person(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
                 String myTok = tokenizer.nextToken();
 
-                if (myTok.indexOf(",") == -1) {
+                if (!myTok.contains(",")) {
                     throw new WrongImportFileException(
                             "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
                 }

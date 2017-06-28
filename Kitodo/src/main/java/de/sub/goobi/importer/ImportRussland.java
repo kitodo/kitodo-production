@@ -102,7 +102,7 @@ public class ImportRussland {
         /*
          * alle Zeilen durchlaufen
          */
-        List<String> listeDaten = new ArrayList<String>();
+        List<String> listeDaten = new ArrayList<>();
         while ((line = reader.readLine()) != null) {
             // logger.info(line);
             if (line.length() == 0) {
@@ -113,7 +113,7 @@ public class ImportRussland {
                  */
                 analyzeParagraph(listeDaten);
                 /* Liste wieder zurücksetzen */
-                listeDaten = new ArrayList<String>();
+                listeDaten = new ArrayList<>();
             } else if (!line.substring(0, 1).equals("+")) {
                 /*
                  * wenn zeile kein Kommentar ist, Zeile in Liste für Auswertung
@@ -334,7 +334,7 @@ public class ImportRussland {
          * gesuchte löschen
          */
         if (inStrukturelement.getAllVisibleMetadata() != null) {
-            LinkedList<Metadata> listMetas = new LinkedList<Metadata>(inStrukturelement.getAllMetadata());
+            LinkedList<Metadata> listMetas = new LinkedList<>(inStrukturelement.getAllMetadata());
             for (Iterator<Metadata> iter = listMetas.iterator(); iter.hasNext();) {
                 Metadata meta = iter.next();
                 String myMetaName = meta.getType().getName();
@@ -357,7 +357,7 @@ public class ImportRussland {
          * gesuchten löschen
          */
         if (inStrukturelement.getAllPersons() != null) {
-            List<Person> listPersons = new ArrayList<Person>(inStrukturelement.getAllPersons());
+            List<Person> listPersons = new ArrayList<>(inStrukturelement.getAllPersons());
             for (Person p : listPersons) {
                 if (p.getRole().equals("Author")) {
                     inStrukturelement.removePerson(p);
@@ -417,7 +417,7 @@ public class ImportRussland {
         if (pName.length() == 0) {
             return;
         }
-        if (pName.indexOf(",") == -1) {
+        if (!pName.contains(",")) {
             throw new WrongImportFileException(
                     "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + inDetail + "')");
         }

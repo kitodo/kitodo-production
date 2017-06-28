@@ -23,8 +23,8 @@ public class Transliteration {
     public String transliterateISO(String inString) {
         String s = "";
         char[] arr = inString.toCharArray();
-        for (int i = 0; i < arr.length; i++) {
-            switch (arr[i]) {
+        for (char sign : arr) {
+            switch (sign) {
                 case 0x410:
                     s = s + "A";
                     break;
@@ -215,7 +215,7 @@ public class Transliteration {
                     s = s + "\u01CE";
                     break;
                 default:
-                    s = s + arr[i];
+                    s = s + sign;
             }
         }
         return s;
@@ -231,8 +231,8 @@ public class Transliteration {
     public String transliterateDIN(String inString) {
         String s = "";
         char[] arr = inString.toCharArray();
-        for (int i = 0; i < arr.length; i++) {
-            switch (arr[i]) {
+        for (char sign : arr) {
+            switch (sign) {
                 case 0x410:
                     s = s + "A";
                     break;
@@ -423,7 +423,7 @@ public class Transliteration {
                     s = s + "ja";
                     break;
                 default:
-                    s = s + arr[i];
+                    s = s + sign;
             }
         }
         return s;

@@ -278,14 +278,13 @@ public class WebDav implements Serializable {
             User aktuellerBenutzer = Helper.getCurrentUser();
             URI verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
                     .resolve(inVerzeichnis);
-            URI benutzerHome = verzeichnisAlle;
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.endsWith("]");
                 }
             };
-            return fileService.getSubUris(filter, benutzerHome).size();
+            return fileService.getSubUris(filter, verzeichnisAlle).size();
         } catch (Exception e) {
             logger.error(e);
             return 0;

@@ -35,11 +35,11 @@ public class ProjectsRootNode {
     private ArrayList<Project> projects;
 
     public ProjectsRootNode() {
-        projects = new ArrayList<Project>();
+        projects = new ArrayList<>();
     }
 
     public ProjectsRootNode(Collection<Project> data) {
-        projects = new ArrayList<Project>(data);
+        projects = new ArrayList<>(data);
     }
 
     /**
@@ -54,7 +54,7 @@ public class ProjectsRootNode {
      *            ProjectsRootNode to create a copy from
      */
     public ProjectsRootNode(ProjectsRootNode toCopy) {
-        this.projects = toCopy.projects != null ? new ArrayList<Project>(toCopy.projects) : null;
+        this.projects = toCopy.projects != null ? new ArrayList<>(toCopy.projects) : null;
     }
 
     public void setProjects(ArrayList<Project> projects) {

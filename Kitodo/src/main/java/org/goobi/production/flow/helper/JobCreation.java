@@ -56,6 +56,7 @@ public class JobCreation {
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
         }
+        //TODO: what is differecene between metsfilename and basepath and metsfile
         URI metsfilename = io.getMetsFilename();
         if (logger.isTraceEnabled()) {
             logger.trace("mets filename is " + metsfilename);
@@ -170,9 +171,8 @@ public class JobCreation {
                 List<URI> imageDir = new ArrayList<>();
 
                 ArrayList<URI> files = fileService.getSubUris(imagesFolder);
-                for (int i = 0; i < files.size(); i++) {
-                    imageDir.add(files.get(i));
-                }
+                imageDir.addAll(files);
+
                 for (URI uri : imageDir) {
                     URI image = fileService.createResource(imagesFolder, uri.toString());
                     URI dest = fileService.createResource(

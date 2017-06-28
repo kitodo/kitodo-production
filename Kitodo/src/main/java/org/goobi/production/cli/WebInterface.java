@@ -109,7 +109,7 @@ public class WebInterface extends HttpServlet {
 
             // hand parameters over to command
             Map<String, String[]> map = req.getParameterMap();
-            HashMap<String, String> params = new HashMap<String, String>();
+            HashMap<String, String> params = new HashMap<>();
             Iterator<Entry<String, String[]>> i = map.entrySet().iterator();
             while (i.hasNext()) {
                 Entry<String, String[]> entry = i.next();

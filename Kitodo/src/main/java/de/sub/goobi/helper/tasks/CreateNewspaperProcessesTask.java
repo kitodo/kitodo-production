@@ -134,11 +134,11 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     public CreateNewspaperProcessesTask(ProzesskopieForm pattern, Course course, Granularity batchGranularity) {
         super(pattern.getProzessVorlageTitel());
         this.pattern = pattern;
-        this.processes = new ArrayList<List<IndividualIssue>>(course.getNumberOfProcesses());
+        this.processes = new ArrayList<>(course.getNumberOfProcesses());
         this.description = CourseToGerman.asReadableText(course);
         this.createBatches = batchGranularity;
         for (List<IndividualIssue> issues : course.getProcesses()) {
-            List<IndividualIssue> process = new ArrayList<IndividualIssue>(issues.size());
+            List<IndividualIssue> process = new ArrayList<>(issues.size());
             process.addAll(issues);
             processes.add(process);
         }
@@ -321,8 +321,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
 
         // create the month level
-        Map<Integer, DocStruct> months = new HashMap<Integer, DocStruct>();
-        Map<LocalDate, DocStruct> days = new HashMap<LocalDate, DocStruct>(488);
+        Map<Integer, DocStruct> months = new HashMap<>();
+        Map<LocalDate, DocStruct> days = new HashMap<>(488);
         for (IndividualIssue individualIssue : issues) {
             LocalDate date = individualIssue.getDate();
             Integer monthNo = date.getMonthOfYear();

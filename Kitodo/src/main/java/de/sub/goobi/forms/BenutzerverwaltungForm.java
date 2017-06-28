@@ -356,7 +356,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         if (this.myClass.getLdapGroup() != null) {
             return this.myClass.getLdapGroup().getId();
         } else {
-            return Integer.valueOf(0);
+            return 0;
         }
     }
 
@@ -364,7 +364,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Ldap-Konfiguration - set LDAP group.
      */
     public void setLdapGruppeAuswahl(Integer inAuswahl) {
-        if (inAuswahl.intValue() != 0) {
+        if (inAuswahl != 0) {
             try {
                 this.myClass.setLdapGroup(serviceManager.getLdapGroupService().find(inAuswahl));
             } catch (DAOException e) {
@@ -378,7 +378,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Ldap-Konfiguration - get LDAP group choice list.
      */
     public List<SelectItem> getLdapGruppeAuswahlListe() throws DAOException {
-        List<SelectItem> myLdapGruppen = new ArrayList<SelectItem>();
+        List<SelectItem> myLdapGruppen = new ArrayList<>();
         List<LdapGroup> temp = serviceManager.getLdapGroupService().search("from LdapGroup ORDER BY title");
         for (LdapGroup gru : temp) {
             myLdapGruppen.add(new SelectItem(gru.getId(), gru.getTitle(), null));

@@ -663,7 +663,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<Property> expected = new ArrayList<>();
-        List<Property> actual = processService.filterForCorrectionSolutionMessages(new ArrayList<Property>());
+        List<Property> actual = processService.filterForCorrectionSolutionMessages(new ArrayList<>());
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 

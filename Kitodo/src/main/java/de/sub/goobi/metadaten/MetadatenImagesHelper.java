@@ -43,7 +43,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -131,7 +130,7 @@ public class MetadatenImagesHelper {
         DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
         List<DocStruct> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
         if (oldPages == null) {
-            oldPages = new ArrayList<DocStruct>();
+            oldPages = new ArrayList<>();
         }
 
         /*
@@ -143,7 +142,7 @@ public class MetadatenImagesHelper {
         }
 
         String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
-        Map<String, DocStruct> assignedImages = new HashMap<String, DocStruct>();
+        Map<String, DocStruct> assignedImages = new HashMap<>();
         List<DocStruct> pageElementsWithoutImages = new ArrayList<>();
         List<URI> imagesWithoutPageElements = new ArrayList<>();
 
@@ -194,7 +193,7 @@ public class MetadatenImagesHelper {
         if (!pageElementsWithoutImages.isEmpty() && imagesWithoutPageElements.isEmpty()) {
             for (DocStruct pageToRemove : pageElementsWithoutImages) {
                 physicaldocstruct.removeChild(pageToRemove);
-                List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
+                List<Reference> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
                 for (ugh.dl.Reference ref : refs) {
                     ref.getSource().removeReferenceTo(pageToRemove);
                 }
@@ -241,9 +240,7 @@ public class MetadatenImagesHelper {
                     }
                     dsPage.addContentFile(cf);
 
-                } catch (TypeNotAllowedAsChildException e) {
-                    logger.error(e);
-                } catch (MetadataTypeNotAllowedException e) {
+                } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                     logger.error(e);
                 }
             }
@@ -270,7 +267,7 @@ public class MetadatenImagesHelper {
                 } else {
                     // remove page
                     physicaldocstruct.removeChild(page);
-                    List<Reference> refs = new ArrayList<Reference>(page.getAllFromReferences());
+                    List<Reference> refs = new ArrayList<>(page.getAllFromReferences());
                     for (ugh.dl.Reference ref : refs) {
                         ref.getSource().removeReferenceTo(page);
                     }
@@ -320,9 +317,7 @@ public class MetadatenImagesHelper {
                         }
                         dsPage.addContentFile(cf);
 
-                    } catch (TypeNotAllowedAsChildException e) {
-                        logger.error(e);
-                    } catch (MetadataTypeNotAllowedException e) {
+                    } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                         logger.error(e);
                     }
                 }
@@ -513,9 +508,7 @@ public class MetadatenImagesHelper {
         ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, dir);
         List<URI> dataList = new ArrayList<>();
         if (files != null && files.size() > 0) {
-            for (int i = 0; i < files.size(); i++) {
-                dataList.add(files.get(i));
-            }
+            dataList.addAll(files);
             /* alle Dateien durchlaufen */
         }
         List<URI> orderedFilenameList = new ArrayList<>();
@@ -591,9 +584,7 @@ public class MetadatenImagesHelper {
         ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
         ArrayList<URI> dataList = new ArrayList<>();
         if (files != null && files.size() > 0) {
-            for (int i = 0; i < files.size(); i++) {
-                dataList.add(files.get(i));
-            }
+            dataList.addAll(files);
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
                 Collections.sort(dataList, new GoobiImageFileComparator());

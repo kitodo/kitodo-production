@@ -373,7 +373,7 @@ public class VariableReplacer {
      * Treffer als Liste zurück.
      */
     public static Iterable<MatchResult> findRegexMatches(String pattern, CharSequence s) {
-        List<MatchResult> results = new ArrayList<MatchResult>();
+        List<MatchResult> results = new ArrayList<>();
         for (Matcher m = Pattern.compile(pattern).matcher(s); m.find();) {
             results.add(m.toMatchResult());
         }

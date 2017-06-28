@@ -242,7 +242,7 @@ public class SRUClient {
      * </p>
      */
     private void saxInit() {
-        namespaces = new HashMap<String, String>();
+        namespaces = new HashMap<>();
         DocumentFactory docFactory = new DocumentFactory();
         docFactory.setXPathNamespaceURIs(namespaces);
         saxReader = new SAXReader(docFactory);

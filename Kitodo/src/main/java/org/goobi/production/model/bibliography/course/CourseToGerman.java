@@ -58,7 +58,7 @@ public class CourseToGerman {
      * @return Verbal description of the course in German
      */
     public static List<String> asReadableText(Course course) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (course.isEmpty()) {
             return result;
         }
@@ -90,7 +90,7 @@ public class CourseToGerman {
     private static String titleToString(Block block, boolean subsequentBlock) {
         StringBuilder result = new StringBuilder(500);
         int currentIssuesSize = block.getIssues().size();
-        if (subsequentBlock == false) {
+        if (!subsequentBlock) {
             result.append("Die Zeitung erschien vom ");
             appendDate(result, block.getFirstAppearance());
         } else {
@@ -191,7 +191,7 @@ public class CourseToGerman {
         }
 
         TreeSet<LocalDate> orderedDates = dates instanceof TreeSet ? (TreeSet<LocalDate>) dates
-                : new TreeSet<LocalDate>(dates);
+                : new TreeSet<>(dates);
 
         Iterator<LocalDate> datesIterator = orderedDates.iterator();
 
@@ -200,7 +200,7 @@ public class CourseToGerman {
         LocalDate overNext = datesIterator.hasNext() ? datesIterator.next() : null;
         int previousYear = Integer.MIN_VALUE;
         boolean nextInSameMonth = false;
-        boolean nextBothInSameMonth = next != null ? DateUtils.sameMonth(current, next) : false;
+        boolean nextBothInSameMonth = next != null && DateUtils.sameMonth(current, next);
         int lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, current.getYear());
 
         do {

@@ -74,14 +74,14 @@ public class MassImportForm implements Serializable {
     private List<String> digitalCollections;
     private List<String> possibleDigitalCollections;
     private String opacCatalogue;
-    private List<String> ids = new ArrayList<String>();
+    private List<String> ids = new ArrayList<>();
     private ImportFormat format = null;
     private String idList = "";
     private String records = "";
-    private List<String> usablePluginsForRecords = new ArrayList<String>();
-    private List<String> usablePluginsForIDs = new ArrayList<String>();
-    private List<String> usablePluginsForFiles = new ArrayList<String>();
-    private List<String> usablePluginsForFolder = new ArrayList<String>();
+    private List<String> usablePluginsForRecords = new ArrayList<>();
+    private List<String> usablePluginsForIDs = new ArrayList<>();
+    private List<String> usablePluginsForFiles = new ArrayList<>();
+    private List<String> usablePluginsForFolder = new ArrayList<>();
     private String currentPlugin = "";
     private IImportPlugin plugin;
     private File importFile = null;
@@ -114,7 +114,7 @@ public class MassImportForm implements Serializable {
             for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    List<String> param = new ArrayList<String>();
+                    List<String> param = new ArrayList<>();
                     param.add(s.getTitle());
                     Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
                 }
@@ -131,14 +131,14 @@ public class MassImportForm implements Serializable {
 
     @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
-        this.possibleDigitalCollections = new ArrayList<String>();
-        ArrayList<String> defaultCollections = new ArrayList<String>();
+        this.possibleDigitalCollections = new ArrayList<>();
+        ArrayList<String> defaultCollections = new ArrayList<>();
         String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
         }
-        this.digitalCollections = new ArrayList<String>();
+        this.digitalCollections = new ArrayList<>();
         try {
             /* Datei einlesen und Root ermitteln */
             SAXBuilder builder = new SAXBuilder();
@@ -194,8 +194,8 @@ public class MassImportForm implements Serializable {
         }
     }
 
-    private List<String> allFilenames = new ArrayList<String>();
-    private List<String> selectedFilenames = new ArrayList<String>();
+    private List<String> allFilenames = new ArrayList<>();
+    private List<String> selectedFilenames = new ArrayList<>();
 
     public List<String> getAllFilenames() {
 
@@ -226,7 +226,7 @@ public class MassImportForm implements Serializable {
             return null;
         }
         if (testForData()) {
-            List<ImportObject> answer = new ArrayList<ImportObject>();
+            List<ImportObject> answer = new ArrayList<>();
             Batch batch = null;
 
             // found list with ids
@@ -239,7 +239,7 @@ public class MassImportForm implements Serializable {
 
             if (StringUtils.isNotEmpty(this.idList)) {
                 List<String> ids = this.plugin.splitIds(this.idList);
-                List<Record> recordList = new ArrayList<Record>();
+                List<Record> recordList = new ArrayList<>();
                 for (String id : ids) {
                     Record r = new Record();
                     r.setData(id);
@@ -304,7 +304,7 @@ public class MassImportForm implements Serializable {
                         this.processList.add(p);
                     }
                 } else {
-                    List<String> param = new ArrayList<String>();
+                    List<String> param = new ArrayList<>();
                     param.add(io.getProcessTitle());
                     param.add(io.getErrorMessage());
                     Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
@@ -379,11 +379,8 @@ public class MassImportForm implements Serializable {
      */
 
     private boolean testForData() {
-        if (StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
-                && this.selectedFilenames.size() == 0) {
-            return false;
-        }
-        return true;
+        return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
+                && this.selectedFilenames.size() == 0);
     }
 
     /**
@@ -392,7 +389,7 @@ public class MassImportForm implements Serializable {
      * @return list with all import formats
      */
     public List<String> getFormats() {
-        List<String> l = new ArrayList<String>();
+        List<String> l = new ArrayList<>();
         for (ImportFormat input : ImportFormat.values()) {
             l.add(input.getTitle());
         }
@@ -527,7 +524,7 @@ public class MassImportForm implements Serializable {
             return ConfigOpac.getAllCatalogueTitles();
         } catch (Throwable t) {
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 
@@ -790,7 +787,7 @@ public class MassImportForm implements Serializable {
         if (this.plugin != null) {
             return this.plugin.getProperties();
         }
-        return new ArrayList<ImportProperty>();
+        return new ArrayList<>();
     }
 
     public List<Process> getProcessList() {
@@ -859,7 +856,7 @@ public class MassImportForm implements Serializable {
             }
         } catch (Exception e) {
         }
-        return new ArrayList<DocstructElement>();
+        return new ArrayList<>();
     }
 
     public int getDocstructssize() {

@@ -38,7 +38,7 @@ public class DigitalCollections {
     @SuppressWarnings("unchecked")
     public static List<String> possibleDigitalCollectionsForProcess(Process process) throws JDOMException, IOException {
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {

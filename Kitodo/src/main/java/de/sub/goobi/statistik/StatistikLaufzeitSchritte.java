@@ -39,15 +39,13 @@ public class StatistikLaufzeitSchritte {
         return categoryDataSet;
     }
 
-    private static int dateDifference(Date datoStart, Date datoEnd) {
-        if (datoStart.before(datoEnd)) {
-            long difference = datoEnd.getTime() - datoStart.getTime();
-            Date datoDifference = new Date(difference);
+    private static int dateDifference(Date dateStart, Date dateEnd) {
+        if (dateStart.before(dateEnd)) {
+            long difference = dateEnd.getTime() - dateStart.getTime();
+            Date dateDifference = new Date(difference);
             Calendar differenz = Calendar.getInstance();
-            differenz.setTime(datoDifference);
-
-            int summe = differenz.get(Calendar.DAY_OF_YEAR);
-            return summe;
+            differenz.setTime(dateDifference);
+            return differenz.get(Calendar.DAY_OF_YEAR);
         } else {
             return 1;
         }

@@ -69,7 +69,7 @@ public class FileManipulation {
 
     private String uploadedFileName = null;
 
-    private List<String> selectedFiles = new ArrayList<String>();
+    private List<String> selectedFiles = new ArrayList<>();
 
     private boolean deleteFilesAfterMove = false;
 
@@ -121,7 +121,7 @@ public class FileManipulation {
             }
 
             if (fileService.fileExist(filename)) {
-                List<String> parameterList = new ArrayList<String>();
+                List<String> parameterList = new ArrayList<>();
                 parameterList.add(baseName);
                 Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
                 return;
@@ -328,7 +328,7 @@ public class FileManipulation {
         }
 
         if (downloadFile == null || !fileService.fileExist(downloadFile)) {
-            List<String> paramList = new ArrayList<String>();
+            List<String> paramList = new ArrayList<>();
             // paramList.add(metadataBean.getMyProzess().getTitel());
             paramList.add(filenamePrefix);
             paramList.add(currentFolder);
@@ -389,7 +389,7 @@ public class FileManipulation {
             return;
         }
         List<DocStruct> allPages = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren();
-        List<String> filenamesToMove = new ArrayList<String>();
+        List<String> filenamesToMove = new ArrayList<>();
 
         for (String fileIndex : selectedFiles) {
             try {
@@ -444,7 +444,7 @@ public class FileManipulation {
             selectedFiles.toArray(pagesArray);
             metadataBean.setAlleSeitenAuswahl(pagesArray);
             metadataBean.deleteSeltectedPages();
-            selectedFiles = new ArrayList<String>();
+            selectedFiles = new ArrayList<>();
             deleteFilesAfterMove = false;
         }
 
@@ -536,9 +536,8 @@ public class FileManipulation {
                             URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
                                     currentProcess);
                             ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                            List<URI> sortedList = objectInFolder;
-                            Collections.sort(sortedList);
-                            for (URI file : sortedList) {
+                            Collections.sort(objectInFolder);
+                            for (URI file : objectInFolder) {
                                 fileService.copyFileToDirectory(file, masterDirectory);
                             }
                         } catch (IOException e) {
@@ -552,17 +551,15 @@ public class FileManipulation {
                                     currentProcess);
                             if (folderName != null) {
                                 try {
-                                    URI directory = folderName;
                                     ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                                    List<URI> sortedList = objectInFolder;
-                                    Collections.sort(sortedList);
-                                    for (URI file : sortedList) {
+                                    Collections.sort(objectInFolder);
+                                    for (URI file : objectInFolder) {
                                         if (serviceManager.getProcessService()
                                                 .getImagesTifDirectory(false, currentProcess)
                                                 .equals(folderName + File.separator)) {
                                             importedFilenames.add(file);
                                         }
-                                        fileService.copyFileToDirectory(file, directory);
+                                        fileService.copyFileToDirectory(file, folderName);
                                     }
                                 } catch (IOException e) {
                                     logger.error(e);
@@ -579,17 +576,15 @@ public class FileManipulation {
                         URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
                                 currentProcess);
                         if (folderName != null) {
-                            URI directory = folderName;
                             ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                            List<URI> sortedList = objectInFolder;
-                            Collections.sort(sortedList);
-                            for (URI file : sortedList) {
+                            Collections.sort(objectInFolder);
+                            for (URI file : objectInFolder) {
                                 try {
                                     if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
                                             .equals(folderName + File.separator)) {
                                         importedFilenames.add(file);
                                     }
-                                    fileService.copyFileToDirectory(file, directory);
+                                    fileService.copyFileToDirectory(file, folderName);
                                 } catch (IOException e) {
                                     logger.error(e);
                                 }
@@ -643,11 +638,8 @@ public class FileManipulation {
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
 
         String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
-        if (!afterLastBackslash.matches(prefix + "\\..+")) {
-            return false;
-        }
 
-        return true;
+        return afterLastBackslash.matches(prefix + "\\..+");
     }
 
 }

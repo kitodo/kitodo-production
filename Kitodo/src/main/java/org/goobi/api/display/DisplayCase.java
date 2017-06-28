@@ -20,7 +20,7 @@ import org.kitodo.data.database.beans.Process;
 
 public class DisplayCase {
     private DisplayType displayType = null;
-    private ArrayList<Item> itemList = new ArrayList<Item>();
+    private ArrayList<Item> itemList = new ArrayList<>();
     private ConfigDispayRules configDisplay;
     private Process myProcess;
     private String metaName;

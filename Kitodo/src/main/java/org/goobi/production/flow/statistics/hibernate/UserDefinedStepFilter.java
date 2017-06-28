@@ -71,10 +71,10 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
         if (myCriteria == null || myCriteria.get() == null) {
             if (myIds == null) {
                 if (myFilter != null) {
-                    myCriteria = new WeakReference<Criteria>(createCriteriaFromFilterString(myFilter));
+                    myCriteria = new WeakReference<>(createCriteriaFromFilterString(myFilter));
                 }
             } else {
-                myCriteria = new WeakReference<Criteria>(createCriteriaFromIDList());
+                myCriteria = new WeakReference<>(createCriteriaFromIDList());
             }
         }
 

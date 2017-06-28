@@ -97,7 +97,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
     @Override
     public List<DataTable> getDataTables(IDataSource dataSource) {
 
-        List<DataTable> allTables = new ArrayList<DataTable>();
+        List<DataTable> allTables = new ArrayList<>();
 
         IEvaluableFilter originalFilter;
 
@@ -117,10 +117,6 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
         if (myIDlist == null || myIDlist.size() == 0) {
             return null;
         }
-        /*
-         * =====================================================================
-         * = ==============
-         */
 
         // a list of DataTables is expected as return Object, even if there is
         // only one

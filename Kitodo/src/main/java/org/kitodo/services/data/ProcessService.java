@@ -456,7 +456,7 @@ public class ProcessService extends TitleSearchService<Process> {
             logger.debug("Hibernate exception: ", e);
         }
         if (process.getHistory() == null) {
-            process.setHistory(new ArrayList<History>());
+            process.setHistory(new ArrayList<>());
         }
         return process.getHistory();
     }
@@ -1253,7 +1253,7 @@ public class ProcessService extends TitleSearchService<Process> {
      */
     protected List<Property> filterForCorrectionSolutionMessages(List<Property> lpe) {
         ArrayList<Property> filteredList = new ArrayList<>();
-        List<String> listOfTranslations = new ArrayList<String>();
+        List<String> listOfTranslations = new ArrayList<>();
         String propertyTitle = "";
 
         listOfTranslations.add("Korrektur notwendig");
@@ -1632,11 +1632,10 @@ public class ProcessService extends TitleSearchService<Process> {
             /* jetzt den eigentlichen Kopiervorgang */
 
             ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
-            for (int i = 0; i < dateien.size(); i++) {
-                if (fileService.isFile(dateien.get(i))) {
-                    URI meinZiel = zielTif
-                            .resolve(File.separator + fileService.getFileNameWithExtension(dateien.get(i)));
-                    fileService.copyFile(dateien.get(i), meinZiel);
+            for (URI file : dateien) {
+                if (fileService.isFile(file)) {
+                    URI target = zielTif.resolve(File.separator + fileService.getFileNameWithExtension(file));
+                    fileService.copyFile(file, target);
                 }
             }
         }
@@ -1798,7 +1797,7 @@ public class ProcessService extends TitleSearchService<Process> {
                 if (sizeOfPagination == sizeOfImages) {
                     dd.overrideContentFiles(imageStrings);
                 } else {
-                    List<String> param = new ArrayList<String>();
+                    List<String> param = new ArrayList<>();
                     param.add(String.valueOf(sizeOfPagination));
                     param.add(String.valueOf(sizeOfImages));
                     Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
@@ -1806,10 +1805,9 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
-
             logger.error(e);
         }
-        mm.write(targetFileName.toString());
+        mm.write(targetFileName);
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
         return true;
     }

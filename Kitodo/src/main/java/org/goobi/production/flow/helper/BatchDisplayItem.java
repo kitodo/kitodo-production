@@ -24,7 +24,7 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
     private String stepTitle = "";
     private Integer stepOrder = null;
     private TaskStatus stepStatus = TaskStatus.DONE;
-    private HashMap<String, String> scripts = new HashMap<String, String>();
+    private HashMap<String, String> scripts = new HashMap<>();
     private boolean exportDMS = false;
     private final ServiceManager serviceManager = new ServiceManager();
 

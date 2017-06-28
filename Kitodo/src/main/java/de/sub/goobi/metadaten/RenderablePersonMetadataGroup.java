@@ -261,7 +261,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      */
     @Override
     public List<Person> toMetadata() {
-        List<Person> result = new ArrayList<Person>(1);
+        List<Person> result = new ArrayList<>(1);
         Person person;
         try {
             person = new Person(metadataType);

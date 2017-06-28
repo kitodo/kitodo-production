@@ -23,7 +23,7 @@ public class DesEncrypterTest {
     static Map<String, String> testData;
 
     static {
-        testData = new HashMap<String, String>();
+        testData = new HashMap<>();
         testData.put("Password", "6lPEb6Gic+/7BNRdMmL1qQ==");
         testData.put("12345678", "wkQy7f152Zl422PTPOPAMQ==");
         testData.put("GoobiPassword1234*./", "nDI2cSug5Nj/kkEvKQPBOsHjdTofLmaJ");

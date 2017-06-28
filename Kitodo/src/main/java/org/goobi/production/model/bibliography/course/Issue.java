@@ -91,9 +91,9 @@ public class Issue {
     public Issue(Course course) {
         this.course = course;
         this.heading = "";
-        this.additions = new HashSet<LocalDate>();
-        this.daysOfWeek = new HashSet<Integer>();
-        this.exclusions = new HashSet<LocalDate>();
+        this.additions = new HashSet<>();
+        this.daysOfWeek = new HashSet<>();
+        this.exclusions = new HashSet<>();
     }
 
     /**
@@ -107,9 +107,9 @@ public class Issue {
     public Issue(Course course, String heading) {
         this.course = course;
         this.heading = heading;
-        this.additions = new HashSet<LocalDate>();
-        this.daysOfWeek = new HashSet<Integer>();
-        this.exclusions = new HashSet<LocalDate>();
+        this.additions = new HashSet<>();
+        this.daysOfWeek = new HashSet<>();
+        this.exclusions = new HashSet<>();
     }
 
     /**
@@ -226,9 +226,9 @@ public class Issue {
     public Issue clone(Course course) {
         Issue copy = new Issue(course);
         copy.heading = heading;
-        copy.additions = new HashSet<LocalDate>(additions);
-        copy.daysOfWeek = new HashSet<Integer>(daysOfWeek);
-        copy.exclusions = new HashSet<LocalDate>(exclusions);
+        copy.additions = new HashSet<>(additions);
+        copy.daysOfWeek = new HashSet<>(daysOfWeek);
+        copy.exclusions = new HashSet<>(exclusions);
         return copy;
     }
 
@@ -400,14 +400,14 @@ public class Issue {
     void recalculateRegularity(LocalDate firstAppearance, LocalDate lastAppearance) {
         final int APPEARED = 1;
         final int NOT_APPEARED = 0;
-        Set<LocalDate> remainingAdditions = new HashSet<LocalDate>();
-        Set<LocalDate> remainingExclusions = new HashSet<LocalDate>();
+        Set<LocalDate> remainingAdditions = new HashSet<>();
+        Set<LocalDate> remainingExclusions = new HashSet<>();
 
         @SuppressWarnings("unchecked")
         HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][APPEARED + 1];
         for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-            subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<LocalDate>();
-            subsets[dayOfWeek - 1][APPEARED] = new HashSet<LocalDate>();
+            subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<>();
+            subsets[dayOfWeek - 1][APPEARED] = new HashSet<>();
         }
 
         for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {

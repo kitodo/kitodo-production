@@ -261,8 +261,7 @@ public class LoginForm implements Serializable{
                 return name.endsWith(".png");
             }
         };
-        URI dir = myPfad;
-        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, dir);
+        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, myPfad);
 
         /* alle Dateien durchlaufen und die alten löschen */
         if (dateien != null) {

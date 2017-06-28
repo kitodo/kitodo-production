@@ -25,7 +25,7 @@ public class ImportObject {
 
     // TODO must end with ".xml" in current implementation
     private String processTitle = "";
-    private final Collection<Batch> batches = new LinkedList<Batch>();
+    private final Collection<Batch> batches = new LinkedList<>();
 
     private URI metsFilename;
     private URI importFileName;

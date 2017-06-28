@@ -111,7 +111,7 @@ public class ProjectHelper {
         Long numberOfSteps;
         Long numberOfImages;
 
-        List<StepInformation> workFlow = new ArrayList<StepInformation>();
+        List<StepInformation> workFlow = new ArrayList<>();
 
         for (Object obj : list) {
             Object[] row = (Object[]) obj;

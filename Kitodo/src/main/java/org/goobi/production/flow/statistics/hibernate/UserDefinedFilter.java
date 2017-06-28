@@ -60,7 +60,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
      * Objects that need to be selected
      */
     public UserDefinedFilter(List<Integer> selectIDs) {
-        myIds = new ArrayList<Integer>(selectIDs);
+        myIds = new ArrayList<>(selectIDs);
     }
 
     /**
@@ -83,10 +83,10 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
         if (myCriteria == null || myCriteria.get() == null) {
             if (myIds == null) {
                 if (getFilter() != null) {
-                    myCriteria = new WeakReference<Criteria>(createCriteriaFromFilterString(getFilter()));
+                    myCriteria = new WeakReference<>(createCriteriaFromFilterString(getFilter()));
                 }
             } else {
-                myCriteria = new WeakReference<Criteria>(createCriteriaFromIDList());
+                myCriteria = new WeakReference<>(createCriteriaFromIDList());
             }
         }
 
@@ -194,7 +194,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
      */
     @SuppressWarnings("unchecked")
     private void createIDListFromCriteria(Criteria crit) {
-        myIds = new ArrayList<Integer>();
+        myIds = new ArrayList<>();
         for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it
                 .hasNext();) {
             Process p = (Process) it.next();
@@ -238,7 +238,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
             // create ID list if not yet done
             createIDListFromCriteria(getCriteria());
         }
-        return new ArrayList<Integer>(myIds);
+        return new ArrayList<>(myIds);
     }
 
     /*

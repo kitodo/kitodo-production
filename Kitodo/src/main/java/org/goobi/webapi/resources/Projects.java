@@ -56,11 +56,11 @@ public class Projects {
         List<Process> processTemplates = query.add(Restrictions.eq("template", Boolean.TRUE)).list();
         for (Process processTemplate : processTemplates) {
             Project project = processTemplate.getProject();
-            Set<Process> templates = data.containsKey(project) ? data.get(project) : new HashSet<Process>();
+            Set<Process> templates = data.containsKey(project) ? data.get(project) : new HashSet<>();
             templates.add(processTemplate);
             data.put(project, templates);
         }
-        List<Project> result = new ArrayList<Project>();
+        List<Project> result = new ArrayList<>();
         for (Project project : data.keySet()) {
             project.template = new ArrayList<>(data.get(project));
             result.add(project);

@@ -58,8 +58,8 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
         }
 
         Criteria crit = Helper.getHibernateSession().createCriteria(Task.class);
-        crit.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
-                Restrictions.like("processingStatus", Integer.valueOf(2))));
+        crit.add(Restrictions.or(Restrictions.eq("processingStatus", 1),
+                Restrictions.like("processingStatus", 2)));
 
         if (originalFilter instanceof UserDefinedFilter) {
             crit.createCriteria("process", "proz");
@@ -79,7 +79,7 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
         }
 
         dtbl.addDataRow(dRow);
-        List<DataTable> allTables = new ArrayList<DataTable>();
+        List<DataTable> allTables = new ArrayList<>();
 
         dtbl.setUnitLabel(Helper.getTranslation("benutzergruppe"));
         allTables.add(dtbl);

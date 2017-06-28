@@ -121,7 +121,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     private MetadataPathSelector(String docStructType, int index, MetadataSelector selector) {
         this.docStructType = docStructType;
-        this.index = Integer.valueOf(index);
+        this.index = index;
         this.selector = selector;
     }
 
@@ -213,7 +213,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     @Override
     protected Iterable<MetadataSelector> findAll(DocStruct logicalNode) {
-        LinkedList<MetadataSelector> result = new LinkedList<MetadataSelector>();
+        LinkedList<MetadataSelector> result = new LinkedList<>();
         List<DocStruct> children = logicalNode.getAllChildren();
         if (children == null) {
             children = Collections.emptyList();

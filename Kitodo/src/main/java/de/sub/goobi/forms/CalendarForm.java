@@ -677,7 +677,7 @@ public class CalendarForm implements Serializable {
                         "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")
                 .split(";");
         course = new Course();
-        blockChangerResolver = new HashMap<String, Block>();
+        blockChangerResolver = new HashMap<>();
         blockShowing = null;
     }
 
@@ -708,7 +708,7 @@ public class CalendarForm implements Serializable {
      * @return a list of issue options for the date
      */
     protected List<IssueOption> buildIssueOptions(List<IssueController> issueControllers, LocalDate date) {
-        List<IssueOption> result = new ArrayList<IssueOption>();
+        List<IssueOption> result = new ArrayList<>();
         for (IssueController controller : issueControllers) {
             result.add(new IssueOption(controller, date));
         }
@@ -838,11 +838,11 @@ public class CalendarForm implements Serializable {
      * @return the elements for the block changer drop down element
      */
     public List<Map<String, String>> getBlockChangerOptions() {
-        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> result = new ArrayList<>();
         for (Block block : course) {
             String value = Integer.toHexString(block.hashCode());
             blockChangerResolver.put(value, block);
-            Map<String, String> item = new HashMap<String, String>();
+            Map<String, String> item = new HashMap<>();
             item.put("value", value);
             item.put("label", block.toString(DateUtils.DATE_FORMATTER));
             result.add(item);
@@ -894,9 +894,9 @@ public class CalendarForm implements Serializable {
      * @return an empty calendar sheet
      */
     protected List<List<Cell>> getEmptySheet() {
-        List<List<Cell>> result = new ArrayList<List<Cell>>(31);
+        List<List<Cell>> result = new ArrayList<>(31);
         for (int day = 1; day <= 31; day++) {
-            ArrayList<Cell> row = new ArrayList<Cell>(DateTimeConstants.DECEMBER);
+            ArrayList<Cell> row = new ArrayList<>(DateTimeConstants.DECEMBER);
             for (int month = 1; month <= 12; month++) {
                 row.add(new Cell());
             }
@@ -926,7 +926,7 @@ public class CalendarForm implements Serializable {
      * @return the list of issues
      */
     public List<IssueController> getIssues() {
-        return blockShowing != null ? getIssues(blockShowing) : new ArrayList<IssueController>();
+        return blockShowing != null ? getIssues(blockShowing) : new ArrayList<>();
     }
 
     /**
@@ -937,7 +937,7 @@ public class CalendarForm implements Serializable {
      * @return the list of issues
      */
     private List<IssueController> getIssues(Block block) {
-        List<IssueController> result = new ArrayList<IssueController>();
+        List<IssueController> result = new ArrayList<>();
         if (block != null) {
             for (Issue issue : block.getIssues()) {
                 result.add(new IssueController(issue, result.size()));
@@ -1098,7 +1098,7 @@ public class CalendarForm implements Serializable {
                 }
             }
         }
-        if (!uploadShowing && value.indexOf("\u00A0") == -1) {
+        if (!uploadShowing && !value.contains("\u00A0")) {
             Helper.setFehlerMeldung("calendar.block." + input + ".invalid");
         }
         return null;
@@ -1112,7 +1112,7 @@ public class CalendarForm implements Serializable {
      *            calendar sheet to populate
      */
     protected void populateByCalendar(List<List<Cell>> sheet) {
-        Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<Integer, List<IssueController>>();
+        Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<>();
         Block currentBlock = null;
         ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
         for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date
@@ -1125,7 +1125,7 @@ public class CalendarForm implements Serializable {
             if (currentBlock == null) {
                 cell.setOnBlock(false);
             } else {
-                Integer hashCode = Integer.valueOf(currentBlock.hashCode());
+                Integer hashCode = currentBlock.hashCode();
                 if (!issueControllersCreatedOnce.containsKey(hashCode)) {
                     issueControllersCreatedOnce.put(hashCode, getIssues(currentBlock));
                 }

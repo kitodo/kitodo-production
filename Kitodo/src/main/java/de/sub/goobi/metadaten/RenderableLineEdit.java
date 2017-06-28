@@ -75,7 +75,7 @@ public class RenderableLineEdit extends RenderableMetadatum
     @Override
     public void addContent(Metadata data) {
         if (value == null) {
-            value = new ArrayList<String>(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
+            value = new ArrayList<>(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
         } else {
             value.addAll(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
         }
@@ -114,7 +114,7 @@ public class RenderableLineEdit extends RenderableMetadatum
      */
     @Override
     public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<Metadata>(1);
+        List<Metadata> result = new ArrayList<>(1);
         result.add(getMetadata(StringUtils.join(value, METADATA_LINE_SEPARATOR)));
         return result;
     }

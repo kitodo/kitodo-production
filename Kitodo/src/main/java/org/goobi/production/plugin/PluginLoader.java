@@ -73,7 +73,7 @@ public class PluginLoader {
         Collection<IPlugin> plugins = pmu.getPlugins(IPlugin.class);
         PicaMassImport pmi = new PicaMassImport();
         plugins.add(pmi);
-        return new ArrayList<IPlugin>(plugins);
+        return new ArrayList<>(plugins);
     }
 
     /**
@@ -143,7 +143,7 @@ public class PluginLoader {
      */
     private static HashMap<String, String> getPluginConfiguration() {
         short ENRIES = 2;
-        HashMap<String, String> conf = new HashMap<String, String>((int) Math.ceil(ENRIES / 0.75));
+        HashMap<String, String> conf = new HashMap<>((int) Math.ceil(ENRIES / 0.75));
         conf.put("configDir", ConfigCore.getKitodoConfigDirectory());
         conf.put("tempDir", ConfigCore.getParameter(Parameters.PLUGIN_TEMP_DIR));
         return conf;
@@ -168,7 +168,7 @@ public class PluginLoader {
         PluginManagerUtil pluginLoader = getPluginLoader(type);
         Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class);
         // Never API version supports no-arg getPlugins() TODO: update API
-        result = new ArrayList<T>(plugins.size() - INTERNAL_CLASSES_COUNT);
+        result = new ArrayList<>(plugins.size() - INTERNAL_CLASSES_COUNT);
         for (Plugin implementation : plugins) {
             if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX)) {
                 continue; // Skip plugin API internal classes
@@ -196,7 +196,7 @@ public class PluginLoader {
      * @return a list of titles of import plug-ins matching
      */
     public static List<String> getImportPluginsForType(ImportType type) {
-        List<String> pluginList = new ArrayList<String>();
+        List<String> pluginList = new ArrayList<>();
 
         for (IPlugin p : PluginLoader.getPluginList(PluginType.Import)) {
             IImportPlugin ip = (IImportPlugin) p;

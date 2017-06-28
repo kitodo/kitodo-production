@@ -48,7 +48,7 @@ public class StatistikForm {
      * @return Anzahl aller Literatureinträge Integer
      */
     public Integer getAnzahlLiteraturGesamt() {
-        return Integer.valueOf(0);
+        return 0;
     }
 
     /**
@@ -160,21 +160,21 @@ public class StatistikForm {
             Criteria crit = session.createCriteria(Task.class);
 
             /* Liste der IDs */
-            List<Integer> trefferListe = new ArrayList<Integer>();
+            List<Integer> trefferListe = new ArrayList<>();
 
             /*
              * die Treffer der Benutzergruppen
              */
             Criteria critGruppen = session.createCriteria(Task.class);
             if (!inOffen && !inBearbeitet) {
-                critGruppen.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
-                        Restrictions.like("processingStatus", Integer.valueOf(2))));
+                critGruppen.add(Restrictions.or(Restrictions.eq("processingStatus", 1),
+                        Restrictions.like("processingStatus", 2)));
             }
             if (inOffen) {
-                critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
+                critGruppen.add(Restrictions.eq("processingStatus", 1));
             }
             if (inBearbeitet) {
-                critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
+                critGruppen.add(Restrictions.eq("processingStatus", 2));
             }
 
             /* nur Prozesse, die keine Vorlagen sind */
@@ -199,14 +199,14 @@ public class StatistikForm {
              */
             Criteria critBenutzer = session.createCriteria(Task.class);
             if (!inOffen && !inBearbeitet) {
-                critBenutzer.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
-                        Restrictions.like("processingStatus", Integer.valueOf(2))));
+                critBenutzer.add(Restrictions.or(Restrictions.eq("processingStatus", 1),
+                        Restrictions.like("processingStatus", 2)));
             }
             if (inOffen) {
-                critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
+                critBenutzer.add(Restrictions.eq("processingStatus", 1));
             }
             if (inBearbeitet) {
-                critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
+                critBenutzer.add(Restrictions.eq("processingStatus", 2));
             }
 
             /* nur Prozesse, die keine Vorlagen sind */

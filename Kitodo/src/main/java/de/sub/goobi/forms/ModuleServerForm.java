@@ -58,7 +58,7 @@ public class ModuleServerForm implements Serializable {
     private static final long serialVersionUID = -3296039795297271346L;
     private Boolean running = false;
     private static volatile GoobiModuleManager modulmanager = null;
-    private static HashMap<String, String> myRunningShortSessions = new HashMap<String, String>();
+    private static HashMap<String, String> myRunningShortSessions = new HashMap<>();
     private ModuleDesc myModule;
     Helper help = new Helper();
     Timer messageTimer;
@@ -106,9 +106,7 @@ public class ModuleServerForm implements Serializable {
 
                     // Alle Modulbeschreibungen aus der Konfigurationsdatei
                     // modules.xml einlesen
-                    for (ModuleDesc md : getModulesFromConfigurationFile()) {
-                        manager.add(md);
-                    }
+                    manager.addAll(getModulesFromConfigurationFile());
                     modulmanager = manager;
                 }
 
@@ -178,7 +176,7 @@ public class ModuleServerForm implements Serializable {
      */
     @SuppressWarnings("unchecked")
     private List<ModuleDesc> getModulesFromConfigurationFile() {
-        List<ModuleDesc> rueckgabe = new ArrayList<ModuleDesc>();
+        List<ModuleDesc> rueckgabe = new ArrayList<>();
         String fileName = ConfigCore.getKitodoConfigDirectory() + "modules.xml";
         if (!(new File(fileName).exists())) {
             Helper.setFehlerMeldung("File not found: ", fileName);
@@ -219,7 +217,7 @@ public class ModuleServerForm implements Serializable {
         /*
          * zusätzliche Parameter neben dem Modulnamen
          */
-        HashMap<String, Object> typeParameters = new HashMap<String, Object>();
+        HashMap<String, Object> typeParameters = new HashMap<>();
         String schrittModuleName = inSchritt.getTypeModuleName();
         StrTokenizer tokenizer = new StrTokenizer(inSchritt.getTypeModuleName());
         int counter = 0;
@@ -352,8 +350,6 @@ public class ModuleServerForm implements Serializable {
                              */
                             try {
                                 modules.get(i - 1).getModuleClient().stop(gmp);
-                            } catch (GoobiModuleException e) {
-                                logger.error(e);
                             } catch (XmlRpcException e) {
                                 logger.error(e);
                             }

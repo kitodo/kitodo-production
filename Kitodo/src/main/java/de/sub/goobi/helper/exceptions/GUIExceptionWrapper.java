@@ -57,7 +57,7 @@ public class GUIExceptionWrapper extends Exception {
     private String errEmailMessage = "";
     private String errSubjectLine = "";
 
-    private ArrayList<String> emailAddresses = new ArrayList<String>();
+    private ArrayList<String> emailAddresses = new ArrayList<>();
 
     private String internalErrorMsg = "";
 
@@ -102,7 +102,7 @@ public class GUIExceptionWrapper extends Exception {
                     this.errSubjectLine = Helper.getTranslation("err_subjectLine");
                     this.errEmailBody = Helper.getTranslation("err_emailBody");
 
-                    Integer emailCounter = Integer.valueOf(0);
+                    Integer emailCounter = 0;
                     String email = "";
 
                     // indefinite emails can be added

@@ -501,7 +501,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
      */
     public Integer count() throws HibernateException {
         Long ur = (Long) this.clone.uniqueResult();
-        return Integer.valueOf(ur.intValue());
+        return ur.intValue();
     }
 
     /**

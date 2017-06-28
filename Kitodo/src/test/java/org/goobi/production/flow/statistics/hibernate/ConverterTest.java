@@ -20,7 +20,7 @@ public class ConverterTest {
     @Test
     public void testGetInteger() {
         Integer testInt = 21;
-        assertTrue("False Integer Value", new Converter(testInt).getInteger() == testInt);
+        assertTrue("False Integer Value", new Converter(testInt).getInteger().equals(testInt));
     }
 
     @Test
@@ -32,7 +32,7 @@ public class ConverterTest {
     @Test
     public void testGetString() {
         String testString = "test";
-        assertTrue("False String value", new Converter(testString).getString() == testString);
+        assertTrue("False String value", new Converter(testString).getString().equals(testString));
     }
 
 }

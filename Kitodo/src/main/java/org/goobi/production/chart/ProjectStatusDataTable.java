@@ -53,8 +53,8 @@ public class ProjectStatusDataTable implements Serializable {
         this.name = inName;
         projectBegin = begin;
         projectEnd = end;
-        projectTasks = new ArrayList<ProjectTask>();
-        taskTitles = new ArrayList<String>();
+        projectTasks = new ArrayList<>();
+        taskTitles = new ArrayList<>();
     }
 
     /**

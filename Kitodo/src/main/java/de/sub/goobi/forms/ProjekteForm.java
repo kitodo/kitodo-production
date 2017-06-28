@@ -81,8 +81,8 @@ public class ProjekteForm extends BasisForm {
     // lists accepting the preliminary actions of adding and delting filegroups
     // it needs the execution of commit fileGroups to make these changes
     // permanent
-    private List<Integer> newFileGroups = new ArrayList<Integer>();
-    private List<Integer> deletedFileGroups = new ArrayList<Integer>();
+    private List<Integer> newFileGroups = new ArrayList<>();
+    private List<Integer> deletedFileGroups = new ArrayList<>();
 
     private StatisticsManager statisticsManager1 = null;
     private StatisticsManager statisticsManager2 = null;
@@ -130,11 +130,11 @@ public class ProjekteForm extends BasisForm {
      */
     private void commitFileGroups() {
         // resetting the List of new fileGroups
-        this.newFileGroups = new ArrayList<Integer>();
+        this.newFileGroups = new ArrayList<>();
         // deleting the fileGroups marked for deletion
         deleteFileGroups(this.deletedFileGroups);
         // resetting the List of fileGroups marked for deletion
-        this.deletedFileGroups = new ArrayList<Integer>();
+        this.deletedFileGroups = new ArrayList<>();
     }
 
     /**
@@ -144,9 +144,9 @@ public class ProjekteForm extends BasisForm {
         // flushing new fileGroups
         deleteFileGroups(this.newFileGroups);
         // resetting the List of new fileGroups
-        this.newFileGroups = new ArrayList<Integer>();
+        this.newFileGroups = new ArrayList<>();
         // resetting the List of fileGroups marked for deletion
-        this.deletedFileGroups = new ArrayList<Integer>();
+        this.deletedFileGroups = new ArrayList<>();
         this.projectProgressImage = null;
         this.projectStatImages = null;
         this.projectStatVolumes = null;
@@ -274,7 +274,7 @@ public class ProjekteForm extends BasisForm {
      */
     public String filegroupSave() {
         if (this.myProjekt.getProjectFileGroups() == null) {
-            this.myProjekt.setProjectFileGroups(new ArrayList<ProjectFileGroup>());
+            this.myProjekt.setProjectFileGroups(new ArrayList<>());
         }
         if (!this.myProjekt.getProjectFileGroups().contains(this.myFilegroup)) {
             this.myProjekt.getProjectFileGroups().add(this.myFilegroup);
@@ -444,8 +444,7 @@ public class ProjekteForm extends BasisForm {
         if (volumes == 0) {
             return pages;
         }
-        int i = pages / volumes;
-        return i;
+        return pages / volumes;
     }
 
     /**
@@ -553,8 +552,7 @@ public class ProjekteForm extends BasisForm {
         if (days < 1) {
             days = 1;
         }
-        double back = (double) this.myProjekt.getNumberOfVolumes() / (double) days;
-        return back;
+        return (double) this.myProjekt.getNumberOfVolumes() / (double) days;
     }
 
     /**
@@ -582,8 +580,7 @@ public class ProjekteForm extends BasisForm {
         if (days < 1) {
             days = 1;
         }
-        double back = (double) this.myProjekt.getNumberOfPages() / (double) days;
-        return back;
+        return (double) this.myProjekt.getNumberOfPages() / (double) days;
     }
 
     /**

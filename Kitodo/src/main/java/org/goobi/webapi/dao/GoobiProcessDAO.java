@@ -64,14 +64,10 @@ public class GoobiProcessDAO {
     }
 
     public static List<GoobiProcess> getAllProcesses() {
-        Session session;
-        List<GoobiProcess> result;
-
-        result = new ArrayList<GoobiProcess>();
-        session = Helper.getHibernateSession();
+        Session session = Helper.getHibernateSession();
+        List<GoobiProcess> result = new ArrayList<>();
 
         try {
-
             Criteria criteria = session.createCriteria(Process.class).createAlias("templates", "v")
                     .createAlias("templates.properties", "ve").createAlias("workpieces", "w")
                     .createAlias("workpieces.properties", "we")
@@ -96,14 +92,10 @@ public class GoobiProcessDAO {
     }
 
     public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN ppn) {
-        List<GoobiProcessStep> result;
-        Session session;
-
-        result = new ArrayList<GoobiProcessStep>();
-        session = Helper.getHibernateSession();
+        List<GoobiProcessStep> result = new ArrayList<>();
+        Session session = Helper.getHibernateSession();
 
         try {
-
             Criteria criteria = session.createCriteria(Task.class).createAlias("process", "p")
                     .createAlias("process.workpieces", "w").createAlias("process.workpieces.properties", "we")
                     .add(Restrictions.or(Restrictions.eq("we.title", "PPN digital a-Satz"),

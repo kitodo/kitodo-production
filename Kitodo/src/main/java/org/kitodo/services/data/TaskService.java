@@ -31,12 +31,10 @@ import java.util.Set;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.hibernate.Session;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -50,7 +48,6 @@ import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -61,7 +58,6 @@ import ugh.dl.DigitalDocument;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 
 public class TaskService extends TitleSearchService<Task> {
@@ -310,7 +306,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @return array list
      */
     public ArrayList<String> getAllScriptPaths(Task task) {
-        ArrayList<String> answer = new ArrayList<String>();
+        ArrayList<String> answer = new ArrayList<>();
         if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
             answer.add(task.getTypeAutomaticScriptPath());
         }
@@ -471,9 +467,7 @@ public class TaskService extends TitleSearchService<Task> {
     public Task setAllScripts(HashMap<String, String> paths, Task task) {
         Set<String> keys = paths.keySet();
         ArrayList<String> keyList = new ArrayList<>();
-        for (String key : keys) {
-            keyList.add(key);
-        }
+        keyList.addAll(keys);
         int size = keyList.size();
         if (size > 0) {
             task.setScriptName1(keyList.get(0));
@@ -595,7 +589,8 @@ public class TaskService extends TitleSearchService<Task> {
         List<Task> allehoeherenSchritte = new ArrayList<>();
         int offeneSchritteGleicherReihenfolge = 0;
         for (Task so : steps) {
-            if (so.getOrdering() == task.getOrdering() && so.getProcessingStatus() != 3 && so.getId() != task.getId()) {
+            if (so.getOrdering().equals(task.getOrdering()) && so.getProcessingStatus() != 3
+                    && !so.getId().equals(task.getId())) {
                 offeneSchritteGleicherReihenfolge++;
             } else if (so.getOrdering() > task.getOrdering()) {
                 allehoeherenSchritte.add(so);

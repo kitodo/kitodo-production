@@ -86,7 +86,7 @@ public class ExtendedDataImpl extends DataImpl {
          */
         if (type.equals("") || type.equals(isProcess)) {
             if (serviceManager.getProcessService().getPropertiesInitialized(p) == null) {
-                p.setProperties(new ArrayList<Property>());
+                p.setProperties(new ArrayList<>());
             }
             Property processProperty = new Property();
             processProperty.getProcesses().add(p);
@@ -108,7 +108,7 @@ public class ExtendedDataImpl extends DataImpl {
             }
             Workpiece w = p.getWorkpieces().get(count);
             if (w.getProperties() == null) {
-                w.setProperties(new ArrayList<Property>());
+                w.setProperties(new ArrayList<>());
             }
             Property workpieceProperty = new Property();
             workpieceProperty.getWorkpieces().add(w);
@@ -130,7 +130,7 @@ public class ExtendedDataImpl extends DataImpl {
             }
             Template v = p.getTemplates().get(count);
             if (v.getProperties() == null) {
-                v.setProperties(new ArrayList<Property>());
+                v.setProperties(new ArrayList<>());
             }
             Property templateProperty = new Property();
             templateProperty.getTemplates().add(v);
@@ -167,7 +167,7 @@ public class ExtendedDataImpl extends DataImpl {
         super.getData(sessionId, type, count);
 
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
-        HashMap<String, String> rueckgabe = new HashMap<String, String>();
+        HashMap<String, String> rueckgabe = new HashMap<>();
         /*
          * feste Prozesseigenschaften
          */
@@ -230,7 +230,7 @@ public class ExtendedDataImpl extends DataImpl {
     public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
             throws GoobiException {
         super.getProperties(sessionId, type, count);
-        ArrayList<GoobiProcessProperty> gpps = new ArrayList<GoobiProcessProperty>();
+        ArrayList<GoobiProcessProperty> gpps = new ArrayList<>();
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
         /*
          * Prozesseigenschaften
@@ -318,7 +318,7 @@ public class ExtendedDataImpl extends DataImpl {
         /*
          * Prozesseigenschaft
          */
-        String myquery = "from ProcessProperty where process=" + p.getId().intValue();
+        String myquery = "from ProcessProperty where process=" + p.getId();
         /*
          * Werkstückeigenschaft
          */

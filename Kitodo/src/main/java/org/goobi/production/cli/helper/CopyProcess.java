@@ -110,12 +110,9 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException e) {
-            logger.error(e);
-        } catch (ReadException e) {
+        } catch (PreferencesException | ReadException e) {
             logger.error(e);
         }
-        ;
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setTemplate(false);
@@ -123,7 +120,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setProject(this.prozessVorlage.getProject());
         this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
         this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
-        this.digitalCollections = new ArrayList<String>();
+        this.digitalCollections = new ArrayList<>();
 
         /*
          * Kopie der Prozessvorlage anlegen
@@ -153,19 +150,16 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException e) {
-            logger.error(e);
-        } catch (ReadException e) {
+        } catch (PreferencesException | ReadException e) {
             logger.error(e);
         }
-        ;
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setTemplate(false);
         this.prozessKopie.setInChoiceListShown(false);
         this.prozessKopie.setProject(this.prozessVorlage.getProject());
         this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
-        this.digitalCollections = new ArrayList<String>();
+        this.digitalCollections = new ArrayList<>();
 
         /*
          * Kopie der Prozessvorlage anlegen
@@ -241,7 +235,7 @@ public class CopyProcess extends ProzesskopieForm {
             int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
             /* Children durchlaufen und SelectItems erzeugen */
             if (selectItemCount > 0) {
-                fa.setSelectList(new ArrayList<SelectItem>());
+                fa.setSelectList(new ArrayList<>());
             }
             for (int j = 0; j < selectItemCount; j++) {
                 String svalue = cp
@@ -386,11 +380,11 @@ public class CopyProcess extends ProzesskopieForm {
         if (this.opacKatalog == null) {
             this.opacKatalog = "";
         }
-        this.standardFields = new HashMap<String, Boolean>();
+        this.standardFields = new HashMap<>();
         this.standardFields.put("collections", true);
         this.standardFields.put("doctype", true);
         this.standardFields.put("regelsatz", true);
-        this.additionalFields = new ArrayList<AdditionalField>();
+        this.additionalFields = new ArrayList<>();
         this.tifHeaderDocumentName = "";
         this.tifHeaderImageDescription = "";
     }
@@ -748,7 +742,7 @@ public class CopyProcess extends ProzesskopieForm {
             MetadataType mdt = UghHelper.getMetadataType(
                     serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection");
-            ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
+            ArrayList<Metadata> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
                 for (Metadata md : myCollections) {
                     colStruct.removeMetadata(md);
@@ -769,12 +763,9 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             ff = new MetsMods(myPrefs);
             ff.read(this.metadataFile.getPath());
-        } catch (PreferencesException e) {
-            logger.error(e);
-        } catch (ReadException e) {
+        } catch (PreferencesException | ReadException e) {
             logger.error(e);
         }
-
     }
 
     private void addProperties(ImportObject io) {
@@ -919,14 +910,14 @@ public class CopyProcess extends ProzesskopieForm {
 
     @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
-        this.possibleDigitalCollection = new ArrayList<String>();
-        ArrayList<String> defaultCollections = new ArrayList<String>();
+        this.possibleDigitalCollection = new ArrayList<>();
+        ArrayList<String> defaultCollections = new ArrayList<>();
         String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
         }
-        this.digitalCollections = new ArrayList<String>();
+        this.digitalCollections = new ArrayList<>();
         try {
             /* Datei einlesen und Root ermitteln */
             SAXBuilder builder = new SAXBuilder();

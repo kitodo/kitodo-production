@@ -334,25 +334,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
 
             return ff;
-        } catch (ReadException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (PreferencesException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (IOException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (JDOMException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (ParserConfigurationException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (MetadataTypeNotAllowedException e) {
+        } catch (PreferencesException | ReadException | TypeNotAllowedForParentException | IOException | JDOMException
+                | ParserConfigurationException | MetadataTypeNotAllowedException e) {
             logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             throw new ImportPluginException(e);
         }
@@ -385,16 +368,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                     String mess = "Could not retrieve superordinate record " + parentPPN;
                     logger.error(mess);
                     throw new ImportPluginException(mess);
-
                 }
                 org.jdom.Document resultAsJDOM = new DOMBuilder().build(parentRecord.getOwnerDocument());
                 volumeAsJDOM.getParent().removeContent(volumeAsJDOM);
                 resultAsJDOM.getRootElement().addContent(volumeAsJDOM);
                 return new DOMOutputter().output(resultAsJDOM).getFirstChild();
             }
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (ImportPluginException e) {
+        } catch (RuntimeException | ImportPluginException e) {
             throw e;
         } catch (Exception e) {
             throw new ImportPluginException(e.getMessage(), e);
@@ -469,7 +449,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<ImportObject> generateFiles(List<Record> records) {
-        List<ImportObject> answer = new ArrayList<ImportObject>();
+        List<ImportObject> answer = new ArrayList<>();
 
         for (Record r : records) {
             this.data = r.getData();
@@ -518,12 +498,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<Record> splitRecords(String records) {
-        return new ArrayList<Record>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<Record> generateRecordsFromFile() {
-        List<Record> records = new ArrayList<Record>();
+        List<Record> records = new ArrayList<>();
 
         try (InputStream myxls = new FileInputStream(importFile)) {
             if (importFile.getName().endsWith(".xlsx")) {
@@ -655,7 +635,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<Record> generateRecordsFromFilenames(List<String> filenames) {
-        return new ArrayList<Record>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -665,24 +645,24 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<String> splitIds(String ids) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<ImportType> getImportTypes() {
-        List<ImportType> answer = new ArrayList<ImportType>();
+        List<ImportType> answer = new ArrayList<>();
         answer.add(ImportType.FILE);
         return answer;
     }
 
     @Override
     public List<ImportProperty> getProperties() {
-        return new ArrayList<ImportProperty>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<String> getAllFilenames() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -845,20 +825,10 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             address = node.getAttributes().getNamedItem("address").getNodeValue();
 
-        } catch (ParserConfigurationException e) {
-            logger.error(e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (SAXException e) {
-            logger.error(e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (XPathExpressionException e) {
+        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
             logger.error(e.getMessage(), e);
             throw new ImportPluginException(e);
         }
-
         return address;
     }
 }

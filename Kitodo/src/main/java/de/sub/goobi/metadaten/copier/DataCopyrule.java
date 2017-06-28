@@ -72,9 +72,7 @@ public abstract class DataCopyrule {
         DataCopyrule ruleImplementation;
         try {
             ruleImplementation = ruleClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         ruleImplementation.setSubject(arguments.get(0));

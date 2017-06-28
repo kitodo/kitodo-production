@@ -46,9 +46,9 @@ public class ProcessProperty implements IProperty, Serializable {
     public ProcessProperty() {
         this.container = 0;
         this.value = "";
-        this.possibleValues = new ArrayList<String>();
-        this.projects = new ArrayList<String>();
-        this.showStepConditions = new ArrayList<ShowStepCondition>();
+        this.possibleValues = new ArrayList<>();
+        this.projects = new ArrayList<>();
+        this.showStepConditions = new ArrayList<>();
         this.prozesseigenschaft = new Property();
     }
 
@@ -314,9 +314,9 @@ public class ProcessProperty implements IProperty, Serializable {
         p.setValue(this.value);
         p.setShowProcessGroupAccessCondition(this.showProcessGroupAccessCondition);
         p.setDuplicationAllowed(this.getDuplicationAllowed());
-        p.setShowStepConditions(new ArrayList<ShowStepCondition>(getShowStepConditions()));
-        p.setPossibleValues(new ArrayList<String>(getPossibleValues()));
-        p.setProjects(new ArrayList<String>(getProjects()));
+        p.setShowStepConditions(new ArrayList<>(getShowStepConditions()));
+        p.setPossibleValues(new ArrayList<>(getPossibleValues()));
+        p.setProjects(new ArrayList<>(getProjects()));
         return p;
     }
 
@@ -339,7 +339,7 @@ public class ProcessProperty implements IProperty, Serializable {
      */
     public List<String> getValueList() {
         String[] values = this.value.split("; ");
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         for (String val : values) {
             answer.add(val);
         }
@@ -365,11 +365,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * @return boolean
      */
     public boolean getBooleanValue() {
-        if (this.value != null && this.value.equalsIgnoreCase("true")) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.value != null && this.value.equalsIgnoreCase("true");
     }
 
     /**
@@ -404,10 +400,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * @return boolean
      */
     public boolean getIsNew() {
-        if (this.name == null || this.name.length() == 0) {
-            return true;
-        }
-        return false;
+        return this.name == null || this.name.length() == 0;
     }
 
     public AccessCondition getCurrentStepAccessCondition() {

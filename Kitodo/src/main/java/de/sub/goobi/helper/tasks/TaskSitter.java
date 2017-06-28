@@ -157,9 +157,9 @@ public class TaskSitter implements Runnable, ServletContextListener {
             return;
         }
 
-        LinkedList<EmptyTask> launchableThreads = new LinkedList<EmptyTask>();
-        LinkedList<EmptyTask> finishedThreads = new LinkedList<EmptyTask>();
-        LinkedList<EmptyTask> failedThreads = new LinkedList<EmptyTask>();
+        LinkedList<EmptyTask> launchableThreads = new LinkedList<>();
+        LinkedList<EmptyTask> finishedThreads = new LinkedList<>();
+        LinkedList<EmptyTask> failedThreads = new LinkedList<>();
         int availableClearance = autoRunLimit;
 
         int successfulMaxCount = ConfigCore.getIntParameter("taskManager.keepThreads.successful.count",

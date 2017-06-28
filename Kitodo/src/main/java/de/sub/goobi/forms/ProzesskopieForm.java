@@ -274,7 +274,7 @@ public class ProzesskopieForm implements Serializable {
             for (Task s : this.prozessVorlage.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    List<String> param = new ArrayList<String>();
+                    List<String> param = new ArrayList<>();
                     param.add(s.getTitle());
                     Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
                 }
@@ -292,7 +292,7 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie.setProject(this.prozessVorlage.getProject());
         this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
         this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
-        this.digitalCollections = new ArrayList<String>();
+        this.digitalCollections = new ArrayList<>();
 
         /*
          * Kopie der Prozessvorlage anlegen
@@ -369,7 +369,7 @@ public class ProzesskopieForm implements Serializable {
             int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
             /* Children durchlaufen und SelectItems erzeugen */
             if (selectItemCount > 0) {
-                fa.setSelectList(new ArrayList<SelectItem>());
+                fa.setSelectList(new ArrayList<>());
             }
             for (int j = 0; j < selectItemCount; j++) {
                 String svalue = cp
@@ -387,7 +387,7 @@ public class ProzesskopieForm implements Serializable {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProzessTemplates() {
-        List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
+        List<SelectItem> myProzessTemplates = new ArrayList<>();
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Process.class);
         crit.add(Restrictions.eq("template", Boolean.FALSE));
@@ -501,12 +501,12 @@ public class ProzesskopieForm implements Serializable {
         if (this.opacKatalog == null) {
             this.opacKatalog = "";
         }
-        this.standardFields = new HashMap<String, Boolean>();
+        this.standardFields = new HashMap<>();
         this.standardFields.put("collections", true);
         this.standardFields.put("doctype", true);
         this.standardFields.put("regelsatz", true);
         this.standardFields.put("images", true);
-        this.additionalFields = new ArrayList<AdditionalField>();
+        this.additionalFields = new ArrayList<>();
         this.tifHeader_documentname = "";
         this.tifHeader_imagedescription = "";
     }
@@ -916,7 +916,7 @@ public class ProzesskopieForm implements Serializable {
              */
             if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
                 DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
-                Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
+                Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<>();
                 while (enricher.getAllChildren() != null) {
                     // save higher level metadata for lower enrichment
                     List<Metadata> allMetadata = enricher.getAllMetadata();
@@ -926,7 +926,7 @@ public class ProzesskopieForm implements Serializable {
                     for (Metadata available : allMetadata) {
                         Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(
                                 available.getType().getName()) ? higherLevelMetadata.get(available.getType().getName())
-                                        : new HashMap<String, Metadata>();
+                                        : new HashMap<>();
                         if (!availableMetadata.containsKey(available.getValue())) {
                             availableMetadata.put(available.getValue(), available);
                         }
@@ -1083,15 +1083,8 @@ public class ProzesskopieForm implements Serializable {
                 md.setValue(s);
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
-            } catch (UghHelperException e) {
+            } catch (UghHelperException | DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
                 Helper.setFehlerMeldung(e.getMessage(), "");
-
-            } catch (DocStructHasNoTypeException e) {
-                Helper.setFehlerMeldung(e.getMessage(), "");
-
-            } catch (MetadataTypeNotAllowedException e) {
-                Helper.setFehlerMeldung(e.getMessage(), "");
-
             }
         }
     }
@@ -1104,16 +1097,13 @@ public class ProzesskopieForm implements Serializable {
             MetadataType mdt = UghHelper.getMetadataType(
                     serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection");
-            ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
+            ArrayList<Metadata> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
                 for (Metadata md : myCollections) {
                     colStruct.removeMetadata(md);
                 }
             }
-        } catch (UghHelperException e) {
-            Helper.setFehlerMeldung(e.getMessage(), "");
-            logger.error(e);
-        } catch (DocStructHasNoTypeException e) {
+        } catch (UghHelperException | DocStructHasNoTypeException e) {
             Helper.setFehlerMeldung(e.getMessage(), "");
             logger.error(e);
         }
@@ -1175,11 +1165,7 @@ public class ProzesskopieForm implements Serializable {
                 this.myRdf = ff;
             }
 
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
-        } catch (TypeNotAllowedAsChildException e) {
-            logger.error(e);
-        } catch (PreferencesException e) {
+        } catch (TypeNotAllowedForParentException | TypeNotAllowedAsChildException | PreferencesException e) {
             logger.error(e);
         } catch (FileNotFoundException e) {
             logger.error("Error while reading von opac-config", e);
@@ -1314,8 +1300,8 @@ public class ProzesskopieForm implements Serializable {
             for (Metadata md : oldDocStruct.getAllMetadata()) {
                 try {
                     newDocStruct.addMetadata(md);
-                } catch (MetadataTypeNotAllowedException e) {
-                } catch (DocStructHasNoTypeException e) {
+                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    logger.error(e);
                 }
             }
         }
@@ -1323,8 +1309,8 @@ public class ProzesskopieForm implements Serializable {
             for (Person p : oldDocStruct.getAllPersons()) {
                 try {
                     newDocStruct.addPerson(p);
-                } catch (MetadataTypeNotAllowedException e) {
-                } catch (DocStructHasNoTypeException e) {
+                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    logger.error(e);
                 }
             }
         }
@@ -1425,8 +1411,8 @@ public class ProzesskopieForm implements Serializable {
 
     @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
-        this.possibleDigitalCollection = new ArrayList<String>();
-        ArrayList<String> defaultCollections = new ArrayList<String>();
+        this.possibleDigitalCollection = new ArrayList<>();
+        ArrayList<String> defaultCollections = new ArrayList<>();
 
         String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
@@ -1434,7 +1420,7 @@ public class ProzesskopieForm implements Serializable {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
         }
-        this.digitalCollections = new ArrayList<String>();
+        this.digitalCollections = new ArrayList<>();
         try {
             /* Datei einlesen und Root ermitteln */
             SAXBuilder builder = new SAXBuilder();
@@ -1480,10 +1466,7 @@ public class ProzesskopieForm implements Serializable {
                     }
                 }
             }
-        } catch (JDOMException e1) {
-            logger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-        } catch (IOException e1) {
+        } catch (JDOMException | IOException e1) {
             logger.error("error while parsing digital collections", e1);
             Helper.setFehlerMeldung("Error while parsing digital collections", e1);
         }
@@ -1510,7 +1493,7 @@ public class ProzesskopieForm implements Serializable {
         } catch (Throwable t) {
             logger.error("Error while reading von opac-config", t);
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 
@@ -1525,7 +1508,7 @@ public class ProzesskopieForm implements Serializable {
         } catch (Throwable t) {
             logger.error("Error while reading von opac-config", t);
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-            return new ArrayList<ConfigOpacDoctype>();
+            return new ArrayList<>();
         }
     }
 
@@ -1957,7 +1940,7 @@ public class ProzesskopieForm implements Serializable {
             return Collections.emptyList();
         }
         int pageSize = getPageSize();
-        List<SelectableHit> result = new ArrayList<SelectableHit>(pageSize);
+        List<SelectableHit> result = new ArrayList<>(pageSize);
         long firstHit = hitlistPage * pageSize;
         long lastHit = Math.min(firstHit + pageSize - 1, hits - 1);
         for (long index = firstHit; index <= lastHit; index++) {

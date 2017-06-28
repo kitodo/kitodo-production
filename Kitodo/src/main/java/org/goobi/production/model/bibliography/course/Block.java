@@ -197,7 +197,7 @@ public class Block {
         if (!isMatch(date)) {
             return Collections.emptyList();
         }
-        ArrayList<IndividualIssue> result = new ArrayList<IndividualIssue>(issues.size());
+        ArrayList<IndividualIssue> result = new ArrayList<>(issues.size());
         for (Issue issue : getIssues()) {
             if (issue.isMatch(date)) {
                 result.add(new IndividualIssue(this, issue, date));

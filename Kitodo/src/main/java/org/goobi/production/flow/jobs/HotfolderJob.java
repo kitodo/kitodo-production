@@ -95,7 +95,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 logger.trace("10");
                                 List<URI> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
                                 logger.trace("11");
-                                HashMap<String, Integer> failedData = new HashMap<String, Integer>();
+                                HashMap<String, Integer> failedData = new HashMap<>();
                                 logger.trace("12");
 
                                 for (URI filename : metsfiles) {
@@ -178,9 +178,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     List<URI> imageDir = new ArrayList<>();
                     if (fileService.isDirectory(images)) {
                         ArrayList<URI> files = fileService.getSubUris(images);
-                        for (URI file : files) {
-                            imageDir.add(file);
-                        }
+                        imageDir.addAll(files);
                         fileService.delete(images);
                     }
                     try {
@@ -202,9 +200,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     List<URI> imageDir = new ArrayList<>();
                     if (fileService.isDirectory(images)) {
                         ArrayList<URI> files = fileService.getSubUris(images);
-                        for (URI file : files) {
-                            imageDir.add(file);
-                        }
+                        imageDir.addAll(files);
                         fileService.delete(images);
                     }
                     try {
@@ -228,10 +224,10 @@ public class HotfolderJob extends AbstractGoobiJob {
             form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
             if (form.testTitle()) {
                 if (digitalCollection == null) {
-                    List<String> collections = new ArrayList<String>();
+                    List<String> collections = new ArrayList<>();
                     form.setDigitalCollections(collections);
                 } else {
-                    List<String> col = new ArrayList<String>();
+                    List<String> col = new ArrayList<>();
                     col.add(digitalCollection);
                     form.setDigitalCollections(col);
                 }
@@ -247,9 +243,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         List<URI> imageDir = new ArrayList<>();
                         if (fileService.isDirectory(images)) {
                             ArrayList<URI> files = fileService.getSubUris(images);
-                            for (URI file : files) {
-                                imageDir.add(file);
-                            }
+                            imageDir.addAll(files);
                             for (URI file : imageDir) {
                                 URI image = fileService.createResource(images, fileService.getFileName(file));
                                 URI dest = fileService.createResource(
@@ -340,7 +334,6 @@ public class HotfolderJob extends AbstractGoobiJob {
         if (logger.isTraceEnabled()) {
             logger.trace("basepath is " + basepath);
         }
-        URI metsfile = metsfilename;
         Process p = null;
         if (!testTitle(processTitle)) {
             logger.trace("wrong title");
@@ -355,7 +348,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 }
             }
             try {
-                fileService.delete(metsfile);
+                fileService.delete(metsfilename);
             } catch (Exception e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
@@ -378,7 +371,7 @@ public class HotfolderJob extends AbstractGoobiJob {
             cp.evaluateOpac();
             try {
                 p = cp.createProcess(io);
-                JobCreation.moveFiles(metsfile, basepath, p);
+                JobCreation.moveFiles(metsfilename, basepath, p);
 
             } catch (ReadException | PreferencesException | WriteException | IOException e) {
                 Helper.setFehlerMeldung(e);

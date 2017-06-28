@@ -139,11 +139,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     public static final FilenameFilter filter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
-            if (!name.contains("anchor") && !name.endsWith("_") && name.endsWith(".xml")) {
-                return true;
-            } else {
-                return false;
-            }
+            return !name.contains("anchor") && !name.endsWith("_") && name.endsWith(".xml");
         }
     };
 
@@ -154,7 +150,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     public static List<GoobiHotfolder> getInstances() {
         logger.trace("config 1");
-        List<GoobiHotfolder> answer = new ArrayList<GoobiHotfolder>();
+        List<GoobiHotfolder> answer = new ArrayList<>();
         logger.trace("config 2");
 
         try {
@@ -208,7 +204,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
             if (logger.isTraceEnabled()) {
                 logger.trace("config 19" + e.getMessage());
             }
-            return new ArrayList<GoobiHotfolder>();
+            return new ArrayList<>();
         }
         logger.trace("config 20");
         return answer;
@@ -291,8 +287,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     }
 
     public URI getLockFile() throws IOException {
-        URI resource = fileService.createResource(this.folder, ".lock");
-        return resource;
+        return fileService.createResource(this.folder, ".lock");
 
     }
 

@@ -42,7 +42,7 @@ public class MetadatumImpl implements Metadatum {
     private int identifier;
     private Prefs myPrefs;
     private Process myProcess;
-    private HashMap<String, DisplayCase> myValues = new HashMap<String, DisplayCase>();
+    private HashMap<String, DisplayCase> myValues = new HashMap<>();
     private List<SelectItem> items;
     private List<String> selectedItems;
 
@@ -131,8 +131,8 @@ public class MetadatumImpl implements Metadatum {
 
     @Override
     public List<SelectItem> getItems() {
-        this.items = new ArrayList<SelectItem>();
-        this.selectedItems = new ArrayList<String>();
+        this.items = new ArrayList<>();
+        this.selectedItems = new ArrayList<>();
         for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
             this.items.add(new SelectItem(i.getLabel()));
             if (i.getIsSelected()) {
@@ -161,7 +161,7 @@ public class MetadatumImpl implements Metadatum {
 
     @Override
     public List<String> getSelectedItems() {
-        this.selectedItems = new ArrayList<String>();
+        this.selectedItems = new ArrayList<>();
         String values = this.md.getValue();
         if (values != null && values.length() != 0) {
             while (!values.isEmpty()) {
