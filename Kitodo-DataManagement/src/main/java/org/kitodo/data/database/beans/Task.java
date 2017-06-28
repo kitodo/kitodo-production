@@ -15,16 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -155,7 +146,7 @@ public class Task extends BaseBean {
      * This field contains information about users, which are allowed to work on
      * this task.
      */
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "task_x_user", joinColumns = {
             @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
@@ -165,7 +156,7 @@ public class Task extends BaseBean {
      * This field contains information about user's groups, which are allowed to
      * work on this task.
      */
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "task_x_userGroup", joinColumns = {
             @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })

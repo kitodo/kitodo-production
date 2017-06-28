@@ -27,7 +27,7 @@ public class BasisForm implements Serializable {
     private static final long serialVersionUID = 2950419497162710096L;
     private transient ServiceManager serviceManager = new ServiceManager();
     protected Page page;
-    protected String zurueck = "";
+    protected String zurueck = null;
     protected String filter = "";
     protected User user;
     protected String sortierung = "prozessAsc";

@@ -115,7 +115,7 @@ public class BenutzergruppenForm extends BasisForm {
         filterKein();
     }
 
-    public String FilterKeinMitZurueck() {
+    public String filterKeinMitZurueck() {
         filterKein();
         return this.zurueck;
     }

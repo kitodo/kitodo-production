@@ -19,12 +19,13 @@
     #########################################-->
 
 <html
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:t="http://myfaces.apache.org/tomahawk"
-    >
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:t="http://myfaces.apache.org/tomahawk"
+        xmlns:p="http://primefaces.org/ui"
+>
     <f:metadata>
         <f:viewParam name="id" value="#{ProjekteForm.itemId}"/>
         <f:viewAction action="#{ProjekteForm.loadProject}"/>
@@ -565,37 +566,32 @@
                                                                                 <h:column id="id84">
                                                                                     <!-- Bearbeiten-Schaltknopf -->
                                                                                     <h:panelGroup id="id85">
-                                                                                        <!-- TODO: find replacement for jp:popupFrame -->
-                                                                                        <!--<jp:popupFrame scrolling="auto"-->
-                                                                                                       <!--height="270px"-->
-                                                                                                       <!--width="700px"-->
-                                                                                                       <!--topStyle="background: #1874CD;"-->
-                                                                                                       <!--bottomStyleClass="popup_unten"-->
-                                                                                                       <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
-                                                                                                       <!--styleClass="standardlink"-->
-                                                                                                       <!--style="margin-top:2px;text-decoration:none"-->
-                                                                                                       <!--actionOpen="#{ProjekteForm.filegroupEdit}"-->
-                                                                                                       <!--actionClose="#{NavigationForm.Reload}"-->
-                                                                                                       <!--center="true"-->
-                                                                                                       <!--title="#{msgs.filegroupBearbeiten}"-->
-                                                                                                       <!--immediate="true">-->
-                                                                                            <!--<t:updateActionListener-->
-                                                                                                    <!--property="#{ProjekteForm.zurueck}"-->
-                                                                                                    <!--value="ProjektFilegroupPopup"/>-->
-                                                                                            <!--<t:updateActionListener-->
-                                                                                                    <!--property="#{ProjekteForm.myFilegroup}"-->
-                                                                                                    <!--value="#{item}"/>-->
-                                                                                            <!--<t:updateActionListener-->
-                                                                                                    <!--property="#{ProjekteForm.myFilegroup}"-->
-                                                                                                    <!--value="#{item}"/>-->
-                                                                                            <!--<h:graphicImage id="id86"-->
-                                                                                                            <!--value="images/buttons/edit_20.gif"/>-->
-                                                                                        <!--</jp:popupFrame>-->
+                                                                                        <!-- FIXME: clicking link does not open dialog -->
+                                                                                        <p:commandLink
+                                                                                                actionListener="#{ProjekteForm.filegroupEdit()}"
+                                                                                                oncomplete="PF('editFileGroupDialog').show()">
+                                                                                            <t:updateActionListener
+                                                                                                    value="#{item}"
+                                                                                                    property="#{ProjekteForm.myFilegroup}"/>
+                                                                                            <p:graphicImage id="id86"
+                                                                                                            value="images/buttons/edit_20.gif"/>
+                                                                                        </p:commandLink>
+
+                                                                                        <p:dialog
+                                                                                                widgetVar="editFileGroupDialog"
+                                                                                                height="270px"
+                                                                                                width="700px"
+                                                                                                dynamic="true"
+                                                                                                modal="true"
+                                                                                                onHide="#{NavigationForm.Reload()}">
+                                                                                            <ui:include
+                                                                                                    src="ProjektFilegroupPopup.xhtml"/>
+                                                                                        </p:dialog>
                                                                                     </h:panelGroup>
 
                                                                                     <!-- Löschen-Schaltknopf -->
                                                                                     <h:commandLink
-                                                                                            action="#{ProjekteForm.filegroupDelete}"
+                                                                                            action="#{ProjekteForm.filegroupDelete()}"
                                                                                             title="#{msgs.filegroupLoeschen}"
                                                                                             onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')) return">
                                                                                         <h:graphicImage alt="delete"
@@ -608,27 +604,24 @@
                                                                             </t:dataTable>
                                                                             <!-- Hinzufügen-Schaltknopf -->
                                                                             <h:panelGroup id="id87">
-                                                                                <!-- TODO: find replacement for jp:popupFrame -->
-                                                                                <!--<jp:popupFrame scrolling="auto" height="270px"-->
-
-                                                                                               <!--width="700px"-->
-                                                                                               <!--topStyle="background: #1874CD;"-->
-                                                                                               <!--bottomStyleClass="popup_unten"-->
-                                                                                               <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
-                                                                                               <!--styleClass="standardlink"-->
-                                                                                               <!--style="margin-top:2px;display:block; text-decoration:none"-->
-                                                                                               <!--actionOpen="#{ProjekteForm.filegroupAdd}"-->
-                                                                                               <!--actionClose="#{NavigationForm.Reload}"-->
-                                                                                               <!--center="true"-->
-                                                                                               <!--title="#{msgs.filegroupHinzufuegen}"-->
-                                                                                               <!--immediate="true">-->
-                                                                                    <!--<t:updateActionListener-->
-                                                                                            <!--property="#{ProjekteForm.zurueck}"-->
-                                                                                            <!--value="ProjektFilegroupPopup"/>-->
-                                                                                    <!--<h:outputText-->
-                                                                                            <!--style="border-bottom: #a24033 dashed 1px;"-->
-                                                                                            <!--value="#{msgs.filegroupHinzufuegen}"/>-->
-                                                                                <!--</jp:popupFrame>-->
+                                                                                <!-- FIXME: clicking link does not open dialog -->
+                                                                                <p:commandLink
+                                                                                        value="#{msgs.filegroupHinzufuegen}"
+                                                                                        actionListener="#{ProjekteForm.filegroupAdd()}"
+                                                                                        oncomplete="PF('addFileGroupDialog').show()"
+                                                                                        styleClass="standardlink">
+                                                                                    <t:updateActionListener
+                                                                                            value="ProjektFilegroupPopup"
+                                                                                            property="#{ProjekteForm.zurueck}"/>
+                                                                                </p:commandLink>
+                                                                                <p:dialog widgetVar="addFileGroupDialog"
+                                                                                          header="#{msgs.filegroupHinzufuegen}"
+                                                                                          height="270px" width="700px"
+                                                                                          modal="true" dynamic="true"
+                                                                                          onHide="#{NavigationForm.Reload()}">
+                                                                                    <ui:include
+                                                                                            src="ProjektFilegroupPopup.xhtml"/>
+                                                                                </p:dialog>
                                                                             </h:panelGroup>
                                                                         </h:panelGroup>
                                                                     </h:panelGrid>
@@ -809,7 +802,7 @@
                                                                                               style="font-weight:normal;"/>
                                                                             </p>
 
-                                                                            <h:graphicImage id="vzid36" alt="volumes"
+                                                                            <h:graphicImage alt="volumes"
                                                                                             title="#{ProjekteForm.myProjekt.title}"
                                                                                             value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectStatVolumes}"/>
 

@@ -20,17 +20,19 @@
 
     <h:panelGroup rendered="#{mypage.totalResults > LoginForm.myBenutzer.tableSize}">
     <!-- erste und vorherige Seite -->
-    <h:commandLink action="#{mypage.cmdMoveFirst}" id="gofirst">
+    <h:commandLink action="#{mypage.cmdMoveFirst}" id="#{formName}_gofirst">
         <h:graphicImage alt="go to first page" url="/newpages/images/datascroller/arrow-first.gif"
                         style="margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>
-    <h:commandLink action="#{mypage.cmdMovePrevious}" id="goprevious">
+    <h:commandLink action="#{mypage.cmdMovePrevious}" id="#{formName}_goprevious">
         <h:graphicImage alt="go to previous page" url="/newpages/images/datascroller/arrow-previous.gif"
                         style="margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>
 
+        <!-- FIXME: add 'formName' param to 'getElementById' javascript functions! see: https://stackoverflow.com/questions/2547814/mixing-jsf-el-in-a-javascript-file -->
+
     <!-- aktuelle Seite anzeigen -->
-    <t:outputText id="txtMoveTo1" forceId="true"
+    <t:outputText id="#{formName}_txtMoveTo1" forceId="true"
                   value="#{msgs.seite} #{mypage.pageNumberCurrent} #{msgs.von} #{mypage.pageNumberLast}"
                   onclick="document.getElementById('txtMoveTo2').style.display='inline';
                        document.getElementById('txtMoveTo1').style.display='none';
@@ -38,20 +40,20 @@
                        document.getElementById('txtMoveTo2').select();"/>
 
     <!-- Seite direkt anspringen -->
-    <t:inputText id="txtMoveTo2" forceId="true"
+    <t:inputText id="#{formName}_txtMoveTo2" forceId="true"
                  value="#{mypage.txtMoveTo}"
                  style="display:none;font-size:9px;width:30px" required="true"
                  onblur="document.getElementById('txtMoveTo2').style.display='none';
                          document.getElementById('txtMoveTo1').style.display='inline';"
                  onkeypress="return submitEnter('cmdMoveTo',event)"/>
-    <t:commandButton action="#{NavigationForm.Reload}" id="cmdMoveTo" forceId="true" value="go" style="display:none"/>
+    <t:commandButton action="#{NavigationForm.Reload}" id="#{formName}_cmdMoveTo" forceId="true" value="go" style="display:none"/>
 
     <!-- nächste und letzte Seite -->
-    <h:commandLink action="#{mypage.cmdMoveNext}" id="gonext">
+    <h:commandLink action="#{mypage.cmdMoveNext}" id="#{formName}_gonext">
         <h:graphicImage alt="go to next page" url="/newpages/images/datascroller/arrow-next.gif"
                         style="margin-left:4px;margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>
-    <h:commandLink action="#{mypage.cmdMoveLast}" id="golast">
+    <h:commandLink action="#{mypage.cmdMoveLast}" id="#{formName}_golast">
         <h:graphicImage alt="go to last page" url="/newpages/images/datascroller/arrow-last.gif"
                         style="margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>

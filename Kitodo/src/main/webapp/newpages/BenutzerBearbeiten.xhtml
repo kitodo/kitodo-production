@@ -24,6 +24,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:metadata>
         <f:viewParam name="id" value="#{BenutzerverwaltungForm.userId}"/>
@@ -216,23 +217,16 @@
                                                         </h:panelGroup>
 
                                                         <h:panelGroup id="id43">
-                                                            <!-- TODO: find replacement for jp:popupFrame -->
-                                                            <!--<jp:popupFrame scrolling="auto" height="380px" width="430px"-->
-                                                                           <!--topStyle="background: #1874CD;"-->
-                                                                           <!--bottomStyleClass="popup_unten"-->
-                                                                           <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
-                                                                           <!--styleClass="standardlink"-->
-                                                                           <!--style="margin-top:2px;display:block; text-decoration:none"-->
-                                                                           <!--actionOpen="#{BenutzergruppenForm.FilterKeinMitZurueck}"-->
-                                                                           <!--actionClose="#{NavigationForm.Reload}" center="true"-->
-                                                                           <!--title="#{msgs.benutzergruppen}" immediate="true">-->
-                                                                <!--<t:updateActionListener-->
-                                                                        <!--property="#{BenutzergruppenForm.zurueck}"-->
-                                                                        <!--value="BenutzerBearbeitenPopup"/>-->
-                                                                <!--<h:outputText id="id44"-->
-                                                                              <!--style="border-bottom: #a24033 dashed 1px;"-->
-                                                                              <!--value="#{msgs.benutzergruppen}"/>-->
-                                                            <!--</jp:popupFrame>-->
+                                                            <p:commandLink value="#{msgs.benutzergruppenHinzufuegen}"
+                                                                           actionListener="#{BenutzergruppenForm.filterKeinMitZurueck()}"
+                                                                           oncomplete="PF('addUserToUserGroupDialog').show()"
+                                                                           styleClass="standardlink"/>
+                                                            <p:dialog widgetVar="addUserToUserGroupDialog" header="#{msgs.benutzergruppenHinzufuegen}"
+                                                                      height="380px" width="430px"
+                                                                      dynamic="true" modal="true"
+                                                                      onHide="#{NavigationForm.Reload()}">
+                                                                <ui:include src="BenutzerBearbeitenPopup.xhtml"/>
+                                                            </p:dialog>
                                                         </h:panelGroup>
 
                                                         <t:dataTable id="id45" width="300"
@@ -255,22 +249,16 @@
                                                         </t:dataTable>
 
                                                         <h:panelGroup id="id51">
-                                                            <!-- TODO: find replacement for jp:popupFrame -->
-                                                            <!--<jp:popupFrame scrolling="auto" height="380px" width="430px"-->
-                                                                           <!--topStyle="background: #1874CD;"-->
-                                                                           <!--bottomStyleClass="popup_unten"-->
-                                                                           <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
-                                                                           <!--styleClass="standardlink"-->
-                                                                           <!--style="margin-top:2px;display:block; text-decoration:none"-->
-                                                                           <!--actionOpen="#{ProjekteForm.filterKeinMitZurueck}"-->
-                                                                           <!--actionClose="#{NavigationForm.Reload}" center="true"-->
-                                                                           <!--title="#{msgs.projekte}" immediate="true">-->
-                                                                <!--<t:updateActionListener property="#{ProjekteForm.zurueck}"-->
-                                                                                        <!--value="BenutzerBearbeitenPopupProjekte"/>-->
-                                                                <!--<h:outputText-->
-                                                                        <!--style="text-decoration: none;border-bottom: #a24033 dashed 1px;"-->
-                                                                        <!--value="#{msgs.projekte}"/>-->
-                                                            <!--</jp:popupFrame>-->
+                                                            <p:commandLink value="#{msgs.projekte}"
+                                                                           actionListener="#{ProjekteForm.filterKeinMitZurueck()}"
+                                                                           oncomplete="PF('addProjectDialog').show()"
+                                                                           styleClass="standardlink"/>
+                                                            <p:dialog widgetVar="addProjectDialog" header="#{msgs.projekte}"
+                                                                      height="380px" width="430px"
+                                                                      dynamic="true" modal="true"
+                                                                      onHide="#{NavigationForm.Reload()}">
+                                                                <ui:include src="BenutzerBearbeitenPopupProjekte.xhtml"/>
+                                                            </p:dialog>
                                                         </h:panelGroup>
 
                                                         <t:dataTable id="id52" width="300"
