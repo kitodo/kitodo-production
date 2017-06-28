@@ -15,23 +15,21 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.json.simple.JSONObject;
-import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Filter;
 
 /**
- * Implementation of Property Type.
+ * Type class for Filter bean.
  */
-public class PropertyType extends BaseType<Property> {
+public class FilterType extends BaseType<Filter> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public HttpEntity createDocument(Property property) {
+    public HttpEntity createDocument(Filter filter) {
 
         JSONObject propertyObject = new JSONObject();
-        propertyObject.put("title", property.getTitle());
-        propertyObject.put("value", property.getValue());
-        propertyObject.put("processes", addObjectRelation(property.getProcesses()));
-        propertyObject.put("templates", addObjectRelation(property.getTemplates()));
-        propertyObject.put("workpieces", addObjectRelation(property.getWorkpieces()));
+        propertyObject.put("value", filter.getValue());
+        Integer user = filter.getUser() != null ? filter.getUser().getId() : null;
+        propertyObject.put("user", user);
 
         return new NStringEntity(propertyObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

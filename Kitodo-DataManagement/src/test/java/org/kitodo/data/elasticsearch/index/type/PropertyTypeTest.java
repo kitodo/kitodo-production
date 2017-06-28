@@ -24,7 +24,6 @@ import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Template;
 
 /**
@@ -36,7 +35,6 @@ public class PropertyTypeTest {
 
         List<Property> properties = new ArrayList<>();
         List<Process> processes = new ArrayList<>();
-        List<User> users = new ArrayList<>();
         List<Template> templates = new ArrayList<>();
 
         Process firstProcess = new Process();
@@ -46,10 +44,6 @@ public class PropertyTypeTest {
         Process secondProcess = new Process();
         secondProcess.setId(2);
         processes.add(secondProcess);
-
-        User user = new User();
-        user.setId(1);
-        users.add(user);
 
         Template template = new Template();
         template.setId(1);
@@ -65,16 +59,9 @@ public class PropertyTypeTest {
         Property secondProperty = new Property();
         secondProperty.setId(2);
         secondProperty.setTitle("Property2");
-        secondProperty.setValue("users");
-        secondProperty.setUsers(users);
+        secondProperty.setValue("templates");
+        secondProperty.setTemplates(templates);
         properties.add(secondProperty);
-
-        Property thirdProperty = new Property();
-        thirdProperty.setId(3);
-        thirdProperty.setTitle("Property3");
-        thirdProperty.setValue("templates");
-        thirdProperty.setTemplates(templates);
-        properties.add(thirdProperty);
 
         return properties;
     }
@@ -87,24 +74,17 @@ public class PropertyTypeTest {
         Property property = prepareData().get(0);
         HttpEntity document = propertyType.createDocument(property);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse(
-                "{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":1},"
-                        + "{\"id\":2}],\"templates\":[],\"users\":[]}");
-        assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
+        JSONObject expected = (JSONObject) parser
+                .parse("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":1},"
+                        + "{\"id\":2}],\"templates\":[]}");
+        assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
 
         property = prepareData().get(1);
         document = propertyType.createDocument(property);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Property2\",\"value\":\"users\",\"workpieces\":[],"
-                + "\"processes\":[],\"templates\":[],\"users\":[{\"id\":1}]}");
-        assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
-
-        property = prepareData().get(2);
-        document = propertyType.createDocument(property);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Property3\",\"value\":\"templates\",\"workpieces\":[],"
-                + "\"processes\":[],\"templates\":[{\"id\":1}],\"users\":[]}");
-        assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
+        expected = (JSONObject) parser.parse("{\"title\":\"Property2\",\"value\":\"templates\",\"workpieces\":[],"
+                + "\"processes\":[],\"templates\":[{\"id\":1}]}");
+        assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test
@@ -113,6 +93,6 @@ public class PropertyTypeTest {
 
         List<Property> properties = prepareData();
         HashMap<Integer, HttpEntity> documents = propertyType.createDocuments(properties);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+        assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

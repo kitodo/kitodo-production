@@ -273,18 +273,18 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldFindByProperty() throws Exception {
+    public void shouldFindByFilter() throws Exception {
         UserService userService = new UserService();
 
-        List<SearchResult> users = userService.findByProperty("FirstUserProperty", "first value");
+        List<SearchResult> users = userService.findByFilter("\"id:1\"");
         Integer actual = users.size();
         Integer expected = 1;
         assertEquals("User was not found in index!", expected, actual);
 
-        users = userService.findByProperty("firstTemplate title", "first value");
+        users = userService.findByFilter("\"id:5\"");
         actual = users.size();
         expected = 0;
-        assertEquals("User was not found in index!", expected, actual);
+        assertEquals("User was found in index!", expected, actual);
     }
 
     @Test

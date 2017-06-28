@@ -22,7 +22,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 
@@ -35,7 +35,7 @@ public class UserTypeTest {
 
         List<User> users = new ArrayList<>();
         List<UserGroup> userGroups = new ArrayList<>();
-        List<Property> properties = new ArrayList<>();
+        List<Filter> filters = new ArrayList<>();
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setId(1);
@@ -45,13 +45,13 @@ public class UserTypeTest {
         secondUserGroup.setId(2);
         userGroups.add(secondUserGroup);
 
-        Property firstProperty = new Property();
-        firstProperty.setId(1);
-        properties.add(firstProperty);
+        Filter firstFilter = new Filter();
+        firstFilter.setId(1);
+        filters.add(firstFilter);
 
-        Property secondProperty = new Property();
-        secondProperty.setId(2);
-        properties.add(secondProperty);
+        Filter secondFilter = new Filter();
+        secondFilter.setId(2);
+        filters.add(secondFilter);
 
         User firstUser = new User();
         firstUser.setId(1);
@@ -70,7 +70,7 @@ public class UserTypeTest {
         secondUser.setActive(true);
         secondUser.setLocation("Berlin");
         secondUser.setUserGroups(userGroups);
-        secondUser.setProperties(properties);
+        secondUser.setFilters(filters);
         users.add(secondUser);
 
         User thirdUser = new User();
@@ -78,7 +78,7 @@ public class UserTypeTest {
         thirdUser.setName("Peter");
         thirdUser.setSurname("Müller");
         thirdUser.setLogin("pmueller");
-        thirdUser.setProperties(properties);
+        thirdUser.setFilters(filters);
         users.add(thirdUser);
 
         return users;
@@ -94,7 +94,7 @@ public class UserTypeTest {
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],"
                 + "\"surname\":\"Kowalski\",\"name\":\"Jan\",\"metadataLanguage\":null,\"login\":\"jkowalski\","
-                + "\"active\":\"true\",\"location\":\"Dresden\",\"properties\":[]}");
+                + "\"active\":\"true\",\"location\":\"Dresden\",\"filters\":[]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(1);
@@ -102,7 +102,7 @@ public class UserTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":1},{\"id\":2}],"
                 + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"id\":1},{\"id\":2}]}");
+                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"filters\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(2);
@@ -110,7 +110,7 @@ public class UserTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"login\":\"pmueller\",\"ldapLogin\":null,\"userGroups\":[],"
                 + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":null,\"properties\":[{\"id\":1},{\"id\":2}]}");
+                + "\"location\":null,\"filters\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

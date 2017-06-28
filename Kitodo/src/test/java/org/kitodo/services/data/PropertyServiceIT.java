@@ -56,7 +56,7 @@ public class PropertyServiceIT {
 
         actual = processProperty.getValue();
         expected = "first value";
-        assertEquals("Process property was not found in database - value doesn'T match!", expected, actual);
+        assertEquals("Process property was not found in database - value doesn't match!", expected, actual);
     }
 
     @Test
@@ -71,20 +71,6 @@ public class PropertyServiceIT {
         actual = templateProperty.getValue();
         expected = "first value";
         assertEquals("Template property was not found in database - value doesn'T match!", expected, actual);
-    }
-
-    @Test
-    public void shouldFindUserProperty() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
-        Property userProperty = propertyService.find(7);
-        String actual = userProperty.getTitle();
-        String expected = "FirstUserProperty";
-        assertEquals("User property was not found in database - title doesn't match!", expected, actual);
-
-        actual = userProperty.getValue();
-        expected = "first value";
-        assertEquals("User property was not found in database - value doesn'T match!", expected, actual);
     }
 
     @Test
@@ -106,7 +92,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         List<Property> properties = propertyService.findAll();
-        assertEquals("Not all properties were found in database!", 8, properties.size());
+        assertEquals("Not all properties were found in database!", 6, properties.size());
     }
 
     @Test
@@ -116,21 +102,21 @@ public class PropertyServiceIT {
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.save(property);
-        Property foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(9));
+        Property foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(7));
         assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
 
         propertyService.remove(foundProperty);
-        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(9));
+        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(7));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
 
         property = new Property();
         property.setTitle("To remove");
         propertyService.save(property);
-        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(10));
+        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(8));
         assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
 
-        propertyService.remove(10);
-        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(10));
+        propertyService.remove(8);
+        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(8));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
     }
 
@@ -150,7 +136,7 @@ public class PropertyServiceIT {
 
         List<SearchResult> properties = propertyService.findByValue("second", true);
         Integer actual = properties.size();
-        Integer expected = 4;
+        Integer expected = 3;
         assertEquals("Properties were not found in index!", expected, actual);
 
         properties = propertyService.findByValue("second value", true);

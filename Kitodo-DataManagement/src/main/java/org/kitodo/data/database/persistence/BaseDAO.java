@@ -218,8 +218,8 @@ public abstract class BaseDAO implements Serializable {
 
     protected List retrieveAllObjects(Class cls) {
         Session session = Helper.getHibernateSession();
-        Criteria criteria = session.createCriteria(cls);
-        return criteria.list();
+        Query query = session.createQuery("FROM " + cls.getSimpleName());
+        return query.list();
     }
 
     /**
