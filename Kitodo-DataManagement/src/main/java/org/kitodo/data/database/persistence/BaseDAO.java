@@ -19,7 +19,6 @@ package org.kitodo.data.database.persistence;
 import java.io.Serializable;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -303,14 +302,19 @@ public abstract class BaseDAO implements Serializable {
         return Util.getQuery(key);
     }
 
-    protected void refresh(Object o) {
+    /**
+     * Refresh object associated with the session.
+     *
+     * @param object associated with the session
+     */
+    protected void refreshObject(Object object) {
         Session session = Helper.getHibernateSession();
         if (session == null) {
             session = HibernateUtil.getSessionFactory().openSession();
-            session.refresh(o);
+            session.refresh(object);
             session.close();
         }
-        session.refresh(o);
+        session.refresh(object);
     }
 
     @SuppressWarnings("rawtypes")

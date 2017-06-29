@@ -83,7 +83,8 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
-    protected void manageDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, DataException, IOException {
+    protected void manageDependenciesForIndex(UserGroup userGroup)
+            throws CustomResponseException, DataException, IOException {
         for (User user : userGroup.getUsers()) {
             serviceManager.getUserService().saveToIndex(user);
         }
@@ -130,6 +131,16 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
 
     public Long count(String query) throws DAOException {
         return userGroupDAO.count(query);
+    }
+
+    /**
+     * Refresh user's group object after update.
+     *
+     * @param userGroup
+     *            object
+     */
+    public void refresh(UserGroup userGroup) {
+        userGroupDAO.refresh(userGroup);
     }
 
     /**

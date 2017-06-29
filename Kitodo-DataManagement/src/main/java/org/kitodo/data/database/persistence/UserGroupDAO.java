@@ -80,4 +80,14 @@ public class UserGroupDAO extends BaseDAO {
     public Long count(String query) throws DAOException {
         return retrieveAmount(query);
     }
+
+    /**
+     * Refresh user's group object after some changes.
+     *
+     * @param userGroup
+     *            object
+     */
+    public void refresh(UserGroup userGroup) {
+        refreshObject(userGroup);
+    }
 }

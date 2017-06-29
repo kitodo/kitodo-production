@@ -109,24 +109,23 @@ public class ProcessDAO extends BaseDAO {
     }
 
     /**
-     * Never ending loop...
-     * 
+     * Refresh process object after some changes.
+     *
      * @param process
      *            object
      */
     public void refresh(Process process) {
-        Object o = process;
-        refresh(o);
+        refreshObject(process);
     }
 
     /**
-     * Never ending loop...
+     * Update process object after some changes.
      * 
      * @param process
      *            object
      */
     public void update(Process process) {
-        Object o = process;
-        updateObject(o);
+        Object object = process;
+        updateObject(object);
     }
 }

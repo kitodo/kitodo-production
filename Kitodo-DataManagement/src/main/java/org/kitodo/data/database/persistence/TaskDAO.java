@@ -93,14 +93,13 @@ public class TaskDAO extends BaseDAO {
     }
 
     /**
-     * Again this weird thing.
+     * Refresh task object after some changes.
      * 
      * @param task
      *            object
      */
     public void refresh(Task task) {
-        Object o = task;
-        refresh(o);
+        refreshObject(task);
     }
 
     public void update(Task task) {
