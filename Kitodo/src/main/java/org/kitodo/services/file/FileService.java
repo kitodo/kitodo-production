@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -657,7 +658,11 @@ public class FileService {
     }
 
     URI mapUriToKitodoUri(URI uri) {
-        return new File(ConfigCore.getKitodoDataDirectory() + uri).toURI();
+        String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
+        if (!uri.toString().contains(kitodoDataDirectory)) {
+            return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
+        }
+        return uri;
     }
 
     URI unmapUriFromKitodoUri(URI uri) {
