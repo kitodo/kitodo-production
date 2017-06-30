@@ -542,18 +542,18 @@ public class FileService {
     }
 
     /**
-     * This method is needed for migraion purposes. It mappes existing
-     * filePathes to the Correct URI.
+     * This method is needed for migration purposes. It maps existing
+     * filePaths to the correct URI.
      *
      * @param process
      *            the process, the uri is needed for.
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
-        String pfad = process.getId().toString();
+        String path = process.getId().toString();
         // TODO: Find out, why File.seperator is not working here
-        pfad = pfad.replaceAll(" ", "__") + "/";
-        return URI.create(pfad);
+        path = path.replaceAll(" ", "__") + "/";
+        return mapUriToKitodoUri(URI.create(path));
     }
 
     /**
