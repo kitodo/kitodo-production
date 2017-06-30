@@ -659,7 +659,7 @@ public class FileService {
 
     URI mapUriToKitodoUri(URI uri) {
         String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
-        if (!uri.toString().contains(kitodoDataDirectory)) {
+        if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
             return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
         }
         return uri;
@@ -684,7 +684,9 @@ public class FileService {
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(URI processSubTypeURI) {
-        processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
+        if (!processSubTypeURI.isAbsolute()) {
+            processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
+        }
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(new File(processSubTypeURI));
         for (File file : files) {
