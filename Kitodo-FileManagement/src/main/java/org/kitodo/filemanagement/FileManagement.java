@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.kitodo.api.filemanagement.FileManagementInterface;
@@ -52,8 +53,6 @@ public class FileManagement implements FileManagementInterface {
         return false;
     }
 
-    // Correct changes to the following methods are made in a separate Pull
-    // Request.
     @Override
     public boolean rename(URI uri, String newName) {
         return false;
@@ -66,7 +65,6 @@ public class FileManagement implements FileManagementInterface {
         if (!processRootDirectory.mkdir()) {
             throw new IOException("Could not create processRoot directory.");
         }
-
         return processRootDirectory.toURI();
 
     }
@@ -87,7 +85,8 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI createResource(URI parentFolderUri, String fileName) {
-        return new File(parentFolderUri.getPath() + File.separator + fileName).toURI();
+        String path = parentFolderUri.getPath() + File.separator + fileName;
+        return Paths.get(path).toUri();
     }
 
     @Override
