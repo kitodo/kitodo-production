@@ -87,7 +87,7 @@ public class FileService {
     public URI createDirectory(URI parentFolderUri, String directoryName) {
         File file = new File(mapUriToKitodoUri(parentFolderUri).getPath(), directoryName);
         file.mkdir();
-        return unmapUriFromKitodoUri(file.toURI());
+        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
     }
 
     /**
@@ -100,7 +100,7 @@ public class FileService {
     public URI createDirectory(String directoryName) {
         File file = new File(mapUriToKitodoUri(URI.create(directoryName)));
         file.mkdir();
-        return unmapUriFromKitodoUri(file.toURI());
+        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
     }
 
     /**
