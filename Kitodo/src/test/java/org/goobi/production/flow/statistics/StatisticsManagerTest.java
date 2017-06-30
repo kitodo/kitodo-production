@@ -15,9 +15,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigCore;
 
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
@@ -46,12 +46,11 @@ public class StatisticsManagerTest {
     static Locale locale = new Locale("GERMAN");
     static IDataSource testFilter = new UserDefinedFilter("stepdone:5");
     private static URI tempPath;
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     @BeforeClass
     public static void setUp() {
-        File f = new File("pages/imagesTemp/");
-        tempPath = f.toURI();
-
+        tempPath = serviceManager.getFileService().mapUriToKitodoUri(URI.create("pages/imagesTemp/"));
         testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
         testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
     }
@@ -80,10 +79,9 @@ public class StatisticsManagerTest {
 
     @AfterClass
     public static void tearDown() throws IOException {
-        ServiceManager serviceManager = new ServiceManager();
         File dir = new File(tempPath);
         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(java.io.File dir, String name) {
+            public boolean accept(File dir, String name) {
                 return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg"));
             }
         };

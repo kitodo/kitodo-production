@@ -542,8 +542,8 @@ public class FileService {
     }
 
     /**
-     * This method is needed for migration purposes. It maps existing
-     * filePaths to the correct URI.
+     * This method is needed for migration purposes. It maps existing filePaths
+     * to the correct URI.
      *
      * @param process
      *            the process, the uri is needed for.
@@ -657,7 +657,14 @@ public class FileService {
         return sourceFolder;
     }
 
-    URI mapUriToKitodoUri(URI uri) {
+    /**
+     * Map relative URI to absolute kitodo data directory uri.
+     * 
+     * @param uri
+     *            relative path
+     * @return absolute URI path
+     */
+    public URI mapUriToKitodoUri(URI uri) {
         String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
         if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
             return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
