@@ -325,7 +325,7 @@ public class FileService {
      * Reads a file at a given URI.
      *
      * @param uri
-     *            The uri to reas
+     *            the uri to read
      * @return an InputStream to read from.
      * @throws IOException
      *             if File cannot be accessed.
@@ -605,7 +605,6 @@ public class FileService {
             default:
                 return processDataDirectory;
         }
-
     }
 
     /**
