@@ -529,7 +529,7 @@ public class FileService {
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
+        return mapUriToKitodoUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
     }
 
     private String getTemporaryMetadataFileName(URI fileName) {
