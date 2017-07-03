@@ -1729,19 +1729,17 @@ public class Metadaten {
                 if (logger.isTraceEnabled()) {
                     logger.trace("myBild: " + this.myBild);
                 }
-                String index = fileService.getFileName(dataList.get(i)).substring(0,
-                        fileService.getFileName(dataList.get(i)).lastIndexOf("."));
+                String index = fileService.getFileName(dataList.get(i));
                 if (logger.isTraceEnabled()) {
                     logger.trace("index: " + index);
                 }
-                String myPicture = fileService.getFileName(this.myBild).substring(0,
-                        fileService.getFileName(this.myBild).lastIndexOf("."));
+                String picture = fileService.getFileName(this.myBild);
                 if (logger.isTraceEnabled()) {
-                    logger.trace("myPicture: " + myPicture);
+                    logger.trace("picture: " + picture);
                 }
                 /* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
-                if (index.equals(myPicture)) {
-                    logger.trace("index == myPicture");
+                if (index.equals(picture)) {
+                    logger.trace("index == picture");
                     int pos = i + welches;
                     if (logger.isTraceEnabled()) {
                         logger.trace("pos: " + pos);
