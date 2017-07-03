@@ -161,47 +161,47 @@
             </table>
 
             <script type="text/javascript">
-            //<![CDATA[
-                function getKeyCode(e) {
-                    var keycode;
+                //<![CDATA[
+                    function getKeyCode(e) {
+                        var keycode;
 
-                    keycode = e.keyCode ? e.keyCode : e.charCode;
-                    //alert('keycode ' + keycode);
+                        keycode = e.keyCode ? e.keyCode : e.charCode;
+                        //alert('keycode ' + keycode);
 
-                    return keycode;
-                }
+                        return keycode;
+                    }
 
-                function checkOpac(commandId, e) {
-                    var keycode;
+                    function checkOpac(commandId, e) {
+                        var keycode;
 
-                    keycode = getKeyCode(e);
+                        keycode = getKeyCode(e);
 
-                    e.stopPropagation();
-                    if (keycode == 36) {
-                        return false;
-                    } else if ((keycode == 13) && (commandId == 'OpacRequest')) {
-                        element = document.getElementById('pageform1:performOpacQuery');
-                        if (element) {
-                            element.click();
+                        e.stopPropagation();
+                        if (keycode == 36) {
+                            return false;
+                        } else if ((keycode == 13) && (commandId == 'OpacRequest')) {
+                            element = document.getElementById('pageform1:performOpacQuery');
+                            if (element) {
+                                element.click();
 
+                                return false;
+                            }
+                        } else {
+                            return true;
+                        }
+
+                        return true;
+
+                    }
+
+                    function ignoreEnterKey(e) {
+                        var keycode;
+                        keycode = getKeyCode(e);
+                        if (keycode == 13) {
                             return false;
                         }
-                    } else {
                         return true;
                     }
-
-                    return true;
-
-                }
-
-                function ignoreEnterKey(e) {
-                    var keycode;
-                    keycode = getKeyCode(e);
-                    if (keycode == 13) {
-                        return false;
-                    }
-                    return true;
-                }
                 //]]>
             </script>
         </h:body>

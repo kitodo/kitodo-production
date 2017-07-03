@@ -130,18 +130,20 @@
             </table>
 
             <script language="javascript" type="text/javascript">
-                function toggle(id) {
-                    var style = document.getElementById(id).style;
-                    if ("block" == style.display) {
-                        style.display = "none";
-                        document.getElementById("buttonOff").style.display = "inline";
-                        document.getElementById("buttonOn").style.display = "none";
-                    } else {
-                        style.display = "block";
-                        document.getElementById("buttonOff").style.display = "none";
-                        document.getElementById("buttonOn").style.display = "inline";
+                //<![CDATA[
+                    function toggle(id) {
+                        var style = document.getElementById(id).style;
+                        if ("block" == style.display) {
+                            style.display = "none";
+                            document.getElementById("buttonOff").style.display = "inline";
+                            document.getElementById("buttonOn").style.display = "none";
+                        } else {
+                            style.display = "block";
+                            document.getElementById("buttonOff").style.display = "none";
+                            document.getElementById("buttonOn").style.display = "inline";
+                        }
                     }
-                }
+                //]]>
             </script>
 
         </h:body>

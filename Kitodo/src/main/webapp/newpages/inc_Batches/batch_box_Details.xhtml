@@ -163,10 +163,11 @@
     </tr>
     </table>
 
-    <script src="../../js/tiny_mce/tiny_mce.js" type="text/javascript"></script>
+    <script src="../../js/tiny_mce/tiny_mce.js" type="text/javascript"/>
 
     <script type="text/javascript">
-        tinyMCE
+        //<![CDATA[
+            tinyMCE
                 .init({
                     mode: "exact",
                     elements: "htmleditorform:myTextArea",
@@ -185,5 +186,6 @@
                     theme_advanced_statusbar_location: "bottom",
                     theme_advanced_resizing: true
                 });
+        //]]>
     </script>
 </ui:composition>

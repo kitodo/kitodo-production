@@ -169,64 +169,65 @@
 
         </h:body>
     </f:view>
-    <script type="text/javascript"><!--
-    // Funktion, die dynamisch das Stylesheet zuweist
-    function styleAnpassen2(element) {
-        try {
-            //	if (parent.rechts.document.getElementById("formular4:DatenGeaendert").value == "1"){
-            //		// Daten sind ungespeichert, also Warnung ausgeben und abbrechen
-            //		alert(document.getElementById("formWarn:Warnmeldung").value);
-            //		//return false;
-            //	}else{
-            // Daten sind gespeichert, also den Klick weitergeben
-            var galleryLinks;
-            galleryLinks = document.getElementsByTagName('a');
-            for (var i = 0; i < galleryLinks.length; i++)
-                galleryLinks[i].className = "document";
-            element.className = "documentSelected";
-            return true;
-            //	}
-        } catch (err) {
-            parent.rechts.location.href = "Metadaten2rechts.jsf";
-        }
-    }
+    <script type="text/javascript">
+        //<![CDATA[
+            // Funktion, die dynamisch das Stylesheet zuweist
+            function styleAnpassen2(element) {
+                try {
+                    //	if (parent.rechts.document.getElementById("formular4:DatenGeaendert").value == "1"){
+                    //		// Daten sind ungespeichert, also Warnung ausgeben und abbrechen
+                    //		alert(document.getElementById("formWarn:Warnmeldung").value);
+                    //		//return false;
+                    //	}else{
+                    // Daten sind gespeichert, also den Klick weitergeben
+                    var galleryLinks;
+                    galleryLinks = document.getElementsByTagName('a');
+                    for (var i = 0; i < galleryLinks.length; i++)
+                        galleryLinks[i].className = "document";
+                    element.className = "documentSelected";
+                    return true;
+                    //	}
+                } catch (err) {
+                    parent.rechts.location.href = "Metadaten2rechts.jsf";
+                }
+            }
 
 
-    function reloadRightFrame() {
-        var myelement = parent.rechts.document.getElementById("formular2:docStructVerschiebenAbbrechen");
-        if (myelement != null) {
-            myelement.click();
-        }
-        var myelement1 = parent.rechts.document.getElementById("formular2:docStructReload");
-        if (myelement1 != null) {
-            myelement1.click();
-        }
-    }
+            function reloadRightFrame() {
+                var myelement = parent.rechts.document.getElementById("formular2:docStructVerschiebenAbbrechen");
+                if (myelement != null) {
+                    myelement.click();
+                }
+                var myelement1 = parent.rechts.document.getElementById("formular2:docStructReload");
+                if (myelement1 != null) {
+                    myelement1.click();
+                }
+            }
 
-    var DHTML = (document.getElementById || document.all || document.layers);
-    var texttop = 10;
+            var DHTML = (document.getElementById || document.all || document.layers);
+            var texttop = 10;
 
-    function getObj(name) {
-        if (document.getElementById) {
-            this.obj = document.getElementById(name);
-            this.style = document.getElementById(name).style;
-        }
-        else if (document.all) {
-            this.obj = document.all[name];
-            this.style = document.all[name].style;
-        }
-        else if (document.layers) {
-            this.obj = document.layers[name];
-            this.style = document.layers[name];
-        }
-    }
+            function getObj(name) {
+                if (document.getElementById) {
+                    this.obj = document.getElementById(name);
+                    this.style = document.getElementById(name).style;
+                }
+                else if (document.all) {
+                    this.obj = document.all[name];
+                    this.style = document.all[name].style;
+                }
+                else if (document.layers) {
+                    this.obj = document.layers[name];
+                    this.style = document.layers[name];
+                }
+            }
 
-    function move(amount) {
-        if (!DHTML) return;
-        var x = new getObj('treeform:tabelle');
-        texttop += amount;
-        x.style.top = texttop;
-    }
-    //-->
+            function move(amount) {
+                if (!DHTML) return;
+                var x = new getObj('treeform:tabelle');
+                texttop += amount;
+                x.style.top = texttop;
+            }
+        //]]>
     </script>
 </html>
