@@ -16,18 +16,16 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class UserTemplatesFilterTest {
+public class UserTemplatesFilterIT {
 
     UserTemplatesFilter test = new UserTemplatesFilter(false);
 
-    @Ignore("Crashing")
     @Test
     public void testGetCriteria() {
-        Criteria crit = test.getCriteria();
-        assertNotNull(crit);
+        Criteria criteria = test.getCriteria();
+        assertNotNull(criteria);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -56,7 +54,6 @@ public class UserTemplatesFilterTest {
         assertNotNull(clone);
     }
 
-    @Ignore("Crashing")
     @Test
     public void testGetSourceData() {
         List<Object> sourceList = test.getSourceData();
