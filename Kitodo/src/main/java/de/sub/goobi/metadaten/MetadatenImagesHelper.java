@@ -21,6 +21,7 @@ import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +39,6 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -103,15 +103,10 @@ public class MetadatenImagesHelper {
             MetadataType metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
             try {
                 Metadata mdForPath = new Metadata(metadataTypeForPath);
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    mdForPath.setValue(
-                            "file:/" + serviceManager.getProcessService().getImagesTifDirectory(false, process));
-                } else {
-                    mdForPath.setValue(
-                            "file://" + serviceManager.getProcessService().getImagesTifDirectory(false, process));
-                }
+                mdForPath.setValue(new File(serviceManager.getProcessService().getImagesTifDirectory(false, process)).getPath());
                 physicaldocstruct.addMetadata(mdForPath);
-            } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e1) {
+            } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                logger.error(e);
             }
             this.mydocument.setPhysicalDocStruct(physicaldocstruct);
         }
@@ -172,7 +167,6 @@ public class MetadatenImagesHelper {
 
                 }
             }
-
         }
         try {
             List<URI> imageNamesInMediaFolder = getDataFiles(process);
@@ -198,9 +192,8 @@ public class MetadatenImagesHelper {
                     ref.getSource().removeReferenceTo(pageToRemove);
                 }
             }
-        }
-        // case 2: no page docs but images (some images are added)
-        else if (pageElementsWithoutImages.isEmpty() && !imagesWithoutPageElements.isEmpty()) {
+        } else if (pageElementsWithoutImages.isEmpty() && !imagesWithoutPageElements.isEmpty()) {
+            // case 2: no page docs but images (some images are added)
             int currentPhysicalOrder = assignedImages.size();
             for (URI newImage : imagesWithoutPageElements) {
                 DocStruct dsPage = this.mydocument.createDocStruct(newPage);
@@ -215,54 +208,28 @@ public class MetadatenImagesHelper {
                     // logical page no
                     mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
                     mdTemp = new Metadata(mdt);
-
-                    if (defaultPagination.equalsIgnoreCase("arabic")) {
-                        mdTemp.setValue(String.valueOf(currentPhysicalOrder));
-                    } else if (defaultPagination.equalsIgnoreCase("roman")) {
-                        RomanNumeral roman = new RomanNumeral();
-                        roman.setValue(currentPhysicalOrder);
-                        mdTemp.setValue(roman.getNumber());
-                    } else {
-                        mdTemp.setValue("uncounted");
-                    }
-
+                    mdTemp.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
                     dsPage.addMetadata(mdTemp);
                     log.addReferenceTo(dsPage, "logical_physical");
 
                     // image name
                     ContentFile cf = new ContentFile();
-                    if (SystemUtils.IS_OS_WINDOWS) {
-                        cf.setLocation("file:/"
-                                + serviceManager.getProcessService().getImagesTifDirectory(false, process) + newImage);
-                    } else {
-                        cf.setLocation("file://"
-                                + serviceManager.getProcessService().getImagesTifDirectory(false, process) + newImage);
-                    }
+                    cf.setLocation(createContentFileLocation(process, newImage));
                     dsPage.addContentFile(cf);
 
                 } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                     logger.error(e);
                 }
             }
-        }
-
-        // case 3: empty page docs and unassinged images
-        else {
+        } else {
+            // case 3: empty page docs and unassinged images
             for (DocStruct page : pageElementsWithoutImages) {
                 if (!imagesWithoutPageElements.isEmpty()) {
                     // assign new image name to page
                     URI newImageName = imagesWithoutPageElements.get(0);
                     imagesWithoutPageElements.remove(0);
                     ContentFile cf = new ContentFile();
-                    if (SystemUtils.IS_OS_WINDOWS) {
-                        cf.setLocation(
-                                "file:/" + serviceManager.getProcessService().getImagesTifDirectory(false, process)
-                                        + newImageName);
-                    } else {
-                        cf.setLocation(
-                                "file://" + serviceManager.getProcessService().getImagesTifDirectory(false, process)
-                                        + newImageName);
-                    }
+                    cf.setLocation(createContentFileLocation(process, newImageName));
                     page.addContentFile(cf);
                 } else {
                     // remove page
@@ -290,31 +257,13 @@ public class MetadatenImagesHelper {
                         // logical page no
                         mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
                         mdTemp = new Metadata(mdt);
-
-                        if (defaultPagination.equalsIgnoreCase("arabic")) {
-                            mdTemp.setValue(String.valueOf(currentPhysicalOrder));
-                        } else if (defaultPagination.equalsIgnoreCase("roman")) {
-                            RomanNumeral roman = new RomanNumeral();
-                            roman.setValue(currentPhysicalOrder);
-                            mdTemp.setValue(roman.getNumber());
-                        } else {
-                            mdTemp.setValue("uncounted");
-                        }
-
+                        mdTemp.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
                         dsPage.addMetadata(mdTemp);
                         log.addReferenceTo(dsPage, "logical_physical");
 
                         // image name
                         ContentFile cf = new ContentFile();
-                        if (SystemUtils.IS_OS_WINDOWS) {
-                            cf.setLocation(
-                                    "file:/" + serviceManager.getProcessService().getImagesTifDirectory(false, process)
-                                            + newImage);
-                        } else {
-                            cf.setLocation(
-                                    "file://" + serviceManager.getProcessService().getImagesTifDirectory(false, process)
-                                            + newImage);
-                        }
+                        cf.setLocation(createContentFileLocation(process, newImage));
                         dsPage.addContentFile(cf);
 
                     } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
@@ -338,6 +287,41 @@ public class MetadatenImagesHelper {
                 }
                 currentPhysicalOrder++;
             }
+        }
+    }
+
+    /**
+     * Create path as String for content file location.
+     *
+     * @param process
+     *            object
+     * @param image
+     *            URI to image
+     * @return path as String
+     */
+    private String createContentFileLocation(Process process, URI image) throws IOException {
+        URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process).resolve(image);
+        return new File(path).getPath();
+    }
+
+    /**
+     * Determine pagination for metadata.
+     *
+     * @param currentPhysicalOrder
+     *            as int
+     * @param defaultPagination
+     *            as String
+     * @return pagination value as String
+     */
+    private String determinePagination(int currentPhysicalOrder, String defaultPagination) {
+        if (defaultPagination.equalsIgnoreCase("arabic")) {
+            return String.valueOf(currentPhysicalOrder);
+        } else if (defaultPagination.equalsIgnoreCase("roman")) {
+            RomanNumeral roman = new RomanNumeral();
+            roman.setValue(currentPhysicalOrder);
+            return roman.getNumber();
+        } else {
+            return "uncounted";
         }
     }
 
