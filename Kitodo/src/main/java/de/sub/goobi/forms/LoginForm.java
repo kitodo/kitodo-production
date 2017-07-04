@@ -35,11 +35,12 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.filters.FileEndFilter;
 import org.kitodo.services.ServiceManager;
 
 @Named("LoginForm")
 @SessionScoped
-public class LoginForm implements Serializable{
+public class LoginForm implements Serializable {
     private static final long serialVersionUID = 7732045664713555233L;
     private String login;
     private String password;
@@ -255,12 +256,7 @@ public class LoginForm implements Serializable{
                 .getInternUri(new File(ConfigCore.getTempImagesPathAsCompleteDirectory()).toURI());
 
         /* Verzeichnis einlesen */
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".png");
-            }
-        };
+        FilenameFilter filter = new FileEndFilter(".png");
         ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, myPfad);
 
         /* alle Dateien durchlaufen und die alten löschen */

@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.filters.FileEndFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -229,14 +230,9 @@ public class FolderInformation {
      */
     public URI getSourceDirectory() {
         URI dir = getImagesDirectory();
-        FilenameFilter filterVerz = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.endsWith("_" + "source"));
-            }
-        };
+        FilenameFilter filterDirectory = new FileEndFilter("_source");
         URI sourceFolder = null;
-        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {

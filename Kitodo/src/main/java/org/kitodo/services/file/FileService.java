@@ -39,6 +39,7 @@ import org.hibernate.Hibernate;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.filters.FileEndFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.RulesetService;
 
@@ -633,14 +634,9 @@ public class FileService {
      */
     public URI getSourceDirectory(Process process) {
         URI dir = getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-        FilenameFilter filterVerz = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.endsWith("_" + "source"));
-            }
-        };
+        FilenameFilter filterDirectory = new FileEndFilter("_source");
         URI sourceFolder;
-        ArrayList<URI> verzeichnisse = getSubUris(filterVerz, dir);
+        ArrayList<URI> verzeichnisse = getSubUris(filterDirectory, dir);
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
