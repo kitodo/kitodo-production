@@ -53,4 +53,39 @@ To transport the generated file to the correct place (*${project.basedir}/docs*)
 mvn --non-recursive antrun:run
 ```
 
-Afterwards the contents of the "docs" directory may be committed. 
+Afterwards the contents of the "docs" directory may be committed.
+
+To make sure that Javadocs are up to date at the time of the committing the call of
+```
+mvn clean
+```
+also deletes the contents of _JavaDocs/JavaDocsGenerationDir_. This makes sure that the directory does not contain parts of files 
+that came into existence during earlier calls of the generation. To get a fresh Javadoc you may issue subsequently:
+
+```
+mvn clean
+mvn javadoc:aggregate 
+mvn --non-recursive antrun:run
+```
+
+Be careful on committing. Look twice what you commit. It may be the case that you checked out the JavaDocs and deleted them
+during the build process locally. It is possible you don't want to commit them (as they are locally deleted).
+
+
+#### Javadoc is graceful
+The configuration of the Javadoc-plugin is set to be graceful. The config tells Javadoc not to stop if there is an error and not
+to fail if there was one. This gives the developer the chance to generate "incorrect" Javadocs which also includes
+Javadocs that are incomplete. 
+
+Changing these parameters may result in Javadocs of a higher quality as lots of documentation is requested but also may
+result in no documentation at all because the compilation just stops.
+
+```xml
+<configuration>
+	<!-- setting to true halts the generation at the first error -->
+	<failOnError>false</failOnError>
+	<!-- commenting this line enables the doclint checks on the sources - this 
+	     leads to fail with badly documented sources -->
+	<additionalparam>-Xdoclint:none</additionalparam>
+</configuration>
+```
