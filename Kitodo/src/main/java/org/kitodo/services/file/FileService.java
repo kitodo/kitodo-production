@@ -543,7 +543,8 @@ public class FileService {
 
     /**
      * This method is needed for migration purposes. It maps existing filePaths
-     * to the correct URI.
+     * to the correct URI. File.separator doesn't work because on Windows it
+     * appends backslash to URI.
      *
      * @param process
      *            the process, the uri is needed for.
@@ -551,7 +552,6 @@ public class FileService {
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
         String path = process.getId().toString();
-        // TODO: Find out, why File.seperator is not working here
         path = path.replaceAll(" ", "__") + "/";
         return mapUriToKitodoUri(URI.create(path));
     }
@@ -579,7 +579,7 @@ public class FileService {
 
         switch (processSubType) {
             case IMAGE:
-                return URI.create(processDataDirectory + "image" + File.separator + id);
+                return URI.create(processDataDirectory + "images/" + id);
             case IMAGE_SOURCE:
                 return URI.create(getSourceDirectory(process) + id);
             case META_XML:
@@ -587,21 +587,17 @@ public class FileService {
             case TEMPLATE:
                 return URI.create(processDataDirectory + "template.xml");
             case IMPORT:
-                return URI.create(processDataDirectory + "import" + File.separator + id);
+                return URI.create(processDataDirectory + "import/" + id);
             case OCR:
-                return URI.create(processDataDirectory + "ocr" + File.separator);
+                return URI.create(processDataDirectory + "ocr/");
             case OCR_PDF:
-                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_pdf"
-                        + File.separator + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_pdf/" + id);
             case OCR_TXT:
-                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_txt"
-                        + File.separator + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_txt/" + id);
             case OCR_WORD:
-                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_wc"
-                        + File.separator + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_wc/" + id);
             case OCR_ALTO:
-                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_alto"
-                        + File.separator + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_alto/" + id);
             default:
                 return processDataDirectory;
         }

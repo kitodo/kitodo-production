@@ -1804,7 +1804,7 @@ public class Metadaten {
                     /* das neue Bild zuweisen */
                     try {
                         URI tiffconverterpfad = fileService.getImagesDirectory(this.myProzess)
-                                .resolve(this.currentTifFolder + File.separator + this.myBild);
+                                .resolve(this.currentTifFolder + "/" + this.myBild);
                         if (logger.isTraceEnabled()) {
                             logger.trace("tiffconverterpfad: " + tiffconverterpfad);
                         }
@@ -1836,7 +1836,7 @@ public class Metadaten {
         try {
             if (this.currentTifFolder != null && this.myBild != null) {
                 exists = fileService.fileExist(fileService.getImagesDirectory(this.myProzess)
-                        .resolve(this.currentTifFolder + File.separator + this.myBild));
+                        .resolve(this.currentTifFolder + "/" + this.myBild));
             }
         } catch (Exception e) {
             this.myBildNummer = -1;
