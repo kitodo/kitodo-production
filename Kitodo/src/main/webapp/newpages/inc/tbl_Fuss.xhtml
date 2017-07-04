@@ -33,6 +33,7 @@
 
                             <h:commandLink action="statischImpressum" value="#{msgs.impressum}" id="impr"/>
                             <script type="javascript">
+                                //<![CDATA[
                                     function submitEnter(commandId, e) {
                                         var keycode;
                                         if (window.event) keycode = window.event.keyCode;
@@ -91,9 +92,8 @@
                                             document.getElementById(targetElement).click();
                                         }
                                     }
-
-                                </script>
-
+                                //]]>
+                            </script>
                         </td>
                     </tr>
                 </table>

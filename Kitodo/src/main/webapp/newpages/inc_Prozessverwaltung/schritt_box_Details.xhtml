@@ -338,34 +338,33 @@
     <!-- // Box für die Bearbeitung der Details -->
 
     <script type="text/javascript">
-        <!--
-        // Funktion, die Änderungen prüft
-        function chkManuellAutomatischSetzen(element) {
-            //alert(element.id);
-            if (element.id != "chkmanuell1")
-                document.getElementById("chkmanuell1").checked = false;
-            if (element.id != "chkmanuell2")
-                document.getElementById("chkmanuell2").checked = false;
-            if (element.id != "chkmanuell3")
-                document.getElementById("chkmanuell3").checked = false;
-            if (element.id != "chkmanuell4")
-                document.getElementById("chkmanuell4").checked = false;
-            //  		if (element.id != "chkautomatisch") document.getElementById("chkautomatisch").checked=false;
-            txtAutomatischAnzeigen();
-            //element.checked=true;
-        }
-
-        function txtAutomatischAnzeigen() {
-            var myelement = document.getElementById("chkautomatisch");
-            if (myelement != null) {
-                if (document.getElementById("chkautomatisch").checked) {
-                    document.getElementById("scripttable").style.display = "inline";
-                } else {
-                    document.getElementById("scripttable").style.display = "none";
-                }
+        //<![CDATA[
+            // Funktion, die Änderungen prüft
+            function chkManuellAutomatischSetzen(element) {
+                //alert(element.id);
+                if (element.id != "chkmanuell1")
+                    document.getElementById("chkmanuell1").checked = false;
+                if (element.id != "chkmanuell2")
+                    document.getElementById("chkmanuell2").checked = false;
+                if (element.id != "chkmanuell3")
+                    document.getElementById("chkmanuell3").checked = false;
+                if (element.id != "chkmanuell4")
+                    document.getElementById("chkmanuell4").checked = false;
+                //  		if (element.id != "chkautomatisch") document.getElementById("chkautomatisch").checked=false;
+                txtAutomatischAnzeigen();
+                //element.checked=true;
             }
 
-        }
-        //-->
+            function txtAutomatischAnzeigen() {
+                var myelement = document.getElementById("chkautomatisch");
+                if (myelement != null) {
+                    if (document.getElementById("chkautomatisch").checked) {
+                        document.getElementById("scripttable").style.display = "inline";
+                    } else {
+                        document.getElementById("scripttable").style.display = "none";
+                    }
+                }
+            }
+        //]]>
     </script>
 </ui:composition>

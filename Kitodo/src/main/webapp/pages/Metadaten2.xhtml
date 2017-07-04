@@ -22,27 +22,27 @@
         <ui:include src="/newpages/inc/head.xhtml" />
 
         <script type="text/javascript">
+            //<![CDATA[
+                function checkFrameLoad() {
 
-            function checkFrameLoad() {
+                    var testObject = rechts.document.getElementById("metadatenRechts");
+                    if (testObject != null) {
+                    } else {
+                        rechts.location.href = rechts.location.href;
+                    }
+                    testObject = oben.document.getElementById("formularOben");
+                    if (testObject != null) {
+                    } else {
+                        oben.location.href = oben.location.href;
+                    }
 
-                var testObject = rechts.document.getElementById("metadatenRechts");
-                if (testObject != null) {
-                } else {
-                    rechts.location.href = rechts.location.href;
+                    testObject = links.document.getElementById("treeform:tabelle");
+                    if (testObject != null) {
+                    } else {
+                        links.location.href = links.location.href;
+                    }
                 }
-                testObject = oben.document.getElementById("formularOben");
-                if (testObject != null) {
-                } else {
-                    oben.location.href = oben.location.href;
-                }
-
-                testObject = links.document.getElementById("treeform:tabelle");
-                if (testObject != null) {
-                } else {
-                    links.location.href = links.location.href;
-                }
-            }
-
+            //]]>
         </script>
 
         <frameset rows="59px,*" bordercolor="#003399" onload="setTimeout('checkFrameLoad()',100);">
