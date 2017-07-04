@@ -221,8 +221,6 @@
 					<!-- Default configuration for all reports -->
 					<failOnError>false</failOnError>
 
-					<destDir>${basedir}/docs/JavaDocs/JavaDocsGenerationDir</destDir>
-
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 				<executions>
@@ -233,6 +231,7 @@
 						</goals>
 						<phase>site</phase>
 						<configuration>
+							<!-- there seems to be no way to start the document-generation in a certain target -->
 							<!-- all the docs are to be generated inside docs/JavaDocs -->
 							<!-- <outputDirectory>/home/flo/git/kitodo-production/docs/JavaDocs/JavaDocsGenerationDir</outputDirectory> -->
 							<!-- <reportOutputDirectory>/home/flo/git/kitodo-production/docs/JavaDocs/JavaDocsGenerationDir</reportOutputDirectory> -->
@@ -250,19 +249,7 @@
 				<version>1.7</version>
 				<executions>
 					<execution>
-						<id>copy-javadoc1</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<echo>Executing ant plugin!</echo>
-							</tasks>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-javadoc</id>
+						<id>default-cli</id>
 						<!-- in any case after generation of javadocs -->
 						<goals>
 							<goal>run</goal>
@@ -271,7 +258,7 @@
 						<configuration>
 							<target name="copy Javadocs">
 								<copy todir="${project.basedir}/docs/JavaDocs/JavaDocsGenerationDir">
-									<fileset dir="${build.directory}/site/apidocs">
+									<fileset dir="${project.build.directory}/site/apidocs">
 										<include name="**/*" />
 									</fileset>
 								</copy>
