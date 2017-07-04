@@ -349,7 +349,7 @@
         </f:facet>
     
         <h:graphicImage alt="" value="#{item.processingStatusEnum.bigImagePath}"
-                        title="#{item.processingStatusEnum.title}"/>
+                        title="#{msgs.get(item.processingStatusEnum.title)}"/>
     
         <h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px"
                       rendered="#{item.priority == 1}"/>
