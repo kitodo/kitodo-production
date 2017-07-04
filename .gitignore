@@ -1,7 +1,4 @@
 # local development
 /config-local
 # Maven
-**target/
-**.settings
-**.project
-**.classpath
+**/target/
