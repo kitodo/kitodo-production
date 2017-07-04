@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -86,7 +87,7 @@ public class FileService {
     public URI createDirectory(URI parentFolderUri, String directoryName) {
         File file = new File(mapUriToKitodoUri(parentFolderUri).getPath(), directoryName);
         file.mkdir();
-        return unmapUriFromKitodoUri(file.toURI());
+        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
     }
 
     /**
@@ -99,7 +100,7 @@ public class FileService {
     public URI createDirectory(String directoryName) {
         File file = new File(mapUriToKitodoUri(URI.create(directoryName)));
         file.mkdir();
-        return unmapUriFromKitodoUri(file.toURI());
+        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
     }
 
     /**
@@ -528,7 +529,7 @@ public class FileService {
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
+        return mapUriToKitodoUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
     }
 
     private String getTemporaryMetadataFileName(URI fileName) {
@@ -541,18 +542,18 @@ public class FileService {
     }
 
     /**
-     * This method is needed for migraion purposes. It mappes existing
-     * filePathes to the Correct URI.
+     * This method is needed for migration purposes. It maps existing filePaths
+     * to the correct URI.
      *
      * @param process
      *            the process, the uri is needed for.
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
-        String pfad = process.getId().toString();
+        String path = process.getId().toString();
         // TODO: Find out, why File.seperator is not working here
-        pfad = pfad.replaceAll(" ", "__") + "/";
-        return URI.create(pfad);
+        path = path.replaceAll(" ", "__") + "/";
+        return mapUriToKitodoUri(URI.create(path));
     }
 
     /**
@@ -656,8 +657,19 @@ public class FileService {
         return sourceFolder;
     }
 
-    URI mapUriToKitodoUri(URI uri) {
-        return new File(ConfigCore.getKitodoDataDirectory() + uri).toURI();
+    /**
+     * Map relative URI to absolute kitodo data directory uri.
+     * 
+     * @param uri
+     *            relative path
+     * @return absolute URI path
+     */
+    public URI mapUriToKitodoUri(URI uri) {
+        String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
+        if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
+            return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
+        }
+        return uri;
     }
 
     URI unmapUriFromKitodoUri(URI uri) {
@@ -679,7 +691,9 @@ public class FileService {
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(URI processSubTypeURI) {
-        processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
+        if (!processSubTypeURI.isAbsolute()) {
+            processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
+        }
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(new File(processSubTypeURI));
         for (File file : files) {

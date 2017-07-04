@@ -16,7 +16,9 @@ import static junit.framework.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 
+import de.sub.goobi.config.ConfigCore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +40,8 @@ public class FilesystemHelperTest {
     @Test(expected = java.io.FileNotFoundException.class)
     public void renamingOfNonExistingFileShouldThrowFileNotFoundException() throws IOException {
         FileService fileService = new FileService();
-        URI oldFileName = new File("old.xml").toURI();
+        URI oldFileName = Paths.get(ConfigCore.getKitodoDataDirectory() + "none.xml").toUri();
         String newFileName = "new.xml";
-
         fileService.renameFile(oldFileName, newFileName);
     }
 
@@ -87,10 +88,5 @@ public class FilesystemHelperTest {
         URI resource = fileService.createResource(fileName);
         fileService.write(resource).write(4);
         return resource;
-    }
-
-    private void deleteFile(String fileName) {
-        File testFile = new File(fileName);
-        testFile.delete();
     }
 }
