@@ -67,10 +67,8 @@ mvn clean
 mvn javadoc:aggregate 
 mvn --non-recursive antrun:run
 ```
-
 Be careful on committing. Look twice what you commit. It may be the case that you checked out the JavaDocs and deleted them
 during the build process locally. It is possible you don't want to commit them (as they are locally deleted).
-
 
 #### Javadoc is graceful
 The configuration of the Javadoc-plugin is set to be graceful. The config tells Javadoc not to stop if there is an error and not
