@@ -39,3 +39,18 @@ Most probably, you will have to adjust these four files:
 * log4j2.properties
 
 Setting up a Kitodo instance can be quite tricky. For more help on how to configure Kitodo, please check the [installation guides](https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung), the [GitHub Wiki](https://github.com/kitodo/kitodo-production/wiki) or ask questions on the [mailing lists](https://github.com/kitodo/kitodo-production/wiki#Mailingliste).
+
+### Generating Javadocs
+
+The generation of Javadocs is issued by calling 
+``` 
+mvn javadoc:aggregate
+```
+inside the Kitodo.Production main folder. This call produces the documentation inside the default directory beneath *${project.basedir}/target/site*. 
+
+To transport the generated file to the correct place (*${project.basedir}/docs*) issue
+```
+mvn --non-recursive antrun:run
+```
+
+Afterwards the contents of the "docs" directory may be committed. 
