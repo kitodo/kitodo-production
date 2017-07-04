@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.filters.FileListFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
