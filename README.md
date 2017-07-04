@@ -73,10 +73,10 @@ during the build process locally. It is possible you don't want to commit them (
 #### Javadoc is graceful
 The configuration of the Javadoc-plugin is set to be graceful. The config tells Javadoc not to stop if there is an error and not
 to fail if there was one. This gives the developer the chance to generate "incorrect" Javadocs which also includes
-Javadocs that are incomplete. 
+Javadocs that are incomplete (for example because of missing docs for a parameter of a function). 
 
 Changing these parameters may result in Javadocs of a higher quality as lots of documentation is requested but also may
-result in no documentation at all because the compilation just stops.
+result in no documentation at all because the compilation just stops because of bad or insufficient Javadoc comments.
 
 ```xml
 <configuration>
