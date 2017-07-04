@@ -27,13 +27,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Crashes")
 public class StatisticsRenderingElementTest {
 
-    Locale locale = new Locale("GERMAN");
-    IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-    StatisticsManager testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
-
+    private Locale locale = new Locale("GERMAN");
+    private IDataSource testFilter = new UserDefinedFilter("stepdone:5");
+    private StatisticsManager testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
     private DataTable inDataTable = new DataTable("testTable");
     private IStatisticalQuestion inQuestion = testManager.getStatisticMode().getStatisticalQuestion();
     private StatisticsRenderingElement testElement = new StatisticsRenderingElement(inDataTable, inQuestion);
@@ -52,17 +50,16 @@ public class StatisticsRenderingElementTest {
         assertNotNull(testStatisticsRenderingElement);
     }
 
+    @Ignore("crashes")
     @Test
     public final void testCreateRenderer() {
         ConfigCore.setImagesPath(tempPath);
         testElement.createRenderer(true);
-
     }
 
     @Test
     public final void testGetDataTable() {
         assertEquals("testTable", testElement.getDataTable().getName());
-
     }
 
     @Test
@@ -76,6 +73,7 @@ public class StatisticsRenderingElementTest {
         assertNotNull(testElement.getTitle());
     }
 
+    @Ignore("crashes")
     @Test
     public final void testGetImageUrl() {
         ConfigCore.setImagesPath(tempPath);

@@ -21,12 +21,11 @@ import org.hibernate.Criteria;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("All tests crashing")
-public class UserDefinedFilterTest {
+public class UserDefinedFilterIT {
 
-    UserDefinedFilter filter = new UserDefinedFilter("stepdone:5");
-    List<Integer> globalId = filter.getIDList();
-    UserDefinedFilter filter2 = new UserDefinedFilter(globalId);
+    private UserDefinedFilter filter = new UserDefinedFilter("stepdone:5");
+    private List<Integer> globalId = filter.getIDList();
+    private UserDefinedFilter filter2 = new UserDefinedFilter(globalId);
 
     @Test
     public void testUserDefinedFilterListOfInteger() {
@@ -41,6 +40,7 @@ public class UserDefinedFilterTest {
         assertNotNull(filterWithString);
     }
 
+    @Ignore("compare class with string...")
     @Test
     public void testGetCriteria() {
         Criteria crit1, crit2;
