@@ -82,6 +82,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.filters.FileBeginEndFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
@@ -747,15 +748,9 @@ public class ProcessService extends TitleSearchService<Process> {
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
-            FilenameFilter filterVerz = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return (name.endsWith("_" + DIRECTORY_SUFFIX) && name.startsWith(DIRECTORY_PREFIX + "_"));
-                }
-            };
-
+            FilenameFilter filterDirectory = new FileBeginEndFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
             URI origOrdner = null;
-            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
             for (URI aVerzeichnisse : verzeichnisse) {
                 origOrdner = aVerzeichnisse;
             }
