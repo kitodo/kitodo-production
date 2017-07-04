@@ -564,40 +564,40 @@ public class FileService {
      *            the process to get the sublocation for.
      * @param processSubType
      *            The subType.
-     * @param id
-     *            the id of the single object (e.g. image) if null, the root
+     * @param resourceName
+     *            the name of the single object (e.g. image) if null, the root
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String id) {
+    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
 
-        if (id == null) {
-            id = "";
+        if (resourceName == null) {
+            resourceName = "";
         }
 
         switch (processSubType) {
             case IMAGE:
-                return URI.create(processDataDirectory + "images/" + id);
+                return URI.create(processDataDirectory + "images/" + resourceName);
             case IMAGE_SOURCE:
-                return URI.create(getSourceDirectory(process) + id);
+                return URI.create(getSourceDirectory(process) + resourceName);
             case META_XML:
                 return URI.create(processDataDirectory + "meta.xml");
             case TEMPLATE:
                 return URI.create(processDataDirectory + "template.xml");
             case IMPORT:
-                return URI.create(processDataDirectory + "import/" + id);
+                return URI.create(processDataDirectory + "import/" + resourceName);
             case OCR:
                 return URI.create(processDataDirectory + "ocr/");
             case OCR_PDF:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_pdf/" + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_pdf/" + resourceName);
             case OCR_TXT:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_txt/" + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_txt/" + resourceName);
             case OCR_WORD:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_wc/" + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_wc/" + resourceName);
             case OCR_ALTO:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_alto/" + id);
+                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_alto/" + resourceName);
             default:
                 return processDataDirectory;
         }
