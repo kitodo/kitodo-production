@@ -103,5 +103,5 @@ You may run MkDocs (the tool that is used by ReadTheDocs under the hood) locally
 * run  "mkdocs serve" at the command line 
 * point your browser to http://127.0.0.1:8000/
 
-For more information check [this page](check this page http://www.mkdocs.org/#getting-started).
+For more information check http://www.mkdocs.org/#getting-started.
  
