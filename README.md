@@ -87,3 +87,21 @@ result in no documentation at all because the compilation just stops because of 
 	<additionalparam>-Xdoclint:none</additionalparam>
 </configuration>
 ```
+
+### Viewing documentation
+Generally there is the idea to generate a viewable form of the documentation automatically by ReadTheDocs. There is a project set 
+up (https://readthedocs.org/projects/kitodo-production/) that has a connection to the Kitodo.Production development project.
+Under normal conditions any check in to the docs-path of that project should trigger a rebuild of the documentation.
+
+What if not?  
+
+#### Checking the documentation locally
+You may run MkDocs (the tool that is used by ReadTheDocs under the hood) locally as well. To do that 
+
+* install MkDocs on your machine by following the instruction mentioned [here](http://www.mkdocs.org/#installation)
+* change to the Kitodo.Production main directory (the one where the "docs" directory can be found)
+* run  "mkdocs serve" at the command line 
+* point your browser to http://127.0.0.1:8000/
+
+For more information check [this page](check this page http://www.mkdocs.org/#getting-started).
+ 
