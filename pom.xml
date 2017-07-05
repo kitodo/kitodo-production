@@ -247,9 +247,6 @@
                                 in a certain target -->
                             <!-- all the docs are to be generated inside 
                                 docs/JavaDocs -->
-                            <!-- <outputDirectory>/home/flo/git/kitodo-production/docs/JavaDocs/JavaDocsGenerationDir</outputDirectory> -->
-                            <!-- <reportOutputDirectory>/home/flo/git/kitodo-production/docs/JavaDocs/JavaDocsGenerationDir</reportOutputDirectory> -->
-
                         </configuration>
                     </execution>
                 </executions>
