@@ -30,6 +30,8 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -47,7 +49,7 @@ import org.kitodo.services.ServiceManager;
 public class HelperForm implements Serializable {
     private static final long serialVersionUID = -5872893771807845586L;
     private transient ServiceManager serviceManager = new ServiceManager();
-
+    private static final Logger logger = LogManager.getLogger(HelperForm.class);
     public static final String MAIN_JSF_PATH = "/newpages";
     public static final String IMAGE_PATH = "/newpages/images";
     public static final String CSS_PATH = "/css";
@@ -140,7 +142,7 @@ public class HelperForm implements Serializable {
                 answer.add(new SelectItem(d, d.getTitle(), null));
             }
         } catch (DAOException e) {
-
+            logger.error(e);
         }
 
         return answer;

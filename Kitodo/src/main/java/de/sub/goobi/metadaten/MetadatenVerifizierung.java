@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -45,6 +47,7 @@ public class MetadatenVerifizierung {
     List<DocStruct> docStructsOhneSeiten;
     Process myProcess;
     boolean autoSave = false;
+    private static final Logger logger = LogManager.getLogger(MetadatenVerifizierung.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -488,6 +491,7 @@ public class MetadatenVerifizierung {
                     myStruct.addMetadata(createdElement);
                 }
             } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                logger.error(e);
             }
 
         }

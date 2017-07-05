@@ -168,6 +168,7 @@ public class ModuleServerForm implements Serializable {
             Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
             logger.error(e);
         } catch (XmlRpcException e) {
+            logger.error(e);
         }
     }
 

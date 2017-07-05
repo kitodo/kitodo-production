@@ -29,6 +29,8 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.IProcessDataExport;
 import org.kitodo.data.database.beans.Process;
 
@@ -38,6 +40,8 @@ import org.kitodo.data.database.beans.Process;
  * @author Steffen Hankiewicz
  */
 public class ExportDocket implements IProcessDataExport {
+
+    private static final Logger logger = LogManager.getLogger(ExportDocket.class);
 
     /**
      * This method exports the production metadata as run note to a given
@@ -122,6 +126,7 @@ public class ExportDocket implements IProcessDataExport {
         try {
             return impl.newTransformer(streamSource);
         } catch (TransformerConfigurationException e) {
+            logger.error(e);
         }
         return null;
     }

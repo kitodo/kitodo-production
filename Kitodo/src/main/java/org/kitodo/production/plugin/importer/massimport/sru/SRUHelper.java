@@ -26,6 +26,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -47,8 +49,8 @@ import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
 public class SRUHelper {
+    private static final Logger logger = LogManager.getLogger(SRUHelper.class);
     private static final Namespace SRW = Namespace.getNamespace("srw", "http://www.loc.gov/zing/srw/");
-
     private static final Namespace PICA = Namespace.getNamespace("pica", "info:srw/schema/5/picaXML-v1.0");
 
     // private static final Namespace DC = Namespace.getNamespace("dc",
@@ -71,9 +73,9 @@ public class SRUHelper {
         SRUClient client;
         try {
             client = new SRUClient("http://" + address, "picaxml", null, null);
-
             return client.getSearchResponse("pica.ppn=" + ppn);
         } catch (MalformedURLException e) {
+            logger.error(e);
         }
         return "";
     }

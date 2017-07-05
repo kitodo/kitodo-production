@@ -189,6 +189,7 @@ class UGHUtils {
                 }
             }
         } catch (IOException e) {
+            logger.error(e);
         }
         return inLanguage;
     }

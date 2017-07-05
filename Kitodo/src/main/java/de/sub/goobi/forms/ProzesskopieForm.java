@@ -565,6 +565,7 @@ public class ProzesskopieForm implements Serializable {
                             myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
                                     .get(0);
                         } catch (RuntimeException e) {
+                            logger.error(e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
@@ -874,6 +875,7 @@ public class ProzesskopieForm implements Serializable {
                         try {
                             myTempChild = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
+                            logger.error(e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {

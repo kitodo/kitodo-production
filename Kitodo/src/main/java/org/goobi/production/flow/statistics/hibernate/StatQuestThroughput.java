@@ -112,6 +112,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
         try {
             this.myIDlist = originalFilter.getIDList();
         } catch (UnsupportedOperationException e) {
+            logger.error(e);
         }
 
         if (myIDlist == null || myIDlist.size() == 0) {

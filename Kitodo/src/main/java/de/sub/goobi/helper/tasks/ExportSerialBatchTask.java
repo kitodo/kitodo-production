@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Batch;
@@ -51,6 +53,7 @@ import ugh.fileformats.mets.MetsModsImportExport;
  */
 public class ExportSerialBatchTask extends EmptyTask {
 
+    private static final Logger logger = LogManager.getLogger(ExportSerialBatchTask.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -182,6 +185,7 @@ public class ExportSerialBatchTask extends EmptyTask {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
+            logger.error(e);
         }
     }
 
@@ -223,6 +227,7 @@ public class ExportSerialBatchTask extends EmptyTask {
         try {
             type = root.getAllChildren().get(0).getType().getName();
         } catch (NullPointerException e) {
+            logger.error(e);
         }
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
         Prefs ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());
