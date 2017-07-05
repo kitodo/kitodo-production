@@ -1663,7 +1663,9 @@ public class Metadaten {
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
         FilenameFilter filterDirectory = new IsDirectoryFilter();
         ArrayList<URI> subUris = fileService.getSubUris(filterDirectory, dir);
-        this.allTifFolders.addAll(subUris);
+        ArrayList<URI> unmappedSubUris = fileService.unmapProcessSpecificPartOfUri(subUris, this.myProzess,
+                ProcessSubType.IMAGE, "");
+        this.allTifFolders.addAll(unmappedSubUris);
 
         if (ConfigCore.getParameter("MetsEditorDefaultSuffix", null) != null) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix");

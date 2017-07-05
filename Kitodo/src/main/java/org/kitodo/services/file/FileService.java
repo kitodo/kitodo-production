@@ -581,29 +581,74 @@ public class FileService {
             resourceName = "";
         }
 
+        return URI.create(processDataDirectory + getProcessSubType(process, processSubType, resourceName));
+    }
+
+    /**
+     * Unmap process specific part of URI e.g 3/images. Lack of this method was
+     * causing error of double uri creation e.g 3/images/3/images/scans_tif
+     * 
+     * @param uriList
+     *            list of URIs for unmap
+     * @param process
+     *            object
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return List of unmapped URIs
+     */
+    public ArrayList<URI> unmapProcessSpecificPartOfUri(ArrayList<URI> uriList, Process process,
+            ProcessSubType processSubType, String resourceName) {
+        ArrayList<URI> unmappedURI = new ArrayList<>();
+        for (URI uri : uriList) {
+            String uriString = uri.toString();
+            String processSpecificPartOfUri = getProcessSubType(process, processSubType, resourceName);
+            if (uriString.contains(processSpecificPartOfUri)) {
+                String[] split = uriString.split(processSpecificPartOfUri);
+                String shortUri = split[1];
+                unmappedURI.add(URI.create(shortUri));
+            }
+            unmappedURI.add(uri);
+        }
+        return unmappedURI;
+    }
+
+    /**
+     * Get part of URI specific for process and process sub type.
+     * 
+     * @param process
+     *            object
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return process specific part of URI
+     */
+    private String getProcessSubType(Process process, ProcessSubType processSubType, String resourceName) {
         switch (processSubType) {
             case IMAGE:
-                return URI.create(processDataDirectory + "images/" + resourceName);
+                return "images/" + resourceName;
             case IMAGE_SOURCE:
-                return URI.create(getSourceDirectory(process) + resourceName);
+                return getSourceDirectory(process) + resourceName;
             case META_XML:
-                return URI.create(processDataDirectory + "meta.xml");
+                return "meta.xml";
             case TEMPLATE:
-                return URI.create(processDataDirectory + "template.xml");
+                return "template.xml";
             case IMPORT:
-                return URI.create(processDataDirectory + "import/" + resourceName);
+                return "import/" + resourceName;
             case OCR:
-                return URI.create(processDataDirectory + "ocr/");
+                return "ocr/";
             case OCR_PDF:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_pdf/" + resourceName);
+                return "ocr/" + process.getTitle() + "_pdf/" + resourceName;
             case OCR_TXT:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_txt/" + resourceName);
+                return "ocr/" + process.getTitle() + "_txt/" + resourceName;
             case OCR_WORD:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_wc/" + resourceName);
+                return "ocr/" + process.getTitle() + "_wc/" + resourceName;
             case OCR_ALTO:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_alto/" + resourceName);
+                return "ocr/" + process.getTitle() + "_alto/" + resourceName;
             default:
-                return processDataDirectory;
+                return "";
         }
     }
 
@@ -713,7 +758,6 @@ public class FileService {
         for (File file : files) {
             resultList.add(unmapUriFromKitodoUri(file.toURI()));
         }
-
         return resultList;
     }
 

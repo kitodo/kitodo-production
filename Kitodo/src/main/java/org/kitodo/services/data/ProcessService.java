@@ -674,7 +674,9 @@ public class ProcessService extends TitleSearchService<Process> {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 ArrayList<URI> folderList = fileService.getSubUris(dir);
-                for (URI folder : folderList) {
+                ArrayList<URI> unmappedFolderList = fileService.unmapProcessSpecificPartOfUri(folderList, process,
+                        ProcessSubType.IMAGE, "");
+                for (URI folder : unmappedFolderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
                         break;

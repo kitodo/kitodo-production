@@ -490,9 +490,16 @@ public class MetadatenImagesHelper {
         }
         /* Verzeichnis einlesen */
         ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, dir);
+        ArrayList<URI> unmappedFiles = fileService.unmapProcessSpecificPartOfUri(files, myProcess, ProcessSubType.IMAGE, "");
+
+        ArrayList<URI> finalFiles = new ArrayList<>();
+        for (URI unmappedFile : unmappedFiles) {
+            String newURI = unmappedFile.toString().replace(directory.toString(), "");
+            finalFiles.add(URI.create(newURI));
+        }
         List<URI> dataList = new ArrayList<>();
-        if (files != null && files.size() > 0) {
-            dataList.addAll(files);
+        if (finalFiles.size() > 0) {
+            dataList.addAll(finalFiles);
             /* alle Dateien durchlaufen */
         }
         List<URI> orderedFilenameList = new ArrayList<>();
