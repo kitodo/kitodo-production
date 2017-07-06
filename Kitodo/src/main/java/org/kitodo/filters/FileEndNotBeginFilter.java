@@ -25,12 +25,17 @@ public class FileEndNotBeginFilter implements FilenameFilter {
     /**
      * Filter files by given begin and end of file.
      *
+     * @param notBegin
+     *            file name should not start from this String
      * @param end
-     *            String
+     *            file name should end with this String
+     * @throws IllegalArgumentException
+     *             it is thrown in case one or both parameters are null or empty
+     *             Strings
      */
     public FileEndNotBeginFilter(String notBegin, String end) {
-        if (notBegin == null || end == null) {
-            throw new IllegalArgumentException("No filter for file begin or end given.");
+        if (notBegin == null || notBegin.equals("") || end == null || end.equals("")) {
+            throw new IllegalArgumentException("No filter or empty filter for file begin or end is given.");
         }
         this.notBegin = notBegin;
         this.end = end;

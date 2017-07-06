@@ -19,14 +19,16 @@ public class FileListFilter implements FilenameFilter {
     private String name;
 
     /**
-     * Filter file list.
+     * Filter file list according to the given name.
      *
      * @param name
      *            String
+     * @throws IllegalArgumentException
+     *             it is thrown in case parameter is null or empty String
      */
     public FileListFilter(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("No filter name given.");
+        if (name == null || name.equals("")) {
+            throw new IllegalArgumentException("No filter or empty name is given.");
         }
         this.name = name;
     }

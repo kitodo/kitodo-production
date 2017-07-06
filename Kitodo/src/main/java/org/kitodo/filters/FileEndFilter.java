@@ -25,11 +25,13 @@ public class FileEndFilter implements FilenameFilter {
      * Filter files by given file end.
      *
      * @param end
-     *            String
+     *            file name should end with this String
+     * @throws IllegalArgumentException
+     *             it is thrown in case parameter is null or empty String
      */
     public FileEndFilter(String end) {
-        if (end == null) {
-            throw new IllegalArgumentException("No filter for file end given.");
+        if (end == null || end.equals("")) {
+            throw new IllegalArgumentException("No filter or empty filter for file end is given.");
         }
         this.end = end;
     }
