@@ -861,12 +861,12 @@ public class FileService {
     }
 
     /**
-     * Gets the uri to the temporal directory.
+     * Gets the URI to the temporal directory.
      *
-     * @return the uri to the temporal directory.
+     * @return the URI to the temporal directory.
      */
     public URI getTemporalDirectory() {
-        return URI.create(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/"));
+        return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toUri();
     }
 
     /**
