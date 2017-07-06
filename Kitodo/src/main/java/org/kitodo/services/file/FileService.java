@@ -56,9 +56,7 @@ import ugh.fileformats.mets.XStream;
 public class FileService {
 
     private static final Logger logger = LogManager.getLogger(FileService.class);
-
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -99,16 +97,18 @@ public class FileService {
     }
 
     /**
-     * Creates a Directory with a given name.
+     * Creates a directory with a given name.
      *
      * @param directoryName
      *            the name of the directory.
-     * @return The URI of the new directory.
+     * @return the URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
         File file = new File(mapUriToKitodoDataDirectoryUri(URI.create(directoryName)));
-        file.mkdir();
-        return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
+        if (file.mkdir()) {
+            return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
+        }
+        return URI.create("");
     }
 
     /**
@@ -179,7 +179,8 @@ public class FileService {
                         + "Forcing immediate garbage collection now!");
                 System.gc();
             }
-            success = new File(mapUriToKitodoDataDirectoryUri(oldFileUri)).renameTo(new File(mapUriToKitodoDataDirectoryUri(newFileUri)));
+            success = new File(mapUriToKitodoDataDirectoryUri(oldFileUri))
+                    .renameTo(new File(mapUriToKitodoDataDirectoryUri(newFileUri)));
             if (!success) {
                 if (millisWaited == 0 && logger.isInfoEnabled()) {
                     logger.info("Renaming " + fileUri + " failed. File may be locked. Retrying...");
@@ -280,7 +281,7 @@ public class FileService {
     }
 
     /**
-     * Copies a File from a given URI to a given uri.
+     * Copies a file from a given URI to a given URI.
      *
      * @param srcFile
      *            the uri to copy from
@@ -290,7 +291,8 @@ public class FileService {
      *             if copying fails
      */
     public void copyFile(URI srcFile, URI destFile) throws IOException {
-        FileUtils.copyFile(new File(mapUriToKitodoDataDirectoryUri(srcFile)), new File(mapUriToKitodoDataDirectoryUri(destFile)));
+        FileUtils.copyFile(new File(mapUriToKitodoDataDirectoryUri(srcFile)),
+                new File(mapUriToKitodoDataDirectoryUri(destFile)));
     }
 
     /**
@@ -309,17 +311,20 @@ public class FileService {
     }
 
     /**
-     * Writes to a File at a given URI.
+     * Writes to a file at a given URI.
      *
      * @param uri
-     *            The Uri, to write to.
-     * @return An Outputstream to the file at the given URI.
+     *            the URI, to write to.
+     * @return an output stream to the file at the given URI.
      * @throws IOException
-     *             If file cannot be accessed
+     *             if file cannot be accessed
      */
     public OutputStream write(URI uri) throws IOException {
         if (!fileExist(uri)) {
-            new File(mapUriToKitodoDataDirectoryUri(uri)).createNewFile();
+            boolean newFileCreated = new File(mapUriToKitodoDataDirectoryUri(uri)).createNewFile();
+            if (!newFileCreated) {
+                logger.info("File was not created!");
+            }
         }
         return new FileOutputStream(new File(mapUriToKitodoDataDirectoryUri(uri)));
     }
@@ -824,20 +829,22 @@ public class FileService {
     }
 
     /**
-     * Creates a resource at a given uri with a given name
+     * Creates a resource at a given URI with a given name.
      *
      * @param targetFolder
-     *            the target folder.
+     *            the URI of the target folder
      * @param name
      *            the name of the new resource
-     * @return The uri of the created resource
+     * @return the URI of the created resource
      * @throws IOException
      *             if creation failed.
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
         File file = new File(mapUriToKitodoDataDirectoryUri(targetFolder).resolve(name));
-        boolean newFile = file.createNewFile();
-        return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
+        if (file.exists() || file.createNewFile()) {
+            return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
+        }
+        return URI.create("");
     }
 
     /**
