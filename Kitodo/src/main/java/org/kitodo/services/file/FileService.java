@@ -576,12 +576,12 @@ public class FileService {
     public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+        String processDataDirectoryPath = new File(processDataDirectory).getPath();
 
         if (resourceName == null) {
             resourceName = "";
         }
-
-        return URI.create(processDataDirectory + getProcessSubType(process, processSubType, resourceName));
+        return Paths.get(processDataDirectoryPath, getProcessSubType(process, processSubType, resourceName)).toUri();
     }
 
     /**
