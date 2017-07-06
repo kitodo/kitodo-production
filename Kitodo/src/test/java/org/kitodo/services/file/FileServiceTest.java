@@ -60,7 +60,7 @@ public class FileServiceTest {
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
         Assert.assertTrue(file.exists());
-        Assert.assertEquals(testMetaUri, fileService.unmapUriFromKitodoUri(file.toURI()));
+        Assert.assertEquals(testMetaUri, fileService.unmapUriFromKitodoDataDirectoryUri(file.toURI()));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class FileServiceTest {
         file = fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaExisting"));
 
         Assert.assertTrue(new File(file).exists());
-        Assert.assertEquals(testMetaUri, fileService.unmapUriFromKitodoUri(file));
+        Assert.assertEquals(testMetaUri, fileService.unmapUriFromKitodoDataDirectoryUri(file));
     }
 
     @Test

@@ -93,7 +93,7 @@ public class FileService {
         if (directoryName != null && !directoryName.equals("")) {
             File file = new File(mapUriToKitodoDataDirectoryUri(parentFolderUri).getPath(), directoryName);
             file.mkdir();
-            return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
+            return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
         }
         return parentFolderUri;
     }
@@ -108,7 +108,7 @@ public class FileService {
     public URI createDirectory(String directoryName) {
         File file = new File(mapUriToKitodoDataDirectoryUri(URI.create(directoryName)));
         file.mkdir();
-        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
+        return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
     }
 
     /**
@@ -740,7 +740,7 @@ public class FileService {
         return uri;
     }
 
-    URI unmapUriFromKitodoUri(URI uri) {
+    URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
         String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
         if (uri.toString().contains(kitodoDataDirectory)) {
             String[] split = uri.toString().split(kitodoDataDirectory);
@@ -765,7 +765,7 @@ public class FileService {
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(new File(processSubTypeURI));
         for (File file : files) {
-            resultList.add(unmapUriFromKitodoUri(file.toURI()));
+            resultList.add(unmapUriFromKitodoDataDirectoryUri(file.toURI()));
         }
 
         return resultList;
@@ -785,7 +785,7 @@ public class FileService {
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(filter, new File(processSubTypeURI));
         for (File file : files) {
-            resultList.add(unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri()));
+            resultList.add(unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri()));
         }
         return resultList;
     }
@@ -816,7 +816,7 @@ public class FileService {
     public URI createResource(URI targetFolder, String name) throws IOException {
         File file = new File(mapUriToKitodoDataDirectoryUri(targetFolder).resolve(name));
         boolean newFile = file.createNewFile();
-        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
+        return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
     }
 
     /**
@@ -1031,6 +1031,6 @@ public class FileService {
      * @return the (shorter) intern uri
      */
     public URI getInternUri(URI uri) {
-        return unmapUriFromKitodoUri(uri);
+        return unmapUriFromKitodoDataDirectoryUri(uri);
     }
 }
