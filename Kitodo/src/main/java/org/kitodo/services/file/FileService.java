@@ -726,7 +726,22 @@ public class FileService {
     }
 
     /**
-     * Map relative URI to absolute kitodo data directory uri.
+     * Map relative URI to absolute kitodo config directory URI.
+     *
+     * @param uri
+     *            relative path
+     * @return absolute URI path
+     */
+    public URI mapUriToKitodoConfigDirectoryUri(URI uri) {
+        String kitodoConfigDirectory = ConfigCore.getKitodoConfigDirectory();
+        if (!uri.isAbsolute() && !uri.toString().contains(kitodoConfigDirectory)) {
+            return Paths.get(ConfigCore.getKitodoConfigDirectory(), uri.toString()).toUri();
+        }
+        return uri;
+    }
+
+    /**
+     * Map relative URI to absolute kitodo data directory URI.
      * 
      * @param uri
      *            relative path
@@ -740,14 +755,20 @@ public class FileService {
         return uri;
     }
 
+    URI unmapUriFromKitodoConfigDirectoryUri(URI uri) {
+        return unmapDirectory(uri, ConfigCore.getKitodoConfigDirectory());
+    }
+
     URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
-        String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
-        if (uri.toString().contains(kitodoDataDirectory)) {
-            String[] split = uri.toString().split(kitodoDataDirectory);
+        return unmapDirectory(uri, ConfigCore.getKitodoDataDirectory());
+    }
+
+    private URI unmapDirectory(URI uri, String directory) {
+        if (uri.toString().contains(directory)) {
+            String[] split = uri.toString().split(directory);
             String shortUri = split[1];
             return URI.create(shortUri);
         }
-
         return uri;
     }
 
