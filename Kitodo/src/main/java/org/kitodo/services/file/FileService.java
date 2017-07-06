@@ -813,7 +813,7 @@ public class FileService {
     public URI createResource(URI targetFolder, String name) throws IOException {
         File file = new File(mapUriToKitodoUri(targetFolder).resolve(name));
         boolean newFile = file.createNewFile();
-        return unmapUriFromKitodoUri(file.toURI());
+        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
     }
 
     /**
