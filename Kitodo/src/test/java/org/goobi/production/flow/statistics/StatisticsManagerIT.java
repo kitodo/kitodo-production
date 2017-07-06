@@ -49,7 +49,7 @@ public class StatisticsManagerIT {
 
     @BeforeClass
     public static void setUp() {
-        tempPath = serviceManager.getFileService().mapUriToKitodoUri(URI.create("pages/imagesTemp/"));
+        tempPath = serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(URI.create("pages/imagesTemp/"));
         testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
         testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
     }

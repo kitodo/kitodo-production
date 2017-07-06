@@ -91,7 +91,7 @@ public class FileService {
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
         if (directoryName != null && !directoryName.equals("")) {
-            File file = new File(mapUriToKitodoUri(parentFolderUri).getPath(), directoryName);
+            File file = new File(mapUriToKitodoDataDirectoryUri(parentFolderUri).getPath(), directoryName);
             file.mkdir();
             return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
         }
@@ -106,7 +106,7 @@ public class FileService {
      * @return The URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
-        File file = new File(mapUriToKitodoUri(URI.create(directoryName)));
+        File file = new File(mapUriToKitodoDataDirectoryUri(URI.create(directoryName)));
         file.mkdir();
         return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
     }
@@ -179,7 +179,7 @@ public class FileService {
                         + "Forcing immediate garbage collection now!");
                 System.gc();
             }
-            success = new File(mapUriToKitodoUri(oldFileUri)).renameTo(new File(mapUriToKitodoUri(newFileUri)));
+            success = new File(mapUriToKitodoDataDirectoryUri(oldFileUri)).renameTo(new File(mapUriToKitodoDataDirectoryUri(newFileUri)));
             if (!success) {
                 if (millisWaited == 0 && logger.isInfoEnabled()) {
                     logger.info("Renaming " + fileUri + " failed. File may be locked. Retrying...");
@@ -267,8 +267,8 @@ public class FileService {
      *            destination file as uri
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        sourceDirectory = mapUriToKitodoUri(sourceDirectory);
-        targetDirectory = mapUriToKitodoUri(targetDirectory);
+        sourceDirectory = mapUriToKitodoDataDirectoryUri(sourceDirectory);
+        targetDirectory = mapUriToKitodoDataDirectoryUri(targetDirectory);
         copyDirectory(new File(sourceDirectory), new File(targetDirectory));
     }
 
@@ -290,7 +290,7 @@ public class FileService {
      *             if copying fails
      */
     public void copyFile(URI srcFile, URI destFile) throws IOException {
-        FileUtils.copyFile(new File(mapUriToKitodoUri(srcFile)), new File(mapUriToKitodoUri(destFile)));
+        FileUtils.copyFile(new File(mapUriToKitodoDataDirectoryUri(srcFile)), new File(mapUriToKitodoDataDirectoryUri(destFile)));
     }
 
     /**
@@ -304,8 +304,8 @@ public class FileService {
      *             if copying fails.
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        FileUtils.copyFileToDirectory(new File(mapUriToKitodoUri(sourceDirectory)),
-                new File(mapUriToKitodoUri(targetDirectory)));
+        FileUtils.copyFileToDirectory(new File(mapUriToKitodoDataDirectoryUri(sourceDirectory)),
+                new File(mapUriToKitodoDataDirectoryUri(targetDirectory)));
     }
 
     /**
@@ -319,9 +319,9 @@ public class FileService {
      */
     public OutputStream write(URI uri) throws IOException {
         if (!fileExist(uri)) {
-            new File(mapUriToKitodoUri(uri)).createNewFile();
+            new File(mapUriToKitodoDataDirectoryUri(uri)).createNewFile();
         }
-        return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
+        return new FileOutputStream(new File(mapUriToKitodoDataDirectoryUri(uri)));
     }
 
     /**
@@ -334,7 +334,7 @@ public class FileService {
      *             if File cannot be accessed.
      */
     public InputStream read(URI uri) throws IOException {
-        URL url = mapUriToKitodoUri(uri).toURL();
+        URL url = mapUriToKitodoDataDirectoryUri(uri).toURL();
         return url.openStream();
     }
 
@@ -351,7 +351,7 @@ public class FileService {
         if (!fileExist(uri)) {
             return true;
         }
-        File file = new File(mapUriToKitodoUri(uri));
+        File file = new File(mapUriToKitodoDataDirectoryUri(uri));
         if (file.isFile()) {
             return file.delete();
         }
@@ -370,7 +370,7 @@ public class FileService {
      * @return True, if the file exists.
      */
     public boolean fileExist(URI uri) {
-        URI path = mapUriToKitodoUri(uri);
+        URI path = mapUriToKitodoDataDirectoryUri(uri);
         File file = new File(path);
         return file.exists();
     }
@@ -536,7 +536,7 @@ public class FileService {
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) {
-        return mapUriToKitodoUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
+        return mapUriToKitodoDataDirectoryUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
     }
 
     private String getTemporaryMetadataFileName(URI fileName) {
@@ -560,7 +560,7 @@ public class FileService {
     public URI getProcessBaseUriForExistingProcess(Process process) {
         String path = process.getId().toString();
         path = path.replaceAll(" ", "__") + "/";
-        return mapUriToKitodoUri(URI.create(path));
+        return mapUriToKitodoDataDirectoryUri(URI.create(path));
     }
 
     /**
@@ -732,7 +732,7 @@ public class FileService {
      *            relative path
      * @return absolute URI path
      */
-    public URI mapUriToKitodoUri(URI uri) {
+    public URI mapUriToKitodoDataDirectoryUri(URI uri) {
         String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
         if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
             return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
@@ -760,7 +760,7 @@ public class FileService {
      */
     public ArrayList<URI> getSubUris(URI processSubTypeURI) {
         if (!processSubTypeURI.isAbsolute()) {
-            processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
+            processSubTypeURI = mapUriToKitodoDataDirectoryUri(processSubTypeURI);
         }
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(new File(processSubTypeURI));
@@ -781,7 +781,7 @@ public class FileService {
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI processSubTypeURI) {
-        processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
+        processSubTypeURI = mapUriToKitodoDataDirectoryUri(processSubTypeURI);
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(filter, new File(processSubTypeURI));
         for (File file : files) {
@@ -814,7 +814,7 @@ public class FileService {
      *             if creation failed.
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
-        File file = new File(mapUriToKitodoUri(targetFolder).resolve(name));
+        File file = new File(mapUriToKitodoDataDirectoryUri(targetFolder).resolve(name));
         boolean newFile = file.createNewFile();
         return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
     }
@@ -849,7 +849,7 @@ public class FileService {
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
-        return new File(mapUriToKitodoUri(dir)).isDirectory();
+        return new File(mapUriToKitodoDataDirectoryUri(dir)).isDirectory();
     }
 
     /**

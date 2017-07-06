@@ -45,7 +45,7 @@ public class FileServiceTest {
     @Ignore("Script is not working")
     public void testCreateMetaDirectory() throws IOException {
         fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
-        File file = new File(fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMetaScript")));
+        File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaScript")));
 
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
@@ -55,7 +55,7 @@ public class FileServiceTest {
     @Test
     public void testCreateDirectory() {
         URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMeta");
-        File file = new File(fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMeta")));
+        File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMeta")));
 
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
@@ -66,7 +66,7 @@ public class FileServiceTest {
     @Test
     public void testCreateDirectoryWithMissingRoot() {
         fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
-        File file = new File(fileService.mapUriToKitodoUri(URI.create("fileServiceTestMissing/testMeta")));
+        File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTestMissing/testMeta")));
 
         Assert.assertFalse(file.exists());
     }
@@ -75,11 +75,11 @@ public class FileServiceTest {
     public void testCreateDirectoryWithAlreadyExistingDirectory() {
         fileService.createDirectory(URI.create("fileServiceTest"), "testMetaExisting");
 
-        URI file = fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMetaExisting"));
+        URI file = fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaExisting"));
         Assert.assertTrue(new File(file).exists());
 
         URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMetaExisting");
-        file = fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMetaExisting"));
+        file = fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaExisting"));
 
         Assert.assertTrue(new File(file).exists());
         Assert.assertEquals(testMetaUri, fileService.unmapUriFromKitodoUri(file));
