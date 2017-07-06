@@ -78,7 +78,9 @@ public class ProjectService extends TitleSearchService<Project> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(project, projectType);
+        if (project != null) {
+            indexer.performSingleRequest(project, projectType);
+        }
     }
 
     /**
@@ -167,7 +169,9 @@ public class ProjectService extends TitleSearchService<Project> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(project, projectType);
+        if (project != null) {
+            indexer.performSingleRequest(project, projectType);
+        }
     }
 
     public List<Project> search(String query) throws DAOException {

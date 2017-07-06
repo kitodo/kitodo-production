@@ -70,7 +70,9 @@ public class PropertyService extends TitleSearchService<Property> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(property, propertyType);
+        if (property != null) {
+            indexer.performSingleRequest(property, propertyType);
+        }
     }
 
     /**
@@ -152,7 +154,9 @@ public class PropertyService extends TitleSearchService<Property> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(property, propertyType);
+        if (property != null) {
+            indexer.performSingleRequest(property, propertyType);
+        }
     }
 
     /**

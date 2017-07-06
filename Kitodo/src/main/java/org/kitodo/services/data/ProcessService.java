@@ -148,7 +148,9 @@ public class ProcessService extends TitleSearchService<Process> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(process, processType);
+        if (process != null) {
+            indexer.performSingleRequest(process, processType);
+        }
     }
 
     /**
@@ -362,7 +364,9 @@ public class ProcessService extends TitleSearchService<Process> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(process, processType);
+        if (process != null) {
+            indexer.performSingleRequest(process, processType);
+        }
     }
 
     public List<Process> search(String query) throws DAOException {

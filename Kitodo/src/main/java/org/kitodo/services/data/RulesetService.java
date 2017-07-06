@@ -71,7 +71,9 @@ public class RulesetService extends TitleSearchService<Ruleset> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(ruleset, rulesetType);
+        if (ruleset != null) {
+            indexer.performSingleRequest(ruleset, rulesetType);
+        }
     }
 
     public Ruleset find(Integer id) throws DAOException {
@@ -115,7 +117,9 @@ public class RulesetService extends TitleSearchService<Ruleset> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(ruleset, rulesetType);
+        if (ruleset != null) {
+            indexer.performSingleRequest(ruleset, rulesetType);
+        }
     }
 
     /**

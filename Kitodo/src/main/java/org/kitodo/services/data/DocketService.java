@@ -73,7 +73,9 @@ public class DocketService extends TitleSearchService<Docket> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(docket, docketType);
+        if (docket != null) {
+            indexer.performSingleRequest(docket, docketType);
+        }
     }
 
     /**
@@ -105,7 +107,9 @@ public class DocketService extends TitleSearchService<Docket> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(docket, docketType);
+        if (docket != null) {
+            indexer.performSingleRequest(docket, docketType);
+        }
     }
 
     public List<Docket> search(String query) throws DAOException {

@@ -64,7 +64,9 @@ public class FilterService extends SearchService<Filter> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Filter filter) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(filter, filterType);
+        if (filter != null) {
+            indexer.performSingleRequest(filter, filterType);
+        }
     }
 
     /**
@@ -127,7 +129,9 @@ public class FilterService extends SearchService<Filter> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Filter filter) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(filter, filterType);
+        if (filter != null) {
+            indexer.performSingleRequest(filter, filterType);
+        }
     }
 
     /**

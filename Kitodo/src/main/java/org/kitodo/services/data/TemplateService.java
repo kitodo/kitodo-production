@@ -67,7 +67,9 @@ public class TemplateService extends SearchService<Template> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(template, templateType);
+        if (template != null) {
+            indexer.performSingleRequest(template, templateType);
+        }
     }
 
     /**
@@ -135,7 +137,9 @@ public class TemplateService extends SearchService<Template> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(template, templateType);
+        if (template != null) {
+            indexer.performSingleRequest(template, templateType);
+        }
     }
 
     /**

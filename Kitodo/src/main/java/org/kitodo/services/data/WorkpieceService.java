@@ -67,7 +67,9 @@ public class WorkpieceService extends SearchService<Workpiece> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(workpiece, workpieceType);
+        if (workpiece != null) {
+            indexer.performSingleRequest(workpiece, workpieceType);
+        }
     }
 
     /**
@@ -135,7 +137,9 @@ public class WorkpieceService extends SearchService<Workpiece> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(workpiece, workpieceType);
+        if (workpiece != null) {
+            indexer.performSingleRequest(workpiece, workpieceType);
+        }
     }
 
     /**

@@ -98,7 +98,9 @@ public class TaskService extends TitleSearchService<Task> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(task, taskType);
+        if (task != null) {
+            indexer.performSingleRequest(task, taskType);
+        }
     }
 
     /**
@@ -118,8 +120,10 @@ public class TaskService extends TitleSearchService<Task> {
     private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
             Process process = task.getProcess();
-            process.getTasks().remove(task);
-            serviceManager.getProcessService().saveToIndex(process);
+            if (process != null) {
+                process.getTasks().remove(task);
+                serviceManager.getProcessService().saveToIndex(process);
+            }
         } else {
             Process process = task.getProcess();
             serviceManager.getProcessService().saveToIndex(process);
@@ -129,8 +133,10 @@ public class TaskService extends TitleSearchService<Task> {
     private void manageProcessingUserDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
             User user = task.getProcessingUser();
-            user.getProcessingTasks().remove(task);
-            serviceManager.getUserService().saveToIndex(user);
+            if (user != null) {
+                user.getProcessingTasks().remove(task);
+                serviceManager.getUserService().saveToIndex(user);
+            }
         } else {
             User user = task.getProcessingUser();
             serviceManager.getUserService().saveToIndex(user);
@@ -200,7 +206,9 @@ public class TaskService extends TitleSearchService<Task> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(task, taskType);
+        if (task != null) {
+            indexer.performSingleRequest(task, taskType);
+        }
     }
 
     public List<Task> search(String query) throws DAOException {

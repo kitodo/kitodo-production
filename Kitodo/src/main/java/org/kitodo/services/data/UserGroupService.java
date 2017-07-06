@@ -75,7 +75,9 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(userGroup, userGroupType);
+        if (userGroup != null) {
+            indexer.performSingleRequest(userGroup, userGroupType);
+        }
     }
 
     /**
@@ -124,7 +126,9 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(userGroup, userGroupType);
+        if (userGroup != null) {
+            indexer.performSingleRequest(userGroup, userGroupType);
+        }
     }
 
     public List<UserGroup> search(String query) throws DAOException {

@@ -72,7 +72,9 @@ public class HistoryService extends SearchService<History> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(history, historyType);
+        if (history != null) {
+            indexer.performSingleRequest(history, historyType);
+        }
     }
 
     /**
@@ -137,7 +139,9 @@ public class HistoryService extends SearchService<History> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(history, historyType);
+        if (history != null) {
+            indexer.performSingleRequest(history, historyType);
+        }
     }
 
     /**
