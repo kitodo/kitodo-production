@@ -1729,19 +1729,8 @@ public class Metadaten {
                 if (this.myBild == null) {
                     this.myBild = dataList.get(0);
                 }
-                if (logger.isTraceEnabled()) {
-                    logger.trace("myBild: " + this.myBild);
-                }
-                String index = fileService.getFileName(dataList.get(i));
-                if (logger.isTraceEnabled()) {
-                    logger.trace("index: " + index);
-                }
-                String picture = fileService.getFileName(this.myBild);
-                if (logger.isTraceEnabled()) {
-                    logger.trace("picture: " + picture);
-                }
                 /* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
-                if (index.equals(picture)) {
+                if (isCurrentImageCorrectImage(dataList, i)) {
                     logger.trace("index == picture");
                     int pos = i + welches;
                     if (logger.isTraceEnabled()) {
@@ -1828,6 +1817,28 @@ public class Metadaten {
             }
         }
         checkImage();
+    }
+
+    /**
+     * Check if current image is the correct (actually wanted) image from the
+     * list.
+     * 
+     * @param dataList
+     *            list of all images
+     * @param i
+     *            iterator
+     * @return true or false
+     */
+    private boolean isCurrentImageCorrectImage(List<URI> dataList, int i) {
+        if (logger.isTraceEnabled()) {
+            logger.trace("myBild: " + this.myBild);
+        }
+        String index = fileService.getFileName(dataList.get(i));
+        if (logger.isTraceEnabled()) {
+            logger.trace("index: " + index);
+        }
+        String picture = fileService.getFileName(this.myBild);
+        return index.equals(picture);
     }
 
     private void checkImage() {
@@ -3097,8 +3108,7 @@ public class Metadaten {
                             .resolve(fileService.getFileName(fileToSort) + "_bak");
                     String sortedName = newfilenamePrefix + fileExtension.toLowerCase();
                     fileService.renameFile(tempFileName, sortedName);
-                    mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1)
-                            .setImageName(sortedName);
+                    mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName);
                 }
                 try {
                     URI ocr = fileService.getProcessSubTypeURI(myProzess, ProcessSubType.OCR, null);
