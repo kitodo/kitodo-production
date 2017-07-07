@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -74,7 +75,6 @@ public class FileService {
             ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
             createDirScript.run(Collections.singletonList(parentFolderUri + directoryName));
         }
-
     }
 
     /**
@@ -121,7 +121,6 @@ public class FileService {
      * @throws IOException
      *             If an I/O error occurs.
      */
-
     public void createDirectoryForUser(URI dirName, String userName) throws IOException {
         if (!serviceManager.getFileService().fileExist(dirName)) {
             ShellScript createDirScript = new ShellScript(
@@ -728,6 +727,25 @@ public class FileService {
         }
 
         return sourceFolder;
+    }
+
+    /**
+     * Map resource to its absolute path inside the Kitodo root folder.
+     * 
+     * @param session
+     *            current HTTP session
+     * @param folderPath
+     *            folder inside the root application
+     * @param resourceToMap
+     *            directory or file to map eg. css file
+     * @return absolute path to mapped resource
+     */
+    public URI mapUriToKitodoRootFolder(HttpSession session, String folderPath, String resourceToMap) {
+        if (folderPath == null) {
+            return Paths.get(session.getServletContext().getRealPath(""), resourceToMap).toUri();
+        } else {
+            return Paths.get(session.getServletContext().getRealPath(folderPath), resourceToMap).toUri();
+        }
     }
 
     /**
