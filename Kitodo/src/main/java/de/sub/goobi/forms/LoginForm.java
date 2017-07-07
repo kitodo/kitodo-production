@@ -252,17 +252,16 @@ public class LoginForm implements Serializable {
 
     private void AlteBilderAufraeumen() throws IOException {
         /* Pages-Verzeichnis mit den temporären Images ermitteln */
-        URI myPfad = serviceManager.getFileService()
-                .getInternUri(new File(ConfigCore.getTempImagesPathAsCompleteDirectory()).toURI());
+        URI path = ConfigCore.getTempImagesPathAsCompleteDirectory();
 
         /* Verzeichnis einlesen */
         FilenameFilter filter = new FileNameEndsWithFilter(".png");
-        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, myPfad);
+        ArrayList<URI> files = serviceManager.getFileService().getSubUris(filter, path);
 
         /* alle Dateien durchlaufen und die alten löschen */
-        if (dateien != null) {
-            for (URI aDateien : dateien) {
-                URI file = myPfad.resolve(aDateien);
+        if (files != null) {
+            for (URI aFiles : files) {
+                URI file = path.resolve(aFiles);
                 if ((System.currentTimeMillis() - new File(file).lastModified()) > 7200000) {
                     serviceManager.getFileService().delete(file);
                 }
