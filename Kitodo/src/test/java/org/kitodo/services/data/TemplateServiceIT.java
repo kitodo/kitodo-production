@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
@@ -56,10 +57,14 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldRemoveTemplate() throws Exception {
+        ProcessService processService = new ProcessService();
         TemplateService templateService = new TemplateService();
+
+        Process process = processService.find(1);
 
         Template template = new Template();
         template.setOrigin("To Remove");
+        template.setProcess(process);
         templateService.save(template);
         Template foundTemplate = templateService.convertSearchResultToObject(templateService.findById(3));
         assertEquals("Additional template was not inserted in database!", "To Remove", foundTemplate.getOrigin());
@@ -70,6 +75,7 @@ public class TemplateServiceIT {
 
         template = new Template();
         template.setOrigin("To remove");
+        template.setProcess(process);
         templateService.save(template);
         foundTemplate = templateService.convertSearchResultToObject(templateService.findById(4));
         assertEquals("Additional template was not inserted in database!", "To remove", foundTemplate.getOrigin());
