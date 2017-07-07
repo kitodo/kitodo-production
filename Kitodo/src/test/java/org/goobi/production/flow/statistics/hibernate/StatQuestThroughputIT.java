@@ -30,7 +30,7 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class StatQuestThroughputTest {
+public class StatQuestThroughputIT {
 
     StatQuestThroughput test = new StatQuestThroughput();
     Locale locale = new Locale("GERMAN");

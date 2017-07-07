@@ -36,11 +36,10 @@ import org.jfree.data.general.DefaultValueDataset;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.services.ServiceManager;
 
-public class StatisticsManagerTest {
+public class StatisticsManagerIT {
     static StatisticsManager testManager;
     static StatisticsManager testManager2;
     static Locale locale = new Locale("GERMAN");
@@ -119,7 +118,6 @@ public class StatisticsManagerTest {
         assertNotSame(StatisticsMode.PRODUCTION, testManager.getStatisticMode());
     }
 
-    @Ignore("Crashing")
     @Test
     public final void testCalculate() {
         ConfigCore.setImagesPath(tempPath);
