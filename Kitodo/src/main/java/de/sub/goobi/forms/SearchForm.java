@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -31,13 +32,16 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.services.ServiceManager;
 
 @Named("SearchForm")
 @RequestScoped
@@ -82,23 +86,25 @@ public class SearchForm {
     private String templatePropertyOperand = "";
     private String stepOperand = "";
 
+    private ServiceManager serviceManager = new ServiceManager();
+
     @Inject
     BeanManager beanManager;
 
     /**
      * Initialise drop down list of master piece property titles.
      */
+    // TODO: Use index here!
     protected void initMasterpiecePropertyTitles() {
-        Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Property.class);
-        crit.addOrder(Order.asc("titel"));
-        crit.setProjection(Projections.distinct(Projections.property("title")));
-        try {
-            @SuppressWarnings("unchecked")
-            List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-            this.masterpiecePropertyTitles.addAll(results);
-        } catch (HibernateException hbe) {
-            logger.warn("Catched HibernateException. List of master piece property titles could be empty!");
+        HashSet<Property> propertiesSet = new HashSet<>();
+        List<Workpiece> workpieces = serviceManager.getWorkpieceService().findAll();
+        for (Workpiece workpiece : workpieces) {
+            List<Property> properties = workpiece.getProperties();
+            propertiesSet.addAll(properties);
+
+        }
+        for (Property property : propertiesSet) {
+            this.masterpiecePropertyTitles.add(property.getTitle());
         }
     }
 
@@ -129,21 +135,17 @@ public class SearchForm {
     /**
      * Initialise drop down list of process property titles.
      */
+    // TODO: Use index here!
     protected void initProcessPropertyTitles() {
-        Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Property.class);
-        crit.addOrder(Order.asc("title"));
-        crit.setProjection(Projections.distinct(Projections.property("title")));
-        try {
-            @SuppressWarnings("unchecked")
-            List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-            for (String itstr : results) {
-                if (itstr != null) {
-                    this.processPropertyTitles.add(itstr);
-                }
-            }
-        } catch (HibernateException hbe) {
-            logger.warn("Catched HibernateException. List of process property titles could be empty!");
+        HashSet<Property> propertiesSet = new HashSet<>();
+        List<Process> processes = serviceManager.getProcessService().findAll();
+        for (Process process : processes) {
+            List<Property> properties = process.getProperties();
+            propertiesSet.addAll(properties);
+
+        }
+        for (Property property : propertiesSet) {
+            this.processPropertyTitles.add(property.getTitle());
         }
     }
 
@@ -159,34 +161,28 @@ public class SearchForm {
     /**
      * Initialise drop down list of step titles.
      */
+    // TODO: Use index here!
     protected void initStepTitles() {
-        Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Task.class);
-        crit.addOrder(Order.asc("title"));
-        crit.setProjection(Projections.distinct(Projections.property("title")));
-        try {
-            @SuppressWarnings("unchecked")
-            List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-            this.stepTitles.addAll(results);
-        } catch (HibernateException hbe) {
-            logger.warn("Catched HibernateException. List of step titles could be empty!");
+        List<Task> tasks = serviceManager.getTaskService().findAll();
+        for (Task task : tasks) {
+            this.stepTitles.add(task.getTitle());
         }
     }
 
     /**
      * Initialise drop down list of template property titles.
      */
+    // TODO: Use index here!
     protected void initTemplatePropertyTitles() {
-        Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Property.class);
-        crit.addOrder(Order.asc("title"));
-        crit.setProjection(Projections.distinct(Projections.property("title")));
-        try {
-            @SuppressWarnings("unchecked")
-            List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-            this.templatePropertyTitles.addAll(results);
-        } catch (HibernateException hbe) {
-            logger.warn("Catched HibernateException. List of template property titles could be empty!");
+        HashSet<Property> propertiesSet = new HashSet<>();
+        List<Template> templates = serviceManager.getTemplateService().findAll();
+        for (Template template : templates) {
+            List<Property> properties = template.getProperties();
+            propertiesSet.addAll(properties);
+
+        }
+        for (Property property : propertiesSet) {
+            this.templatePropertyTitles.add(property.getTitle());
         }
     }
 
@@ -434,10 +430,10 @@ public class SearchForm {
                     + this.stepdonetitle + "\" ";
         }
 
-        Bean<ProzessverwaltungForm> bean =
-                (Bean<ProzessverwaltungForm>) beanManager.resolve(beanManager.getBeans(ProzessverwaltungForm.class));
-        ProzessverwaltungForm form =
-                beanManager.getContext(bean.getScope()).get(bean, beanManager.createCreationalContext(bean));
+        Bean<ProzessverwaltungForm> bean = (Bean<ProzessverwaltungForm>) beanManager
+                .resolve(beanManager.getBeans(ProzessverwaltungForm.class));
+        ProzessverwaltungForm form = beanManager.getContext(bean.getScope()).get(bean,
+                beanManager.createCreationalContext(bean));
 
         if (form != null) {
             form.filter = search;
