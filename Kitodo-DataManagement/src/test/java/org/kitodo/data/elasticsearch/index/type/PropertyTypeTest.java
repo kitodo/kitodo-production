@@ -76,14 +76,14 @@ public class PropertyTypeTest {
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser
                 .parse("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":1},"
-                        + "{\"id\":2}],\"templates\":[]}");
+                        + "{\"id\":2}],\"type\":\"process\",\"templates\":[]}");
         assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
 
         property = prepareData().get(1);
         document = propertyType.createDocument(property);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Property2\",\"value\":\"templates\",\"workpieces\":[],"
-                + "\"processes\":[],\"templates\":[{\"id\":1}]}");
+                + "\"processes\":[],\"type\":\"template\",\"templates\":[{\"id\":1}]}");
         assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
