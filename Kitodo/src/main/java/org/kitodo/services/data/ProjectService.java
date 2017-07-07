@@ -46,15 +46,15 @@ public class ProjectService extends TitleSearchService<Project> {
     private List<StepInformation> commonWorkFlow = null;
     private ProjectDAO projectDAO = new ProjectDAO();
     private ProjectType projectType = new ProjectType();
-    private Indexer<Project, ProjectType> indexer = new Indexer<>(Project.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ProjectService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public ProjectService() {
         super(new Searcher(Project.class));
+        this.indexer = new Indexer<>(Project.class);
     }
 
     /**
@@ -73,6 +73,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(project, projectType);
@@ -125,6 +126,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(project, projectType);

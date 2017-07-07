@@ -42,15 +42,15 @@ public class HistoryService extends SearchService<History> {
 
     private HistoryDAO historyDAO = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
-    private Indexer<History, HistoryType> indexer = new Indexer<>(History.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(HistoryService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public HistoryService() {
         super(new Searcher(History.class));
+        this.indexer = new Indexer<>(History.class);
     }
 
     /**
@@ -69,6 +69,7 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(history, historyType);
@@ -133,6 +134,7 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(history, historyType);

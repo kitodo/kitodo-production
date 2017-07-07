@@ -31,6 +31,7 @@ import java.util.Set;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
@@ -48,6 +49,7 @@ import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -64,15 +66,15 @@ public class TaskService extends TitleSearchService<Task> {
 
     private TaskDAO taskDAO = new TaskDAO();
     private TaskType taskType = new TaskType();
-    private Indexer<Task, TaskType> indexer = new Indexer<>(Task.class);
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public TaskService() {
         super(new Searcher(Task.class));
+        this.indexer = new Indexer<>(Task.class);
     }
 
     /**
@@ -91,6 +93,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param task
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(task, taskType);
@@ -130,6 +133,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param task
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(task, taskType);
@@ -141,6 +145,18 @@ public class TaskService extends TitleSearchService<Task> {
 
     public Long count(String query) throws DAOException {
         return taskDAO.count(query);
+    }
+
+    /**
+     * Find tasks by id of process.
+     *
+     * @param id
+     *            of process
+     * @return list of search results with tasks for specific process id
+     */
+    public List<SearchResult> findByProcessId(Integer id) throws DataException {
+        QueryBuilder query = createSimpleQuery("process", id, true);
+        return searcher.findDocuments(query.toString());
     }
 
     /**

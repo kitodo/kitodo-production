@@ -39,6 +39,7 @@ public class ProcessType extends BaseType<Process> {
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : null;
         processObject.put("docket", docket);
         processObject.put("batches", addObjectRelation(process.getBatches()));
+        processObject.put("tasks", addObjectRelation(process.getTasks()));
         processObject.put("properties", addObjectRelation(process.getProperties()));
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);

@@ -105,7 +105,7 @@ public class ProcessTypeTest {
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
                 + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project\":1,\"creationDate\":"
-                + "\"2017-01-01\",\"batches\":[{\"id\":1}],\"properties\":[]}");
+                + "\"2017-01-01\",\"batches\":[{\"id\":1}],\"tasks\":[],\"properties\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(1);
@@ -113,7 +113,7 @@ public class ProcessTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
                 + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project\":1,\"creationDate\":\""
-                + dateFormat.format(process.getCreationDate())+ "\",\"properties\":[{\"id\":1},{\"id\":2}]}");
+                + dateFormat.format(process.getCreationDate())+ "\",\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
@@ -121,7 +121,7 @@ public class ProcessTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
                 + "\"docket\":null,\"ruleset\":null,\"project\":null," + "\"creationDate\":\""
-                + dateFormat.format(process.getCreationDate()) + "\",\"properties\":[],\"batches\":[]}");
+                + dateFormat.format(process.getCreationDate()) + "\",\"tasks\":[],\"properties\":[],\"batches\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

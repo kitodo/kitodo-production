@@ -36,14 +36,14 @@ public class DocketService extends TitleSearchService<Docket> {
 
     private DocketDAO docketDAO = new DocketDAO();
     private DocketType docketType = new DocketType();
-    private Indexer<Docket, DocketType> indexer = new Indexer<>(Docket.class);
     private static final Logger logger = LogManager.getLogger(DocketService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public DocketService() {
         super(new Searcher(Docket.class));
+        this.indexer = new Indexer<>(Docket.class);
     }
 
     public Docket find(Integer id) throws DAOException {
@@ -70,6 +70,7 @@ public class DocketService extends TitleSearchService<Docket> {
      * @param docket
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(docket, docketType);
@@ -101,6 +102,7 @@ public class DocketService extends TitleSearchService<Docket> {
      * @param docket
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(docket, docketType);

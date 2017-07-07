@@ -28,6 +28,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -42,15 +43,15 @@ public class BatchService extends TitleSearchService<Batch> {
 
     private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
-    private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BatchService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public BatchService() {
         super(new Searcher(Batch.class));
+        this.indexer = new Indexer<>(Batch.class);
     }
 
     /**
@@ -69,6 +70,7 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(batch, batchType);
@@ -80,9 +82,16 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
-    protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, DataException, IOException {
-        for (Process process : batch.getProcesses()) {
-            serviceManager.getProcessService().saveToIndex(process);
+    protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, IOException {
+        if (batch.getIndexAction() == IndexAction.DELETE) {
+            for (Process process : batch.getProcesses()) {
+                process.getBatches().remove(batch);
+                serviceManager.getProcessService().saveToIndex(process);
+            }
+        } else {
+            for (Process process : batch.getProcesses()) {
+                serviceManager.getProcessService().saveToIndex(process);
+            }
         }
     }
 
@@ -131,6 +140,7 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(batch, batchType);
