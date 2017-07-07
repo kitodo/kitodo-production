@@ -33,6 +33,17 @@ public class PropertyType extends BaseType<Property> {
         propertyObject.put("templates", addObjectRelation(property.getTemplates()));
         propertyObject.put("workpieces", addObjectRelation(property.getWorkpieces()));
 
+        String type = null;
+        if (!property.getProcesses().isEmpty()) {
+            type = "process";
+        } else if (!property.getTemplates().isEmpty()) {
+            type = "template";
+        } else if (!property.getWorkpieces().isEmpty()) {
+            type = "workpiece";
+        }
+
+        propertyObject.put("type", type);
+
         return new NStringEntity(propertyObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 }
