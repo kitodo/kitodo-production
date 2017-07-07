@@ -35,6 +35,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -92,21 +93,96 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
-    protected void manageDependenciesForIndex(User user) throws CustomResponseException, DataException, IOException {
-        for (UserGroup userGroup : user.getUserGroups()) {
-            serviceManager.getUserGroupService().saveToIndex(userGroup);
-        }
+    protected void manageDependenciesForIndex(User user) throws CustomResponseException, IOException {
+        manageFiltersDependenciesForIndex(user);
+        manageProjectsDependenciesForIndex(user);
+        manageTasksDependenciesForIndex(user);
+        manageUserGroupsDependenciesForIndex(user);
+    }
 
-        for (Project project : user.getProjects()) {
-            serviceManager.getProjectService().saveToIndex(project);
+    /**
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save project, if false only re-save project object.
+     *
+     * @param user
+     *            object
+     */
+    private void manageProjectsDependenciesForIndex(User user) throws CustomResponseException, IOException {
+        if (user.getIndexAction() == IndexAction.DELETE) {
+            for (Project project : user.getProjects()) {
+                project.getUsers().remove(user);
+                serviceManager.getProjectService().saveToIndex(project);
+            }
+        } else {
+            for (Project project : user.getProjects()) {
+                serviceManager.getProjectService().saveToIndex(project);
+            }
         }
+    }
 
-        for (Filter filter : user.getFilters()) {
-            serviceManager.getFilterService().saveToIndex(filter);
+    /**
+     * Check if IndexAction flag is delete. If true remove filter from the
+     * index, if false re-save filter object.
+     *
+     * @param user
+     *            object
+     */
+    private void manageFiltersDependenciesForIndex(User user) throws CustomResponseException, IOException {
+        if (user.getIndexAction() == IndexAction.DELETE) {
+            for (Filter filter : user.getFilters()) {
+                serviceManager.getFilterService().removeFromIndex(filter);
+            }
+        } else {
+            for (Filter filter : user.getFilters()) {
+                serviceManager.getFilterService().saveToIndex(filter);
+            }
         }
+    }
 
-        for (Task task : user.getTasks()) {
-            serviceManager.getTaskService().saveToIndex(task);
+    /**
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save task, if false only re-save task object.
+     *
+     * @param user
+     *            object
+     */
+    private void manageTasksDependenciesForIndex(User user) throws CustomResponseException, IOException {
+        if (user.getIndexAction() == IndexAction.DELETE) {
+            for (Task task : user.getTasks()) {
+                task.getUsers().remove(user);
+                serviceManager.getTaskService().saveToIndex(task);
+            }
+            for (Task task : user.getProcessingTasks()) {
+                task.setProcessingUser(null);
+                serviceManager.getTaskService().saveToIndex(task);
+            }
+        } else {
+            for (Task task : user.getTasks()) {
+                serviceManager.getTaskService().saveToIndex(task);
+            }
+            for (Task task : user.getProcessingTasks()) {
+                serviceManager.getTaskService().saveToIndex(task);
+            }
+        }
+    }
+
+    /**
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save group, if false only re-save group object.
+     * 
+     * @param user
+     *            object
+     */
+    private void manageUserGroupsDependenciesForIndex(User user) throws CustomResponseException, IOException {
+        if (user.getIndexAction() == IndexAction.DELETE) {
+            for (UserGroup userGroup : user.getUserGroups()) {
+                userGroup.getUsers().remove(user);
+                serviceManager.getUserGroupService().saveToIndex(userGroup);
+            }
+        } else {
+            for (UserGroup userGroup : user.getUserGroups()) {
+                serviceManager.getUserGroupService().saveToIndex(userGroup);
+            }
         }
     }
 

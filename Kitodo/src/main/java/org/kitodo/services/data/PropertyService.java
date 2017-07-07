@@ -81,8 +81,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
-    protected void manageDependenciesForIndex(Property property)
-            throws CustomResponseException, DataException, IOException {
+    protected void manageDependenciesForIndex(Property property) throws CustomResponseException, IOException {
         for (Process process : property.getProcesses()) {
             serviceManager.getProcessService().saveToIndex(process);
         }
