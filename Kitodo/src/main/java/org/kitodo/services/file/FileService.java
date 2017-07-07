@@ -76,18 +76,21 @@ public class FileService {
     }
 
     /**
-     * Creates a Directory at a given uri with a given name.
+     * Creates a directory at a given URI with a given name.
      *
      * @param parentFolderUri
-     *            The uri, where the directory should be created
+     *            the uri, where the directory should be created
      * @param directoryName
      *            the name of the directory.
-     * @return The URI of the new directory.
+     * @return the URI of the new directory or URI of parent directory if directoryName is null or empty
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
-        File file = new File(mapUriToKitodoUri(parentFolderUri).getPath(), directoryName);
-        file.mkdir();
-        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
+        if (directoryName != null && !directoryName.equals("")) {
+            File file = new File(mapUriToKitodoUri(parentFolderUri).getPath(), directoryName);
+            file.mkdir();
+            return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
+        }
+        return parentFolderUri;
     }
 
     /**
