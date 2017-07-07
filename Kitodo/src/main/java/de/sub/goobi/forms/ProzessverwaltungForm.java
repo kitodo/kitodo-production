@@ -35,7 +35,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -715,6 +724,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 myDav.uploadFromHome(b, this.mySchritt.getProcess());
             } catch (RuntimeException e) {
+                logger.error(e);
             }
         }
         /* alle Benutzergruppen mit ihren Benutzern */
@@ -723,6 +733,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 try {
                     myDav.uploadFromHome(b, this.mySchritt.getProcess());
                 } catch (RuntimeException e) {
+                    logger.error(e);
                 }
             }
         }
@@ -1929,7 +1940,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 facesContext.responseComplete();
 
             } catch (IOException e) {
-
+                logger.error(e);
             }
         }
     }
@@ -1991,8 +2002,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 document.close();
                 out.flush();
                 facesContext.responseComplete();
-
             } catch (Exception e) {
+                logger.error(e);
             }
         }
     }
@@ -2020,9 +2031,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 wb.write(out);
                 out.flush();
                 facesContext.responseComplete();
-
             } catch (IOException e) {
-
+                logger.error(e);
             }
         }
     }
@@ -2050,7 +2060,6 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String getWikiField() {
         return this.myProzess.getWikiField();
-
     }
 
     /**

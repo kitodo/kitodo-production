@@ -749,7 +749,7 @@ public class Metadaten {
             try {
                 createPagination();
             } catch (TypeNotAllowedForParentException e) {
-
+                logger.error(e);
             }
         }
 
@@ -761,7 +761,7 @@ public class Metadaten {
                         Integer value = Integer.valueOf(md.getValue());
                         currentRepresentativePage = String.valueOf(value - 1);
                     } catch (Exception e) {
-
+                        logger.error(e);
                     }
                 }
             }
@@ -840,7 +840,7 @@ public class Metadaten {
                     md.setValue(String.valueOf(value + 1));
                     this.mydocument.getPhysicalDocStruct().addMetadata(md);
                 } catch (MetadataTypeNotAllowedException e) {
-
+                    logger.error(e);
                 }
 
             }
@@ -2004,6 +2004,7 @@ public class Metadaten {
                     Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
                 }
             } catch (Exception e) {
+                logger.error(e);
             }
         }
         return "Metadaten3links";
@@ -2055,7 +2056,7 @@ public class Metadaten {
                     Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
                 }
             } catch (Exception e) {
-
+                logger.error(e);
             }
         }
         saveMetadataAsBean(this.myDocStruct);
@@ -2277,7 +2278,7 @@ public class Metadaten {
             int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite) - this.myBildNummer + 1;
             identifyImage(pageNumber);
         } catch (Exception e) {
-
+            logger.error(e);
         }
         return "";
     }

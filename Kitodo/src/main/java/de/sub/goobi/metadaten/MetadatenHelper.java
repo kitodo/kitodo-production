@@ -225,6 +225,7 @@ public class MetadatenHelper implements Comparator<Object> {
                     alleDS = new ArrayList<>();
                 }
             } catch (Exception e) {
+                logger.error(e);
             }
 
             /*

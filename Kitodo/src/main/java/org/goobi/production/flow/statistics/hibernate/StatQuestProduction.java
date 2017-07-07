@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -55,6 +57,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     // default values set to days and volumesAndPages
     TimeUnit timeGrouping = TimeUnit.days;
     private CalculationUnit cu = CalculationUnit.volumesAndPages;
+    private static final Logger logger = LogManager.getLogger(StatQuestProduction.class);
 
     /**
      * IDataSource needs here to be an implementation of
@@ -94,10 +97,12 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         try {
             exactStepDone = originalFilter.stepDone();
         } catch (UnsupportedOperationException e1) {
+            logger.error(e1);
         }
         try {
             stepname = originalFilter.stepDoneName();
         } catch (UnsupportedOperationException e1) {
+            logger.error(e1);
         }
 
         // we have to build a query from scratch by reading the ID's
@@ -105,6 +110,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         try {
             idList = originalFilter.getIDList();
         } catch (UnsupportedOperationException e) {
+            logger.error(e);
         }
         if (idList == null || idList.size() == 0) {
             return null;

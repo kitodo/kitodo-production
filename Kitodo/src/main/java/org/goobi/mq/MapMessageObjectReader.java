@@ -20,9 +20,13 @@ import java.util.Set;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class MapMessageObjectReader {
 
     private MapMessage ticket;
+    private static final Logger logger = LogManager.getLogger(MapMessageObjectReader.class);
 
     /**
      * This instantiates a new MapMessageObjectReader which is attached to a
@@ -164,7 +168,8 @@ public class MapMessageObjectReader {
         Object mapObject = null;
         try {
             mapObject = ticket.getObject(key);
-        } catch (Exception irrelevant) {
+        } catch (Exception e) {
+            logger.error(e);
         }
         if (mapObject == null) {
             return null;

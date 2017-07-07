@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -34,7 +36,7 @@ public class FolderInformation {
     public static final String metadataPath = ConfigCore.getParameter("MetadatenVerzeichnis");
     public static String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     public static String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
-
+    private static final Logger logger = LogManager.getLogger(FolderInformation.class);
     private static ServiceManager serviceManager = new ServiceManager();
     private static FileService fileService = serviceManager.getFileService();
 
@@ -262,6 +264,7 @@ public class FolderInformation {
             return (String) o;
         } catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException
                 | InvocationTargetException e) {
+            logger.error(e);
         }
         String folder = this.getImagesTifDirectory(false).toString();
         folder = folder.substring(0, folder.lastIndexOf("_"));

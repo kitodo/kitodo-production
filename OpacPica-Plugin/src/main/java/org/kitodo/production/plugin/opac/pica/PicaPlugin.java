@@ -24,6 +24,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -63,6 +65,8 @@ import ugh.fileformats.opac.PicaPlus;
  */
 @PluginImplementation
 public class PicaPlugin implements Plugin {
+
+    private static final Logger logger = LogManager.getLogger(PicaPlugin.class);
     /**
      * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
      * languages mapping file. This is a text file with lines in form
@@ -491,6 +495,7 @@ public class PicaPlugin implements Plugin {
             try {
                 topstructChild = topstruct.getAllChildren().get(0);
             } catch (RuntimeException e) {
+                logger.error(e);
             }
             mySecondHit = (Element) myFirstHit.getParentElement().getChildren().get(1);
         }
@@ -784,7 +789,8 @@ public class PicaPlugin implements Plugin {
         try {
             LocalDate date = toRecentLocalDate(accessed, today);
             result.put("accessed", date.toDateTime(date.isEqual(today) ? new LocalTime() : DAY_END).toString());
-        } catch (RuntimeException r) {
+        } catch (RuntimeException e) {
+            logger.error(e);
         }
 
         String lastName = getElementFieldValue(hit, "028A", "a");
@@ -820,7 +826,8 @@ public class PicaPlugin implements Plugin {
         try {
             LocalDate localDate = toRecentLocalDate(date, today);
             result.put("date", localDate.toString());
-        } catch (RuntimeException r) {
+        } catch (RuntimeException e) {
+            logger.error(e);
         }
 
         result.put("edition", getElementFieldValue(hit, "032@", "a"));

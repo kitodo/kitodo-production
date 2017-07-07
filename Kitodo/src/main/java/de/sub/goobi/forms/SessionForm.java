@@ -22,6 +22,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
 
@@ -37,6 +39,7 @@ public class SessionForm {
     private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
     private String aktuelleZeit = this.formatter.format(new Date());
     private String bitteAusloggen = "";
+    private static final Logger logger = LogManager.getLogger(SessionForm.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -223,6 +226,7 @@ public class SessionForm {
                         tempSession.invalidate();
                     }
                 } catch (RuntimeException e) {
+                    logger.error(e);
                 }
                 this.alleSessions.remove(map);
             }

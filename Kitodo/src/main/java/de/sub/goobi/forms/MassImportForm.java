@@ -739,6 +739,7 @@ public class MassImportForm implements Serializable {
                 return true;
             }
         } catch (Exception e) {
+            logger.error(e);
         }
         try {
             method = this.plugin.getClass().getMethod("getProperties");
@@ -749,6 +750,7 @@ public class MassImportForm implements Serializable {
                 return true;
             }
         } catch (Exception e) {
+            logger.error(e);
         }
         return false;
     }
@@ -773,6 +775,7 @@ public class MassImportForm implements Serializable {
                 return "/newpages/MultiMassImportPage2";
             }
         } catch (Exception e) {
+            logger.error(e);
         }
         return "/newpages/MassImportFormPage2";
     }
@@ -855,6 +858,7 @@ public class MassImportForm implements Serializable {
                 return list;
             }
         } catch (Exception e) {
+            logger.error(e);
         }
         return new ArrayList<>();
     }

@@ -162,6 +162,7 @@ public class Ldap {
                         // Tear down TLS connection
                         tls.close();
                     } catch (IOException e) {
+                        logger.error(e);
                     }
                 }
                 if (ctx != null) {
@@ -169,6 +170,7 @@ public class Ldap {
                         // Close LDAP connection
                         ctx.close();
                     } catch (NamingException e) {
+                        logger.error(e);
                     }
                 }
             }
@@ -278,6 +280,7 @@ public class Ldap {
                         // Tear down TLS connection
                         tls.close();
                     } catch (IOException e) {
+                        logger.error(e);
                     }
                 }
                 if (ctx != null) {
@@ -285,6 +288,7 @@ public class Ldap {
                         // Close LDAP connection
                         ctx.close();
                     } catch (NamingException e) {
+                        logger.error(e);
                     }
                 }
             }
