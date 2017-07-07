@@ -96,16 +96,15 @@ public class SearchForm {
      */
     // TODO: Use index here!
     protected void initMasterpiecePropertyTitles() {
-        HashSet<Property> propertiesSet = new HashSet<>();
         List<Workpiece> workpieces = serviceManager.getWorkpieceService().findAll();
+        HashSet<String> masterpiecePropertyTitles = new HashSet<>();
         for (Workpiece workpiece : workpieces) {
             List<Property> properties = workpiece.getProperties();
-            propertiesSet.addAll(properties);
-
+            for (Property property : properties) {
+                masterpiecePropertyTitles.add(property.getTitle());
+            }
         }
-        for (Property property : propertiesSet) {
-            this.masterpiecePropertyTitles.add(property.getTitle());
-        }
+        this.masterpiecePropertyTitles.addAll(masterpiecePropertyTitles);
     }
 
     /**
@@ -137,16 +136,15 @@ public class SearchForm {
      */
     // TODO: Use index here!
     protected void initProcessPropertyTitles() {
-        HashSet<Property> propertiesSet = new HashSet<>();
         List<Process> processes = serviceManager.getProcessService().findAll();
+        HashSet<String> processPropertyTitles = new HashSet<>();
         for (Process process : processes) {
             List<Property> properties = process.getProperties();
-            propertiesSet.addAll(properties);
-
+            for (Property property : properties) {
+                processPropertyTitles.add(property.getTitle());
+            }
         }
-        for (Property property : propertiesSet) {
-            this.processPropertyTitles.add(property.getTitle());
-        }
+        this.processPropertyTitles.addAll(processPropertyTitles);
     }
 
     /**
@@ -174,16 +172,15 @@ public class SearchForm {
      */
     // TODO: Use index here!
     protected void initTemplatePropertyTitles() {
-        HashSet<Property> propertiesSet = new HashSet<>();
         List<Template> templates = serviceManager.getTemplateService().findAll();
+        HashSet<String> templatePropertyTitles = new HashSet<>();
         for (Template template : templates) {
             List<Property> properties = template.getProperties();
-            propertiesSet.addAll(properties);
-
+            for (Property property : properties) {
+                templatePropertyTitles.add(property.getTitle());
+            }
         }
-        for (Property property : propertiesSet) {
-            this.templatePropertyTitles.add(property.getTitle());
-        }
+        this.templatePropertyTitles.addAll(templatePropertyTitles);
     }
 
     /**
