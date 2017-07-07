@@ -81,7 +81,9 @@ public class UserService extends SearchService<User> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(user, userType);
+        if (user != null) {
+            indexer.performSingleRequest(user, userType);
+        }
     }
 
     /**
@@ -145,7 +147,9 @@ public class UserService extends SearchService<User> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(user, userType);
+        if (user != null) {
+            indexer.performSingleRequest(user, userType);
+        }
     }
 
     public List<User> search(String query) throws DAOException {

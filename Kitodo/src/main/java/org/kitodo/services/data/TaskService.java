@@ -40,8 +40,10 @@ import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
@@ -96,7 +98,75 @@ public class TaskService extends TitleSearchService<Task> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(task, taskType);
+        if (task != null) {
+            indexer.performSingleRequest(task, taskType);
+        }
+    }
+
+    /**
+     * Method saves or removes dependencies with process, users and user's
+     * groups related to modified task.
+     *
+     * @param task
+     *            object
+     */
+    protected void manageDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+        manageProcessDependenciesForIndex(task);
+        manageProcessingUserDependenciesForIndex(task);
+        manageUsersDependenciesForIndex(task);
+        manageUserGroupsDependenciesForIndex(task);
+    }
+
+    private void manageProcessDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+        if (task.getIndexAction() == IndexAction.DELETE) {
+            Process process = task.getProcess();
+            if (process != null) {
+                process.getTasks().remove(task);
+                serviceManager.getProcessService().saveToIndex(process);
+            }
+        } else {
+            Process process = task.getProcess();
+            serviceManager.getProcessService().saveToIndex(process);
+        }
+    }
+
+    private void manageProcessingUserDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+        if (task.getIndexAction() == IndexAction.DELETE) {
+            User user = task.getProcessingUser();
+            if (user != null) {
+                user.getProcessingTasks().remove(task);
+                serviceManager.getUserService().saveToIndex(user);
+            }
+        } else {
+            User user = task.getProcessingUser();
+            serviceManager.getUserService().saveToIndex(user);
+        }
+    }
+
+    private void manageUsersDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+        if (task.getIndexAction() == IndexAction.DELETE) {
+            for (User user : task.getUsers()) {
+                user.getTasks().remove(task);
+                serviceManager.getUserService().saveToIndex(user);
+            }
+        } else {
+            for (User user : task.getUsers()) {
+                serviceManager.getUserService().saveToIndex(user);
+            }
+        }
+    }
+
+    private void manageUserGroupsDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+        if (task.getIndexAction() == IndexAction.DELETE) {
+            for (UserGroup userGroup : task.getUserGroups()) {
+                userGroup.getTasks().remove(task);
+                serviceManager.getUserGroupService().saveToIndex(userGroup);
+            }
+        } else {
+            for (UserGroup userGroup : task.getUserGroups()) {
+                serviceManager.getUserGroupService().saveToIndex(userGroup);
+            }
+        }
     }
 
     public Task find(Integer id) throws DAOException {
@@ -136,7 +206,9 @@ public class TaskService extends TitleSearchService<Task> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(task, taskType);
+        if (task != null) {
+            indexer.performSingleRequest(task, taskType);
+        }
     }
 
     public List<Task> search(String query) throws DAOException {

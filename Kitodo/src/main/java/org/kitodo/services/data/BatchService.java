@@ -73,7 +73,9 @@ public class BatchService extends TitleSearchService<Batch> {
     @SuppressWarnings("unchecked")
     public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(batch, batchType);
+        if (batch != null) {
+            indexer.performSingleRequest(batch, batchType);
+        }
     }
 
     /**
@@ -143,7 +145,9 @@ public class BatchService extends TitleSearchService<Batch> {
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(batch, batchType);
+        if (batch != null) {
+            indexer.performSingleRequest(batch, batchType);
+        }
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {
