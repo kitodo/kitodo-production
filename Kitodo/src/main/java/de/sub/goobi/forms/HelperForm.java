@@ -196,7 +196,8 @@ public class HelperForm implements Serializable {
 
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        URI fileName = new File(session.getServletContext().getRealPath("/css") + File.separator).toURI();
+        URI fileName = serviceManager.getFileService().mapUriToKitodoRootFolderUri(session, CSS_PATH, null);
+        //URI fileName = new File(session.getServletContext().getRealPath("/css") + File.separator).toURI();
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
 
         ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);

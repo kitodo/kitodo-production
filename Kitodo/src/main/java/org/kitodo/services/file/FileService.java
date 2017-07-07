@@ -826,13 +826,13 @@ public class FileService {
     }
 
     /**
-     * gets all sub URIs of an uri with a given filter.
+     * Get all sub URIs of an uri with a given filter.
      *
      * @param filter
      *            the filter to filter the subUris
      * @param processSubTypeURI
      *            the uri, to get the subUris from.
-     * @return A List of sub uris.
+     * @return a List of sub uris.
      */
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI processSubTypeURI) {
         processSubTypeURI = mapUriToKitodoDataDirectoryUri(processSubTypeURI);
