@@ -928,10 +928,8 @@ public class ProcessService extends TitleSearchService<Process> {
         }
 
         Fileformat ff = determineFileFormat(type, process);
-
         try {
-            // TODO: this is not working anymore because uri is not full path
-            ff.read(metadataFileUri.toString());
+            ff.read(new File(metadataFileUri).toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setFehlerMeldung("metadataCorrupt");
