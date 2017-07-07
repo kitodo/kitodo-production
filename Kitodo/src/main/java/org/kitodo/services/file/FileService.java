@@ -778,6 +778,16 @@ public class FileService {
         return uri;
     }
 
+    URI unmapUriFromKitodoRootFolderUri(HttpSession session, String folderPath, URI uri) {
+        String directory;
+        if (folderPath == null) {
+            directory = session.getServletContext().getRealPath("");
+        } else {
+            directory = session.getServletContext().getRealPath(folderPath);
+        }
+        return unmapDirectory(uri, directory);
+    }
+
     URI unmapUriFromKitodoConfigDirectoryUri(URI uri) {
         return unmapDirectory(uri, ConfigCore.getKitodoConfigDirectory());
     }
