@@ -740,7 +740,7 @@ public class FileService {
      *            directory or file to map eg. css file
      * @return absolute path to mapped resource
      */
-    public URI mapUriToKitodoRootFolder(HttpSession session, String folderPath, String resourceToMap) {
+    public URI mapUriToKitodoRootFolderUri(HttpSession session, String folderPath, String resourceToMap) {
         if (folderPath == null) {
             return Paths.get(session.getServletContext().getRealPath(""), resourceToMap).toUri();
         } else {
