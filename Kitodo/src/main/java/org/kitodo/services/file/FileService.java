@@ -782,7 +782,7 @@ public class FileService {
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(filter, new File(processSubTypeURI));
         for (File file : files) {
-            resultList.add(unmapUriFromKitodoUri(file.toURI()));
+            resultList.add(unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri()));
         }
         return resultList;
     }
