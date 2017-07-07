@@ -34,46 +34,6 @@ public class ConfigCore extends ConfigMain {
     public static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
     /**
-     * Request selected parameter from configuration.
-     *
-     * @return Parameter as String
-     */
-    public static String getParameter(String inParameter) {
-        try {
-            return getConfig().getString(inParameter);
-        } catch (RuntimeException e) {
-            logger.error(e);
-            return "- keine Konfiguration gefunden -";
-        }
-    }
-
-    /**
-     * Request selected parameter with given default value from configuration.
-     *
-     * @return Parameter as String
-     */
-    public static String getParameter(String inParameter, String inDefaultIfNull) {
-        try {
-            return getConfig().getString(inParameter, inDefaultIfNull);
-        } catch (RuntimeException e) {
-            return inDefaultIfNull;
-        }
-    }
-
-    /**
-     * Request int-parameter from Configuration with default-value.
-     *
-     * @return Parameter as Int
-     */
-    public static int getIntParameter(String inParameter, int inDefault) {
-        try {
-            return getConfig().getInt(inParameter, inDefault);
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    /**
      * den Pfad für die temporären Images zur Darstellung zurückgeben.
      */
     public static String getTempImagesPath() {
