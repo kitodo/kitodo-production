@@ -82,8 +82,8 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.filters.FileBeginEndFilter;
-import org.kitodo.filters.FileEndNotBeginFilter;
+import org.kitodo.filters.FileNameBeginsAndEndsWithFilter;
+import org.kitodo.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
@@ -660,7 +660,7 @@ public class ProcessService extends TitleSearchService<Process> {
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
-        FilenameFilter filterDirectory = new FileEndNotBeginFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
+        FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
         ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
 
@@ -743,7 +743,7 @@ public class ProcessService extends TitleSearchService<Process> {
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
-            FilenameFilter filterDirectory = new FileBeginEndFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
+            FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
             URI origOrdner = null;
             ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
             for (URI aVerzeichnisse : verzeichnisse) {

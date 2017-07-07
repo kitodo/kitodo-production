@@ -17,7 +17,7 @@ import java.io.FilenameFilter;
 /**
  * Implementation of FileNameFilter for checking the begin and the end of files.
  */
-public class FileBeginEndFilter implements FilenameFilter {
+public class FileNameBeginsAndEndsWithFilter implements FilenameFilter {
 
     private String begin;
     private String end;
@@ -33,7 +33,7 @@ public class FileBeginEndFilter implements FilenameFilter {
      *             it is thrown in case one or both parameters are null or empty
      *             Strings
      */
-    public FileBeginEndFilter(String begin, String end) {
+    public FileNameBeginsAndEndsWithFilter(String begin, String end) {
         if (begin == null || begin.equals("") || end == null || end.equals("")) {
             throw new IllegalArgumentException("No filter or empty filter for file begin or end is given.");
         }

@@ -30,7 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.filters.FileEndFilter;
+import org.kitodo.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -68,7 +68,7 @@ public class WebDav implements Serializable {
         }
 
         URI benutzerHome = directoryName;
-        FilenameFilter filter = new FileEndFilter("]");
+        FilenameFilter filter = new FileNameEndsWithFilter("]");
         ArrayList<URI> dateien = fileService.getSubUris(filter, benutzerHome);
         for (URI data : dateien) {
             String dataString = data.toString();
@@ -273,7 +273,7 @@ public class WebDav implements Serializable {
             User aktuellerBenutzer = Helper.getCurrentUser();
             URI verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
                     .resolve(inVerzeichnis);
-            FilenameFilter filter = new FileEndFilter("]");
+            FilenameFilter filter = new FileNameEndsWithFilter("]");
             return fileService.getSubUris(filter, verzeichnisAlle).size();
         } catch (Exception e) {
             logger.error(e);

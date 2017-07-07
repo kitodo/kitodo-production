@@ -14,30 +14,27 @@ package org.kitodo.filters;
 import java.io.File;
 import java.io.FilenameFilter;
 
-/**
- * Implementation of FileNameFilter for checking the end of files.
- */
-public class FileEndFilter implements FilenameFilter {
+public class FileNameMatchesFilter implements FilenameFilter {
 
-    private String end;
+    private String name;
 
     /**
-     * Filter files by given file end.
+     * Filter file list according to the given name.
      *
-     * @param end
-     *            file name should end with this String
+     * @param name
+     *            String
      * @throws IllegalArgumentException
      *             it is thrown in case parameter is null or empty String
      */
-    public FileEndFilter(String end) {
-        if (end == null || end.equals("")) {
-            throw new IllegalArgumentException("No filter or empty filter for file end is given.");
+    public FileNameMatchesFilter(String name) {
+        if (name == null || name.equals("")) {
+            throw new IllegalArgumentException("No filter or empty name is given.");
         }
-        this.end = end;
+        this.name = name;
     }
 
     @Override
-    public boolean accept(File dir, String name) {
-        return (name.endsWith(end));
+    public boolean accept(File directory, String filename) {
+        return filename.matches(name);
     }
 }

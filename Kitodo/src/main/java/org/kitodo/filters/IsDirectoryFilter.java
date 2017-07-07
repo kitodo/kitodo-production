@@ -17,7 +17,7 @@ import java.io.FilenameFilter;
 /**
  * Implementation of FileNameFilter for checking if file is a directory.
  */
-public class FileDirectoryFilter implements FilenameFilter {
+public class IsDirectoryFilter implements FilenameFilter {
 
     @Override
     public boolean accept(File dir, String name) {

@@ -58,7 +58,7 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.filters.FileDirectoryFilter;
+import org.kitodo.filters.IsDirectoryFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -1661,7 +1661,7 @@ public class Metadaten {
         URI dir = fileService.getProcessSubTypeURI(this.myProzess, ProcessSubType.IMAGE, null);
 
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
-        FilenameFilter filterDirectory = new FileDirectoryFilter();
+        FilenameFilter filterDirectory = new IsDirectoryFilter();
         ArrayList<URI> subUris = fileService.getSubUris(filterDirectory, dir);
         this.allTifFolders.addAll(subUris);
 

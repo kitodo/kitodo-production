@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.kitodo.filters.FileListFilter;
+import org.kitodo.filters.FileNameMatchesFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -126,7 +126,7 @@ public class ExportPdf extends ExportMets {
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
                         contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
                     }
-                    FilenameFilter filter = new FileListFilter("\\d*\\.tif");
+                    FilenameFilter filter = new FileNameMatchesFilter("\\d*\\.tif");
                     URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
                     ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
                     int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
