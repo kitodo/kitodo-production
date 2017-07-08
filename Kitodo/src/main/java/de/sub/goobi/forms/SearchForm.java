@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -33,13 +32,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
@@ -96,15 +91,9 @@ public class SearchForm {
      */
     // TODO: Use index here!
     protected void initMasterpiecePropertyTitles() {
-        List<Workpiece> workpieces = serviceManager.getWorkpieceService().findAll();
-        HashSet<String> masterpiecePropertyTitles = new HashSet<>();
-        for (Workpiece workpiece : workpieces) {
-            List<Property> properties = workpiece.getProperties();
-            for (Property property : properties) {
-                masterpiecePropertyTitles.add(property.getTitle());
-            }
-        }
-        this.masterpiecePropertyTitles.addAll(masterpiecePropertyTitles);
+        List<String> workpiecePropertiesTitlesDistinct = serviceManager.getPropertyService()
+                .findWorkpiecePropertiesTitlesDistinct();
+        this.masterpiecePropertyTitles = workpiecePropertiesTitlesDistinct;
     }
 
     /**
@@ -136,15 +125,9 @@ public class SearchForm {
      */
     // TODO: Use index here!
     protected void initProcessPropertyTitles() {
-        List<Process> processes = serviceManager.getProcessService().findAll();
-        HashSet<String> processPropertyTitles = new HashSet<>();
-        for (Process process : processes) {
-            List<Property> properties = process.getProperties();
-            for (Property property : properties) {
-                processPropertyTitles.add(property.getTitle());
-            }
-        }
-        this.processPropertyTitles.addAll(processPropertyTitles);
+        List<String> processPropertiesTitlesDistinct = serviceManager.getPropertyService()
+                .findProcessPropertiesTitlesDistinct();
+        this.processPropertyTitles = processPropertiesTitlesDistinct;
     }
 
     /**
@@ -172,15 +155,9 @@ public class SearchForm {
      */
     // TODO: Use index here!
     protected void initTemplatePropertyTitles() {
-        List<Template> templates = serviceManager.getTemplateService().findAll();
-        HashSet<String> templatePropertyTitles = new HashSet<>();
-        for (Template template : templates) {
-            List<Property> properties = template.getProperties();
-            for (Property property : properties) {
-                templatePropertyTitles.add(property.getTitle());
-            }
-        }
-        this.templatePropertyTitles.addAll(templatePropertyTitles);
+        List<String> templatePropertiesTitlesDistinct = serviceManager.getPropertyService()
+                .findTemplatePropertiesTitlesDistinct();
+        this.templatePropertyTitles = templatePropertiesTitlesDistinct;
     }
 
     /**
