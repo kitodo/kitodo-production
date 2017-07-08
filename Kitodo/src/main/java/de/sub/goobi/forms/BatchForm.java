@@ -20,6 +20,7 @@ import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -278,7 +279,7 @@ public class BatchForm extends BasisForm {
                     ArrayList<Process> processes = new ArrayList<>(docket);
                     File file = module.generateMultipleDockets(
                             serviceManager.getProcessService().getDocketData(processes), xsltfile);
-                    byte[] bytes = IOUtils.toByteArray(IOUtils.toInputStream(file.toString()));
+                    byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
                     out.write(bytes);
                     out.flush();
                 } catch (IOException e) {

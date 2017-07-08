@@ -26,6 +26,7 @@ import de.sub.goobi.metadaten.copier.DataCopier;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -1213,7 +1214,7 @@ public class ProcessService extends TitleSearchService<Process> {
                 ServletOutputStream out = response.getOutputStream();
 
                 File file = module.generateDocket(getDocketData(process), xsltFile.toURI());
-                byte[] bytes = IOUtils.toByteArray(IOUtils.toInputStream(file.toString()));
+                byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
                 out.write(bytes);
                 out.flush();
 

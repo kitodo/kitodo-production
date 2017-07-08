@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
@@ -837,7 +838,7 @@ public class MassImportForm implements Serializable {
 
                 File file = module.generateMultipleDockets(
                         serviceManager.getProcessService().getDocketData(this.processList), xsltfile);
-                byte[] bytes = IOUtils.toByteArray(IOUtils.toInputStream(file.toString()));
+                byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
                 out.write(bytes);
                 out.flush();
             } catch (IOException e) {
