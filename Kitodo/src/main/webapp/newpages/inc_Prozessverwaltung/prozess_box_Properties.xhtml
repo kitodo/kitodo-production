@@ -69,7 +69,6 @@
                                 <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="0"/>
                                 <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}"
                                                         value="eigenschaft"/>
-                                <!-- <a4j:support event="onchange" reRender="editBatch" />-->
                             </h:commandLink>
                             <h:commandLink action="#{ProzessverwaltungForm.duplicateProperty}" title="#{msgs.duplicate}">
                                 <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
@@ -113,7 +112,6 @@
                                     <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}"/>
                                     <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}"
                                                             value="eigenschaft"/>
-                                    <!-- 	<a4j:support event="onchange" reRender="editBatch" /> -->
                                 </h:commandLink>
                                 <!-- duplicate container -->
                                 <h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}">
