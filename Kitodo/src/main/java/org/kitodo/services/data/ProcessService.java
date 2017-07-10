@@ -673,10 +673,9 @@ public class ProcessService extends TitleSearchService<Process> {
         if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUris(dir);
-                ArrayList<URI> unmappedFolderList = fileService.unmapProcessSpecificPartOfUri(folderList, process,
+                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, dir, process,
                         ProcessSubType.IMAGE, "");
-                for (URI folder : unmappedFolderList) {
+                for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
                         break;

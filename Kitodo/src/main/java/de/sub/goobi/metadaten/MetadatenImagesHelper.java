@@ -489,12 +489,10 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, dir);
-        ArrayList<URI> unmappedFiles = fileService.unmapProcessSpecificPartOfUri(files, myProcess, ProcessSubType.IMAGE, "");
-
+        ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, dir, myProcess, ProcessSubType.IMAGE, "");
         ArrayList<URI> finalFiles = new ArrayList<>();
-        for (URI unmappedFile : unmappedFiles) {
-            String newURI = unmappedFile.toString().replace(directory.toString(), "");
+        for (URI file : files) {
+            String newURI = file.toString().replace(directory.toString(), "");
             finalFiles.add(URI.create(newURI));
         }
         List<URI> dataList = new ArrayList<>();
