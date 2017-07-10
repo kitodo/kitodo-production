@@ -83,7 +83,8 @@ public class FileService {
      *            the uri, where the directory should be created
      * @param directoryName
      *            the name of the directory.
-     * @return the URI of the new directory or URI of parent directory if directoryName is null or empty
+     * @return the URI of the new directory or URI of parent directory if
+     *         directoryName is null or empty
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
         if (directoryName != null && !directoryName.equals("")) {
@@ -108,10 +109,9 @@ public class FileService {
     }
 
     /**
-     * Creates a directory with a name given and assigns permissions to the
-     * given user. Under Linux a script is used to set the file system
-     * permissions accordingly. This cannot be done from within java code before
-     * version 1.7.
+     * Creates a directory with a name given and assigns permissions to the given
+     * user. Under Linux a script is used to set the file system permissions
+     * accordingly. This cannot be done from within java code before version 1.7.
      *
      * @param dirName
      *            Name of directory to create
@@ -128,9 +128,9 @@ public class FileService {
     }
 
     /**
-     * This function implements file renaming. Renaming of files is full of
-     * mischief under Windows which unaccountably holds locks on files.
-     * Sometimes running the JVM’s garbage collector puts things right.
+     * This function implements file renaming. Renaming of files is full of mischief
+     * under Windows which unaccountably holds locks on files. Sometimes running the
+     * JVM’s garbage collector puts things right.
      *
      * @param fileUri
      *            File to rename
@@ -325,7 +325,7 @@ public class FileService {
      * Reads a file at a given URI.
      *
      * @param uri
-     *            The uri to reas
+     *            the uri to read
      * @return an InputStream to read from.
      * @throws IOException
      *             if File cannot be accessed.
@@ -546,9 +546,9 @@ public class FileService {
     }
 
     /**
-     * This method is needed for migration purposes. It maps existing filePaths
-     * to the correct URI. File.separator doesn't work because on Windows it
-     * appends backslash to URI.
+     * This method is needed for migration purposes. It maps existing filePaths to
+     * the correct URI. File.separator doesn't work because on Windows it appends
+     * backslash to URI.
      *
      * @param process
      *            the process, the uri is needed for.
@@ -561,8 +561,8 @@ public class FileService {
     }
 
     /**
-     * Get's the URI for a Process Sub-location. Possible Locations are listed
-     * in ProcessSubType
+     * Get's the URI for a Process Sub-location. Possible Locations are listed in
+     * ProcessSubType
      *
      * @param process
      *            the process to get the sublocation for.
@@ -581,31 +581,101 @@ public class FileService {
             resourceName = "";
         }
 
+        return URI.create(processDataDirectory + getProcessSubType(process, processSubType, resourceName));
+    }
+
+    /**
+     * Get unmapped part of the URI for specific process.
+     * 
+     * @param filter
+     *            FilenameFilter object
+     * @param uri
+     *            for unmapping
+     * @param process
+     *            object
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return unmapped URI
+     */
+    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, URI uri, Process process,
+            ProcessSubType processSubType, String resourceName) {
+        ArrayList<URI> subURIs;
+        if (filter == null) {
+            subURIs = getSubUris(uri);
+        } else {
+            subURIs = getSubUris(filter, uri);
+        }
+        return removeProcessSpecificPartOfUri(subURIs, process, processSubType, resourceName);
+    }
+
+    /**
+     * Remove process specific part of URI e.g 3/images. Lack of this method was
+     * causing error of double uri creation e.g 3/images/3/images/scans_tif
+     * 
+     * @param uriList
+     *            list of URIs for unmap
+     * @param process
+     *            object
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return List of extracted URIs
+     */
+    private ArrayList<URI> removeProcessSpecificPartOfUri(ArrayList<URI> uriList, Process process,
+            ProcessSubType processSubType, String resourceName) {
+        ArrayList<URI> unmappedURI = new ArrayList<>();
+        for (URI uri : uriList) {
+            String uriString = uri.toString();
+            String processSpecificPartOfUri = getProcessSubType(process, processSubType, resourceName);
+            if (uriString.contains(processSpecificPartOfUri)) {
+                String[] split = uriString.split(processSpecificPartOfUri);
+                String shortUri = split[1];
+                unmappedURI.add(URI.create(shortUri));
+            }
+            unmappedURI.add(uri);
+        }
+        return unmappedURI;
+    }
+
+    /**
+     * Get part of URI specific for process and process sub type.
+     * 
+     * @param process
+     *            object
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return process specific part of URI
+     */
+    private String getProcessSubType(Process process, ProcessSubType processSubType, String resourceName) {
         switch (processSubType) {
             case IMAGE:
-                return URI.create(processDataDirectory + "images/" + resourceName);
+                return "images/" + resourceName;
             case IMAGE_SOURCE:
-                return URI.create(getSourceDirectory(process) + resourceName);
+                return getSourceDirectory(process) + resourceName;
             case META_XML:
-                return URI.create(processDataDirectory + "meta.xml");
+                return "meta.xml";
             case TEMPLATE:
-                return URI.create(processDataDirectory + "template.xml");
+                return "template.xml";
             case IMPORT:
-                return URI.create(processDataDirectory + "import/" + resourceName);
+                return "import/" + resourceName;
             case OCR:
-                return URI.create(processDataDirectory + "ocr/");
+                return "ocr/";
             case OCR_PDF:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_pdf/" + resourceName);
+                return "ocr/" + process.getTitle() + "_pdf/" + resourceName;
             case OCR_TXT:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_txt/" + resourceName);
+                return "ocr/" + process.getTitle() + "_txt/" + resourceName;
             case OCR_WORD:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_wc/" + resourceName);
+                return "ocr/" + process.getTitle() + "_wc/" + resourceName;
             case OCR_ALTO:
-                return URI.create(processDataDirectory + "ocr/" + process.getTitle() + "_alto/" + resourceName);
+                return "ocr/" + process.getTitle() + "_alto/" + resourceName;
             default:
-                return processDataDirectory;
+                return "";
         }
-
     }
 
     /**
@@ -714,7 +784,6 @@ public class FileService {
         for (File file : files) {
             resultList.add(unmapUriFromKitodoUri(file.toURI()));
         }
-
         return resultList;
     }
 

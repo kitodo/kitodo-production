@@ -56,7 +56,7 @@ public class ConfigCore extends ConfigMain {
             /* den Ordner neu anlegen, wenn er nicht existiert */
             try {
                 internUri = serviceManager.getFileService().getInternUri(new File(fileName).toURI());
-                serviceManager.getFileService().createDirectory(internUri, "imagesTemp");
+                internUri = serviceManager.getFileService().createDirectory(internUri, "imagesTemp");
             } catch (Exception ioe) {
                 logger.error("IO error: " + ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());

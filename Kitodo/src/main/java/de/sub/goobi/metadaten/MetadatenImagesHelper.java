@@ -103,7 +103,9 @@ public class MetadatenImagesHelper {
             MetadataType metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
             try {
                 Metadata mdForPath = new Metadata(metadataTypeForPath);
-                mdForPath.setValue(new File(serviceManager.getProcessService().getImagesTifDirectory(false, process)).getPath());
+                URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process);
+                String pathString = new File(pathURI).getPath();
+                mdForPath.setValue(pathString);
                 physicaldocstruct.addMetadata(mdForPath);
             } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
                 logger.error(e);
@@ -242,7 +244,6 @@ public class MetadatenImagesHelper {
             }
             if (!imagesWithoutPageElements.isEmpty()) {
                 // create new page elements
-
                 int currentPhysicalOrder = physicaldocstruct.getAllChildren().size();
                 for (URI newImage : imagesWithoutPageElements) {
                     DocStruct dsPage = this.mydocument.createDocStruct(newPage);
@@ -265,7 +266,6 @@ public class MetadatenImagesHelper {
                         ContentFile cf = new ContentFile();
                         cf.setLocation(createContentFileLocation(process, newImage));
                         dsPage.addContentFile(cf);
-
                     } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                         logger.error(e);
                     }
@@ -489,10 +489,15 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, dir);
+        ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, dir, myProcess, ProcessSubType.IMAGE, "");
+        ArrayList<URI> finalFiles = new ArrayList<>();
+        for (URI file : files) {
+            String newURI = file.toString().replace(directory.toString(), "");
+            finalFiles.add(URI.create(newURI));
+        }
         List<URI> dataList = new ArrayList<>();
-        if (files != null && files.size() > 0) {
-            dataList.addAll(files);
+        if (finalFiles.size() > 0) {
+            dataList.addAll(finalFiles);
             /* alle Dateien durchlaufen */
         }
         List<URI> orderedFilenameList = new ArrayList<>();
