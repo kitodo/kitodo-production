@@ -26,6 +26,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.filters.FileNameBeginsAndEndsWithFilter;
+import org.kitodo.filters.FileNameEndsWithFilter;
+import org.kitodo.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -57,15 +60,9 @@ public class FolderInformation {
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
-        FilenameFilter filterVerz = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.endsWith("_" + DIRECTORY_SUFFIX) && !name.startsWith(DIRECTORY_PREFIX + "_"));
-            }
-        };
-
+        FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
-        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
 
         if (verzeichnisse != null) {
             for (URI aVerzeichnisse : verzeichnisse) {
@@ -142,15 +139,9 @@ public class FolderInformation {
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
-            FilenameFilter filterVerz = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return (name.endsWith("_" + DIRECTORY_SUFFIX) && name.startsWith(DIRECTORY_PREFIX + "_"));
-                }
-            };
-
+            FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
             URI origOrdner = null;
-            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
             // TODO: does it actually make sense?
             for (URI directory : verzeichnisse) {
                 origOrdner = directory;
@@ -229,14 +220,9 @@ public class FolderInformation {
      */
     public URI getSourceDirectory() {
         URI dir = getImagesDirectory();
-        FilenameFilter filterVerz = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.endsWith("_" + "source"));
-            }
-        };
+        FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
         URI sourceFolder = null;
-        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {

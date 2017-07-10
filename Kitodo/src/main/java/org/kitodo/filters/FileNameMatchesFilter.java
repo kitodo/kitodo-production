@@ -9,24 +9,26 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.io;
+package org.kitodo.filters;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
-public class FileListFilter implements FilenameFilter {
+public class FileNameMatchesFilter implements FilenameFilter {
 
     private String name;
 
     /**
-     * Filter file list.
+     * Filter file list according to the given name.
      *
      * @param name
      *            String
+     * @throws IllegalArgumentException
+     *             it is thrown in case parameter is null or empty String
      */
-    public FileListFilter(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("No filter name given.");
+    public FileNameMatchesFilter(String name) {
+        if (name == null || name.equals("")) {
+            throw new IllegalArgumentException("No filter or empty name is given.");
         }
         this.name = name;
     }

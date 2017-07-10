@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.filters.IsDirectoryFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -496,13 +497,7 @@ public class FileManipulation {
         this.allImportFolder = allImportFolder;
     }
 
-    private static FilenameFilter directoryFilter = new FilenameFilter() {
-        @Override
-        public boolean accept(final java.io.File dir, final String name) {
-            File toTest = new File(dir, name);
-            return toTest.isDirectory();
-        }
-    };
+    private static FilenameFilter directoryFilter = new IsDirectoryFilter();
 
     /**
      * Import files.

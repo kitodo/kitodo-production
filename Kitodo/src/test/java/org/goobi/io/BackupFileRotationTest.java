@@ -177,7 +177,7 @@ public class BackupFileRotationTest {
         int numberOfBackups = 1;
         Process process = new Process();
         process.setId(2);
-        runBackup(numberOfBackups, "", process);
+        runBackup(numberOfBackups, "veryLongMatchingToNothingName", process);
 
         assertFileNotExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");
     }

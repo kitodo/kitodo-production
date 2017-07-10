@@ -39,6 +39,7 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -195,12 +196,7 @@ public class HelperForm implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         URI fileName = new File(session.getServletContext().getRealPath("/css") + File.separator).toURI();
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.endsWith(".css"));
-            }
-        };
+        FilenameFilter filter = new FileNameEndsWithFilter(".css");
 
         ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);
         for (URI uri : dateien) {
@@ -223,12 +219,7 @@ public class HelperForm implements Serializable {
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         URI fileName = serviceManager.getFileService()
                 .getInternUri(new File(session.getServletContext().getRealPath(CSS_PATH) + File.separator).toURI());
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.endsWith(".css"));
-            }
-        };
+        FilenameFilter filter = new FileNameEndsWithFilter(".css");
 
         ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);
         for (URI uri : dateien) {
