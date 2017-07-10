@@ -123,7 +123,7 @@ public class FileService {
         if (!serviceManager.getFileService().fileExist(dirName)) {
             ShellScript createDirScript = new ShellScript(
                     new File(ConfigCore.getParameter("script_createDirUserHome")));
-            createDirScript.run(Arrays.asList(userName, dirName.toString()));
+            createDirScript.run(Arrays.asList(userName, new File(dirName).getPath()));
         }
     }
 
@@ -367,7 +367,7 @@ public class FileService {
      * @return True, if the file exists.
      */
     public boolean fileExist(URI uri) {
-        String path = mapUriToKitodoUri(uri).getPath();
+        URI path = mapUriToKitodoUri(uri);
         File file = new File(path);
         return file.exists();
     }
