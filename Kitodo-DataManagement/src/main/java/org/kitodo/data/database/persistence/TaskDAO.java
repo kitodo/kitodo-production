@@ -13,8 +13,13 @@ package org.kitodo.data.database.persistence;
 
 import java.util.List;
 
+import javax.persistence.Table;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.Helper;
 
 public class TaskDAO extends BaseDAO {
 
@@ -109,5 +114,12 @@ public class TaskDAO extends BaseDAO {
 
     public Task load(int id) throws DAOException {
         return (Task) loadObjects(Task.class, id);
+    }
+
+    public List<String> getTaskTitlesDistict() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createSQLQuery(
+                "select distinct title from " + Task.class.getAnnotation(Table.class).name() + " order by title");
+        return query.list();
     }
 }

@@ -33,7 +33,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
@@ -144,10 +143,8 @@ public class SearchForm {
      */
     // TODO: Use index here!
     protected void initStepTitles() {
-        List<Task> tasks = serviceManager.getTaskService().findAll();
-        for (Task task : tasks) {
-            this.stepTitles.add(task.getTitle());
-        }
+        List<String> taskTitles = serviceManager.getTaskService().getTaskTitlesDistinct();
+        this.stepTitles = taskTitles;
     }
 
     /**

@@ -116,7 +116,7 @@ public class PropertyDAO extends BaseDAO {
         Session session = Helper.getHibernateSession();
         Query query = session
                 .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
-                        + " as p inner join workpiece_x_property wxp on p.id = wxp.property_id");
+                        + " as p inner join workpiece_x_property wxp on p.id = wxp.property_id order by title");
         return query.list();
     }
 
@@ -129,7 +129,7 @@ public class PropertyDAO extends BaseDAO {
         Session session = Helper.getHibernateSession();
         Query query = session
                 .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
-                        + " as p inner join template_x_property txp on p.id = txp.property_id");
+                        + " as p inner join template_x_property txp on p.id = txp.property_id order by title");
         return query.list();
     }
 
@@ -142,7 +142,7 @@ public class PropertyDAO extends BaseDAO {
         Session session = Helper.getHibernateSession();
         Query query = session
                 .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
-                        + " as p inner join process_x_property pxp on p.id = pxp.property_id");
+                        + " as p inner join process_x_property pxp on p.id = pxp.property_id order by title");
         return query.list();
     }
 }
