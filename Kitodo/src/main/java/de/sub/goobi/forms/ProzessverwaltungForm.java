@@ -1838,9 +1838,9 @@ public class ProzessverwaltungForm extends BasisForm {
         ExportXmlLog xmlExport = new ExportXmlLog();
         try {
             LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            String ziel = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer())
-                    + this.myProzess.getTitle() + "_log.xml";
-            xmlExport.startExport(this.myProzess, ziel);
+            String directory = new File(serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer())).getPath();
+            String destination = directory + this.myProzess.getTitle() + "_log.xml";
+            xmlExport.startExport(this.myProzess, destination);
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not write logfile to home directory: ", e);
         }
