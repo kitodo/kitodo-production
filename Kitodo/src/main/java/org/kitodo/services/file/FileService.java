@@ -218,8 +218,8 @@ public class FileService {
      */
     public Integer getNumberOfFiles(URI directory) {
         int count = 0;
-        if (isDirectory(directory)) {
-            if (directory.isAbsolute()) {
+        if (directory.isAbsolute()) {
+            if (isDirectory(directory)) {
                 ArrayList<URI> children = getSubUris(directory);
                 for (URI aChildren : children) {
                     if (isDirectory(aChildren)) {
@@ -228,8 +228,11 @@ public class FileService {
                         count += 1;
                     }
                 }
-            } else {
-                ArrayList<URI> children = getSubUris(directory, MappingType.DATA, null, null);
+            }
+        } else {
+            directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
+            ArrayList<URI> children = getSubUris(directory);
+            if (isDirectory(directory)) {
                 for (URI aChildren : children) {
                     if (isDirectory(aChildren)) {
                         count += getNumberOfFiles(aChildren);
