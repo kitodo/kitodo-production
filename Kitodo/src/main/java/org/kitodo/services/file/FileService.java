@@ -1134,7 +1134,7 @@ public class FileService {
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
-        return new File(mapUriToKitodoDataDirectoryUri(dir)).isDirectory();
+        return new File(dir).isDirectory();
     }
 
     /**
