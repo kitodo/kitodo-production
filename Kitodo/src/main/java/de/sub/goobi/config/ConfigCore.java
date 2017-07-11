@@ -52,21 +52,20 @@ public class ConfigCore extends ConfigMain {
     public static URI getTempImagesPathAsCompleteDirectory() {
         FacesContext context = FacesContext.getCurrentInstance();
         String fileName;
-        URI internUri = null;
+        URI uri = null;
         if (imagesPath != null) {
-            internUri = imagesPath;
+            uri = imagesPath;
         } else {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
             fileName = session.getServletContext().getRealPath("/pages") + File.separator;
             try {
-                internUri = serviceManager.getFileService().getInternUri(Paths.get(fileName).toUri());
-                internUri = serviceManager.getFileService().createDirectory(internUri, "imagesTemp");
+                uri = serviceManager.getFileService().createDirectory(Paths.get(fileName).toUri(), "imagesTemp");
             } catch (Exception ioe) {
                 logger.error("IO error: " + ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
             }
         }
-        return internUri;
+        return uri;
     }
 
     public static void setImagesPath(URI path) {
