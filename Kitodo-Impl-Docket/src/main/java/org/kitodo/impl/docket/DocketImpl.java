@@ -1,10 +1,8 @@
 package org.kitodo.impl.docket;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 
@@ -33,8 +31,6 @@ public class DocketImpl implements DocketInterface {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
 
         exportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
-
-        InputStream inputStream = new FileInputStream(file);
 
         return file;
     }
