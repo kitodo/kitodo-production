@@ -565,6 +565,94 @@ public class FileService {
     }
 
     /**
+     * Gets the specific IMAGE sub type.
+     *
+     * @param process
+     *            the process to get the imageDirectory for.
+     * @return The uri of the Image Directory.
+     */
+    public URI getImagesDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
+    }
+
+    /**
+     * Gets the URI to the ocr directory.
+     *
+     * @param process
+     *            the process tog et the ocr directory for.
+     * @return the uri to the ocr directory.
+     */
+    public URI getOcrDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
+    }
+
+    /**
+     * Gets the URI to the import directory.
+     *
+     * @param process
+     *            the process to get the import directory for.
+     * @return the uri of the import directory
+     */
+    public URI getImportDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
+    }
+
+    /**
+     * Gets the URI to the text directory.
+     *
+     * @param process
+     *            the process to get the text directory for.
+     * @return the uri of the text directory
+     */
+    public URI getTxtDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
+    }
+
+    /**
+     * Gets the URI to the pdf directory.
+     *
+     * @param process
+     *            the process to get the pdf directory for.
+     * @return the uri of the pdf directory
+     */
+    public URI getPdfDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
+    }
+
+    /**
+     * Gets the URI to the alto directory.
+     *
+     * @param process
+     *            the process to get the alto directory for.
+     * @return the uri of the alto directory
+     */
+    public URI getAltoDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
+    }
+
+    /**
+     * Gets the URI to the word directory.
+     *
+     * @param process
+     *            the process to get the word directory for.
+     * @return the uri of the word directory
+     */
+    public URI getWordDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
+    }
+
+    /**
+     * Gets the URI to the template file.
+     *
+     * @param process
+     *            the process to get the template file for.
+     * @return the uri of the template file
+     */
+    public URI getTemplateFile(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
+    }
+
+    /**
      * This method is needed for migration purposes. It maps existing filePaths to
      * the correct URI. File.separator doesn't work because on Windows it appends
      * backslash to URI.
@@ -742,6 +830,181 @@ public class FileService {
     }
 
     /**
+     * Returns the version used in with the direct File mapping.
+     *
+     * @param uri
+     *            the uri to map
+     * @param mappingType
+     *            CONFIG, DATA and ROOT
+     * @param folderPath
+     *            as String - used for ROOT mapping, in other case null
+     * @param resourceToMap
+     *            as String - used for ROOT mapping, in other case null
+     * @return the absolute URI path
+     */
+    public URI getAbsoluteURI(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
+        return mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
+    }
+
+    /**
+     * Returns the version used in the core code, without direct File mapping.
+     *
+     * @param uri
+     *            the URI to unmapp
+     * @param mappingType
+     *            CONFIG, DATA and ROOT
+     * @param folderPath
+     *            as String - used for ROOT mapping, in other case null
+     * @return the relative URI path
+     */
+    public URI getRelativeURI(URI uri, MappingType mappingType, String folderPath) {
+        return unmapAccordingToMappingType(uri, mappingType, folderPath);
+    }
+
+    /**
+     * Get sub URIs without mapping/unmapping.
+     *
+     * @param uri
+     *            specified URI
+     * @return list of sub URIs
+     */
+    public ArrayList<URI> getSubUris(URI uri) {
+        ArrayList<URI> resultList = new ArrayList<>();
+        if (uri.isAbsolute()) {
+            File[] files = listFiles(new File(uri));
+            for (File file : files) {
+                resultList.add(Paths.get(file.getPath()).toUri());
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * Get all sub URIs of an URI with a given filter without mapping/unmapping.
+     *
+     * @param filter
+     *            the filter to filter the sub URIs
+     * @param uri
+     *            the URI, to get the sub URIs from.
+     * @return a List of sub uris.
+     */
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
+        ArrayList<URI> resultList = new ArrayList<>();
+        if (uri.isAbsolute()) {
+            File[] files = listFiles(filter, new File(uri));
+            for (File file : files) {
+                resultList.add(Paths.get(file.getPath()).toUri());
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * Get all sub URIs of an given URI with mapping/unmapping.
+     *
+     * @param uri
+     *            the URI, to get the sub URIs from.
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @param resourceToMap
+     *            as String
+     * @return a List of sub URIs.
+     */
+    public ArrayList<URI> getSubUris(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
+        if (!uri.isAbsolute()) {
+            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
+        }
+        ArrayList<URI> resultList = new ArrayList<>();
+        File[] files = listFiles(new File(uri));
+        for (File file : files) {
+            URI tempURI = Paths.get(file.getPath()).toUri();
+            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
+        }
+        return resultList;
+    }
+
+    /**
+     * Get all sub URIs of an URI with a given filter with mapping/unmapping.
+     *
+     * @param filter
+     *            the filter to filter the subUris
+     * @param uri
+     *            the URI, to get the sub URIs from.
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @param resourceToMap
+     *            as String
+     * @return a List of sub URIs.
+     */
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri, MappingType mappingType, String folderPath,
+                                     String resourceToMap) {
+        if (!uri.isAbsolute()) {
+            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
+        }
+        ArrayList<URI> resultList = new ArrayList<>();
+        File[] files = listFiles(filter, new File(uri));
+        for (File file : files) {
+            URI tempURI = Paths.get(file.getPath()).toUri();
+            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
+        }
+        return resultList;
+    }
+
+    /**
+     * Execute right mapping type according to value of enum MappingType.
+     *
+     * @param uri
+     *            to map
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @param resourceToMap
+     *            as string
+     * @return mapped URI
+     */
+    private URI mapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
+        switch (mappingType) {
+            case CONFIG:
+                return mapUriToKitodoConfigDirectoryUri(uri);
+            case DATA:
+                return mapUriToKitodoDataDirectoryUri(uri);
+            case ROOT:
+                return mapUriToKitodoRootFolderUri(folderPath, resourceToMap);
+            default:
+                return URI.create("");
+        }
+    }
+
+    /**
+     * Execute right unpmapping type according to value of enum MappingType.
+     *
+     * @param uri
+     *            to unamp
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @return unmapped URI
+     */
+    private URI unmapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath) {
+        switch (mappingType) {
+            case CONFIG:
+                return unmapUriFromKitodoConfigDirectoryUri(uri);
+            case DATA:
+                return unmapUriFromKitodoDataDirectoryUri(uri);
+            case ROOT:
+                return unmapUriFromKitodoRootFolderUri(folderPath, uri);
+            default:
+                return URI.create("");
+        }
+    }
+
+    /**
      * Map resource to its absolute path inside the Kitodo root folder.
      *
      * @param folderPath
@@ -833,149 +1096,6 @@ public class FileService {
     }
 
     /**
-     * Get sub URIs without mapping/unmapping.
-     * 
-     * @param uri
-     *            specified URI
-     * @return list of sub URIs
-     */
-    public ArrayList<URI> getSubUris(URI uri) {
-        ArrayList<URI> resultList = new ArrayList<>();
-        if (uri.isAbsolute()) {
-            File[] files = listFiles(new File(uri));
-            for (File file : files) {
-                resultList.add(Paths.get(file.getPath()).toUri());
-            }
-        }
-        return resultList;
-    }
-
-    /**
-     * Get all sub URIs of an URI with a given filter without mapping/unmapping.
-     *
-     * @param filter
-     *            the filter to filter the sub URIs
-     * @param uri
-     *            the URI, to get the sub URIs from.
-     * @return a List of sub uris.
-     */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
-        ArrayList<URI> resultList = new ArrayList<>();
-        if (uri.isAbsolute()) {
-            File[] files = listFiles(filter, new File(uri));
-            for (File file : files) {
-                resultList.add(Paths.get(file.getPath()).toUri());
-            }
-        }
-        return resultList;
-    }
-
-    /**
-     * Get all sub URIs of an given URI with mapping/unmapping.
-     *
-     * @param uri
-     *            the URI, to get the sub URIs from.
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @param resourceToMap
-     *            as String
-     * @return a List of sub URIs.
-     */
-    public ArrayList<URI> getSubUris(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
-        if (!uri.isAbsolute()) {
-            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
-        }
-        ArrayList<URI> resultList = new ArrayList<>();
-        File[] files = listFiles(new File(uri));
-        for (File file : files) {
-            URI tempURI = Paths.get(file.getPath()).toUri();
-            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
-        }
-        return resultList;
-    }
-
-    /**
-     * Get all sub URIs of an URI with a given filter with mapping/unmapping.
-     *
-     * @param filter
-     *            the filter to filter the subUris
-     * @param uri
-     *            the URI, to get the sub URIs from.
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @param resourceToMap
-     *            as String
-     * @return a List of sub URIs.
-     */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri, MappingType mappingType, String folderPath,
-            String resourceToMap) {
-        if (!uri.isAbsolute()) {
-            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
-        }
-        ArrayList<URI> resultList = new ArrayList<>();
-        File[] files = listFiles(filter, new File(uri));
-        for (File file : files) {
-            URI tempURI = Paths.get(file.getPath()).toUri();
-            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
-        }
-        return resultList;
-    }
-
-    /**
-     * Execute right mapping type according to value of enum MappingType.
-     * 
-     * @param uri
-     *            to map
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @param resourceToMap
-     *            as string
-     * @return mapped URI
-     */
-    private URI mapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
-        switch (mappingType) {
-            case CONFIG:
-                return mapUriToKitodoConfigDirectoryUri(uri);
-            case DATA:
-                return mapUriToKitodoDataDirectoryUri(uri);
-            case ROOT:
-                return mapUriToKitodoRootFolderUri(folderPath, resourceToMap);
-            default:
-                return URI.create("");
-        }
-    }
-
-    /**
-     * Execute right unpmapping type according to value of enum MappingType.
-     * 
-     * @param uri
-     *            to unamp
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @return unmapped URI
-     */
-    private URI unmapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath) {
-        switch (mappingType) {
-            case CONFIG:
-                return unmapUriFromKitodoConfigDirectoryUri(uri);
-            case DATA:
-                return unmapUriFromKitodoDataDirectoryUri(uri);
-            case ROOT:
-                return unmapUriFromKitodoRootFolderUri(folderPath, uri);
-            default:
-                return URI.create("");
-        }
-    }
-
-    /**
      * Creates a new File.
      *
      * @param fileName
@@ -1004,28 +1124,6 @@ public class FileService {
             return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
         }
         return URI.create("");
-    }
-
-    /**
-     * Gets the specific IMAGE sub type.
-     *
-     * @param process
-     *            the process to get the imageDirectory for.
-     * @return The uri of the Image Directory.
-     */
-    public URI getImagesDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-    }
-
-    /**
-     * Gets the URI to the ocr directory.
-     *
-     * @param process
-     *            the process tog et the ocr directory for.
-     * @return the uri to the ocr directory.
-     */
-    public URI getOcrDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
     }
 
     /**
@@ -1068,72 +1166,6 @@ public class FileService {
      */
     public boolean isFile(URI uri) {
         return new File(uri).isFile();
-    }
-
-    /**
-     * Gets the URI to the import directory.
-     *
-     * @param process
-     *            the process to get the import directory for.
-     * @return the uri of the import directory
-     */
-    public URI getImportDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
-    }
-
-    /**
-     * Gets the URI to the text directory.
-     *
-     * @param process
-     *            the process to get the text directory for.
-     * @return the uri of the text directory
-     */
-    public URI getTxtDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
-    }
-
-    /**
-     * Gets the URI to the pdf directory.
-     *
-     * @param process
-     *            the process to get the pdf directory for.
-     * @return the uri of the pdf directory
-     */
-    public URI getPdfDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
-    }
-
-    /**
-     * Gets the URI to the alto directory.
-     *
-     * @param process
-     *            the process to get the alto directory for.
-     * @return the uri of the alto directory
-     */
-    public URI getAltoDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
-    }
-
-    /**
-     * Gets the URI to the word directory.
-     *
-     * @param process
-     *            the process to get the word directory for.
-     * @return the uri of the word directory
-     */
-    public URI getWordDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
-    }
-
-    /**
-     * Gets the URI to the template file.
-     *
-     * @param process
-     *            the process to get the template file for.
-     * @return the uri of the template file
-     */
-    public URI getTemplateFile(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
@@ -1208,37 +1240,5 @@ public class FileService {
             return "";
         }
         return decodedPath;
-    }
-
-    /**
-     * Returns the version used in with the direct File mapping.
-     * 
-     * @param uri
-     *            the uri to map
-     * @param mappingType
-     *            CONFIG, DATA and ROOT
-     * @param folderPath
-     *            as String - used for ROOT mapping, in other case null
-     * @param resourceToMap
-     *            as String - used for ROOT mapping, in other case null
-     * @return the absolute URI path
-     */
-    public URI getAbsoluteURI(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
-        return mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
-    }
-
-    /**
-     * Returns the version used in the core code, without direct File mapping.
-     *
-     * @param uri
-     *            the URI to unmapp
-     * @param mappingType
-     *            CONFIG, DATA and ROOT
-     * @param folderPath
-     *            as String - used for ROOT mapping, in other case null
-     * @return the relative URI path
-     */
-    public URI getRelativeURI(URI uri, MappingType mappingType, String folderPath) {
-        return unmapAccordingToMappingType(uri, mappingType, folderPath);
     }
 }
