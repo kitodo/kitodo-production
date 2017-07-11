@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +26,12 @@ public class DocketImplTest {
     @Before
     public void initialize() {
         this.docketDataGenerator = new DocketDataGenerator();
+    }
+
+    @After
+    public void tearDown() {
+        new File("docket.pdf").delete();
+        new File("docket_multipage.pdf").delete();
     }
 
     @Test
