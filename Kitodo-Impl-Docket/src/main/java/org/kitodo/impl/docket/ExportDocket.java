@@ -56,8 +56,6 @@ public class ExportDocket {
         byte[] pdfBytes = generatePdfBytes(out, xsltfile);
 
         os.write(pdfBytes);
-        os.flush();
-        os.close();
     }
 
     public void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltfile) throws IOException {
