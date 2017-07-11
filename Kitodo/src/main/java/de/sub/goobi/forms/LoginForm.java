@@ -256,12 +256,12 @@ public class LoginForm implements Serializable {
 
         /* Verzeichnis einlesen */
         FilenameFilter filter = new FileNameEndsWithFilter(".png");
-        ArrayList<URI> files = serviceManager.getFileService().getSubUris(filter, path);
+        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, path);
 
         /* alle Dateien durchlaufen und die alten löschen */
-        if (files != null) {
-            for (URI aFiles : files) {
-                URI file = path.resolve(aFiles);
+        if (uris != null) {
+            for (URI uri : uris) {
+                URI file = path.resolve(uri);
                 if ((System.currentTimeMillis() - new File(file).lastModified()) > 7200000) {
                     serviceManager.getFileService().delete(file);
                 }
