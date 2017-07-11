@@ -80,7 +80,8 @@ public class FileService {
     }
 
     /**
-     * Creates a directory at a given URI with a given name.
+     * Creates a directory at a given URI with a given name without
+     * mapping/unampping - actually with default data mapping.
      *
      * @param parentFolderUri
      *            the uri, where the directory should be created
@@ -90,25 +91,54 @@ public class FileService {
      *         directoryName is null or empty
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
+        return createDirectory(parentFolderUri, directoryName, MappingType.DATA, null, null);
+    }
+
+    /**
+     * Creates a directory at a given URI with a given name with mapping/unmapping.
+     *
+     * @param parentFolderUri
+     *            the uri, where the directory should be created
+     * @param directoryName
+     *            the name of the directory.
+     * @return the URI of the new directory or URI of parent directory if
+     *         directoryName is null or empty
+     */
+    public URI createDirectory(URI parentFolderUri, String directoryName, MappingType mappingType, String folderPath,
+            String resourceToMap) {
         if (directoryName != null && !directoryName.equals("")) {
-            File file = new File(mapUriToKitodoDataDirectoryUri(parentFolderUri).getPath(), directoryName);
+            parentFolderUri = mapAccordingToMappingType(parentFolderUri, mappingType, folderPath, resourceToMap);
+            File file = new File(parentFolderUri.getPath(), directoryName);
             file.mkdir();
-            return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
+            return unmapAccordingToMappingType(Paths.get(file.getPath()).toUri(), mappingType, folderPath);
         }
         return parentFolderUri;
     }
 
     /**
-     * Creates a directory with a given name.
+     * Creates a directory with a given name without
+     * mapping/unampping - actually with default data mapping.
      *
      * @param directoryName
      *            the name of the directory.
      * @return the URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
-        File file = new File(mapUriToKitodoDataDirectoryUri(URI.create(directoryName)));
+       return createDirectory(directoryName, MappingType.DATA, null, null);
+    }
+
+    /**
+     * Creates a directory with a given name with mapping/unmapping.
+     *
+     * @param directoryName
+     *            the name of the directory.
+     * @return the URI of the new directory.
+     */
+    public URI createDirectory(String directoryName, MappingType mappingType, String folderPath, String resourceToMap) {
+        File file = new File(
+                mapAccordingToMappingType(URI.create(directoryName), mappingType, folderPath, resourceToMap));
         if (file.mkdir()) {
-            return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
+            return unmapAccordingToMappingType(Paths.get(file.getPath()).toUri(), mappingType, folderPath);
         }
         return URI.create("");
     }
@@ -824,7 +854,7 @@ public class FileService {
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                createDirectory(dir, process.getTitle() + "_source");
+                createDirectory(dir, process.getTitle() + "_source", MappingType.DATA, null, null);
             }
         } else {
             sourceFolder = dir.resolve(verzeichnisse.get(0));
@@ -945,7 +975,7 @@ public class FileService {
      * @return a List of sub URIs.
      */
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri, MappingType mappingType, String folderPath,
-                                     String resourceToMap) {
+            String resourceToMap) {
         if (!uri.isAbsolute()) {
             uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
         }
@@ -980,7 +1010,7 @@ public class FileService {
             case ROOT:
                 return mapUriToKitodoRootFolderUri(folderPath, resourceToMap);
             default:
-                return URI.create("");
+                return uri;
         }
     }
 
@@ -1004,7 +1034,7 @@ public class FileService {
             case ROOT:
                 return unmapUriFromKitodoRootFolderUri(folderPath, uri);
             default:
-                return URI.create("");
+                return uri;
         }
     }
 
