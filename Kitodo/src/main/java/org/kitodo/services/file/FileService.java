@@ -252,19 +252,20 @@ public class FileService {
      */
     public Integer getNumberOfImageFiles(URI directory) {
         int count = 0;
-        if (isDirectory(directory)) {
-            if (directory.isAbsolute()) {
+        if (directory.isAbsolute()) {
+            if (isDirectory(directory)) {
                 count = getSubUris(Helper.imageNameFilter, directory).size();
                 ArrayList<URI> children = getSubUris(directory);
                 for (URI aChildren : children) {
                     count += getNumberOfImageFiles(aChildren);
                 }
-            } else {
-                count = getSubUris(Helper.imageNameFilter, directory, MappingType.DATA, null, null).size();
-                ArrayList<URI> children = getSubUris(directory, MappingType.DATA, null, null);
-                for (URI aChildren : children) {
-                    count += getNumberOfImageFiles(aChildren);
-                }
+            }
+        } else {
+            directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
+            count = getSubUris(Helper.imageNameFilter, directory).size();
+            ArrayList<URI> children = getSubUris(directory);
+            for (URI aChildren : children) {
+                count += getNumberOfImageFiles(aChildren);
             }
         }
         return count;
