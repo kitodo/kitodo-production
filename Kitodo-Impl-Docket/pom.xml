@@ -99,7 +99,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>../Kitodo/src/main/resources/kitodo_config.properties</file>
+                                <file>../config-local/kitodo_config.properties</file>
                             </files>
                         </configuration>
                     </execution>
