@@ -17,12 +17,10 @@ import de.sub.goobi.export.download.TiffHeader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -131,9 +129,9 @@ public class WebDav implements Serializable {
      *            Process object
      */
     public void uploadFromHome(User user, Process process) {
-        URI after;
+        URI destination;
         try {
-            after = serviceManager.getUserService().getHomeDirectory(user);
+            destination = serviceManager.getUserService().getHomeDirectory(user);
         } catch (Exception ioe) {
             logger.error("Exception uploadFromHome(...)", ioe);
             Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
@@ -142,22 +140,20 @@ public class WebDav implements Serializable {
 
         /* prüfen, ob Benutzer Massenupload macht */
         if (user.isWithMassDownload()) {
-            after = Paths.get(new File(after).getPath(), process.getProject().getTitle()).toUri();
-            after = Paths.get(new File(after).getPath().replaceAll(" ", "__")).toUri();
-            URI projectDirectory = after;
-            if (!fileService.fileExist(projectDirectory)
-                    && !fileService.isDirectory(fileService.createResource(projectDirectory.toString()))) {
+            destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
+            destination = Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri();
+            if (!fileService.fileExist(destination)
+                    && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
                 List<String> param = new ArrayList<>();
-                param.add(new File(after).getPath().replaceAll(" ", "__"));
+                param.add(new File(destination).getPath().replaceAll(" ", "__"));
                 Helper.setFehlerMeldung(Helper.getTranslation("MassDownloadProjectCreationError", param));
                 logger.error("Can not create project directory "
-                        + Paths.get(new File(after).getPath().replaceAll(" ", "__")).toUri());
+                        + Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
                 return;
             }
         }
-        after = Paths.get(new File(after).getPath(), getEncodedProcessLinkName(process)).toUri();
-        URI userHome = after;
-        fileService.deleteSymLink((userHome));
+        destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
+        fileService.deleteSymLink((destination));
     }
 
     /**
@@ -165,17 +161,17 @@ public class WebDav implements Serializable {
      *
      * @param process
      *            Process object
-     * @param inNurLesen
+     * @param onlyRead
      *            boolean
      */
-    public void downloadToHome(Process process, boolean inNurLesen) {
+    public void downloadToHome(Process process, boolean onlyRead) {
         saveTiffHeader(process);
         User currentUser = Helper.getCurrentUser();
-        URI before;
+        URI source;
         URI userHome;
 
         try {
-            before = serviceManager.getFileService().getImagesDirectory(process);
+            source = serviceManager.getFileService().getImagesDirectory(process);
             userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
 
             /*
@@ -194,55 +190,25 @@ public class WebDav implements Serializable {
             return;
         }
 
-        URI after = userHome;
+        URI destination = userHome;
         if (currentUser.isWithMassDownload() && process.getProject() != null) {
-            after = Paths.get(new File(after).getPath(), process.getProject().getTitle()).toUri();
+            destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
         }
-        after = Paths.get(new File(after).getPath(), getEncodedProcessLinkName(process)).toUri();
+        destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
 
         if (logger.isInfoEnabled()) {
-            logger.info("before: " + before);
-            logger.info("after: " + after);
+            logger.info("source: " + source);
+            logger.info("destination: " + destination);
         }
 
-        File imagePath = new File(before);
-        File newUserHome = new File(getDecodedPath(after));
-
-        // wenn der Ziellink schon existiert, dann abbrechen
-        if (newUserHome.exists()) {
+        if (!fileService.createSymLink(source, destination, onlyRead, currentUser)) {
             return;
         }
-
-        String command = ConfigCore.getParameter("script_createSymLink") + " ";
-        command += imagePath + " " + newUserHome + " ";
-        if (inNurLesen) {
-            command += ConfigCore.getParameter("UserForImageReading", "root");
-        } else {
-            command += currentUser.getLogin();
-        }
-        try {
-            ShellScript.legacyCallShell2(command);
-        } catch (IOException ioe) {
-            logger.error("IOException downloadToHome()", ioe);
-            Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
-        }
-    }
-
-    private String getDecodedPath(URI uri) {
-        String uriToDecode = new File(uri).getPath();
-        String decodedPath;
-        try {
-            decodedPath = URLDecoder.decode(uriToDecode, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e);
-            return "";
-        }
-        return decodedPath;
     }
 
     /**
      * Method creates process link name and next encodes it for URI creation.
-     * 
+     *
      * @param process
      *            object
      * @return encoded process link name

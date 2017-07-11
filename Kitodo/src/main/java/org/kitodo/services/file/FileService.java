@@ -22,8 +22,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +40,7 @@ import org.goobi.io.BackupFileRotation;
 import org.hibernate.Hibernate;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
@@ -960,23 +963,42 @@ public class FileService {
      *            The home URI.
      * @return true, if link creation was successfull.
      */
-    public boolean createSymLink(URI targetUri, URI homeUri) {
-        return true;
+    public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) {
+        File imagePath = new File(homeUri);
+        File userHome = new File(getDecodedPath(targetUri));
+        if (userHome.exists()) {
+            return false;
+        }
+        String command = ConfigCore.getParameter("script_createSymLink") + " ";
+        command += imagePath + " " + userHome + " ";
+        if (onlyRead) {
+            command += ConfigCore.getParameter("UserForImageReading", "root");
+        } else {
+            command += user.getLogin();
+        }
+        try {
+            ShellScript.legacyCallShell2(command);
+            return true;
+        } catch (IOException ioe) {
+            logger.error("IOException downloadToHome()", ioe);
+            Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
+            return false;
+        }
     }
 
     /**
-     * Delets a symbolik link.
+     * Delete a symbolic link.
      *
      * @param homeUri
-     *            The uri of the home folder, where the link should be deleted.
-     * @return true, if deletion was successull.
+     *            the URI of the home folder, where the link should be deleted.
+     * @return true, if deletion was successful.
      */
     public boolean deleteSymLink(URI homeUri) {
         String command = ConfigCore.getParameter("script_deleteSymLink");
         ShellScript deleteSymLinkScript;
         try {
             deleteSymLinkScript = new ShellScript(new File(command));
-            deleteSymLinkScript.run(Collections.singletonList(homeUri.toString()));
+            deleteSymLinkScript.run(Collections.singletonList(new File(getDecodedPath(homeUri)).getPath()));
         } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException in deleteSymLink()", e);
             Helper.setFehlerMeldung("Couldn't find script file, error", e.getMessage());
@@ -987,6 +1009,18 @@ public class FileService {
             return false;
         }
         return true;
+    }
+
+    private String getDecodedPath(URI uri) {
+        String uriToDecode = new File(uri).getPath();
+        String decodedPath;
+        try {
+            decodedPath = URLDecoder.decode(uriToDecode, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e);
+            return "";
+        }
+        return decodedPath;
     }
 
     /**
