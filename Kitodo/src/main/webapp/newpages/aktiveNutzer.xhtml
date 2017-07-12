@@ -24,6 +24,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -65,8 +66,7 @@
                                                     infoClass="text_blue" showDetail="true" showSummary="true"
                                                     tooltip="true"/>
 
-                                        <!--<a4j:poll id="id6" interval="10001"-->
-                                                  <!--reRender="serverzeit, benutzerliste" ajaxSingle="true"/>-->
+                                        <p:poll interval="10" update="serverzeit benutzerliste"/>
 
                                         <h:panelGrid id="serverzeit" columns="2" style="font-size:11">
                                             <h:outputText id="id7" value="#{msgs.aktiveBenutzer}:"/>

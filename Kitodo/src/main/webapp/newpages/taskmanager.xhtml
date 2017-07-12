@@ -19,11 +19,12 @@
         #########################################-->
 
 <html
-        xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -122,9 +123,7 @@
                                                     title="Meldungen" layout="table" infoClass="text_blue"
                                                     showDetail="true" showSummary="true" tooltip="true"/>
 
-                                        <!-- TODO: find suitable replacement for example p:poll from PrimeFaces -->
-                                        <!--<a4j:poll id="id19" interval="5001" reRender="taskliste"-->
-                                                  <!--ajaxSingle="true"/>-->
+                                        <p:poll interval="5" update="taskliste"/>
 
                                         <!-- Datentabelle -->
                                         <t:dataTable id="taskliste" styleClass="standardTable"
