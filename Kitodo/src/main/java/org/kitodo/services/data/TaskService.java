@@ -178,6 +178,15 @@ public class TaskService extends TitleSearchService<Task> {
     }
 
     /**
+     * Gets the task titles distinct.
+     * 
+     * @return Al list of titles
+     */
+    public List<String> getTaskTitlesDistinct() {
+        return taskDAO.getTaskTitlesDistict();
+    }
+
+    /**
      * Method removes task object from database.
      *
      * @param task

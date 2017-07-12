@@ -13,8 +13,13 @@ package org.kitodo.data.database.persistence;
 
 import java.util.List;
 
+import javax.persistence.Table;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.Helper;
 
 public class PropertyDAO extends BaseDAO {
 
@@ -100,5 +105,44 @@ public class PropertyDAO extends BaseDAO {
      */
     public Long count(String query) throws DAOException {
         return retrieveAmount(query);
+    }
+
+    /**
+     * Gets all titles from workpieceproperties.
+     * 
+     * @return a list of titles.
+     */
+    public List<String> findWorkpiecePropertiesTitlesDistinct() {
+        Session session = Helper.getHibernateSession();
+        Query query = session
+                .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
+                        + " as p inner join workpiece_x_property wxp on p.id = wxp.property_id order by title");
+        return query.list();
+    }
+
+    /**
+     * Gets all titles from templateproperties.
+     * 
+     * @return a list of titles.
+     */
+    public List<String> findTemplatePropertiesTitlesDistinct() {
+        Session session = Helper.getHibernateSession();
+        Query query = session
+                .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
+                        + " as p inner join template_x_property txp on p.id = txp.property_id order by title");
+        return query.list();
+    }
+
+    /**
+     * Gets all titles from processProperties.
+     * 
+     * @return a list of titles.
+     */
+    public List<String> findProcessPropertiesTitlesDistinct() {
+        Session session = Helper.getHibernateSession();
+        Query query = session
+                .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
+                        + " as p inner join process_x_property pxp on p.id = pxp.property_id order by title");
+        return query.list();
     }
 }

@@ -114,6 +114,33 @@ public class PropertyService extends TitleSearchService<Property> {
     }
 
     /**
+     * Gets all titles from workpieceproperties.
+     *
+     * @return a list of titles.
+     */
+    public List<String> findWorkpiecePropertiesTitlesDistinct() {
+        return propertyDAO.findWorkpiecePropertiesTitlesDistinct();
+    }
+
+    /**
+     * Gets all titles from templateproperties.
+     *
+     * @return a list of titles.
+     */
+    public List<String> findTemplatePropertiesTitlesDistinct() {
+        return propertyDAO.findTemplatePropertiesTitlesDistinct();
+    }
+
+    /**
+     * Gets all titles from processProperties.
+     *
+     * @return a list of titles.
+     */
+    public List<String> findProcessPropertiesTitlesDistinct() {
+        return propertyDAO.findProcessPropertiesTitlesDistinct();
+    }
+
+    /**
      * Search by query in database.
      * 
      * @param query
