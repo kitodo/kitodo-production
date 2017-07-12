@@ -14,12 +14,16 @@ package org.kitodo.data.elasticsearch;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.api.RestClientInterface;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
  * Implementation of Elastic Search REST Client for Index Module.
@@ -49,6 +53,22 @@ public abstract class KitodoRestClient implements RestClientInterface {
     public String getServerInformation() throws IOException {
         Response response = restClient.performRequest("GET", "/", Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
+    }
+
+    /**
+     * Create new index. Used for tests!
+     */
+    public void createIndex() throws IOException, CustomResponseException {
+        String query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
+        HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
+        restClient.performRequest("PUT", "/" + index, Collections.<String, String>emptyMap(), entity);
+    }
+
+    /**
+     * Delete the whole index. Used for cleaning after tests!
+     */
+    public void deleteIndex() throws IOException, CustomResponseException {
+        restClient.performRequest("DELETE", "/" + index);
     }
 
     /**
