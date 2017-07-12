@@ -20,9 +20,11 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -73,18 +75,36 @@ public class TemplateService extends SearchService<Template> {
     }
 
     /**
-     * Method saves process and properties related to modified template.
+     * Method manages process and properties related to modified template.
      *
      * @param template
      *            object
      */
     protected void manageDependenciesForIndex(Template template) throws CustomResponseException, IOException {
-        if (template.getProcess() != null) {
-            serviceManager.getProcessService().saveToIndex(template.getProcess());
-        }
+        manageProcessDependenciesForIndex(template);
+        managePropertiesDependenciesForIndex(template);
+    }
 
-        for (Property property : template.getProperties()) {
-            serviceManager.getPropertyService().saveToIndex(property);
+    private void manageProcessDependenciesForIndex(Template template) throws CustomResponseException, IOException {
+        Process process = template.getProcess();
+        if (template.getIndexAction() == IndexAction.DELETE) {
+            process.getTemplates().remove(template);
+            serviceManager.getProcessService().saveToIndex(process);
+        } else {
+            serviceManager.getProcessService().saveToIndex(process);
+        }
+    }
+
+    private void managePropertiesDependenciesForIndex(Template template) throws CustomResponseException, IOException {
+        List<Property> properties = template.getProperties();
+        if (template.getIndexAction() == IndexAction.DELETE) {
+            for (Property property : properties) {
+                serviceManager.getPropertyService().removeFromIndex(property);
+            }
+        } else {
+            for (Property property : properties) {
+                serviceManager.getPropertyService().saveToIndex(property);
+            }
         }
     }
 
