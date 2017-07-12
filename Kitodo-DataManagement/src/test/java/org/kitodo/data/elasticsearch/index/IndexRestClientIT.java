@@ -11,23 +11,79 @@
 
 package org.kitodo.data.elasticsearch.index;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 
+import org.elasticsearch.common.io.FileSystemUtils;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.transport.Netty4Plugin;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
-import java.io.IOException;
+import java.io.File;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Test class for IndexRestClient.
  */
 public class IndexRestClientIT {
 
+    private static IndexRestClient restClient;
+    private static String testIndexName = "testindex";
+    private static final String HTTP_PORT = "9205";
+    private static final String HTTP_TRANSPORT_PORT = "9305";
+    private static Node node;
+
+    @BeforeClass
+    @SuppressWarnings("unchecked")
+    public static void startElasticSearch() throws Exception {
+        final String nodeName = "indexernode";
+
+        Map settingsMap = MockEntity.prepareNodeSettings(HTTP_PORT, HTTP_TRANSPORT_PORT, nodeName);
+
+        removeOldDataDirectories("target/" + nodeName);
+
+        Settings settings = Settings.builder().put(settingsMap).build();
+        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+        node.start();
+
+        restClient = initializeRestClient();
+    }
+
+    private static class ExtendedNode extends Node {
+        public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
+            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
+        }
+    }
+
+    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
+        File dataDir = new File(dataDirectory);
+        if (dataDir.exists()) {
+            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
+        }
+    }
+
     @AfterClass
-    public static void cleanIndex() throws IOException, CustomResponseException {
-        IndexRestClient restClient = initializeRestClient();
+    public static void stopElasticSearch() throws Exception {
+        node.close();
+    }
+
+    @Before
+    public void createIndex() throws Exception {
+        restClient.createIndex();
+        System.out.println(restClient.getServerInformation());
+    }
+
+    @After
+    public void deleteIndex() throws Exception {
         restClient.deleteIndex();
     }
 
@@ -39,28 +95,25 @@ public class IndexRestClientIT {
 
     @Test
     public void shouldAddType() throws Exception {
-        IndexRestClient restClient = initializeRestClient();
         String result = restClient.addType(MockEntity.createEntities());
 
-        boolean created = result.contains(
-                "requestLine=PUT /kitodo/test/1 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 201 Created");
-        boolean ok = result.contains(
-                "requestLine=PUT /kitodo/test/1 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 200 OK");
-        boolean condition = created || ok;
-        assertTrue("Add of type has failed - document id 1!", condition);
+        boolean created = result.contains("HTTP/1.1 201 Created");
+        assertTrue("Add of type has failed - document id 1!", created);
 
-        created = result.contains(
-                "requestLine=PUT /kitodo/test/2 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 201 Created");
-        ok = result.contains(
-                "requestLine=PUT /kitodo/test/2 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 200 OK");
-        condition = created || ok;
-        assertTrue("Add of type has failed - document id 2!", condition);
+        created = result.contains("HTTP/1.1 201 Created");
+        assertTrue("Add of type has failed - document id 2!", created);
+
+        result = restClient.addType(MockEntity.createEntities());
+
+        boolean ok = result.contains("HTTP/1.1 200 OK");
+        assertTrue("Update of type has failed - document id 1!", ok);
+
+        ok = result.contains("HTTP/1.1 200 OK");
+        assertTrue("Update of type has failed - document id 2!", ok);
     }
 
     @Test
     public void shouldDeleteDocument() throws Exception {
-        IndexRestClient restClient = initializeRestClient();
-
         restClient.addType(MockEntity.createEntities());
         assertTrue("Delete of document has failed!", restClient.deleteDocument(1));
 
@@ -69,7 +122,6 @@ public class IndexRestClientIT {
 
     @Test
     public void shouldDeleteType() throws Exception {
-        IndexRestClient restClient = initializeRestClient();
         restClient.addType(MockEntity.createEntities());
         assertTrue("Delete of type has failed!", restClient.deleteType());
     }
@@ -77,8 +129,8 @@ public class IndexRestClientIT {
     private static IndexRestClient initializeRestClient() {
         IndexRestClient restClient = new IndexRestClient();
         restClient.initiateClient();
-        restClient.setIndex("kitodo");
-        restClient.setType("test");
+        restClient.setIndex(testIndexName);
+        restClient.setType("indexer");
         return restClient;
     }
 }
