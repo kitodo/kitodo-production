@@ -127,12 +127,14 @@
                         <executions>
                             <execution>
                                 <id>checkstyle-check</id>
-                                <phase>compile</phase>
+                                <phase>validate</phase>
                                 <configuration>
                                     <encoding>UTF-8</encoding>
-                                    <failOnViolation>false</failOnViolation>
+                                    <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
-                                    <maxAllowedViolations>700</maxAllowedViolations>
+                                    <logViolationsToConsole>false</logViolationsToConsole>
+                                    <maxAllowedViolations>610</maxAllowedViolations>
+                                    <violationSeverity>warning</violationSeverity>
                                 </configuration>
                                 <goals>
                                     <goal>check</goal>
