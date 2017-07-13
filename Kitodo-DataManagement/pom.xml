@@ -148,7 +148,7 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>rest</artifactId>
-            <version>5.1.1</version>
+            <version>5.4.3</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -212,13 +212,13 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>5.1.1</version>
+            <version>5.4.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.plugin</groupId>
             <artifactId>transport-netty4-client</artifactId>
-            <version>5.1.1</version>
+            <version>5.4.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
