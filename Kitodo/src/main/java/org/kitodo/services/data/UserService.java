@@ -17,8 +17,10 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -604,18 +606,14 @@ public class UserService extends SearchService<User> {
         URI result;
         if (ConfigCore.getBooleanParameter("ldap_use")) {
             Ldap ldap = new Ldap();
-            result = URI.create(ldap.getUserHomeDirectory(user));
+            result = Paths.get(ldap.getUserHomeDirectory(user)).toUri();
         } else {
-            result = URI.create(ConfigCore.getParameter("dir_Users") + user.getLogin());
+            result = Paths.get(ConfigCore.getParameter("dir_Users"), user.getLogin()).toUri();
         }
 
-        if (result.equals("")) {
-            return URI.create("");
+        if (!new File(result).exists()) {
+            serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
         }
-
-        // if the directory is not "", but does not yet exist, then create it
-        // now
-        serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
         return result;
     }
 

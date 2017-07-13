@@ -376,7 +376,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     if (ben != null) {
                         s.setProcessingUser(ben);
                     }
-                    this.myDav.downloadToHome(s.getProcess(), s.getId(), !s.isTypeImagesWrite());
+                    this.myDav.downloadToHome(s.getProcess(), !s.isTypeImagesWrite());
 
                 }
             }
@@ -780,8 +780,7 @@ public class AktuelleSchritteForm extends BasisForm {
         if (ben != null) {
             mySchritt.setProcessingUser(ben);
         }
-        this.myDav.downloadToHome(this.mySchritt.getProcess(), this.mySchritt.getId(),
-                !this.mySchritt.isTypeImagesWrite());
+        this.myDav.downloadToHome(this.mySchritt.getProcess(), !this.mySchritt.isTypeImagesWrite());
 
         return null;
     }
@@ -852,7 +851,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 } catch (DataException e) {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
                 }
-                this.myDav.downloadToHome(proz, step.getId(), false);
+                this.myDav.downloadToHome(proz, false);
             }
         }
         // calcHomeImages();
@@ -885,7 +884,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 } catch (DataException e) {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
                 }
-                this.myDav.downloadToHome(proz, step.getId(), false);
+                this.myDav.downloadToHome(proz, false);
             }
         }
         // calcHomeImages();

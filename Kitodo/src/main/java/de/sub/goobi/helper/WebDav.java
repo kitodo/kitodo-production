@@ -17,11 +17,13 @@ import de.sub.goobi.export.download.TiffHeader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -121,16 +123,15 @@ public class WebDav implements Serializable {
     /**
      * Upload from home.
      *
-     * @param inBenutzer
+     * @param user
      *            User object
-     * @param myProcess
+     * @param process
      *            Process object
      */
-    public void uploadFromHome(User inBenutzer, Process myProcess) {
-        URI nach = null;
-
+    public void uploadFromHome(User user, Process process) {
+        URI destination;
         try {
-            nach = serviceManager.getUserService().getHomeDirectory(inBenutzer);
+            destination = serviceManager.getUserService().getHomeDirectory(user);
         } catch (Exception ioe) {
             logger.error("Exception uploadFromHome(...)", ioe);
             Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
@@ -138,121 +139,109 @@ public class WebDav implements Serializable {
         }
 
         /* prüfen, ob Benutzer Massenupload macht */
-        if (inBenutzer.isWithMassDownload()) {
-            nach = nach.resolve(myProcess.getProject().getTitle() + File.separator);
-            nach = URI.create(nach.toString().replaceAll(" ", "__"));
-            URI projectDirectory = nach;
-            if (!fileService.fileExist(projectDirectory)
-                    && !fileService.isDirectory(fileService.createResource(projectDirectory.toString()))) {
+        if (user.isWithMassDownload()) {
+            destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
+            destination = Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri();
+            if (!fileService.fileExist(destination)
+                    && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
                 List<String> param = new ArrayList<>();
-                param.add(nach.toString().replaceAll(" ", "__"));
+                param.add(new File(destination).getPath().replaceAll(" ", "__"));
                 Helper.setFehlerMeldung(Helper.getTranslation("MassDownloadProjectCreationError", param));
-                logger.error("Can not create project directory " + URI.create(nach.toString().replaceAll(" ", "__")));
+                logger.error("Can not create project directory "
+                        + Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
                 return;
             }
         }
-        nach = nach.resolve(myProcess.getTitle() + " [" + myProcess.getId() + "]");
-
-        /* Leerzeichen maskieren */
-        nach = URI.create(nach.toString().replaceAll(" ", "__"));
-        URI benutzerHome = nach;
-
-        fileService.deleteSymLink((benutzerHome));
+        destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
+        fileService.deleteSymLink((destination));
     }
 
     /**
      * Download to home.
      *
-     * @param myProcess
+     * @param process
      *            Process object
-     * @param inSchrittID
-     *            int
-     * @param inNurLesen
+     * @param onlyRead
      *            boolean
      */
-    public void downloadToHome(Process myProcess, int inSchrittID, boolean inNurLesen) {
-        saveTiffHeader(myProcess);
-        User aktuellerBenutzer = Helper.getCurrentUser();
-        URI von;
+    public void downloadToHome(Process process, boolean onlyRead) {
+        saveTiffHeader(process);
+        User currentUser = Helper.getCurrentUser();
+        URI source;
         URI userHome;
 
         try {
-            von = serviceManager.getFileService().getImagesDirectory(myProcess);
-            /* UserHome ermitteln */
-            userHome = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer);
+            source = serviceManager.getFileService().getImagesDirectory(process);
+            userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
 
             /*
-             * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
-             * existieren
+             * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren
              */
-            if (aktuellerBenutzer.isWithMassDownload()) {
-                URI projekt = new File(userHome + myProcess.getProject().getTitle()).toURI();
-                fileService.createDirectoryForUser(projekt, aktuellerBenutzer.getLogin());
+            if (currentUser.isWithMassDownload()) {
+                URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
+                fileService.createDirectoryForUser(project, currentUser.getLogin());
 
-                projekt = new File(userHome + DONEDIRECTORYNAME).toURI();
-                fileService.createDirectoryForUser(projekt, aktuellerBenutzer.getLogin());
+                project = Paths.get(userHome + DONEDIRECTORYNAME).toUri();
+                fileService.createDirectoryForUser(project, currentUser.getLogin());
             }
-
         } catch (Exception ioe) {
             logger.error("Exception downloadToHome()", ioe);
             Helper.setFehlerMeldung("Aborted download to home, error", ioe.getMessage());
             return;
         }
 
-        /*
-         * abhängig davon, ob der Download als "Massendownload" in einen
-         * Projektordner erfolgen soll oder nicht, das Zielverzeichnis
-         * definieren
-         */
-        String processLinkName = myProcess.getTitle() + "__[" + myProcess.getId() + "]";
-        URI nach = userHome;
-        if (aktuellerBenutzer.isWithMassDownload() && myProcess.getProject() != null) {
-            nach = nach.resolve(myProcess.getProject().getTitle() + File.separator);
+        URI destination = userHome;
+        if (currentUser.isWithMassDownload() && process.getProject() != null) {
+            destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
         }
-        nach = nach.resolve(processLinkName);
-
-        /* Leerzeichen maskieren */
-        nach = URI.create(nach.toString().replaceAll(" ", "__"));
+        destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
 
         if (logger.isInfoEnabled()) {
-            logger.info("von: " + von);
-            logger.info("nach: " + nach);
+            logger.info("source: " + source);
+            logger.info("destination: " + destination);
         }
 
-        File imagePfad = new File(von);
-        File benutzerHome = new File(nach);
-
-        // wenn der Ziellink schon existiert, dann abbrechen
-        if (benutzerHome.exists()) {
+        if (!fileService.createSymLink(source, destination, onlyRead, currentUser)) {
             return;
-        }
-
-        String command = ConfigCore.getParameter("script_createSymLink") + " ";
-        command += imagePfad + " " + benutzerHome + " ";
-        if (inNurLesen) {
-            command += ConfigCore.getParameter("UserForImageReading", "root");
-        } else {
-            command += aktuellerBenutzer.getLogin();
-        }
-        try {
-            ShellScript.legacyCallShell2(command);
-        } catch (IOException ioe) {
-            logger.error("IOException downloadToHome()", ioe);
-            Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
         }
     }
 
+    /**
+     * Method creates process link name and next encodes it for URI creation.
+     *
+     * @param process
+     *            object
+     * @return encoded process link name
+     */
+    private String getEncodedProcessLinkName(Process process) {
+        String processLinkName = process.getTitle() + "__[" + process.getId() + "]";
+        String encodedProcessLinkName;
+        try {
+            encodedProcessLinkName = URLEncoder.encode(processLinkName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e);
+            return "";
+        }
+        return encodedProcessLinkName;
+    }
+
+    /**
+     * Method checks if tiff header already exists. If yes method breaks, if not
+     * method creates it and saves to it.
+     * 
+     * @param inProcess
+     *            process object
+     */
     private void saveTiffHeader(Process inProcess) {
         try {
-            /* prüfen, ob Tiff-Header schon existiert */
-            if (new File(serviceManager.getFileService().getImagesDirectory(inProcess) + "tiffwriter.conf").exists()) {
+            URI imagesDirectory = serviceManager.getFileService().getImagesDirectory(inProcess);
+            URI tiffWriterURI = Paths.get(new File(imagesDirectory).getPath(), "tiffwriter.conf").toUri();
+            if (new File(tiffWriterURI).exists()) {
                 return;
             }
             TiffHeader tif = new TiffHeader(inProcess);
             try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
-                    fileService.write(
-                            serviceManager.getFileService().getImagesDirectory(inProcess).resolve("tiffwriter.conf")),
-                    StandardCharsets.UTF_8));) {
+                    fileService.write(tiffWriterURI), StandardCharsets.UTF_8))) {
                 outfile.write(tif.getTiffAlles());
             }
         } catch (Exception e) {

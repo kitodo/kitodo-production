@@ -989,7 +989,7 @@ public class ProzessverwaltungForm extends BasisForm {
          */
         if (!serviceManager.getProcessService().isImageFolderInUse(this.myProzess)) {
             WebDav myDav = new WebDav();
-            myDav.downloadToHome(this.myProzess, 0, false);
+            myDav.downloadToHome(this.myProzess, false);
         } else {
             Helper.setMeldung(null,
                     Helper.getTranslation("directory ") + " " + this.myProzess.getTitle() + " "
@@ -997,7 +997,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.myProzess)));
             WebDav myDav = new WebDav();
-            myDav.downloadToHome(this.myProzess, 0, true);
+            myDav.downloadToHome(this.myProzess, true);
         }
     }
 
@@ -1014,14 +1014,14 @@ public class ProzessverwaltungForm extends BasisForm {
              * ansonsten Download
              */
             if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
-                myDav.downloadToHome(proz, 0, false);
+                myDav.downloadToHome(proz, false);
             } else {
                 Helper.setMeldung(null,
                         Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
                                 + Helper.getTranslation("isInUse"),
                         serviceManager.getUserService()
                                 .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
-                myDav.downloadToHome(proz, 0, true);
+                myDav.downloadToHome(proz, true);
             }
         }
         Helper.setMeldung(null, "createdInUserHome", "");
@@ -1036,14 +1036,14 @@ public class ProzessverwaltungForm extends BasisForm {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
                 if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
-                    myDav.downloadToHome(proz, 0, false);
+                    myDav.downloadToHome(proz, false);
                 } else {
                     Helper.setMeldung(null,
                             Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
                                     + Helper.getTranslation("isInUse"),
                             serviceManager.getUserService()
                                     .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
-                    myDav.downloadToHome(proz, 0, true);
+                    myDav.downloadToHome(proz, true);
                 }
             }
         }
@@ -1058,14 +1058,14 @@ public class ProzessverwaltungForm extends BasisForm {
         WebDav myDav = new WebDav();
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
-                myDav.downloadToHome(proz, 0, false);
+                myDav.downloadToHome(proz, false);
             } else {
                 Helper.setMeldung(null,
                         Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
                                 + Helper.getTranslation("isInUse"),
                         serviceManager.getUserService()
                                 .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
-                myDav.downloadToHome(proz, 0, true);
+                myDav.downloadToHome(proz, true);
             }
         }
         Helper.setMeldung(null, "createdInUserHomeAll", "");
@@ -1838,9 +1838,9 @@ public class ProzessverwaltungForm extends BasisForm {
         ExportXmlLog xmlExport = new ExportXmlLog();
         try {
             LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            String ziel = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer())
-                    + this.myProzess.getTitle() + "_log.xml";
-            xmlExport.startExport(this.myProzess, ziel);
+            String directory = new File(serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer())).getPath();
+            String destination = directory + this.myProzess.getTitle() + "_log.xml";
+            xmlExport.startExport(this.myProzess, destination);
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not write logfile to home directory: ", e);
         }

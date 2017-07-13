@@ -15,6 +15,7 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -55,7 +56,7 @@ public class ConfigCore extends ConfigMain {
 
             /* den Ordner neu anlegen, wenn er nicht existiert */
             try {
-                internUri = serviceManager.getFileService().getInternUri(new File(fileName).toURI());
+                internUri = serviceManager.getFileService().getInternUri(Paths.get(fileName).toUri());
                 internUri = serviceManager.getFileService().createDirectory(internUri, "imagesTemp");
             } catch (Exception ioe) {
                 logger.error("IO error: " + ioe);

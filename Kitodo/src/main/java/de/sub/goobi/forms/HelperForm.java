@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -218,7 +219,7 @@ public class HelperForm implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         URI fileName = serviceManager.getFileService()
-                .getInternUri(new File(session.getServletContext().getRealPath(CSS_PATH) + File.separator).toURI());
+                .getInternUri(Paths.get(session.getServletContext().getRealPath(CSS_PATH) + File.separator).toUri());
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
 
         ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);
