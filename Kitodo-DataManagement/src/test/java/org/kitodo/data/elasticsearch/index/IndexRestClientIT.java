@@ -36,25 +36,26 @@ import java.util.Map;
 public class IndexRestClientIT {
 
     private static IndexRestClient restClient;
-    private static String testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-    private static final String HTTP_PORT = ConfigMain.getParameter("elasticsearch.port", "9205");
-    private static final String HTTP_TRANSPORT_PORT = "9305";
     private static Node node;
+    private static String testIndexName;
+    private static String port;
+    private static final String HTTP_TRANSPORT_PORT = "9305";
 
     @BeforeClass
     @SuppressWarnings("unchecked")
     public static void startElasticSearch() throws Exception {
         final String nodeName = "indexernode";
+        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        port = ConfigMain.getParameter("elasticsearch.port", "9205");
+        restClient = initializeRestClient();
 
-        Map settingsMap = MockEntity.prepareNodeSettings(HTTP_PORT, HTTP_TRANSPORT_PORT, nodeName);
+        Map settingsMap = MockEntity.prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
 
         removeOldDataDirectories("target/" + nodeName);
 
         Settings settings = Settings.builder().put(settingsMap).build();
         node = new ExtendedNode(settings, asList(Netty4Plugin.class));
         node.start();
-
-        restClient = initializeRestClient();
     }
 
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {
