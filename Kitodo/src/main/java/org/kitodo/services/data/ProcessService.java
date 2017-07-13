@@ -1189,13 +1189,15 @@ public class ProcessService extends TitleSearchService<Process> {
             logger.debug("generate docket for process " + process.getId());
         }
         String rootPath = ConfigCore.getParameter("xsltFolder");
-        File xsltFile = new File(rootPath, "docket.xsl");
+        File xsltFile;
         if (process.getDocket() != null) {
             xsltFile = new File(rootPath, process.getDocket().getFile());
             if (!xsltFile.exists()) {
                 Helper.setFehlerMeldung("docketMissing");
                 return "";
             }
+        } else {
+            xsltFile = new File(rootPath, "docket.xsl");
         }
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
