@@ -41,7 +41,7 @@ import static java.util.Arrays.asList;
 
 public class ElasticSearchIT {
     private Client client;
-    private static String testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+    private static String testIndexName = "testcreation";
     private static final String HTTP_BASE_URL = "http://localhost";
     private static final String HTTP_PORT = ConfigMain.getParameter("elasticsearch.port", "9205");
     private static final String HTTP_TRANSPORT_PORT = "9305";
