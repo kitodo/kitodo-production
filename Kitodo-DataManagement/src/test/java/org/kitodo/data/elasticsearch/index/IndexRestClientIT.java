@@ -25,6 +25,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.MockEntity;
 
 import java.io.File;
@@ -37,8 +38,8 @@ import java.util.Map;
 public class IndexRestClientIT {
 
     private static IndexRestClient restClient;
-    private static String testIndexName = "testindex";
-    private static final String HTTP_PORT = "9205";
+    private static String testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+    private static final String HTTP_PORT = ConfigMain.getParameter("elasticsearch.port", "9205");
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static Node node;
 

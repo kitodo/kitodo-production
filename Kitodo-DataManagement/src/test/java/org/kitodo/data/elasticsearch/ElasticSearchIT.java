@@ -38,14 +38,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.config.ConfigMain;
 
 import static java.util.Arrays.asList;
 
 public class ElasticSearchIT {
     private Client client;
-    private static String testIndexName = "indexname";
+    private static String testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
     private static final String HTTP_BASE_URL = "http://localhost";
-    private static final String HTTP_PORT = "9205";
+    private static final String HTTP_PORT = ConfigMain.getParameter("elasticsearch.port", "9205");
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final String elasticSearchBaseUrl = HTTP_BASE_URL + ":" + HTTP_PORT;
     private static Node node;
