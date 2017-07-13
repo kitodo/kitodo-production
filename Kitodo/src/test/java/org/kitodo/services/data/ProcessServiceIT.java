@@ -39,14 +39,18 @@ import ugh.dl.DigitalDocument;
  */
 public class ProcessServiceIT {
 
+    private static FileService fileService = new FileService();
+
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
+        fileService.createDirectory(URI.create(""), "1");
     }
 
     @AfterClass
-    public static void cleanDatabase() {
+    public static void cleanDatabase() throws Exception {
         // MockDatabase.cleanDatabase();
+        fileService.delete(URI.create("1"));
     }
 
     @Before
@@ -205,32 +209,30 @@ public class ProcessServiceIT {
         assertTrue("Blocked user doesn't match to given user!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetImagesTifDirectory() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
         URI directory = processService.getImagesTifDirectory(true, process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\First process_media\\");
+        boolean condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
 
         directory = processService.getImagesTifDirectory(false, process);
-        condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\First process_media\\");
+        condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
         // I don't know what changes this useFallback so I'm testing for both
         // cases
     }
 
-    @Ignore("not sure how method works")
     @Test
     public void shouldCheckIfTifDirectoryExists() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        // it is weird but it says that it doesn't exist....
-        fileService.createMetaDirectory(URI.create("C:\\dev\\kitodo\\metadata\\1\\images\\"), "First process_media\\");
+        fileService.createDirectory(URI.create("1"), "images");
+        URI directory = fileService.createDirectory(URI.create("1/images"), "First__process_tif");
+        fileService.createResource(directory, "test.jpg");
         boolean condition = processService.checkIfTifDirectoryExists(process);
         assertTrue("Images TIF directory doesn't exist!", condition);
 
@@ -239,33 +241,29 @@ public class ProcessServiceIT {
         assertTrue("Images TIF directory exists, but it shouldn't!", !condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetImagesOrigDirectory() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
         URI directory = processService.getImagesOrigDirectory(false, process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\master_First process_media\\");
+        boolean condition = directory.getRawPath().contains("orig_First__process_tif");
         assertTrue("Images orig directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetImagesDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getImagesDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\");
+        boolean condition = directory.getRawPath().contains("1/images");
         assertTrue("Images directory doesn't match to given directory!", condition);
     }
 
     @Test
     public void shouldGetSourceDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getSourceDirectory(process);
@@ -283,75 +281,63 @@ public class ProcessServiceIT {
         assertTrue("Process data directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetOcrDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getOcrDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\");
+        boolean condition = directory.getRawPath().contains("1/ocr");
         assertTrue("OCR directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetTxtDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getTxtDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_txt\\");
+        boolean condition = directory.getRawPath().contains("1/ocr/First__process_txt");
         assertTrue("TXT directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetWordDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getWordDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_wc\\");
+        boolean condition = directory.getRawPath().contains("1/ocr/First__process_wc");
         assertTrue("Word directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetPdfDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getPdfDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_pdf\\");
+        boolean condition = directory.getRawPath().contains("1/ocr/First__process_pdf");
         assertTrue("PDF directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetAltoDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getAltoDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_alto\\");
+        boolean condition = directory.getRawPath().contains("1/ocr/First__process_alto");
         assertTrue("Alto directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetImportDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         URI directory = fileService.getImportDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\import\\");
+        boolean condition = directory.getRawPath().contains("1/import");
         assertTrue("Import directory doesn't match to given directory!", condition);
     }
 
@@ -494,7 +480,6 @@ public class ProcessServiceIT {
         assertTrue("Metadata file path doesn't match to given file path!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetTemplateFilePath() throws Exception {
         ProcessService processService = new ProcessService();
@@ -502,18 +487,17 @@ public class ProcessServiceIT {
 
         Process process = processService.find(1);
         URI directory = fileService.getTemplateFile(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\template.xml");
+        boolean condition = directory.getRawPath().contains("1/template.xml");
         assertTrue("Template file path doesn't match to given file path!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetFulltextFilePath() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
         String directory = processService.getFulltextFilePath(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\fulltext.xml");
+        boolean condition = directory.contains("1/fulltext.xml");
         assertTrue("Fulltext file path doesn't match to given file path!", condition);
     }
 
@@ -572,7 +556,6 @@ public class ProcessServiceIT {
         assertTrue("Process doesn't contain unreachable tasks!", condition);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldCheckIfIsImageFolderInUse() throws Exception {
         ProcessService processService = new ProcessService();
@@ -625,6 +608,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
+        processService.createProcessDirs(process);
         // assertEquals("Process directories are not created!", expected,
         // actual);
     }
