@@ -20,7 +20,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,8 +29,6 @@ import javax.ws.rs.core.MediaType;
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.internal.InternalSettingsPreparer;
-import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -63,12 +60,6 @@ public class ElasticSearchIT {
         Settings settings = Settings.builder().put(settingsMap).build();
         node = new ExtendedNode(settings, asList(Netty4Plugin.class));
         node.start();
-    }
-
-    private static class ExtendedNode extends Node {
-        public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
-        }
     }
 
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {

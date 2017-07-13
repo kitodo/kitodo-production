@@ -17,8 +17,6 @@ import static org.junit.Assert.assertTrue;
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.internal.InternalSettingsPreparer;
-import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -26,10 +24,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.config.ConfigMain;
+import org.kitodo.data.elasticsearch.ExtendedNode;
 import org.kitodo.data.elasticsearch.MockEntity;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -57,12 +55,6 @@ public class IndexRestClientIT {
         node.start();
 
         restClient = initializeRestClient();
-    }
-
-    private static class ExtendedNode extends Node {
-        public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
-        }
     }
 
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {
