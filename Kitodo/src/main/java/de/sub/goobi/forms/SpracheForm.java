@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import org.apache.commons.lang.LocaleUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -41,11 +42,11 @@ public class SpracheForm implements Serializable {
      * The constructor of this class loads the required MessageBundle.
      */
     public SpracheForm() {
-        String p = ConfigCore.getParameter("language.force-default");
-        if (p != null && p.length() > 0) {
+        String key = ConfigCore.getParameter("language.default", "de");
+        Locale locale = new Locale.Builder().setLanguageTag(key).build();
+        if (!LocaleUtils.isAvailableLocale(locale)) {
             FacesContext context = FacesContext.getCurrentInstance();
             if (!Objects.equals(context.getViewRoot(), null)) {
-                Locale locale = new Locale(p);
                 context.getViewRoot().setLocale(locale);
                 context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
             }
@@ -168,7 +169,13 @@ public class SpracheForm implements Serializable {
              *  When no locale is given (no Accept-Language Http Request header is present)
              *  return default language
              */
-            return new Locale(ConfigCore.getParameter("language.default"));
+            String key = ConfigCore.getParameter("language.default", "de");
+            Locale locale = new Locale.Builder().setLanguageTag(key).build();
+            if (LocaleUtils.isAvailableLocale(locale)) {
+                return locale;
+            } else {
+                throw new IllegalArgumentException("Locale code is not valid");
+            }
         }
     }
 
