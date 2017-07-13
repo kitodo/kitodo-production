@@ -11,15 +11,24 @@
 
 package org.kitodo.data.elasticsearch.search;
 
-import java.io.IOException;
+import java.io.File;
+import java.util.Map;
 
+import org.elasticsearch.common.io.FileSystemUtils;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.transport.Netty4Plugin;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.config.ConfigMain;
+import org.kitodo.data.elasticsearch.ExtendedNode;
 import org.kitodo.data.elasticsearch.MockEntity;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -27,23 +36,57 @@ import static org.junit.Assert.assertTrue;
  */
 public class SearchRestClientIT {
 
+    private static Node node;
+    private static SearchRestClient searchRestClient;
+    private static String testIndexName;
+    private static String port;
+    private static final String HTTP_TRANSPORT_PORT = "9305";
+
     @BeforeClass
-    public static void prepareIndex() throws IOException, CustomResponseException {
+    @SuppressWarnings("unchecked")
+    public static void prepareIndex() throws Exception {
+        final String nodeName = "searchernode";
+        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        port = ConfigMain.getParameter("elasticsearch.port", "9205");
+        searchRestClient = initializeSearchRestClient();
+
+        Map settingsMap = MockEntity.prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
+
+        removeOldDataDirectories("target/" + nodeName);
+
+        Settings settings = Settings.builder().put(settingsMap).build();
+        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+        node.start();
+    }
+
+    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
+        File dataDir = new File(dataDirectory);
+        if (dataDir.exists()) {
+            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
+        }
+    }
+
+    @AfterClass
+    public static void cleanIndex() throws Exception {
+        node.close();
+    }
+
+    @Before
+    public void createIndex() throws Exception {
+        searchRestClient.createIndex();
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
     }
 
-    @AfterClass
-    public static void cleanIndex() throws IOException, CustomResponseException {
-        IndexRestClient restClient = initializeIndexRestClient();
-        restClient.deleteIndex();
+    @After
+    public void deleteIndex() throws Exception {
+        searchRestClient.deleteIndex();
     }
 
     @Test
     public void shouldCountDocuments() throws Exception {
         Thread.sleep(2000);
-        SearchRestClient searchRestClient = initializeSearchRestClient();
         String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
         String result = searchRestClient.countDocuments(query);
 
@@ -53,7 +96,6 @@ public class SearchRestClientIT {
 
     @Test
     public void shouldGetDocumentById() throws Exception {
-        SearchRestClient searchRestClient = initializeSearchRestClient();
         String result = searchRestClient.getDocument(1);
 
         boolean condition = result.contains("\"found\" : true");
@@ -63,7 +105,6 @@ public class SearchRestClientIT {
     @Test
     public void shouldGetDocumentByQuery() throws Exception {
         Thread.sleep(2000);
-        SearchRestClient searchRestClient = initializeSearchRestClient();
         String query = "{\n\"match_all\" : {}\n}";
         String result = searchRestClient.getDocument(query);
 
@@ -74,16 +115,16 @@ public class SearchRestClientIT {
     private static SearchRestClient initializeSearchRestClient() {
         SearchRestClient restClient = new SearchRestClient();
         restClient.initiateClient();
-        restClient.setIndex("kitodo");
-        restClient.setType("testGet");
+        restClient.setIndex(testIndexName);
+        restClient.setType("testsearchclient");
         return restClient;
     }
 
     private static IndexRestClient initializeIndexRestClient() {
         IndexRestClient restClient = new IndexRestClient();
         restClient.initiateClient();
-        restClient.setIndex("kitodo");
-        restClient.setType("testGet");
+        restClient.setIndex(testIndexName);
+        restClient.setType("testsearchclient");
         return restClient;
     }
 }
