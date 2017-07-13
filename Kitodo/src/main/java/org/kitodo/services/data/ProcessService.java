@@ -2008,8 +2008,13 @@ public class ProcessService extends TitleSearchService<Process> {
         docketdata.setRulesetName(process.getRuleset().getTitle());
         docketdata.setComment(process.getWikiField());
 
-        docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates().get(0).getProperties()));
-        docketdata.setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces().get(0).getProperties()));
+        if (process.getTemplates() != null) {
+            docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates().get(0).getProperties()));
+        }
+        if (process.getWorkpieces() != null) {
+            docketdata
+                    .setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces().get(0).getProperties()));
+        }
         docketdata.setProcessProperties(getDocketDataForProperties(process.getProperties()));
 
         return docketdata;
