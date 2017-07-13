@@ -13,14 +13,17 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIViewRoot;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
@@ -40,7 +43,12 @@ public class SpracheForm implements Serializable {
     public SpracheForm() {
         String p = ConfigCore.getParameter("language.force-default");
         if (p != null && p.length() > 0) {
-            FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(p));
+            FacesContext context = FacesContext.getCurrentInstance();
+            if (!Objects.equals(context.getViewRoot(), null)) {
+                Locale locale = new Locale(p);
+                context.getViewRoot().setLocale(locale);
+                context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
+            }
         }
     }
 
@@ -109,7 +117,7 @@ public class SpracheForm implements Serializable {
      *            “‹language›_‹country›”, e.g. “en” or “en_GB” are valid values.
      */
     @SuppressWarnings("unchecked")
-    public void switchLanguage(String langCodeCombined) {
+    public void switchLanguage(String langCodeCombined) throws IOException {
         String[] languageCode = langCodeCombined.split("_");
         Locale locale = null;
         if (languageCode.length == 2) {
@@ -120,6 +128,8 @@ public class SpracheForm implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         context.getViewRoot().setLocale(locale);
         context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
+        // Reload current page to make language change effective
+        context.getExternalContext().redirect(((HttpServletRequest) context.getExternalContext().getRequest()).getRequestURI());
     }
 
     /**
@@ -129,7 +139,7 @@ public class SpracheForm implements Serializable {
      * @return the empty String to point to the JSF framework to remain on the
      *         current page
      */
-    public void switchLanguage() {
+    public void switchLanguage() throws IOException {
         String languageCodeCombined = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale().toLanguageTag();
         switchLanguage(languageCodeCombined);
     }
@@ -142,9 +152,9 @@ public class SpracheForm implements Serializable {
     public Locale getLocale() {
         FacesContext fac = FacesContext.getCurrentInstance();
         @SuppressWarnings("rawtypes")
-        Map session = fac.getExternalContext().getSessionMap();
         UIViewRoot frame = fac.getViewRoot();
         if (!Objects.equals(frame, null)) {
+            Map session = fac.getExternalContext().getSessionMap();
             if (session.containsKey(SESSION_LOCALE_FIELD_ID)) {
                 Locale locale = (Locale) session.get(SESSION_LOCALE_FIELD_ID);
                 if (frame.getLocale() != locale) {
@@ -154,8 +164,11 @@ public class SpracheForm implements Serializable {
             } else
                 return frame.getLocale();
         } else {
-            // workaround for session object not containing 'locale' value
-            return Locale.GERMAN;
+            /**
+             *  When no locale is given (no Accept-Language Http Request header is present)
+             *  return default language
+             */
+            return new Locale(ConfigCore.getParameter("language.default"));
         }
     }
 
