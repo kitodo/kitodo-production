@@ -115,8 +115,6 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
         if (method == HTTPMethods.PUT) {
             HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseBeans);
             response = restClient.addType(documents);
-        } else if (method == HTTPMethods.DELETE) {
-            response = String.valueOf(restClient.deleteType());
         } else {
             response = "Incorrect HTTP method!";
         }

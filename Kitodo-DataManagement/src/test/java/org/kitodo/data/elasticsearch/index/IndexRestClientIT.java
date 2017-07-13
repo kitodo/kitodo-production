@@ -120,12 +120,6 @@ public class IndexRestClientIT {
         assertTrue("Delete of document has failed!", restClient.deleteDocument(100));
     }
 
-    @Test
-    public void shouldDeleteType() throws Exception {
-        restClient.addType(MockEntity.createEntities());
-        assertTrue("Delete of type has failed!", restClient.deleteType());
-    }
-
     private static IndexRestClient initializeRestClient() {
         IndexRestClient restClient = new IndexRestClient();
         restClient.initiateClient();
