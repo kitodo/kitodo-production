@@ -20,6 +20,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
 
     <ui:fragment rendered="#{ProzessverwaltungForm.statisticsManager != null and ProzessverwaltungForm.showStatistics}">
@@ -62,28 +63,20 @@
 
                     <h:outputLabel for="from" value="#{msgs.zeitraum} #{msgs.von}" style="width:150px"/>
                     <h:panelGroup>
-                        <t:inputCalendar id="from" style="width:110px"
-                                         value="#{ProzessverwaltungForm.statisticsManager.sourceDateFrom}"
-                                         renderAsPopup="true"
-                                         renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}"
-                                         popupWeekString="#{msgs.kw}"
-                                         imageLocation="/newpages/images/calendarImages"
-                                         popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif"
-                                         styleClass="projekteBearbeiten"
-                        />
+                        <p:calendar id="from" style="width:110px"
+                                    value="#{ProzessverwaltungForm.statisticsManager.sourceDateFrom}"
+                                    styleClass="projekteBearbeiten"
+                                    navigator="true"
+                                    showOn="button"/>
                     </h:panelGroup>
 
                     <h:outputLabel for="to" value="#{msgs.to}"/>
                     <h:panelGroup>
-                        <t:inputCalendar id="to" style="width:110px"
-                                         value="#{ProzessverwaltungForm.statisticsManager.sourceDateTo}"
-                                         renderAsPopup="true"
-                                         renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}"
-                                         popupWeekString="#{msgs.kw}"
-                                         imageLocation="/newpages/images/calendarImages"
-                                         popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif"
-                                         styleClass="projekteBearbeiten"
-                        />
+                        <p:calendar id="to" style="width:110px"
+                                    value="#{ProzessverwaltungForm.statisticsManager.sourceDateTo}"
+                                    styleClass="projekteBearbeiten"
+                                    navigator="true"
+                                    showOn="button"/>
                     </h:panelGroup>
 
                     <h:outputText style="font-weight:bold" value=" - #{msgs.orLast} - "/>

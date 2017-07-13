@@ -18,6 +18,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -82,15 +83,6 @@
                                         <h:graphicImage id="id14" alt="add user" value="/newpages/images/buttons/addUser.gif"/>
                                         <f:param id="id15" name="ID" value="#{item.id}"/>
                                     </h:commandLink>
-
-                                    <!-- TODO: find replacement for jp:closePopupFrame -->
-                                    <!--<jp:closePopupFrame rendered="false">-->
-                                        <!--<h:commandLink id="id16" action="#{NavigationForm.JeniaPopupCloseAction}"-->
-                                                       <!--title="#{msgs.uebernehmen}">-->
-                                            <!--<h:graphicImage id="id17" value="/newpages/images/buttons/addUser.gif"/>-->
-                                            <!--<f:param id="id18" name="ID" value="#{item.id}"/>-->
-                                        <!--</h:commandLink>-->
-                                    <!--</jp:closePopupFrame>-->
                                 </h:column>
 
                             </t:dataTable>
@@ -101,18 +93,15 @@
                                         <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                         <t:aliasBean alias="#{mypage}"
                                                      value="#{BenutzergruppenForm.page}">
-                                            <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                            <ui:include src="/newpages/inc/datascroller.xhtml">
+                                                <ui:param name="formName" value="userEditForm"/>
+                                            </ui:include>
                                         </t:aliasBean>
                                         <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
                                     </td>
                                     <td align="center">
-                                        <!-- Schliessen-Schaltknopf -->
-                                        <!-- TODO: find replacement for jp:closePopupFrame -->
-                                        <!--<jp:closePopupFrame>-->
-                                            <!--&lt;!&ndash; TODO: Use massage files here &ndash;&gt;-->
-                                            <!--<h:commandLink id="id20" value="#{msgs.close}"-->
-                                                           <!--action="#{NavigationForm.JeniaPopupCloseAction}"></h:commandLink>-->
-                                        <!--</jp:closePopupFrame>-->
+                                        <!-- Close button -->
+                                        <p:commandLink onclick="PF('addUserToUserGroupDialog').hide()" value="#{msgs.close}"/>
                                     </td>
                                 </tr>
                             </table>

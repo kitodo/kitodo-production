@@ -1,0 +1,212 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
+    >
+    <div id="tab1">
+        <h:panelGrid columns="2" rowClasses="top" id="projgrid2"
+                     styleClass="tableDetails ">
+
+            <!-- Titel -->
+            <h:outputLabel id="id17" for="titel"
+                           value="#{msgs.titel}"/>
+            <h:panelGroup id="id18">
+                <h:inputText id="titel"
+                             style="width: 200px;margin-right:15px"
+                             value="#{ProjekteForm.myProjekt.title}"
+                             required="true"/>
+                <t:message id="id19" for="titel" style="color: red"
+                           replaceIdWithLabel="true"/>
+            </h:panelGroup>
+
+            <!-- number of pages -->
+            <h:outputText id="vwid8" value="#{msgs.numberImages}:"/>
+            <h:panelGroup>
+                <h:inputText id="id24"
+                             style="width: 200px;margin-right:15px"
+                             value="#{ProjekteForm.myProjekt.numberOfPages}">
+                </h:inputText>
+                <h:commandLink
+                        action="#{ProjekteForm.generateValuesForStatistics}">
+                    <h:graphicImage alt="#{msgs.generateValues}"
+                                    value="/newpages/images/buttons/reload.gif"
+                                    style="margin-right:10px"/>
+                </h:commandLink>
+            </h:panelGroup>
+
+            <!-- number of volumes -->
+            <h:outputText id="vwid11" value="#{msgs.numberVolumes}:"/>
+            <h:inputText id="id25"
+                         style="width: 200px;margin-right:15px"
+                         value="#{ProjekteForm.myProjekt.numberOfVolumes}">
+            </h:inputText>
+
+            <!-- startdate -->
+            <h:outputText id="vwid14" value="#{msgs.startdate}:"/>
+
+            <p:calendar id="vwid15" style="width:200px"
+                        value="#{ProjekteForm.myProjekt.startDate}"
+                        styleClass="projekteBearbeiten"
+                        navigator="true"
+                        showOn="button"/>
+
+            <!-- enddate -->
+            <h:outputText id="vwid17" value="#{msgs.enddate}:"/>
+
+            <p:calendar id="vwid18" style="width:200px"
+                        value="#{ProjekteForm.myProjekt.endDate}"
+                        styleClass="projekteBearbeiten"
+                        navigator="true"
+                        showOn="button"/>
+
+            <h:outputText id="vwid36a"
+                          value="#{msgs.projectIsArchived}: "/>
+            <h:selectBooleanCheckbox id="vwid37b"
+                                     style="margin-right:15px"
+                                     value="#{ProjekteForm.myProjekt.projectIsArchived}"/>
+
+        </h:panelGrid>
+
+        <table class="tableCalcStat tableDetails">
+
+            <tbody>
+            <tr class="header">
+                <td>
+                    <!-- pages per volume -->
+                    <h:outputText id="vwid22"
+                                  value="#{msgs.imagesPerVolume}:"/>
+                </td>
+                <td class="left">
+                    <h:outputText id="vwid23"
+                                  value="#{ProjekteForm.calcImagesPerVolume}"/>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <!-- duration -->
+                <td>
+                    <h:outputText id="vwid24"
+                                  value="#{msgs.durationInMonth}:"/>
+                </td>
+                <td class="left">
+                    <h:outputText id="vwid25"
+                                  value="#{ProjekteForm.calcDuration}"/>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <ui:fragment rendered="#{ProjekteForm.calcDuration > 11}">
+                <tr>
+                    <!-- throughputPerYear -->
+                    <td>
+                        <h:outputText id="vwid26"
+                                      value="#{msgs.volumesPerYear}:"
+                                      rendered="#{ProjekteForm.calcDuration > 11}"/>
+                    </td>
+                    <td class="left">
+                        <h:outputText id="vwid27"
+                                      value="#{ProjekteForm.calcThroughputPerYear}"
+                                      rendered="#{ProjekteForm.calcDuration > 11}"/>
+                    </td>
+                    <td class="right">
+                        <h:outputText id="id28"
+                                      value="#{msgs.pagesPerYear}:"/>
+                    </td>
+                    <td>
+                        <h:outputText id="id29"
+                                      value="#{ProjekteForm.calcThroughputPagesPerYear}"/>
+                    </td>
+                </tr>
+            </ui:fragment>
+            <ui:fragment rendered="#{ProjekteForm.calcDuration > 2}">
+                <tr>
+                    <!-- throughputPerQuarter -->
+                    <td>
+                        <h:outputText id="vwid28"
+                                      value="#{msgs.volumesPerQuarter}:"
+                                      rendered="#{ProjekteForm.calcDuration > 2}"/>
+                    </td>
+                    <td class="left">
+                        <h:outputText id="vwid29"
+                                      value="#{ProjekteForm.calcThroughputPerQuarter}"
+                                      rendered="#{ProjekteForm.calcDuration > 2}"/>
+                    </td>
+                    <td class="right">
+                        <!--pages per Quarter -->
+                        <h:outputText id="vwid38"
+                                      value="#{msgs.pagesPerQuarter}:"/>
+                    </td>
+                    <td>
+                        <h:outputText id="vwid39"
+                                      value="#{ProjekteForm.calcTroughputPagesPerQuarter}"/>
+                    </td>
+
+                </tr>
+            </ui:fragment>
+            <ui:fragment rendered="#{ProjekteForm.calcDuration > 0}">
+                <tr>
+                    <!-- throughputPerMonth -->
+                    <td>
+                        <h:outputText id="vwid30"
+                                      value="#{msgs.volumesPerMonth}:"
+                                      rendered="#{ProjekteForm.calcDuration > 0}"/>
+                    </td>
+                    <td class="left">
+                        <h:outputText id="vwid31"
+                                      value="#{ProjekteForm.calcThroughputPerMonth}"
+                                      rendered="#{ProjekteForm.calcDuration > 0}"/>
+                    </td>
+                    <!-- average pages per month -->
+                    <td class="right">
+
+                        <h:outputText id="vwid36"
+                                      value="#{msgs.pagesPerMonth}:"/>
+                    </td>
+                    <td>
+                        <h:outputText id="vwid37"
+                                      value="#{ProjekteForm.calcThroughputPagesPerMonth}"/>
+                    </td>
+                </tr>
+            </ui:fragment>
+            <tr>
+
+                <!-- throughputPerDay -->
+                <td>
+                    <h:outputText id="vwid32"
+                                  value="#{msgs.volumesPerDay}:"/>
+                </td>
+                <td class="left">
+                    <h:outputText id="vwid33"
+                                  value="#{ProjekteForm.calcThroughputPerDay}"/>
+                </td>
+                <td class="right">
+                    <!--pages per day -->
+                    <h:outputText id="vwid34"
+                                  value="#{msgs.pagesPerDay}:"/>
+                </td>
+                <td>
+                    <h:outputText id="vwid35"
+                                  value="#{ProjekteForm.calcPagesPerDay}"/>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+</ui:composition>

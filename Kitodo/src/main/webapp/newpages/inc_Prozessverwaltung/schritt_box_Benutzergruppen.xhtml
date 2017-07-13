@@ -21,11 +21,11 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <h4 style="margin-top:15px">
         <h:outputText value="#{msgs.benutzergruppen}"/>
     </h4>
-
 
     <t:dataTable id="benutzergruppen" styleClass="standardTable"
                  width="100%" cellspacing="1px" cellpadding="1px"
@@ -34,43 +34,38 @@
                  var="item"
                  value="#{ProzessverwaltungForm.mySchritt.userGroups}">
 
-    <h:column>
-        <f:facet name="header">
-            <h:outputText value="#{msgs.titel}"/>
-        </f:facet>
-        <h:outputText value="#{item.title}"/>
-    </h:column>
-    <h:column>
-        <f:facet name="header">
-            <h:outputText value="#{msgs.loeschen}"/>
-        </f:facet>
-        <!-- Löschen-Schaltknopf -->
-        <h:commandLink
-                action="#{ProzessverwaltungForm.BenutzergruppeLoeschen}"
-                title="#{msgs.berechtigungLoeschen}">
-            <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" alt="delete user group"/>
-            <t:updateActionListener
-                    property="#{ProzessverwaltungForm.myBenutzergruppe}" value="#{item}"/>
-        </h:commandLink>
-    </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="#{msgs.titel}"/>
+            </f:facet>
+            <h:outputText value="#{item.title}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="#{msgs.loeschen}"/>
+            </f:facet>
+            <!-- Löschen-Schaltknopf -->
+            <h:commandLink
+                    action="#{ProzessverwaltungForm.BenutzergruppeLoeschen}"
+                    title="#{msgs.berechtigungLoeschen}">
+                <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" alt="delete user group"/>
+                <t:updateActionListener
+                        property="#{ProzessverwaltungForm.myBenutzergruppe}" value="#{item}"/>
+            </h:commandLink>
+        </h:column>
     </t:dataTable>
 
-    <!-- newUser-Schaltknopf -->
+    <!-- Add user group -->
     <h:panelGroup>
-        <!-- Benutzergruppen mittels IFrame zuweisen -->
-        <!-- TODO: find replacement for jp:popupFrame -->
-        <!--<jp:popupFrame scrolling="auto" height="380px" width="430px"-->
-                       <!--topStyle="background: #1874CD;" bottomStyleClass="popup_unten"-->
-                       <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
-                       <!--styleClass="standardlink"-->
-                       <!--style="margin-top:2px;display:block; text-decoration:none"-->
-                       <!--actionOpen="#{BenutzergruppenForm.FilterKeinMitZurueck}"-->
-                       <!--actionClose="#{NavigationForm.Reload}" center="true"-->
-                       <!--title="#{msgs.benutzergruppen}" immediate="true">-->
-            <!--<t:updateActionListener property="#{BenutzergruppenForm.zurueck}"-->
-                                    <!--value="inc_Prozessverwaltung/schritt_box_BenutzerPopup"/>-->
-            <!--<h:outputText style="border-bottom: #a24033 dashed 1px;"-->
-                          <!--value="#{msgs.benutzergruppenHinzufuegen}"/>-->
-        <!--</jp:popupFrame>-->
+        <p:commandLink value="#{msgs.benutzergruppenHinzufuegen}"
+                       actionListener="#{BenutzergruppenForm.filterKeinMitZurueck()}"
+                       oncomplete="PF('addUserGroupDialog').show()"
+                       styleClass="standardlink"/>
+        <p:dialog widgetVar="addUserGroupDialog" header="#{msgs.benutzergruppenHinzufuegen}"
+                  height="380px" width="430px"
+                  dynamic="true" modal="true"
+                  onHide="#{NavigationForm.Reload()}">
+            <ui:include src="schritt_box_BenutzergruppenPopup.xhtml" />
+        </p:dialog>
     </h:panelGroup>
 </ui:composition>
