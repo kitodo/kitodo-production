@@ -2008,43 +2008,26 @@ public class ProcessService extends TitleSearchService<Process> {
         docketdata.setRulesetName(process.getRuleset().getTitle());
         docketdata.setComment(process.getWikiField());
 
-        ArrayList<org.kitodo.api.docket.Property> templateProperties = new ArrayList<>();
-        for (Property property : process.getTemplates().get(0).getProperties()) {
-            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
-            propertyForDocket.setId(property.getId());
-            propertyForDocket.setTitle(property.getTitle());
-            propertyForDocket.setValue(property.getValue());
-
-            templateProperties.add(propertyForDocket);
-
-        }
-        docketdata.setTemplateProperties(templateProperties);
-
-        ArrayList<org.kitodo.api.docket.Property> workpieceProperties = new ArrayList<>();
-        for (org.kitodo.data.database.beans.Property property : process.getWorkpieces().get(0).getProperties()) {
-            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
-            propertyForDocket.setId(property.getId());
-            propertyForDocket.setTitle(property.getTitle());
-            propertyForDocket.setValue(property.getValue());
-
-            workpieceProperties.add(propertyForDocket);
-
-        }
-        docketdata.setWorkpieceProperties(workpieceProperties);
-
-        ArrayList<org.kitodo.api.docket.Property> processProperties = new ArrayList<>();
-        for (Property property : process.getProperties()) {
-            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
-            propertyForDocket.setId(property.getId());
-            propertyForDocket.setTitle(property.getTitle());
-            propertyForDocket.setValue(property.getValue());
-
-            processProperties.add(propertyForDocket);
-
-        }
-        docketdata.setProcessProperties(processProperties);
+        docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates().get(0).getProperties()));
+        docketdata.setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces().get(0).getProperties()));
+        docketdata.setProcessProperties(getDocketDataForProperties(process.getProperties()));
 
         return docketdata;
 
+    }
+
+    private ArrayList<org.kitodo.api.docket.Property> getDocketDataForProperties(List<Property> properties) {
+        ArrayList<org.kitodo.api.docket.Property> propertiesForDocket = new ArrayList<>();
+        for (Property property : properties) {
+            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
+            propertyForDocket.setId(property.getId());
+            propertyForDocket.setTitle(property.getTitle());
+            propertyForDocket.setValue(property.getValue());
+
+            propertiesForDocket.add(propertyForDocket);
+
+        }
+
+        return propertiesForDocket;
     }
 }
