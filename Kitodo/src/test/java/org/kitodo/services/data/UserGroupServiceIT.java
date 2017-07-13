@@ -27,7 +27,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for UserGroupService class.
@@ -35,7 +34,7 @@ import org.kitodo.data.exceptions.DataException;
 public class UserGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 

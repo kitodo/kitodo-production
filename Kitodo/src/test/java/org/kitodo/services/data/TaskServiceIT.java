@@ -22,9 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for TaskService class.
@@ -32,7 +30,7 @@ import org.kitodo.data.exceptions.DataException;
 public class TaskServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 

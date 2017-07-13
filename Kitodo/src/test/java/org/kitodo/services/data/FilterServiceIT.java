@@ -19,8 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 public class FilterServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 

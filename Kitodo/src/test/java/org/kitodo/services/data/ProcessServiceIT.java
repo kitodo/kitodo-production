@@ -29,9 +29,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
@@ -42,7 +40,7 @@ import ugh.dl.DigitalDocument;
 public class ProcessServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 
