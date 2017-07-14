@@ -45,7 +45,6 @@ public class ExportDocket {
      * @param docketData
      *            the docketData to export
      * @throws IOException
-     * @throws ExportFileException
      */
     public void startExport(DocketData docketData, OutputStream os, File xsltfile) throws IOException {
 
@@ -58,6 +57,14 @@ public class ExportDocket {
         os.write(pdfBytes);
     }
 
+    /**
+     * This method exports the production metadata as run note to a given
+     * stream. the docket.xsl has to be in the config-folder.
+     *
+     * @param docketDataList
+     *            the docketData to export for several processes
+     * @throws IOException
+     */
     public void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltfile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
