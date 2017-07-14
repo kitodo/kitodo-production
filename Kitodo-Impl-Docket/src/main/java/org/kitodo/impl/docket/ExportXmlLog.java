@@ -188,30 +188,32 @@ public class ExportXmlLog {
         Element template = new Element("original", xmlns);
 
         ArrayList<Element> templateProperties = new ArrayList<Element>();
-        for (Property prop : docketData.getTemplateProperties()) {
-            Element property = new Element("property", xmlns);
-            property.setAttribute("propertyIdentifier", prop.getTitle());
-            if (prop.getValue() != null) {
-                property.setAttribute("value", replacer(prop.getValue()));
-            } else {
-                property.setAttribute("value", "");
-            }
-
-            Element label = new Element("label", xmlns);
-
-            label.setText(prop.getTitle());
-            property.addContent(label);
-
-            templateProperties.add(property);
-            if (prop.getTitle().equals("Signatur")) {
-                Element secondProperty = new Element("property", xmlns);
-                secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
+        if (docketData.getTemplateProperties() != null) {
+            for (Property prop : docketData.getTemplateProperties()) {
+                Element property = new Element("property", xmlns);
+                property.setAttribute("propertyIdentifier", prop.getTitle());
                 if (prop.getValue() != null) {
-                    secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
-                    Element secondLabel = new Element("label", xmlns);
-                    secondLabel.setText(prop.getTitle());
-                    secondProperty.addContent(secondLabel);
-                    templateProperties.add(secondProperty);
+                    property.setAttribute("value", replacer(prop.getValue()));
+                } else {
+                    property.setAttribute("value", "");
+                }
+
+                Element label = new Element("label", xmlns);
+
+                label.setText(prop.getTitle());
+                property.addContent(label);
+
+                templateProperties.add(property);
+                if (prop.getTitle().equals("Signatur")) {
+                    Element secondProperty = new Element("property", xmlns);
+                    secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
+                    if (prop.getValue() != null) {
+                        secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
+                        Element secondLabel = new Element("label", xmlns);
+                        secondLabel.setText(prop.getTitle());
+                        secondProperty.addContent(secondLabel);
+                        templateProperties.add(secondProperty);
+                    }
                 }
             }
         }
@@ -230,20 +232,22 @@ public class ExportXmlLog {
         Element dd = new Element("digitalDocument", xmlns);
 
         ArrayList<Element> docProperties = new ArrayList<Element>();
-        for (Property prop : docketData.getWorkpieceProperties()) {
-            Element property = new Element("property", xmlns);
-            property.setAttribute("propertyIdentifier", prop.getTitle());
-            if (prop.getValue() != null) {
-                property.setAttribute("value", replacer(prop.getValue()));
-            } else {
-                property.setAttribute("value", "");
+        if (docketData.getWorkpieceProperties() != null) {
+            for (Property prop : docketData.getWorkpieceProperties()) {
+                Element property = new Element("property", xmlns);
+                property.setAttribute("propertyIdentifier", prop.getTitle());
+                if (prop.getValue() != null) {
+                    property.setAttribute("value", replacer(prop.getValue()));
+                } else {
+                    property.setAttribute("value", "");
+                }
+
+                Element label = new Element("label", xmlns);
+
+                label.setText(prop.getTitle());
+                property.addContent(label);
+                docProperties.add(property);
             }
-
-            Element label = new Element("label", xmlns);
-
-            label.setText(prop.getTitle());
-            property.addContent(label);
-            docProperties.add(property);
         }
         if (docProperties.size() != 0) {
             Element properties = new Element("properties", xmlns);
