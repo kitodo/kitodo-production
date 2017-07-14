@@ -124,7 +124,7 @@ public class FileService {
      * @return the URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
-       return createDirectory(directoryName, MappingType.DATA, null, null);
+        return createDirectory(directoryName, MappingType.DATA, null, null);
     }
 
     /**
@@ -223,8 +223,7 @@ public class FileService {
                 }
                 millisWaited += SLEEP_INTERVAL_MILLIS;
             }
-        }
-        while (!success && millisWaited < MAX_WAIT_MILLIS);
+        } while (!success && millisWaited < MAX_WAIT_MILLIS);
 
         if (!success) {
             logger.error("Rename " + fileUri + " failed. This is a permanent error. Giving up.");
@@ -249,23 +248,29 @@ public class FileService {
     public Integer getNumberOfFiles(URI directory) {
         int count = 0;
         if (directory.isAbsolute()) {
-            if (isDirectory(directory)) {
-                ArrayList<URI> children = getSubUris(directory);
-                for (URI aChildren : children) {
-                    if (isDirectory(aChildren)) {
-                        count += getNumberOfFiles(aChildren);
-                    } else {
-                        count += 1;
-                    }
-                }
-            }
+            count += iterateOverDirectories(directory);
         } else {
             directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
-            ArrayList<URI> children = getSubUris(directory);
+            count += iterateOverDirectories(directory);
+        }
+        return count;
+    }
+
+    /**
+     * Iterate over children directories of directory.
+     * 
+     * @param directory
+     *            as URI
+     * @return amount of files
+     */
+    private Integer iterateOverDirectories(URI directory) {
+        int count = 0;
+        if (directory.isAbsolute()) {
             if (isDirectory(directory)) {
-                for (URI aChildren : children) {
-                    if (isDirectory(aChildren)) {
-                        count += getNumberOfFiles(aChildren);
+                ArrayList<URI> children = getSubUris(directory);
+                for (URI child : children) {
+                    if (isDirectory(child)) {
+                        count += getNumberOfFiles(child);
                     } else {
                         count += 1;
                     }
@@ -286,19 +291,28 @@ public class FileService {
     public Integer getNumberOfImageFiles(URI directory) {
         int count = 0;
         if (directory.isAbsolute()) {
-            if (isDirectory(directory)) {
-                count = getSubUris(Helper.imageNameFilter, directory).size();
-                ArrayList<URI> children = getSubUris(directory);
-                for (URI aChildren : children) {
-                    count += getNumberOfImageFiles(aChildren);
-                }
-            }
+            count += iterateOverImageDirectories(directory);
         } else {
             directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
+            count += iterateOverImageDirectories(directory);
+        }
+        return count;
+    }
+
+    /**
+     * Iterate over children image directories of directory.
+     *
+     * @param directory
+     *            as URI
+     * @return amount of image files
+     */
+    private Integer iterateOverImageDirectories(URI directory) {
+        int count = 0;
+        if (isDirectory(directory)) {
             count = getSubUris(Helper.imageNameFilter, directory).size();
             ArrayList<URI> children = getSubUris(directory);
-            for (URI aChildren : children) {
-                count += getNumberOfImageFiles(aChildren);
+            for (URI child : children) {
+                count += getNumberOfImageFiles(child);
             }
         }
         return count;
@@ -368,7 +382,9 @@ public class FileService {
         if (!fileExist(uri)) {
             boolean newFileCreated = new File(mapUriToKitodoDataDirectoryUri(uri)).createNewFile();
             if (!newFileCreated) {
-                logger.info("File was not created!");
+                logger.error("File was not created!");
+                throw new IOException(
+                        "File: " + new File(mapUriToKitodoDataDirectoryUri(uri)).getPath() + " couldn't be created!");
             }
         }
         return new FileOutputStream(new File(mapUriToKitodoDataDirectoryUri(uri)));
