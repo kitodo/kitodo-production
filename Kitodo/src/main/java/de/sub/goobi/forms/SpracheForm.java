@@ -42,7 +42,7 @@ public class SpracheForm implements Serializable {
      * The constructor of this class loads the required MessageBundle.
      */
     public SpracheForm() {
-        String key = ConfigCore.getParameter("language.default", "de");
+        String key = ConfigCore.getParameter("language.force-default", "de");
         Locale locale = new Locale.Builder().setLanguageTag(key).build();
         if (!LocaleUtils.isAvailableLocale(locale)) {
             FacesContext context = FacesContext.getCurrentInstance();
