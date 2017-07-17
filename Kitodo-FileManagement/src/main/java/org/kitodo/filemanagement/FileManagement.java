@@ -37,20 +37,24 @@ import org.kitodo.config.Config;
 public class FileManagement implements FileManagementInterface {
 
     private static final Logger logger = LogManager.getLogger(FileManagement.class);
+    private static final FileMapper fileMapper = new FileMapper();
 
     @Override
     public OutputStream write(URI uri) throws IOException {
+        uri = fileMapper.mapAccordingToMappingType(uri);
         return new FileOutputStream(new File(uri));
     }
 
     @Override
     public InputStream read(URI uri) throws IOException {
+        uri = fileMapper.mapAccordingToMappingType(uri);
         URL url = uri.toURL();
         return url.openStream();
     }
 
     @Override
     public boolean delete(URI uri) throws IOException {
+        uri = fileMapper.mapAccordingToMappingType(uri);
         File file = new File(uri);
         if (file.isFile()) {
             return file.delete();
@@ -77,7 +81,6 @@ public class FileManagement implements FileManagementInterface {
         final int SLEEP_INTERVAL_MILLIS = 20;
         final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
         int millisWaited = 0;
-        FileMapper fileMapper = new FileMapper();
 
         if ((uri == null) || (newName == null)) {
             return null;
@@ -138,12 +141,14 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean fileExist(URI uri) {
+        uri = fileMapper.mapAccordingToMappingType(uri);
         File file = new File(uri);
         return file.exists();
     }
 
     @Override
     public boolean isFile(URI uri) {
+        uri = fileMapper.mapAccordingToMappingType(uri);
         File file = new File(uri);
         return file.isFile();
     }
@@ -198,7 +203,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean createSymLink(URI targetUri, URI homeUri, boolean onlyRead, String userLogin) {
-        File imagePath = new File(homeUri);
+        File imagePath = new File(fileMapper.mapAccordingToMappingType(homeUri));
         File userHome = new File(getDecodedPath(targetUri));
         if (userHome.exists()) {
             return false;
@@ -237,6 +242,7 @@ public class FileManagement implements FileManagementInterface {
     }
 
     private String getDecodedPath(URI uri) {
+        uri = fileMapper.mapAccordingToMappingType(uri);
         String uriToDecode = new File(uri).getPath();
         String decodedPath;
         try {
