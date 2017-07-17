@@ -18,6 +18,6 @@ import org.kitodo.data.database.beans.Process;
 
 public interface IProcessDataExport {
 
-    abstract void startExport(Process process, OutputStream os, String xsltfile) throws IOException;
+    abstract void startExport(Process process, OutputStream os, String xsltFile) throws IOException;
 
 }

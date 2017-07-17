@@ -820,7 +820,7 @@ public class MassImportForm implements Serializable {
     public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
         URI rootpath = new File(ConfigCore.getParameter("xsltFolder")).toURI();
-        URI xsltfile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
+        URI xsltFile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
@@ -837,7 +837,7 @@ public class MassImportForm implements Serializable {
                 ServletOutputStream out = response.getOutputStream();
 
                 File file = module.generateMultipleDockets(
-                        serviceManager.getProcessService().getDocketData(this.processList), xsltfile);
+                        serviceManager.getProcessService().getDocketData(this.processList), xsltFile);
                 byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
                 out.write(bytes);
                 out.flush();

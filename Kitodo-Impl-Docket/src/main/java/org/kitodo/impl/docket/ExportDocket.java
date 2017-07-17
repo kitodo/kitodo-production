@@ -45,13 +45,13 @@ public class ExportDocket {
      *            the docketData to export
      * @throws IOException
      */
-    public void startExport(DocketData docketData, OutputStream os, File xsltfile) throws IOException {
+    public void startExport(DocketData docketData, OutputStream os, File xsltFile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         exl.startExport(docketData, out);
 
-        byte[] pdfBytes = generatePdfBytes(out, xsltfile);
+        byte[] pdfBytes = generatePdfBytes(out, xsltFile);
 
         os.write(pdfBytes);
     }
@@ -64,21 +64,21 @@ public class ExportDocket {
      *            the docketData to export for several processes
      * @throws IOException
      */
-    public void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltfile) throws IOException {
+    public void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltFile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         exl.startMultipleExport(docketDataList, out, null);
 
-        byte[] pdfBytes = generatePdfBytes(out, xsltfile);
+        byte[] pdfBytes = generatePdfBytes(out, xsltFile);
 
         os.write(pdfBytes);
     }
 
-    public byte[] generatePdfBytes(ByteArrayOutputStream out, File xsltfile) throws IOException {
+    public byte[] generatePdfBytes(ByteArrayOutputStream out, File xsltFile) throws IOException {
         // generate pdf file
         StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
-        StreamSource transformSource = new StreamSource(xsltfile);
+        StreamSource transformSource = new StreamSource(xsltFile);
         FopFactory fopFactory = FopFactory.newInstance();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         // transform xml

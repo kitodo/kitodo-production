@@ -247,7 +247,7 @@ public class BatchForm extends BasisForm {
     public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
         URI rootpath = new File(ConfigCore.getParameter("xsltFolder")).toURI();
-        URI xsltfile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
+        URI xsltFile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         List<Process> docket = Collections.emptyList();
         if (this.selectedBatches.size() == 0) {
@@ -278,7 +278,7 @@ public class BatchForm extends BasisForm {
                     ServletOutputStream out = response.getOutputStream();
                     ArrayList<Process> processes = new ArrayList<>(docket);
                     File file = module.generateMultipleDockets(
-                            serviceManager.getProcessService().getDocketData(processes), xsltfile);
+                            serviceManager.getProcessService().getDocketData(processes), xsltFile);
                     byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
                     out.write(bytes);
                     out.flush();

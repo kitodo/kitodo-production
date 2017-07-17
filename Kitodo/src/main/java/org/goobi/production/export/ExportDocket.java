@@ -53,7 +53,7 @@ public class ExportDocket implements IProcessDataExport {
      *            the OutputStream to write the contents to
      */
     @Override
-    public void startExport(Process process, OutputStream os, String xsltfile) throws IOException {
+    public void startExport(Process process, OutputStream os, String xsltFile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -61,7 +61,7 @@ public class ExportDocket implements IProcessDataExport {
 
         // generate pdf file
         StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
-        StreamSource transformSource = new StreamSource(xsltfile);
+        StreamSource transformSource = new StreamSource(xsltFile);
         FopFactory fopFactory = FopFactory.newInstance();
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -89,10 +89,10 @@ public class ExportDocket implements IProcessDataExport {
      *            list of process' objects
      * @param os
      *            OutputStream object
-     * @param xsltfile
+     * @param xsltFile
      *            String
      */
-    public void startExport(Iterable<Process> processList, OutputStream os, String xsltfile) throws IOException {
+    public void startExport(Iterable<Process> processList, OutputStream os, String xsltFile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -100,7 +100,7 @@ public class ExportDocket implements IProcessDataExport {
 
         // generate pdf file
         StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
-        StreamSource transformSource = new StreamSource(xsltfile);
+        StreamSource transformSource = new StreamSource(xsltFile);
         FopFactory fopFactory = FopFactory.newInstance();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         // transform xml
