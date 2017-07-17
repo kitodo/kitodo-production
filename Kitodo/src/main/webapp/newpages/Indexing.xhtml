@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+
+        <h:body>
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                   style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                   align="center">
+                <tr>
+                    <ui:include src="inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
+                        <!-- Breadcrumb -->
+                        <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
+                            <h:panelGroup id="id1">
+                                <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                <h:outputText id="id3" value="#{msgs.indexing}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        <table>
+                            <tr>
+                                <td><h:outputText value="#{msgs.users}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startUserIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.benutzergruppen}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startUserGroupIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.projekte}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startProjectIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.regelsaetze}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startRulesetIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.dockets}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startDocketIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.schritte}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startTaskIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.prozessvorlagen}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startTemplateIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.prozesse}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startProcessIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.batches}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startBatchIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.eigenschaften}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startPropertyIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.werkstuecke}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startWorkpieceIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.history}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startHistoryIndexing()}"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><hr/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="#{msgs.wholeIndex}"/></td>
+                                <td><p:commandButton value="#{msgs.startIndexing}" action="#{indexingForm.startAllIndexing()}"/></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <ui:include src="inc/tbl_Fuss.xhtml" />
+            </table>
+        </h:body>
+    </f:view>
+
+</html>

@@ -252,6 +252,15 @@
                                 <h:outputText value="#{msgs.modulemanager}"/>
                             </h:link>
 
+                            <!-- Indexing -->
+                            <h:link  styleClass="mlink" outcome="/newpages/Indexing"
+                                     style="#{view.viewId == 'newpages/Indexing.xhtml' ? 'font-weight: bold;':'font-weight:normal;'}"
+                                     id="indexing">
+                                     <h:panelGroup rendered="#{view.viewId == '/newpages/Intexing.xhtml'}">
+                                         <f:verbatim>&#8250; </f:verbatim>
+                                     </h:panelGroup>
+                                <h:outputText value="#{msgs.indexing}"/>
+                            </h:link>
                         </h:panelGroup>
 
                         <!-- ################            Benutzereinstellungen              ######################-->
