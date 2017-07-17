@@ -25,30 +25,21 @@ public class Config {
     private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
     /**
-     * Gets the configuration.
+     * Get Kitodo data directory.
      *
-     * @return the PropertyConfiguration
+     * @return String
      */
-    public static PropertiesConfiguration getConfig() {
-        if (config == null) {
-            synchronized (Config.class) {
-                PropertiesConfiguration initialized = config;
-                if (initialized == null) {
-                    PropertiesConfiguration.setDefaultListDelimiter('&');
-                    try {
-                        initialized = new PropertiesConfiguration(CONFIG_FILE);
-                    } catch (ConfigurationException e) {
-                        logger.warn("Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.",
-                                e);
-                        initialized = new PropertiesConfiguration();
-                    }
-                    initialized.setListDelimiter('&');
-                    initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
-                    config = initialized;
-                }
-            }
-        }
-        return config;
+    public static String getKitodoDataDirectory() {
+        return getParameter(METADATA_DIRECTORY);
+    }
+
+    /**
+     * Get Kitodo config directory.
+     *
+     * @return String
+     */
+    public static String getKitodoConfigDirectory() {
+        return getParameter(CONFIG_DIR);
     }
 
     /**
@@ -66,20 +57,42 @@ public class Config {
     }
 
     /**
-     * Get Kitodo data directory.
+     * Request selected parameter with given default value from configuration.
      *
-     * @return String
+     * @return Parameter as String
      */
-    public static String getKitodoDataDirectory() {
-        return getParameter(METADATA_DIRECTORY);
+    public static String getParameter(String parameter, String defaultIfNull) {
+        try {
+            return getConfig().getString(parameter, defaultIfNull);
+        } catch (RuntimeException e) {
+            return defaultIfNull;
+        }
     }
 
     /**
-     * Get Kitodo config directory.
+     * Gets the configuration.
      *
-     * @return String
+     * @return the PropertyConfiguration
      */
-    public static String getKitodoConfigDirectory() {
-        return getParameter(CONFIG_DIR);
+    private static PropertiesConfiguration getConfig() {
+        if (config == null) {
+            synchronized (Config.class) {
+                PropertiesConfiguration initialized = config;
+                if (initialized == null) {
+                    PropertiesConfiguration.setDefaultListDelimiter('&');
+                    try {
+                        initialized = new PropertiesConfiguration(CONFIG_FILE);
+                    } catch (ConfigurationException e) {
+                        logger.warn(
+                                "Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
+                        initialized = new PropertiesConfiguration();
+                    }
+                    initialized.setListDelimiter('&');
+                    initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
+                    config = initialized;
+                }
+            }
+        }
+        return config;
     }
 }
