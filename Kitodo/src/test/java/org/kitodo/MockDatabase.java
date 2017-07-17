@@ -29,7 +29,7 @@ import java.util.Map;
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.hibernate.Session;
@@ -60,7 +60,7 @@ public class MockDatabase {
     private static final ServiceManager serviceManager = new ServiceManager();
 
     public static void insertProcessesFull() throws Exception {
-        final String nodeName = "searchernode";
+        final String nodeName = "corenode";
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         port = ConfigMain.getParameter("elasticsearch.port", "9205");
         indexRestClient = initializeIndexRestClient();
