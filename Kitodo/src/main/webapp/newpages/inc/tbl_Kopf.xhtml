@@ -101,7 +101,7 @@
                             <t:dataList var="availableLanguage" value="#{SpracheForm.supportedLocales}">
                                 <ui:fragment rendered="#{not availableLanguage.selected}">
                                     <span class="alterLanguage">
-                                        <h:commandLink action="#{SpracheForm.switchLanguage}"
+                                        <h:commandLink action="#{SpracheForm.switchLanguage(availableLanguage.id)}"
                                                        title="#{availableLanguage.displayLanguageTranslated}">
                                             <f:param name="locale" value="#{availableLanguage.id}"/>
                                             <h:outputText value="#{availableLanguage.displayLanguageSelf}"/>
