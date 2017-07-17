@@ -19,7 +19,6 @@ import java.io.OutputStream;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
@@ -96,16 +95,6 @@ public class ExportDocket {
 
         // write the content to output stream
         return outStream.toByteArray();
-    }
-
-    private static Transformer getTransformer(StreamSource streamSource) {
-        // setup the xslt transformer
-        net.sf.saxon.TransformerFactoryImpl impl = new net.sf.saxon.TransformerFactoryImpl();
-        try {
-            return impl.newTransformer(streamSource);
-        } catch (TransformerConfigurationException e) {
-        }
-        return null;
     }
 
 }
