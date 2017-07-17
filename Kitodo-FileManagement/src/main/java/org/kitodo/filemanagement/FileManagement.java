@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
@@ -70,8 +71,67 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public URI rename(URI uri, String newName) {
-        return URI.create("");
+    public URI rename(URI uri, String newName) throws IOException {
+        final int SLEEP_INTERVAL_MILLIS = 20;
+        final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
+        int millisWaited = 0;
+        FileMapper fileMapper = new FileMapper();
+
+        if ((uri == null) || (newName == null)) {
+            return null;
+        }
+
+        String substring = uri.toString().substring(0, uri.toString().lastIndexOf('/') + 1);
+        URI newFileUri = URI.create(substring + newName);
+        URI mappedFileURI = fileMapper.mapAccordingToMappingType(uri);
+        URI mappedNewFileURI = fileMapper.mapAccordingToMappingType(newFileUri);
+        boolean success;
+
+        if (!fileExist(mappedFileURI)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("File " + uri.getPath() + " does not exist for renaming.");
+            }
+            throw new FileNotFoundException(uri + " does not exist for renaming.");
+        }
+
+        if (fileExist(mappedNewFileURI)) {
+            String message = "Renaming of " + uri + " into " + newName + " failed: Destination exists.";
+            logger.error(message);
+            throw new IOException(message);
+        }
+
+        File fileToRename = new File(mappedFileURI);
+        File renamedFile = new File(mappedNewFileURI);
+        do {
+            if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
+                logger.warn("Renaming " + uri
+                        + " failed. This is Windows. Running the garbage collector may yield good results. "
+                        + "Forcing immediate garbage collection now!");
+                System.gc();
+            }
+            success = fileToRename.renameTo(renamedFile);
+            if (!success) {
+                if (millisWaited == 0 && logger.isInfoEnabled()) {
+                    logger.info("Renaming " + uri + " failed. File may be locked. Retrying...");
+                }
+                try {
+                    Thread.sleep(SLEEP_INTERVAL_MILLIS);
+                } catch (InterruptedException e) {
+                    logger.warn("The thread was interrupted");
+                }
+                millisWaited += SLEEP_INTERVAL_MILLIS;
+            }
+        } while (!success && millisWaited < MAX_WAIT_MILLIS);
+
+        if (!success) {
+            logger.error("Rename " + uri + " failed. This is a permanent error. Giving up.");
+            throw new IOException("Renaming of " + uri + " into " + newName + " failed.");
+        }
+
+        if (millisWaited > 0 && logger.isInfoEnabled()) {
+            logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
+        }
+        return fileMapper.unmapAccordingToMappingType(Paths.get(renamedFile.getPath()).toUri());
     }
 
     @Override
