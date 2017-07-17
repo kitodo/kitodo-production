@@ -18,10 +18,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -195,12 +198,54 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean createSymLink(URI targetUri, URI homeUri, boolean onlyRead, String userLogin) {
-        return false;
+        File imagePath = new File(homeUri);
+        File userHome = new File(getDecodedPath(targetUri));
+        if (userHome.exists()) {
+            return false;
+        }
+        String command = Config.getParameter("script_createSymLink") + " ";
+        command += imagePath + " " + userHome + " ";
+        if (onlyRead) {
+            command += Config.getParameter("UserForImageReading", "root");
+        } else {
+            command += userLogin;
+        }
+        try {
+            ShellScript.legacyCallShell(command);
+            return true;
+        } catch (IOException e) {
+            logger.error("IOException downloadToHome()", e);
+            return false;
+        }
     }
 
     @Override
     public boolean deleteSymLink(URI homeUri) {
-        return false;
+        String command = Config.getParameter("script_deleteSymLink");
+        ShellScript deleteSymLinkScript;
+        try {
+            deleteSymLinkScript = new ShellScript(new File(command));
+            deleteSymLinkScript.run(Collections.singletonList(new File(getDecodedPath(homeUri)).getPath()));
+        } catch (FileNotFoundException e) {
+            logger.error("FileNotFoundException in deleteSymLink()", e);
+            return false;
+        } catch (IOException e) {
+            logger.error("IOException in deleteSymLink()", e);
+            return false;
+        }
+        return true;
+    }
+
+    private String getDecodedPath(URI uri) {
+        String uriToDecode = new File(uri).getPath();
+        String decodedPath;
+        try {
+            decodedPath = URLDecoder.decode(uriToDecode, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e);
+            return "";
+        }
+        return decodedPath;
     }
 
     @Override
