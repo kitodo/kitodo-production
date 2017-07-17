@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -246,7 +247,7 @@ public class BatchForm extends BasisForm {
      */
     public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
-        URI rootpath = new File(ConfigCore.getParameter("xsltFolder")).toURI();
+        URI rootpath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
         URI xsltFile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         List<Process> docket = Collections.emptyList();
