@@ -30,6 +30,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -42,6 +44,7 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.enums.MappingType;
 import org.kitodo.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.RulesetService;
@@ -56,9 +59,7 @@ import ugh.fileformats.mets.XStream;
 public class FileService {
 
     private static final Logger logger = LogManager.getLogger(FileService.class);
-
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -76,11 +77,11 @@ public class FileService {
             ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
             createDirScript.run(Collections.singletonList(parentFolderUri + directoryName));
         }
-
     }
 
     /**
-     * Creates a directory at a given URI with a given name.
+     * Creates a directory at a given URI with a given name without
+     * mapping/unampping - actually with default data mapping.
      *
      * @param parentFolderUri
      *            the uri, where the directory should be created
@@ -90,25 +91,56 @@ public class FileService {
      *         directoryName is null or empty
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
+        return createDirectory(parentFolderUri, directoryName, MappingType.DATA, null, null);
+    }
+
+    /**
+     * Creates a directory at a given URI with a given name with mapping/unmapping.
+     *
+     * @param parentFolderUri
+     *            the uri, where the directory should be created
+     * @param directoryName
+     *            the name of the directory.
+     * @return the URI of the new directory or URI of parent directory if
+     *         directoryName is null or empty
+     */
+    public URI createDirectory(URI parentFolderUri, String directoryName, MappingType mappingType, String folderPath,
+            String resourceToMap) {
         if (directoryName != null && !directoryName.equals("")) {
-            File file = new File(mapUriToKitodoUri(parentFolderUri).getPath(), directoryName);
+            parentFolderUri = mapAccordingToMappingType(parentFolderUri, mappingType, folderPath, resourceToMap);
+            File file = new File(parentFolderUri.getPath(), directoryName);
             file.mkdir();
-            return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
+            return unmapAccordingToMappingType(Paths.get(file.getPath()).toUri(), mappingType, folderPath);
         }
         return parentFolderUri;
     }
 
     /**
-     * Creates a Directory with a given name.
+     * Creates a directory with a given name without
+     * mapping/unampping - actually with default data mapping.
      *
      * @param directoryName
      *            the name of the directory.
-     * @return The URI of the new directory.
+     * @return the URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
-        File file = new File(mapUriToKitodoUri(URI.create(directoryName)));
-        file.mkdir();
-        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
+        return createDirectory(directoryName, MappingType.DATA, null, null);
+    }
+
+    /**
+     * Creates a directory with a given name with mapping/unmapping.
+     *
+     * @param directoryName
+     *            the name of the directory.
+     * @return the URI of the new directory.
+     */
+    public URI createDirectory(String directoryName, MappingType mappingType, String folderPath, String resourceToMap) {
+        File file = new File(
+                mapAccordingToMappingType(URI.create(directoryName), mappingType, folderPath, resourceToMap));
+        if (file.mkdir()) {
+            return unmapAccordingToMappingType(Paths.get(file.getPath()).toUri(), mappingType, folderPath);
+        }
+        return URI.create("");
     }
 
     /**
@@ -121,7 +153,6 @@ public class FileService {
      * @throws IOException
      *             If an I/O error occurs.
      */
-
     public void createDirectoryForUser(URI dirName, String userName) throws IOException {
         if (!serviceManager.getFileService().fileExist(dirName)) {
             ShellScript createDirScript = new ShellScript(
@@ -179,7 +210,8 @@ public class FileService {
                         + "Forcing immediate garbage collection now!");
                 System.gc();
             }
-            success = new File(mapUriToKitodoUri(oldFileUri)).renameTo(new File(mapUriToKitodoUri(newFileUri)));
+            success = new File(mapUriToKitodoDataDirectoryUri(oldFileUri))
+                    .renameTo(new File(mapUriToKitodoDataDirectoryUri(newFileUri)));
             if (!success) {
                 if (millisWaited == 0 && logger.isInfoEnabled()) {
                     logger.info("Renaming " + fileUri + " failed. File may be locked. Retrying...");
@@ -206,7 +238,7 @@ public class FileService {
     }
 
     /**
-     * calculate all files with given file extension at specified directory
+     * Calculate all files with given file extension at specified directory
      * recursively.
      *
      * @param directory
@@ -215,16 +247,33 @@ public class FileService {
      */
     public Integer getNumberOfFiles(URI directory) {
         int count = 0;
-        if (isDirectory(directory)) {
-            /*
-             * die Unterverzeichnisse durchlaufen
-             */
-            ArrayList<URI> children = getSubUris(directory);
-            for (URI aChildren : children) {
-                if (isDirectory(aChildren)) {
-                    count += getNumberOfFiles(aChildren);
-                } else {
-                    count += 1;
+        if (directory.isAbsolute()) {
+            count += iterateOverDirectories(directory);
+        } else {
+            directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
+            count += iterateOverDirectories(directory);
+        }
+        return count;
+    }
+
+    /**
+     * Iterate over children directories of directory.
+     * 
+     * @param directory
+     *            as URI
+     * @return amount of files
+     */
+    private Integer iterateOverDirectories(URI directory) {
+        int count = 0;
+        if (directory.isAbsolute()) {
+            if (isDirectory(directory)) {
+                ArrayList<URI> children = getSubUris(directory);
+                for (URI child : children) {
+                    if (isDirectory(child)) {
+                        count += getNumberOfFiles(child);
+                    } else {
+                        count += 1;
+                    }
                 }
             }
         }
@@ -232,7 +281,7 @@ public class FileService {
     }
 
     /**
-     * calculate all files with given file extension at specified directory
+     * Calculate all files with given file extension at specified directory
      * recursively.
      *
      * @param directory
@@ -241,18 +290,29 @@ public class FileService {
      */
     public Integer getNumberOfImageFiles(URI directory) {
         int count = 0;
-        if (isDirectory(directory)) {
-            /*
-             * die Images zählen
-             */
-            count = getSubUris(Helper.imageNameFilter, directory).size();
+        if (directory.isAbsolute()) {
+            count += iterateOverImageDirectories(directory);
+        } else {
+            directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
+            count += iterateOverImageDirectories(directory);
+        }
+        return count;
+    }
 
-            /*
-             * die Unterverzeichnisse durchlaufen
-             */
+    /**
+     * Iterate over children image directories of directory.
+     *
+     * @param directory
+     *            as URI
+     * @return amount of image files
+     */
+    private Integer iterateOverImageDirectories(URI directory) {
+        int count = 0;
+        if (isDirectory(directory)) {
+            count = getSubUris(Helper.imageNameFilter, directory).size();
             ArrayList<URI> children = getSubUris(directory);
-            for (URI aChildren : children) {
-                count += getNumberOfImageFiles(aChildren);
+            for (URI child : children) {
+                count += getNumberOfImageFiles(child);
             }
         }
         return count;
@@ -267,8 +327,8 @@ public class FileService {
      *            destination file as uri
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        sourceDirectory = mapUriToKitodoUri(sourceDirectory);
-        targetDirectory = mapUriToKitodoUri(targetDirectory);
+        sourceDirectory = mapUriToKitodoDataDirectoryUri(sourceDirectory);
+        targetDirectory = mapUriToKitodoDataDirectoryUri(targetDirectory);
         copyDirectory(new File(sourceDirectory), new File(targetDirectory));
     }
 
@@ -280,7 +340,7 @@ public class FileService {
     }
 
     /**
-     * Copies a File from a given URI to a given uri.
+     * Copies a file from a given URI to a given URI.
      *
      * @param srcFile
      *            the uri to copy from
@@ -290,7 +350,8 @@ public class FileService {
      *             if copying fails
      */
     public void copyFile(URI srcFile, URI destFile) throws IOException {
-        FileUtils.copyFile(new File(mapUriToKitodoUri(srcFile)), new File(mapUriToKitodoUri(destFile)));
+        FileUtils.copyFile(new File(mapUriToKitodoDataDirectoryUri(srcFile)),
+                new File(mapUriToKitodoDataDirectoryUri(destFile)));
     }
 
     /**
@@ -304,24 +365,29 @@ public class FileService {
      *             if copying fails.
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        FileUtils.copyFileToDirectory(new File(mapUriToKitodoUri(sourceDirectory)),
-                new File(mapUriToKitodoUri(targetDirectory)));
+        FileUtils.copyFileToDirectory(new File(mapUriToKitodoDataDirectoryUri(sourceDirectory)),
+                new File(mapUriToKitodoDataDirectoryUri(targetDirectory)));
     }
 
     /**
-     * Writes to a File at a given URI.
+     * Writes to a file at a given URI.
      *
      * @param uri
-     *            The Uri, to write to.
-     * @return An Outputstream to the file at the given URI.
+     *            the URI, to write to.
+     * @return an output stream to the file at the given URI.
      * @throws IOException
-     *             If file cannot be accessed
+     *             if file cannot be accessed
      */
     public OutputStream write(URI uri) throws IOException {
         if (!fileExist(uri)) {
-            new File(mapUriToKitodoUri(uri)).createNewFile();
+            boolean newFileCreated = new File(mapUriToKitodoDataDirectoryUri(uri)).createNewFile();
+            if (!newFileCreated) {
+                logger.error("File was not created!");
+                throw new IOException(
+                        "File: " + new File(mapUriToKitodoDataDirectoryUri(uri)).getPath() + " couldn't be created!");
+            }
         }
-        return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
+        return new FileOutputStream(new File(mapUriToKitodoDataDirectoryUri(uri)));
     }
 
     /**
@@ -334,7 +400,7 @@ public class FileService {
      *             if File cannot be accessed.
      */
     public InputStream read(URI uri) throws IOException {
-        URL url = mapUriToKitodoUri(uri).toURL();
+        URL url = mapUriToKitodoDataDirectoryUri(uri).toURL();
         return url.openStream();
     }
 
@@ -351,7 +417,7 @@ public class FileService {
         if (!fileExist(uri)) {
             return true;
         }
-        File file = new File(mapUriToKitodoUri(uri));
+        File file = new File(mapUriToKitodoDataDirectoryUri(uri));
         if (file.isFile()) {
             return file.delete();
         }
@@ -370,7 +436,7 @@ public class FileService {
      * @return True, if the file exists.
      */
     public boolean fileExist(URI uri) {
-        URI path = mapUriToKitodoUri(uri);
+        URI path = mapUriToKitodoDataDirectoryUri(uri);
         File file = new File(path);
         return file.exists();
     }
@@ -536,7 +602,7 @@ public class FileService {
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) {
-        return mapUriToKitodoUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
+        return mapUriToKitodoDataDirectoryUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
     }
 
     private String getTemporaryMetadataFileName(URI fileName) {
@@ -546,6 +612,94 @@ public class FileService {
         String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
         return directoryPath + File.separator + temporaryFileName;
+    }
+
+    /**
+     * Gets the specific IMAGE sub type.
+     *
+     * @param process
+     *            the process to get the imageDirectory for.
+     * @return The uri of the Image Directory.
+     */
+    public URI getImagesDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
+    }
+
+    /**
+     * Gets the URI to the ocr directory.
+     *
+     * @param process
+     *            the process tog et the ocr directory for.
+     * @return the uri to the ocr directory.
+     */
+    public URI getOcrDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
+    }
+
+    /**
+     * Gets the URI to the import directory.
+     *
+     * @param process
+     *            the process to get the import directory for.
+     * @return the uri of the import directory
+     */
+    public URI getImportDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
+    }
+
+    /**
+     * Gets the URI to the text directory.
+     *
+     * @param process
+     *            the process to get the text directory for.
+     * @return the uri of the text directory
+     */
+    public URI getTxtDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
+    }
+
+    /**
+     * Gets the URI to the pdf directory.
+     *
+     * @param process
+     *            the process to get the pdf directory for.
+     * @return the uri of the pdf directory
+     */
+    public URI getPdfDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
+    }
+
+    /**
+     * Gets the URI to the alto directory.
+     *
+     * @param process
+     *            the process to get the alto directory for.
+     * @return the uri of the alto directory
+     */
+    public URI getAltoDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
+    }
+
+    /**
+     * Gets the URI to the word directory.
+     *
+     * @param process
+     *            the process to get the word directory for.
+     * @return the uri of the word directory
+     */
+    public URI getWordDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
+    }
+
+    /**
+     * Gets the URI to the template file.
+     *
+     * @param process
+     *            the process to get the template file for.
+     * @return the uri of the template file
+     */
+    public URI getTemplateFile(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
     /**
@@ -560,7 +714,7 @@ public class FileService {
     public URI getProcessBaseUriForExistingProcess(Process process) {
         String path = process.getId().toString();
         path = path.replaceAll(" ", "__") + "/";
-        return mapUriToKitodoUri(URI.create(path));
+        return mapUriToKitodoDataDirectoryUri(URI.create(path));
     }
 
     /**
@@ -606,9 +760,9 @@ public class FileService {
             ProcessSubType processSubType, String resourceName) {
         ArrayList<URI> subURIs;
         if (filter == null) {
-            subURIs = getSubUris(uri);
+            subURIs = getSubUris(uri, MappingType.DATA, null, null);
         } else {
-            subURIs = getSubUris(filter, uri);
+            subURIs = getSubUris(filter, uri, MappingType.DATA, null, null);
         }
         return removeProcessSpecificPartOfUri(subURIs, process, processSubType, resourceName);
     }
@@ -716,7 +870,7 @@ public class FileService {
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                createDirectory(dir, process.getTitle() + "_source");
+                createDirectory(dir, process.getTitle() + "_source", MappingType.DATA, null, null);
             }
         } else {
             sourceFolder = dir.resolve(verzeichnisse.get(0));
@@ -726,13 +880,226 @@ public class FileService {
     }
 
     /**
-     * Map relative URI to absolute kitodo data directory uri.
+     * Returns the version used in with the direct File mapping.
+     *
+     * @param uri
+     *            the uri to map
+     * @param mappingType
+     *            CONFIG, DATA and ROOT
+     * @param folderPath
+     *            as String - used for ROOT mapping, in other case null
+     * @param resourceToMap
+     *            as String - used for ROOT mapping, in other case null
+     * @return the absolute URI path
+     */
+    public URI getAbsoluteURI(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
+        return mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
+    }
+
+    /**
+     * Returns the version used in the core code, without direct File mapping.
+     *
+     * @param uri
+     *            the URI to unmapp
+     * @param mappingType
+     *            CONFIG, DATA and ROOT
+     * @param folderPath
+     *            as String - used for ROOT mapping, in other case null
+     * @return the relative URI path
+     */
+    public URI getRelativeURI(URI uri, MappingType mappingType, String folderPath) {
+        return unmapAccordingToMappingType(uri, mappingType, folderPath);
+    }
+
+    /**
+     * Get sub URIs without mapping/unmapping.
+     *
+     * @param uri
+     *            specified URI
+     * @return list of sub URIs
+     */
+    public ArrayList<URI> getSubUris(URI uri) {
+        ArrayList<URI> resultList = new ArrayList<>();
+        if (uri.isAbsolute()) {
+            File[] files = listFiles(new File(uri));
+            for (File file : files) {
+                resultList.add(Paths.get(file.getPath()).toUri());
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * Get all sub URIs of an URI with a given filter without mapping/unmapping.
+     *
+     * @param filter
+     *            the filter to filter the sub URIs
+     * @param uri
+     *            the URI, to get the sub URIs from.
+     * @return a List of sub uris.
+     */
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
+        ArrayList<URI> resultList = new ArrayList<>();
+        if (uri.isAbsolute()) {
+            File[] files = listFiles(filter, new File(uri));
+            for (File file : files) {
+                resultList.add(Paths.get(file.getPath()).toUri());
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * Get all sub URIs of an given URI with mapping/unmapping.
+     *
+     * @param uri
+     *            the URI, to get the sub URIs from.
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @param resourceToMap
+     *            as String
+     * @return a List of sub URIs.
+     */
+    public ArrayList<URI> getSubUris(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
+        if (!uri.isAbsolute()) {
+            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
+        }
+        ArrayList<URI> resultList = new ArrayList<>();
+        File[] files = listFiles(new File(uri));
+        for (File file : files) {
+            URI tempURI = Paths.get(file.getPath()).toUri();
+            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
+        }
+        return resultList;
+    }
+
+    /**
+     * Get all sub URIs of an URI with a given filter with mapping/unmapping.
+     *
+     * @param filter
+     *            the filter to filter the subUris
+     * @param uri
+     *            the URI, to get the sub URIs from.
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @param resourceToMap
+     *            as String
+     * @return a List of sub URIs.
+     */
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri, MappingType mappingType, String folderPath,
+            String resourceToMap) {
+        if (!uri.isAbsolute()) {
+            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
+        }
+        ArrayList<URI> resultList = new ArrayList<>();
+        File[] files = listFiles(filter, new File(uri));
+        for (File file : files) {
+            URI tempURI = Paths.get(file.getPath()).toUri();
+            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
+        }
+        return resultList;
+    }
+
+    /**
+     * Execute right mapping type according to value of enum MappingType.
+     *
+     * @param uri
+     *            to map
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @param resourceToMap
+     *            as string
+     * @return mapped URI
+     */
+    private URI mapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
+        switch (mappingType) {
+            case CONFIG:
+                return mapUriToKitodoConfigDirectoryUri(uri);
+            case DATA:
+                return mapUriToKitodoDataDirectoryUri(uri);
+            case ROOT:
+                return mapUriToKitodoRootFolderUri(folderPath, resourceToMap);
+            default:
+                return uri;
+        }
+    }
+
+    /**
+     * Execute right unpmapping type according to value of enum MappingType.
+     *
+     * @param uri
+     *            to unamp
+     * @param mappingType
+     *            CONFIG, DATA or ROOT
+     * @param folderPath
+     *            as String
+     * @return unmapped URI
+     */
+    private URI unmapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath) {
+        switch (mappingType) {
+            case CONFIG:
+                return unmapUriFromKitodoConfigDirectoryUri(uri);
+            case DATA:
+                return unmapUriFromKitodoDataDirectoryUri(uri);
+            case ROOT:
+                return unmapUriFromKitodoRootFolderUri(folderPath, uri);
+            default:
+                return uri;
+        }
+    }
+
+    /**
+     * Map resource to its absolute path inside the Kitodo root folder.
+     *
+     * @param folderPath
+     *            folder inside the root application
+     * @param resourceToMap
+     *            directory or file to map eg. css file
+     * @return absolute path to mapped resource
+     */
+    private URI mapUriToKitodoRootFolderUri(String folderPath, String resourceToMap) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        if (folderPath == null && resourceToMap == null) {
+            return Paths.get(session.getServletContext().getContextPath()).toUri();
+        } else if (folderPath == null) {
+            return Paths.get(session.getServletContext().getContextPath(), resourceToMap).toUri();
+        } else if (resourceToMap == null) {
+            return Paths.get(session.getServletContext().getRealPath(folderPath)).toUri();
+        } else {
+            return Paths.get(session.getServletContext().getRealPath(folderPath), resourceToMap).toUri();
+        }
+    }
+
+    /**
+     * Map relative URI to absolute kitodo config directory URI.
+     *
+     * @param uri
+     *            relative path
+     * @return absolute URI path
+     */
+    private URI mapUriToKitodoConfigDirectoryUri(URI uri) {
+        String kitodoConfigDirectory = ConfigCore.getKitodoConfigDirectory();
+        if (!uri.isAbsolute() && !uri.toString().contains(kitodoConfigDirectory)) {
+            return Paths.get(ConfigCore.getKitodoConfigDirectory(), uri.toString()).toUri();
+        }
+        return uri;
+    }
+
+    /**
+     * Map relative URI to absolute kitodo data directory URI.
      * 
      * @param uri
      *            relative path
      * @return absolute URI path
      */
-    public URI mapUriToKitodoUri(URI uri) {
+    public URI mapUriToKitodoDataDirectoryUri(URI uri) {
         String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
         if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
             return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
@@ -740,54 +1107,42 @@ public class FileService {
         return uri;
     }
 
-    URI unmapUriFromKitodoUri(URI uri) {
-        String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
-        if (uri.toString().contains(kitodoDataDirectory)) {
-            String[] split = uri.toString().split(kitodoDataDirectory);
+    private URI unmapUriFromKitodoRootFolderUri(String folderPath, URI uri) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        String directory;
+        if (folderPath == null) {
+            directory = session.getServletContext().getContextPath();
+        } else {
+            directory = session.getServletContext().getRealPath(folderPath);
+        }
+        return unmapDirectory(uri, directory);
+    }
+
+    private URI unmapUriFromKitodoConfigDirectoryUri(URI uri) {
+        return unmapDirectory(uri, ConfigCore.getKitodoConfigDirectory());
+    }
+
+    URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
+        return unmapDirectory(uri, ConfigCore.getKitodoDataDirectory());
+    }
+
+    private URI unmapDirectory(URI uri, String directory) {
+        String path = uri.toString();
+        directory = encodeDirectory(directory);
+        if (path.contains(directory)) {
+            String[] split = path.split(directory);
             String shortUri = split[1];
             return URI.create(shortUri);
         }
-
         return uri;
     }
 
-    /**
-     * gets all sub URIs of an uri.
-     *
-     * @param processSubTypeURI
-     *            the uri, to get the subUris from.
-     * @return A List of sub uris.
-     */
-    public ArrayList<URI> getSubUris(URI processSubTypeURI) {
-        if (!processSubTypeURI.isAbsolute()) {
-            processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
+    private String encodeDirectory(String directory) {
+        if (directory.contains("\\")) {
+            directory = directory.replace("\\", "/");
         }
-        ArrayList<URI> resultList = new ArrayList<>();
-        File[] files = listFiles(new File(processSubTypeURI));
-        for (File file : files) {
-            resultList.add(unmapUriFromKitodoUri(file.toURI()));
-        }
-
-        return resultList;
-    }
-
-    /**
-     * gets all sub URIs of an uri with a given filter.
-     *
-     * @param filter
-     *            the filter to filter the subUris
-     * @param processSubTypeURI
-     *            the uri, to get the subUris from.
-     * @return A List of sub uris.
-     */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI processSubTypeURI) {
-        processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
-        ArrayList<URI> resultList = new ArrayList<>();
-        File[] files = listFiles(filter, new File(processSubTypeURI));
-        for (File file : files) {
-            resultList.add(unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri()));
-        }
-        return resultList;
+        return directory;
     }
 
     /**
@@ -803,42 +1158,22 @@ public class FileService {
     }
 
     /**
-     * Creates a resource at a given uri with a given name
+     * Creates a resource at a given URI with a given name.
      *
      * @param targetFolder
-     *            the target folder.
+     *            the URI of the target folder
      * @param name
      *            the name of the new resource
-     * @return The uri of the created resource
+     * @return the URI of the created resource
      * @throws IOException
      *             if creation failed.
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
-        File file = new File(mapUriToKitodoUri(targetFolder).resolve(name));
-        boolean newFile = file.createNewFile();
-        return unmapUriFromKitodoUri(Paths.get(file.getPath()).toUri());
-    }
-
-    /**
-     * Gets the specific IMAGE sub type.
-     *
-     * @param process
-     *            the process to get the imageDirectory for.
-     * @return The uri of the Image Directory.
-     */
-    public URI getImagesDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-    }
-
-    /**
-     * Gets the URI to the ocr directory.
-     *
-     * @param process
-     *            the process tog et the ocr directory for.
-     * @return the uri to the ocr directory.
-     */
-    public URI getOcrDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
+        File file = new File(mapUriToKitodoDataDirectoryUri(targetFolder).resolve(name));
+        if (file.exists() || file.createNewFile()) {
+            return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
+        }
+        return URI.create("");
     }
 
     /**
@@ -849,7 +1184,7 @@ public class FileService {
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
-        return new File(mapUriToKitodoUri(dir)).isDirectory();
+        return new File(dir).isDirectory();
     }
 
     /**
@@ -881,72 +1216,6 @@ public class FileService {
      */
     public boolean isFile(URI uri) {
         return new File(uri).isFile();
-    }
-
-    /**
-     * Gets the URI to the import directory.
-     *
-     * @param process
-     *            the process to get the import directory for.
-     * @return the uri of the import directory
-     */
-    public URI getImportDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
-    }
-
-    /**
-     * Gets the URI to the text directory.
-     *
-     * @param process
-     *            the process to get the text directory for.
-     * @return the uri of the text directory
-     */
-    public URI getTxtDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
-    }
-
-    /**
-     * Gets the URI to the pdf directory.
-     *
-     * @param process
-     *            the process to get the pdf directory for.
-     * @return the uri of the pdf directory
-     */
-    public URI getPdfDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
-    }
-
-    /**
-     * Gets the URI to the alto directory.
-     *
-     * @param process
-     *            the process to get the alto directory for.
-     * @return the uri of the alto directory
-     */
-    public URI getAltoDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
-    }
-
-    /**
-     * Gets the URI to the word directory.
-     *
-     * @param process
-     *            the process to get the word directory for.
-     * @return the uri of the word directory
-     */
-    public URI getWordDirectory(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
-    }
-
-    /**
-     * Gets the URI to the template file.
-     *
-     * @param process
-     *            the process to get the template file for.
-     * @return the uri of the template file
-     */
-    public URI getTemplateFile(Process process) {
-        return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
@@ -1021,16 +1290,5 @@ public class FileService {
             return "";
         }
         return decodedPath;
-    }
-
-    /**
-     * Returns the version used in the core code, without direkt File mapping.
-     * 
-     * @param uri
-     *            the uri to unmapp
-     * @return the (shorter) intern uri
-     */
-    public URI getInternUri(URI uri) {
-        return unmapUriFromKitodoUri(uri);
     }
 }

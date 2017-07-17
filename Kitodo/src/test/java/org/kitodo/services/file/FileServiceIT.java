@@ -49,7 +49,7 @@ public class FileServiceIT {
         URI oldUri = fileService.createResource(URI.create("fileServiceTest"), "oldName.xml");
         Assert.assertTrue(fileService.fileExist(oldUri));
         // Open stream to file and lock it, so it cannot be renamed
-        FileOutputStream outputStream = new FileOutputStream(new File(fileService.mapUriToKitodoUri(oldUri)));
+        FileOutputStream outputStream = new FileOutputStream(new File(fileService.mapUriToKitodoDataDirectoryUri(oldUri)));
         outputStream.getChannel().lock();
 
         try {

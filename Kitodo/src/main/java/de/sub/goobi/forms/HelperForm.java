@@ -14,11 +14,9 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.File;
 import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +27,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +37,7 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.enums.MappingType;
 import org.kitodo.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 
@@ -191,24 +189,25 @@ public class HelperForm implements Serializable {
         return FacesContext.getCurrentInstance().getMessages().hasNext();
     }
 
+    /**
+     * Get all css files from root folder.
+     * 
+     * @return list of css files
+     */
     public List<SelectItem> getCssFiles() {
-        List<SelectItem> myList = new ArrayList<>();
-
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        URI fileName = new File(session.getServletContext().getRealPath("/css") + File.separator).toURI();
+        List<SelectItem> list = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-
-        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);
-        for (URI uri : dateien) {
-            myList.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
+        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(""), MappingType.ROOT,
+                CSS_PATH, "");
+        for (URI uri : uris) {
+            list.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
         }
-        return myList;
+        return list;
     }
 
     /**
-     * method returns a valid css file, which is the suggestion unless
-     * suggestion is not available if not available default.css is returned
+     * Method returns a valid css file, which is the suggestion unless suggestion is
+     * not available if not available default.css is returned.
      * 
      * @param cssFileName
      *            suggested css file
@@ -216,15 +215,11 @@ public class HelperForm implements Serializable {
      * @return valid css file
      */
     public String getCssLinkIfExists(String cssFileName) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        URI fileName = serviceManager.getFileService()
-                .getInternUri(Paths.get(session.getServletContext().getRealPath(CSS_PATH) + File.separator).toUri());
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-
-        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);
-        for (URI uri : dateien) {
-            if ((CSS_PATH + "/" + uri).equals(cssFileName)) {
+        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(""), MappingType.ROOT,
+                CSS_PATH, null);
+        for (URI uri : uris) {
+            if ((CSS_PATH + uri).equals(cssFileName)) {
                 return cssFileName;
             }
         }
@@ -262,8 +257,8 @@ public class HelperForm implements Serializable {
     }
 
     /**
-     * Returning value of configuration parameter withUserStepDoneSearch. Used
-     * for enabling/disabling search for done steps by user.
+     * Returning value of configuration parameter withUserStepDoneSearch. Used for
+     * enabling/disabling search for done steps by user.
      *
      * @return boolean
      */
