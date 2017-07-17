@@ -34,7 +34,6 @@ import org.kitodo.config.Config;
 public class FileManagement implements FileManagementInterface {
 
     private static final Logger logger = LogManager.getLogger(FileManagement.class);
-    private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
 
     @Override
     public OutputStream write(URI uri) throws IOException {
@@ -173,12 +172,11 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public URI createProcessLocation(String processId) throws IOException {
         File processRootDirectory = new File(
-                (Config.getConfig().getString(METADATA_DIRECTORY) + File.separator + processId));
+                (Config.getKitodoDataDirectory() + File.separator + processId));
         if (!processRootDirectory.mkdir()) {
             throw new IOException("Could not create processRoot directory.");
         }
         return processRootDirectory.toURI();
-
     }
 
     @Override
