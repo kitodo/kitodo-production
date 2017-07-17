@@ -15,14 +15,12 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 public class DBConnectionTestIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 

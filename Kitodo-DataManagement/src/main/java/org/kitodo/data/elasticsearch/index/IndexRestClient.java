@@ -20,8 +20,6 @@ import java.util.concurrent.CountDownLatch;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Response;
@@ -110,30 +108,6 @@ public class IndexRestClient extends KitodoRestClient {
             }
         }
         return result;
-    }
-
-    /**
-     * Delete all documents of certain type from the index.
-     *
-     * @return response from server
-     */
-    public boolean deleteType() throws IOException, CustomResponseException {
-        String query = "{\n" + "  \"query\": {\n" + "    \"match_all\": {}\n" + "  }\n" + "}";
-        HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest("POST",
-                "/" + this.getIndex() + "/" + this.getType() + "/_delete_by_query?conflicts=proceed",
-                Collections.<String, String>emptyMap(), entity);
-        return processStatusCode(indexResponse.getStatusLine()) == 200;
-    }
-
-    /**
-     * Delete the whole index. Used for cleaning after tests!
-     *
-     * @return status code of the response from server
-     */
-    public boolean deleteIndex() throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest("DELETE", "/kitodo");
-        return processStatusCode(indexResponse.getStatusLine()) == 200;
     }
 
     private void filterAsynchronousResponses(ArrayList<String> responses) throws CustomResponseException {

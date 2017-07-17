@@ -18,8 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapGroup;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for LdapGroupService class.
@@ -27,7 +25,7 @@ import org.kitodo.data.exceptions.DataException;
 public class LdapGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 

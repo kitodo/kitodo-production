@@ -11,18 +11,30 @@
 
 package org.kitodo;
 
+import static java.util.Arrays.asList;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 import static org.kitodo.data.database.beans.Batch.Type.NEWSPAPER;
 import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
 
 import de.sub.goobi.helper.Helper;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.elasticsearch.common.io.FileSystemUtils;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.transport.Netty4Plugin;
 import org.hibernate.Session;
 import org.joda.time.LocalDate;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -40,10 +52,30 @@ import org.kitodo.services.ServiceManager;
  */
 public class MockDatabase {
 
+    private static Node node;
+    private static IndexRestClient indexRestClient;
+    private static String testIndexName;
+    private static String port;
+    private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final ServiceManager serviceManager = new ServiceManager();
 
-    public static void insertProcessesFull() throws DAOException, DataException {
+    public static void insertProcessesFull() throws Exception {
+        final String nodeName = "searchernode";
+        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        port = ConfigMain.getParameter("elasticsearch.port", "9205");
+        indexRestClient = initializeIndexRestClient();
+
+        Map settingsMap = prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
+        Settings settings = Settings.builder().put(settingsMap).build();
+
         if (serviceManager.getBatchService().find(1) == null) {
+            removeOldDataDirectories("target/" + nodeName);
+
+            node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+            node.start();
+
+            indexRestClient.createIndex();
+
             insertBatches();
             insertDockets();
             insertRulesets();
@@ -62,6 +94,45 @@ public class MockDatabase {
             insertTasks();
             insertHistory();
         }
+    }
+
+    private static class ExtendedNode extends Node {
+        public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
+            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
+        }
+    }
+
+    private static IndexRestClient initializeIndexRestClient() {
+        IndexRestClient restClient = new IndexRestClient();
+        restClient.initiateClient();
+        restClient.setIndex(testIndexName);
+        return restClient;
+    }
+
+    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
+        File dataDir = new File(dataDirectory);
+        if (dataDir.exists()) {
+            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map prepareNodeSettings(String httpPort, String httpTransportPort, String nodeName) {
+        Map settingsMap = new HashMap();
+        settingsMap.put("node.name", nodeName);
+        // create all data directories under Maven build directory
+        settingsMap.put("path.conf", "target");
+        settingsMap.put("path.data", "target");
+        settingsMap.put("path.logs", "target");
+        settingsMap.put("path.home", "target");
+        // set ports used by Elastic Search to something different than default
+        settingsMap.put("http.type", "netty4");
+        settingsMap.put("http.port", httpPort);
+        settingsMap.put("transport.tcp.port", httpTransportPort);
+        settingsMap.put("transport.type", "netty4");
+        // disable automatic index creation
+        settingsMap.put("action.auto_create_index", "false");
+        return settingsMap;
     }
 
     private static void insertBatches() throws DataException {

@@ -23,9 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for TemplateService class.
@@ -33,7 +31,7 @@ import org.kitodo.data.exceptions.DataException;
 public class TemplateServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 

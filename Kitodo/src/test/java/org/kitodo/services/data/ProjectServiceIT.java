@@ -26,10 +26,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for ProjectService class.
@@ -37,7 +35,7 @@ import org.kitodo.data.exceptions.DataException;
 public class ProjectServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, DataException {
+    public static void prepareDatabase() throws Exception {
         MockDatabase.insertProcessesFull();
     }
 
