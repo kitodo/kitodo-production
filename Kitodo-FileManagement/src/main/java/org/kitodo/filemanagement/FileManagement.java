@@ -155,7 +155,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean isDirectory(URI directory) {
-        return false;
+        return new File(directory).isDirectory();
     }
 
     @Override
@@ -175,11 +175,6 @@ public class FileManagement implements FileManagementInterface {
 
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
         return new ArrayList<>();
-    }
-
-    @Override
-    public boolean isDirectory(URI directory) {
-        return new File(directory).isDirectory();
     }
 
     @Override
