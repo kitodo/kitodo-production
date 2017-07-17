@@ -12,6 +12,7 @@
 package org.kitodo.filemanagement;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -22,12 +23,16 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.config.Config;
 
 public class FileManagement implements FileManagementInterface {
 
+    private static final Logger logger = LogManager.getLogger(FileManagement.class);
     private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
 
     @Override
@@ -71,12 +76,14 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean fileExist(URI uri) {
-        return false;
+        File file = new File(uri);
+        return file.exists();
     }
 
     @Override
     public boolean isFile(URI uri) {
-        return false;
+        File file = new File(uri);
+        return file.isFile();
     }
 
     @Override
