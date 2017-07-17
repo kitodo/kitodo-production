@@ -178,6 +178,11 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
+    public boolean isDirectory(URI directory) {
+        return new File(directory).isDirectory();
+    }
+
+    @Override
     public URI createProcessLocation(String processId) throws IOException {
         File processRootDirectory = new File(
                 (Config.getKitodoDataDirectory() + File.separator + processId));
