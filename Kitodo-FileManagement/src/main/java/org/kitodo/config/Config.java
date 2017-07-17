@@ -21,6 +21,8 @@ public class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
+    private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
+    private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
     /**
      * Gets the configuration.
@@ -47,5 +49,37 @@ public class Config {
             }
         }
         return config;
+    }
+
+    /**
+     * Request selected parameter from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static String getParameter(String parameter) {
+        try {
+            return getConfig().getString(parameter);
+        } catch (RuntimeException e) {
+            logger.error(e);
+            return "No configuration found!";
+        }
+    }
+
+    /**
+     * Get Kitodo data directory.
+     *
+     * @return String
+     */
+    public static String getKitodoDataDirectory() {
+        return getParameter(METADATA_DIRECTORY);
+    }
+
+    /**
+     * Get Kitodo config directory.
+     *
+     * @return String
+     */
+    public static String getKitodoConfigDirectory() {
+        return getParameter(CONFIG_DIR);
     }
 }
