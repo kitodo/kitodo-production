@@ -62,7 +62,7 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
+    public void copy(URI sourceDirectory, URI targetDirectory) throws IOException {
         sourceDirectory = fileMapper.mapAccordingToMappingType(sourceDirectory);
         targetDirectory = fileMapper.mapAccordingToMappingType(targetDirectory);
         copyDirectory(new File(sourceDirectory), new File(targetDirectory));
@@ -75,15 +75,13 @@ public class FileManagement implements FileManagementInterface {
         FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
-    @Override
-    public void copyFile(URI sourceFile, URI destinationFile) throws IOException {
+    private void copyFile(URI sourceFile, URI destinationFile) throws IOException {
         File srcFile = new File(fileMapper.mapAccordingToMappingType(sourceFile));
         File destFile = new File(fileMapper.mapAccordingToMappingType(destinationFile));
         FileUtils.copyFile(srcFile, destFile);
     }
 
-    @Override
-    public void copyFileToDirectory(URI sourceFile, URI targetDirectory) throws IOException {
+    private void copyFileToDirectory(URI sourceFile, URI targetDirectory) throws IOException {
         File file = new File(fileMapper.mapAccordingToMappingType(sourceFile));
         File directory = new File(fileMapper.mapAccordingToMappingType(targetDirectory));
         FileUtils.copyFileToDirectory(file, directory);
@@ -101,11 +99,6 @@ public class FileManagement implements FileManagementInterface {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void copy(URI sourceResource, URI targetResource) throws IOException {
-
     }
 
     @Override

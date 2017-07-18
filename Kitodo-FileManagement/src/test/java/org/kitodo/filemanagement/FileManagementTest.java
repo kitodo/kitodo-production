@@ -39,6 +39,19 @@ public class FileManagementTest {
     }
 
     @Test
+    public void shouldCreateDirectory() throws IOException {
+        URI testDirectory = fileManagement.create(URI.create("fileTest"), "testDirectory", false);
+        Assert.assertTrue("Directory not created", fileManagement.isDirectory(testDirectory));
+        Assert.assertTrue("Directory not created", fileManagement.fileExist(testDirectory));
+    }
+
+    @Test
+    public void shouldCreateResource() throws IOException {
+        URI testDirectory = fileManagement.create(URI.create("fileTest"), "newResource.xml", true);
+        Assert.assertTrue("File not created", fileManagement.fileExist(testDirectory));
+    }
+
+    @Test
     public void shouldRead() throws IOException {
         int testContent = 8;
 
@@ -89,6 +102,45 @@ public class FileManagementTest {
         Assert.assertTrue(fileManagement.fileExist(newUri));
     }
 
+    public void shouldCopyDirectory() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "toCopy", false);
+        URI file = fileManagement.create(resource, "fileToCopy.xml", true);
+        URI oldUri = URI.create("fileTest/toCopy/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertEquals(file, oldUri);
+
+        fileManagement.copy(resource, URI.create("fileTest/copiedDirectory"));
+        URI newUri = URI.create("fileTest/copiedDirectory/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertTrue(fileManagement.fileExist(newUri));
+    }
+
+    @Test
+    public void shouldCopyFile() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "fileToCopy.xml", true);
+        URI oldUri = URI.create("fileTest/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertEquals(resource, oldUri);
+
+        fileManagement.copy(resource, URI.create("fileTest/copiedFile.xml"));
+        URI newUri = URI.create("fileTest/copiedFile.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertTrue(fileManagement.fileExist(newUri));
+    }
+
+    @Test
+    public void shouldCopyFileToDirectory() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "fileToCopy.xml", true);
+        URI oldUri = URI.create("fileTest/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertEquals(resource, oldUri);
+
+        fileManagement.copy(resource, URI.create("fileTest/newDirectory"));
+        URI newUri = URI.create("fileTest/newDirectory/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertTrue(fileManagement.fileExist(newUri));
+    }
+
     @Test
     public void shouldDeleteFile() throws IOException {
         URI resource = fileManagement.create(URI.create(""), "testDelete.txt", true);
@@ -102,13 +154,6 @@ public class FileManagementTest {
 
         fileManagement.delete(resource);
         Assert.assertFalse("File not deleted", fileManagement.fileExist(resource));
-    }
-
-    @Test
-    public void shouldCreateDirectory() throws IOException {
-        URI testDirectory = fileManagement.create(URI.create("fileTest"), "testDirectory", false);
-        Assert.assertTrue("Directory not created", fileManagement.isDirectory(testDirectory));
-        Assert.assertTrue("Directory not created", fileManagement.fileExist(testDirectory));
     }
 
     @Test
