@@ -38,7 +38,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.enums.MappingType;
-import org.kitodo.filters.FileNameEndsWithFilter;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 
 /**

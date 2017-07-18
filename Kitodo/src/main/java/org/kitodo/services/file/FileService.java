@@ -46,7 +46,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.enums.MappingType;
-import org.kitodo.filters.FileNameEndsWithFilter;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.RulesetService;
 

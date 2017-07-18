@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.filters.FileNameMatchesFilter;
+import org.kitodo.api.filemanagement.filters.FileNameMatchesFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 

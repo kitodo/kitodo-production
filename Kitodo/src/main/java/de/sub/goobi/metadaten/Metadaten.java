@@ -58,7 +58,7 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.filters.IsDirectoryFilter;
+import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
