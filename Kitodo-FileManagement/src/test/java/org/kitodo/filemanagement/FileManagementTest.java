@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -191,6 +192,19 @@ public class FileManagementTest {
 
         String fileName = fileManagement.getFileNameWithExtension(resource);
         Assert.assertEquals(fileName, "fileName.xml");
+    }
+
+    @Test
+    public void shouldGetSubUris() throws Exception {
+        URI directory = fileManagement.createDirectory(URI.create("fileTest"), "testSub");
+        URI firstSub = fileManagement.createResource(directory, "first.txt");
+        URI secondSub = fileManagement.createResource(directory, "second.xml");
+        URI thirdSub = fileManagement.createResource(directory, "third.jpg");
+
+        ArrayList subUris = fileManagement.getSubUris(null, directory);
+        Assert.assertEquals(subUris.get(0), firstSub);
+        Assert.assertEquals(subUris.get(1), secondSub);
+        Assert.assertEquals(subUris.get(2), thirdSub);
     }
 
     @Test
