@@ -62,6 +62,34 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
+    public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
+        sourceDirectory = fileMapper.mapAccordingToMappingType(sourceDirectory);
+        targetDirectory = fileMapper.mapAccordingToMappingType(targetDirectory);
+        copyDirectory(new File(sourceDirectory), new File(targetDirectory));
+    }
+
+    private void copyDirectory(File sourceDirectory, File targetDirectory) throws IOException {
+        if (!targetDirectory.exists()) {
+            targetDirectory.mkdirs();
+        }
+        FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
+    }
+
+    @Override
+    public void copyFile(URI sourceFile, URI destinationFile) throws IOException {
+        File srcFile = new File(fileMapper.mapAccordingToMappingType(sourceFile));
+        File destFile = new File(fileMapper.mapAccordingToMappingType(destinationFile));
+        FileUtils.copyFile(srcFile, destFile);
+    }
+
+    @Override
+    public void copyFileToDirectory(URI sourceFile, URI targetDirectory) throws IOException {
+        File file = new File(fileMapper.mapAccordingToMappingType(sourceFile));
+        File directory = new File(fileMapper.mapAccordingToMappingType(targetDirectory));
+        FileUtils.copyFileToDirectory(file, directory);
+    }
+
+    @Override
     public boolean delete(URI uri) throws IOException {
         uri = fileMapper.mapAccordingToMappingType(uri);
         File file = new File(uri);
