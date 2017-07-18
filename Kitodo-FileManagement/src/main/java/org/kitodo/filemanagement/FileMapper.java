@@ -31,11 +31,13 @@ public class FileMapper {
      * @return mapped URI
      */
     URI mapAccordingToMappingType(URI uri) {
-        if (uri.toString().contains(".css")) {
-            return mapUriToKitodoRootFolderUri(uri);
-        } else {
+        if (uri != null) {
+            if (uri.toString().contains(".css")) {
+                return mapUriToKitodoRootFolderUri(uri);
+            }
             return mapUriToKitodoDataDirectoryUri(uri);
         }
+        return mapUriToKitodoDataDirectoryUri(null);
     }
 
     /**
@@ -94,8 +96,12 @@ public class FileMapper {
      */
     private URI mapUriToKitodoDataDirectoryUri(URI uri) {
         String kitodoDataDirectory = Config.getKitodoDataDirectory();
-        if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
-            return Paths.get(Config.getKitodoDataDirectory(), uri.toString()).toUri();
+        if (uri == null) {
+            return Paths.get(Config.getKitodoDataDirectory()).toUri();
+        } else {
+            if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
+                return Paths.get(Config.getKitodoDataDirectory(), uri.toString()).toUri();
+            }
         }
         return uri;
     }
