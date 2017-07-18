@@ -2023,6 +2023,10 @@ public class Metadaten {
      * die Seiten über die Ajax-Felder festlegen ================================================================
      */
     public void AjaxSeitenStartUndEndeSetzen() {
+        if (this.alleSeiten == null) {
+            return;
+        }
+
         boolean startseiteOk = false;
         boolean endseiteOk = false;
 
