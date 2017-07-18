@@ -19,7 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DocketImplTest {
+public class DocketTest {
 
     DocketDataGenerator docketDataGenerator;
 
@@ -89,9 +89,9 @@ public class DocketImplTest {
     public File generateDocket(String processId, String signatur, String docType) throws IOException {
         URI pathToXslFile = new File("src/test/resources/docket.xsl").toURI();
 
-        DocketImpl docketImpl = new DocketImpl();
-        File generatedFile = docketImpl
-                .generateDocket(docketDataGenerator.createDocketData(processId, signatur, docType), pathToXslFile);
+        Docket docket = new Docket();
+        File generatedFile = docket.generateDocket(docketDataGenerator.createDocketData(processId, signatur, docType),
+                pathToXslFile);
 
         return generatedFile;
     }
@@ -99,8 +99,8 @@ public class DocketImplTest {
     public File generateMultipleDockets(ArrayList<String> processIds) throws IOException {
         URI pathToXslFile = new File("src/test/resources/docket_multipage.xsl").toURI();
 
-        DocketImpl docketImpl = new DocketImpl();
-        File generatedFile = docketImpl.generateMultipleDockets(docketDataGenerator.createDocketData(processIds),
+        Docket docket = new Docket();
+        File generatedFile = docket.generateMultipleDockets(docketDataGenerator.createDocketData(processIds),
                 pathToXslFile);
 
         return generatedFile;
