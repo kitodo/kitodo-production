@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.impl.docket;
+package org.kitodo.docket;
 
 import java.io.IOException;
 import java.io.OutputStream;

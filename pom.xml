@@ -92,7 +92,7 @@
         <module>Kitodo-API</module>
         <module>Kitodo-FileManagement</module>
         <module>Kitodo-PersistentIdentifier</module>
-        <module>Kitodo-Impl-Docket</module>
+        <module>Kitodo-Docket</module>
         <module>Kitodo</module>
     </modules>
 

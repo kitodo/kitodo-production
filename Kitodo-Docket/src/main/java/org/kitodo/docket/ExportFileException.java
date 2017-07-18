@@ -9,21 +9,16 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.impl.docket;
+package org.kitodo.docket;
 
-public class ExportFileException extends Exception  {
-	private static final long serialVersionUID = 8440137060804389036L;
+public class ExportFileException extends Exception {
+    private static final long serialVersionUID = 8440137060804389036L;
 
-	public ExportFileException()
-	  {
-		super();
-	  }
+    public ExportFileException() {
+        super();
+    }
 
-	  public ExportFileException( String s )
-	  {
-	    super( s );
-	  }
+    public ExportFileException(String s) {
+        super(s);
+    }
 }
-
-
-

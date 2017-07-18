@@ -1,4 +1,4 @@
-package org.kitodo.impl.docket;
+package org.kitodo.docket;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

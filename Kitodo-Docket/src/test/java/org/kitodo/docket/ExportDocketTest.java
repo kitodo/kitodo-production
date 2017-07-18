@@ -1,4 +1,4 @@
-package org.kitodo.impl.docket;
+package org.kitodo.docket;
 
 import java.io.File;
 import java.io.FileOutputStream;
