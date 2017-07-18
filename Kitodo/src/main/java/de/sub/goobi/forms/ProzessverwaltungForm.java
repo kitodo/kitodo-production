@@ -1886,15 +1886,19 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public List<URI> getXsltList() {
         List<URI> answer = new ArrayList<>();
-        URI folder = fileService.createDirectory("xsltFolder");
-        if (fileService.isDirectory(folder) && fileService.fileExist(folder)) {
-            ArrayList<URI> files = fileService.getSubUris(folder);
+        try {
+            URI folder = fileService.createDirectory(null, "xsltFolder");
+            if (fileService.isDirectory(folder) && fileService.fileExist(folder)) {
+                ArrayList<URI> files = fileService.getSubUris(folder);
 
-            for (URI uri : files) {
-                if (uri.toString().endsWith(".xslt") || uri.toString().endsWith(".xsl")) {
-                    answer.add(uri);
+                for (URI uri : files) {
+                    if (uri.toString().endsWith(".xslt") || uri.toString().endsWith(".xsl")) {
+                        answer.add(uri);
+                    }
                 }
             }
+        } catch (IOException e) {
+            logger.error(e);
         }
         return answer;
     }

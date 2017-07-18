@@ -729,11 +729,12 @@ public class ProcessService extends TitleSearchService<Process> {
         URI testMe;
         try {
             testMe = getImagesTifDirectory(true, process);
+            return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
+                    && fileService.getSubUris(testMe).size() > 0;
         } catch (IOException e) {
+            logger.error(e);
             return false;
         }
-        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                && fileService.getSubUris(testMe).size() > 0;
 
     }
 
@@ -741,7 +742,9 @@ public class ProcessService extends TitleSearchService<Process> {
      * Get images origin directory.
      *
      * @param useFallBack
+     *            as boolean
      * @param process
+     *            object
      * @return path
      */
     public URI getImagesOrigDirectory(boolean useFallBack, Process process) throws IOException {
@@ -826,8 +829,8 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated
-     * with as readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated with as
+     * readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */

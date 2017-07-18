@@ -16,16 +16,11 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ShellScript;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,9 +29,7 @@ import java.util.Collections;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
@@ -92,14 +85,10 @@ public class FileService {
      * @return the URI of the new directory or URI of parent directory if
      *         directoryName is null or empty
      */
-    public URI createDirectory(URI parentFolderUri, String directoryName) {
+    public URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
         if (directoryName != null) {
-            try {
-                FileManagementInterface fileManagementModule = getFileManagementModule();
-                return fileManagementModule.createDirectory(parentFolderUri, directoryName);
-            } catch (IOException e) {
-                logger.error(e);
-            }
+            return fileManagementModule.createDirectory(parentFolderUri, directoryName);
         }
         return URI.create("");
     }
@@ -136,67 +125,8 @@ public class FileService {
      *             is thrown if the rename fails permanently
      */
     public URI renameFile(URI fileUri, String newFileName) throws IOException {
-
-        final int SLEEP_INTERVAL_MILLIS = 20;
-        final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
-        URI oldFileUri;
-        URI newFileUri;
-        int millisWaited = 0;
-
-        if ((fileUri == null) || (newFileName == null)) {
-            return null;
-        }
-
-        oldFileUri = fileUri;
-        String substring = fileUri.toString().substring(0, fileUri.toString().lastIndexOf('/') + 1);
-        newFileUri = URI.create(substring + newFileName);
-        boolean success;
-
-        if (!fileExist(oldFileUri)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("File " + fileUri.getPath() + " does not exist for renaming.");
-            }
-            throw new FileNotFoundException(fileUri + " does not exist for renaming.");
-        }
-
-        if (fileExist(newFileUri)) {
-            String message = "Renaming of " + fileUri + " into " + newFileName + " failed: Destination exists.";
-            logger.error(message);
-            throw new IOException(message);
-        }
-
-        do {
-            if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
-                logger.warn("Renaming " + fileUri
-                        + " failed. This is Windows. Running the garbage collector may yield good results. "
-                        + "Forcing immediate garbage collection now!");
-                System.gc();
-            }
-            success = new File(mapUriToKitodoDataDirectoryUri(oldFileUri))
-                    .renameTo(new File(mapUriToKitodoDataDirectoryUri(newFileUri)));
-            if (!success) {
-                if (millisWaited == 0 && logger.isInfoEnabled()) {
-                    logger.info("Renaming " + fileUri + " failed. File may be locked. Retrying...");
-                }
-                try {
-                    Thread.sleep(SLEEP_INTERVAL_MILLIS);
-                } catch (InterruptedException e) {
-                    logger.warn("The thread was interrupted");
-                }
-                millisWaited += SLEEP_INTERVAL_MILLIS;
-            }
-        } while (!success && millisWaited < MAX_WAIT_MILLIS);
-
-        if (!success) {
-            logger.error("Rename " + fileUri + " failed. This is a permanent error. Giving up.");
-            throw new IOException("Renaming of " + fileUri + " into " + newFileName + " failed.");
-        }
-
-        if (millisWaited > 0 && logger.isInfoEnabled()) {
-            logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
-        }
-
-        return fileUri;
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.rename(fileUri, newFileName);
     }
 
     /**
@@ -228,15 +158,19 @@ public class FileService {
     private Integer iterateOverDirectories(URI directory) {
         int count = 0;
         if (directory.isAbsolute()) {
-            if (isDirectory(directory)) {
-                ArrayList<URI> children = getSubUris(directory);
-                for (URI child : children) {
-                    if (isDirectory(child)) {
-                        count += getNumberOfFiles(child);
-                    } else {
-                        count += 1;
+            try {
+                if (isDirectory(directory)) {
+                    ArrayList<URI> children = getSubUris(directory);
+                    for (URI child : children) {
+                        if (isDirectory(child)) {
+                            count += getNumberOfFiles(child);
+                        } else {
+                            count += 1;
+                        }
                     }
                 }
+            } catch (IOException e) {
+                logger.error(e);
             }
         }
         return count;
@@ -270,12 +204,16 @@ public class FileService {
      */
     private Integer iterateOverImageDirectories(URI directory) {
         int count = 0;
-        if (isDirectory(directory)) {
-            count = getSubUris(Helper.imageNameFilter, directory).size();
-            ArrayList<URI> children = getSubUris(directory);
-            for (URI child : children) {
-                count += getNumberOfImageFiles(child);
+        try {
+            if (isDirectory(directory)) {
+                count = getSubUris(Helper.imageNameFilter, directory).size();
+                ArrayList<URI> children = getSubUris(directory);
+                for (URI child : children) {
+                    count += getNumberOfImageFiles(child);
+                }
             }
+        } catch (IOException e) {
+            logger.error(e);
         }
         return count;
     }
@@ -289,16 +227,8 @@ public class FileService {
      *            destination file as uri
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        sourceDirectory = mapUriToKitodoDataDirectoryUri(sourceDirectory);
-        targetDirectory = mapUriToKitodoDataDirectoryUri(targetDirectory);
-        copyDirectory(new File(sourceDirectory), new File(targetDirectory));
-    }
-
-    private void copyDirectory(File sourceDirectory, File targetDirectory) throws IOException {
-        if (!targetDirectory.exists()) {
-            targetDirectory.mkdirs();
-        }
-        FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        fileManagementModule.copyDirectory(sourceDirectory, targetDirectory);
     }
 
     /**
@@ -312,8 +242,8 @@ public class FileService {
      *             if copying fails
      */
     public void copyFile(URI srcFile, URI destFile) throws IOException {
-        FileUtils.copyFile(new File(mapUriToKitodoDataDirectoryUri(srcFile)),
-                new File(mapUriToKitodoDataDirectoryUri(destFile)));
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        fileManagementModule.copyFile(srcFile, destFile);
     }
 
     /**
@@ -327,8 +257,8 @@ public class FileService {
      *             if copying fails.
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        FileUtils.copyFileToDirectory(new File(mapUriToKitodoDataDirectoryUri(sourceDirectory)),
-                new File(mapUriToKitodoDataDirectoryUri(targetDirectory)));
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        fileManagementModule.copyFileToDirectory(sourceDirectory, targetDirectory);
     }
 
     /**
@@ -336,20 +266,13 @@ public class FileService {
      *
      * @param uri
      *            the URI, to write to.
-     * @return an output stream to the file at the given URI.
+     * @return an output stream to the file at the given URI or null
      * @throws IOException
-     *             if file cannot be accessed
+     *             if write fails
      */
     public OutputStream write(URI uri) throws IOException {
-        if (!fileExist(uri)) {
-            boolean newFileCreated = new File(mapUriToKitodoDataDirectoryUri(uri)).createNewFile();
-            if (!newFileCreated) {
-                logger.error("File was not created!");
-                throw new IOException(
-                        "File: " + new File(mapUriToKitodoDataDirectoryUri(uri)).getPath() + " couldn't be created!");
-            }
-        }
-        return new FileOutputStream(new File(mapUriToKitodoDataDirectoryUri(uri)));
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.write(uri);
     }
 
     /**
@@ -357,109 +280,106 @@ public class FileService {
      *
      * @param uri
      *            the uri to read
-     * @return an InputStream to read from.
+     * @return an InputStream to read from or null
      * @throws IOException
-     *             if File cannot be accessed.
+     *             if read fails
      */
     public InputStream read(URI uri) throws IOException {
-        URL url = mapUriToKitodoDataDirectoryUri(uri).toURL();
-        return url.openStream();
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.read(uri);
     }
 
     /**
-     * Deletes a resource at a given uri.
+     * Deletes a resource at a given URI.
      *
      * @param uri
-     *            The uri to delete-
-     * @return True, if successfull, false otherwise.
+     *            the uri to delete
+     * @return true, if successful, false otherwise
      * @throws IOException
-     *             If the File cannot be accessed.
+     *             if get of module fails
      */
     public boolean delete(URI uri) throws IOException {
-        if (!fileExist(uri)) {
-            return true;
-        }
-        File file = new File(mapUriToKitodoDataDirectoryUri(uri));
-        if (file.isFile()) {
-            return file.delete();
-        }
-        if (file.isDirectory()) {
-            FileUtils.deleteDirectory(file);
-            return true;
-        }
-        return false;
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.delete(uri);
     }
 
     /**
      * Checks, if a file exists.
      *
      * @param uri
-     *            The uri, to check, if there is a file.
-     * @return True, if the file exists.
+     *            the URI, to check, if there is a file
+     * @return true, if the file exists
+     * @throws IOException
+     *             if get of module fails
      */
-    public boolean fileExist(URI uri) {
-        URI path = mapUriToKitodoDataDirectoryUri(uri);
-        File file = new File(path);
-        return file.exists();
+    public boolean fileExist(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.fileExist(uri);
+    }
+
+    /**
+     * Returns the name of a file at a given URI.
+     *
+     * @param uri
+     *            the URI, to get the filename from.
+     * @return the name of the file
+     * @throws IOException
+     *             if get of module fails
+     */
+    public String getFileName(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getFileName(uri);
     }
 
     /**
      * Returns the name of a file at a given uri.
      *
      * @param uri
-     *            The uri, to get the filename from.
-     * @return The name of the file.
+     *            the URI, to get the filename from
+     * @return the name of the file
+     * @throws IOException
+     *             if get of module fails
      */
-    public String getFileName(URI uri) {
-        return FilenameUtils.getBaseName(uri.getPath());
+    public String getFileNameWithExtension(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getFileNameWithExtension(uri);
     }
 
     /**
-     * Returns the name of a file at a given uri.
-     *
-     * @param uri
-     *            The uri, to get the filename from.
-     * @return The name of the file.
-     */
-    public String getFileNameWithExtension(URI uri) {
-        return FilenameUtils.getName(uri.getPath());
-    }
-
-    /**
-     * Moves a directory from a given URI to a given URI
+     * Moves a directory from a given URI to a given URI.
      *
      * @param sourceUri
-     *            The source URI.
+     *            the source URI
      * @param targetUri
-     *            The target URI.
+     *            the target URI
      * @throws IOException
-     *             if directory cannot be accessed.
+     *             if get of module fails
      */
     public void moveDirectory(URI sourceUri, URI targetUri) throws IOException {
-        copyDirectory(sourceUri, targetUri);
-        delete(sourceUri);
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        fileManagementModule.moveDirectory(sourceUri, targetUri);
     }
 
     /**
-     * Moves a file from a given URI to a given URI
+     * Moves a file from a given URI to a given URI.
      *
      * @param sourceUri
-     *            The source URI.
+     *            the source URI
      * @param targetUri
-     *            The target URI.
+     *            the target URI
      * @throws IOException
-     *             if directory cannot be accessed.
+     *             if get of module fails
      */
     public void moveFile(URI sourceUri, URI targetUri) throws IOException {
-        copyFile(sourceUri, targetUri);
-        delete(sourceUri);
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        fileManagementModule.moveFile(sourceUri, targetUri);
     }
 
     /**
      * Lists all Files at the given Path.
      *
      * @param file
-     *            The Directory to get the Files from.
+     *            the directory to get the Files from
      * @return an Array of Files.
      */
     private File[] listFiles(File file) {
@@ -798,17 +718,18 @@ public class FileService {
     }
 
     /**
-     * deletes all process directorys and their content.
+     * Deletes all process directories and their content.
      *
      * @param process
-     *            the processt o delete the doirectorys for.
-     * @return true, if deletion was successfull.
+     *            the process to delete the directories for.
+     * @return true, if deletion was successful.
      */
     public boolean deleteProcessContent(Process process) {
         for (ProcessSubType processSubType : ProcessSubType.values()) {
             URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, null);
             try {
-                delete(processSubTypeURI);
+                FileManagementInterface fileManagementModule = getFileManagementModule();
+                fileManagementModule.delete(processSubTypeURI);
             } catch (IOException e) {
                 logger.warn("uri " + processSubTypeURI + " could not be deleted");
                 return false;
@@ -832,7 +753,11 @@ public class FileService {
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                createDirectory(dir, process.getTitle() + "_source");
+                try {
+                    createDirectory(dir, process.getTitle() + "_source");
+                } catch (IOException e) {
+                    logger.error(e);
+                }
             }
         } else {
             sourceFolder = dir.resolve(verzeichnisse.get(0));
@@ -856,21 +781,6 @@ public class FileService {
      */
     public URI getAbsoluteURI(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
         return mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
-    }
-
-    /**
-     * Returns the version used in the core code, without direct File mapping.
-     *
-     * @param uri
-     *            the URI to unmapp
-     * @param mappingType
-     *            CONFIG, DATA and ROOT
-     * @param folderPath
-     *            as String - used for ROOT mapping, in other case null
-     * @return the relative URI path
-     */
-    public URI getRelativeURI(URI uri, MappingType mappingType, String folderPath) {
-        return unmapAccordingToMappingType(uri, mappingType, folderPath);
     }
 
     /**
@@ -1114,9 +1024,9 @@ public class FileService {
      *            the name of the new file
      * @return the uri of the new file
      */
-    public URI createResource(String fileName) {
-        String path = new File(fileName).toURI().getPath();
-        return URI.create(path.substring(path.lastIndexOf('/') + 1));
+    public URI createResource(String fileName) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.createResource(null, fileName);
     }
 
     /**
@@ -1127,15 +1037,10 @@ public class FileService {
      * @param name
      *            the name of the new resource
      * @return the URI of the created resource
-     * @throws IOException
-     *             if creation failed.
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
-        File file = new File(mapUriToKitodoDataDirectoryUri(targetFolder).resolve(name));
-        if (file.exists() || file.createNewFile()) {
-            return unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
-        }
-        return URI.create("");
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.createResource(targetFolder, name);
     }
 
     /**
@@ -1145,8 +1050,9 @@ public class FileService {
      *            the uri to check.
      * @return true, if it is a directory.
      */
-    public boolean isDirectory(URI dir) {
-        return new File(dir).isDirectory();
+    public boolean isDirectory(URI dir) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.isDirectory(dir);
     }
 
     /**
@@ -1156,8 +1062,9 @@ public class FileService {
      *            the uri to check.
      * @return true, if it's readable, false otherwise.
      */
-    public boolean canRead(URI uri) {
-        return new File(uri).canRead();
+    public boolean canRead(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.canRead(uri);
     }
 
     /**
@@ -1170,14 +1077,17 @@ public class FileService {
     }
 
     /**
-     * Checks if a resource at a given uri is a file.
+     * Checks if a resource at a given URI is a file.
      *
      * @param uri
-     *            the uri to check, if there is a file.
+     *            the URI to check, if there is a file
      * @return true, if it is a file, false otherwise
+     * @throws IOException
+     *             if get of module fails
      */
-    public boolean isFile(URI uri) {
-        return new File(uri).isFile();
+    public boolean isFile(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.isFile(uri);
     }
 
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
@@ -1189,69 +1099,30 @@ public class FileService {
      * Creates a symbolic link.
      *
      * @param targetUri
-     *            The target URI for the link.
+     *            the target URI for the link
      * @param homeUri
-     *            The home URI.
-     * @return true, if link creation was successfull.
+     *            the home URI
+     * @return true, if link creation was successful
+     * @throws IOException
+     *             if get of module fails
      */
-    public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) {
-        File imagePath = new File(homeUri);
-        File userHome = new File(getDecodedPath(targetUri));
-        if (userHome.exists()) {
-            return false;
-        }
-        String command = ConfigCore.getParameter("script_createSymLink") + " ";
-        command += imagePath + " " + userHome + " ";
-        if (onlyRead) {
-            command += ConfigCore.getParameter("UserForImageReading", "root");
-        } else {
-            command += user.getLogin();
-        }
-        try {
-            ShellScript.legacyCallShell2(command);
-            return true;
-        } catch (IOException ioe) {
-            logger.error("IOException downloadToHome()", ioe);
-            Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
-            return false;
-        }
+    public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.createSymLink(homeUri, targetUri, onlyRead, user.getLogin());
     }
 
     /**
      * Delete a symbolic link.
      *
      * @param homeUri
-     *            the URI of the home folder, where the link should be deleted.
-     * @return true, if deletion was successful.
+     *            the URI of the home folder, where the link should be deleted
+     * @return true, if deletion was successful
+     * @throws IOException
+     *             if get of module fails
      */
-    public boolean deleteSymLink(URI homeUri) {
-        String command = ConfigCore.getParameter("script_deleteSymLink");
-        ShellScript deleteSymLinkScript;
-        try {
-            deleteSymLinkScript = new ShellScript(new File(command));
-            deleteSymLinkScript.run(Collections.singletonList(new File(getDecodedPath(homeUri)).getPath()));
-        } catch (FileNotFoundException e) {
-            logger.error("FileNotFoundException in deleteSymLink()", e);
-            Helper.setFehlerMeldung("Couldn't find script file, error", e.getMessage());
-            return false;
-        } catch (IOException e) {
-            logger.error("IOException in deleteSymLink()", e);
-            Helper.setFehlerMeldung("Aborted deleteSymLink(), error", e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
-    private String getDecodedPath(URI uri) {
-        String uriToDecode = new File(uri).getPath();
-        String decodedPath;
-        try {
-            decodedPath = URLDecoder.decode(uriToDecode, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e);
-            return "";
-        }
-        return decodedPath;
+    public boolean deleteSymLink(URI homeUri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.deleteSymLink(homeUri);
     }
 
     private FileManagementInterface getFileManagementModule() throws IOException {

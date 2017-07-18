@@ -114,9 +114,9 @@ public class ExtendedProzessImpl extends ProcessImpl {
         super.getParams(sessionId);
         HashMap<String, URI> myMap = new HashMap<>();
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
-        myMap.put("ruleset", serviceManager.getFileService()
-                .createResource(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile()));
         try {
+            myMap.put("ruleset", serviceManager.getFileService()
+                .createResource(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile()));
             myMap.put("tifdirectory", serviceManager.getProcessService().getImagesTifDirectory(false, p));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"

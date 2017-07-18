@@ -24,7 +24,7 @@ import org.junit.Test;
 public class FileServiceIT {
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws IOException {
         FileService fileService = new FileService();
         fileService.createDirectory(URI.create(""), "fileServiceTest");
     }

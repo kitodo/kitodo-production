@@ -405,52 +405,62 @@ public class MetadatenImagesHelper {
         /*
          * alle Bilder durchlaufen und dafür die Seiten anlegen
          */
-        if (fileService.fileExist(folder)) {
-            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
-            if (files == null || files.size() == 0) {
-                Helper.setFehlerMeldung("[" + title + "] No objects found");
-                return false;
-            }
-
-            this.myLastImage = files.size();
-            if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-                List<URI> filesDirs = files;
-                Collections.sort(filesDirs);
-                int counter = 1;
-                int myDiff = 0;
-                String currentFileName = null;
-                try {
-                    for (Iterator<URI> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
-                        currentFileName = fileService.getFileName(iterator.next());
-
-                        int curFileNumber = Integer
-                                .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
-                        if (curFileNumber != counter + myDiff) {
-                            Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
-                                    + " but found File " + currentFileName);
-                            myDiff = curFileNumber - counter;
-                            isValid = false;
-                        }
-                    }
-                } catch (NumberFormatException e1) {
-                    isValid = false;
-                    Helper.setFehlerMeldung(
-                            "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
+        try {
+            if (fileService.fileExist(folder)) {
+                ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
+                if (files == null || files.size() == 0) {
+                    Helper.setFehlerMeldung("[" + title + "] No objects found");
+                    return false;
                 }
-                return isValid;
+
+                this.myLastImage = files.size();
+                if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+                    List<URI> filesDirs = files;
+                    Collections.sort(filesDirs);
+                    int counter = 1;
+                    int myDiff = 0;
+                    String currentFileName = null;
+                    try {
+                        for (Iterator<URI> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
+                            currentFileName = fileService.getFileName(iterator.next());
+                            int curFileNumber = Integer
+                                    .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
+                            if (curFileNumber != counter + myDiff) {
+                                Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
+                                        + " but found File " + currentFileName);
+                                myDiff = curFileNumber - counter;
+                                isValid = false;
+                            }
+                        }
+                    } catch (NumberFormatException e1) {
+                        isValid = false;
+                        Helper.setFehlerMeldung(
+                                "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
+                    }
+                    return isValid;
+                }
+                return true;
             }
-            return true;
+            Helper.setFehlerMeldung("[" + title + "] No image-folder found");
+            return false;
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
         }
-        Helper.setFehlerMeldung("[" + title + "] No image-folder found");
-        return false;
     }
 
     public static class GoobiImageFileComparator implements Comparator<URI> {
 
         @Override
         public int compare(URI firstUri, URI secondUri) {
-            String firstString = fileService.getFileName(firstUri);
-            String secondString = fileService.getFileName(secondUri);
+            String firstString = "";
+            String secondString = "";
+            try {
+                firstString = fileService.getFileName(firstUri);
+                secondString = fileService.getFileName(secondUri);
+            } catch (IOException e) {
+                logger.error(e);
+            }
             String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
             firstString = firstString.substring(0, firstString.lastIndexOf("."));
             secondString = secondString.substring(0, secondString.lastIndexOf("."));
@@ -509,12 +519,16 @@ public class MetadatenImagesHelper {
                     String filename = page.getImageName();
                     String filenamePrefix = filename.replace(Metadaten.getFileExtension(filename), "");
                     for (URI currentImage : dataList) {
-                        String currentFileName = fileService.getFileName(currentImage);
-                        String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),
-                                "");
-                        if (currentImagePrefix.equals(filenamePrefix)) {
-                            orderedFilenameList.add(currentImage);
-                            break;
+                        try {
+                            String currentFileName = fileService.getFileName(currentImage);
+                            String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),
+                                    "");
+                            if (currentImagePrefix.equals(filenamePrefix)) {
+                                orderedFilenameList.add(currentImage);
+                                break;
+                            }
+                        } catch (IOException e) {
+                            logger.error(e);
                         }
                     }
                 }

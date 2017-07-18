@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.logging.log4j.LogManager;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -27,6 +28,7 @@ import org.kitodo.data.database.beans.Process;
 public class FileServiceTest {
 
     private static FileService fileService = new FileService();
+    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(FileService.class);
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -53,7 +55,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testCreateDirectory() {
+    public void testCreateDirectory() throws IOException {
         URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMeta");
         File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMeta")));
 
@@ -65,14 +67,18 @@ public class FileServiceTest {
 
     @Test
     public void testCreateDirectoryWithMissingRoot() {
-        fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
+        try {
+            fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
+        } catch (IOException e) {
+            logger.error(e);
+        }
         File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTestMissing/testMeta")));
 
         Assert.assertFalse(file.exists());
     }
 
     @Test
-    public void testCreateDirectoryWithAlreadyExistingDirectory() {
+    public void testCreateDirectoryWithAlreadyExistingDirectory() throws IOException {
         fileService.createDirectory(URI.create("fileServiceTest"), "testMetaExisting");
 
         URI file = fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaExisting"));
@@ -86,7 +92,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testCreateDirectoryWithNameOnly() {
+    public void testCreateDirectoryWithNameOnly() throws IOException {
         URI testMetaNameOnly = fileService.createDirectory(URI.create("fileServiceTest"), "testMetaNameOnly");
         Assert.assertTrue(fileService.fileExist(testMetaNameOnly));
 
@@ -262,17 +268,17 @@ public class FileServiceTest {
 
     @Test
     public void testCopyFileToDirectory() throws IOException {
-        URI originFile = fileService.createResource(URI.create("fileServiceTest"), "copyFileToDirectory");
+        URI originFile = fileService.createResource(URI.create("fileServiceTest"), "copyFileToDirectory.txt");
         URI targetDirectory = fileService.createDirectory(URI.create("fileServiceTest"), "copyFileToDirectoryTarget");
 
         Assert.assertTrue(fileService.fileExist(originFile));
         Assert.assertTrue(fileService.fileExist(targetDirectory));
-        Assert.assertFalse(fileService.fileExist(targetDirectory.resolve("copyFileToDirectory")));
+        Assert.assertFalse(fileService.fileExist(targetDirectory.resolve("copyFileToDirectory.txt")));
 
         fileService.copyFileToDirectory(originFile, targetDirectory);
 
         Assert.assertTrue(fileService.fileExist(originFile));
-        Assert.assertTrue(fileService.fileExist(targetDirectory.resolve("copyFileToDirectory")));
+        Assert.assertTrue(fileService.fileExist(targetDirectory.resolve("copyFileToDirectory.txt")));
 
     }
 

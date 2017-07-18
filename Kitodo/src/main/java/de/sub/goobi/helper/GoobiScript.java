@@ -244,12 +244,12 @@ public class GoobiScript {
         }
 
         URI sourceFolder = new File(this.myParameters.get("sourcefolder")).toURI();
-        if (!fileService.isDirectory(sourceFolder)) {
-            Helper.setFehlerMeldung("kitodoScriptfield",
-                    "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
-            return;
-        }
         try {
+            if (!fileService.isDirectory(sourceFolder)) {
+                Helper.setFehlerMeldung("kitodoScriptfield",
+                        "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
+                return;
+            }
             for (Process p : inProzesse) {
                 URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, p);
                 if (fileService.getSubUris(imagesFolder).size() > 0) {
@@ -269,7 +269,7 @@ public class GoobiScript {
                             "The process " + p.getTitle() + " [" + p.getId() + "] is copied");
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             Helper.setFehlerMeldung(e);
             logger.error(e);
         }

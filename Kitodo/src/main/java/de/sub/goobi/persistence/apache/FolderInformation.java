@@ -17,6 +17,7 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -122,9 +123,13 @@ public class FolderInformation {
         URI testMe;
 
         testMe = getImagesTifDirectory(true);
-
-        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                && fileService.getSubUris(testMe).size() > 0;
+        try {
+            return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
+                    && fileService.getSubUris(testMe).size() > 0;
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
+        }
     }
 
     /**
@@ -228,7 +233,11 @@ public class FolderInformation {
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                fileService.createDirectory(dir, title + "_source");
+                try {
+                    fileService.createDirectory(dir, title + "_source");
+                } catch (IOException e) {
+                    logger.error(e);
+                }
             }
         } else {
             sourceFolder = dir.resolve(verzeichnisse.get(0));

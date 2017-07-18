@@ -33,8 +33,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -320,35 +320,42 @@ public class FileManipulation {
         ArrayList<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
                 .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder));
         for (URI currentFile : filesInFolder) {
-            String currentFileName = fileService.getFileName(currentFile);
-            String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
-            if (filenamePrefix.equals(currentFileNamePrefix)) {
-                downloadFile = currentFile;
-                break;
+            try {
+                String currentFileName = fileService.getFileName(currentFile);
+                String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
+                if (filenamePrefix.equals(currentFileNamePrefix)) {
+                    downloadFile = currentFile;
+                    break;
+                }
+            } catch (IOException e) {
+                logger.error(e);
             }
         }
 
-        if (downloadFile == null || !fileService.fileExist(downloadFile)) {
-            List<String> paramList = new ArrayList<>();
-            // paramList.add(metadataBean.getMyProzess().getTitel());
-            paramList.add(filenamePrefix);
-            paramList.add(currentFolder);
-            Helper.setFehlerMeldung(Helper.getTranslation("MetsEditorMissingFile", paramList));
-            return;
+        try {
+            if (downloadFile == null || !fileService.fileExist(downloadFile)) {
+                List<String> paramList = new ArrayList<>();
+                // paramList.add(metadataBean.getMyProzess().getTitel());
+                paramList.add(filenamePrefix);
+                paramList.add(currentFolder);
+                Helper.setFehlerMeldung(Helper.getTranslation("MetsEditorMissingFile", paramList));
+                return;
+            }
+        } catch (IOException e) {
+            logger.error(e);
         }
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-
-            String fileName = fileService.getFileName(downloadFile);
-            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-            String contentType = servletContext.getMimeType(fileName);
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             InputStream in = null;
             ServletOutputStream out = null;
             try {
+                String fileName = fileService.getFileName(downloadFile);
+                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+                String contentType = servletContext.getMimeType(fileName);
+                response.setContentType(contentType);
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
                 in = fileService.read(downloadFile);
                 out = response.getOutputStream();
                 byte[] buffer = new byte[4096];
@@ -487,8 +494,12 @@ public class FileManipulation {
         URI fileuploadFolder = tempDirectory.resolve("fileupload");
 
         allImportFolder = new ArrayList<>();
-        if (fileService.isDirectory(fileuploadFolder)) {
-            allImportFolder.addAll(fileService.getSubUris(directoryFilter, fileuploadFolder));
+        try {
+            if (fileService.isDirectory(fileuploadFolder)) {
+                allImportFolder.addAll(fileService.getSubUris(directoryFilter, fileuploadFolder));
+            }
+        } catch (IOException e) {
+            logger.error(e);
         }
         return allImportFolder;
     }
@@ -623,7 +634,13 @@ public class FileManipulation {
     }
 
     private static boolean matchesFileConfiguration(URI file) {
-        String fileName = fileService.getFileName(file);
+        String fileName = null;
+
+        try {
+            fileName = fileService.getFileName(file);
+        } catch (IOException e) {
+            logger.error(e);
+        }
 
         if (fileName == null) {
             return false;

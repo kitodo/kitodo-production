@@ -17,6 +17,7 @@ import de.sub.goobi.export.download.TiffHeader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -30,9 +31,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -102,8 +103,12 @@ public class WebDav implements Serializable {
         }
 
         for (Iterator<URI> it = inList.iterator(); it.hasNext();) {
-            URI myname = it.next();
-            fileService.deleteSymLink(verzeichnisAlle.resolve(myname));
+            URI name = it.next();
+            try {
+                fileService.deleteSymLink(verzeichnisAlle.resolve(name));
+            } catch (IOException e) {
+                logger.error(e);
+            }
         }
     }
 
@@ -142,18 +147,26 @@ public class WebDav implements Serializable {
         if (user.isWithMassDownload()) {
             destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
             destination = Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri();
-            if (!fileService.fileExist(destination)
-                    && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
-                List<String> param = new ArrayList<>();
-                param.add(new File(destination).getPath().replaceAll(" ", "__"));
-                Helper.setFehlerMeldung(Helper.getTranslation("MassDownloadProjectCreationError", param));
-                logger.error("Can not create project directory "
-                        + Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
-                return;
+            try {
+                if (!fileService.fileExist(destination)
+                        && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
+                    List<String> param = new ArrayList<>();
+                    param.add(new File(destination).getPath().replaceAll(" ", "__"));
+                    Helper.setFehlerMeldung(Helper.getTranslation("MassDownloadProjectCreationError", param));
+                    logger.error("Can not create project directory "
+                            + Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
+                    return;
+                }
+            } catch (IOException e) {
+                logger.error(e);
             }
         }
         destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
-        fileService.deleteSymLink((destination));
+        try {
+            fileService.deleteSymLink((destination));
+        } catch (IOException e) {
+            logger.error(e);
+        }
     }
 
     /**
@@ -202,8 +215,10 @@ public class WebDav implements Serializable {
             logger.info("destination: " + destination);
         }
 
-        if (!fileService.createSymLink(source, destination, onlyRead, currentUser)) {
-            return;
+        try {
+            fileService.createSymLink(source, destination, onlyRead, currentUser);
+        } catch (IOException e) {
+            logger.error(e);
         }
     }
 
