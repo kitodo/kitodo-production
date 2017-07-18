@@ -181,10 +181,10 @@ public class FileManagement implements FileManagementInterface {
     public URI createProcessLocation(String processId) throws IOException {
         File processRootDirectory = new File(
                 (Config.getKitodoDataDirectory() + File.separator + processId));
-        if (!processRootDirectory.mkdir()) {
+        if (!processRootDirectory.exists() && !processRootDirectory.mkdir()) {
             throw new IOException("Could not create processRoot directory.");
         }
-        return processRootDirectory.toURI();
+        return fileMapper.unmapAccordingToMappingType(Paths.get(processRootDirectory.getPath()).toUri());
     }
 
     @Override
@@ -198,7 +198,7 @@ public class FileManagement implements FileManagementInterface {
         if (!directory.mkdir()) {
             throw new IOException("Could not create directory.");
         }
-        return directory.toURI();
+        return fileMapper.unmapAccordingToMappingType(Paths.get(directory.getPath()).toUri());
     }
 
     @Override
