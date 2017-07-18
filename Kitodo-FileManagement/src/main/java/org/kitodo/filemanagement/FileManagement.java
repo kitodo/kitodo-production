@@ -206,7 +206,45 @@ public class FileManagement implements FileManagementInterface {
     }
 
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
-        return new ArrayList<>();
+        if (!uri.isAbsolute()) {
+            uri = fileMapper.mapAccordingToMappingType(uri);
+        }
+        ArrayList<URI> resultList = new ArrayList<>();
+        File[] files;
+        if (filter == null) {
+            files = listFiles(new File(uri));
+        } else {
+            files = listFiles(filter, new File(uri));
+        }
+        for (File file : files) {
+            URI tempURI = Paths.get(file.getPath()).toUri();
+            resultList.add(fileMapper.unmapAccordingToMappingType(tempURI));
+        }
+        return resultList;
+    }
+
+    /**
+     * Lists all Files at the given path.
+     *
+     * @param file
+     *            the Directory to get the Files from
+     * @return an Array of Files
+     */
+    private File[] listFiles(File file) {
+        File[] unchecked = file.listFiles();
+        return unchecked != null ? unchecked : new File[0];
+    }
+
+    /**
+     * Lists all files at the given path and with a given filter.
+     *
+     * @param file
+     *            the directory to get the Files from
+     * @return an Array of Files
+     */
+    private File[] listFiles(FilenameFilter filter, File file) {
+        File[] unchecked = file.listFiles(filter);
+        return unchecked != null ? unchecked : new File[0];
     }
 
     @Override
