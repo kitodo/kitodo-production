@@ -144,16 +144,33 @@ public class FileManagementTest {
     @Test
     public void shouldDeleteFile() throws IOException {
         URI resource = fileManagement.create(URI.create(""), "testDelete.txt", true);
-        OutputStream outputStream = fileManagement.write(resource);
-        try {
-            outputStream.write(5);
-        } finally {
-            outputStream.close();
-        }
         Assert.assertTrue("File not created", fileManagement.fileExist(resource));
 
         fileManagement.delete(resource);
         Assert.assertFalse("File not deleted", fileManagement.fileExist(resource));
+    }
+
+    @Test
+    public void shouldMoveDirectory() throws IOException {
+        URI resource = fileManagement.create(URI.create("fileTest"), "testMove", false);
+        URI file = fileManagement.create(resource, "testMove.txt", true);
+        Assert.assertTrue("File not created", fileManagement.fileExist(file));
+
+        fileManagement.move(resource, URI.create("fileTest/moved"));
+        URI movedFile = URI.create("fileTest/moved/testMove.txt");
+        Assert.assertFalse("Directory not deleted", fileManagement.fileExist(resource));
+        Assert.assertTrue("Directory not moved", fileManagement.fileExist(movedFile));
+    }
+
+    @Test
+    public void shouldMoveFile() throws IOException {
+        URI resource = fileManagement.create(URI.create("fileTest"), "testMove.txt", true);
+        Assert.assertTrue("File not created", fileManagement.fileExist(resource));
+
+        URI movedFile = URI.create("fileTest/moved.txt");
+        fileManagement.move(resource, movedFile);
+        Assert.assertFalse("File not deleted", fileManagement.fileExist(resource));
+        Assert.assertTrue("File not moved", fileManagement.fileExist(movedFile));
     }
 
     @Test
@@ -165,6 +182,15 @@ public class FileManagementTest {
 
         fileManagement.delete(directory);
         Assert.assertFalse("Directory not deleted", fileManagement.fileExist(directory));
+    }
+
+    @Test
+    public void shouldGetFileNameWithExtension() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "fileName.xml", true);
+        Assert.assertTrue(fileManagement.fileExist(resource));
+
+        String fileName = fileManagement.getFileNameWithExtension(resource);
+        Assert.assertEquals(fileName, "fileName.xml");
     }
 
     @Test
