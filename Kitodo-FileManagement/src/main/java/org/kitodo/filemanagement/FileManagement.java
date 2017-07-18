@@ -40,6 +40,15 @@ public class FileManagement implements FileManagementInterface {
     private static final FileMapper fileMapper = new FileMapper();
 
     @Override
+    public URI create(URI parentFolderUri, String directoryName, boolean file) throws IOException {
+        File directory = new File(parentFolderUri.getPath() + File.separator + directoryName);
+        if (!directory.mkdir()) {
+            throw new IOException("Could not create directory.");
+        }
+        return fileMapper.unmapAccordingToMappingType(Paths.get(directory.getPath()).toUri());
+    }
+
+    @Override
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapAccordingToMappingType(uri);
         return new FileOutputStream(new File(uri));
@@ -188,17 +197,12 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public URI getProcessSubTypeUri(URI processBaseUri, ProcessSubType subType, int id) {
+    public URI createUriForExistingProcess(String processId) {
         return null;
     }
 
-    @Override
-    public URI create(URI parentFolderUri, String directoryName, boolean file) throws IOException {
-        File directory = new File(parentFolderUri.getPath() + File.separator + directoryName);
-        if (!directory.mkdir()) {
-            throw new IOException("Could not create directory.");
-        }
-        return fileMapper.unmapAccordingToMappingType(Paths.get(directory.getPath()).toUri());
+    public URI getProcessSubTypeUri(URI processBaseUri, ProcessSubType subType, int id) {
+        return null;
     }
 
     @Override
@@ -252,10 +256,5 @@ public class FileManagement implements FileManagementInterface {
             return "";
         }
         return decodedPath;
-    }
-
-    @Override
-    public URI createUriForExistingProcess(String processId) {
-        return null;
     }
 }
