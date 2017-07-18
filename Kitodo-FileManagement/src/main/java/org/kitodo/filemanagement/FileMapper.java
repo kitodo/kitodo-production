@@ -32,7 +32,7 @@ public class FileMapper {
      */
     URI mapAccordingToMappingType(URI uri) {
         if (uri != null) {
-            if (uri.toString().contains(".css")) {
+            if (uri.toString().contains("css")) {
                 return mapUriToKitodoRootFolderUri(uri);
             }
             return mapUriToKitodoDataDirectoryUri(uri);

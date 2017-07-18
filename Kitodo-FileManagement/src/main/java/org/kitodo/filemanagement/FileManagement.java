@@ -92,14 +92,17 @@ public class FileManagement implements FileManagementInterface {
     public boolean delete(URI uri) throws IOException {
         uri = fileMapper.mapAccordingToMappingType(uri);
         File file = new File(uri);
-        if (file.isFile()) {
-            return file.delete();
+        if (file.exists()) {
+            if (file.isFile()) {
+                return file.delete();
+            }
+            if (file.isDirectory()) {
+                FileUtils.deleteDirectory(file);
+                return true;
+            }
+            return false;
         }
-        if (file.isDirectory()) {
-            FileUtils.deleteDirectory(file);
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
