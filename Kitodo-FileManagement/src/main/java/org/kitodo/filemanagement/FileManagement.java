@@ -142,25 +142,25 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public boolean fileExist(URI uri) {
         uri = fileMapper.mapAccordingToMappingType(uri);
-        File file = new File(uri);
-        return file.exists();
+        return new File(uri).exists();
     }
 
     @Override
     public boolean isFile(URI uri) {
         uri = fileMapper.mapAccordingToMappingType(uri);
-        File file = new File(uri);
-        return file.isFile();
+        return new File(uri).isFile();
     }
 
     @Override
     public boolean isDirectory(URI directory) {
+        directory = fileMapper.mapAccordingToMappingType(directory);
         return new File(directory).isDirectory();
     }
 
     @Override
     public boolean canRead(URI uri) {
-        return false;
+        uri = fileMapper.mapAccordingToMappingType(uri);
+        return new File(uri).canRead();
     }
 
     @Override
@@ -175,11 +175,6 @@ public class FileManagement implements FileManagementInterface {
 
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
         return new ArrayList<>();
-    }
-
-    @Override
-    public boolean canRead(URI uri) {
-        return new File(uri).canRead();
     }
 
     @Override
