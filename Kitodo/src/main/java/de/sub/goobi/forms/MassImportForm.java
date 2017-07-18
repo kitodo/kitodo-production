@@ -16,25 +16,18 @@ import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,13 +50,11 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
@@ -819,36 +810,8 @@ public class MassImportForm implements Serializable {
      * @return String
      */
     public String downloadDocket() throws IOException {
-        logger.debug("generate docket for process list");
-        URI rootpath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
-        URI xsltFile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            String fileName = "batch_docket" + ".pdf";
-            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-            String contentType = servletContext.getMimeType(fileName);
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-
-            // write docket to servlet output stream
-            try {
-                KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
-                DocketInterface module = loader.loadModule();
-                ServletOutputStream out = response.getOutputStream();
-
-                File file = module.generateMultipleDockets(
-                        serviceManager.getProcessService().getDocketData(this.processList), xsltFile);
-                byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
-                out.write(bytes);
-                out.flush();
-            } catch (IOException e) {
-                logger.error("IOException while exporting run note", e);
-            }
-
-            facesContext.responseComplete();
-        }
-        return null;
+        serviceManager.getProcessService().downloadDocket(this.processList);
+        return "";
     }
 
     /**

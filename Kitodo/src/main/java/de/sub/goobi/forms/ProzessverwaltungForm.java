@@ -1839,7 +1839,8 @@ public class ProzessverwaltungForm extends BasisForm {
             ExportXmlLog xmlExport = new ExportXmlLog();
 
             LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            String directory = new File(serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer())).getPath();
+            String directory = new File(serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer()))
+                    .getPath();
             String destination = directory + this.myProzess.getTitle() + "_log.xml";
             xmlExport.startExport(this.myProzess, destination);
         } catch (IOException e) {
@@ -1906,8 +1907,14 @@ public class ProzessverwaltungForm extends BasisForm {
         return this.selectedXslt;
     }
 
-    public String downloadDocket() {
-        return serviceManager.getProcessService().downloadDocket(this.myProzess);
+    /**
+     * Downloads a docket for myProcess.
+     * 
+     * @return The navigation string
+     */
+    public String downloadDocket() throws IOException {
+        serviceManager.getProcessService().downloadDocket(this.myProzess);
+        return "";
     }
 
     public void setMyCurrentTable(StatisticsRenderingElement myCurrentTable) {

@@ -19,26 +19,16 @@ import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
 import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
@@ -49,14 +39,12 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 
 @Named("BatchForm")
@@ -247,15 +235,12 @@ public class BatchForm extends BasisForm {
      */
     public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
-        URI rootpath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
-        URI xsltFile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        List<Process> docket = Collections.emptyList();
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
         } else if (this.selectedBatches.size() == 1) {
             try {
-                docket = serviceManager.getBatchService().find(selectedBatches.get(0)).getProcesses();
+                serviceManager.getProcessService()
+                        .downloadDocket(serviceManager.getBatchService().find(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -263,32 +248,6 @@ public class BatchForm extends BasisForm {
             }
         } else {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
-        }
-        if (docket.size() > 0) {
-            if (!facesContext.getResponseComplete()) {
-                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-                String fileName = "batch_docket.pdf";
-                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-                String contentType = servletContext.getMimeType(fileName);
-                response.setContentType(contentType);
-                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-
-                try {
-                    KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
-                    DocketInterface module = loader.loadModule();
-                    ServletOutputStream out = response.getOutputStream();
-                    ArrayList<Process> processes = new ArrayList<>(docket);
-                    File file = module.generateMultipleDockets(
-                            serviceManager.getProcessService().getDocketData(processes), xsltFile);
-                    byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
-                    out.write(bytes);
-                    out.flush();
-                } catch (IOException e) {
-                    logger.error("IOException while exporting run note", e);
-                }
-
-                facesContext.responseComplete();
-            }
         }
         return null;
     }

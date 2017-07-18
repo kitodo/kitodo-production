@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1183,51 +1184,89 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return empty string?
      */
-    public String downloadDocket(Process process) {
+    public void downloadDocket(Process process) throws IOException {
 
         if (logger.isDebugEnabled()) {
             logger.debug("generate docket for process " + process.getId());
         }
-        String rootPath = ConfigCore.getParameter("xsltFolder");
-        File xsltFile;
+        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI xsltFile;
         if (process.getDocket() != null) {
-            xsltFile = new File(rootPath, process.getDocket().getFile());
-            if (!xsltFile.exists()) {
+            xsltFile = serviceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
+            if (!fileService.fileExist(xsltFile)) {
                 Helper.setFehlerMeldung("docketMissing");
-                return "";
             }
         } else {
-            xsltFile = new File(rootPath, "docket.xsl");
+            xsltFile = serviceManager.getFileService().createResource(rootPath, "docket.xsl");
         }
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            String fileName = process.getTitle() + ".pdf";
-            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-            String contentType = servletContext.getMimeType(fileName);
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
             // write run note to servlet output stream
             try {
-                KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
-                DocketInterface module = loader.loadModule();
+                DocketInterface module = initialiseDocketModule();
 
-                ServletOutputStream out = response.getOutputStream();
+                File file = module.generateDocket(getDocketData(process), xsltFile);
+                writeToOutputStream(facesContext, file);
 
-                File file = module.generateDocket(getDocketData(process), xsltFile.toURI());
-                byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
-                out.write(bytes);
-                out.flush();
-
-                facesContext.responseComplete();
             } catch (Exception e) {
                 Helper.setFehlerMeldung("Exception while exporting run note.", e.getMessage());
-                response.reset();
             }
 
+            facesContext.responseComplete();
         }
-        return "";
+    }
+
+    /**
+     * Writes a multipage docket for a list of processes to an outpustream.
+     * 
+     * @param processes
+     *            The list of processes
+     * @throws IOException
+     */
+    public void downloadDocket(List<Process> processes) throws IOException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("generate docket for processes " + processes);
+        }
+        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI xsltFile = serviceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (!facesContext.getResponseComplete()) {
+
+            try {
+                DocketInterface module = initialiseDocketModule();
+                File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
+                        xsltFile);
+
+                writeToOutputStream(facesContext, file);
+
+            } catch (IOException e) {
+                logger.error("IOException while exporting run note", e);
+            }
+
+            facesContext.responseComplete();
+        }
+    }
+
+    private void writeToOutputStream(FacesContext facesContext, File file) throws IOException {
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+        String fileName = "batch_docket.pdf";
+        ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+        String contentType = servletContext.getMimeType(fileName);
+        response.setContentType(contentType);
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
+        outputStream.write(bytes);
+        outputStream.flush();
+
+    }
+
+    private DocketInterface initialiseDocketModule() throws IOException {
+        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
+        DocketInterface module = loader.loadModule();
+        return module;
     }
 
     /**
@@ -1985,7 +2024,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            the process to create the docket data for.
      * @return A List of docketdata
      */
-    public ArrayList<DocketData> getDocketData(ArrayList<Process> processes) {
+    public ArrayList<DocketData> getDocketData(List<Process> processes) {
         ArrayList<DocketData> docketdata = new ArrayList<>();
         for (Process process : processes) {
             docketdata.add(getDocketData(process));
