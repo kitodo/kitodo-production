@@ -11,6 +11,7 @@
 
 package org.kitodo.filemanagement;
 
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 
 public class FileManagementTest {
 
@@ -205,6 +207,11 @@ public class FileManagementTest {
         Assert.assertEquals(subUris.get(0), firstSub);
         Assert.assertEquals(subUris.get(1), secondSub);
         Assert.assertEquals(subUris.get(2), thirdSub);
+
+        FilenameFilter filter = new FileNameEndsWithFilter(".xml");
+        ArrayList subUrisWithFilter = fileManagement.getSubUris(filter, directory);
+        Assert.assertEquals(subUrisWithFilter.size(), 1);
+        Assert.assertEquals(subUrisWithFilter.get(0), secondSub);
     }
 
     @Test
