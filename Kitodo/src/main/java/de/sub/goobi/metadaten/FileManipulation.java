@@ -317,22 +317,19 @@ public class FileManipulation {
         DocStruct page = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
-        ArrayList<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
-                .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder));
-        for (URI currentFile : filesInFolder) {
-            try {
+        URI processSubTypeURI = serviceManager.getFileService()
+                .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder);
+        try {
+            ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
+            for (URI currentFile : filesInFolder) {
                 String currentFileName = fileService.getFileName(currentFile);
                 String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
                 if (filenamePrefix.equals(currentFileNamePrefix)) {
                     downloadFile = currentFile;
                     break;
                 }
-            } catch (IOException e) {
-                logger.error(e);
             }
-        }
 
-        try {
             if (downloadFile == null || !fileService.fileExist(downloadFile)) {
                 List<String> paramList = new ArrayList<>();
                 // paramList.add(metadataBean.getMyProzess().getTitel());

@@ -64,39 +64,40 @@ public class FolderInformation {
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
-        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
-
-        if (verzeichnisse != null) {
-            for (URI aVerzeichnisse : verzeichnisse) {
-                tifOrdner = aVerzeichnisse;
+        try {
+            ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
+            if (directories != null) {
+                for (URI directory : directories) {
+                    tifOrdner = directory;
+                }
             }
+        } catch (IOException e) {
+            logger.error(e);
         }
 
         if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUris(dir);
-                for (URI folder : folderList) {
-                    if (folder.toString().endsWith(suffix)) {
-                        tifOrdner = folder;
-                        break;
-                    }
-                }
+                tifOrdner = iterateOverDirectories(dir, suffix);
             }
         }
         if (!(tifOrdner == null) && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 URI tif = tifOrdner;
-                ArrayList<URI> files = fileService.getSubUris(tif);
-                if (files == null || files.size() == 0) {
-                    ArrayList<URI> folderList = fileService.getSubUris(dir);
-                    for (URI folder : folderList) {
-                        if (folder.toString().endsWith(suffix)) {
-                            tifOrdner = folder;
-                            break;
+                try {
+                    ArrayList<URI> files = fileService.getSubUris(tif);
+                    if (files == null || files.size() == 0) {
+                        ArrayList<URI> folderList = fileService.getSubUris(dir);
+                        for (URI folder : folderList) {
+                            if (folder.toString().endsWith(suffix)) {
+                                tifOrdner = folder;
+                                break;
+                            }
                         }
                     }
+                } catch (IOException e) {
+                    logger.error(e);
                 }
             }
         }
@@ -148,36 +149,32 @@ public class FolderInformation {
             FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_",
                     "_" + DIRECTORY_SUFFIX);
             URI origOrdner = null;
-            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
-            // TODO: does it actually make sense?
-            for (URI directory : verzeichnisse) {
-                origOrdner = directory;
+            try {
+                ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
+                // TODO: does it actually make sense?
+                for (URI directory : verzeichnisse) {
+                    origOrdner = directory;
+                }
+            } catch (IOException e) {
+                logger.error(e);
             }
             if (origOrdner == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    ArrayList<URI> folderList = fileService.getSubUris(dir);
-                    for (URI folder : folderList) {
-                        if (folder.toString().endsWith(suffix)) {
-                            origOrdner = folder;
-                            break;
-                        }
-                    }
+                    origOrdner = iterateOverDirectories(dir, suffix);
                 }
             }
             if (!(origOrdner == null) && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     URI tif = origOrdner;
-                    ArrayList<URI> files = fileService.getSubUris(tif);
-                    if (files == null || files.size() == 0) {
-                        ArrayList<URI> folderList = fileService.getSubUris(dir);
-                        for (URI folder : folderList) {
-                            if (folder.toString().endsWith(suffix)) {
-                                origOrdner = folder;
-                                break;
-                            }
+                    try {
+                        ArrayList<URI> files = fileService.getSubUris(tif);
+                        if (files == null || files.size() == 0) {
+                            origOrdner = iterateOverDirectories(dir, suffix);
                         }
+                    } catch (IOException e) {
+                        logger.error(e);
                     }
                 }
             }
@@ -190,6 +187,20 @@ public class FolderInformation {
         } else {
             return getImagesTifDirectory(useFallBack);
         }
+    }
+
+    private URI iterateOverDirectories(URI directory, String suffix) {
+        try {
+            ArrayList<URI> folderList = fileService.getSubUris(directory);
+            for (URI folder : folderList) {
+                if (folder.toString().endsWith(suffix)) {
+                    return folder;
+                }
+            }
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        return null;
     }
 
     /**
@@ -228,9 +239,14 @@ public class FolderInformation {
     public URI getSourceDirectory() {
         URI dir = getImagesDirectory();
         FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
-        URI sourceFolder = null;
-        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
-        if (verzeichnisse == null || verzeichnisse.size() == 0) {
+        URI sourceFolder;
+        ArrayList<URI> directories = new ArrayList<>();
+        try {
+            directories = fileService.getSubUris(filterDirectory, dir);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        if (directories.size() == 0) {
             sourceFolder = dir.resolve(title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                 try {
@@ -240,7 +256,7 @@ public class FolderInformation {
                 }
             }
         } else {
-            sourceFolder = dir.resolve(verzeichnisse.get(0));
+            sourceFolder = dir.resolve(directories.get(0));
         }
 
         return sourceFolder;
@@ -285,16 +301,21 @@ public class FolderInformation {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, dir);
-        ArrayList<URI> dataList = new ArrayList<>();
-        if (dateien != null && dateien.size() > 0) {
-            dataList.addAll(dateien);
+        try {
+            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+            ArrayList<URI> dataList = new ArrayList<>();
+            if (files != null && files.size() > 0) {
+                dataList.addAll(files);
             /* alle Dateien durchlaufen */
-            if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageURIComparator());
+                if (dataList.size() != 0) {
+                    Collections.sort(dataList, new GoobiImageURIComparator());
+                }
+                return dataList;
+            } else {
+                return null;
             }
-            return dataList;
-        } else {
+        } catch (IOException e) {
+            logger.error(e);
             return null;
         }
     }

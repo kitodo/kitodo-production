@@ -387,11 +387,6 @@ public class FileService {
         return unchecked != null ? unchecked : new File[0];
     }
 
-    private File[] listFiles(FilenameFilter filter, File file) {
-        File[] unchecked = file.listFiles(filter);
-        return unchecked != null ? unchecked : new File[0];
-    }
-
     /**
      * Writes a metadata file.
      *
@@ -640,11 +635,11 @@ public class FileService {
      */
     public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, URI uri, Process process,
             ProcessSubType processSubType, String resourceName) {
-        ArrayList<URI> subURIs;
-        if (filter == null) {
-            subURIs = getSubUris(uri, MappingType.DATA, null, null);
-        } else {
-            subURIs = getSubUris(filter, uri, MappingType.DATA, null, null);
+        ArrayList<URI> subURIs = new ArrayList<>();
+        try {
+            subURIs = getSubUris(filter, uri);
+        } catch (IOException e) {
+            logger.error(e);
         }
         return removeProcessSpecificPartOfUri(subURIs, process, processSubType, resourceName);
     }
@@ -748,19 +743,19 @@ public class FileService {
     public URI getSourceDirectory(Process process) {
         URI dir = getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
         FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
-        URI sourceFolder;
-        ArrayList<URI> verzeichnisse = getSubUris(filterDirectory, dir);
-        if (verzeichnisse == null || verzeichnisse.size() == 0) {
-            sourceFolder = dir.resolve(process.getTitle() + "_source");
-            if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                try {
+        URI sourceFolder = URI.create("");
+        try {
+            ArrayList<URI> directories = getSubUris(filterDirectory, dir);
+            if (directories == null || directories.size() == 0) {
+                sourceFolder = dir.resolve(process.getTitle() + "_source");
+                if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                     createDirectory(dir, process.getTitle() + "_source");
-                } catch (IOException e) {
-                    logger.error(e);
                 }
+            } else {
+                sourceFolder = dir.resolve(directories.get(0));
             }
-        } else {
-            sourceFolder = dir.resolve(verzeichnisse.get(0));
+        } catch (IOException e) {
+            logger.error(e);
         }
 
         return sourceFolder;
@@ -784,96 +779,29 @@ public class FileService {
     }
 
     /**
-     * Get sub URIs without mapping/unmapping.
+     * Get all sub URIs of an URI.
      *
      * @param uri
-     *            specified URI
-     * @return list of sub URIs
+     *            the URI, to get the sub URIs from
+     * @return a List of sub URIs
      */
-    public ArrayList<URI> getSubUris(URI uri) {
-        ArrayList<URI> resultList = new ArrayList<>();
-        if (uri.isAbsolute()) {
-            File[] files = listFiles(new File(uri));
-            for (File file : files) {
-                resultList.add(Paths.get(file.getPath()).toUri());
-            }
-        }
-        return resultList;
+    public ArrayList<URI> getSubUris(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getSubUris(null, uri);
     }
 
     /**
-     * Get all sub URIs of an URI with a given filter without mapping/unmapping.
+     * Get all sub URIs of an URI with a given filter.
      *
      * @param filter
      *            the filter to filter the sub URIs
      * @param uri
-     *            the URI, to get the sub URIs from.
-     * @return a List of sub uris.
+     *            the URI, to get the sub URIs from
+     * @return a List of sub URIs
      */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
-        ArrayList<URI> resultList = new ArrayList<>();
-        if (uri.isAbsolute()) {
-            File[] files = listFiles(filter, new File(uri));
-            for (File file : files) {
-                resultList.add(Paths.get(file.getPath()).toUri());
-            }
-        }
-        return resultList;
-    }
-
-    /**
-     * Get all sub URIs of an given URI with mapping/unmapping.
-     *
-     * @param uri
-     *            the URI, to get the sub URIs from.
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @param resourceToMap
-     *            as String
-     * @return a List of sub URIs.
-     */
-    public ArrayList<URI> getSubUris(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
-        if (!uri.isAbsolute()) {
-            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
-        }
-        ArrayList<URI> resultList = new ArrayList<>();
-        File[] files = listFiles(new File(uri));
-        for (File file : files) {
-            URI tempURI = Paths.get(file.getPath()).toUri();
-            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
-        }
-        return resultList;
-    }
-
-    /**
-     * Get all sub URIs of an URI with a given filter with mapping/unmapping.
-     *
-     * @param filter
-     *            the filter to filter the subUris
-     * @param uri
-     *            the URI, to get the sub URIs from.
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @param resourceToMap
-     *            as String
-     * @return a List of sub URIs.
-     */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri, MappingType mappingType, String folderPath,
-            String resourceToMap) {
-        if (!uri.isAbsolute()) {
-            uri = mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
-        }
-        ArrayList<URI> resultList = new ArrayList<>();
-        File[] files = listFiles(filter, new File(uri));
-        for (File file : files) {
-            URI tempURI = Paths.get(file.getPath()).toUri();
-            resultList.add(unmapAccordingToMappingType(tempURI, mappingType, folderPath));
-        }
-        return resultList;
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getSubUris(filter, uri);
     }
 
     /**
@@ -897,30 +825,6 @@ public class FileService {
                 return mapUriToKitodoDataDirectoryUri(uri);
             case ROOT:
                 return mapUriToKitodoRootFolderUri(folderPath, resourceToMap);
-            default:
-                return uri;
-        }
-    }
-
-    /**
-     * Execute right unpmapping type according to value of enum MappingType.
-     *
-     * @param uri
-     *            to unamp
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @return unmapped URI
-     */
-    private URI unmapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath) {
-        switch (mappingType) {
-            case CONFIG:
-                return unmapUriFromKitodoConfigDirectoryUri(uri);
-            case DATA:
-                return unmapUriFromKitodoDataDirectoryUri(uri);
-            case ROOT:
-                return unmapUriFromKitodoRootFolderUri(folderPath, uri);
             default:
                 return uri;
         }
@@ -977,22 +881,6 @@ public class FileService {
             return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
         }
         return uri;
-    }
-
-    private URI unmapUriFromKitodoRootFolderUri(String folderPath, URI uri) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String directory;
-        if (folderPath == null) {
-            directory = session.getServletContext().getContextPath();
-        } else {
-            directory = session.getServletContext().getRealPath(folderPath);
-        }
-        return unmapDirectory(uri, directory);
-    }
-
-    private URI unmapUriFromKitodoConfigDirectoryUri(URI uri) {
-        return unmapDirectory(uri, ConfigCore.getKitodoConfigDirectory());
     }
 
     URI unmapUriFromKitodoDataDirectoryUri(URI uri) {

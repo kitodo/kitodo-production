@@ -72,17 +72,23 @@ public class WebDav implements Serializable {
 
         URI benutzerHome = directoryName;
         FilenameFilter filter = new FileNameEndsWithFilter("]");
-        ArrayList<URI> dateien = fileService.getSubUris(filter, benutzerHome);
-        for (URI data : dateien) {
+        ArrayList<URI> files = new ArrayList<>();
+        try {
+            files = fileService.getSubUris(filter, benutzerHome);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        for (URI data : files) {
             String dataString = data.toString();
             if (dataString.endsWith("/") || dataString.endsWith("\\")) {
                 data = URI.create(dataString.substring(0, dataString.length() - 1));
             }
             if (data.toString().contains("/")) {
+                //TODO: check what happens here
                 data = URI.create(dataString.substring(dataString.lastIndexOf("/")));
             }
         }
-        return dateien;
+        return files;
 
     }
 

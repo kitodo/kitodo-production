@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -33,12 +34,11 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
-import org.kitodo.enums.MappingType;
-import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -197,10 +197,13 @@ public class HelperForm implements Serializable {
     public List<SelectItem> getCssFiles() {
         List<SelectItem> list = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(""), MappingType.ROOT,
-                CSS_PATH, "");
-        for (URI uri : uris) {
-            list.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
+        try {
+            ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
+            for (URI uri : uris) {
+                list.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
+            }
+        } catch (IOException e) {
+            logger.error(e);
         }
         return list;
     }
@@ -216,12 +219,15 @@ public class HelperForm implements Serializable {
      */
     public String getCssLinkIfExists(String cssFileName) {
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(""), MappingType.ROOT,
-                CSS_PATH, null);
-        for (URI uri : uris) {
-            if ((CSS_PATH + uri).equals(cssFileName)) {
-                return cssFileName;
+        try {
+            ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
+            for (URI uri : uris) {
+                if ((CSS_PATH + uri).equals(cssFileName)) {
+                    return cssFileName;
+                }
             }
+        } catch (IOException e) {
+            logger.error(e);
         }
         return CSS_PATH + "/default.css";
     }

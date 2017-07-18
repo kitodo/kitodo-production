@@ -585,9 +585,14 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+        ArrayList<URI> files = new ArrayList<>();
         ArrayList<URI> dataList = new ArrayList<>();
-        if (files != null && files.size() > 0) {
+        try {
+            files = fileService.getSubUris(Helper.dataFilter, dir);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        if (files.size() > 0) {
             dataList.addAll(files);
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.api.filemanagement.filters.FileNameMatchesFilter;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -155,7 +155,12 @@ public class BackupFileRotation {
         FilenameFilter filter = new FileNameMatchesFilter(filterFormat);
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
-        ArrayList<URI> subUris = fileService.getSubUris(filter, processDataDirectory);
+        ArrayList<URI> subUris = new ArrayList<>();
+        try {
+            subUris = fileService.getSubUris(filter, processDataDirectory);
+        } catch (IOException e) {
+            logger.error(e);
+        }
         filteredUris.addAll(subUris);
         return filteredUris;
     }
