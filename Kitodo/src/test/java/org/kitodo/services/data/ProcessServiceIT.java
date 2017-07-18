@@ -603,17 +603,6 @@ public class ProcessServiceIT {
         assertEquals("Processing user doesn't match to the given user!", expected, actual);
     }
 
-    @Ignore(" java.lang.NullPointerException at org.kitodo.services.ProcessService.downloadDocket(ProcessService.java:984)")
-    @Test
-    public void shouldDownloadDocket() throws Exception {
-        ProcessService processService = new ProcessService();
-
-        Process process = processService.find(2);
-        // TODO: method downloadDocket should return boolean not empty string
-        boolean condition = processService.downloadDocket(process).equals("");
-        assertTrue("Processing user doesn't match to the given user!", condition);
-    }
-
     @Test
     public void shouldGetFirstOpenStep() throws Exception {
         ProcessService processService = new ProcessService();
