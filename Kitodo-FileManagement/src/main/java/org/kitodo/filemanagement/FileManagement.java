@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,7 +104,8 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public void move(URI sourceUri, URI targetUri) throws IOException {
-
+        copy(sourceUri, targetUri);
+        delete(sourceUri);
     }
 
     @Override
@@ -200,7 +202,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public String getFileNameWithExtension(URI uri) {
-        return "";
+        return FilenameUtils.getName(uri.getPath());
     }
 
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
