@@ -41,12 +41,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
 import org.hibernate.Hibernate;
+import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.enums.MappingType;
-import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.RulesetService;
 
@@ -81,8 +83,7 @@ public class FileService {
     }
 
     /**
-     * Creates a directory at a given URI with a given name without
-     * mapping/unampping - actually with default data mapping.
+     * Creates a directory at a given URI with a given name.
      *
      * @param parentFolderUri
      *            the uri, where the directory should be created
@@ -92,55 +93,13 @@ public class FileService {
      *         directoryName is null or empty
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
-        return createDirectory(parentFolderUri, directoryName, MappingType.DATA, null, null);
-    }
-
-    /**
-     * Creates a directory at a given URI with a given name with
-     * mapping/unmapping.
-     *
-     * @param parentFolderUri
-     *            the uri, where the directory should be created
-     * @param directoryName
-     *            the name of the directory.
-     * @return the URI of the new directory or URI of parent directory if
-     *         directoryName is null or empty
-     */
-    public URI createDirectory(URI parentFolderUri, String directoryName, MappingType mappingType, String folderPath,
-            String resourceToMap) {
-        if (directoryName != null && !directoryName.equals("")) {
-            parentFolderUri = mapAccordingToMappingType(parentFolderUri, mappingType, folderPath, resourceToMap);
-            File file = new File(parentFolderUri.getPath(), directoryName);
-            file.mkdir();
-            return unmapAccordingToMappingType(Paths.get(file.getPath()).toUri(), mappingType, folderPath);
-        }
-        return parentFolderUri;
-    }
-
-    /**
-     * Creates a directory with a given name without mapping/unampping -
-     * actually with default data mapping.
-     *
-     * @param directoryName
-     *            the name of the directory.
-     * @return the URI of the new directory.
-     */
-    public URI createDirectory(String directoryName) {
-        return createDirectory(directoryName, MappingType.DATA, null, null);
-    }
-
-    /**
-     * Creates a directory with a given name with mapping/unmapping.
-     *
-     * @param directoryName
-     *            the name of the directory.
-     * @return the URI of the new directory.
-     */
-    public URI createDirectory(String directoryName, MappingType mappingType, String folderPath, String resourceToMap) {
-        File file = new File(
-                mapAccordingToMappingType(URI.create(directoryName), mappingType, folderPath, resourceToMap));
-        if (file.mkdir()) {
-            return unmapAccordingToMappingType(Paths.get(file.getPath()).toUri(), mappingType, folderPath);
+        if (directoryName != null) {
+            try {
+                FileManagementInterface fileManagementModule = getFileManagementModule();
+                return fileManagementModule.createDirectory(parentFolderUri, directoryName);
+            } catch (IOException e) {
+                logger.error(e);
+            }
         }
         return URI.create("");
     }
@@ -873,7 +832,7 @@ public class FileService {
         if (verzeichnisse == null || verzeichnisse.size() == 0) {
             sourceFolder = dir.resolve(process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                createDirectory(dir, process.getTitle() + "_source", MappingType.DATA, null, null);
+                createDirectory(dir, process.getTitle() + "_source");
             }
         } else {
             sourceFolder = dir.resolve(verzeichnisse.get(0));
@@ -1293,5 +1252,10 @@ public class FileService {
             return "";
         }
         return decodedPath;
+    }
+
+    private FileManagementInterface getFileManagementModule() throws IOException {
+        KitodoServiceLoader<FileManagementInterface> loader = new KitodoServiceLoader<>(FileManagementInterface.class);
+        return loader.loadModule();
     }
 }
