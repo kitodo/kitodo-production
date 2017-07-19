@@ -274,15 +274,13 @@ public class ProcessServiceIT {
         assertTrue("Source directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetProcessDataDirectory() throws Exception {
         ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        URI directory = fileService.getProcessBaseUriForExistingProcess(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\");
+        URI directory = processService.getProcessDataDirectory(process);
+        boolean condition = directory.getRawPath().contains("1");
         assertTrue("Process data directory doesn't match to given directory!", condition);
     }
 
