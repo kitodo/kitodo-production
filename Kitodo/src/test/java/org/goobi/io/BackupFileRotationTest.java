@@ -61,7 +61,8 @@ public class BackupFileRotationTest {
         process.setId(2);
         int numberOfBackups = 1;
         String content = "Test One.";
-        writeFile(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME), content);
+        URI correctURI = URI.create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
+        writeFile(correctURI, content);
         runBackup(numberOfBackups, process);
         assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1", content);
     }
@@ -153,7 +154,8 @@ public class BackupFileRotationTest {
 
         Process process = new Process();
         process.setId(2);
-        writeFile(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME), content1);
+        URI correctURI = URI.create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
+        writeFile(correctURI, content1);
         runBackup(numberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
