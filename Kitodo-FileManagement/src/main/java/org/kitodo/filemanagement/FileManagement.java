@@ -337,8 +337,47 @@ public class FileManagement implements FileManagementInterface {
         return null;
     }
 
-    public URI getProcessSubTypeUri(URI processBaseUri, ProcessSubType subType, int id) {
-        return null;
+    @Override
+    public URI getProcessSubTypeUri(URI processBaseUri, String processTitle, ProcessSubType subType, String resourceName) {
+        return fileMapper.mapAccordingToMappingType(URI.create(getProcessSubType(processBaseUri.toString(), processTitle, subType, resourceName)));
+    }
+
+    /**
+     * Get part of URI specific for process and process sub type.
+     *
+     * @param processTitle
+     *            tile of process
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return process specific part of URI
+     */
+    private String getProcessSubType(String processID, String processTitle, ProcessSubType processSubType, String resourceName) {
+        switch (processSubType) {
+            case IMAGE:
+                return processID + "/images/" + resourceName;
+            case IMAGE_SOURCE:
+                //return getSourceDirectory(process) + resourceName;
+            case META_XML:
+                return processID + "/meta.xml";
+            case TEMPLATE:
+                return processID + "/template.xml";
+            case IMPORT:
+                return processID + "/import/" + resourceName;
+            case OCR:
+                return processID + "/ocr/";
+            case OCR_PDF:
+                return processID + "/ocr/" + processTitle + "_pdf/" + resourceName;
+            case OCR_TXT:
+                return processID + "/ocr/" + processTitle + "_txt/" + resourceName;
+            case OCR_WORD:
+                return processID + "/ocr/" + processTitle + "_wc/" + resourceName;
+            case OCR_ALTO:
+                return processID + "/ocr/" + processTitle + "_alto/" + resourceName;
+            default:
+                return "";
+        }
     }
 
     @Override

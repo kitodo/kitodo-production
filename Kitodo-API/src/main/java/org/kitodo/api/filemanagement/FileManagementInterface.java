@@ -191,11 +191,11 @@ public interface FileManagementInterface {
      *            the base uri of the process.
      * @param subType
      *            the subtype.
-     * @param id
+     * @param resourceName
      *            the id of a specific element at the subtype
      * @return the URI to the requested resource.
      */
-    URI getProcessSubTypeUri(URI processUri, ProcessSubType subType, int id);
+    URI getProcessSubTypeUri(URI processUri, String processTitle, ProcessSubType subType, String resourceName);
 
     /**
      * Creates a symbolic link.
