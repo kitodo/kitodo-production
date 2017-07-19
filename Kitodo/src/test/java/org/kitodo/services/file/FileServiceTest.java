@@ -161,8 +161,21 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testGetNumberOfImageFilesWithSubDirectory() throws IOException {
+    public void testGetNumberOfImageFiles() throws IOException {
         URI directory = fileService.createDirectory(URI.create("fileServiceTest"), "countFiles2");
+        fileService.createResource(directory, "test.pdf");
+        fileService.createResource(directory, "subTest.xml");
+        fileService.createResource(directory, "subTest2.jpg");
+
+        int numberOfFiles = fileService.getNumberOfImageFiles(directory);
+
+        Assert.assertEquals(1, numberOfFiles);
+
+    }
+
+    @Test
+    public void testGetNumberOfImageFilesWithSubDirectory() throws IOException {
+        URI directory = fileService.createDirectory(URI.create("fileServiceTest"), "countFiles3");
         fileService.createResource(directory, "test.pdf");
         URI subDirectory = fileService.createDirectory(directory, "subdirectory");
         fileService.createResource(subDirectory, "subTest.xml");
