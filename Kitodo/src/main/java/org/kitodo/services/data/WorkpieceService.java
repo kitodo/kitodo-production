@@ -80,8 +80,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
-    protected void manageDependenciesForIndex(Workpiece workpiece)
-            throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         manageProcessDependenciesForIndex(workpiece);
         managePropertiesDependenciesForIndex(workpiece);
     }

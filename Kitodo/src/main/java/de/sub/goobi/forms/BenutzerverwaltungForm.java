@@ -11,6 +11,11 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+import de.sub.goobi.helper.ldap.Ldap;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,11 +35,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
-
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.ldap.Ldap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,13 +104,13 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * This method initializes the user list without any filters whenever the bean is constructed.
+     * This method initializes the user list without any filters whenever the
+     * bean is constructed.
      */
     @PostConstruct
     public void initializeUserList() {
         filterKein();
     }
-
 
     public String filterKeinMitZurueck() {
         filterKein();
@@ -415,12 +415,12 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for user edit form.
-     * If 'userId' is '0', the form for creating a new user will be displayed.
+     * Method being used as viewAction for user edit form. If 'userId' is '0',
+     * the form for creating a new user will be displayed.
      */
     public void loadMyClass() {
         try {
-            if(!Objects.equals(this.userId, 0)) {
+            if (!Objects.equals(this.userId, 0)) {
                 setMyClass(this.serviceManager.getUserService().find(this.userId));
             }
         } catch (DAOException e) {
@@ -428,8 +428,12 @@ public class BenutzerverwaltungForm extends BasisForm {
         }
     }
 
-    public int getUserId() { return this.userId; }
+    public int getUserId() {
+        return this.userId;
+    }
 
-    public void setUserId(int id) { this.userId = id; }
+    public void setUserId(int id) {
+        this.userId = id;
+    }
 
 }

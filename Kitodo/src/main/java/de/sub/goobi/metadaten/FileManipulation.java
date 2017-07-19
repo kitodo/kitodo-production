@@ -188,8 +188,8 @@ public class FileManipulation {
         this.uploadedFileName = uploadedFileName;
     }
 
-    private void updatePagination(URI filename) throws TypeNotAllowedForParentException, IOException,
-            MetadataTypeNotAllowedException {
+    private void updatePagination(URI filename)
+            throws TypeNotAllowedForParentException, IOException, MetadataTypeNotAllowedException {
         if (!matchesFileConfiguration(filename)) {
             return;
         }

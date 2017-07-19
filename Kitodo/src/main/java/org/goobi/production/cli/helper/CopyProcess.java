@@ -1332,7 +1332,11 @@ public class CopyProcess extends ProzesskopieForm {
         return newProperty;
     }
 
-    public void setMetadataFile(URI mdFile) { this.metadataFile = mdFile; }
+    public void setMetadataFile(URI mdFile) {
+        this.metadataFile = mdFile;
+    }
 
-    public URI getMetadataFile() { return this.metadataFile; }
+    public URI getMetadataFile() {
+        return this.metadataFile;
+    }
 }

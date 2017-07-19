@@ -16,5 +16,4 @@ package org.kitodo.api.externaldatamanagement;
  */
 public enum Source {
 
-
 }

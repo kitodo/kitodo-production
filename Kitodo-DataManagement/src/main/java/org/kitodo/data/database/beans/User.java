@@ -17,7 +17,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -290,7 +289,8 @@ public class User extends BaseBean {
     /**
      * Set user filters.
      *
-     * @param filters list of user filters
+     * @param filters
+     *            list of user filters
      */
     public void setFilters(List<Filter> filters) {
         this.filters = filters;

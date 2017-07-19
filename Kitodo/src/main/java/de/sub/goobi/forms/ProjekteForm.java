@@ -17,7 +17,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -238,7 +238,8 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * This method initializes the project list without any filters whenever the bean is constructed.
+     * This method initializes the project list without any filters whenever the
+     * bean is constructed.
      */
     @PostConstruct
     public void initializeProjectList() {
@@ -787,8 +788,8 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for project edit form.
-     * If 'itemId' is '0', the form for creating a new project will be displayed.
+     * Method being used as viewAction for project edit form. If 'itemId' is
+     * '0', the form for creating a new project will be displayed.
      */
     public void loadProject() {
         try {

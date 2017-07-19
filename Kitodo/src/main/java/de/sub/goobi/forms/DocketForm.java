@@ -123,7 +123,8 @@ public class DocketForm extends BasisForm {
     }
 
     /**
-     * This method initializes the docket list without any filter whenever the bean is constructed.
+     * This method initializes the docket list without any filter whenever the
+     * bean is constructed.
      */
     @PostConstruct
     public void initializeDocketList() {
@@ -136,8 +137,8 @@ public class DocketForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for docket edit form.
-     * If 'docketId' is '0', the form for creating a new docket will be displayed.
+     * Method being used as viewAction for docket edit form. If 'docketId' is
+     * '0', the form for creating a new docket will be displayed.
      */
     public void loadDocket() {
         try {

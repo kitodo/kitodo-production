@@ -14,6 +14,9 @@ package org.kitodo.data.elasticsearch.index;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.util.Map;
+
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
@@ -26,9 +29,6 @@ import org.junit.Test;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.ExtendedNode;
 import org.kitodo.data.elasticsearch.MockEntity;
-
-import java.io.File;
-import java.util.Map;
 
 /**
  * Test class for IndexRestClient.

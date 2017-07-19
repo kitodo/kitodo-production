@@ -62,8 +62,8 @@ public class ExportDms_CorrectRusdml {
      *
      * @return String
      */
-    public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException,
-            ExportFileException {
+    public String correctionStart()
+            throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException {
         String atsPpnBand;
         DocStruct logicalTopstruct = myDocument.getLogicalDocStruct();
         docStructsOhneSeiten = new ArrayList<>();

@@ -97,7 +97,7 @@ public class SearcherIT {
     }
 
     @Test
-        public void shouldFindDocumentById() throws Exception {
+    public void shouldFindDocumentById() throws Exception {
         Searcher searcher = new Searcher("testsearch");
         SearchResult result = searcher.findDocument(1);
 

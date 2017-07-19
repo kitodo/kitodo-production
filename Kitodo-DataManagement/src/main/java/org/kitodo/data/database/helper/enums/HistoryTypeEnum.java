@@ -100,7 +100,7 @@ public enum HistoryTypeEnum {
      * if EventType contains string and/or numeric content.
      */
     private HistoryTypeEnum(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
-                            String groupingExpression) {
+            String groupingExpression) {
         this.value = inValue;
         this.title = inTitle;
         this.isNumeric = inIsNumeric;

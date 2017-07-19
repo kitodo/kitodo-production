@@ -305,7 +305,8 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Refresh object associated with the session.
      *
-     * @param object associated with the session
+     * @param object
+     *            associated with the session
      */
     protected void refreshObject(Object object) {
         Session session = Helper.getHibernateSession();

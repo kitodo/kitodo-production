@@ -166,7 +166,7 @@ public class ProjectTypeTest {
                 + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital"
                 + ")\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":\"image\\/jpeg\",\"suffix\":"
                 + "\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"
-                + "\\/jpgs\\/default\\/\","+ "\"folder\":null,\"name\":\"DEFAULT\",\"mimeType\":\"image\\/jpeg\","
+                + "\\/jpgs\\/default\\/\"," + "\"folder\":null,\"name\":\"DEFAULT\",\"mimeType\":\"image\\/jpeg\","
                 + "\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"
                 + "\\/jpgs\\/thumbs\\/\",\"folder\":null,\"name\":\"THUMBS\",\"mimeType\":\"image\\/jpeg\","
                 + "\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"

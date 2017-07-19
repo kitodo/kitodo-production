@@ -13,12 +13,13 @@ package de.sub.goobi.helper;
 
 import static junit.framework.Assert.fail;
 
+import de.sub.goobi.config.ConfigCore;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 
-import de.sub.goobi.config.ConfigCore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

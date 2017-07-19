@@ -127,7 +127,8 @@ public class Block {
             if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0) {
                 course.clearProcesses();
             }
-        } catch (RuntimeException e) { // if firstAppearance or lastAppearance is null
+        } catch (RuntimeException e) { // if firstAppearance or lastAppearance
+                                       // is null
             course.clearProcesses();
         }
     }

@@ -175,7 +175,8 @@ public class WebDav implements Serializable {
             userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
 
             /*
-             * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren
+             * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
+             * existieren
              */
             if (currentUser.isWithMassDownload()) {
                 URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
@@ -240,8 +241,8 @@ public class WebDav implements Serializable {
                 return;
             }
             TiffHeader tif = new TiffHeader(inProcess);
-            try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
-                    fileService.write(tiffWriterURI), StandardCharsets.UTF_8))) {
+            try (BufferedWriter outfile = new BufferedWriter(
+                    new OutputStreamWriter(fileService.write(tiffWriterURI), StandardCharsets.UTF_8))) {
                 outfile.write(tif.getTiffAlles());
             }
         } catch (Exception e) {

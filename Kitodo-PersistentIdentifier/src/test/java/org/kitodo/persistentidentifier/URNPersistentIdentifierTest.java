@@ -11,9 +11,9 @@
 
 package org.kitodo.persistentidentifier;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests for PersistentIdentifier.

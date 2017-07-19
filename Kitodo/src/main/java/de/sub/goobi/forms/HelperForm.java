@@ -206,8 +206,8 @@ public class HelperForm implements Serializable {
     }
 
     /**
-     * Method returns a valid css file, which is the suggestion unless suggestion is
-     * not available if not available default.css is returned.
+     * Method returns a valid css file, which is the suggestion unless
+     * suggestion is not available if not available default.css is returned.
      * 
      * @param cssFileName
      *            suggested css file
@@ -257,8 +257,8 @@ public class HelperForm implements Serializable {
     }
 
     /**
-     * Returning value of configuration parameter withUserStepDoneSearch. Used for
-     * enabling/disabling search for done steps by user.
+     * Returning value of configuration parameter withUserStepDoneSearch. Used
+     * for enabling/disabling search for done steps by user.
      *
      * @return boolean
      */

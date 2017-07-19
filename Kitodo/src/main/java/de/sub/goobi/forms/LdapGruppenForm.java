@@ -14,6 +14,12 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -21,11 +27,6 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
-
-import javax.annotation.PostConstruct;
-import java.util.Objects;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
 
 @Named("LdapGruppenForm")
 @SessionScoped
@@ -91,8 +92,8 @@ public class LdapGruppenForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for ldap group edit form.
-     * If 'itemId' is '0', the form for creating a new ldap group will be displayed.
+     * Method being used as viewAction for ldap group edit form. If 'itemId' is
+     * '0', the form for creating a new ldap group will be displayed.
      */
     public void loadLdapGroup() {
         try {
@@ -129,7 +130,11 @@ public class LdapGruppenForm extends BasisForm {
         this.myLdapGruppe = myLdapGruppe;
     }
 
-    public void setItemId(int id) { this.itemId = id; }
+    public void setItemId(int id) {
+        this.itemId = id;
+    }
 
-    public int getItemId() { return this.itemId; }
+    public int getItemId() {
+        return this.itemId;
+    }
 }

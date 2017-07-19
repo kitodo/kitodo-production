@@ -57,8 +57,7 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
         }
 
         Criteria crit = Helper.getHibernateSession().createCriteria(Task.class);
-        crit.add(Restrictions.or(Restrictions.eq("processingStatus", 1),
-                Restrictions.like("processingStatus", 2)));
+        crit.add(Restrictions.or(Restrictions.eq("processingStatus", 1), Restrictions.like("processingStatus", 2)));
 
         if (originalFilter instanceof UserDefinedFilter) {
             crit.createCriteria("process", "proz");

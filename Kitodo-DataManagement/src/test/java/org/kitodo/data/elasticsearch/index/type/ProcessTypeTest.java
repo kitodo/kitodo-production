@@ -28,8 +28,8 @@ import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 
 /**
@@ -113,7 +113,8 @@ public class ProcessTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
                 + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project\":1,\"creationDate\":\""
-                + dateFormat.format(process.getCreationDate())+ "\",\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
+                + dateFormat.format(process.getCreationDate())
+                + "\",\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
