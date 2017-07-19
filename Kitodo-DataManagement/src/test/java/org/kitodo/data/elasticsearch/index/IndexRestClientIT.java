@@ -73,7 +73,6 @@ public class IndexRestClientIT {
     @Before
     public void createIndex() throws Exception {
         restClient.createIndex();
-        System.out.println(restClient.getServerInformation());
     }
 
     @After
