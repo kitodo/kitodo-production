@@ -200,7 +200,57 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public Integer getNumberOfFiles(FilenameFilter filter, URI directory) {
-        return 0;
+        int count = 0;
+        directory = fileMapper.mapAccordingToMappingType(directory);
+        if (filter == null) {
+            count += iterateOverDirectories(directory);
+        } else {
+            count += iterateOverSpecificDirectories(filter, directory);
+        }
+        return count;
+    }
+
+    /**
+     * Iterate over children directories of directory.
+     *
+     * @param directory
+     *            as URI
+     * @return amount of files
+     */
+    private Integer iterateOverDirectories(URI directory) {
+        int count = 0;
+        if (isDirectory(directory)) {
+            ArrayList<URI> children = getSubUris(null, directory);
+            for (URI child : children) {
+                child = fileMapper.mapAccordingToMappingType(child);
+                if (isDirectory(child)) {
+                    count += getNumberOfFiles(null, child);
+                } else {
+                    count += 1;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Iterate over children specific directories of directory.
+     *
+     * @param directory
+     *            as URI
+     * @return amount of specific (eg. image) files
+     */
+    private Integer iterateOverSpecificDirectories(FilenameFilter filter, URI directory) {
+        int count = 0;
+        if (isDirectory(directory)) {
+            count = getSubUris(filter, directory).size();
+            ArrayList<URI> children = getSubUris(null, directory);
+            for (URI child : children) {
+                child = fileMapper.mapAccordingToMappingType(child);
+                count += getNumberOfFiles(filter, child);
+            }
+        }
+        return count;
     }
 
     @Override
@@ -208,6 +258,7 @@ public class FileManagement implements FileManagementInterface {
         return FilenameUtils.getName(uri.getPath());
     }
 
+    @Override
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
         if (!uri.isAbsolute()) {
             uri = fileMapper.mapAccordingToMappingType(uri);
