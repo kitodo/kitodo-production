@@ -31,9 +31,9 @@ import org.kitodo.services.file.FileService;
 
 public class BackupFileRotationTest {
 
-    public static final String BACKUP_FILE_NAME = "testMeta.xml";
-    public static ProcessService processService = new ProcessService();
-    public static FileService fileService = new FileService();
+    private static final String BACKUP_FILE_NAME = "testMeta.xml";
+    private static ProcessService processService = new ProcessService();
+    private static FileService fileService = new FileService();
 
     @Before
     public void setUp() throws Exception {
