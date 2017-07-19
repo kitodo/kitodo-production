@@ -740,28 +740,6 @@ public class FileService {
         return uri;
     }
 
-    URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
-        return unmapDirectory(uri, ConfigCore.getKitodoDataDirectory());
-    }
-
-    private URI unmapDirectory(URI uri, String directory) {
-        String path = uri.toString();
-        directory = encodeDirectory(directory);
-        if (path.contains(directory)) {
-            String[] split = path.split(directory);
-            String shortUri = split[1];
-            return URI.create(shortUri);
-        }
-        return uri;
-    }
-
-    private String encodeDirectory(String directory) {
-        if (directory.contains("\\")) {
-            directory = directory.replace("\\", "/");
-        }
-        return directory;
-    }
-
     /**
      * Gets the URI to the temporal directory.
      *
