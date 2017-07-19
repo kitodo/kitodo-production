@@ -679,8 +679,7 @@ public class ProcessService extends TitleSearchService<Process> {
         if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE,
-                        "");
+                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
@@ -1057,7 +1056,8 @@ public class ProcessService extends TitleSearchService<Process> {
 
         Fileformat ff = determineFileFormat(type, process);
         try {
-            ff.read(new File(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFileUri)).toString());
+            ff.read(new File(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFileUri))
+                    .toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setFehlerMeldung("metadataCorrupt");
@@ -1976,20 +1976,20 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param myProcess
      *            the process object
-     * @param zielVerzeichnis
+     * @param targetDirectory
      *            the destination directory
      */
-    private void directoryDownload(Process myProcess, URI zielVerzeichnis) throws IOException {
+    private void directoryDownload(Process myProcess, URI targetDirectory) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
+            URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
+                    + processDir.replace("(processtitle)", myProcess.getTitle()));
+            URI destinationDirectory = URI.create(
+                    targetDirectory.toString() + "/" + processDir.replace("(processtitle)", myProcess.getTitle()));
 
-            URI srcDir = getProcessDataDirectory(myProcess)
-                    .resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
-            URI dstDir = zielVerzeichnis.resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
-
-            if (fileService.isDirectory(srcDir)) {
-                fileService.copyFile(srcDir, dstDir);
+            if (fileService.isDirectory(sourceDirectory)) {
+                fileService.copyFile(sourceDirectory, destinationDirectory);
             }
         }
     }
