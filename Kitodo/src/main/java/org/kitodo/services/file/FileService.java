@@ -109,9 +109,63 @@ public class FileService {
     }
 
     /**
-     * This function implements file renaming. Renaming of files is full of
-     * mischief under Windows which unaccountably holds locks on files.
-     * Sometimes running the JVM’s garbage collector puts things right.
+     * Creates a new File.
+     *
+     * @param fileName
+     *            the name of the new file
+     * @return the uri of the new file
+     */
+    public URI createResource(String fileName) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.create(null, fileName, true);
+    }
+
+    /**
+     * Creates a resource at a given URI with a given name.
+     *
+     * @param targetFolder
+     *            the URI of the target folder
+     * @param name
+     *            the name of the new resource
+     * @return the URI of the created resource
+     */
+    public URI createResource(URI targetFolder, String name) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.create(targetFolder, name, true);
+    }
+
+    /**
+     * Writes to a file at a given URI.
+     *
+     * @param uri
+     *            the URI, to write to.
+     * @return an output stream to the file at the given URI or null
+     * @throws IOException
+     *             if write fails
+     */
+    public OutputStream write(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.write(uri);
+    }
+
+    /**
+     * Reads a file at a given URI.
+     *
+     * @param uri
+     *            the uri to read
+     * @return an InputStream to read from or null
+     * @throws IOException
+     *             if read fails
+     */
+    public InputStream read(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.read(uri);
+    }
+
+    /**
+     * This function implements file renaming. Renaming of files is full of mischief
+     * under Windows which unaccountably holds locks on files. Sometimes running the
+     * JVM’s garbage collector puts things right.
      *
      * @param fileUri
      *            File to rename
@@ -195,34 +249,6 @@ public class FileService {
     }
 
     /**
-     * Writes to a file at a given URI.
-     *
-     * @param uri
-     *            the URI, to write to.
-     * @return an output stream to the file at the given URI or null
-     * @throws IOException
-     *             if write fails
-     */
-    public OutputStream write(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.write(uri);
-    }
-
-    /**
-     * Reads a file at a given URI.
-     *
-     * @param uri
-     *            the uri to read
-     * @return an InputStream to read from or null
-     * @throws IOException
-     *             if read fails
-     */
-    public InputStream read(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.read(uri);
-    }
-
-    /**
      * Deletes a resource at a given URI.
      *
      * @param uri
@@ -248,6 +274,44 @@ public class FileService {
     public boolean fileExist(URI uri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.fileExist(uri);
+    }
+
+    /**
+     * Checks if a resource at a given URI is a file.
+     *
+     * @param uri
+     *            the URI to check, if there is a file
+     * @return true, if it is a file, false otherwise
+     * @throws IOException
+     *             if get of module fails
+     */
+    public boolean isFile(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.isFile(uri);
+    }
+
+    /**
+     * checks, if a URI leads to a directory.
+     *
+     * @param dir
+     *            the uri to check.
+     * @return true, if it is a directory.
+     */
+    public boolean isDirectory(URI dir) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.isDirectory(dir);
+    }
+
+    /**
+     * Checks if an uri is readable.
+     *
+     * @param uri
+     *            the uri to check.
+     * @return true, if it's readable, false otherwise.
+     */
+    public boolean canRead(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.canRead(uri);
     }
 
     /**
@@ -310,6 +374,32 @@ public class FileService {
     public void moveFile(URI sourceUri, URI targetUri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         fileManagementModule.move(sourceUri, targetUri);
+    }
+
+    /**
+     * Get all sub URIs of an URI.
+     *
+     * @param uri
+     *            the URI, to get the sub URIs from
+     * @return a List of sub URIs
+     */
+    public ArrayList<URI> getSubUris(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getSubUris(null, uri);
+    }
+
+    /**
+     * Get all sub URIs of an URI with a given filter.
+     *
+     * @param filter
+     *            the filter to filter the sub URIs
+     * @param uri
+     *            the URI, to get the sub URIs from
+     * @return a List of sub URIs
+     */
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getSubUris(filter, uri);
     }
 
     /**
@@ -636,32 +726,6 @@ public class FileService {
     }
 
     /**
-     * Get all sub URIs of an URI.
-     *
-     * @param uri
-     *            the URI, to get the sub URIs from
-     * @return a List of sub URIs
-     */
-    public ArrayList<URI> getSubUris(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.getSubUris(null, uri);
-    }
-
-    /**
-     * Get all sub URIs of an URI with a given filter.
-     *
-     * @param filter
-     *            the filter to filter the sub URIs
-     * @param uri
-     *            the URI, to get the sub URIs from
-     * @return a List of sub URIs
-     */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.getSubUris(filter, uri);
-    }
-
-    /**
      * Map relative URI to absolute kitodo data directory URI.
      * 
      * @param uri
@@ -699,76 +763,12 @@ public class FileService {
     }
 
     /**
-     * Creates a new File.
-     *
-     * @param fileName
-     *            the name of the new file
-     * @return the uri of the new file
-     */
-    public URI createResource(String fileName) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.create(null, fileName, true);
-    }
-
-    /**
-     * Creates a resource at a given URI with a given name.
-     *
-     * @param targetFolder
-     *            the URI of the target folder
-     * @param name
-     *            the name of the new resource
-     * @return the URI of the created resource
-     */
-    public URI createResource(URI targetFolder, String name) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.create(targetFolder, name, true);
-    }
-
-    /**
-     * checks, if a URI leads to a directory.
-     *
-     * @param dir
-     *            the uri to check.
-     * @return true, if it is a directory.
-     */
-    public boolean isDirectory(URI dir) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.isDirectory(dir);
-    }
-
-    /**
-     * Checks if an uri is readable.
-     *
-     * @param uri
-     *            the uri to check.
-     * @return true, if it's readable, false otherwise.
-     */
-    public boolean canRead(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.canRead(uri);
-    }
-
-    /**
      * Gets the URI to the temporal directory.
      *
      * @return the URI to the temporal directory.
      */
     public URI getTemporalDirectory() {
         return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toUri();
-    }
-
-    /**
-     * Checks if a resource at a given URI is a file.
-     *
-     * @param uri
-     *            the URI to check, if there is a file
-     * @return true, if it is a file, false otherwise
-     * @throws IOException
-     *             if get of module fails
-     */
-    public boolean isFile(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.isFile(uri);
     }
 
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
