@@ -527,8 +527,7 @@ public class FileService {
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
         String path = process.getId().toString();
-        path = path.replaceAll(" ", "__") + "/";
-        return mapUriToKitodoDataDirectoryUri(URI.create(path));
+        return URI.create(path);
     }
 
     /**
@@ -547,12 +546,17 @@ public class FileService {
     public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
-        String processDataDirectoryPath = new File(processDataDirectory).getPath();
 
         if (resourceName == null) {
             resourceName = "";
         }
-        return Paths.get(processDataDirectoryPath, getProcessSubType(process, processSubType, resourceName)).toUri();
+        try {
+            FileManagementInterface fileManagementModule = getFileManagementModule();
+            return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType, resourceName);
+        } catch (IOException e) {
+            logger.error(e);
+            return URI.create("");
+        }
     }
 
     /**
@@ -578,75 +582,7 @@ public class FileService {
         } catch (IOException e) {
             logger.error(e);
         }
-        return removeProcessSpecificPartOfUri(subURIs, process, processSubType, resourceName);
-    }
-
-    /**
-     * Remove process specific part of URI e.g 3/images. Lack of this method was
-     * causing error of double uri creation e.g 3/images/3/images/scans_tif
-     * 
-     * @param uriList
-     *            list of URIs for unmap
-     * @param process
-     *            object
-     * @param processSubType
-     *            object
-     * @param resourceName
-     *            as String
-     * @return List of extracted URIs
-     */
-    private ArrayList<URI> removeProcessSpecificPartOfUri(ArrayList<URI> uriList, Process process,
-            ProcessSubType processSubType, String resourceName) {
-        ArrayList<URI> unmappedURI = new ArrayList<>();
-        for (URI uri : uriList) {
-            String uriString = uri.toString();
-            String processSpecificPartOfUri = getProcessSubType(process, processSubType, resourceName);
-            if (uriString.contains(processSpecificPartOfUri)) {
-                String[] split = uriString.split(processSpecificPartOfUri);
-                String shortUri = split[1];
-                unmappedURI.add(URI.create(shortUri));
-            }
-            unmappedURI.add(uri);
-        }
-        return unmappedURI;
-    }
-
-    /**
-     * Get part of URI specific for process and process sub type.
-     * 
-     * @param process
-     *            object
-     * @param processSubType
-     *            object
-     * @param resourceName
-     *            as String
-     * @return process specific part of URI
-     */
-    private String getProcessSubType(Process process, ProcessSubType processSubType, String resourceName) {
-        switch (processSubType) {
-            case IMAGE:
-                return "images/" + resourceName;
-            case IMAGE_SOURCE:
-                return getSourceDirectory(process) + resourceName;
-            case META_XML:
-                return "meta.xml";
-            case TEMPLATE:
-                return "template.xml";
-            case IMPORT:
-                return "import/" + resourceName;
-            case OCR:
-                return "ocr/";
-            case OCR_PDF:
-                return "ocr/" + process.getTitle() + "_pdf/" + resourceName;
-            case OCR_TXT:
-                return "ocr/" + process.getTitle() + "_txt/" + resourceName;
-            case OCR_WORD:
-                return "ocr/" + process.getTitle() + "_wc/" + resourceName;
-            case OCR_ALTO:
-                return "ocr/" + process.getTitle() + "_alto/" + resourceName;
-            default:
-                return "";
-        }
+        return subURIs;
     }
 
     /**

@@ -805,13 +805,6 @@ public class ProcessService extends TitleSearchService<Process> {
         }
     }
 
-    /**
-     * Get source directory.
-     *
-     * @param process
-     *            object
-     * @return path
-     */
 
     /**
      * Get process data directory.
@@ -823,7 +816,7 @@ public class ProcessService extends TitleSearchService<Process> {
     public URI getProcessDataDirectory(Process process) {
         URI processBaseUri = process.getProcessBaseUri();
         if (processBaseUri == null) {
-            process.setProcessBaseUri(serviceManager.getFileService().getProcessBaseUriForExistingProcess(process));
+            process.setProcessBaseUri(URI.create(process.getId().toString()));
         }
         return process.getProcessBaseUri();
     }
