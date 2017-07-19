@@ -19,6 +19,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -467,7 +468,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 
         Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         MetsMods result = new MetsMods(ruleSet);
-        result.read(serviceManager.getFileService().getMetadataFilePath(process).toString());
+        URI metadataFilePath = serviceManager.getFileService().getMetadataFilePath(process);
+        result.read(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFilePath).toString());
 
         DigitalDocument caudexDigitalis = result.getDigitalDocument();
         int ownYear = getMetadataIntValueByName(

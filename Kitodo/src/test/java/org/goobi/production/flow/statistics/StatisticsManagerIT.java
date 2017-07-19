@@ -49,7 +49,7 @@ public class StatisticsManagerIT {
 
     @BeforeClass
     public static void setUp() {
-        tempPath = serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(URI.create("pages/imagesTemp/"));
+        tempPath = URI.create("pages/imagesTemp/");
         testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
         testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
     }
@@ -78,18 +78,18 @@ public class StatisticsManagerIT {
 
     @AfterClass
     public static void tearDown() throws IOException {
-        File dir = new File(tempPath);
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg"));
             }
         };
-        ArrayList<URI> data = serviceManager.getFileService().getSubUris(filter, dir.toURI());
+        ArrayList<URI> data = serviceManager.getFileService().getSubUris(filter, tempPath);
         if (data == null || data.size() == 0) {
             return;
         }
         for (URI aData : data) {
-            boolean success = serviceManager.getFileService().delete(tempPath.resolve(aData));
+            URI tempData = URI.create(tempPath.toString() + "/" + aData);
+            boolean success = serviceManager.getFileService().delete(tempData);
             if (!success) {
                 throw new IllegalArgumentException("Delete: deletion failed");
             }

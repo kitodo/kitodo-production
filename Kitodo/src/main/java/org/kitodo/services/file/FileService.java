@@ -507,12 +507,12 @@ public class FileService {
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) {
-        return mapUriToKitodoDataDirectoryUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
+        return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
     }
 
     private String getTemporaryMetadataFileName(URI fileName) {
-
-        File temporaryFile = new File(fileName);
+        URI mapped = mapUriToKitodoDataDirectoryUri(fileName);
+        File temporaryFile = new File(mapped);
         String directoryPath = temporaryFile.getParentFile().getPath();
         String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 

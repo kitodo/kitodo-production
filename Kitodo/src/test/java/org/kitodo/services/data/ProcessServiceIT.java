@@ -486,16 +486,14 @@ public class ProcessServiceIT {
         assertEquals("Progress doesn't match given plain text!", 1, condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetMetadataFilePath() throws Exception {
         ProcessService processService = new ProcessService();
         FileService fileService = new FileService();
 
-        // TODO: solve problem of paths - it will be done with Path class!
         Process process = processService.find(1);
         URI directory = fileService.getMetadataFilePath(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\meta.xml");
+        boolean condition = directory.getRawPath().contains("1/meta.xml");
         assertTrue("Metadata file path doesn't match to given file path!", condition);
     }
 

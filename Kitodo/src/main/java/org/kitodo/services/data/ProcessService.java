@@ -1057,7 +1057,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
         Fileformat ff = determineFileFormat(type, process);
         try {
-            ff.read(new File(metadataFileUri).toString());
+            ff.read(new File(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFileUri)).toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setFehlerMeldung("metadataCorrupt");
@@ -1090,13 +1090,12 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     private boolean checkForMetadataFile(Process process) {
-        boolean result = true;
-        File f = new File(fileService.getMetadataFilePath(process));
-        if (!f.exists()) {
-            result = false;
+        try {
+            return fileService.fileExist(fileService.getMetadataFilePath(process));
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
         }
-
-        return result;
     }
 
     /**
