@@ -56,21 +56,21 @@ public class Multipage {
         /* alle tifs durchlaufen */
         URI pfad = serviceManager.getFileService().getImagesDirectory(process);
 
-        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, pfad);
+        ArrayList<URI> files = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, pfad);
 
         /* keine Tifs vorhanden, also raus */
-        if (dateien == null) {
-            logger.debug("Verzeichnis ist leer");
+        if (files.size() == 0) {
+            logger.debug("Directory is empty!");
             return;
         }
 
         /* alle Bilder in ein Array übernehmen */
-        RenderedImage[] image = new PlanarImage[dateien.size()];
-        for (int i = 0; i < dateien.size(); i++) {
+        RenderedImage[] image = new PlanarImage[files.size()];
+        for (int i = 0; i < files.size(); i++) {
             if (logger.isDebugEnabled()) {
-                logger.debug(pfad + dateien.get(i).toString());
+                logger.debug(pfad + files.get(i).toString());
             }
-            image[i] = JAI.create("fileload", pfad + dateien.get(i).toString());
+            image[i] = JAI.create("fileload", pfad + files.get(i).toString());
         }
         logger.debug("Bilder durchlaufen");
 
