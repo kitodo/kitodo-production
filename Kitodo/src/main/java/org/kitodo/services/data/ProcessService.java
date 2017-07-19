@@ -1203,16 +1203,10 @@ public class ProcessService extends TitleSearchService<Process> {
         if (!facesContext.getResponseComplete()) {
 
             // write run note to servlet output stream
-            try {
-                DocketInterface module = initialiseDocketModule();
+            DocketInterface module = initialiseDocketModule();
 
-                File file = module.generateDocket(getDocketData(process), xsltFile);
-                writeToOutputStream(facesContext, file);
-
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("Exception while exporting run note.", e.getMessage());
-            }
-
+            File file = module.generateDocket(getDocketData(process), xsltFile);
+            writeToOutputStream(facesContext, file);
             facesContext.responseComplete();
         }
     }
@@ -1223,6 +1217,8 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param processes
      *            The list of processes
      * @throws IOException
+     *             when xslt file could not be loaded, or write to output
+     *             failed.
      */
     public void downloadDocket(List<Process> processes) throws IOException {
         if (logger.isDebugEnabled()) {
@@ -1233,17 +1229,11 @@ public class ProcessService extends TitleSearchService<Process> {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
 
-            try {
-                DocketInterface module = initialiseDocketModule();
-                File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
-                        xsltFile);
+            DocketInterface module = initialiseDocketModule();
+            File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
+                    xsltFile);
 
-                writeToOutputStream(facesContext, file);
-
-            } catch (IOException e) {
-                logger.error("IOException while exporting run note", e);
-            }
-
+            writeToOutputStream(facesContext, file);
             facesContext.responseComplete();
         }
     }
@@ -1263,7 +1253,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     }
 
-    private DocketInterface initialiseDocketModule() throws IOException {
+    private DocketInterface initialiseDocketModule() {
         KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
         DocketInterface module = loader.loadModule();
         return module;

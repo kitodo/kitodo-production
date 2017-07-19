@@ -25,17 +25,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ServiceLoader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigMain;
 
 public class KitodoServiceLoader<T> {
-    private ServiceLoader<T> loader;
     private Class clazz;
+    private static final Logger logger = LogManager.getLogger(KitodoServiceLoader.class);
 
     public KitodoServiceLoader(Class clazz) {
         this.clazz = clazz;
     }
 
-    public T loadModule() throws IOException {
+    /**
+     * Loads a module from the classpath which implements the constructed clazz.
+     * 
+     * @return A module with type T.
+     */
+    public T loadModule() {
 
         loadModulesIntoClasspath();
 
@@ -45,7 +52,11 @@ public class KitodoServiceLoader<T> {
         return loader.iterator().next();
     }
 
-    public void loadModulesIntoClasspath() {
+    /**
+     * Loads jars from the pluginsFolder to the classpath, so the ServiceLoader
+     * can find them.
+     */
+    private void loadModulesIntoClasspath() {
         Path pluginFolder = FileSystems.getDefault().getPath(ConfigMain.getParameter("pluginFolder"));
 
         URLClassLoader sysLoader = null;
@@ -65,7 +76,7 @@ public class KitodoServiceLoader<T> {
                 }
             }
         } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            logger.error("Classpath could not be accessed", e.getMessage());
         }
     }
 
