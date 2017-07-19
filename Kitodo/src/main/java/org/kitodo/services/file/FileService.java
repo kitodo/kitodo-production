@@ -340,7 +340,8 @@ public class FileService {
      */
     public void writeMetadataFile(Fileformat gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
-        serviceManager.getFileService().write(serviceManager.getProcessService().getProcessDataDirectory(process)).close();
+        serviceManager.getFileService().write(serviceManager.getProcessService().getProcessDataDirectory(process))
+                .close();
 
         RulesetService rulesetService = new RulesetService();
         Fileformat ff;
@@ -552,7 +553,8 @@ public class FileService {
         }
         try {
             FileManagementInterface fileManagementModule = getFileManagementModule();
-            return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType, resourceName);
+            return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
+                    resourceName);
         } catch (IOException e) {
             logger.error(e);
             return URI.create("");
@@ -560,12 +562,10 @@ public class FileService {
     }
 
     /**
-     * Get unmapped part of the URI for specific process.
+     * Get part of the URI for specific process.
      * 
      * @param filter
      *            FilenameFilter object
-     * @param uri
-     *            for unmapping
      * @param process
      *            object
      * @param processSubType
@@ -574,11 +574,12 @@ public class FileService {
      *            as String
      * @return unmapped URI
      */
-    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, URI uri, Process process,
-            ProcessSubType processSubType, String resourceName) {
+    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Process process, ProcessSubType processSubType,
+            String resourceName) {
         ArrayList<URI> subURIs = new ArrayList<>();
         try {
-            subURIs = getSubUris(filter, uri);
+            URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
+            subURIs = getSubUris(filter, processSubTypeURI);
         } catch (IOException e) {
             logger.error(e);
         }

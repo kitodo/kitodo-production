@@ -492,15 +492,8 @@ public class MetadatenImagesHelper {
      * @return sorted list with strings representing images of process
      */
     public List<URI> getImageFiles(Process myProcess, URI directory) throws InvalidImagesException {
-        URI dir;
-        try {
-            dir = fileService.getProcessSubTypeURI(myProcess, ProcessSubType.IMAGE, null).resolve(directory);
-        } catch (Exception e) {
-            throw new InvalidImagesException(e);
-        }
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, dir, myProcess,
-                ProcessSubType.IMAGE, "");
+        ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, myProcess, ProcessSubType.IMAGE, "");
         ArrayList<URI> finalFiles = new ArrayList<>();
         for (URI file : files) {
             String newURI = file.toString().replace(directory.toString(), "");
