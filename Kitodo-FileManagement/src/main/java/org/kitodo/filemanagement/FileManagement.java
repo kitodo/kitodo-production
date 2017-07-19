@@ -339,7 +339,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI getProcessSubTypeUri(URI processBaseUri, String processTitle, ProcessSubType subType, String resourceName) {
-        return fileMapper.mapAccordingToMappingType(URI.create(getProcessSubType(processBaseUri.toString(), processTitle, subType, resourceName)));
+        return URI.create(getProcessSubType(processBaseUri.toString(), processTitle, subType, resourceName));
     }
 
     /**
