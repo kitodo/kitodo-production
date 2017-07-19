@@ -1206,8 +1206,7 @@ public class ProcessService extends TitleSearchService<Process> {
             DocketInterface module = initialiseDocketModule();
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
-            writeToOutputStream(facesContext, file);
-            facesContext.responseComplete();
+            writeToOutputStream(facesContext, file, process.getTitle() + ".pdf");
         }
     }
 
@@ -1233,14 +1232,12 @@ public class ProcessService extends TitleSearchService<Process> {
             File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
                     xsltFile);
 
-            writeToOutputStream(facesContext, file);
-            facesContext.responseComplete();
+            writeToOutputStream(facesContext, file, "batch_docket.pdf");
         }
     }
 
-    private void writeToOutputStream(FacesContext facesContext, File file) throws IOException {
+    private void writeToOutputStream(FacesContext facesContext, File file, String fileName) throws IOException {
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-        String fileName = "batch_docket.pdf";
         ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
         String contentType = servletContext.getMimeType(fileName);
         response.setContentType(contentType);
@@ -1250,7 +1247,7 @@ public class ProcessService extends TitleSearchService<Process> {
         byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
         outputStream.write(bytes);
         outputStream.flush();
-
+        facesContext.responseComplete();
     }
 
     private DocketInterface initialiseDocketModule() {
