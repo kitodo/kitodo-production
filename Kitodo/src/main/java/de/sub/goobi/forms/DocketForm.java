@@ -43,6 +43,11 @@ public class DocketForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
     private int docketId;
 
+    /**
+     * Creates a new Docket.
+     * 
+     * @return the navigation String
+     */
     public String Neu() {
         this.myDocket = new Docket();
         this.docketId = 0;

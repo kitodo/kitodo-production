@@ -168,6 +168,7 @@ public class FilterHelper {
      * step filter in first position.
      *
      * @param parameter
+     *            the string, where the integer should be extracted
      * @return Integer
      */
     protected static Integer getStepStart(String parameter) {

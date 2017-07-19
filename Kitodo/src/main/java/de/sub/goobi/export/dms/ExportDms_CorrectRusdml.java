@@ -65,7 +65,6 @@ public class ExportDms_CorrectRusdml {
     public String correctionStart()
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException {
         String atsPpnBand;
-        DocStruct logicalTopstruct = myDocument.getLogicalDocStruct();
         docStructsOhneSeiten = new ArrayList<>();
 
         /*
@@ -86,6 +85,7 @@ public class ExportDms_CorrectRusdml {
         /*
          * DocStruct rukursiv durchlaufen und die Metadaten prüfen
          */
+        DocStruct logicalTopstruct = myDocument.getLogicalDocStruct();
         evaluateRusdmlDocStructPages(logicalTopstruct);
         rusdmlPathImageFilesKorrigieren(myDocument.getPhysicalDocStruct(), "./" + atsPpnBand + "_tif");
         rusdmlAddMissingMetadata(logicalTopstruct, myProcess);
@@ -309,7 +309,7 @@ public class ExportDms_CorrectRusdml {
         String title = BeanHelper.determineWorkpieceProperty(myProcess, "Haupttitel");
         String verlag = BeanHelper.determineWorkpieceProperty(myProcess, "Verlag");
         String place = BeanHelper.determineWorkpieceProperty(myProcess, "Erscheinungsort");
-        String ISSN = BeanHelper.determineWorkpieceProperty(myProcess, "ISSN");
+        String issn = BeanHelper.determineWorkpieceProperty(myProcess, "ISSN");
         String bandNumber = BeanHelper.determineWorkpieceProperty(myProcess, "Band");
 
         /*
@@ -329,7 +329,7 @@ public class ExportDms_CorrectRusdml {
             mdPlace = new Metadata(myPrefs.getMetadataTypeByName("PlaceOfPublication"));
             mdPlace.setValue(place);
             mdISSN = new Metadata(myPrefs.getMetadataTypeByName("ISSN"));
-            mdISSN.setValue(ISSN);
+            mdISSN.setValue(issn);
             mdPPN = new Metadata(myPrefs.getMetadataTypeByName("CatalogIDDigital"));
             mdPPN.setValue("PPN" + ppn);
             mdPPNBand = new Metadata(myPrefs.getMetadataTypeByName("CatalogIDDigital"));
