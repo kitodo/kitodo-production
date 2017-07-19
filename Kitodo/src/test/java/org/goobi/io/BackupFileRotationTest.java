@@ -52,7 +52,7 @@ public class BackupFileRotationTest {
         process.setId(2);
         int numberOfBackups = 1;
         runBackup(numberOfBackups, process);
-        assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");
+        assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1");
     }
 
     @Test
@@ -63,7 +63,7 @@ public class BackupFileRotationTest {
         String content = "Test One.";
         writeFile(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME), content);
         runBackup(numberOfBackups, process);
-        assertFileHasContent(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1", content);
+        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1", content);
     }
 
     @Test
@@ -90,8 +90,8 @@ public class BackupFileRotationTest {
 
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
-        assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");
-        assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".2");
+        assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1");
+        assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".2");
     }
 
     @Test
@@ -104,12 +104,12 @@ public class BackupFileRotationTest {
         writeFile(resolve, content1);
         runBackup(numberOfBackups, process);
 
-        assertFileHasContent(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1", content1);
+        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" +  BACKUP_FILE_NAME + ".1", content1);
 
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
 
-        assertFileHasContent(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".2", content1);
+        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".2", content1);
     }
 
     @Test
@@ -141,9 +141,9 @@ public class BackupFileRotationTest {
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
 
-        assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");
-        assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".2");
-        assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".3");
+        assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1");
+        assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".2");
+        assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".3");
     }
 
     @Test
@@ -160,7 +160,7 @@ public class BackupFileRotationTest {
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
 
-        assertFileHasContent(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".3", content1);
+        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".3", content1);
     }
 
     @Test
