@@ -55,6 +55,8 @@ public class ExportDocket {
         byte[] pdfBytes = generatePdfBytes(out, xsltFile);
 
         os.write(pdfBytes);
+        os.flush();
+        os.close();
     }
 
     /**
