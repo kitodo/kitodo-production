@@ -45,9 +45,9 @@ public class ExportXmlLog {
      * @param os
      *            the OutputStream to write the contents to
      * @throws IOException
-     * @throws ExportFileException
+     *             Throws IOException, when document creation fails.
      */
-    public void startExport(DocketData docketData, OutputStream os) throws IOException {
+    void startExport(DocketData docketData, OutputStream os) throws IOException {
         try {
             Document doc = createDocument(docketData, true);
 
@@ -58,6 +58,7 @@ public class ExportXmlLog {
             os.close();
 
         } catch (Exception e) {
+            logger.error("Document creation failed.");
             throw new IOException(e);
         }
     }
@@ -69,10 +70,10 @@ public class ExportXmlLog {
      * @param docketDataList
      *            a list of Docketdata
      * @param outputStream
-     * @param xslt
+     *            The outputstream, to write the docket to.
      */
 
-    public void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream, String xslt) {
+    void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream) {
         Document answer = new Document();
         Element root = new Element("processes");
         answer.setRootElement(root);
@@ -95,16 +96,15 @@ public class ExportXmlLog {
         outp.setFormat(Format.getPrettyFormat());
 
         try {
-
             outp.output(answer, outputStream);
         } catch (IOException e) {
-
+            logger.error("Generating XML Output failed.", e.getMessage());
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException e) {
-                    outputStream = null;
+                    logger.error("Closing the outputstream failed.", e.getMessage());
                 }
             }
         }
@@ -121,7 +121,7 @@ public class ExportXmlLog {
     private Document createDocument(DocketData docketData, boolean addNamespace) {
 
         Element processElm = new Element("process");
-        Document doc = new Document(processElm);
+        final Document doc = new Document(processElm);
 
         processElm.setAttribute("processID", String.valueOf(docketData.getProcessId()));
 
@@ -183,7 +183,6 @@ public class ExportXmlLog {
         }
 
         // template information
-        Element templates = new Element("originals", xmlns);
         ArrayList<Element> templateElements = new ArrayList<Element>();
         Element template = new Element("original", xmlns);
 
@@ -223,11 +222,12 @@ public class ExportXmlLog {
             template.addContent(properties);
         }
         templateElements.add(template);
+
+        Element templates = new Element("originals", xmlns);
         templates.addContent(templateElements);
         processElements.add(templates);
 
         // digital document information
-        Element digdoc = new Element("digitalDocuments", xmlns);
         ArrayList<Element> docElements = new ArrayList<Element>();
         Element dd = new Element("digitalDocument", xmlns);
 
@@ -255,6 +255,8 @@ public class ExportXmlLog {
             dd.addContent(properties);
         }
         docElements.add(dd);
+
+        Element digdoc = new Element("digitalDocuments", xmlns);
         digdoc.addContent(docElements);
         processElements.add(digdoc);
 

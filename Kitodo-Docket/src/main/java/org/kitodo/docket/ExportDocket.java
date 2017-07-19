@@ -44,8 +44,9 @@ public class ExportDocket {
      * @param docketData
      *            the docketData to export
      * @throws IOException
+     *             Throws IOException, when pdfGeneration fails
      */
-    public void startExport(DocketData docketData, OutputStream os, File xsltFile) throws IOException {
+    void startExport(DocketData docketData, OutputStream os, File xsltFile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -63,19 +64,20 @@ public class ExportDocket {
      * @param docketDataList
      *            the docketData to export for several processes
      * @throws IOException
+     *             Throws IOException, when pdfGeneration fails.
      */
-    public void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltFile) throws IOException {
+    void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltFile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        exl.startMultipleExport(docketDataList, out, null);
+        exl.startMultipleExport(docketDataList, out);
 
         byte[] pdfBytes = generatePdfBytes(out, xsltFile);
 
         os.write(pdfBytes);
     }
 
-    public byte[] generatePdfBytes(ByteArrayOutputStream out, File xsltFile) throws IOException {
+    private byte[] generatePdfBytes(ByteArrayOutputStream out, File xsltFile) throws IOException {
         // generate pdf file
         StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
         StreamSource transformSource = new StreamSource(xsltFile);
