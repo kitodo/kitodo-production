@@ -710,7 +710,7 @@ public class FileService {
         URI sourceFolder = URI.create("");
         try {
             ArrayList<URI> directories = getSubUris(filterDirectory, dir);
-            if (directories == null || directories.size() == 0) {
+            if (directories.size() == 0) {
                 sourceFolder = dir.resolve(process.getTitle() + "_source");
                 if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                     createDirectory(dir, process.getTitle() + "_source");

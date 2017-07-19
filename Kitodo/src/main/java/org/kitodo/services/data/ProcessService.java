@@ -668,12 +668,9 @@ public class ProcessService extends TitleSearchService<Process> {
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
-        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
-
-        if (verzeichnisse != null) {
-            for (URI aVerzeichnisse : verzeichnisse) {
-                tifOrdner = aVerzeichnisse;
-            }
+        ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
+        for (URI directory : directories) {
+            tifOrdner = directory;
         }
 
         if (tifOrdner == null && useFallBack) {
@@ -1949,18 +1946,16 @@ public class ProcessService extends TitleSearchService<Process> {
             for (URI image : images) {
                 imageStrings.add(image.getPath());
             }
-            if (images != null) {
-                int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
-                int sizeOfImages = images.size();
-                if (sizeOfPagination == sizeOfImages) {
-                    dd.overrideContentFiles(imageStrings);
-                } else {
-                    List<String> param = new ArrayList<>();
-                    param.add(String.valueOf(sizeOfPagination));
-                    param.add(String.valueOf(sizeOfImages));
-                    Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
-                    return false;
-                }
+            int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+            int sizeOfImages = images.size();
+            if (sizeOfPagination == sizeOfImages) {
+                dd.overrideContentFiles(imageStrings);
+            } else {
+                List<String> param = new ArrayList<>();
+                param.add(String.valueOf(sizeOfPagination));
+                param.add(String.valueOf(sizeOfImages));
+                Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                return false;
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
             logger.error(e);

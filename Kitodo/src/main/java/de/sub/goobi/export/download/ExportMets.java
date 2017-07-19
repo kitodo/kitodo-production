@@ -305,17 +305,15 @@ public class ExportMets {
                     imageStrings.add(uri.toString());
                 }
                 int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
-                if (images != null) {
-                    int sizeOfImages = images.size();
-                    if (sizeOfPagination == sizeOfImages) {
-                        dd.overrideContentFiles(imageStrings);
-                    } else {
-                        List<String> param = new ArrayList<>();
-                        param.add(String.valueOf(sizeOfPagination));
-                        param.add(String.valueOf(sizeOfImages));
-                        Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
-                        return false;
-                    }
+                int sizeOfImages = images.size();
+                if (sizeOfPagination == sizeOfImages) {
+                    dd.overrideContentFiles(imageStrings);
+                } else {
+                    List<String> param = new ArrayList<>();
+                    param.add(String.valueOf(sizeOfPagination));
+                    param.add(String.valueOf(sizeOfImages));
+                    Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                    return false;
                 }
             } catch (IndexOutOfBoundsException | InvalidImagesException e) {
                 logger.error(e);

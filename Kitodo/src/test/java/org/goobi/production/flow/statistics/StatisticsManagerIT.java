@@ -84,7 +84,7 @@ public class StatisticsManagerIT {
             }
         };
         ArrayList<URI> data = serviceManager.getFileService().getSubUris(filter, tempPath);
-        if (data == null || data.size() == 0) {
+        if (data.size() == 0) {
             return;
         }
         for (URI aData : data) {

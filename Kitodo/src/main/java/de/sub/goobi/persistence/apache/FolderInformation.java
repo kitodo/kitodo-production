@@ -66,10 +66,8 @@ public class FolderInformation {
         URI tifOrdner = null;
         try {
             ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
-            if (directories != null) {
-                for (URI directory : directories) {
-                    tifOrdner = directory;
-                }
+            for (URI directory : directories) {
+                tifOrdner = directory;
             }
         } catch (IOException e) {
             logger.error(e);
@@ -301,22 +299,17 @@ public class FolderInformation {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
+        ArrayList<URI> dataList = new ArrayList<>();
         try {
             ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
-            ArrayList<URI> dataList = new ArrayList<>();
-            if (files != null && files.size() > 0) {
+            if (files.size() > 0) {
                 dataList.addAll(files);
-            /* alle Dateien durchlaufen */
-                if (dataList.size() != 0) {
-                    Collections.sort(dataList, new GoobiImageURIComparator());
-                }
-                return dataList;
-            } else {
-                return null;
+                Collections.sort(dataList, new GoobiImageURIComparator());
             }
+            return dataList;
         } catch (IOException e) {
             logger.error(e);
-            return null;
+            return dataList;
         }
     }
 

@@ -172,11 +172,9 @@ public class MetadatenImagesHelper {
         }
         try {
             List<URI> imageNamesInMediaFolder = getDataFiles(process);
-            if (imageNamesInMediaFolder != null) {
-                for (URI imageName : imageNamesInMediaFolder) {
-                    if (!assignedImages.containsKey(imageName)) {
-                        imagesWithoutPageElements.add(imageName);
-                    }
+            for (URI imageName : imageNamesInMediaFolder) {
+                if (!assignedImages.containsKey(imageName)) {
+                    imagesWithoutPageElements.add(imageName);
                 }
             }
         } catch (InvalidImagesException e1) {
@@ -408,7 +406,7 @@ public class MetadatenImagesHelper {
         try {
             if (fileService.fileExist(folder)) {
                 ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
-                if (files == null || files.size() == 0) {
+                if (files.size() == 0) {
                     Helper.setFehlerMeldung("[" + title + "] No objects found");
                     return false;
                 }
@@ -587,14 +585,9 @@ public class MetadatenImagesHelper {
         }
         if (files.size() > 0) {
             dataList.addAll(files);
-            /* alle Dateien durchlaufen */
-            if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
-            }
-            return dataList;
-        } else {
-            return null;
+            Collections.sort(dataList, new GoobiImageFileComparator());
         }
+        return dataList;
     }
 
 }
