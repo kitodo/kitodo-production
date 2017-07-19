@@ -133,7 +133,7 @@
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
                                     <logViolationsToConsole>false</logViolationsToConsole>
-                                    <maxAllowedViolations>610</maxAllowedViolations>
+                                    <maxAllowedViolations>570</maxAllowedViolations>
                                     <violationSeverity>warning</violationSeverity>
                                 </configuration>
                                 <goals>
