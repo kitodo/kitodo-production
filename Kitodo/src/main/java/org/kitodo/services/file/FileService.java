@@ -340,7 +340,7 @@ public class FileService {
      */
     public void writeMetadataFile(Fileformat gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
-        serviceManager.getFileService().write(process.getProcessBaseUri()).close();
+        serviceManager.getFileService().write(serviceManager.getProcessService().getProcessDataDirectory(process)).close();
 
         RulesetService rulesetService = new RulesetService();
         Fileformat ff;

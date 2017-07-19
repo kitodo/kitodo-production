@@ -83,9 +83,6 @@ public class Process extends BaseBean {
     @Column(name = "wikiField", columnDefinition = "longtext")
     private String wikiField = "";
 
-    @Column(name = "processBaseUri")
-    private URI processBaseUri;
-
     @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
     private Docket docket;
@@ -239,23 +236,6 @@ public class Process extends BaseBean {
 
     public String getWikiField() {
         return this.wikiField;
-    }
-
-    /**
-     * Gets the process Base Uri.
-     */
-    public URI getProcessBaseUri() {
-        return processBaseUri;
-    }
-
-    /**
-     * Sets the process base uri
-     * 
-     * @param processBaseUri
-     *            the given process base uri
-     */
-    public void setProcessBaseUri(URI processBaseUri) {
-        this.processBaseUri = processBaseUri;
     }
 
     public void setWikiField(String wikiField) {
