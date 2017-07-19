@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +37,6 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
-import org.kitodo.enums.MappingType;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.RulesetService;
@@ -137,43 +133,9 @@ public class FileService {
      *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfFiles(URI directory) {
-        int count = 0;
-        if (directory.isAbsolute()) {
-            count += iterateOverDirectories(directory);
-        } else {
-            directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
-            count += iterateOverDirectories(directory);
-        }
-        return count;
-    }
-
-    /**
-     * Iterate over children directories of directory.
-     * 
-     * @param directory
-     *            as URI
-     * @return amount of files
-     */
-    private Integer iterateOverDirectories(URI directory) {
-        int count = 0;
-        if (directory.isAbsolute()) {
-            try {
-                if (isDirectory(directory)) {
-                    ArrayList<URI> children = getSubUris(directory);
-                    for (URI child : children) {
-                        if (isDirectory(child)) {
-                            count += getNumberOfFiles(child);
-                        } else {
-                            count += 1;
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                logger.error(e);
-            }
-        }
-        return count;
+    public Integer getNumberOfFiles(URI directory) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getNumberOfFiles(null, directory);
     }
 
     /**
@@ -184,38 +146,9 @@ public class FileService {
      *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfImageFiles(URI directory) {
-        int count = 0;
-        if (directory.isAbsolute()) {
-            count += iterateOverImageDirectories(directory);
-        } else {
-            directory = getAbsoluteURI(directory, MappingType.DATA, null, null);
-            count += iterateOverImageDirectories(directory);
-        }
-        return count;
-    }
-
-    /**
-     * Iterate over children image directories of directory.
-     *
-     * @param directory
-     *            as URI
-     * @return amount of image files
-     */
-    private Integer iterateOverImageDirectories(URI directory) {
-        int count = 0;
-        try {
-            if (isDirectory(directory)) {
-                count = getSubUris(Helper.imageNameFilter, directory).size();
-                ArrayList<URI> children = getSubUris(directory);
-                for (URI child : children) {
-                    count += getNumberOfImageFiles(child);
-                }
-            }
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        return count;
+    public Integer getNumberOfImageFiles(URI directory) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getNumberOfFiles(Helper.imageNameFilter, directory);
     }
 
     /**
@@ -762,23 +695,6 @@ public class FileService {
     }
 
     /**
-     * Returns the version used in with the direct File mapping.
-     *
-     * @param uri
-     *            the uri to map
-     * @param mappingType
-     *            CONFIG, DATA and ROOT
-     * @param folderPath
-     *            as String - used for ROOT mapping, in other case null
-     * @param resourceToMap
-     *            as String - used for ROOT mapping, in other case null
-     * @return the absolute URI path
-     */
-    public URI getAbsoluteURI(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
-        return mapAccordingToMappingType(uri, mappingType, folderPath, resourceToMap);
-    }
-
-    /**
      * Get all sub URIs of an URI.
      *
      * @param uri
@@ -802,70 +718,6 @@ public class FileService {
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSubUris(filter, uri);
-    }
-
-    /**
-     * Execute right mapping type according to value of enum MappingType.
-     *
-     * @param uri
-     *            to map
-     * @param mappingType
-     *            CONFIG, DATA or ROOT
-     * @param folderPath
-     *            as String
-     * @param resourceToMap
-     *            as string
-     * @return mapped URI
-     */
-    private URI mapAccordingToMappingType(URI uri, MappingType mappingType, String folderPath, String resourceToMap) {
-        switch (mappingType) {
-            case CONFIG:
-                return mapUriToKitodoConfigDirectoryUri(uri);
-            case DATA:
-                return mapUriToKitodoDataDirectoryUri(uri);
-            case ROOT:
-                return mapUriToKitodoRootFolderUri(folderPath, resourceToMap);
-            default:
-                return uri;
-        }
-    }
-
-    /**
-     * Map resource to its absolute path inside the Kitodo root folder.
-     *
-     * @param folderPath
-     *            folder inside the root application
-     * @param resourceToMap
-     *            directory or file to map eg. css file
-     * @return absolute path to mapped resource
-     */
-    private URI mapUriToKitodoRootFolderUri(String folderPath, String resourceToMap) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        if (folderPath == null && resourceToMap == null) {
-            return Paths.get(session.getServletContext().getContextPath()).toUri();
-        } else if (folderPath == null) {
-            return Paths.get(session.getServletContext().getContextPath(), resourceToMap).toUri();
-        } else if (resourceToMap == null) {
-            return Paths.get(session.getServletContext().getRealPath(folderPath)).toUri();
-        } else {
-            return Paths.get(session.getServletContext().getRealPath(folderPath), resourceToMap).toUri();
-        }
-    }
-
-    /**
-     * Map relative URI to absolute kitodo config directory URI.
-     *
-     * @param uri
-     *            relative path
-     * @return absolute URI path
-     */
-    private URI mapUriToKitodoConfigDirectoryUri(URI uri) {
-        String kitodoConfigDirectory = ConfigCore.getKitodoConfigDirectory();
-        if (!uri.isAbsolute() && !uri.toString().contains(kitodoConfigDirectory)) {
-            return Paths.get(ConfigCore.getKitodoConfigDirectory(), uri.toString()).toUri();
-        }
-        return uri;
     }
 
     /**

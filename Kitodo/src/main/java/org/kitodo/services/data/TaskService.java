@@ -747,10 +747,14 @@ public class TaskService extends TitleSearchService<Task> {
         }
         Process po = task.getProcess();
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-        if (po.getSortHelperImages() != serviceManager.getFileService()
-                .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
-            po.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)));
-            serviceManager.getProcessService().save(po);
+        try {
+            if (po.getSortHelperImages() != serviceManager.getFileService()
+                    .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
+                po.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)));
+                serviceManager.getProcessService().save(po);
+            }
+        } catch (IOException e) {
+            logger.error(e);
         }
         logger.debug("update process status");
         updateProcessStatus(po);
