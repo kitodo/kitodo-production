@@ -57,6 +57,15 @@ public class Config {
     }
 
     /**
+     * Request boolean parameter from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static boolean getBooleanParameter(String parameter, boolean defaultIfNull) {
+        return getConfig().getBoolean(parameter, defaultIfNull);
+    }
+
+    /**
      * Request selected parameter with given default value from configuration.
      *
      * @return Parameter as String

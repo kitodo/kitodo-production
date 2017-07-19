@@ -33,7 +33,6 @@ import org.goobi.io.BackupFileRotation;
 import org.hibernate.Hibernate;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
@@ -702,27 +701,10 @@ public class FileService {
      *
      * @param process
      *            the process, to get the source directory for
-     * @return the source directory as a string
+     * @return the source directory as an URI
      */
     public URI getSourceDirectory(Process process) {
-        URI dir = getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-        FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
-        URI sourceFolder = URI.create("");
-        try {
-            ArrayList<URI> directories = getSubUris(filterDirectory, dir);
-            if (directories.size() == 0) {
-                sourceFolder = dir.resolve(process.getTitle() + "_source");
-                if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                    createDirectory(dir, process.getTitle() + "_source");
-                }
-            } else {
-                sourceFolder = dir.resolve(directories.get(0));
-            }
-        } catch (IOException e) {
-            logger.error(e);
-        }
-
-        return sourceFolder;
+        return getProcessSubTypeURI(process, ProcessSubType.IMAGE_SOURCE, null);
     }
 
     /**

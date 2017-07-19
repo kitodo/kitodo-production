@@ -262,7 +262,6 @@ public class ProcessServiceIT {
         assertTrue("Images directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
     @Test
     public void shouldGetSourceDirectory() throws Exception {
         ProcessService processService = new ProcessService();
@@ -270,7 +269,7 @@ public class ProcessServiceIT {
 
         Process process = processService.find(1);
         URI directory = fileService.getSourceDirectory(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\First process_source");
+        boolean condition = directory.getRawPath().contains("1/images/First__process_source");
         assertTrue("Source directory doesn't match to given directory!", condition);
     }
 
