@@ -26,11 +26,13 @@ import de.sub.goobi.metadaten.copier.DataCopier;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,6 +46,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,10 +54,11 @@ import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.kitodo.api.docket.DocketData;
+import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -84,6 +88,7 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.filters.FileNameEndsAndDoesNotBeginWithFilter;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
@@ -174,7 +179,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Check if IndexAction flag is delete. If true remove process from list of
      * processes and re-save batch, if false only re-save batch object.
-     * 
+     *
      * @param process
      *            object
      */
@@ -193,7 +198,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Add process to project, if project is assigned to process.
-     * 
+     *
      * @param process
      *            object
      */
@@ -206,7 +211,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Check IndexAction flag in for process object. If DELETE remove all tasks
      * from index, if other call saveOrRemoveTaskInIndex() method.
-     * 
+     *
      * @param process
      *            object
      */
@@ -224,7 +229,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Compare index and database, according to comparisons results save or
      * remove tasks.
-     * 
+     *
      * @param process
      *            object
      */
@@ -263,7 +268,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Remove template if process is removed, add template if process is marked
      * as template.
-     * 
+     *
      * @param process
      *            object
      */
@@ -281,8 +286,8 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * Remove workpiece if process is removed, add workpiece if process is marked
-     * as workpiece.
+     * Remove workpiece if process is removed, add workpiece if process is
+     * marked as workpiece.
      *
      * @param process
      *            object
@@ -302,7 +307,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Compare two list and return difference between them.
-     * 
+     *
      * @param firstList
      *            list from which records can be remove
      * @param secondList
@@ -660,7 +665,8 @@ public class ProcessService extends TitleSearchService<Process> {
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
-        FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
+        FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
+                "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
         ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
 
@@ -673,8 +679,8 @@ public class ProcessService extends TitleSearchService<Process> {
         if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, dir, process,
-                        ProcessSubType.IMAGE, "");
+                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, dir, process, ProcessSubType.IMAGE,
+                        "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
@@ -744,7 +750,8 @@ public class ProcessService extends TitleSearchService<Process> {
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
-            FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
+            FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_",
+                    "_" + DIRECTORY_SUFFIX);
             URI origOrdner = null;
             ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
             for (URI aVerzeichnisse : verzeichnisse) {
@@ -1177,43 +1184,76 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return empty string?
      */
-    public String downloadDocket(Process process) {
+    public void downloadDocket(Process process) throws IOException {
 
         if (logger.isDebugEnabled()) {
             logger.debug("generate docket for process " + process.getId());
         }
-        String rootPath = ConfigCore.getParameter("xsltFolder");
-        File xsltFile = new File(rootPath, "docket.xsl");
+        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI xsltFile;
         if (process.getDocket() != null) {
-            xsltFile = new File(rootPath, process.getDocket().getFile());
-            if (!xsltFile.exists()) {
+            xsltFile = serviceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
+            if (!fileService.fileExist(xsltFile)) {
                 Helper.setFehlerMeldung("docketMissing");
-                return "";
             }
+        } else {
+            xsltFile = serviceManager.getFileService().createResource(rootPath, "docket.xsl");
         }
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            String fileName = process.getTitle() + ".pdf";
-            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-            String contentType = servletContext.getMimeType(fileName);
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
             // write run note to servlet output stream
-            try {
-                ServletOutputStream out = response.getOutputStream();
-                ExportDocket ern = new ExportDocket();
-                ern.startExport(process, out, xsltFile.getAbsolutePath());
-                out.flush();
-                facesContext.responseComplete();
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("Exception while exporting run note.", e.getMessage());
-                response.reset();
-            }
+            DocketInterface module = initialiseDocketModule();
 
+            File file = module.generateDocket(getDocketData(process), xsltFile);
+            writeToOutputStream(facesContext, file, process.getTitle() + ".pdf");
         }
-        return "";
+    }
+
+    /**
+     * Writes a multipage docket for a list of processes to an outpustream.
+     * 
+     * @param processes
+     *            The list of processes
+     * @throws IOException
+     *             when xslt file could not be loaded, or write to output
+     *             failed.
+     */
+    public void downloadDocket(List<Process> processes) throws IOException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("generate docket for processes " + processes);
+        }
+        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI xsltFile = serviceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (!facesContext.getResponseComplete()) {
+
+            DocketInterface module = initialiseDocketModule();
+            File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
+                    xsltFile);
+
+            writeToOutputStream(facesContext, file, "batch_docket.pdf");
+        }
+    }
+
+    private void writeToOutputStream(FacesContext facesContext, File file, String fileName) throws IOException {
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+        ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+        String contentType = servletContext.getMimeType(fileName);
+        response.setContentType(contentType);
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
+        outputStream.write(bytes);
+        outputStream.flush();
+        facesContext.responseComplete();
+    }
+
+    private DocketInterface initialiseDocketModule() {
+        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
+        DocketInterface module = loader.loadModule();
+        return module;
     }
 
     /**
@@ -1962,5 +2002,65 @@ public class ProcessService extends TitleSearchService<Process> {
                 fileService.copyFile(srcDir, dstDir);
             }
         }
+    }
+
+    /**
+     * Creates a List of Docket data for the given processes.
+     * 
+     * @param processes
+     *            the process to create the docket data for.
+     * @return A List of docketdata
+     */
+    public ArrayList<DocketData> getDocketData(List<Process> processes) {
+        ArrayList<DocketData> docketdata = new ArrayList<>();
+        for (Process process : processes) {
+            docketdata.add(getDocketData(process));
+        }
+        return docketdata;
+    }
+
+    /**
+     * Creates the DocketData for a given Process.
+     * 
+     * @param process
+     *            The process to create the docket data for.
+     * @return The DocketData for the process.
+     */
+    private DocketData getDocketData(Process process) {
+        DocketData docketdata = new DocketData();
+
+        docketdata.setCreationDate(process.getCreationDate().toString());
+        docketdata.setProcessId(process.getId().toString());
+        docketdata.setProcessName(process.getTitle());
+        docketdata.setProjectName(process.getProject().getTitle());
+        docketdata.setRulesetName(process.getRuleset().getTitle());
+        docketdata.setComment(process.getWikiField());
+
+        if (!process.getTemplates().isEmpty() && process.getTemplates().get(0) != null) {
+            docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates().get(0).getProperties()));
+        }
+        if (!process.getWorkpieces().isEmpty() && process.getWorkpieces().get(0) != null) {
+            docketdata
+                    .setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces().get(0).getProperties()));
+        }
+        docketdata.setProcessProperties(getDocketDataForProperties(process.getProperties()));
+
+        return docketdata;
+
+    }
+
+    private ArrayList<org.kitodo.api.docket.Property> getDocketDataForProperties(List<Property> properties) {
+        ArrayList<org.kitodo.api.docket.Property> propertiesForDocket = new ArrayList<>();
+        for (Property property : properties) {
+            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
+            propertyForDocket.setId(property.getId());
+            propertyForDocket.setTitle(property.getTitle());
+            propertyForDocket.setValue(property.getValue());
+
+            propertiesForDocket.add(propertyForDocket);
+
+        }
+
+        return propertiesForDocket;
     }
 }

@@ -50,10 +50,10 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
-import org.goobi.production.plugin.PluginLoader;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -926,9 +926,9 @@ public class ProzesskopieForm implements Serializable {
                         allMetadata = Collections.emptyList();
                     }
                     for (Metadata available : allMetadata) {
-                        Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(
-                                available.getType().getName()) ? higherLevelMetadata.get(available.getType().getName())
-                                        : new HashMap<>();
+                        Map<String, Metadata> availableMetadata = higherLevelMetadata
+                                .containsKey(available.getType().getName())
+                                        ? higherLevelMetadata.get(available.getType().getName()) : new HashMap<>();
                         if (!availableMetadata.containsKey(available.getValue())) {
                             availableMetadata.put(available.getValue(), available);
                         }
@@ -1845,8 +1845,19 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
+    /**
+     * Downloads a docket for the process.
+     * 
+     * @return the navigation-strign
+     */
     public String downloadDocket() {
-        return serviceManager.getProcessService().downloadDocket(this.prozessKopie);
+        try {
+            serviceManager.getProcessService().downloadDocket(this.prozessKopie);
+        } catch (IOException e) {
+            logger.error("Excetion thrown, when creating the docket", e.getMessage());
+            // TODO: Handle exceptions in Frontend
+        }
+        return "";
     }
 
     /**

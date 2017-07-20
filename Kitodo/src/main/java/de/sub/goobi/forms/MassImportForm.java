@@ -25,11 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +36,6 @@ import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
-import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.GoobiHotfolder;
@@ -89,7 +84,7 @@ public class MassImportForm implements Serializable {
     private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
 
-    private List<Process> processList;
+    private ArrayList<Process> processList;
 
     /**
      * Constructor.
@@ -757,7 +752,7 @@ public class MassImportForm implements Serializable {
 
     /**
      * Get next page.
-     * 
+     *
      * @return next page
      */
     public String nextPage() {
@@ -793,11 +788,11 @@ public class MassImportForm implements Serializable {
         return new ArrayList<>();
     }
 
-    public List<Process> getProcessList() {
+    public ArrayList<Process> getProcessList() {
         return this.processList;
     }
 
-    public void setProcessList(List<Process> processList) {
+    public void setProcessList(ArrayList<Process> processList) {
         this.processList = processList;
     }
 
@@ -814,32 +809,9 @@ public class MassImportForm implements Serializable {
      *
      * @return String
      */
-    public String downloadDocket() {
-        logger.debug("generate docket for process list");
-        String rootpath = ConfigCore.getParameter("xsltFolder");
-        File xsltfile = new File(rootpath, "docket_multipage.xsl");
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            String fileName = "batch_docket" + ".pdf";
-            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-            String contentType = servletContext.getMimeType(fileName);
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-
-            // write docket to servlet output stream
-            try {
-                ServletOutputStream out = response.getOutputStream();
-                ExportDocket ern = new ExportDocket();
-                ern.startExport(this.processList, out, xsltfile.getAbsolutePath());
-                out.flush();
-            } catch (IOException e) {
-                logger.error("IOException while exporting run note", e);
-            }
-
-            facesContext.responseComplete();
-        }
-        return null;
+    public String downloadDocket() throws IOException {
+        serviceManager.getProcessService().downloadDocket(this.processList);
+        return "";
     }
 
     /**

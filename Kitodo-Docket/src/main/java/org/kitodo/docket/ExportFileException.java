@@ -9,15 +9,16 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.goobi.production;
+package org.kitodo.docket;
 
-import java.io.IOException;
-import java.io.OutputStream;
+public class ExportFileException extends Exception {
+    private static final long serialVersionUID = 8440137060804389036L;
 
-import org.kitodo.data.database.beans.Process;
+    public ExportFileException() {
+        super();
+    }
 
-public interface IProcessDataExport {
-
-    abstract void startExport(Process process, OutputStream os, String xsltFile) throws IOException;
-
+    public ExportFileException(String s) {
+        super(s);
+    }
 }

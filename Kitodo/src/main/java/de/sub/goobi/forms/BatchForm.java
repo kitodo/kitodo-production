@@ -19,26 +19,19 @@ import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
 import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
-import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.hibernate.Criteria;
@@ -240,17 +233,14 @@ public class BatchForm extends BasisForm {
      *
      * @return String
      */
-    public String downloadDocket() {
+    public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
-        String rootpath = ConfigCore.getParameter("xsltFolder");
-        File xsltfile = new File(rootpath, "docket_multipage.xsl");
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        List<Process> docket = Collections.emptyList();
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
         } else if (this.selectedBatches.size() == 1) {
             try {
-                docket = serviceManager.getBatchService().find(selectedBatches.get(0)).getProcesses();
+                serviceManager.getProcessService()
+                        .downloadDocket(serviceManager.getBatchService().find(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -258,27 +248,6 @@ public class BatchForm extends BasisForm {
             }
         } else {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
-        }
-        if (docket.size() > 0) {
-            if (!facesContext.getResponseComplete()) {
-                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-                String fileName = "batch_docket" + ".pdf";
-                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-                String contentType = servletContext.getMimeType(fileName);
-                response.setContentType(contentType);
-                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-
-                try {
-                    ServletOutputStream out = response.getOutputStream();
-                    ExportDocket ern = new ExportDocket();
-                    ern.startExport(docket, out, xsltfile.getAbsolutePath());
-                    out.flush();
-                } catch (IOException e) {
-                    logger.error("IOException while exporting run note", e);
-                }
-
-                facesContext.responseComplete();
-            }
         }
         return null;
     }

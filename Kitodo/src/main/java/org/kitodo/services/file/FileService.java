@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
@@ -95,7 +96,8 @@ public class FileService {
     }
 
     /**
-     * Creates a directory at a given URI with a given name with mapping/unmapping.
+     * Creates a directory at a given URI with a given name with
+     * mapping/unmapping.
      *
      * @param parentFolderUri
      *            the uri, where the directory should be created
@@ -116,8 +118,8 @@ public class FileService {
     }
 
     /**
-     * Creates a directory with a given name without
-     * mapping/unampping - actually with default data mapping.
+     * Creates a directory with a given name without mapping/unampping -
+     * actually with default data mapping.
      *
      * @param directoryName
      *            the name of the directory.
@@ -144,9 +146,10 @@ public class FileService {
     }
 
     /**
-     * Creates a directory with a name given and assigns permissions to the given
-     * user. Under Linux a script is used to set the file system permissions
-     * accordingly. This cannot be done from within java code before version 1.7.
+     * Creates a directory with a name given and assigns permissions to the
+     * given user. Under Linux a script is used to set the file system
+     * permissions accordingly. This cannot be done from within java code before
+     * version 1.7.
      *
      * @param dirName
      *            Name of directory to create
@@ -162,9 +165,9 @@ public class FileService {
     }
 
     /**
-     * This function implements file renaming. Renaming of files is full of mischief
-     * under Windows which unaccountably holds locks on files. Sometimes running the
-     * JVM’s garbage collector puts things right.
+     * This function implements file renaming. Renaming of files is full of
+     * mischief under Windows which unaccountably holds locks on files.
+     * Sometimes running the JVM’s garbage collector puts things right.
      *
      * @param fileUri
      *            File to rename
@@ -703,9 +706,9 @@ public class FileService {
     }
 
     /**
-     * This method is needed for migration purposes. It maps existing filePaths to
-     * the correct URI. File.separator doesn't work because on Windows it appends
-     * backslash to URI.
+     * This method is needed for migration purposes. It maps existing filePaths
+     * to the correct URI. File.separator doesn't work because on Windows it
+     * appends backslash to URI.
      *
      * @param process
      *            the process, the uri is needed for.
@@ -718,8 +721,8 @@ public class FileService {
     }
 
     /**
-     * Get's the URI for a Process Sub-location. Possible Locations are listed in
-     * ProcessSubType
+     * Get's the URI for a Process Sub-location. Possible Locations are listed
+     * in ProcessSubType
      *
      * @param process
      *            the process to get the sublocation for.

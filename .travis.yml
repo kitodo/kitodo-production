@@ -17,7 +17,10 @@ env: DB=mysql
 services:
   - mysql
 
-script: mvn clean install -Pall-tests,flyway,checkstyle-findbugs
+script: mvn clean install -Pall-tests,flyway,checkstyle-findbugs,!development
+
+# install: true is deactivating the separate install-step, which runs before the script
+install: true
 
 before_install:
 
