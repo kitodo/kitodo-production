@@ -41,7 +41,7 @@
          --%>
             function toAjaxUrl(url){
                 return url.replace(new RegExp("^.*?://[^/]+/(.*)$", ""), function($0, $1){
-                    return "${pageContext.request.contextPath}/" + $1 + "/about/rdf";
+                    return "${pageContext.request.contextPath}/" + $1 + "/about/lds.rdf";
                 });
             }
 
