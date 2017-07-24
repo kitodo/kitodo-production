@@ -28,11 +28,6 @@
     <name>Kitodo - Persistent Identifier</name>
     <url>https://github.com/kitodo/kitodo-production</url>
 
-    <properties>
-        <parent.basedir>${basedir}/../</parent.basedir>
-        <checkstyle.config.location>${parent.basedir}/config/checkstyle.xml</checkstyle.config.location>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.kitodo</groupId>
@@ -52,28 +47,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>../config-local</directory>
-            </resource>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.properties</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-    </build>
 </project>

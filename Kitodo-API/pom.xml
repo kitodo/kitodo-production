@@ -24,7 +24,4 @@
     <artifactId>kitodo-api</artifactId>
     <name>Kitodo - API</name>
 
-    <properties>
-        <parent.basedir>${basedir}/../</parent.basedir>
-    </properties>
 </project>
