@@ -11,7 +11,6 @@
 
 package org.kitodo.services.file;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -40,7 +39,6 @@ public class FileServiceIT {
      * MAX_WAIT_MILLIS is reached in the rename method. This is actually set to
      * 2,5 minutes, thats why I excludet it to an IT test.
      *
-     * @throws IOException
      */
     @Test
     public void testRenameFileWithLockedFile() throws IOException {
@@ -49,8 +47,7 @@ public class FileServiceIT {
         URI oldUri = fileService.createResource(URI.create("fileServiceTest"), "oldName.xml");
         Assert.assertTrue(fileService.fileExist(oldUri));
         // Open stream to file and lock it, so it cannot be renamed
-        FileOutputStream outputStream = new FileOutputStream(
-                new File(fileService.mapUriToKitodoDataDirectoryUri(oldUri)));
+        FileOutputStream outputStream = new FileOutputStream(fileService.getFile(oldUri));
         outputStream.getChannel().lock();
 
         try {

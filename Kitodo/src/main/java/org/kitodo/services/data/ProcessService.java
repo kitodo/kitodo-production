@@ -1085,8 +1085,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
         Fileformat ff = determineFileFormat(type, process);
         try {
-            ff.read(new File(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFileUri))
-                    .toString());
+            ff.read(serviceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setFehlerMeldung("metadataCorrupt");
