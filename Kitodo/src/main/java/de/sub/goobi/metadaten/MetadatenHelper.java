@@ -51,11 +51,9 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class MetadatenHelper implements Comparator<Object> {
     private static final Logger logger = LogManager.getLogger(MetadatenHelper.class);
-    public static final int PAGENUMBER_FIRST = 0;
-    public static final int PAGENUMBER_LAST = 1;
-
-    static ServiceManager serviceManager = new ServiceManager();
-
+    private static final int PAGENUMBER_FIRST = 0;
+    private static final int PAGENUMBER_LAST = 1;
+    private static ServiceManager serviceManager = new ServiceManager();
     private Prefs myPrefs;
     private DigitalDocument mydocument;
 
@@ -265,29 +263,23 @@ public class MetadatenHelper implements Comparator<Object> {
         List<DocStruct> alleDS = new ArrayList<>();
 
         /* alle Elemente des Parents durchlaufen */
-        // TODO: get rid of Iterators, use a for Loop instead
-        for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-            DocStruct tempDS = iter.next();
-
+        for (DocStruct child : parent.getAllChildren()) {
             /* wenn das aktuelle Element das zu verschiebende ist */
-            if (tempDS != inStruct) {
-                alleDS.add(tempDS);
+            if (child != inStruct) {
+                alleDS.add(child);
             } else {
-                if (iter.hasNext()) {
-                    alleDS.add(iter.next());
-                }
                 alleDS.add(inStruct);
             }
         }
 
         /* anschliessend alle Children entfernen */
-        for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-            parent.removeChild(iter.next());
+        for (DocStruct child : alleDS) {
+            parent.removeChild(child);
         }
 
         /* anschliessend die neue Childliste anlegen */
-        for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-            parent.addChild(iter.next());
+        for (DocStruct child : alleDS) {
+            parent.addChild(child);
         }
     }
 
@@ -366,10 +358,8 @@ public class MetadatenHelper implements Comparator<Object> {
     public void deleteAllUnusedElements(DocStruct inStruct) {
         inStruct.deleteUnusedPersonsAndMetadata();
         if (inStruct.getAllChildren() != null && inStruct.getAllChildren().size() > 0) {
-            // TODO: get rid of Iterators, use a for Loop instead
-            for (Iterator<DocStruct> it = inStruct.getAllChildren().iterator(); it.hasNext();) {
-                DocStruct ds = it.next();
-                deleteAllUnusedElements(ds);
+            for (DocStruct child : inStruct.getAllChildren()) {
+                deleteAllUnusedElements(child);
             }
         }
     }
