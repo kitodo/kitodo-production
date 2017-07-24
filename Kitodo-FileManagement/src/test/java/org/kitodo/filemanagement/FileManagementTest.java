@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -199,6 +200,7 @@ public class FileManagementTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldGetSubUris() throws Exception {
         URI directory = fileManagement.create(URI.create("fileTest"), "testSub", false);
         URI firstSub = fileManagement.create(directory, "first.txt", true);
@@ -206,6 +208,7 @@ public class FileManagementTest {
         URI thirdSub = fileManagement.create(directory, "third.jpg", true);
 
         ArrayList subUris = fileManagement.getSubUris(null, directory);
+        Collections.sort(subUris);
         Assert.assertEquals(subUris.get(0), firstSub);
         Assert.assertEquals(subUris.get(1), secondSub);
         Assert.assertEquals(subUris.get(2), thirdSub);
