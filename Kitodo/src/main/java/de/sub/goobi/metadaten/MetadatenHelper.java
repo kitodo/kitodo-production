@@ -54,12 +54,12 @@ public class MetadatenHelper implements Comparator<Object> {
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
     private static ServiceManager serviceManager = new ServiceManager();
-    private Prefs myPrefs;
-    private DigitalDocument mydocument;
+    private Prefs prefs;
+    private DigitalDocument digitalDocument;
 
     public MetadatenHelper(Prefs inPrefs, DigitalDocument inDocument) {
-        this.myPrefs = inPrefs;
-        this.mydocument = inDocument;
+        this.prefs = inPrefs;
+        this.digitalDocument = inDocument;
     }
 
     /**
@@ -94,8 +94,8 @@ public class MetadatenHelper implements Comparator<Object> {
             TypeNotAllowedForParentException {
         // inOldDocstruct.getType().getName()
         // + " soll werden zu " + inNewType);
-        DocStructType dst = this.myPrefs.getDocStrctTypeByName(inNewType);
-        DocStruct newDocstruct = this.mydocument.createDocStruct(dst);
+        DocStructType dst = this.prefs.getDocStrctTypeByName(inNewType);
+        DocStruct newDocstruct = this.digitalDocument.createDocStruct(dst);
         /*
          * alle Metadaten hinzufügen
          */
@@ -309,7 +309,7 @@ public class MetadatenHelper implements Comparator<Object> {
          * zuerst mal die addierbaren Metadatentypen ermitteln
          */
         List<String> types;
-        SelectItem myTypes[] = new SelectItem[0];
+        SelectItem[] myTypes = new SelectItem[0];
 
         try {
             if (!checkTypesFromParent) {
@@ -327,7 +327,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
         List<DocStructType> newTypes = new ArrayList<>();
         for (String tempTitel : types) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(tempTitel);
+            DocStructType dst = this.prefs.getDocStrctTypeByName(tempTitel);
             if (dst != null) {
                 newTypes.add(dst);
             } else {
@@ -404,7 +404,7 @@ public class MetadatenHelper implements Comparator<Object> {
                     final Reference secondReference = secondObject;
                     Integer firstPage = 0;
                     Integer secondPage = 0;
-                    final MetadataType mdt = MetadatenHelper.this.myPrefs.getMetadataTypeByName("physPageNumber");
+                    final MetadataType mdt = MetadatenHelper.this.prefs.getMetadataTypeByName("physPageNumber");
                     List<? extends Metadata> listMetadaten = firstReference.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
                         final Metadata meineSeite = listMetadaten.get(0);
@@ -419,7 +419,7 @@ public class MetadatenHelper implements Comparator<Object> {
                 }
             });
 
-            MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+            MetadataType mdt = this.prefs.getMetadataTypeByName("physPageNumber");
             List<? extends Metadata> listSeiten = listReferenzen.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
@@ -428,7 +428,7 @@ public class MetadatenHelper implements Comparator<Object> {
                 Metadata meineSeite = listSeiten.get(0);
                 rueckgabe += meineSeite.getValue();
             }
-            mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+            mdt = this.prefs.getMetadataTypeByName("logicalPageNumber");
             listSeiten = listReferenzen.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
@@ -644,7 +644,7 @@ public class MetadatenHelper implements Comparator<Object> {
             }
 
             if (addRole) {
-                types.add(this.myPrefs.getMetadataTypeByName(inRoleName));
+                types.add(this.prefs.getMetadataTypeByName(inRoleName));
             }
         }
         /*
