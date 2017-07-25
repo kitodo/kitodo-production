@@ -344,7 +344,7 @@
                             rendered="#{not Metadaten.modusHinzufuegen and not Metadaten.modusHinzufuegenPerson and not Metadaten.addMetadataGroupMode and not Metadaten.nurLesenModus}"
                             style="margin-top:10px">
                         <!-- Hinzufuegen-Schaltknopf fuer Person-->
-                        <h:commandLink id="l2" action="#{Metadaten.HinzufuegenPerson}" style="margin-left:2px"
+                        <h:commandLink id="l2" action="#{Metadaten.addPerson}" style="margin-left:2px"
                                        title="#{msgs.neuePersonAnlegen}"
                                        rendered="#{Metadaten.sizeOfRoles!=0}">
 
@@ -355,7 +355,7 @@
                         </h:commandLink>
                         <br/>
                         <!-- Hinzufuegen-Schaltknopf fuer Metadaten -->
-                        <h:commandLink id="l1" action="#{Metadaten.Hinzufuegen}" style="margin-left:2px"
+                        <h:commandLink id="l1" action="#{Metadaten.add}" style="margin-left:2px"
                                        title="#{msgs.neuesMetadatumAnlegen}"
                                        rendered="#{Metadaten.sizeOfMetadata!=0}">
                             <h:graphicImage value="/newpages/images/buttons/new.gif" alt="new metadata"

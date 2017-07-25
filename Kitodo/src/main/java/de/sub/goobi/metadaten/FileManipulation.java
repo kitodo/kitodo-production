@@ -450,7 +450,7 @@ public class FileManipulation {
             String[] pagesArray = new String[selectedFiles.size()];
             selectedFiles.toArray(pagesArray);
             metadataBean.setAlleSeitenAuswahl(pagesArray);
-            metadataBean.deleteSeltectedPages();
+            metadataBean.deleteSelectedPages();
             selectedFiles = new ArrayList<>();
             deleteFilesAfterMove = false;
         }

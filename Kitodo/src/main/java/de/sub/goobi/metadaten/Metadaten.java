@@ -114,11 +114,11 @@ public class Metadaten {
     private URI currentTifFolder;
     private List<URI> allTifFolders;
     /* Variablen für die Zuweisung der Seiten zu Strukturelementen */
-    private String alleSeitenAuswahl_ersteSeite;
-    private String alleSeitenAuswahl_letzteSeite;
-    private String[] alleSeitenAuswahl;
+    private String allPagesSelectionFirstPage;
+    private String allPagesSelectionLastPage;
+    private String[] allPagesSelection;
     private String[] structSeitenAuswahl;
-    private SelectItem alleSeiten[];
+    private SelectItem allPages[];
     private MetadatumImpl alleSeitenNeu[];
     private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
     private MetadatumImpl selectedMetadatum;
@@ -207,7 +207,7 @@ public class Metadaten {
      *
      * @return String
      */
-    public String Hinzufuegen() {
+    public String add() {
         this.modusHinzufuegen = true;
         Modes.setBindState(BindState.create);
         getMetadatum().setValue("");
@@ -222,7 +222,7 @@ public class Metadaten {
      *
      * @return String
      */
-    public String HinzufuegenPerson() {
+    public String addPerson() {
         this.modusHinzufuegenPerson = true;
         this.tempPersonNachname = "";
         this.tempPersonRecord = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
@@ -677,8 +677,8 @@ public class Metadaten {
             return Helper.getRequestParameter("zurueck");
         }
         this.myBenutzerID = Helper.getRequestParameter("BenutzerID");
-        this.alleSeitenAuswahl_ersteSeite = "";
-        this.alleSeitenAuswahl_letzteSeite = "";
+        this.allPagesSelectionFirstPage = "";
+        this.allPagesSelectionLastPage = "";
         this.zurueck = Helper.getRequestParameter("zurueck");
         String onlyRead = Helper.getRequestParameter("nurLesen");
         if (onlyRead != null) {
@@ -1348,11 +1348,11 @@ public class Metadaten {
 
         List<DocStruct> meineListe = mydocument.getPhysicalDocStruct().getAllChildren();
         if (meineListe == null) {
-            this.alleSeiten = null;
+            this.allPages = null;
             return;
         }
         int zaehler = meineListe.size();
-        this.alleSeiten = new SelectItem[zaehler];
+        this.allPages = new SelectItem[zaehler];
         this.alleSeitenNeu = new MetadatumImpl[zaehler];
         zaehler = 0;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
@@ -1360,7 +1360,7 @@ public class Metadaten {
             List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
             for (Metadata meineSeite : mySeitenDocStructMetadaten) {
                 this.alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.myProzess);
-                this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler),
+                this.allPages[zaehler] = new SelectItem(String.valueOf(zaehler),
                         determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
                                 + meineSeite.getValue());
             }
@@ -1468,9 +1468,9 @@ public class Metadaten {
      */
     public String Paginierung() {
 
-        int[] pageSelection = new int[alleSeitenAuswahl.length];
-        for (int i = 0; i < alleSeitenAuswahl.length; i++) {
-            pageSelection[i] = Integer.parseInt(alleSeitenAuswahl[i]);
+        int[] pageSelection = new int[allPagesSelection.length];
+        for (int i = 0; i < allPagesSelection.length; i++) {
+            pageSelection[i] = Integer.parseInt(allPagesSelection[i]);
         }
 
         Paginator.Mode mode;
@@ -1533,7 +1533,7 @@ public class Metadaten {
         /*
          * zum Schluss nochmal alle Seiten neu einlesen
          */
-        alleSeitenAuswahl = null;
+        allPagesSelection = null;
         retrieveAllImages();
         if (!updateBlocked()) {
             return "SperrungAbgelaufen";
@@ -2110,7 +2110,7 @@ public class Metadaten {
      * Current start page.
      */
     public void currentStartpage() {
-        for (SelectItem selectItem : this.alleSeiten) {
+        for (SelectItem selectItem : this.allPages) {
             if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
                 this.pagesStart = selectItem.getLabel();
             }
@@ -2121,7 +2121,7 @@ public class Metadaten {
      * Current end page.
      */
     public void currentEndpage() {
-        for (SelectItem selectItem : this.alleSeiten) {
+        for (SelectItem selectItem : this.allPages) {
             if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
                 this.pagesEnd = selectItem.getLabel();
             }
@@ -2152,8 +2152,8 @@ public class Metadaten {
     public List<String> getAjaxAlleSeiten(String prefix) {
         logger.debug("Ajax-Liste abgefragt");
         List<String> li = new ArrayList<>();
-        if (this.alleSeiten != null && this.alleSeiten.length > 0) {
-            for (SelectItem selectItem : this.alleSeiten) {
+        if (this.allPages != null && this.allPages.length > 0) {
+            for (SelectItem selectItem : this.allPages) {
                 if (selectItem.getLabel().contains(prefix)) {
                     li.add(selectItem.getLabel());
                 }
@@ -2173,14 +2173,14 @@ public class Metadaten {
          * alle Seiten durchlaufen und prüfen, ob die eingestellte Seite
          * überhaupt existiert
          */
-        for (SelectItem selectItem : this.alleSeiten) {
+        for (SelectItem selectItem : this.allPages) {
             if (selectItem.getLabel().equals(this.ajaxSeiteStart)) {
                 startseiteOk = true;
-                this.alleSeitenAuswahl_ersteSeite = (String) selectItem.getValue();
+                this.allPagesSelectionFirstPage = (String) selectItem.getValue();
             }
             if (selectItem.getLabel().equals(this.ajaxSeiteEnde)) {
                 endseiteOk = true;
-                this.alleSeitenAuswahl_letzteSeite = (String) selectItem.getValue();
+                this.allPagesSelectionLastPage = (String) selectItem.getValue();
             }
         }
 
@@ -2199,15 +2199,15 @@ public class Metadaten {
         if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
-        int anzahlAuswahl = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite)
-                - Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) + 1;
+        int anzahlAuswahl = Integer.parseInt(this.allPagesSelectionLastPage)
+                - Integer.parseInt(this.allPagesSelectionFirstPage) + 1;
         if (anzahlAuswahl > 0) {
             /* alle bisher zugewiesenen Seiten entfernen */
             this.myDocStruct.getAllToReferences().clear();
             int zaehler = 0;
             while (zaehler < anzahlAuswahl) {
                 this.myDocStruct.addReferenceTo(
-                        this.alleSeitenNeu[Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) + zaehler].getMd()
+                        this.alleSeitenNeu[Integer.parseInt(this.allPagesSelectionFirstPage) + zaehler].getMd()
                                 .getDocStruct(),
                         "logical_physical");
                 zaehler++;
@@ -2265,15 +2265,15 @@ public class Metadaten {
     public String imageShowLastPage() {
         this.bildAnzeigen = true;
         if (this.treeProperties.get("showpagesasajax")) {
-            for (SelectItem selectItem : this.alleSeiten) {
+            for (SelectItem selectItem : this.allPages) {
                 if (selectItem.getLabel().equals(this.ajaxSeiteEnde)) {
-                    this.alleSeitenAuswahl_letzteSeite = (String) selectItem.getValue();
+                    this.allPagesSelectionLastPage = (String) selectItem.getValue();
                     break;
                 }
             }
         }
         try {
-            int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite) - this.myBildNummer + 1;
+            int pageNumber = Integer.parseInt(this.allPagesSelectionLastPage) - this.myBildNummer + 1;
             identifyImage(pageNumber);
         } catch (Exception e) {
             logger.error(e);
@@ -2286,7 +2286,7 @@ public class Metadaten {
      */
     public String addPages() {
         /* alle markierten Seiten durchlaufen */
-        for (String page : this.alleSeitenAuswahl) {
+        for (String page : this.allPagesSelection) {
             int aktuelleID = Integer.parseInt(page);
             boolean schonEnthalten = false;
 
@@ -2311,7 +2311,7 @@ public class Metadaten {
             }
         }
         determinePagesStructure(this.myDocStruct);
-        this.alleSeitenAuswahl = null;
+        this.allPagesSelection = null;
         if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
@@ -2536,16 +2536,16 @@ public class Metadaten {
         this.tempPersonVorname = tempPersonVorname;
     }
 
-    public String[] getAlleSeitenAuswahl() {
-        return this.alleSeitenAuswahl;
+    public String[] getAllPagesSelection() {
+        return this.allPagesSelection;
     }
 
-    public void setAlleSeitenAuswahl(String[] alleSeitenAuswahl) {
-        this.alleSeitenAuswahl = alleSeitenAuswahl;
+    public void setAlleSeitenAuswahl(String[] allPagesSelection) {
+        this.allPagesSelection = allPagesSelection;
     }
 
-    public SelectItem[] getAlleSeiten() {
-        return this.alleSeiten;
+    public SelectItem[] getAllPages() {
+        return this.allPages;
     }
 
     /**
@@ -2690,20 +2690,20 @@ public class Metadaten {
         }
     }
 
-    public String getAlleSeitenAuswahl_ersteSeite() {
-        return this.alleSeitenAuswahl_ersteSeite;
+    public String getAllPagesSelectionFirstPage() {
+        return this.allPagesSelectionFirstPage;
     }
 
-    public void setAlleSeitenAuswahl_ersteSeite(String alleSeitenAuswahl_ersteSeite) {
-        this.alleSeitenAuswahl_ersteSeite = alleSeitenAuswahl_ersteSeite;
+    public void setAllPagesSelectionFirstPagee(String allPagesSelectionFirstPage) {
+        this.allPagesSelectionFirstPage = allPagesSelectionFirstPage;
     }
 
-    public String getAlleSeitenAuswahl_letzteSeite() {
-        return this.alleSeitenAuswahl_letzteSeite;
+    public String getAllPagesSelectionLastPage() {
+        return this.allPagesSelectionLastPage;
     }
 
-    public void setAlleSeitenAuswahl_letzteSeite(String alleSeitenAuswahl_letzteSeite) {
-        this.alleSeitenAuswahl_letzteSeite = alleSeitenAuswahl_letzteSeite;
+    public void setAllPagesSelectionLastPage(String allPagesSelectionLastPage) {
+        this.allPagesSelectionLastPage = allPagesSelectionLastPage;
     }
 
     /**
@@ -2879,12 +2879,12 @@ public class Metadaten {
     public List<String> autocomplete(Object suggest) {
         String pref = (String) suggest;
         ArrayList<String> result = new ArrayList<>();
-        ArrayList<String> alle = new ArrayList<>();
-        for (SelectItem si : this.alleSeiten) {
-            alle.add(si.getLabel());
+        ArrayList<String> all = new ArrayList<>();
+        for (SelectItem si : this.allPages) {
+            all.add(si.getLabel());
         }
 
-        Iterator<String> iterator = alle.iterator();
+        Iterator<String> iterator = all.iterator();
         while (iterator.hasNext()) {
             String elem = iterator.next();
             if (elem != null && elem.contains(pref) || "".equals(pref)) {
@@ -2938,7 +2938,7 @@ public class Metadaten {
     public void moveSeltectedPagesUp() {
         List<Integer> selectedPages = new ArrayList<>();
         List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
-        List<String> pageNoList = Arrays.asList(alleSeitenAuswahl);
+        List<String> pageNoList = Arrays.asList(allPagesSelection);
         for (String order : pageNoList) {
             int currentPhysicalPageNo = Integer.parseInt(order);
             if (currentPhysicalPageNo == 0) {
@@ -2958,7 +2958,7 @@ public class Metadaten {
             newSelectionList.add(String.valueOf(pageIndex - 1));
         }
 
-        alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
+        allPagesSelection = newSelectionList.toArray(new String[newSelectionList.size()]);
 
         retrieveAllImages();
         identifyImage(0);
@@ -2970,11 +2970,11 @@ public class Metadaten {
     public void moveSeltectedPagesDown() {
         List<Integer> selectedPages = new ArrayList<>();
         List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
-        List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
+        List<String> pagesList = Arrays.asList(allPagesSelection);
         Collections.reverse(pagesList);
         for (String order : pagesList) {
             int currentPhysicalPageNo = Integer.parseInt(order);
-            if (currentPhysicalPageNo + 1 == alleSeiten.length) {
+            if (currentPhysicalPageNo + 1 == this.allPages.length) {
                 break;
             }
             selectedPages.add(currentPhysicalPageNo);
@@ -2985,13 +2985,13 @@ public class Metadaten {
         }
         List<String> newSelectionList = new ArrayList<>();
         for (Integer pageIndex : selectedPages) {
-            DocStruct firstpage = allPages.get(pageIndex + 1);
-            DocStruct secondpage = allPages.get(pageIndex);
-            switchFileNames(firstpage, secondpage);
+            DocStruct firstPage = allPages.get(pageIndex + 1);
+            DocStruct secondPage = allPages.get(pageIndex);
+            switchFileNames(firstPage, secondPage);
             newSelectionList.add(String.valueOf(pageIndex + 1));
         }
 
-        alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
+        allPagesSelection = newSelectionList.toArray(new String[newSelectionList.size()]);
         retrieveAllImages();
         identifyImage(0);
     }
@@ -2999,10 +2999,10 @@ public class Metadaten {
     /**
      * Delete selected pages.
      */
-    public void deleteSeltectedPages() throws IOException {
+    public void deleteSelectedPages() throws IOException {
         List<Integer> selectedPages = new ArrayList<>();
         List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
-        List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
+        List<String> pagesList = Arrays.asList(allPagesSelection);
         Collections.reverse(pagesList);
         for (String order : pagesList) {
             int currentPhysicalPageNo = Integer.parseInt(order);
@@ -3016,9 +3016,9 @@ public class Metadaten {
         for (Integer pageIndex : selectedPages) {
 
             DocStruct pageToRemove = allPages.get(pageIndex);
-            String imagename = pageToRemove.getImageName();
+            String imageName = pageToRemove.getImageName();
 
-            removeImage(imagename);
+            removeImage(imageName);
             mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
 
             mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
@@ -3029,7 +3029,7 @@ public class Metadaten {
 
         }
 
-        alleSeitenAuswahl = null;
+        allPagesSelection = null;
         if (mydocument.getPhysicalDocStruct().getAllChildren() != null) {
             myBildLetztes = mydocument.getPhysicalDocStruct().getAllChildren().size();
         } else {

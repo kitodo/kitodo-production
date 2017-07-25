@@ -274,7 +274,7 @@
 
         #########################################-->
 
-        <h:panelGroup rendered="#{Metadaten.alleSeiten !=null}">
+        <h:panelGroup rendered="#{Metadaten.allPages !=null}">
 
             <!-- ++++++++++++++++ Zuweisung der ersten und letzten Seite     ++++++++++++++++ -->
             <table cellpadding="3" cellspacing="0" width="350px" class="eingabeBoxen" style="margin-top:20px">
@@ -316,8 +316,8 @@
 
                             <h:selectOneMenu style="width: 200px"
                                              rendered="#{Metadaten.treeProperties.showpagesasajax==false}"
-                                             value="#{Metadaten.alleSeitenAuswahl_ersteSeite}">
-                                <f:selectItems value="#{Metadaten.alleSeiten}"/>
+                                             value="#{Metadaten.allPagesSelectionFirstPage}">
+                                <f:selectItems value="#{Metadaten.allPages}"/>
                             </h:selectOneMenu>
 
                             <h:commandLink action="#{Metadaten.imageShowLastPage}">
@@ -337,8 +337,8 @@
                             </h:panelGroup>
                             <h:selectOneMenu style="width: 200px"
                                              rendered="#{Metadaten.treeProperties.showpagesasajax==false}"
-                                             value="#{Metadaten.alleSeitenAuswahl_letzteSeite}">
-                                <f:selectItems value="#{Metadaten.alleSeiten}"/>
+                                             value="#{Metadaten.allPagesSelectionLastPage}">
+                                <f:selectItems value="#{Metadaten.allPages}"/>
                             </h:selectOneMenu>
                         </h:panelGrid>
                     </td>
@@ -378,8 +378,8 @@
                     </h3>
 
                     <t:selectManyListbox style="font-size:12px;height:300px;width:150px"
-                                         value="#{Metadaten.alleSeitenAuswahl}">
-                        <f:selectItems value="#{Metadaten.alleSeiten}"/>
+                                         value="#{Metadaten.allPagesSelection}">
+                        <f:selectItems value="#{Metadaten.allPages}"/>
                     </t:selectManyListbox>
 
                 </h:panelGroup>
