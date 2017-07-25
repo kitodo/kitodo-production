@@ -84,7 +84,7 @@
                                 </h:selectOneMenu>
                                 <br/>
                                 <t:inputText id="paginierungWert" forceId="true"
-                                             value="#{Metadaten.paginierungWert}"
+                                             value="#{Metadaten.paginationValue}"
                                              style="width: 270px;margin-top:10px;margin-bottom:5px;margin-left:5px"/>
                                 <br/>
 
@@ -93,101 +93,101 @@
                                     <h:outputLabel for="checkbox-fictitious" value="#{msgs.paginationFictitious}"/>
                                 </div>
 
-                                <h:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=1}"
+                                <h:commandLink rendered="#{Metadaten.paginationPagesProImage!=1}"
                                                  title="#{msgs.seitenzaehlung}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_seite_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="1"
-                                                            property="#{Metadaten.paginierungSeitenProImage}"/>
+                                                            property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginierungSeitenProImage==1}"
+                                        rendered="#{Metadaten.paginationPagesProImage==1}"
                                         value="/newpages/images/buttons/paginierung_seite.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlung}"/>
 
-                                <h:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=2}"
+                                <h:commandLink rendered="#{Metadaten.paginationPagesProImage!=2}"
                                                  title="#{msgs.spaltenzaehlung}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_spalte_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="2"
-                                                            property="#{Metadaten.paginierungSeitenProImage}"/>
+                                                            property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginierungSeitenProImage==2}"
+                                        rendered="#{Metadaten.paginationPagesProImage==2}"
                                         value="/newpages/images/buttons/paginierung_spalte.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.spaltenzaehlung}"/>
 
-                                <h:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=3}"
+                                <h:commandLink rendered="#{Metadaten.paginationPagesProImage!=3}"
                                                  title="#{msgs.blattzaehlung}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_blatt_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="3"
-                                                            property="#{Metadaten.paginierungSeitenProImage}"/>
+                                                            property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginierungSeitenProImage==3}"
+                                        rendered="#{Metadaten.paginationPagesProImage==3}"
                                         value="/newpages/images/buttons/paginierung_blatt.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.blattzaehlung}"/>
 
                                 <h:commandLink
-                                        rendered="#{Metadaten.paginierungSeitenProImage!=4}"
+                                        rendered="#{Metadaten.paginationPagesProImage!=4}"
                                         title="#{msgs.blattzaehlungrectoverso}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_blatt_rectoverso_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="4"
-                                                            property="#{Metadaten.paginierungSeitenProImage}"/>
+                                                            property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginierungSeitenProImage==4}"
+                                        rendered="#{Metadaten.paginationPagesProImage==4}"
                                         value="/newpages/images/buttons/paginierung_blatt_rectoverso.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.blattzaehlungrectoverso}"/>
 
                                 <h:commandLink
-                                        rendered="#{Metadaten.paginierungSeitenProImage!=5}"
+                                        rendered="#{Metadaten.paginationPagesProImage!=5}"
                                         title="#{msgs.seitenzaehlungrectoverso}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="5"
-                                                            property="#{Metadaten.paginierungSeitenProImage}"/>
+                                                            property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginierungSeitenProImage==5}"
+                                        rendered="#{Metadaten.paginationPagesProImage==5}"
                                         value="/newpages/images/buttons/paginierung_seite_rectoverso.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlungrectoverso}"/>
 
                                 <h:commandLink
-                                        rendered="#{Metadaten.paginierungSeitenProImage!=6}"
+                                        rendered="#{Metadaten.paginationPagesProImage!=6}"
                                         title="#{msgs.seitenzaehlungdoppelseiten}">
                                     <f:ajax render="PaginierungActionBox,myMessages,mygrid10"/>
                                     <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_doppelseite_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="6"
-                                                            property="#{Metadaten.paginierungSeitenProImage}"/>
+                                                            property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginierungSeitenProImage==6}"
+                                        rendered="#{Metadaten.paginationPagesProImage==6}"
                                         value="/newpages/images/buttons/paginierung_doppelseite.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlungdoppelseiten}"/>
 
                                 <br/>
-                                <ui:fragment rendered="#{Metadaten.paginierungSeitenProImage>=5}">
+                                <ui:fragment rendered="#{Metadaten.paginationPagesProImage>=5}">
                                     <div style=" margin-left: 6px; margin-top: 8px;">
                                         <h:outputText value="#{msgs.pageSeparator}: "/>
                                         <h:selectOneMenu value="#{Metadaten.paginierungSeparator}">
@@ -198,16 +198,16 @@
                                 </ui:fragment>
                                 <br/>
 
-                                <h:commandLink id="s4" action="#{Metadaten.Paginierung}" style="margin-top:15px">
+                                <h:commandLink id="s4" action="#{Metadaten.changePagination}" style="margin-top:15px">
                                     <f:ajax render="PaginierungAlleImages myMessages mygrid10"/>
                                     <h:outputText value="#{msgs.nurDieMarkiertenSeiten}"/>
-                                    <t:updateActionListener property="#{Metadaten.paginierungAbSeiteOderMarkierung}" value="2"/>
+                                    <t:updateActionListener property="#{Metadaten.paginationFromPageOrMark}" value="2"/>
                                 </h:commandLink>
                                 <br style="margin-top:15px"/>
-                                <h:commandLink id="s5" action="#{Metadaten.Paginierung}" style="margin-top:15px">
+                                <h:commandLink id="s5" action="#{Metadaten.changePagination}" style="margin-top:15px">
                                     <f:ajax render="PaginierungAlleImages,myMessages,mygrid10"/>
                                     <h:outputText value="#{msgs.abDerErstenMarkiertenSeite}"/>
-                                    <t:updateActionListener property="#{Metadaten.paginierungAbSeiteOderMarkierung}" value="1"/>
+                                    <t:updateActionListener property="#{Metadaten.paginationFromPageOrMark}" value="1"/>
                                 </h:commandLink>
                             </td>
                         </tr>

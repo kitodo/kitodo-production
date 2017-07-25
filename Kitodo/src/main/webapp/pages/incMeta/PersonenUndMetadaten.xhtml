@@ -20,7 +20,7 @@
     >
 
     <h:panelGroup
-    rendered="#{(not Metadaten.modusHinzufuegen) and (not Metadaten.modusHinzufuegenPerson) and (not Metadaten.addMetadataGroupMode)}">
+    rendered="#{(not Metadaten.modeAdd) and (not Metadaten.modeAddPerson) and (not Metadaten.addMetadataGroupMode)}">
 
 
         <!-- ########################################
@@ -33,9 +33,9 @@
                 <td>
                     <!-- passende Ueberschrift -->
                     <h3 style="margin-top:10px">
-                        <h:outputText value="#{msgs.metadatenBearbeiten}" rendered="#{not Metadaten.nurLesenModus}"/>
-                        <h:outputText value="#{msgs.metadatenBetrachten}" rendered="#{Metadaten.nurLesenModus}"/>
-                        <h:outputText value=" (#{msgs.schreibgeschuetzt})" rendered="#{Metadaten.nurLesenModus}"
+                        <h:outputText value="#{msgs.metadatenBearbeiten}" rendered="#{not Metadaten.modeOnlyRead}"/>
+                        <h:outputText value="#{msgs.metadatenBetrachten}" rendered="#{Metadaten.modeOnlyRead}"/>
+                        <h:outputText value=" (#{msgs.schreibgeschuetzt})" rendered="#{Metadaten.modeOnlyRead}"
                                       style="color: red"/>
                     </h3>
                 </td>
@@ -65,28 +65,28 @@
                     <h:panelGrid columns="2">
                         <h:outputText value="#{msgs.rolle}" style="font-size: 11px"/>
                         <h:selectOneMenu value="#{Item.rolle}" styleClass="metadatenInput" style="width: 350px;"
-                                         disabled="#{Metadaten.nurLesenModus}"
-                                         onchange="styleAnpassenPerson(this)" readonly="#{Metadaten.nurLesenModus}">
+                                         disabled="#{Metadaten.modeOnlyRead}"
+                                         onchange="styleAnpassenPerson(this)" readonly="#{Metadaten.modeOnlyRead}">
                             <f:selectItems value="#{Item.addableRollen}"/>
                             <f:ajax event="mouseup"/>
                         </h:selectOneMenu>
                         <h:outputText value="#{msgs.normDataRecord}" style="font-size: 11px"/>
                         <h:inputText value="#{Item.record}" onchange="styleAnpassen(this)" styleClass="metadatenInput"
                                      style="width: 350px;"
-                                     readonly="#{Metadaten.nurLesenModus}" id="record"/>
+                                     readonly="#{Metadaten.modeOnlyRead}" id="record"/>
                         <h:outputText value="#{msgs.vorname}" style="font-size: 11px"/>
                         <h:inputText value="#{Item.vorname}" onchange="styleAnpassen(this)" styleClass="metadatenInput"
                                      style="width: 350px;"
-                                     readonly="#{Metadaten.nurLesenModus}" id="firstname"/>
+                                     readonly="#{Metadaten.modeOnlyRead}" id="firstname"/>
                         <h:outputText value="#{msgs.nachname}" style="font-size: 11px"/>
                         <h:inputText value="#{Item.nachname}" onkeyup="astyleAnpassenPerson(this)"
                                      onchange="styleAnpassen(this)" styleClass="metadatenInput"
-                                     style="width: 350px;" readonly="#{Metadaten.nurLesenModus}" id="lastname"/>
+                                     style="width: 350px;" readonly="#{Metadaten.modeOnlyRead}" id="lastname"/>
                     </h:panelGrid>
                 </h:column>
 
                 <!-- Link fuer Details -->
-                <h:column rendered="#{not Metadaten.nurLesenModus}">
+                <h:column rendered="#{not Metadaten.modeOnlyRead}">
                     <!-- copy-Schaltknopf -->
                     <h:commandLink id="l7" action="#{Metadaten.copyPerson}" title="#{msgs.personendatenKopieren}">
                         <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
@@ -122,7 +122,7 @@
 
             <f:ajax event="keyup"/>
 
-            <table style="#{Metadaten.nurLesenModus ? '' : 'min-width: 536px; '}">
+            <table style="#{Metadaten.modeOnlyRead ? '' : 'min-width: 536px; '}">
                 <t:dataList var="aGroup" value="#{Metadaten.myGroups}"
                             layout="simple">
                     <t:dataList var="member" value="#{aGroup.members}" layout="simple">
@@ -137,19 +137,19 @@
                                     <h:outputText value="#{member.label}"/>
                                 </td>
                                 <td colspan="2" class="mdgroup">
-                                    <h:inputTextarea value="#{member.value}" readonly="#{Metadaten.nurLesenModus}"
+                                    <h:inputTextarea value="#{member.value}" readonly="#{Metadaten.modeOnlyRead}"
                                                      styleClass="metadatenInput"
                                                      rendered="#{member.class.simpleName == 'RenderableLineEdit'}"/>
                                     <h:inputText value="#{member.value}" styleClass="metadatenInput"
-                                                 readonly="#{Metadaten.nurLesenModus}"
+                                                 readonly="#{Metadaten.modeOnlyRead}"
                                                  rendered="#{member.class.simpleName == 'RenderableEdit' and not member.readonly}"/>
-                                    <h:selectManyListbox value="#{member.selectedItems}" readonly="#{Metadaten.nurLesenModus}"
+                                    <h:selectManyListbox value="#{member.selectedItems}" readonly="#{Metadaten.modeOnlyRead}"
                                                          styleClass="metadatenInput"
                                                          rendered="#{member.class.simpleName == 'RenderableListBox'}">
                                         <f:selectItems value="#{member.items}"/>
                                         <f:ajax event="mouseup"/>
                                     </h:selectManyListbox>
-                                    <h:selectOneMenu value="#{member.value}" readonly="#{Metadaten.nurLesenModus}"
+                                    <h:selectOneMenu value="#{member.value}" readonly="#{Metadaten.modeOnlyRead}"
                                                      styleClass="metadatenInput"
                                                      rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
                                         <f:selectItems value="#{member.items}"/>
@@ -162,11 +162,11 @@
                                     <td rowspan="#{aGroup.rowspan}"
                                             class="mdgroup">
                                         <h:commandLink action="#{aGroup.copy}"
-                                                       rendered="#{aGroup.copyable and not Metadaten.nurLesenModus}"
+                                                       rendered="#{aGroup.copyable and not Metadaten.modeOnlyRead}"
                                                        title="#{msgs.metadatenKopieren}">
                                             <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
                                         </h:commandLink>
-                                        <h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.nurLesenModus}"
+                                        <h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.modeOnlyRead}"
                                                        title="#{msgs.metadatenLoeschen}">
                                             <h:graphicImage alt="delete"
                                                     value="/newpages/images/buttons/waste1a_20px.gif"
@@ -194,20 +194,20 @@
                                     <h:outputText value="#{innerMember.label}"/>
                                 </td>
                                 <td class="mdgroup">
-                                    <h:inputTextarea value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
+                                    <h:inputTextarea value="#{innerMember.value}" readonly="#{Metadaten.modeOnlyRead}"
                                                      styleClass="metadatenInput"
                                                      rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}"/>
-                                    <h:inputText value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
+                                    <h:inputText value="#{innerMember.value}" readonly="#{Metadaten.modeOnlyRead}"
                                                  styleClass="metadatenInput"
                                                  rendered="#{innerMember.class.simpleName == 'RenderableEdit' and not innerMember.readonly}"/>
                                     <h:selectManyListbox value="#{innerMember.selectedItems}"
-                                                         readonly="#{Metadaten.nurLesenModus}"
+                                                         readonly="#{Metadaten.modeOnlyRead}"
                                                          styleClass="metadatenInput"
                                                          rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
                                         <f:selectItems value="#{innerMember.items}"/>
                                         <f:ajax event="mouseup"/>
                                     </h:selectManyListbox>
-                                    <h:selectOneMenu value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
+                                    <h:selectOneMenu value="#{innerMember.value}" readonly="#{Metadaten.modeOnlyRead}"
                                                      styleClass="metadatenInput"
                                                      rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
                                         <f:selectItems value="#{innerMember.items}"/>
@@ -220,11 +220,11 @@
                                     <td rowspan="#{aGroup.rowspan}"
                                             class="mdgroup">
                                         <h:commandLink action="#{aGroup.copy}"
-                                                       rendered="#{aGroup.copyable and not Metadaten.nurLesenModus}"
+                                                       rendered="#{aGroup.copyable and not Metadaten.modeOnlyRead}"
                                                        title="#{msgs.metadatenKopieren}">
                                             <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
                                         </h:commandLink>
-                                        <h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.nurLesenModus}"
+                                        <h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.modeOnlyRead}"
                                                        title="#{msgs.metadatenLoeschen}">
                                             <h:graphicImage alt="delete"
                                                     value="/newpages/images/buttons/waste1a_20px.gif"
@@ -271,7 +271,7 @@
                 <h:column>
                     <h:panelGrid columns="1" rendered="#{(Item.outputType == 'textarea')}">
 
-                        <h:inputTextarea value="#{Item.value}" immediate="true" readonly="#{Metadaten.nurLesenModus}"
+                        <h:inputTextarea value="#{Item.value}" immediate="true" readonly="#{Metadaten.modeOnlyRead}"
                                          onchange="styleAnpassen(this)"
                                          styleClass="metadatenInput" style="width: 350px;height: 45px;">
                             <f:ajax event="mouseup"/>
@@ -281,7 +281,7 @@
                     <h:panelGrid columns="1" rendered="#{(Item.outputType == 'input')}">
                         <h:inputText value="#{Item.value}" onchange="styleAnpassen(this)" styleClass="metadatenInput"
                                      style="width: 350px;"
-                                     readonly="#{Metadaten.nurLesenModus}"/>
+                                     readonly="#{Metadaten.modeOnlyRead}"/>
                         <f:ajax event="mouseup"/>
 
                     </h:panelGrid>
@@ -289,13 +289,13 @@
 
                     <h:selectManyListbox onselect="styleAnpassen(this)" value="#{Item.selectedItems}"
                                          rendered="#{(Item.outputType == 'select')}"
-                                         readonly="#{Metadaten.nurLesenModus}">
+                                         readonly="#{Metadaten.modeOnlyRead}">
                         <f:selectItems value="#{Item.items}" itemValue="#{element.label}" var="element"
                                         itemLabel="#{element.label}"/>
                         <f:ajax event="change"/>
                     </h:selectManyListbox>
                     <h:selectOneMenu value="#{Item.selectedItem}" rendered="#{(Item.outputType == 'select1')}"
-                                     readonly="#{Metadaten.nurLesenModus}">
+                                     readonly="#{Metadaten.modeOnlyRead}">
                         <f:selectItems value="#{Item.items}" itemValue="#{element.label}" var="element"
                                         itemLabel="#{element.label}"/>
                         <f:ajax event="change"/>
@@ -307,7 +307,7 @@
 
 
                 <!-- Link fuer Details -->
-                <h:column rendered="#{not Metadaten.nurLesenModus}">
+                <h:column rendered="#{not Metadaten.modeOnlyRead}">
                     <!-- copy-Schaltknopf -->
                     <h:commandLink id="l5" action="#{Metadaten.copy}" title="#{msgs.metadatenKopieren}">
                         <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
@@ -341,7 +341,7 @@
             <tr>
                 <td>
                     <h:panelGroup
-                            rendered="#{not Metadaten.modusHinzufuegen and not Metadaten.modusHinzufuegenPerson and not Metadaten.addMetadataGroupMode and not Metadaten.nurLesenModus}"
+                            rendered="#{not Metadaten.modeAdd and not Metadaten.modeAddPerson and not Metadaten.addMetadataGroupMode and not Metadaten.modeOnlyRead}"
                             style="margin-top:10px">
                         <!-- Hinzufuegen-Schaltknopf fuer Person-->
                         <h:commandLink id="l2" action="#{Metadaten.addPerson}" style="margin-left:2px"

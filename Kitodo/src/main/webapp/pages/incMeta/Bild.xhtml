@@ -222,7 +222,7 @@
                 <!-- gehezu-Schaltknopf -->
                 <h:outputText value="#{msgs.geheZuBild}:" style="margin-left:5px;margin-right:0px;font-size: 12px"
                               title="#{msgs.geheZuImage}"/>
-                <h:inputText value="#{Metadaten.bildNummerGeheZu}"
+                <h:inputText value="#{Metadaten.imageNumberToGo}"
                              onkeypress="return submitEnter('formularBild:goButton',event)"
                              style="width:30px;border-style: solid;border-color: silver;border-width: 1px"/>
                 <h:commandButton value="go" id="goButton"
@@ -243,7 +243,7 @@
                 <!-- Verlinkung des Bildes mit dem gewaehlten Strukturelement -->
                 <h:outputText value="#{msgs.bildVerlinken}:" style="margin-left:13px;font-size: 12px"
                               title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
-                <h:selectBooleanCheckbox value="#{Metadaten.bildZuStrukturelement}"
+                <h:selectBooleanCheckbox value="#{Metadaten.imageToStructuralElement}"
                                          onclick="document.getElementById('formularBild:goButton').click();"
                                          style="margin-left:4px" title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
 
@@ -295,7 +295,7 @@
                          rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}">
             <f:selectItems value="#{Metadaten.allPages}"/>
         </h:selectOneMenu>
-        <h:commandButton action="#{Metadaten.Reload}" value="#{msgs.uebernehmen}"
+        <h:commandButton action="#{Metadaten.reload}" value="#{msgs.uebernehmen}"
                          rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
     </h:panelGrid>
 
