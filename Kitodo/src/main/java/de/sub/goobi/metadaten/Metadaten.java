@@ -1187,13 +1187,13 @@ public class Metadaten {
             }
 
             /* anschliessend alle Childs entfernen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.removeChild(iter.next());
+            for (DocStruct docStruct : alleDS) {
+                parent.removeChild(docStruct);
             }
 
             /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
+            for (DocStruct docStruct : alleDS) {
+                parent.addChild(docStruct);
             }
         }
 
@@ -1221,13 +1221,13 @@ public class Metadaten {
             }
 
             /* anschliessend alle Childs entfernen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.removeChild(iter.next());
+            for (DocStruct docStruct : alleDS) {
+                parent.removeChild(docStruct);
             }
 
             /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
+            for (DocStruct docStruct : alleDS) {
+                parent.addChild(docStruct);
             }
         }
 
@@ -1251,8 +1251,8 @@ public class Metadaten {
             }
 
             /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
+            for (DocStruct docStruct : alleDS) {
+                parent.addChild(docStruct);
             }
         }
 
@@ -2885,11 +2885,9 @@ public class Metadaten {
             all.add(si.getLabel());
         }
 
-        Iterator<String> iterator = all.iterator();
-        while (iterator.hasNext()) {
-            String elem = iterator.next();
-            if (elem != null && elem.contains(pref) || "".equals(pref)) {
-                result.add(elem);
+        for (String element : all) {
+            if (element != null && element.contains(pref) || "".equals(pref)) {
+                result.add(element);
             }
         }
         return result;
