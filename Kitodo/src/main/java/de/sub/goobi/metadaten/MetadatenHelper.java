@@ -63,6 +63,24 @@ public class MetadatenHelper implements Comparator<Object> {
     }
 
     /**
+     * Getter for final value PAGENUMBER_FIRST.
+     *
+     * @return PAGENUMBER_FIRST
+     */
+    public static int getPageNumberFirst() {
+        return PAGENUMBER_FIRST;
+    }
+
+    /**
+     * Getter for final value PAGENUMBER_LAST.
+     *
+     * @return PAGENUMBER_LAST
+     */
+    public static int getPageNumberLast() {
+        return PAGENUMBER_LAST;
+    }
+
+    /**
      * Change current document structure.
      *
      * @param inOldDocstruct
