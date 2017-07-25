@@ -188,7 +188,7 @@ public class MetadatenImagesHelper {
             for (DocStruct pageToRemove : pageElementsWithoutImages) {
                 physicaldocstruct.removeChild(pageToRemove);
                 List<Reference> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-                for (ugh.dl.Reference ref : refs) {
+                for (Reference ref : refs) {
                     ref.getSource().removeReferenceTo(pageToRemove);
                 }
             }
@@ -200,22 +200,14 @@ public class MetadatenImagesHelper {
                 try {
                     // physical page no
                     physicaldocstruct.addChild(dsPage);
-                    MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
-                    Metadata mdTemp = new Metadata(mdt);
-                    mdTemp.setValue(String.valueOf(++currentPhysicalOrder));
-                    dsPage.addMetadata(mdTemp);
+                    dsPage.addMetadata(createMetadataForPhysicalPageNumber(currentPhysicalOrder));
 
                     // logical page no
-                    mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-                    mdTemp = new Metadata(mdt);
-                    mdTemp.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
-                    dsPage.addMetadata(mdTemp);
+                    dsPage.addMetadata(createMetadataForLogicalPageNumber(currentPhysicalOrder, defaultPagination));
                     log.addReferenceTo(dsPage, "logical_physical");
 
                     // image name
-                    ContentFile cf = new ContentFile();
-                    cf.setLocation(createContentFileLocation(process, newImage));
-                    dsPage.addContentFile(cf);
+                    dsPage.addContentFile(createContentFile(process, newImage));
 
                 } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                     logger.error(e);
@@ -228,9 +220,7 @@ public class MetadatenImagesHelper {
                     // assign new image name to page
                     URI newImageName = imagesWithoutPageElements.get(0);
                     imagesWithoutPageElements.remove(0);
-                    ContentFile cf = new ContentFile();
-                    cf.setLocation(createContentFileLocation(process, newImageName));
-                    page.addContentFile(cf);
+                    page.addContentFile(createContentFile(process, newImageName));
                 } else {
                     // remove page
                     physicaldocstruct.removeChild(page);
@@ -248,22 +238,14 @@ public class MetadatenImagesHelper {
                     try {
                         // physical page no
                         physicaldocstruct.addChild(dsPage);
-                        MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
-                        Metadata mdTemp = new Metadata(mdt);
-                        mdTemp.setValue(String.valueOf(++currentPhysicalOrder));
-                        dsPage.addMetadata(mdTemp);
+                        dsPage.addMetadata(createMetadataForPhysicalPageNumber(currentPhysicalOrder));
 
                         // logical page no
-                        mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-                        mdTemp = new Metadata(mdt);
-                        mdTemp.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
-                        dsPage.addMetadata(mdTemp);
+                        dsPage.addMetadata(createMetadataForLogicalPageNumber(currentPhysicalOrder, defaultPagination));
                         log.addReferenceTo(dsPage, "logical_physical");
 
                         // image name
-                        ContentFile cf = new ContentFile();
-                        cf.setLocation(createContentFileLocation(process, newImage));
-                        dsPage.addContentFile(cf);
+                        dsPage.addContentFile(createContentFile(process, newImage));
                     } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                         logger.error(e);
                     }
@@ -289,17 +271,51 @@ public class MetadatenImagesHelper {
     }
 
     /**
-     * Create path as String for content file location.
+     * Create Metadata for logical page number.
+     * 
+     * @param currentPhysicalOrder
+     *            as int
+     * @param defaultPagination
+     *            as String
+     * @return Metadata object
+     */
+    private Metadata createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
+            throws MetadataTypeNotAllowedException {
+        MetadataType metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+        Metadata metadata = new Metadata(metadataType);
+        metadata.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
+        return metadata;
+    }
+
+    /**
+     * Create Metadata for physical page number.
+     * 
+     * @param currentPhysicalOrder
+     *            as int
+     * @return Metadata object
+     */
+    private Metadata createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
+            throws MetadataTypeNotAllowedException {
+        MetadataType metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        Metadata metadata = new Metadata(metadataType);
+        metadata.setValue(String.valueOf(++currentPhysicalOrder));
+        return metadata;
+    }
+
+    /**
+     * Create ContentFile with set up location.
      *
      * @param process
      *            object
      * @param image
      *            URI to image
-     * @return path as String
+     * @return ContentFile object
      */
-    private String createContentFileLocation(Process process, URI image) throws IOException {
+    private ContentFile createContentFile(Process process, URI image) throws IOException {
+        ContentFile contentFile = new ContentFile();
         URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process).resolve(image);
-        return new File(path).getPath();
+        contentFile.setLocation(path.getPath());
+        return contentFile;
     }
 
     /**
