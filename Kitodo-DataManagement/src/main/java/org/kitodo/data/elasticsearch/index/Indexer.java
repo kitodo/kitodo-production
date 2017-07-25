@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -29,6 +31,7 @@ import org.kitodo.data.elasticsearch.index.type.BaseType;
 public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
 
     private HTTPMethods method;
+    private static final Logger logger = LogManager.getLogger(Indexer.class);
 
     /**
      * Constructor for indexer with type names equal to table names.
@@ -150,5 +153,23 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
      */
     public void setMethod(HTTPMethods method) {
         this.method = method;
+    }
+
+    /**
+     * Return server information provided and gathered by the rest client.
+     *
+     * @return String
+     *             information about the server
+     */
+    public String getServerInformation() {
+        IndexRestClient restClient = initiateRestClient();
+        String serverInformation = null;
+        try {
+            serverInformation = restClient.getServerInformation();
+            restClient.closeClient();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+        return serverInformation;
     }
 }
