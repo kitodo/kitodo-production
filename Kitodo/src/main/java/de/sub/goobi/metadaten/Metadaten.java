@@ -90,8 +90,8 @@ import ugh.exceptions.TypeNotAllowedForParentException;
  */
 public class Metadaten {
     private static final Logger logger = LogManager.getLogger(Metadaten.class);
-    MetadatenImagesHelper imagehelper;
-    MetadatenHelper metahelper;
+    MetadatenImagesHelper imageHelper;
+    MetadatenHelper metaHelper;
     private boolean treeReloaden = false;
     String ocrResult = "";
     private Fileformat gdzfile;
@@ -101,12 +101,12 @@ public class Metadaten {
     private List<MetaPerson> myPersonen = new LinkedList<>();
     private MetadatumImpl curMetadatum;
     private MetaPerson curPerson;
-    private DigitalDocument mydocument;
+    private DigitalDocument digitalDocument;
     private Process myProzess;
     private Prefs myPrefs;
     private String myBenutzerID;
     private String tempTyp;
-    private String tempWert;
+    private String tempValue;
     private String tempPersonRecord;
     private String tempPersonVorname;
     private String tempPersonNachname;
@@ -321,10 +321,10 @@ public class Metadaten {
      */
     public String changeCurrentDocstructType() {
 
-        if (this.myDocStruct != null && this.tempWert != null) {
+        if (this.myDocStruct != null && this.tempValue != null) {
             try {
-                DocStruct rueckgabe = this.metahelper.changeCurrentDocstructType(this.myDocStruct, this.tempWert);
-                saveMetadataAsBean(rueckgabe);
+                DocStruct result = this.metaHelper.changeCurrentDocstructType(this.myDocStruct, this.tempValue);
+                saveMetadataAsBean(result);
                 readMetadataAsTree1();
             } catch (DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("Error while changing DocStructTypes (DocStructHasNoTypeException): ",
@@ -381,7 +381,7 @@ public class Metadaten {
         this.modusHinzufuegen = false;
         Modes.setBindState(BindState.edit);
         this.selectedMetadatum.setValue("");
-        this.tempWert = "";
+        this.tempValue = "";
         saveMetadataAsBean(this.myDocStruct);
         if (!updateBlocked()) {
             return "SperrungAbgelaufen";
@@ -499,7 +499,7 @@ public class Metadaten {
      * die noch erlaubten Rollen zurückgeben.
      */
     public ArrayList<SelectItem> getAddableRollen() {
-        return this.metahelper.getAddablePersonRoles(this.myDocStruct, "");
+        return this.metaHelper.getAddablePersonRoles(this.myDocStruct, "");
     }
 
     /**
@@ -569,7 +569,7 @@ public class Metadaten {
         int counter = types.size();
 
         for (MetadataType mdt : types) {
-            myList.add(new SelectItem(mdt.getName(), this.metahelper.getMetadatatypeLanguage(mdt)));
+            myList.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
             try {
                 Metadata md = new Metadata(mdt);
                 MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.myProzess);
@@ -622,7 +622,7 @@ public class Metadaten {
          */
         zaehler = 0;
         for (MetadataType mdt : types) {
-            myTypen[zaehler] = new SelectItem(mdt.getName(), this.metahelper.getMetadatatypeLanguage(mdt));
+            myTypen[zaehler] = new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt));
             zaehler++;
         }
 
@@ -723,10 +723,10 @@ public class Metadaten {
          * Dokument einlesen
          */
         this.gdzfile = serviceManager.getProcessService().readMetadataFile(this.myProzess);
-        this.mydocument = this.gdzfile.getDigitalDocument();
-        this.mydocument.addAllContentFiles();
-        this.metahelper = new MetadatenHelper(this.myPrefs, this.mydocument);
-        this.imagehelper = new MetadatenImagesHelper(this.myPrefs, this.mydocument);
+        this.digitalDocument = this.gdzfile.getDigitalDocument();
+        this.digitalDocument.addAllContentFiles();
+        this.metaHelper = new MetadatenHelper(this.myPrefs, this.digitalDocument);
+        this.imageHelper = new MetadatenImagesHelper(this.myPrefs, this.digitalDocument);
 
         /*
          * Das Hauptelement ermitteln
@@ -734,7 +734,7 @@ public class Metadaten {
 
         // TODO: think something up, how to handle a not matching ruleset
         // causing logicalDocstruct to be null
-        this.logicalTopstruct = this.mydocument.getLogicalDocStruct();
+        this.logicalTopstruct = this.digitalDocument.getLogicalDocStruct();
 
         // this exception needs some serious feedback because data is corrupted
         if (this.logicalTopstruct == null) {
@@ -744,9 +744,9 @@ public class Metadaten {
         identifyImage(0);
         retrieveAllImages();
         if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
-                && (this.mydocument.getPhysicalDocStruct() == null
-                        || this.mydocument.getPhysicalDocStruct().getAllChildren() == null
-                        || this.mydocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
+                && (this.digitalDocument.getPhysicalDocStruct() == null
+                        || this.digitalDocument.getPhysicalDocStruct().getAllChildren() == null
+                        || this.digitalDocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
             try {
                 createPagination();
             } catch (TypeNotAllowedForParentException e) {
@@ -754,9 +754,9 @@ public class Metadaten {
             }
         }
 
-        if (this.mydocument.getPhysicalDocStruct().getAllMetadata() != null
-                && this.mydocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
-            for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
+        if (this.digitalDocument.getPhysicalDocStruct().getAllMetadata() != null
+                && this.digitalDocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
+            for (Metadata md : this.digitalDocument.getPhysicalDocStruct().getAllMetadata()) {
                 if (md.getType().getName().equals("_representative")) {
                     try {
                         Integer value = Integer.valueOf(md.getValue());
@@ -818,14 +818,14 @@ public class Metadaten {
         /*
          * vor dem save alle ungenutzen Docstructs rauswerfen
          */
-        this.metahelper.deleteAllUnusedElements(this.mydocument.getLogicalDocStruct());
+        this.metaHelper.deleteAllUnusedElements(this.digitalDocument.getLogicalDocStruct());
 
         if (currentRepresentativePage != null && currentRepresentativePage.length() > 0) {
             boolean match = false;
-            if (this.mydocument.getPhysicalDocStruct() != null
-                    && this.mydocument.getPhysicalDocStruct().getAllMetadata() != null
-                    && this.mydocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
-                for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
+            if (this.digitalDocument.getPhysicalDocStruct() != null
+                    && this.digitalDocument.getPhysicalDocStruct().getAllMetadata() != null
+                    && this.digitalDocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
+                for (Metadata md : this.digitalDocument.getPhysicalDocStruct().getAllMetadata()) {
                     if (md.getType().getName().equals("_representative")) {
                         Integer value = Integer.valueOf(currentRepresentativePage);
                         md.setValue(String.valueOf(value + 1));
@@ -839,7 +839,7 @@ public class Metadaten {
                     Metadata md = new Metadata(mdt);
                     Integer value = Integer.valueOf(currentRepresentativePage);
                     md.setValue(String.valueOf(value + 1));
-                    this.mydocument.getPhysicalDocStruct().addMetadata(md);
+                    this.digitalDocument.getPhysicalDocStruct().addMetadata(md);
                 } catch (MetadataTypeNotAllowedException e) {
                     logger.error(e);
                 }
@@ -904,10 +904,10 @@ public class Metadaten {
         /*
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
          */
-        List<? extends Metadata> myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
+        List<? extends Metadata> tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(inStrukturelement,
                 (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"), false, this.myProzess);
-        if (myTempMetadata != null) {
-            for (Metadata metadata : myTempMetadata) {
+        if (tempMetadata != null) {
+            for (Metadata metadata : tempMetadata) {
                 MetadatumImpl meta = new MetadatumImpl(metadata, 0, this.myPrefs, this.myProzess);
                 meta.getSelectedItem();
                 lsMeta.add(meta);
@@ -917,10 +917,10 @@ public class Metadaten {
         /*
          * alle Personen und die DefaultDisplay-Werte ermitteln
          */
-        myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
+        tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(inStrukturelement,
                 (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"), true, this.myProzess);
-        if (myTempMetadata != null) {
-            for (Metadata metadata : myTempMetadata) {
+        if (tempMetadata != null) {
+            for (Metadata metadata : tempMetadata) {
                 lsPers.add(new MetaPerson((Person) metadata, 0, this.myPrefs, inStrukturelement));
             }
         }
@@ -1007,8 +1007,8 @@ public class Metadaten {
         OberKnoten.setZblNummer(determineMetadata(inStrukturelement, "ZBLIdentifier"));
         OberKnoten.setZblSeiten(determineMetadata(inStrukturelement, "ZBLPageNumber"));
         OberKnoten.setPpnDigital(determineMetadata(inStrukturelement, "IdentifierDigital"));
-        OberKnoten.setFirstImage(this.metahelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst()));
-        OberKnoten.setLastImage(this.metahelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast()));
+        OberKnoten.setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst()));
+        OberKnoten.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast()));
         // wenn es ein Heft ist, die Issue-Number mit anzeigen
         if (inStrukturelement.getType().getName().equals("PeriodicalIssue")) {
             OberKnoten.setDescription(
@@ -1096,7 +1096,7 @@ public class Metadaten {
      */
     public String nodeUp() {
         try {
-            this.metahelper.knotUp(this.myDocStruct);
+            this.metaHelper.knotUp(this.myDocStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
@@ -1110,7 +1110,7 @@ public class Metadaten {
      */
     public String nodeDown() {
         try {
-            this.metahelper.setNodeDown(this.myDocStruct);
+            this.metaHelper.setNodeDown(this.myDocStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
@@ -1164,7 +1164,7 @@ public class Metadaten {
                 return "Metadaten3links";
             }
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
-            ds = this.mydocument.createDocStruct(dst);
+            ds = this.digitalDocument.createDocStruct(dst);
             if (this.myDocStruct == null) {
                 return "Metadaten3links";
             }
@@ -1202,7 +1202,7 @@ public class Metadaten {
          */
         if (this.neuesElementWohin.equals("2")) {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
-            ds = this.mydocument.createDocStruct(dst);
+            ds = this.digitalDocument.createDocStruct(dst);
             DocStruct parent = this.myDocStruct.getParent();
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
@@ -1236,7 +1236,7 @@ public class Metadaten {
          */
         if (this.neuesElementWohin.equals("3")) {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
-            ds = this.mydocument.createDocStruct(dst);
+            ds = this.digitalDocument.createDocStruct(dst);
             DocStruct parent = this.myDocStruct;
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
@@ -1261,7 +1261,7 @@ public class Metadaten {
          */
         if (this.neuesElementWohin.equals("4")) {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
-            ds = this.mydocument.createDocStruct(dst);
+            ds = this.digitalDocument.createDocStruct(dst);
             this.myDocStruct.addChild(ds);
         }
 
@@ -1281,14 +1281,14 @@ public class Metadaten {
      * mögliche Docstructs als Kind zurückgeben.
      */
     public SelectItem[] getAddableDocStructTypenAlsKind() {
-        return this.metahelper.getAddableDocStructTypen(this.myDocStruct, false);
+        return this.metaHelper.getAddableDocStructTypen(this.myDocStruct, false);
     }
 
     /**
      * mögliche Docstructs als Nachbar zurückgeben.
      */
     public SelectItem[] getAddableDocStructTypenAlsNachbar() {
-        return this.metahelper.getAddableDocStructTypen(this.myDocStruct, true);
+        return this.metaHelper.getAddableDocStructTypen(this.myDocStruct, true);
     }
 
     /*
@@ -1299,11 +1299,11 @@ public class Metadaten {
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
     public String createPagination() throws TypeNotAllowedForParentException, IOException {
-        this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
+        this.imageHelper.createPagination(this.myProzess, this.currentTifFolder);
         retrieveAllImages();
 
         // added new
-        DocStruct log = this.mydocument.getLogicalDocStruct();
+        DocStruct log = this.digitalDocument.getLogicalDocStruct();
         while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
                 && log.getAllChildren().size() > 0) {
             log = log.getAllChildren().get(0);
@@ -1700,13 +1700,13 @@ public class Metadaten {
         this.ocrResult = "";
 
         logger.trace("dataList");
-        List<URI> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+        List<URI> dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         logger.trace("dataList 2");
         if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (dataList == null || dataList.isEmpty())) {
             try {
                 createPagination();
-                dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+                dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
             } catch (IOException | TypeNotAllowedForParentException e) {
                 logger.error(e);
             }
@@ -1741,7 +1741,7 @@ public class Metadaten {
                             logger.trace("currentTifFolder: " + this.currentTifFolder);
                         }
                         try {
-                            dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
+                            dataList = this.imageHelper.getImageFiles(this.myProzess, this.currentTifFolder);
                             if (dataList == null) {
                                 return;
                             }
@@ -1798,7 +1798,7 @@ public class Metadaten {
                                             + ", using image from " + new File(serviceManager.getProcessService()
                                                     .getImagesTifDirectory(true, this.myProzess)).getName());
                         }
-                        this.imagehelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.myBildGroesse,
+                        this.imageHelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.myBildGroesse,
                                 this.myImageRotation);
                         logger.trace("scaleFile");
                     } catch (Exception e) {
@@ -2392,7 +2392,7 @@ public class Metadaten {
 
     private String getOcrBasisUrl(int... seiten) {
         String url = ConfigCore.getParameter("ocrUrl");
-        VariableReplacer replacer = new VariableReplacer(this.mydocument, this.myPrefs, this.myProzess, null);
+        VariableReplacer replacer = new VariableReplacer(this.digitalDocument, this.myPrefs, this.myProzess, null);
         url = replacer.replace(url);
         url += "/&imgrange=" + seiten[0];
         if (seiten.length > 1) {
@@ -2480,12 +2480,12 @@ public class Metadaten {
         return this.selectedMetadatum.getOutputType();
     }
 
-    public String getTempWert() {
-        return this.tempWert;
+    public String getTempValue() {
+        return this.tempValue;
     }
 
-    public void setTempWert(String tempWert) {
-        this.tempWert = tempWert;
+    public void setTempValue(String tempValue) {
+        this.tempValue = tempValue;
     }
 
     public boolean isModusHinzufuegen() {
@@ -2937,7 +2937,7 @@ public class Metadaten {
      */
     public void moveSeltectedPagesUp() {
         List<Integer> selectedPages = new ArrayList<>();
-        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<DocStruct> allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
         List<String> pageNoList = Arrays.asList(allPagesSelection);
         for (String order : pageNoList) {
             int currentPhysicalPageNo = Integer.parseInt(order);
@@ -2967,9 +2967,9 @@ public class Metadaten {
     /**
      * Move selected pages down.
      */
-    public void moveSeltectedPagesDown() {
+    public void moveSelectedPagesDown() {
         List<Integer> selectedPages = new ArrayList<>();
-        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<DocStruct> allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
         List<String> pagesList = Arrays.asList(allPagesSelection);
         Collections.reverse(pagesList);
         for (String order : pagesList) {
@@ -3001,7 +3001,7 @@ public class Metadaten {
      */
     public void deleteSelectedPages() throws IOException {
         List<Integer> selectedPages = new ArrayList<>();
-        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<DocStruct> allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
         List<String> pagesList = Arrays.asList(allPagesSelection);
         Collections.reverse(pagesList);
         for (String order : pagesList) {
@@ -3019,9 +3019,8 @@ public class Metadaten {
             String imageName = pageToRemove.getImageName();
 
             removeImage(imageName);
-            mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
-
-            mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
+            digitalDocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
+            digitalDocument.getPhysicalDocStruct().removeChild(pageToRemove);
             List<Reference> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
             for (ugh.dl.Reference ref : refs) {
                 ref.getSource().removeReferenceTo(pageToRemove);
@@ -3030,13 +3029,13 @@ public class Metadaten {
         }
 
         allPagesSelection = null;
-        if (mydocument.getPhysicalDocStruct().getAllChildren() != null) {
-            myBildLetztes = mydocument.getPhysicalDocStruct().getAllChildren().size();
+        if (digitalDocument.getPhysicalDocStruct().getAllChildren() != null) {
+            myBildLetztes = digitalDocument.getPhysicalDocStruct().getAllChildren().size();
         } else {
             myBildLetztes = 0;
         }
 
-        allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+        allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
 
         int currentPhysicalOrder = 1;
         if (allPages != null) {
@@ -3076,7 +3075,7 @@ public class Metadaten {
         }
 
         List<URI> oldfilenames = new ArrayList<>();
-        for (DocStruct page : mydocument.getPhysicalDocStruct().getAllChildren()) {
+        for (DocStruct page : digitalDocument.getPhysicalDocStruct().getAllChildren()) {
             oldfilenames.add(URI.create(page.getImageName()));
         }
 
@@ -3107,7 +3106,7 @@ public class Metadaten {
                             .resolve(fileService.getFileName(fileToSort) + "_bak");
                     String sortedName = newfilenamePrefix + fileExtension.toLowerCase();
                     fileService.renameFile(tempFileName, sortedName);
-                    mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName);
+                    digitalDocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName);
                 }
                 try {
                     URI ocr = fileService.getProcessSubTypeURI(myProzess, ProcessSubType.OCR, null);
@@ -3205,12 +3204,12 @@ public class Metadaten {
         this.fileManipulation = fileManipulation;
     }
 
-    public DigitalDocument getDocument() {
-        return mydocument;
+    public DigitalDocument getDigitalDocument() {
+        return digitalDocument;
     }
 
-    public void setDocument(DigitalDocument document) {
-        this.mydocument = document;
+    public void setDigitalDocument(DigitalDocument digitalDocument) {
+        this.digitalDocument = digitalDocument;
     }
 
     /**

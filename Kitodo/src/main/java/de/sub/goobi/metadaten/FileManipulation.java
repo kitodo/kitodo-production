@@ -199,7 +199,7 @@ public class FileManipulation {
         } else {
 
             Prefs prefs = serviceManager.getRulesetService().getPreferences(metadataBean.getMyProzess().getRuleset());
-            DigitalDocument doc = metadataBean.getDocument();
+            DigitalDocument doc = metadataBean.getDigitalDocument();
             DocStruct physical = doc.getPhysicalDocStruct();
 
             List<DocStruct> pageList = physical.getAllChildren();
@@ -314,7 +314,7 @@ public class FileManipulation {
         URI downloadFile = null;
 
         int imageOrder = Integer.parseInt(imageSelection);
-        DocStruct page = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
+        DocStruct page = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
         URI processSubTypeURI;
@@ -395,7 +395,7 @@ public class FileManipulation {
             Helper.setFehlerMeldung("noFileSelected");
             return;
         }
-        List<DocStruct> allPages = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren();
+        List<DocStruct> allPages = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren();
         List<String> filenamesToMove = new ArrayList<>();
 
         for (String fileIndex : selectedFiles) {
