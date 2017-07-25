@@ -19,6 +19,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:t="http://myfaces.apache.org/tomahawk"
+        xmlns:p="http://primefaces.org/ui"
 >
 
     <ui:fragment
@@ -51,7 +52,8 @@
                             <span class="toggle" data-for="toggle-9">
                                 <h:commandLink id="downloadswitcher">
                                     <f:ajax render="download"/>
-                                    <h:graphicImage value="/newpages/images/buttons/load_down_set_20px.gif" alt="download set"
+                                    <h:graphicImage value="/newpages/images/buttons/load_down_set_20px.gif"
+                                                    alt="download set"
                                                     style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.imHomeVerzeichnisVerlinken}"/>
                                 </h:commandLink>
@@ -240,47 +242,70 @@
                                     <table>
                                         <tr>
                                             <td colspan="3">
-                                                <h:outputText styleClass="kitodoScriptLink" value="addUser"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:addUser \x22steptitle:TITLE_STEP\x22 username:USER_NAME'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="addUserGroup"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:addUserGroup \x22steptitle:TITLE_STEP\x22 group:GROUP_NAME'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="deleteTiffHeaderFile"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:deleteTiffHeaderFile'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="swapSteps"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:swapSteps swap1nr:ORDER_NUMBER_FIRST_STEP \x22swap1title:TITLE_FIRST_STEP\x22swap2nr:ORDER_NUMBER_SECOND_STEP \x22swap2title:TITLE_SECOND_STEP\x22'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="importFromFileSystem"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="setRuleset"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:setRuleset \x22ruleset:TITLE_RULESET\x22'"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="addUser"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:addUser &quot;steptitle:TITLE_STEP&quot; username:USER_NAME')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="addUserGroup"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:addUserGroup &quot;steptitle:TITLE_STEP&quot; group:GROUP_NAME')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink"
+                                                               value="deleteTiffHeaderFile"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:deleteTiffHeaderFile')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="swapSteps"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:swapSteps swap1nr:ORDER_NUMBER_FIRST_STEP &quot;swap1title:TITLE_FIRST_STEP&quot; swap2nr:ORDER_NUMBER_SECOND_STEP &quot;swap2title:TITLE_SECOND_STEP&quot;')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink"
+                                                               value="importFromFileSystem"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:importFromFileSystem sourcefolder:SOURCE_FOLDER')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="setRuleset"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:setRuleset &quot;ruleset:TITLE_RULESET&quot;')}"/>
+
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="3">
-                                                <h:outputText styleClass="kitodoScriptLink" value="deleteStep"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:deleteStep \x22steptitle:TITLE_STEP\x22'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="addStep"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:addStep \x22steptitle:TITLE_STEP\x22 number:NUMBER_1_TO_?'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="setStepStatus"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:setStepStatus \x22steptitle:TITLE_STEP\x22 status:NUMBER_0_TO_3'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="setStepNumber"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:setStepNumber \x22steptitle:TITLE_STEP\x22 number:NUMBER_1_TO_?'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="addModuleToStep"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:addModuleToStep \x22steptitle:TITLE_STEP\x22 \x22module:MODULE_NAME\x22'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="addShellScriptToStep"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:addShellScriptToStep \x22steptitle:TITLE_STEP\x22 \x22label:LABEL_FOR_SCRIPT\x22 \x22script:PATH_TO_SCRIPT\x22'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="setTaskProperty"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:setTaskProperty \x22steptitle:TITLE_STEP\x22 property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="tiffWriter"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:tiffWriter'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="exportDms"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:exportDms exportImages:false'"/>
+
+                                                <p:commandLink styleClass="kitodoScriptLink" value="deleteStep"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:deleteStep &quot;steptitle:TITLE_STEP&quot;')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="addStep"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:addStep &quot;steptitle:TITLE_STEP&quot; number:NUMBER_1_TO_?')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="setStepStatus"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:setStepStatus &quot;steptitle:TITLE_STEP&quot; status:NUMBER_0_TO_3')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="setStepNumber"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:setStepNumber &quot;steptitle:TITLE_STEP&quot; number:NUMBER_1_TO_?')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="addModuleToStep"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:addModuleToStep &quot;steptitle:TITLE_STEP&quot; &quot;module:MODULE_NAME&quot;')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink"
+                                                               value="addShellScriptToStep"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:addShellScriptToStep &quot;steptitle:TITLE_STEP&quot; &quot;label:LABEL_FOR_SCRIPT&quot; &quot;script:PATH_TO_SCRIPT&quot;')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="setTaskProperty"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:setTaskProperty &quot;steptitle:TITLE_STEP&quot;')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="tiffWriter"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:tiffWriter')}"/>
+                                                <p:commandLink styleClass="kitodoScriptLink" value="exportDms"
+                                                               update="kitodoScriptfield"
+                                                               action="#{ProzessverwaltungForm.setKitodoScript('action:exportDms exportImages:false')}"/>
+
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="3">
-                                                <t:inputTextarea id="kitodoScriptfield" forceId="true"
+                                                <p:inputTextarea id="kitodoScriptfield" forceId="true"
                                                                  style="width:450px;height:100px"
+                                                                 autoResize="false"
                                                                  value="#{ProzessverwaltungForm.kitodoScript}"/>
+
                                             </td>
                                         </tr>
                                         <tr>

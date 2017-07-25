@@ -1717,6 +1717,12 @@ public class ProzessverwaltungForm extends BasisForm {
         return this.kitodoScript;
     }
 
+    /**
+     * Setter for kitodoScript.
+     * 
+     * @param kitodoScript
+     *            the kitodoScript
+     */
     public void setKitodoScript(String kitodoScript) {
         this.kitodoScript = kitodoScript;
     }
@@ -1909,7 +1915,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     /**
      * Downloads a docket for myProcess.
-     * 
+     *
      * @return The navigation string
      */
     public String downloadDocket() throws IOException {
