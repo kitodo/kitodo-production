@@ -141,15 +141,15 @@ public class Metadaten {
     private boolean modusHinzufuegenPerson = false;
     private String modusAnsicht = "Metadaten";
     private TreeNodeStruct3 tree3;
-    private URI myBild;
+    private URI image;
 
-    private int myBildNummer = 0;
-    private int myBildLetztes = 0;
-    private int myBildCounter = 0;
-    private int myBildGroesse = 30;
-    private int myImageRotation = 0; // entspricht myBildRotation
+    private int imageNumber = 0;
+    private int lastImage = 0;
+    private int imageCounter = 0;
+    private int imageSize = 30;
+    private int imageRotation = 0;
 
-    private boolean bildAnzeigen = true;
+    private boolean displayImage = true;
     private boolean bildZuStrukturelement = false;
     private String bildNummerGeheZu = "";
     private String addDocStructType1;
@@ -713,9 +713,9 @@ public class Metadaten {
         this.modusHinzufuegenPerson = false;
         this.modusStrukturelementVerschieben = false;
         // TODO: Make file pattern configurable
-        this.myBild = null;
-        this.myBildNummer = 1;
-        this.myImageRotation = 0;
+        this.image = null;
+        this.imageNumber = 1;
+        this.imageRotation = 0;
         this.currentTifFolder = null;
         readAllTifFolders();
 
@@ -1426,7 +1426,7 @@ public class Metadaten {
          * das richtige Bild anzeigen
          */
         if (this.bildZuStrukturelement) {
-            identifyImage(imageNr - this.myBildNummer);
+            identifyImage(imageNr - this.imageNumber);
         }
     }
 
@@ -1583,15 +1583,15 @@ public class Metadaten {
      * Rotate left.
      */
     public void rotateLeft() {
-        if (this.myImageRotation < 90) {
-            this.myImageRotation = 360;
+        if (this.imageRotation < 90) {
+            this.imageRotation = 360;
         }
-        this.myImageRotation = (this.myImageRotation - 90) % 360;
+        this.imageRotation = (this.imageRotation - 90) % 360;
         identifyImage(0);
     }
 
     public void rotateRight() {
-        this.myImageRotation = (this.myImageRotation + 90) % 360;
+        this.imageRotation = (this.imageRotation + 90) % 360;
         identifyImage(0);
     }
 
@@ -1605,10 +1605,10 @@ public class Metadaten {
         try {
             eingabe = Integer.parseInt(this.bildNummerGeheZu);
         } catch (Exception e) {
-            eingabe = this.myBildNummer;
+            eingabe = this.imageNumber;
         }
 
-        identifyImage(eingabe - this.myBildNummer);
+        identifyImage(eingabe - this.imageNumber);
         return "";
     }
 
@@ -1618,7 +1618,7 @@ public class Metadaten {
      * @return empty String
      */
     public String zoomImageIn() {
-        this.myBildGroesse += 10;
+        this.imageSize += 10;
         identifyImage(0);
         return "";
     }
@@ -1629,8 +1629,8 @@ public class Metadaten {
      * @return empty String
      */
     public String zoomImageOut() {
-        if (this.myBildGroesse > 10) {
-            this.myBildGroesse -= 10;
+        if (this.imageSize > 10) {
+            this.imageSize -= 10;
         }
         identifyImage(0);
         return "";
@@ -1646,7 +1646,7 @@ public class Metadaten {
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        return ConfigCore.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
+        return ConfigCore.getTempImagesPath() + session.getId() + "_" + this.imageCounter + ".png";
     }
 
     public List<URI> getAllTifFolders() {
@@ -1692,7 +1692,7 @@ public class Metadaten {
          * nicht neu umrechnen
          */
         logger.trace("start identifyImage 1");
-        if (!this.bildAnzeigen) {
+        if (!this.displayImage) {
             logger.trace("end identifyImage 1");
             return;
         }
@@ -1713,14 +1713,14 @@ public class Metadaten {
         }
         if (dataList != null && dataList.size() > 0) {
             logger.trace("dataList not null");
-            this.myBildLetztes = dataList.size();
+            this.lastImage = dataList.size();
             logger.trace("myBildLetztes");
             for (int i = 0; i < dataList.size(); i++) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("file: " + i);
                 }
-                if (this.myBild == null) {
-                    this.myBild = dataList.get(0);
+                if (this.image == null) {
+                    this.image = dataList.get(0);
                 }
                 /* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
                 if (isCurrentImageCorrectImage(dataList, i)) {
@@ -1753,15 +1753,15 @@ public class Metadaten {
                     }
                     /* das aktuelle tif erfassen */
                     if (dataList.size() > pos) {
-                        this.myBild = dataList.get(pos);
+                        this.image = dataList.get(pos);
                     } else {
-                        this.myBild = dataList.get(dataList.size() - 1);
+                        this.image = dataList.get(dataList.size() - 1);
                     }
                     logger.trace("found myBild");
                     /* die korrekte Seitenzahl anzeigen */
-                    this.myBildNummer = pos + 1;
+                    this.imageNumber = pos + 1;
                     if (logger.isTraceEnabled()) {
-                        logger.trace("myBildNummer: " + this.myBildNummer);
+                        logger.trace("myBildNummer: " + this.imageNumber);
                     }
                     /* Pages-Verzeichnis ermitteln */
                     URI myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
@@ -1772,34 +1772,34 @@ public class Metadaten {
                      * den Counter für die Bild-ID auf einen neuen Wert setzen,
                      * damit nichts gecacht wird
                      */
-                    this.myBildCounter++;
+                    this.imageCounter++;
                     if (logger.isTraceEnabled()) {
-                        logger.trace("myBildCounter: " + this.myBildCounter);
+                        logger.trace("myBildCounter: " + this.imageCounter);
                     }
 
                     /* Session ermitteln */
                     FacesContext context = FacesContext.getCurrentInstance();
                     HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-                    String mySession = session.getId() + "_" + this.myBildCounter + ".png";
+                    String mySession = session.getId() + "_" + this.imageCounter + ".png";
                     logger.trace("facescontext");
 
                     /* das neue Bild zuweisen */
                     try {
                         URI tiffconverterpfad = fileService.getImagesDirectory(this.myProzess)
-                                .resolve(this.currentTifFolder + "/" + this.myBild);
+                                .resolve(this.currentTifFolder + "/" + this.image);
                         if (logger.isTraceEnabled()) {
                             logger.trace("tiffconverterpfad: " + tiffconverterpfad);
                         }
                         if (!fileService.fileExist(tiffconverterpfad)) {
                             tiffconverterpfad = serviceManager.getProcessService()
-                                    .getImagesTifDirectory(true, this.myProzess).resolve(this.myBild);
+                                    .getImagesTifDirectory(true, this.myProzess).resolve(this.image);
                             Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
-                                    "image " + this.myBild + " does not exist in folder " + this.currentTifFolder
+                                    "image " + this.image + " does not exist in folder " + this.currentTifFolder
                                             + ", using image from " + new File(serviceManager.getProcessService()
                                                     .getImagesTifDirectory(true, this.myProzess)).getName());
                         }
-                        this.imageHelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.myBildGroesse,
-                                this.myImageRotation);
+                        this.imageHelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.imageSize,
+                                this.imageRotation);
                         logger.trace("scaleFile");
                     } catch (Exception e) {
                         Helper.setFehlerMeldung("could not find image folder", e);
@@ -1824,14 +1824,14 @@ public class Metadaten {
      */
     private boolean isCurrentImageCorrectImage(List<URI> dataList, int i) {
         if (logger.isTraceEnabled()) {
-            logger.trace("myBild: " + this.myBild);
+            logger.trace("myBild: " + this.image);
         }
         try {
             String index = fileService.getFileName(dataList.get(i));
             if (logger.isTraceEnabled()) {
                 logger.trace("index: " + index);
             }
-            String picture = fileService.getFileName(this.myBild);
+            String picture = fileService.getFileName(this.image);
             return index.equals(picture);
         } catch (IOException e) {
             logger.error(e);
@@ -1843,17 +1843,17 @@ public class Metadaten {
         /* wenn bisher noch kein Bild da ist, das erste nehmen */
         boolean exists = false;
         try {
-            if (this.currentTifFolder != null && this.myBild != null) {
+            if (this.currentTifFolder != null && this.image != null) {
                 exists = fileService.fileExist(fileService.getImagesDirectory(this.myProzess)
-                        .resolve(this.currentTifFolder + "/" + this.myBild));
+                        .resolve(this.currentTifFolder + "/" + this.image));
             }
         } catch (Exception e) {
-            this.myBildNummer = -1;
+            this.imageNumber = -1;
             logger.error(e);
         }
         /* wenn das Bild nicht existiert, den Status ändern */
         if (!exists) {
-            this.myBildNummer = -1;
+            this.imageNumber = -1;
         }
     }
 
@@ -2254,7 +2254,7 @@ public class Metadaten {
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
      */
     public String imageShowFirstPage() {
-        myBild = null;
+        image = null;
         identifyImage(0);
         return "";
     }
@@ -2263,7 +2263,7 @@ public class Metadaten {
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
      */
     public String imageShowLastPage() {
-        this.bildAnzeigen = true;
+        this.displayImage = true;
         if (this.treeProperties.get("showpagesasajax")) {
             for (SelectItem selectItem : this.allPages) {
                 if (selectItem.getLabel().equals(this.ajaxSeiteEnde)) {
@@ -2273,7 +2273,7 @@ public class Metadaten {
             }
         }
         try {
-            int pageNumber = Integer.parseInt(this.allPagesSelectionLastPage) - this.myBildNummer + 1;
+            int pageNumber = Integer.parseInt(this.allPagesSelectionLastPage) - this.imageNumber + 1;
             identifyImage(pageNumber);
         } catch (Exception e) {
             logger.error(e);
@@ -2345,7 +2345,7 @@ public class Metadaten {
      * Show OCR result.
      */
     public void showOcrResult() {
-        String myOcrUrl = getOcrBasisUrl(this.myBildNummer);
+        String myOcrUrl = getOcrBasisUrl(this.imageNumber);
         HttpClient client = new HttpClient();
         GetMethod method = new GetMethod(myOcrUrl);
         try {
@@ -2401,23 +2401,24 @@ public class Metadaten {
         return url;
     }
 
-    public int getBildNummer() {
-        return this.myBildNummer;
+    public int getImageNumber() {
+        return this.imageNumber;
     }
 
-    public void setBildNummer(int inBild) {
+    public void setImageNumber(int imageNumber) {
+        this.imageNumber = imageNumber;
     }
 
-    public int getBildLetztes() {
-        return this.myBildLetztes;
+    public int getLastImage() {
+        return this.lastImage;
     }
 
-    public int getBildGroesse() {
-        return this.myBildGroesse;
+    public int getImageSize() {
+        return this.imageSize;
     }
 
-    public void setBildGroesse(int myBildGroesse) {
-        this.myBildGroesse = myBildGroesse;
+    public void setImageSize(int imageSize) {
+        this.imageSize = imageSize;
     }
 
     /**
@@ -2605,16 +2606,16 @@ public class Metadaten {
         this.paginierungArt = paginierungArt;
     }
 
-    public boolean isBildAnzeigen() {
-        return this.bildAnzeigen;
+    public boolean isDisplayImage() {
+        return this.displayImage;
     }
 
     /**
      * Show picture.
      */
     public void showImage() {
-        this.bildAnzeigen = !this.bildAnzeigen;
-        if (this.bildAnzeigen) {
+        this.displayImage = !this.displayImage;
+        if (this.displayImage) {
             try {
                 identifyImage(0);
             } catch (Exception e) {
@@ -3030,9 +3031,9 @@ public class Metadaten {
 
         allPagesSelection = null;
         if (digitalDocument.getPhysicalDocStruct().getAllChildren() != null) {
-            myBildLetztes = digitalDocument.getPhysicalDocStruct().getAllChildren().size();
+            lastImage = digitalDocument.getPhysicalDocStruct().getAllChildren().size();
         } else {
-            myBildLetztes = 0;
+            lastImage = 0;
         }
 
         allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
@@ -3055,7 +3056,7 @@ public class Metadaten {
         retrieveAllImages();
 
         // current image was deleted, load first image
-        if (selectedPages.contains(myBildNummer - 1)) {
+        if (selectedPages.contains(imageNumber - 1)) {
 
             imageShowFirstPage();
         } else {

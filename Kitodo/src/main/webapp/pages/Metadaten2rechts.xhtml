@@ -173,11 +173,11 @@
 
                                 <td align="right">
                                     <h:commandLink action="#{Metadaten.showImage}"
-                                                   rendered="#{Metadaten.bildAnzeigen==true}"
+                                                   rendered="#{Metadaten.displayImage==true}"
                                                    value="#{msgs.metadatenBildAusblenden}"
                                                    style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}"/>
                                     <h:commandLink action="#{Metadaten.showImage}"
-                                                   rendered="#{Metadaten.bildAnzeigen==false}"
+                                                   rendered="#{Metadaten.displayImage==false}"
                                                    value="#{msgs.metadatenBildAnzeigen}"
                                                    style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}"/>
                                     <h:outputText value=" | " style="font-size: 11px;"/>
@@ -272,7 +272,7 @@
                     </h:panelGroup>
                 </td>
 
-                <ui:fragment rendered="#{Metadaten.bildAnzeigen==true}">
+                <ui:fragment rendered="#{Metadaten.displayImage==true}">
                     <td style="top: 30px;">
                         <h:panelGroup id="BildArea2"
                                       style="#{Metadaten.treeProperties.imageSticky?'position: fixed;top: 30px;left: 600px;':''}">
