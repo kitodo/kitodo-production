@@ -48,7 +48,7 @@
         Tabelle fuer die Personen
 
         #########################################-->
-        <h:panelGroup rendered="#{!empty Metadaten.myPersonen}">
+        <h:panelGroup rendered="#{!empty Metadaten.metaPersonList}">
 
             <h4 style="margin-top:0px;margin-bottom:1px">
                 <h:outputText value="#{msgs.personen}"/>
@@ -57,7 +57,7 @@
             <f:ajax event="keyup"/>
 
             <!-- oeffnen der Tabelle -->
-            <h:dataTable value="#{Metadaten.myPersonen}" var="Item" style="background-color:#F0F0F0" styleClass="Tabelle"
+            <h:dataTable value="#{Metadaten.metaPersonList}" var="Item" style="background-color:#F0F0F0" styleClass="Tabelle"
                          columnClasses="TabelleSpalteLinks,TabelleSpalteLinks">
 
                 <!-- Metadaten -->
@@ -250,7 +250,7 @@
 
         #########################################-->
         <h:panelGroup rendered="#{!empty Metadaten.myMetadaten}"
-                      style="#{empty Metadaten.myPersonen ? 'margin-top:0px':'margin-top:15px;'}; display:block">
+                      style="#{empty Metadaten.metaPersonList ? 'margin-top:0px':'margin-top:15px;'}; display:block">
             <h4 style="margin-top:0px; margin-bottom:1px">
                 <h:outputText value="#{msgs.metadaten}"/>
             </h4>

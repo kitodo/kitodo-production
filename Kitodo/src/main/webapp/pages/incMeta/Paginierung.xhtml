@@ -190,8 +190,8 @@
                                 <ui:fragment rendered="#{Metadaten.paginationPagesProImage>=5}">
                                     <div style=" margin-left: 6px; margin-top: 8px;">
                                         <h:outputText value="#{msgs.pageSeparator}: "/>
-                                        <h:selectOneMenu value="#{Metadaten.paginierungSeparator}">
-                                            <f:selectItems var="ps" value="#{Metadaten.paginierungSeparators}"
+                                        <h:selectOneMenu value="#{Metadaten.paginationSeparator}">
+                                            <f:selectItems var="ps" value="#{Metadaten.paginationSeparators}"
                                                             itemLabel="#{ps.label}" itemValue="#{ps.id}"/>
                                         </h:selectOneMenu>
                                     </div>
