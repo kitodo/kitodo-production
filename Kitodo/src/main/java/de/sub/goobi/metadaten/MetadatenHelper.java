@@ -184,7 +184,7 @@ public class MetadatenHelper implements Comparator<Object> {
             }
         }
         for (int j = newDocstruct.getParent().getAllChildren().size() - i; j > 0; j--) {
-            KnotenUp(newDocstruct);
+            knotUp(newDocstruct);
         }
 
         /*
@@ -200,7 +200,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @param inStruct
      *            DocStruct object
      */
-    public void KnotenUp(DocStruct inStruct) throws TypeNotAllowedAsChildException {
+    public void knotUp(DocStruct inStruct) throws TypeNotAllowedAsChildException {
         DocStruct parent = inStruct.getParent();
         if (parent == null) {
             return;

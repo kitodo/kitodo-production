@@ -1096,7 +1096,7 @@ public class Metadaten {
      */
     public String nodeUp() {
         try {
-            this.metahelper.KnotenUp(this.myDocStruct);
+            this.metahelper.knotUp(this.myDocStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
