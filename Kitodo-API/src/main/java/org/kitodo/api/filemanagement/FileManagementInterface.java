@@ -24,26 +24,18 @@ import java.util.ArrayList;
 public interface FileManagementInterface {
 
     /**
-     * Creates a directory with a given name at a given uri.
+     * Creates a resource (file/folder) with a given name. Important is that
+     * resource will be created only in case when parent folder exists.
      *
      * @param parentFolderUri
-     *            the location to create the folder
-     * @param directoryName
-     *            the name of the directory
-     * @return the URI to the userHomeLocation
-     */
-    URI createDirectory(URI parentFolderUri, String directoryName) throws IOException;
-
-    /**
-     * Creates a resource with a given fileName.
-     *
-     * @param parentFolderUri
-     *            the Location to create the resource
-     * @param fileName
-     *            the fileName of the new resource
+     *            the location to create the resource
+     * @param name
+     *            the name of the new resource
+     * @param file
+     *            if true it creates the file, if false it created directory
      * @return the URI of the new resource
      */
-    URI createResource(URI parentFolderUri, String fileName) throws IOException;
+    URI create(URI parentFolderUri, String name, boolean file) throws IOException;
 
     /**
      * Opens an OutputStream to a given uri.
@@ -64,38 +56,14 @@ public interface FileManagementInterface {
     InputStream read(URI uri) throws IOException;
 
     /**
-     * Copy directory.
+     * Copy resource.
      *
-     * @param sourceDirectory
+     * @param sourceResource
      *            source file as uri
-     * @param targetDirectory
+     * @param targetResource
      *            destination file as uri
      */
-    void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException;
-
-    /**
-     * Copies a file from a given URI to a given URI.
-     *
-     * @param sourceFile
-     *            the uri to copy from
-     * @param destinationFile
-     *            the uri to copy to
-     * @throws IOException
-     *             if copying fails
-     */
-    void copyFile(URI sourceFile, URI destinationFile) throws IOException;
-
-    /**
-     * Copies a file to a directory.
-     *
-     * @param sourceFile
-     *            The source directory
-     * @param targetDirectory
-     *            the target directory
-     * @throws IOException
-     *             if copying fails.
-     */
-    void copyFileToDirectory(URI sourceFile, URI targetDirectory) throws IOException;
+    void copy(URI sourceResource, URI targetResource) throws IOException;
 
     /**
      * Delete content at a given URI.
@@ -107,7 +75,7 @@ public interface FileManagementInterface {
     boolean delete(URI uri) throws IOException;
 
     /**
-     * Moves a directory from a given URI to a given URI.
+     * Moves a resource from a given URI to a given URI.
      *
      * @param sourceUri
      *            the source URI
@@ -116,19 +84,7 @@ public interface FileManagementInterface {
      * @throws IOException
      *             if directory cannot be accessed
      */
-    void moveDirectory(URI sourceUri, URI targetUri) throws IOException;
-
-    /**
-     * Moves a file from a given URI to a given URI.
-     *
-     * @param sourceUri
-     *            the source URI
-     * @param targetUri
-     *            the target URI
-     * @throws IOException
-     *             if directory cannot be accessed
-     */
-    void moveFile(URI sourceUri, URI targetUri) throws IOException;
+    void move(URI sourceUri, URI targetUri) throws IOException;
 
     /**
      * Renames a resource at a given URI.
@@ -150,15 +106,6 @@ public interface FileManagementInterface {
      * @return number of files as Integer
      */
     Integer getNumberOfFiles(FilenameFilter filter, URI directory);
-
-    /**
-     * Returns the name of a file at a given URI.
-     *
-     * @param uri
-     *            the URI, to get the filename from
-     * @return the name of the file
-     */
-    String getFileName(URI uri);
 
     /**
      * Returns the name of a file with extension at a given URI.
@@ -226,10 +173,10 @@ public interface FileManagementInterface {
     URI createProcessLocation(String processId) throws IOException;
 
     /**
-     * Creates the URI, if a process and it's location already exists, so no
-     * process location needs to be created. This method is for migration
-     * purposes, because when this interface is used, there will be already
-     * processes in the filesystem.
+     * Creates the URI, if a process and it's location already exists, so no process
+     * location needs to be created. This method is for migration purposes, because
+     * when this interface is used, there will be already processes in the
+     * filesystem.
      *
      * @param processId
      *            the id of the process.
