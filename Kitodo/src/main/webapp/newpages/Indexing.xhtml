@@ -21,6 +21,40 @@
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
         <h:body>
+            <script type="text/javascript">
+                //<![CDATA[
+                    function toggleIndexingButtons(state) {
+                        if(state) {
+                            PF('startIndexingBatches').enable();
+                            PF('startIndexingDockets').enable();
+                            PF('startIndexingHistory').enable();
+                            PF('startIndexingProcesses').enable();
+                            PF('startIndexingProjects').enable();
+                            PF('startIndexingProperties').enable();
+                            PF('startIndexingRulesets').enable();
+                            PF('startIndexingTasks').enable();
+                            PF('startIndexingTemplates').enable();
+                            PF('startIndexingUsers').enable();
+                            PF('startIndexingUserGroups').enable();
+                            PF('startIndexingWorkpieces').enable();
+                        }
+                        else {
+                            PF('startIndexingBatches').disable();
+                            PF('startIndexingDockets').disable();
+                            PF('startIndexingHistory').disable();
+                            PF('startIndexingProcesses').disable();
+                            PF('startIndexingProjects').disable();
+                            PF('startIndexingProperties').disable();
+                            PF('startIndexingRulesets').disable();
+                            PF('startIndexingTasks').disable();
+                            PF('startIndexingTemplates').disable();
+                            PF('startIndexingUsers').disable();
+                            PF('startIndexingUserGroups').disable();
+                            PF('startIndexingWorkpieces').disable();
+                        }
+                    }
+                //]]>
+            </script>
             <table class="headTable" cellspacing="0" cellpadding="0"
                    style="padding-left:5px;padding-right:5px;margin-top:5px;">
                 <ui:include src="inc/tbl_Kopf.xhtml" />
@@ -61,7 +95,7 @@
                                                 <td><h:outputText value="#{msgs.users}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingUsers"
-                                                                     onclick="PF('usersProgress').start();"
+                                                                     onclick="PF('usersProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startUserIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.userCount lt 1}"/>
@@ -75,7 +109,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedUsers} / #{indexingForm.userCount}"/>
                                                 </td>
                                                 <td>
@@ -93,7 +127,7 @@
                                                 <td><h:outputText value="#{msgs.benutzergruppen}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingUserGroups"
-                                                                     onclick="PF('userGroupsProgress').start();"
+                                                                     onclick="PF('userGroupsProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startUserGroupIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.userGroupCount lt 1}"/>
@@ -107,7 +141,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedUserGroups} / #{indexingForm.userGroupCount}"/>
                                                 </td>
                                                 <td>
@@ -125,7 +159,7 @@
                                                 <td><h:outputText value="#{msgs.projekte}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingProjects"
-                                                                     onclick="PF('projectsProgress').start();"
+                                                                     onclick="PF('projectsProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startProjectIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.projectCount lt 1}"/>
@@ -139,7 +173,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedProjects} / #{indexingForm.projectCount}"/>
                                                 </td>
                                                 <td>
@@ -157,7 +191,7 @@
                                                 <td><h:outputText value="#{msgs.regelsaetze}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingRulesets"
-                                                                     onclick="PF('rulesetsProgress').start();"
+                                                                     onclick="PF('rulesetsProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startRulesetIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.rulesetCount lt 1}"/>
@@ -171,7 +205,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedRulesets} / #{indexingForm.rulesetCount}"/>
                                                 </td>
                                                 <td>
@@ -189,7 +223,7 @@
                                                 <td><h:outputText value="#{msgs.dockets}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingDockets"
-                                                                     onclick="PF('docketsProgress').start();"
+                                                                     onclick="PF('docketsProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startDocketIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.docketCount lt 1}"/>
@@ -203,7 +237,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedDockets} / #{indexingForm.docketCount}"/>
                                                 </td>
                                                 <td>
@@ -221,7 +255,7 @@
                                                 <td><h:outputText value="#{msgs.schritte}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingTasks"
-                                                                     onclick="PF('tasksProgress').start();"
+                                                                     onclick="PF('tasksProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startTaskIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.taskCount lt 1}"/>
@@ -235,7 +269,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedTasks} / #{indexingForm.taskCount}"/>
                                                 </td>
                                                 <td>
@@ -253,7 +287,7 @@
                                                 <td><h:outputText value="#{msgs.prozessvorlagen}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingTemplates"
-                                                                     onclick="PF('templatesProgress').start();"
+                                                                     onclick="PF('templatesProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startTemplateIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.templateCount lt 1}"/>
@@ -267,7 +301,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedTemplates} / #{indexingForm.templateCount}"/>
                                                 </td>
                                                 <td>
@@ -285,7 +319,7 @@
                                                 <td><h:outputText value="#{msgs.prozesse}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingProcesses"
-                                                                     onclick="PF('processesProgress').start();"
+                                                                     onclick="PF('processesProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startProcessIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.processCount lt 1}"/>
@@ -299,7 +333,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedProcesses} / #{indexingForm.processCount}"/>
                                                 </td>
                                                 <td>
@@ -317,7 +351,7 @@
                                                 <td><h:outputText value="#{msgs.batches}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingBatches"
-                                                                     onclick="PF('batchesProgress').start();"
+                                                                     onclick="PF('batchesProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startBatchIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.batchCount lt 1}"/>
@@ -331,7 +365,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedBatches} / #{indexingForm.batchCount}"/>
                                                 </td>
                                                 <td>
@@ -349,7 +383,7 @@
                                                 <td><h:outputText value="#{msgs.eigenschaften}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingProperties"
-                                                                     onclick="PF('propertiesProgress').start();"
+                                                                     onclick="PF('propertiesProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startPropertyIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.propertyCount lt 1}"/>
@@ -363,7 +397,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedProperties} / #{indexingForm.propertyCount}"/>
                                                 </td>
                                                 <td>
@@ -381,7 +415,7 @@
                                                 <td><h:outputText value="#{msgs.werkstuecke}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingWorkpieces"
-                                                                     onclick="PF('workpiecesProgress').start();"
+                                                                     onclick="PF('workpiecesProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startWorkpieceIndexing()}"
                                                                      disabled="#{indexingForm.indexingInProgress() or indexingForm.workpieceCount lt 1}"/>
@@ -395,7 +429,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedWorkpieces} / #{indexingForm.workpieceCount}"/>
                                                 </td>
                                                 <td>
@@ -413,10 +447,10 @@
                                                 <td><h:outputText value="#{msgs.history}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingHistory"
-                                                                     onclick="PF('historyProgress').start();"
+                                                                     onclick="PF('historyProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startHistoryIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress()}"/>
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.historyCount lt 1}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="historyProgress"
@@ -427,7 +461,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: center;">
                                                     <h:outputText value="#{indexingForm.indexedHistory} / #{indexingForm.historyCount}"/>
                                                 </td>
                                                 <td>

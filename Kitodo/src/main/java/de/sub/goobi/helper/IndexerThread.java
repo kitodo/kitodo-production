@@ -16,6 +16,15 @@ public class IndexerThread<T> implements Runnable {
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(IndexerThread.class);
 
+    /**
+     * Constructor initializing an IndexerThread object with the given SearchService
+     * and list of objects that will be indexed.
+     *
+     * @param searchService
+     *      SearchService instance used to index the entries in the given 'entries' list.
+     * @param entries
+     *      List of 'entries' that will be indexed.
+     */
     public IndexerThread(SearchService searchService, List<BaseBean> entries) {
         this.searchService = searchService;
         this.indexedObjects = 0;
@@ -27,14 +36,33 @@ public class IndexerThread<T> implements Runnable {
         this.indexObjects();
     }
 
+    /**
+     * Return the number of objects that have already been indexed during the current indexing process.
+     *
+     * @return int
+     *      the number of objects indexed during the current indexing run
+     */
     public int getIndexedObjects() {
         return this.indexedObjects;
     }
 
+    /**
+     * Return the number objects that will be indexed by this IndexerThread instance.
+     *
+     * @return
+     *      the number of objects that are to be indexed by this IndexerThread
+     */
     public int getObjectCount() {
         return this.entryList.size();
     }
 
+    /**
+     * Return the progress in percent of the currently running indexing process.
+     * If the list of entries to be indexed is empty, this will return "0".
+     *
+     * @return
+     *      the progress of the current indexing process in percent
+     */
     public int getIndexingProgress() {
         if (this.entryList.size() > 0) {
             return (int) ((this.indexedObjects / (float)this.entryList.size()) * 100);
