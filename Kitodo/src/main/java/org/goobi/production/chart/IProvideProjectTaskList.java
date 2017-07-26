@@ -27,11 +27,15 @@ import org.kitodo.data.database.beans.Project;
 public interface IProvideProjectTaskList {
 
     /**
-     *
+     * Calculate project tasks.
+     * 
      * @param inProject
+     *            as Project object
      * @param countImages
+     *            as Boolean
+     * @param inMax
+     *            as Integer
      * @return List
      */
-
-    public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax);
+    List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax);
 }
