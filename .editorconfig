@@ -1,0 +1,17 @@
+# top-most EditorConfig file
+root = true
+
+[*]
+charset=utf-8
+end_of_line=crlf
+insert_final_newline=false
+indent_style=space
+indent_size=4
+
+[{*.sht,*.htm,*.html,*.shtm,*.shtml,*.ng}]
+indent_style=space
+indent_size=8
+continuation_indent_size=4
+
+
+
