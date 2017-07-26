@@ -548,6 +548,13 @@ public class ProcessService extends TitleSearchService<Process> {
         indexer.performMultipleRequests(findAll(), processType);
     }
 
+    /**
+     * Get title without white spaces.
+     * 
+     * @param process
+     *            object
+     * @return title with '__' instead of ' '
+     */
     public String getNormalizedTitle(Process process) {
         return process.getTitle().replace(" ", "__");
     }
@@ -1046,6 +1053,13 @@ public class ProcessService extends TitleSearchService<Process> {
         return (int) closed;
     }
 
+    /**
+     * Get full text file path.
+     *
+     * @param process
+     *            object
+     * @return path as a String to the full text file
+     */
     public String getFulltextFilePath(Process process) throws IOException {
         return getProcessDataDirectory(process) + "/fulltext.xml";
     }
