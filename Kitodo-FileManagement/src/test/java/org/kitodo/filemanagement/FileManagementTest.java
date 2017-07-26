@@ -119,7 +119,7 @@ public class FileManagementTest {
 
         File currentDirFile = new File(testFolder);
         FileManagement fileManagement = new FileManagement();
-        URI testDir = fileManagement.createDirectory(currentDirFile.toURI(), directoryName);
+        URI testDir = fileManagement.create(currentDirFile.toURI(), directoryName, false);
         File testDirFile = new File(testDir);
         Assert.assertTrue("Directory not created", testDirFile.isDirectory());
         Assert.assertTrue("Directory not created", testDirFile.exists());
