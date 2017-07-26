@@ -41,12 +41,29 @@ public class FileManagement implements FileManagementInterface {
     private static final FileMapper fileMapper = new FileMapper();
 
     @Override
-    public URI create(URI parentFolderUri, String directoryName, boolean file) throws IOException {
-        File directory = new File(parentFolderUri.getPath() + File.separator + directoryName);
-        if (!directory.mkdir()) {
+    public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
+        if (file) {
+            return createResource(parentFolderUri, name);
+        }
+        return createDirectory(parentFolderUri, name);
+    }
+
+    private URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
+        parentFolderUri = fileMapper.mapAccordingToMappingType(parentFolderUri);
+        File directory = new File(Paths.get(new File(parentFolderUri).getPath(), directoryName).toUri());
+        if (!directory.exists() && !directory.mkdir()) {
             throw new IOException("Could not create directory.");
         }
         return fileMapper.unmapAccordingToMappingType(Paths.get(directory.getPath()).toUri());
+    }
+
+    private URI createResource(URI targetFolder, String fileName) throws IOException {
+        targetFolder = fileMapper.mapAccordingToMappingType(targetFolder);
+        File file = new File(Paths.get(new File(targetFolder).getPath(), fileName).toUri());
+        if (file.exists() || file.createNewFile()) {
+            return fileMapper.unmapAccordingToMappingType(Paths.get(file.getPath()).toUri());
+        }
+        return URI.create("");
     }
 
     @Override
@@ -63,10 +80,18 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public void copy(URI sourceDirectory, URI targetDirectory) throws IOException {
-        sourceDirectory = fileMapper.mapAccordingToMappingType(sourceDirectory);
-        targetDirectory = fileMapper.mapAccordingToMappingType(targetDirectory);
-        copyDirectory(new File(sourceDirectory), new File(targetDirectory));
+    public void copy(URI sourceUri, URI targetUri) throws IOException {
+        sourceUri = fileMapper.mapAccordingToMappingType(sourceUri);
+        targetUri = fileMapper.mapAccordingToMappingType(targetUri);
+        if (!fileExist(sourceUri)) {
+            throw new FileNotFoundException();
+        } else if (isFile(sourceUri) && targetUri.getPath().contains(".")) {
+            copyFile(new File(sourceUri), new File(targetUri));
+        } else if (isFile(sourceUri)) {
+            copyFileToDirectory(new File(sourceUri), new File(targetUri));
+        } else if (isDirectory(sourceUri)) {
+            copyDirectory(new File(sourceUri), new File(targetUri));
+        }
     }
 
     private void copyDirectory(File sourceDirectory, File targetDirectory) throws IOException {
@@ -76,16 +101,12 @@ public class FileManagement implements FileManagementInterface {
         FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
-    private void copyFile(URI sourceFile, URI destinationFile) throws IOException {
-        File srcFile = new File(fileMapper.mapAccordingToMappingType(sourceFile));
-        File destFile = new File(fileMapper.mapAccordingToMappingType(destinationFile));
-        FileUtils.copyFile(srcFile, destFile);
+    private void copyFile(File sourceFile, File destinationFile) throws IOException {
+        FileUtils.copyFile(sourceFile, destinationFile);
     }
 
-    private void copyFileToDirectory(URI sourceFile, URI targetDirectory) throws IOException {
-        File file = new File(fileMapper.mapAccordingToMappingType(sourceFile));
-        File directory = new File(fileMapper.mapAccordingToMappingType(targetDirectory));
-        FileUtils.copyFileToDirectory(file, directory);
+    private void copyFileToDirectory(File sourceFile, File targetDirectory) throws IOException {
+        FileUtils.copyFileToDirectory(sourceFile, targetDirectory);
     }
 
     @Override

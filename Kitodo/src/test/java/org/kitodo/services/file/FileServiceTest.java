@@ -266,8 +266,8 @@ public class FileServiceTest {
 
     @Test
     public void testCopyFileWithExistingTarget() throws IOException {
-        URI originFile = fileService.createResource(URI.create("fileServiceTest"), "copyFileExisting");
-        URI targetFile = fileService.createResource(URI.create("fileServiceTest"), "copyFileExistingTarget");
+        URI originFile = fileService.createResource(URI.create("fileServiceTest"), "copyFileExisting.txt");
+        URI targetFile = fileService.createResource(URI.create("fileServiceTest"), "copyFileExistingTarget.txt");
 
         Assert.assertTrue(fileService.fileExist(originFile));
         Assert.assertTrue(fileService.fileExist(targetFile));

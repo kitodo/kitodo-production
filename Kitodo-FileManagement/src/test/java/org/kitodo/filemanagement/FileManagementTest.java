@@ -105,6 +105,7 @@ public class FileManagementTest {
         Assert.assertTrue(fileManagement.fileExist(newUri));
     }
 
+    @Test
     public void shouldCopyDirectory() throws Exception {
         URI resource = fileManagement.create(URI.create("fileTest"), "toCopy", false);
         URI file = fileManagement.create(resource, "fileToCopy.xml", true);
@@ -198,10 +199,10 @@ public class FileManagementTest {
 
     @Test
     public void shouldGetSubUris() throws Exception {
-        URI directory = fileManagement.createDirectory(URI.create("fileTest"), "testSub");
-        URI firstSub = fileManagement.createResource(directory, "first.txt");
-        URI secondSub = fileManagement.createResource(directory, "second.xml");
-        URI thirdSub = fileManagement.createResource(directory, "third.jpg");
+        URI directory = fileManagement.create(URI.create("fileTest"), "testSub", false);
+        URI firstSub = fileManagement.create(directory, "first.txt", true);
+        URI secondSub = fileManagement.create(directory, "second.xml", true);
+        URI thirdSub = fileManagement.create(directory, "third.jpg", true);
 
         ArrayList subUris = fileManagement.getSubUris(null, directory);
         Assert.assertEquals(subUris.get(0), firstSub);

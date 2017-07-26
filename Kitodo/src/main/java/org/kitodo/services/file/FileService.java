@@ -84,7 +84,7 @@ public class FileService {
     public URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         if (directoryName != null) {
-            return fileManagementModule.createDirectory(parentFolderUri, directoryName);
+            return fileManagementModule.create(parentFolderUri, directoryName, false);
         }
         return URI.create("");
     }
@@ -161,22 +161,22 @@ public class FileService {
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        fileManagementModule.copyDirectory(sourceDirectory, targetDirectory);
+        fileManagementModule.copy(sourceDirectory, targetDirectory);
     }
 
     /**
      * Copies a file from a given URI to a given URI.
      *
-     * @param srcFile
+     * @param sourceUri
      *            the uri to copy from
-     * @param destFile
+     * @param destinationUri
      *            the uri to copy to
      * @throws IOException
      *             if copying fails
      */
-    public void copyFile(URI srcFile, URI destFile) throws IOException {
+    public void copyFile(URI sourceUri, URI destinationUri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        fileManagementModule.copyFile(srcFile, destFile);
+        fileManagementModule.copy(sourceUri, destinationUri);
     }
 
     /**
@@ -191,7 +191,7 @@ public class FileService {
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        fileManagementModule.copyFileToDirectory(sourceDirectory, targetDirectory);
+        fileManagementModule.copy(sourceDirectory, targetDirectory);
     }
 
     /**
@@ -261,7 +261,11 @@ public class FileService {
      */
     public String getFileName(URI uri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.getFileName(uri);
+        String fileNameWithExtension = fileManagementModule.getFileNameWithExtension(uri);
+        if (fileNameWithExtension.contains(".")) {
+            return fileNameWithExtension.substring(0, fileNameWithExtension.indexOf("."));
+        }
+        return fileNameWithExtension;
     }
 
     /**
@@ -290,7 +294,7 @@ public class FileService {
      */
     public void moveDirectory(URI sourceUri, URI targetUri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        fileManagementModule.moveDirectory(sourceUri, targetUri);
+        fileManagementModule.move(sourceUri, targetUri);
     }
 
     /**
@@ -305,7 +309,7 @@ public class FileService {
      */
     public void moveFile(URI sourceUri, URI targetUri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        fileManagementModule.moveFile(sourceUri, targetUri);
+        fileManagementModule.move(sourceUri, targetUri);
     }
 
     /**
@@ -766,7 +770,7 @@ public class FileService {
      */
     public URI createResource(String fileName) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.createResource(null, fileName);
+        return fileManagementModule.create(null, fileName, true);
     }
 
     /**
@@ -780,7 +784,7 @@ public class FileService {
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.createResource(targetFolder, name);
+        return fileManagementModule.create(targetFolder, name, true);
     }
 
     /**
