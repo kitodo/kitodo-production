@@ -45,6 +45,14 @@ public class TaskServiceIT {
     }
 
     @Test
+    public void shouldCountAllTasks() throws Exception {
+        TaskService taskService = new TaskService();
+
+        Long amount = taskService.count();
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(4), amount);
+    }
+
+    @Test
     public void shouldFindTask() throws Exception {
         TaskService taskService = new TaskService();
 
