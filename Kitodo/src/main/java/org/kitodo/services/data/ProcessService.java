@@ -808,8 +808,17 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return path
      */
-    public URI getProcessDataDirectory(Process process) {
-        return URI.create(process.getId().toString());
+    public URI getProcessDataDirectory(Process process) throws IOException {
+        if (process.getProcessBaseUri() == null) {
+            process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
+            try {
+                save(process);
+            } catch (DataException e) {
+                logger.error(e);
+                return URI.create("");
+            }
+        }
+        return process.getProcessBaseUri();
     }
 
     /**
@@ -1028,7 +1037,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return (int) closed;
     }
 
-    public String getFulltextFilePath(Process process) {
+    public String getFulltextFilePath(Process process) throws IOException {
         return getProcessDataDirectory(process) + "fulltext.xml";
     }
 

@@ -490,6 +490,7 @@ public class FileServiceTest {
     public void testCreateBackupFile() throws IOException {
         Process process = new Process();
         process.setId(2);
+        process.setProcessBaseUri(URI.create("2"));
 
         Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.1")));
         Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.2")));

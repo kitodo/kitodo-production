@@ -62,8 +62,12 @@ public class ExtendedProzessImpl extends ProcessImpl {
     @Override
     public String getFullTextFile(String sessionId) throws GoobiException {
         super.getFullTextFile(sessionId);
-        return serviceManager.getProcessService()
-                .getFulltextFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
+        try {
+            return serviceManager.getProcessService()
+                    .getFulltextFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
+        } catch (IOException e) {
+            throw new GoobiException(254, e.getMessage());
+        }
     }
 
     /**

@@ -334,7 +334,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI createUriForExistingProcess(String processId) {
-        return null;
+        return URI.create(processId);
     }
 
     @Override

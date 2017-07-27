@@ -615,9 +615,13 @@ public class FileService {
      *            the process, the uri is needed for.
      * @return the URI.
      */
-    public URI getProcessBaseUriForExistingProcess(Process process) {
-        String path = process.getId().toString();
-        return URI.create(path);
+    public URI getProcessBaseUriForExistingProcess(Process process) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        URI processBaseUri = process.getProcessBaseUri();
+        if (processBaseUri == null) {
+            process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
+        }
+        return process.getProcessBaseUri();
     }
 
     /**
