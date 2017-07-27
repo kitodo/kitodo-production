@@ -170,8 +170,13 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
         return userGroupDAO.search(query);
     }
 
-    public Long count(String query) throws DAOException {
-        return userGroupDAO.count(query);
+    /**
+     * Count all user groups stored in index.
+     * 
+     * @return all user groups
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
     }
 
     /**

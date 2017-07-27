@@ -32,6 +32,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 @Named("StatistikForm")
@@ -73,12 +74,12 @@ public class StatistikForm {
     /**
      * Get amount of user groups.
      *
-     * @return Anzahl der Benutzer
+     * @return amount of user groups
      */
-    public Long getAnzahlBenutzergruppen() {
+    public Long getAmountUserGroups() {
         try {
-            return serviceManager.getUserService().count("from UserGroup");
-        } catch (DAOException e) {
+            return serviceManager.getUserGroupService().count();
+        } catch (DataException e) {
             Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
             return null;
         }
