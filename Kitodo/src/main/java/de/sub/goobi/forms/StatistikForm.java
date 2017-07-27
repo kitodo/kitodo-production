@@ -11,6 +11,8 @@
 
 package de.sub.goobi.forms;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
@@ -20,12 +22,16 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -53,7 +59,7 @@ public class StatistikForm {
     }
 
     /**
-     * The function getAnzahlBenutzer() counts the number of user accounts in
+     * The function getAmountUsers() counts the number of user accounts in
      * the kitodo.production environment. Since user accounts are not hard
      * deleted from the database when the delete button is pressed a where
      * clause is used in the SQL statement to exclude the deleted accounts from
@@ -62,10 +68,10 @@ public class StatistikForm {
      * @return the count of valid user accounts
      */
 
-    public Long getAnzahlBenutzer() {
+    public Long getAmountUsers() {
         try {
-            return serviceManager.getUserService().count("from User where visible is null");
-        } catch (DAOException e) {
+            return serviceManager.getUserService().count();
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;
         }

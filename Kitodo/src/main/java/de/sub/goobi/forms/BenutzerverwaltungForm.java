@@ -11,6 +11,8 @@
 
 package de.sub.goobi.forms;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
@@ -38,6 +40,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
@@ -123,33 +126,33 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * Save user.
+     * Save user if there is not other user with the same login.
      *
      * @return page or empty String
      */
     public String save() {
         Session session = Helper.getHibernateSession();
         session.evict(this.myClass);
-        String bla = this.myClass.getLogin();
+        String login = this.myClass.getLogin();
 
-        if (!isLoginValid(bla)) {
+        if (!isLoginValid(login)) {
             return null;
         }
 
-        Integer blub = this.myClass.getId();
+        Integer id = this.myClass.getId();
+
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery.mustNot(matchQuery("_id", id.toString()));
+        boolQuery.must(matchQuery("login", login));
         try {
-            /*
-             * prüfen, ob schon ein anderer Benutzer mit gleichem Login
-             * existiert
-             */
-            if (this.serviceManager.getUserService().count("from User where login='" + bla + "'AND id<>" + blub) == 0) {
+            if (this.serviceManager.getUserService().count(boolQuery.toString()) == 0) {
                 this.serviceManager.getUserService().save(this.myClass);
                 return "/newpages/BenutzerAlle";
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
                 return null;
             }
-        } catch (DAOException | DataException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
             return null;
