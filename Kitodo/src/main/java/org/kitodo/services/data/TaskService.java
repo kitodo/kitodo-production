@@ -648,7 +648,7 @@ public class TaskService extends TitleSearchService<Task> {
         return processService.getBatchesInitialized(task.getProcess()).size() > 0;
     }
 
-    public void close(Task task, boolean requestFromGUI) throws DataException {
+    public void close(Task task, boolean requestFromGUI) throws DataException, IOException {
         Integer processId = task.getProcess().getId();
         if (logger.isDebugEnabled()) {
             logger.debug("closing step with id " + task.getId() + " and process id " + processId);
@@ -747,14 +747,10 @@ public class TaskService extends TitleSearchService<Task> {
         }
         Process po = task.getProcess();
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-        try {
-            if (po.getSortHelperImages() != serviceManager.getFileService()
+        if (po.getSortHelperImages() != serviceManager.getFileService()
                     .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
-                po.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)));
-                serviceManager.getProcessService().save(po);
-            }
-        } catch (IOException e) {
-            logger.error(e);
+            po.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)));
+            serviceManager.getProcessService().save(po);
         }
         logger.debug("update process status");
         updateProcessStatus(po);

@@ -17,6 +17,7 @@ import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -895,7 +896,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException {
+    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException, IOException {
 
         // for (ProcessProperty pp : this.processPropertyList) {
         // this.processProperty = pp;

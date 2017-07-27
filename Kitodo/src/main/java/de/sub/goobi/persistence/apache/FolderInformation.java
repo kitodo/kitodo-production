@@ -56,7 +56,7 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public URI getImagesTifDirectory(boolean useFallBack) {
+    public URI getImagesTifDirectory(boolean useFallBack) throws IOException {
         URI dir = getImagesDirectory();
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
@@ -64,13 +64,9 @@ public class FolderInformation {
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
-        try {
-            ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
-            for (URI directory : directories) {
-                tifOrdner = directory;
-            }
-        } catch (IOException e) {
-            logger.error(e);
+        ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
+        for (URI directory : directories) {
+            tifOrdner = directory;
         }
 
         if (tifOrdner == null && useFallBack) {
@@ -83,19 +79,15 @@ public class FolderInformation {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 URI tif = tifOrdner;
-                try {
-                    ArrayList<URI> files = fileService.getSubUris(tif);
-                    if (files == null || files.size() == 0) {
-                        ArrayList<URI> folderList = fileService.getSubUris(dir);
-                        for (URI folder : folderList) {
-                            if (folder.toString().endsWith(suffix)) {
-                                tifOrdner = folder;
-                                break;
-                            }
+                ArrayList<URI> files = fileService.getSubUris(tif);
+                if (files == null || files.size() == 0) {
+                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    for (URI folder : folderList) {
+                        if (folder.toString().endsWith(suffix)) {
+                            tifOrdner = folder;
+                            break;
                         }
                     }
-                } catch (IOException e) {
-                    logger.error(e);
                 }
             }
         }
@@ -119,10 +111,8 @@ public class FolderInformation {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean getTifDirectoryExists() {
-        URI testMe;
-
-        testMe = getImagesTifDirectory(true);
         try {
+            URI testMe = getImagesTifDirectory(true);
             return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
                     && fileService.getSubUris(testMe).size() > 0;
         } catch (IOException e) {
@@ -138,7 +128,7 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public URI getImagesOrigDirectory(boolean useFallBack) {
+    public URI getImagesOrigDirectory(boolean useFallBack) throws IOException {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             URI dir = getImagesDirectory();
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -147,14 +137,10 @@ public class FolderInformation {
             FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_",
                     "_" + DIRECTORY_SUFFIX);
             URI origOrdner = null;
-            try {
-                ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
-                // TODO: does it actually make sense?
-                for (URI directory : verzeichnisse) {
-                    origOrdner = directory;
-                }
-            } catch (IOException e) {
-                logger.error(e);
+            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
+            // TODO: does it actually make sense?
+            for (URI directory : verzeichnisse) {
+                origOrdner = directory;
             }
             if (origOrdner == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
@@ -166,13 +152,9 @@ public class FolderInformation {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     URI tif = origOrdner;
-                    try {
-                        ArrayList<URI> files = fileService.getSubUris(tif);
-                        if (files == null || files.size() == 0) {
-                            origOrdner = iterateOverDirectories(dir, suffix);
-                        }
-                    } catch (IOException e) {
-                        logger.error(e);
+                    ArrayList<URI> files = fileService.getSubUris(tif);
+                    if (files == null || files.size() == 0) {
+                        origOrdner = iterateOverDirectories(dir, suffix);
                     }
                 }
             }
@@ -187,16 +169,12 @@ public class FolderInformation {
         }
     }
 
-    private URI iterateOverDirectories(URI directory, String suffix) {
-        try {
-            ArrayList<URI> folderList = fileService.getSubUris(directory);
-            for (URI folder : folderList) {
-                if (folder.toString().endsWith(suffix)) {
-                    return folder;
-                }
+    private URI iterateOverDirectories(URI directory, String suffix) throws IOException {
+        ArrayList<URI> folderList = fileService.getSubUris(directory);
+        for (URI folder : folderList) {
+            if (folder.toString().endsWith(suffix)) {
+                return folder;
             }
-        } catch (IOException e) {
-            logger.error(e);
         }
         return null;
     }
@@ -234,24 +212,15 @@ public class FolderInformation {
      *
      * @return path
      */
-    public URI getSourceDirectory() {
+    public URI getSourceDirectory() throws IOException {
         URI dir = getImagesDirectory();
         FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
         URI sourceFolder;
-        ArrayList<URI> directories = new ArrayList<>();
-        try {
-            directories = fileService.getSubUris(filterDirectory, dir);
-        } catch (IOException e) {
-            logger.error(e);
-        }
+        ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
         if (directories.size() == 0) {
             sourceFolder = dir.resolve(title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                try {
-                    fileService.createDirectory(dir, title + "_source");
-                } catch (IOException e) {
-                    logger.error(e);
-                }
+                fileService.createDirectory(dir, title + "_source");
             }
         } else {
             sourceFolder = dir.resolve(directories.get(0));
@@ -276,14 +245,8 @@ public class FolderInformation {
         } catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException
                 | InvocationTargetException e) {
             logger.error(e);
+            return null;
         }
-        String folder = this.getImagesTifDirectory(false).toString();
-        folder = folder.substring(0, folder.lastIndexOf("_"));
-        folder = folder + "_" + methodName;
-        if (new File(folder).exists()) {
-            return folder;
-        }
-        return null;
     }
 
     /**

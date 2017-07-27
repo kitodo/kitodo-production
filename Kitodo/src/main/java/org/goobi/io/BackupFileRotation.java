@@ -149,18 +149,13 @@ public class BackupFileRotation {
         }
     }
 
-    private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
+    private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) throws IOException {
 
         ArrayList<URI> filteredUris = new ArrayList<>();
         FilenameFilter filter = new FileNameMatchesFilter(filterFormat);
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
-        ArrayList<URI> subUris = new ArrayList<>();
-        try {
-            subUris = fileService.getSubUris(filter, processDataDirectory);
-        } catch (IOException e) {
-            logger.error(e);
-        }
+        ArrayList<URI> subUris = fileService.getSubUris(filter, processDataDirectory);
         filteredUris.addAll(subUris);
         return filteredUris;
     }

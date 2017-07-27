@@ -505,7 +505,7 @@ public class FileService {
      *            the process to get the metadata.xml for.
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(Process process) {
+    public URI getMetadataFilePath(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
     }
 
@@ -525,7 +525,7 @@ public class FileService {
      *            the process to get the imageDirectory for.
      * @return The uri of the Image Directory.
      */
-    public URI getImagesDirectory(Process process) {
+    public URI getImagesDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
     }
 
@@ -536,7 +536,7 @@ public class FileService {
      *            the process tog et the ocr directory for.
      * @return the uri to the ocr directory.
      */
-    public URI getOcrDirectory(Process process) {
+    public URI getOcrDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
     }
 
@@ -547,7 +547,7 @@ public class FileService {
      *            the process to get the import directory for.
      * @return the uri of the import directory
      */
-    public URI getImportDirectory(Process process) {
+    public URI getImportDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
     }
 
@@ -558,7 +558,7 @@ public class FileService {
      *            the process to get the text directory for.
      * @return the uri of the text directory
      */
-    public URI getTxtDirectory(Process process) {
+    public URI getTxtDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
     }
 
@@ -569,7 +569,7 @@ public class FileService {
      *            the process to get the pdf directory for.
      * @return the uri of the pdf directory
      */
-    public URI getPdfDirectory(Process process) {
+    public URI getPdfDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
     }
 
@@ -580,7 +580,7 @@ public class FileService {
      *            the process to get the alto directory for.
      * @return the uri of the alto directory
      */
-    public URI getAltoDirectory(Process process) {
+    public URI getAltoDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
     }
 
@@ -591,7 +591,7 @@ public class FileService {
      *            the process to get the word directory for.
      * @return the uri of the word directory
      */
-    public URI getWordDirectory(Process process) {
+    public URI getWordDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
     }
 
@@ -602,7 +602,7 @@ public class FileService {
      *            the process to get the template file for.
      * @return the uri of the template file
      */
-    public URI getTemplateFile(Process process) {
+    public URI getTemplateFile(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
@@ -633,21 +633,16 @@ public class FileService {
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
+    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) throws IOException {
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
 
         if (resourceName == null) {
             resourceName = "";
         }
-        try {
-            FileManagementInterface fileManagementModule = getFileManagementModule();
-            return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
                     resourceName);
-        } catch (IOException e) {
-            logger.error(e);
-            return URI.create("");
-        }
     }
 
     /**
@@ -664,15 +659,9 @@ public class FileService {
      * @return unmapped URI
      */
     public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Process process, ProcessSubType processSubType,
-            String resourceName) {
-        ArrayList<URI> subURIs = new ArrayList<>();
-        try {
-            URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
-            subURIs = getSubUris(filter, processSubTypeURI);
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        return subURIs;
+            String resourceName) throws IOException {
+        URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
+        return getSubUris(filter, processSubTypeURI);
     }
 
     /**
@@ -682,14 +671,11 @@ public class FileService {
      *            the process to delete the directories for.
      * @return true, if deletion was successful.
      */
-    public boolean deleteProcessContent(Process process) {
+    public boolean deleteProcessContent(Process process) throws IOException {
         for (ProcessSubType processSubType : ProcessSubType.values()) {
             URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, null);
-            try {
-                FileManagementInterface fileManagementModule = getFileManagementModule();
-                fileManagementModule.delete(processSubTypeURI);
-            } catch (IOException e) {
-                logger.warn("uri " + processSubTypeURI + " could not be deleted");
+            FileManagementInterface fileManagementModule = getFileManagementModule();
+            if (!fileManagementModule.delete(processSubTypeURI)) {
                 return false;
             }
         }
@@ -703,7 +689,7 @@ public class FileService {
      *            the process, to get the source directory for
      * @return the source directory as an URI
      */
-    public URI getSourceDirectory(Process process) {
+    public URI getSourceDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.IMAGE_SOURCE, null);
     }
 
@@ -732,7 +718,7 @@ public class FileService {
     }
 
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
-            throws WriteException, PreferencesException {
+            throws IOException, WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }
 

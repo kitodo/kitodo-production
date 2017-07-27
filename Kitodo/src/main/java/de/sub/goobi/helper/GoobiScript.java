@@ -198,18 +198,18 @@ public class GoobiScript {
                 }
             }
             if (!contentOnly) {
-                deleteMetadataDirectory(p);
                 try {
+                    deleteMetadataDirectory(p);
                     serviceManager.getProcessService().remove(p);
                     Helper.setMeldung("Process " + title + " deleted.");
-                } catch (DataException e) {
+                } catch (DataException | IOException e) {
                     Helper.setFehlerMeldung("could not delete process " + p.getTitle(), e);
                 }
             }
         }
     }
 
-    private void deleteMetadataDirectory(Process process) {
+    private void deleteMetadataDirectory(Process process) throws IOException {
         serviceManager.getFileService().deleteProcessContent(process);
     }
 

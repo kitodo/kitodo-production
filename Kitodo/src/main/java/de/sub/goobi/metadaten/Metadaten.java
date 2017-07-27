@@ -1745,7 +1745,7 @@ public class Metadaten {
                             if (dataList == null) {
                                 return;
                             }
-                        } catch (InvalidImagesException e1) {
+                        } catch (IOException | InvalidImagesException e1) {
                             logger.trace("dataList error");
                             logger.error("Images could not be read", e1);
                             Helper.setFehlerMeldung("images could not be read", e1);

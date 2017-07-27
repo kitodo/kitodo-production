@@ -234,7 +234,7 @@ public class MetadatenVerifizierung {
                 Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
                 return false;
             }
-        } catch (InvalidImagesException e1) {
+        } catch (IOException | InvalidImagesException e1) {
             Helper.setFehlerMeldung(process.getTitle() + ": ", e1);
             ergebnis = false;
         }

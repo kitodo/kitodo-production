@@ -1075,7 +1075,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenPage() throws DAOException, DataException {
+    public void BearbeitungsstatusHochsetzenPage() throws DAOException, DataException, IOException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             stepStatusUp(proz.getId());
         }
@@ -1085,7 +1085,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenSelection() throws DAOException, DataException {
+    public void BearbeitungsstatusHochsetzenSelection() throws DAOException, DataException, IOException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
                 stepStatusUp(proz.getId());
@@ -1097,13 +1097,13 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenHits() throws DAOException, DataException {
+    public void BearbeitungsstatusHochsetzenHits() throws DAOException, DataException, IOException {
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             stepStatusUp(proz.getId());
         }
     }
 
-    private void stepStatusUp(int processId) throws DAOException, DataException {
+    private void stepStatusUp(int processId) throws DAOException, DataException, IOException {
         List<Task> taskList = serviceManager.getProcessService().find(processId).getTasks();
 
         for (Task t : taskList) {
@@ -1190,7 +1190,7 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Task status up.
      */
-    public void SchrittStatusUp() throws DAOException, DataException {
+    public void SchrittStatusUp() throws DAOException, DataException, IOException {
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.DONE) {
             this.mySchritt = serviceManager.getTaskService().setProcessingStatusUp(this.mySchritt);
             this.mySchritt.setEditTypeEnum(TaskEditType.ADMIN);
