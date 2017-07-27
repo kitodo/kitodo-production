@@ -30,6 +30,7 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -387,19 +388,19 @@ public class HotfolderJob extends AbstractGoobiJob {
     /**
      * Test title.
      *
-     * @param titel
+     * @param title
      *            String
      * @return boolean
      */
-    public static boolean testTitle(String titel) {
-        if (titel != null) {
-            long anzahl = 0;
+    public static boolean testTitle(String title) {
+        if (title != null) {
+            long amount = 0;
             try {
-                anzahl = serviceManager.getProcessService().count("from Process where title='" + titel + "'");
-            } catch (DAOException e) {
+                amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
+            } catch (DataException e) {
                 return false;
             }
-            if (anzahl > 0) {
+            if (amount > 0) {
                 Helper.setFehlerMeldung("processTitleAllreadyInUse");
                 return false;
             }

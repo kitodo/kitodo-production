@@ -11,8 +11,6 @@
 
 package de.sub.goobi.forms;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
@@ -30,8 +28,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -96,10 +92,10 @@ public class StatistikForm {
      *
      * @return amount of processes
      */
-    public Long getAnzahlProzesse() {
+    public Long getAmountProcesses() {
         try {
-            return serviceManager.getProcessService().count("from Process");
-        } catch (DAOException e) {
+            return serviceManager.getProcessService().count();
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;
         }

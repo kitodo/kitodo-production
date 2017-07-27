@@ -11,6 +11,8 @@
 
 package org.goobi.production.cli.helper;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.forms.AdditionalField;
@@ -38,6 +40,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.Operator;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.importer.ImportObject;
 import org.jdom.Document;
@@ -472,21 +475,8 @@ public class CopyProcess extends ProzesskopieForm {
             Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
         }
 
-        /* prüfen, ob der Prozesstitel schon verwendet wurde */
         if (this.prozessKopie.getTitle() != null) {
-            long anzahl = 0;
-            try {
-                anzahl = serviceManager.getProcessService()
-                        .count("from Process where title='" + this.prozessKopie.getTitle() + "'");
-            } catch (DAOException e) {
-                Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
-                valide = false;
-            }
-            if (anzahl > 0) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ")
-                        + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
-            }
+            valide = isProcessTitleAvailable(this.prozessKopie.getTitle());
         }
 
         /*
@@ -552,24 +542,35 @@ public class CopyProcess extends ProzesskopieForm {
                 Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
             }
 
-            /* prüfen, ob der Prozesstitel schon verwendet wurde */
             if (this.prozessKopie.getTitle() != null) {
-                long anzahl = 0;
-                try {
-                    anzahl = serviceManager.getProcessService()
-                            .count("from Prozess where titel='" + this.prozessKopie.getTitle() + "'");
-                } catch (DAOException e) {
-                    Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
-                    valide = false;
-                }
-                if (anzahl > 0) {
-                    valide = false;
-                    Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
-                            + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
-                }
+                valide = isProcessTitleAvailable(this.prozessKopie.getTitle());
             }
         }
         return valide;
+    }
+
+    /**
+     * Checks if process title is available. If yes, return true, if no, return
+     * false.
+     * 
+     * @param title
+     *            of process
+     * @return boolean
+     */
+    private boolean isProcessTitleAvailable(String title) {
+        long amount = 0;
+        try {
+            amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
+        } catch (DataException e) {
+            Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
+            return false;
+        }
+        if (amount > 0) {
+            Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
+                    + Helper.getTranslation("ProcessCreationErrorTitleAlreadyInUse"));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1236,8 +1237,7 @@ public class CopyProcess extends ProzesskopieForm {
         while (tokenizer.hasMoreTokens()) {
             String myString = tokenizer.nextToken();
             /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
-             * übernehmen
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
                 this.tifHeaderImageDescription += myString.substring(1, myString.length() - 1);

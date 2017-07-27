@@ -54,7 +54,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
@@ -214,7 +214,7 @@ public class MassImportForm implements Serializable {
      *
      * @return String
      */
-    public String convertData() throws IOException, DAOException {
+    public String convertData() throws IOException, DataException {
         this.processList = new ArrayList<>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setFehlerMeldung("missingPlugin");

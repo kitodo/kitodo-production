@@ -50,10 +50,10 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
+import org.goobi.production.plugin.PluginLoader;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -709,15 +709,14 @@ public class ProzesskopieForm implements Serializable {
 
             /* prüfen, ob der Prozesstitel schon verwendet wurde */
             if (this.prozessKopie.getTitle() != null) {
-                long anzahl = 0;
+                long amount = 0;
                 try {
-                    anzahl = serviceManager.getProcessService()
-                            .count("from Process where title='" + this.prozessKopie.getTitle() + "'");
-                } catch (DAOException e) {
+                    amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
+                } catch (DataException e) {
                     Helper.setFehlerMeldung("Error on reading process information", e.getMessage());
                     valide = false;
                 }
-                if (anzahl > 0) {
+                if (amount > 0) {
                     valide = false;
                     Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
                             + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
