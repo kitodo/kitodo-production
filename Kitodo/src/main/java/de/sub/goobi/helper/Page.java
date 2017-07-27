@@ -19,8 +19,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 
 /**
  * This class provides pagination for displaying results from a large result set
@@ -38,20 +36,19 @@ public class Page implements Serializable { // implements Iterator
     private int pageSize = 0;
     private int page = 0;
     private int totalResults = 0;
-    private Criteria criteria;
     private static final Logger logger = LogManager.getLogger(Page.class);
 
     /**
      * Construct a new Page with a Criteria. Page numbers are zero-based, so the
      * first page is page 0.
      *
-     * @param criteria
-     *            the Hibernate Criteria
+     * @param totalResults
+     *            the number of results
      *
      * @param page
      *            the page number (zero-based)
      */
-    public Page(Criteria criteria, int page) {
+    public Page(int totalResults, int page) {
         this.page = page;
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (login == null || login.getMyBenutzer() == null) {
@@ -59,25 +56,9 @@ public class Page implements Serializable { // implements Iterator
         } else {
             this.pageSize = login.getMyBenutzer().getTableSize();
         }
-        this.criteria = criteria;
-        try {
 
-            if (criteria instanceof PaginatingCriteria) {
-                this.totalResults = ((PaginatingCriteria) criteria).count();
-            } else {
-                // this case should be avoided, especially if dealing with a
-                // large number of Objects
-                logger.debug("Page-Object is working with a memory stressing Criteria. Try to replace by "
-                        + "PaginatingCriteria, if performance or memory is going down");
-                this.totalResults = criteria.list().size();
-            }
+        this.totalResults = totalResults;
 
-        } catch (HibernateException e) {
-            // no hits found, error is thrown
-            if (logger.isDebugEnabled()) {
-                logger.debug("Failed to get paginated results: " + e);
-            }
-        }
     }
 
     /**
@@ -116,7 +97,7 @@ public class Page implements Serializable { // implements Iterator
     // TODO: Use generics
     @SuppressWarnings("rawtypes")
     public List getCompleteList() {
-        return this.criteria.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+        return results;
     }
 
     public int getTotalResults() {
@@ -145,20 +126,11 @@ public class Page implements Serializable { // implements Iterator
          * class was constructed, we now trim it down to the pageSize if a next
          * page exists.
          */
-        if (this.criteria != null) {
-            try {
-                this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1)
-                        .list();
-                if (this.results != null && this.results.size() > 0) {
-                    return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
-                } else {
-                    return new ArrayList();
-                }
-            } catch (HibernateException e) {
-                return this.results;
-            }
+        if (this.results != null && this.results.size() > 0) {
+            return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
+        } else {
+            return new ArrayList();
         }
-        return new ArrayList();
     }
 
     /*
