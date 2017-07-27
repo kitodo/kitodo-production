@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -19,6 +20,7 @@ import de.sub.goobi.config.ConfigCore;
 import java.io.File;
 import java.util.List;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -47,6 +49,31 @@ public class UserServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllUsers() throws Exception {
+        UserService userService = new UserService();
+
+        Long amount = userService.count();
+        assertEquals("Users were not counted correctly!", Long.valueOf(3), amount);
+    }
+
+    @Test
+    public void shouldCountUsersAccordingToQuery() throws Exception {
+        UserService userService = new UserService();
+
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery.mustNot(matchQuery("_id", "1"));
+        boolQuery.must(matchQuery("login", "kowal"));
+        Long amount = userService.count(boolQuery.toString());
+        assertEquals("User was found!", Long.valueOf(0), amount);
+
+        BoolQueryBuilder boolQuerySecond = new BoolQueryBuilder();
+        boolQuerySecond.must(matchQuery("_id", "1"));
+        boolQuerySecond.must(matchQuery("login", "kowal"));
+        amount = userService.count(boolQuerySecond.toString());
+        assertEquals("User was not found!", Long.valueOf(1), amount);
     }
 
     @Test
