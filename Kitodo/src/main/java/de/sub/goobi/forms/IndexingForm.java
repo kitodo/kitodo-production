@@ -11,353 +11,778 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.helper.IndexerThread;
+import de.sub.goobi.helper.IndexWorker;
+import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.time.LocalDateTime;
+import java.util.*;
 
 @Named
 @ApplicationScoped
 public class IndexingForm {
 
+    class IndexAllThread extends Thread {
+
+        private int pause = 1000;
+
+        @Override
+        public void run() {
+            try {
+                startUserIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startUserGroupIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startProjectIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startRulesetIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startDocketIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startTaskIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startTemplateIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startProcessIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startBatchIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startPropertyIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                startWorkpieceIndexing();
+                indexerThread.join();
+                sleep(pause);
+
+                currentIndexState = ObjectTypes.NONE;
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    private LocalDateTime batchLastIndexedDate = null;
-    private LocalDateTime docketLastIndexedDate = null;
-    private LocalDateTime historyLastIndexedDate = null;
-    private LocalDateTime processesLastIndexedDate = null;
-    private LocalDateTime projectsLastIndexedDate = null;
-    private LocalDateTime propertiesLastIndexedDate = null;
-    private LocalDateTime rulsetsLastIndexedDate = null;
-    private LocalDateTime tasksLastIndexedDate = null;
-    private LocalDateTime templatesLastIndexedDate = null;
-    private LocalDateTime usersLastIndexedDate = null;
-    private LocalDateTime userGroupsLastIndexedDate = null;
-    private LocalDateTime workpiecesLastIndexedDate = null;
+    private enum ObjectTypes {
+            BATCH,
+            DOCKET,
+            PROCESS,
+            PROJECT,
+            PROPERTY,
+            RULESET,
+            TASK,
+            TEMPLATE,
+            USER,
+            USERGROUP,
+            WORKPIECE,
+            NONE
+    }
 
-    private IndexerThread batchThread;
-    private IndexerThread docketThread;
-    private IndexerThread historyThread;
-    private IndexerThread processThread;
-    private IndexerThread projectThread;
-    private IndexerThread propertyThread;
-    private IndexerThread rulesetThread;
-    private IndexerThread taskThread;
-    private IndexerThread templateThread;
-    private IndexerThread userThread;
-    private IndexerThread usergroupThread;
-    private IndexerThread workpieceThread;
+    private ObjectTypes currentIndexState = ObjectTypes.NONE;
+
+    private Map<ObjectTypes, LocalDateTime> lastIndexed = new EnumMap<>(ObjectTypes.class);
+
+    private List<Batch> batches = serviceManager.getBatchService().findAll();
+    private List<Docket> dockets = serviceManager.getDocketService().findAll();
+    private List<Process> processes = serviceManager.getProcessService().findAll();
+    private List<Project> projects = serviceManager.getProjectService().findAll();
+    private List<Property> properties = serviceManager.getPropertyService().findAll();
+    private List<Ruleset> rulesets = serviceManager.getRulesetService().findAll();
+    private List<Task> tasks = serviceManager.getTaskService().findAll();
+    private List<Template> templates = serviceManager.getTemplateService().findAll();
+    private List<User> users = serviceManager.getUserService().findAll();
+    private List<UserGroup> userGroups = serviceManager.getUserGroupService().findAll();
+    private List<Workpiece> workpieces = serviceManager.getWorkpieceService().findAll();
+
+    private int indexedBatches = 0;
+    private int indexedDockets = 0;
+    private int indexedProcesses = 0;
+    private int indexedProjects = 0;
+    private int indexedProperties = 0;
+    private int indexedRulesetes = 0;
+    private int indexedTasks = 0;
+    private int indexedTemplates = 0;
+    private int indexedUsers = 0;
+    private int indexedUsergroups = 0;
+    private int indexedWorkpieces = 0;
+
+    private IndexWorker batchWorker;
+    private IndexWorker docketWorker;
+    private IndexWorker processWorker;
+    private IndexWorker projectWorker;
+    private IndexWorker propertyWorker;
+    private IndexWorker rulesetWorker;
+    private IndexWorker taskWorker;
+    private IndexWorker templateWorker;
+    private IndexWorker userWorker;
+    private IndexWorker usergroupWorker;
+    private IndexWorker workpieceWorker;
+
+    private Thread indexerThread;
 
     /**
      * Standard constructor.
      */
     public IndexingForm() {
-        this.batchThread = new IndexerThread(serviceManager.getBatchService(), serviceManager.getBatchService().findAll());
-        this.docketThread = new IndexerThread(serviceManager.getDocketService(), serviceManager.getDocketService().findAll());
-        this.historyThread = new IndexerThread(serviceManager.getHistoryService(), serviceManager.getHistoryService().findAll());
-        this.processThread = new IndexerThread(serviceManager.getProcessService(), serviceManager.getProcessService().findAll());
-        this.projectThread = new IndexerThread(serviceManager.getProjectService(), serviceManager.getProjectService().findAll());
-        this.propertyThread = new IndexerThread(serviceManager.getPropertyService(), serviceManager.getPropertyService().findAll());
-        this.rulesetThread = new IndexerThread(serviceManager.getRulesetService(), serviceManager.getRulesetService().findAll());
-        this.taskThread = new IndexerThread(serviceManager.getTaskService(), serviceManager.getTaskService().findAll());
-        this.templateThread = new IndexerThread(serviceManager.getTemplateService(), serviceManager.getTemplateService().findAll());
-        this.userThread = new IndexerThread(serviceManager.getUserService(), serviceManager.getUserService().findAll());
-        this.usergroupThread = new IndexerThread(serviceManager.getUserGroupService(), serviceManager.getUserGroupService().findAll());
-        this.workpieceThread = new IndexerThread(serviceManager.getWorkpieceService(), serviceManager.getWorkpieceService().findAll());
+        this.batchWorker = new IndexWorker(serviceManager.getBatchService(), this.batches);
+        this.docketWorker = new IndexWorker(serviceManager.getDocketService(), this.dockets);
+        this.processWorker = new IndexWorker(serviceManager.getProcessService(), this.processes);
+        this.projectWorker = new IndexWorker(serviceManager.getProjectService(), this.projects);
+        this.propertyWorker = new IndexWorker(serviceManager.getPropertyService(), this.properties);
+        this.rulesetWorker = new IndexWorker(serviceManager.getRulesetService(), this.rulesets);
+        this.taskWorker = new IndexWorker(serviceManager.getTaskService(), this.tasks);
+        this.templateWorker = new IndexWorker(serviceManager.getTemplateService(), this.templates);
+        this.userWorker = new IndexWorker(serviceManager.getUserService(), this.users);
+        this.usergroupWorker = new IndexWorker(serviceManager.getUserGroupService(), this.userGroups);
+        this.workpieceWorker = new IndexWorker(serviceManager.getWorkpieceService(), this.workpieces);
     }
 
+    /**
+     * Return the number of batches.
+     *
+     * @return int
+     *      number of batches
+     */
     public int getBatchCount(){
-        return this.batchThread.getObjectCount();
-    }
-    public int getIndexedBatches(){
-        return this.batchThread.getIndexedObjects();
-    }
-    public int getBatchIndexingProgress() {
-        return this.batchThread.getIndexingProgress();
-    }
-    public LocalDateTime getBatchesLastIndexedDate() {
-        return batchLastIndexedDate;
+        return this.batches.size();
     }
 
-    public int getHistoryCount(){
-        return this.historyThread.getObjectCount();
-    }
-    public int getIndexedHistory(){
-        return this.historyThread.getIndexedObjects();
-    }
-    public int getHistoryIndexingProgress() {
-        return this.historyThread.getIndexingProgress();
-    }
-    public LocalDateTime getHistoryLastIndexedDate() {
-        return historyLastIndexedDate;
+    /**
+     * Return the number of dockets.
+     *
+     * @return int
+     *      number of dockets
+     */
+    public int getDocketCount() {
+        return this.dockets.size();
     }
 
-    public int getDocketCount(){
-        return this.docketThread.getObjectCount();
-    }
-    public int getIndexedDockets(){
-        return this.docketThread.getIndexedObjects();
-    }
-    public int getDocketsIndexingProgress() {
-        return this.docketThread.getIndexingProgress();
-    }
-    public LocalDateTime getDocketsLastIndexedDate() {
-        return docketLastIndexedDate;
-    }
-
+    /**
+     * Return the number of processes.
+     *
+     * @return int
+     *      number of processes
+     */
     public int getProcessCount(){
-        return this.processThread.getObjectCount();
-    }
-    public int getIndexedProcesses(){
-        return this.processThread.getIndexedObjects();
-    }
-    public int getProcessIndexingProgress() {
-        return this.processThread.getIndexingProgress();
-    }
-    public LocalDateTime getProcessesLastIndexedDate() {
-        return processesLastIndexedDate;
+        return this.processes.size();
     }
 
+    /**
+     * Return the number of projects.
+     *
+     * @return int
+     *      number of projects
+     */
     public int getProjectCount(){
-        return this.projectThread.getObjectCount();
-    }
-    public int getIndexedProjects(){
-        return this.projectThread.getIndexedObjects();
-    }
-    public int getProjectsIndexingProgress() { return this.projectThread.getIndexingProgress();
-    }
-    public LocalDateTime getProjectsLastIndexedDate() {
-        return projectsLastIndexedDate;
+        return this.projects.size();
     }
 
+    /**
+     * Return the number of properties.
+     *
+     * @return int
+     *      number of properties
+     */
     public int getPropertyCount(){
-        return this.propertyThread.getObjectCount();
-    }
-    public int getIndexedProperties(){
-        return this.propertyThread.getIndexedObjects();
-    }
-    public int getPropertiesIndexingProgress() {
-        return this.propertyThread.getIndexingProgress();
-    }
-    public LocalDateTime getPropertiesLastIndexedDate() {
-        return propertiesLastIndexedDate;
+        return this.properties.size();
     }
 
+    /**
+     * Return the number of rulesets.
+     *
+     * @return int
+     *      number of rulesets
+     */
     public int getRulesetCount(){
-        return this.rulesetThread.getObjectCount();
-    }
-    public int getIndexedRulesets(){
-        return this.rulesetThread.getIndexedObjects();
-    }
-    public int getRulesetsIndexingProgress() {
-        return this.rulesetThread.getIndexingProgress();
-    }
-    public LocalDateTime getRulsetsLastIndexedDate() {
-        return rulsetsLastIndexedDate;
+        return this.rulesets.size();
     }
 
-    public int getTemplateCount(){
-        return this.templateThread.getObjectCount();
-    }
-    public int getIndexedTemplates(){
-        return this.templateThread.getIndexedObjects();
-    }
-    public int getTemplatesIndexingProgress() {
-        return this.templateThread.getIndexingProgress();
-    }
-    public LocalDateTime getTemplatesLastIndexedDate() {
-        return templatesLastIndexedDate;
-    }
-
+    /**
+     * Return the number of tasks.
+     *
+     * @return int
+     *      number of tasks
+     */
     public int getTaskCount(){
-        return this.taskThread.getObjectCount();
-    }
-    public int getIndexedTasks(){
-        return this.taskThread.getIndexedObjects();
-    }
-    public int getTasksIndexingProgress() {
-        return this.taskThread.getIndexingProgress();
-    }
-    public LocalDateTime getTasksLastIndexedDate() {
-        return tasksLastIndexedDate;
+        return this.tasks.size();
     }
 
+    /**
+     * Return the number of templates.
+     *
+     * @return int
+     *      number of templates
+     */
+    public int getTemplateCount(){
+        return this.templates.size();
+    }
+
+    /**
+     * Return the number of users.
+     *
+     * @return int
+     *      number of users
+     */
     public int getUserCount(){
-        return this.userThread.getObjectCount();
-    }
-    public int getIndexedUsers(){
-        return this.userThread.getIndexedObjects();
-    }
-    public int getUserIndexingProgress() { return this.userThread.getIndexingProgress(); }
-    public LocalDateTime getUsersLastIndexedDate() {
-        return usersLastIndexedDate;
+        return this.users.size();
     }
 
+    /**
+     * Return the number of user groups.
+     *
+     * @return int
+     *      number of user groups
+     */
     public int getUserGroupCount(){
-        return this.usergroupThread.getObjectCount();
-    }
-    public int getIndexedUserGroups(){
-        return this.usergroupThread.getIndexedObjects();
-    }
-    public int getUserGroupIndexingProgress() {
-        return this.usergroupThread.getIndexingProgress();
-    }
-    public LocalDateTime getUserGroupsLastIndexedDate() {
-        return userGroupsLastIndexedDate;
+        return this.userGroups.size();
     }
 
+    /**
+     * Return the number of workpieces.
+     *
+     * @return int
+     *      number of workpieces
+     */
     public int getWorkpieceCount(){
-        return this.workpieceThread.getObjectCount();
+        return this.workpieces.size();
     }
+
+    /**
+     * Return the total number of all objects that can be indexed.
+     *
+     * @return int
+     *      number of all items that can be written to the index
+     */
+    public int getTotalCount(){
+        return (this.getBatchCount() +
+                this.getDocketCount() +
+                this.getProcessCount() +
+                this.getProjectCount() +
+                this.getPropertyCount() +
+                this.getRulesetCount() +
+                this.getTaskCount() +
+                this.getTemplateCount() +
+                this.getUserCount() +
+                this.getUserGroupCount() +
+                this.getWorkpieceCount());
+    }
+
+    /**
+     * Return the number of currently indexed batches.
+     *
+     * @return int
+     *      number of currently indexed batches
+     */
+    public int getIndexedBatches(){
+        if(currentIndexState == ObjectTypes.BATCH) {
+            indexedBatches = batchWorker.getIndexedObjects();
+        }
+        return indexedBatches;
+    }
+
+    /**
+     * Return the number of currently indexed dockets.
+     *
+     * @return int
+     *      number of currently indexed dockets
+     */
+    public int getIndexedDockets(){
+        if(currentIndexState == ObjectTypes.DOCKET) {
+            indexedDockets = docketWorker.getIndexedObjects();
+        }
+        return indexedDockets;
+    }
+
+    /**
+     * Return the number of currently indexed processes.
+     *
+     * @return int
+     *      number of currently indexed processes
+     */
+    public int getIndexedProcesses(){
+        if(currentIndexState == ObjectTypes.PROCESS) {
+            indexedProcesses = processWorker.getIndexedObjects();
+        }
+        return indexedProcesses;
+    }
+
+    /**
+     * Return the number of currently indexed projects.
+     *
+     * @return int
+     *      number of currently indexed projects
+     */
+    public int getIndexedProjects() {
+        if(currentIndexState == ObjectTypes.PROJECT) {
+            indexedProjects = projectWorker.getIndexedObjects();
+        }
+        return indexedProjects;
+    }
+
+    /**
+     * Return the number of currently indexed properties.
+     *
+     * @return int
+     *      number of currently indexed properties
+     */
+    public int getIndexedProperties(){
+        if(currentIndexState == ObjectTypes.PROPERTY) {
+            indexedProperties = propertyWorker.getIndexedObjects();
+        }
+        return indexedProperties;
+    }
+
+    /**
+     * Return the number of currently indexed rulesets.
+     *
+     * @return int
+     *      number of currently indexed rulesets
+     */
+    public int getIndexedRulesets(){
+        if(currentIndexState == ObjectTypes.RULESET) {
+            indexedRulesetes = rulesetWorker.getIndexedObjects();
+        }
+        return indexedRulesetes;
+    }
+
+    /**
+     * Return the number of currently indexed templates.
+     *
+     * @return int
+     *      number of currently indexed templates
+     */
+    public int getIndexedTemplates(){
+        if(currentIndexState == ObjectTypes.TEMPLATE) {
+            indexedTemplates = templateWorker.getIndexedObjects();
+        }
+        return indexedTemplates;
+    }
+
+    /**
+     * Return the number of currently indexed tasks.
+     *
+     * @return int
+     *      number of currently indexed tasks
+     */
+    public int getIndexedTasks(){
+        if(currentIndexState == ObjectTypes.TASK) {
+            indexedTasks = taskWorker.getIndexedObjects();
+        }
+        return indexedTasks;
+    }
+
+    /**
+     * Return the number of currently indexed users.
+     *
+     * @return int
+     *      number of currently indexed users
+     */
+    public int getIndexedUsers(){
+        if(currentIndexState == ObjectTypes.USER) {
+            indexedUsers = userWorker.getIndexedObjects();
+        }
+        return indexedUsers;
+    }
+
+    /**
+     * Return the number of currently indexed user groups.
+     *
+     * @return int
+     *      number of currently indexed user groups
+     */
+    public int getIndexedUserGroups(){
+        if(currentIndexState == ObjectTypes.USERGROUP) {
+            indexedUsergroups = usergroupWorker.getIndexedObjects();
+        }
+        return indexedUsergroups;
+    }
+
+    /**
+     * Return the number of currently indexed user workpieces.
+     *
+     * @return int
+     *      number of currently indexed user workpieces
+     */
     public int getIndexedWorkpieces(){
-        return this.workpieceThread.getIndexedObjects();
+        if(currentIndexState == ObjectTypes.WORKPIECE) {
+            indexedWorkpieces = workpieceWorker.getIndexedObjects();
+        }
+        return indexedWorkpieces;
     }
-    public int getWorkpieceIndexingProgress() {
-        return this.workpieceThread.getIndexingProgress();
+
+    /**
+     * Return the number of all objects processed during the current indexing progress.
+     *
+     * @return int
+     *      number of all currently indexed objects
+     */
+    public int getAllIndexed() {
+        return (getIndexedBatches() +
+                getIndexedDockets() +
+                getIndexedProcesses() +
+                getIndexedProjects() +
+                getIndexedProperties() +
+                getIndexedRulesets() +
+                getIndexedTasks() +
+                getIndexedTemplates() +
+                getIndexedUsers() +
+                getIndexedUserGroups() +
+                getIndexedWorkpieces());
     }
+
+    /**
+     * Return the date and time the last batch indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last batch indexing process
+     */
+    public LocalDateTime getBatchesLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.BATCH);
+    }
+
+    /**
+     * Return the date and time the last docket indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last docket indexing process
+     */
+    public LocalDateTime getDocketsLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.DOCKET);
+    }
+
+    /**
+     * Return the date and time the last process indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last process indexing process
+     */
+    public LocalDateTime getProcessesLastIndexedDate(){
+        return lastIndexed.get(ObjectTypes.PROCESS);
+    }
+
+    /**
+     * Return the date and time the last project indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last project indexing process
+     */
+    public LocalDateTime getProjectsLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.PROJECT);
+    }
+
+    /**
+     * Return the date and time the last properties indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last properties indexing process
+     */
+    public LocalDateTime getPropertiesLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.PROPERTY);
+    }
+
+    /**
+     * Return the date and time the last ruleset indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last ruleset indexing process
+     */
+    public LocalDateTime getRulsetsLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.RULESET);
+    }
+
+    /**
+     * Return the date and time the last template indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last template indexing process
+     */
+    public LocalDateTime getTemplatesLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.TEMPLATE);
+    }
+
+    /**
+     * Return the date and time the last task indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last task indexing process
+     */
+    public LocalDateTime getTasksLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.TASK);
+    }
+
+    /**
+     * Return the date and time the last user indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last user indexing process
+     */
+    public LocalDateTime getUsersLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.USER);
+    }
+
+    /**
+     * Return the date and time the last user group indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last user group indexing process
+     */
+    public LocalDateTime getUserGroupsLastIndexedDate() {
+        return lastIndexed.get(ObjectTypes.USERGROUP);
+    }
+
+    /**
+     * Return the date and time the last workpiece indexing process finished.
+     *
+     * @return LocalDateTime
+     *      the timestamp of the last workpiece indexing process
+     */
     public LocalDateTime getWorkpiecesLastIndexedDate() {
-        return workpiecesLastIndexedDate;
+        return lastIndexed.get(ObjectTypes.WORKPIECE);
+    }
+
+
+    /**
+     * Returns the progress of the current batch indexing process in percent.
+     *
+     * @return the batch indexing progress
+     */
+    public int getBatchIndexingProgress() {
+        return getProgress(batches.size(), ObjectTypes.BATCH, getIndexedBatches());
+    }
+
+    /**
+     * Returns the progress of the current docket indexing process in percent.
+     *
+     * @return the docket indexing progress
+     */
+    public int getDocketsIndexingProgress() {
+        return getProgress(dockets.size(), ObjectTypes.DOCKET, getIndexedDockets());
+    }
+
+    /**
+     * Returns the progress of the current process indexing process in percent.
+     *
+     * @return the process indexing progress
+     */
+    public int getProcessIndexingProgress() {
+        return getProgress(processes.size(), ObjectTypes.PROCESS, getIndexedProcesses());
+    }
+
+    /**
+     * Returns the progress of the current project indexing process in percent.
+     *
+     * @return the project indexing progress
+     */
+    public int getProjectsIndexingProgress() {
+        return getProgress(projects.size(), ObjectTypes.PROJECT, getIndexedProjects());
+    }
+
+    /**
+     * Returns the progress of the current properties indexing process in percent.
+     *
+     * @return the properties indexing progress
+     */
+    public int getPropertiesIndexingProgress() {
+        return getProgress(properties.size(), ObjectTypes.PROPERTY, getIndexedProperties());
+    }
+
+    /**
+     * Returns the progress of the current ruleset indexing process in percent.
+     *
+     * @return the ruleset indexing progress
+     */
+    public int getRulesetsIndexingProgress() {
+        return getProgress(rulesets.size(), ObjectTypes.RULESET, getIndexedRulesets());
+    }
+
+    /**
+     * Returns the progress of the current template indexing process in percent.
+     *
+     * @return the template indexing progress
+     */
+    public int getTemplatesIndexingProgress() {
+        return getProgress(templates.size(), ObjectTypes.TEMPLATE, getIndexedTemplates());
+    }
+
+    /**
+     * Returns the progress of the current task indexing process in percent.
+     *
+     * @return the task indexing progress
+     */
+    public int getTasksIndexingProgress() {
+        return getProgress(tasks.size(), ObjectTypes.TASK, getIndexedTasks());
+    }
+
+    /**
+     * Returns the progress of the current user indexing process in percent.
+     *
+     * @return the user indexing progress
+     */
+    public int getUserIndexingProgress() {
+        return getProgress(users.size(), ObjectTypes.USER, getIndexedUsers());
+    }
+
+    /**
+     * Returns the progress of the current usergroup indexing process in percent.
+     *
+     * @return the usergroup indexing progress
+     */
+    public int getUserGroupIndexingProgress() {
+        return getProgress(userGroups.size(), ObjectTypes.USERGROUP, getIndexedUserGroups());
+    }
+
+    /**
+     * Returns the progress of the current workpiece indexing process in percent.
+     *
+     * @return the workpiece indexing progress
+     */
+    public int getWorkpieceIndexingProgress() {
+        return getProgress(workpieces.size(), ObjectTypes.WORKPIECE, getIndexedWorkpieces());
     }
 
     /**
      * Starts the process of indexing batches to the ElasticSearch index.
      */
     public void startBatchIndexing() {
-        Thread batchIndexingThread = new Thread((this.batchThread));
-        batchIndexingThread.setDaemon(true);
-        batchIndexingThread.start();
-        batchLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.BATCH;
+        indexerThread = new Thread((this.batchWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing dockets to the ElasticSearch index.
      */
     public void startDocketIndexing() {
-        Thread docketIndexingThread = new Thread((this.docketThread));
-        docketIndexingThread.setDaemon(true);
-        docketIndexingThread.start();
-        docketLastIndexedDate = LocalDateTime.now();
-    }
-
-    /**
-     * Starts the process of indexing the history to the ElasticSearch index.
-     */
-    public void startHistoryIndexing() {
-        Thread historyIndexingThread = new Thread((this.historyThread));
-        historyIndexingThread.setDaemon(true);
-        historyIndexingThread.start();
-        historyLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.DOCKET;
+        indexerThread = new Thread((this.docketWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing processes to the ElasticSearch index.
      */
     public void startProcessIndexing() {
-        Thread processIndexingThread = new Thread((this.processThread));
-        processIndexingThread.setDaemon(true);
-        processIndexingThread.start();
-        processesLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.PROCESS;
+        indexerThread = new Thread((this.processWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing projects to the ElasticSearch index.
      */
     public void startProjectIndexing() {
-        Thread projetIndexingThread = new Thread((this.projectThread));
-        projetIndexingThread.setDaemon(true);
-        projetIndexingThread.start();
-        projectsLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.PROJECT;
+        indexerThread = new Thread((this.projectWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing properties to the ElasticSearch index.
      */
     public void startPropertyIndexing() {
-        Thread propertyIndexingThread = new Thread((this.propertyThread));
-        propertyIndexingThread.setDaemon(true);
-        propertyIndexingThread.start();
-        propertiesLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.PROPERTY;
+        indexerThread = new Thread((this.propertyWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing rulesets to the ElasticSearch index.
      */
     public void startRulesetIndexing() {
-        Thread rulesetIndexingThread = new Thread((this.rulesetThread));
-        rulesetIndexingThread.setDaemon(true);
-        rulesetIndexingThread.start();
-        rulsetsLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.RULESET;
+        indexerThread = new Thread((this.rulesetWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing tasks to the ElasticSearch index.
      */
     public void startTaskIndexing() {
-        Thread taskIndexingThread = new Thread((this.taskThread));
-        taskIndexingThread.setDaemon(true);
-        taskIndexingThread.start();
-        tasksLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.TASK;
+        indexerThread = new Thread((this.taskWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing templates to the ElasticSearch index.
      */
     public void startTemplateIndexing() {
-        Thread templateIndexingThread = new Thread((this.templateThread));
-        templateIndexingThread.setDaemon(true);
-        templateIndexingThread.start();
-        templatesLastIndexedDate = LocalDateTime.now();
-    }
-
-    /**
-     * Starts the process of indexing user groups to the ElasticSearch index.
-     */
-    public void startUserGroupIndexing() {
-        Thread usergroupIndexingThread = new Thread((this.usergroupThread));
-        usergroupIndexingThread.setDaemon(true);
-        usergroupIndexingThread.start();
-        userGroupsLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.TEMPLATE;
+        indexerThread = new Thread((this.templateWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing users to the ElasticSearch index.
      */
     public void startUserIndexing() {
-        Thread userIndexingThread = new Thread((this.userThread));
-        userIndexingThread.setDaemon(true);
-        userIndexingThread.start();
-        usersLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.USER;
+        indexerThread = new Thread((this.userWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
+    }
+
+    /**
+     * Starts the process of indexing user groups to the ElasticSearch index.
+     */
+    public void startUserGroupIndexing() {
+        currentIndexState = ObjectTypes.USERGROUP;
+        indexerThread = new Thread((this.usergroupWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing workpieces to the ElasticSearch index.
      */
     public void startWorkpieceIndexing() {
-        Thread userIndexingThread = new Thread((this.userThread));
-        userIndexingThread.setDaemon(true);
-        userIndexingThread.start();
-        workpiecesLastIndexedDate = LocalDateTime.now();
+        currentIndexState = ObjectTypes.WORKPIECE;
+        indexerThread = new Thread((this.workpieceWorker));
+        indexerThread.setDaemon(true);
+        indexerThread.start();
     }
 
     /**
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexing() {
-        this.startBatchIndexing();
-        this.startDocketIndexing();
-        this.startHistoryIndexing();
-        this.startProcessIndexing();
-        this.startProcessIndexing();
-        this.startProjectIndexing();
-        this.startPropertyIndexing();
-        this.startRulesetIndexing();
-        this.startTaskIndexing();
-        this.startTemplateIndexing();
-        this.startUserGroupIndexing();
-        this.startUserIndexing();
-        this.startWorkpieceIndexing();
+        IndexAllThread indexAllThread = new IndexAllThread();
+        indexAllThread.start();
+    }
+
+    public int getAllIndexingProgress() {
+        return (int) ((getAllIndexed() / (float) getTotalCount()) * 100);
     }
 
     /**
@@ -367,20 +792,7 @@ public class IndexingForm {
      *      Value indicating whether any indexing process is currently in progress or not
      */
     public boolean indexingInProgress() {
-        return (
-            (getBatchIndexingProgress() > 0 && getBatchIndexingProgress() < 100) ||
-            (getHistoryIndexingProgress() > 0 && getHistoryIndexingProgress() < 100) ||
-            (getDocketsIndexingProgress() > 0 && getDocketsIndexingProgress() < 100) ||
-            (getProcessIndexingProgress() > 0 && getProcessIndexingProgress() < 100) ||
-            (getProjectsIndexingProgress() > 0 && getProjectsIndexingProgress() < 100) ||
-            (getPropertiesIndexingProgress() > 0 && getPropertiesIndexingProgress() < 100) ||
-            (getRulesetsIndexingProgress() > 0 && getRulesetsIndexingProgress() < 100) ||
-            (getTemplatesIndexingProgress() > 0 && getTemplatesIndexingProgress() < 100) ||
-            (getTasksIndexingProgress() > 0 && getTasksIndexingProgress() < 100) ||
-            (getUserIndexingProgress() > 0 && getUserIndexingProgress() < 100) ||
-            (getUserGroupIndexingProgress() > 0 && getUserGroupIndexingProgress() < 100) ||
-            (getWorkpieceIndexingProgress() > 0 && getWorkpieceIndexingProgress() < 100)
-        );
+        return (!Objects.equals(this.currentIndexState, ObjectTypes.NONE));
     }
 
     /**
@@ -392,4 +804,29 @@ public class IndexingForm {
     public String getServerInformation() {
         return this.serviceManager.getBatchService().getServerInformation();
     }
+
+    /**
+     * Return the progress in percent of the currently running indexing process.
+     * If the list of entries to be indexed is empty, this will return "0".
+     *
+     * @param numberOfObjects the number of existing objects of the given ObjectType
+     * @param currentType the ObjectType for which the progress will be determined
+     * @param nrOfindexedObjects the number of objects of the given ObjectType that have already been indexed
+     *
+     * @return the progress of the current indexing process in percent
+     */
+    private int getProgress(int numberOfObjects, ObjectTypes currentType, int nrOfindexedObjects) {
+        if (numberOfObjects > 0) {
+            int progress = (int) ((nrOfindexedObjects / (float) numberOfObjects) * 100);
+            if (Objects.equals(currentIndexState, currentType) && progress == 100) {
+                lastIndexed.put(currentIndexState,LocalDateTime.now());
+                currentIndexState = ObjectTypes.NONE;
+                indexerThread.interrupt();
+            }
+            return progress;
+        } else {
+            return 0;
+        }
+    }
 }
+

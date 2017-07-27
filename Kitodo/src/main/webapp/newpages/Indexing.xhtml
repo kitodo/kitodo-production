@@ -27,7 +27,6 @@
                         if(state) {
                             PF('startIndexingBatches').enable();
                             PF('startIndexingDockets').enable();
-                            PF('startIndexingHistory').enable();
                             PF('startIndexingProcesses').enable();
                             PF('startIndexingProjects').enable();
                             PF('startIndexingProperties').enable();
@@ -37,11 +36,11 @@
                             PF('startIndexingUsers').enable();
                             PF('startIndexingUserGroups').enable();
                             PF('startIndexingWorkpieces').enable();
+                            PF('startIndexingAll').enable();
                         }
                         else {
                             PF('startIndexingBatches').disable();
                             PF('startIndexingDockets').disable();
-                            PF('startIndexingHistory').disable();
                             PF('startIndexingProcesses').disable();
                             PF('startIndexingProjects').disable();
                             PF('startIndexingProperties').disable();
@@ -51,6 +50,7 @@
                             PF('startIndexingUsers').disable();
                             PF('startIndexingUserGroups').disable();
                             PF('startIndexingWorkpieces').disable();
+                            PF('startIndexingAll').disable();
                         }
                     }
                 //]]>
@@ -109,7 +109,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedUsers} / #{indexingForm.userCount}"/>
                                                 </td>
                                                 <td>
@@ -141,7 +141,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedUserGroups} / #{indexingForm.userGroupCount}"/>
                                                 </td>
                                                 <td>
@@ -173,7 +173,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedProjects} / #{indexingForm.projectCount}"/>
                                                 </td>
                                                 <td>
@@ -205,7 +205,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedRulesets} / #{indexingForm.rulesetCount}"/>
                                                 </td>
                                                 <td>
@@ -237,7 +237,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedDockets} / #{indexingForm.docketCount}"/>
                                                 </td>
                                                 <td>
@@ -269,7 +269,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedTasks} / #{indexingForm.taskCount}"/>
                                                 </td>
                                                 <td>
@@ -301,7 +301,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedTemplates} / #{indexingForm.templateCount}"/>
                                                 </td>
                                                 <td>
@@ -333,7 +333,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedProcesses} / #{indexingForm.processCount}"/>
                                                 </td>
                                                 <td>
@@ -365,7 +365,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedBatches} / #{indexingForm.batchCount}"/>
                                                 </td>
                                                 <td>
@@ -397,7 +397,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedProperties} / #{indexingForm.propertyCount}"/>
                                                 </td>
                                                 <td>
@@ -429,7 +429,7 @@
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
+                                                <td style="text-align: right;">
                                                     <h:outputText value="#{indexingForm.indexedWorkpieces} / #{indexingForm.workpieceCount}"/>
                                                 </td>
                                                 <td>
@@ -442,50 +442,45 @@
                                                 </td>
                                             </tr>
 
-                                            <!-- History -->
                                             <tr>
-                                                <td><h:outputText value="#{msgs.history}"/></td>
+                                                <td colspan="6"><hr/></td>
+                                            </tr>
+
+                                            <!-- Whole index -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.wholeIndex}"/></td>
                                                 <td>
-                                                    <p:commandButton widgetVar="startIndexingHistory"
-                                                                     onclick="PF('historyProgress').start();toggleIndexingButtons(false);"
+                                                    <p:commandButton widgetVar="startIndexingAll"
+                                                                     onclick="PF('allProgress').start();toggleIndexingButtons(false);"
                                                                      value="#{msgs.startIndexing}"
-                                                                     action="#{indexingForm.startHistoryIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.historyCount lt 1}"/>
+                                                                     action="#{indexingForm.startAllIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress()}"/>
                                                 </td>
                                                 <td>
-                                                    <p:progressBar widgetVar="historyProgress"
+                                                    <p:progressBar widgetVar="allProgress"
                                                                    ajax="true"
-                                                                   value="#{indexingForm.historyIndexingProgress}"
+                                                                   value="#{indexingForm.allIndexingProgress}"
                                                                    labelTemplate="{value}%"
                                                                    global="false"
                                                                    style="width: 100px;">
                                                     </p:progressBar>
                                                 </td>
-                                                <td style="text-align: center;">
-                                                    <h:outputText value="#{indexingForm.indexedHistory} / #{indexingForm.historyCount}"/>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.allIndexed} / #{indexingForm.totalCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.historyIndexingProgress gt 0 and indexingForm.historyIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.historyIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.historyIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress gt 0 and indexingForm.allIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100}" />
                                                 </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.historyLastIndexedDate}"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6"><hr/></td>
-                                            </tr>
-                                            <tr>
-                                                <td><h:outputText value="#{msgs.wholeIndex}"/></td>
-                                                <td><p:commandButton value="#{msgs.startIndexing}"
-                                                                     action="#{indexingForm.startAllIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress()}"/>
-                                                </td>
+                                                <!--<td>-->
+                                                    <!--<h:outputText value="#{indexingForm.allLastIndexedDate}"/>-->
+                                                <!--</td>-->
                                             </tr>
                                         </tbody>
                                     </table>
                                 </h:panelGroup>
+                                <!-- TODO: polling should be toggled using f:websocket once Kitodo is updated to JSF 2.3 -->
                                 <p:poll update="indexingTable" interval="1"/>
                             </ui:fragment>
                         </h:form>

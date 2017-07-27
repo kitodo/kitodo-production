@@ -9,15 +9,15 @@ import org.kitodo.services.data.base.SearchService;
 import java.io.IOException;
 import java.util.List;
 
-public class IndexerThread<T> implements Runnable {
+public class IndexWorker<T> implements Runnable {
 
     private int indexedObjects;
     private List<BaseBean> entryList;
     private SearchService searchService;
-    private static final Logger logger = LogManager.getLogger(IndexerThread.class);
+    private static final Logger logger = LogManager.getLogger(IndexWorker.class);
 
     /**
-     * Constructor initializing an IndexerThread object with the given SearchService
+     * Constructor initializing an IndexWorker object with the given SearchService
      * and list of objects that will be indexed.
      *
      * @param searchService
@@ -25,7 +25,7 @@ public class IndexerThread<T> implements Runnable {
      * @param entries
      *      List of 'entries' that will be indexed.
      */
-    public IndexerThread(SearchService searchService, List<BaseBean> entries) {
+    public IndexWorker(SearchService searchService, List<BaseBean> entries) {
         this.searchService = searchService;
         this.indexedObjects = 0;
         this.entryList = entries;
@@ -44,33 +44,6 @@ public class IndexerThread<T> implements Runnable {
      */
     public int getIndexedObjects() {
         return this.indexedObjects;
-    }
-
-    /**
-     * Return the number objects that will be indexed by this IndexerThread instance.
-     *
-     * @return
-     *      the number of objects that are to be indexed by this IndexerThread
-     */
-    public int getObjectCount() {
-        return this.entryList.size();
-    }
-
-    /**
-     * Return the progress in percent of the currently running indexing process.
-     * If the list of entries to be indexed is empty, this will return "0".
-     *
-     * @return
-     *      the progress of the current indexing process in percent
-     */
-    public int getIndexingProgress() {
-        if (this.entryList.size() > 0) {
-            return (int) ((this.indexedObjects / (float)this.entryList.size()) * 100);
-        }
-        else {
-            return 0;
-        }
-
     }
 
     private void indexObjects(){
