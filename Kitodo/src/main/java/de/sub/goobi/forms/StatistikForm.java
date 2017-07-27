@@ -106,10 +106,10 @@ public class StatistikForm {
      *
      * @return amount of tasks
      */
-    public Long getAnzahlSchritte() {
+    public Long getAmountTasks() {
         try {
-            return serviceManager.getTaskService().count("from Task");
-        } catch (DAOException e) {
+            return serviceManager.getTaskService().count();
+        } catch (DataException e) {
             logger.error("Hibernate error", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
             return Long.valueOf(-1);

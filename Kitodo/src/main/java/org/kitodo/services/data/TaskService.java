@@ -224,8 +224,24 @@ public class TaskService extends TitleSearchService<Task> {
         return taskDAO.search(query);
     }
 
-    public Long count(String query) throws DAOException {
-        return taskDAO.count(query);
+    /**
+     * Count all tasks.
+     *
+     * @return amount of all tasks
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
+    }
+
+    /**
+     * Count tasks according to given query.
+     *
+     * @param query
+     *            for index search
+     * @return amount of tasks according to given query
+     */
+    public Long count(String query) throws DataException {
+        return searcher.countDocuments(query);
     }
 
     /**
