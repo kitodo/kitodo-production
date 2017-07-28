@@ -521,6 +521,7 @@ public class MockDatabase {
 
     private static void insertTemplates() throws DAOException, DataException {
         Process process = serviceManager.getProcessService().find(1);
+        process.setTemplate(true);
 
         Template firstTemplate = new Template();
         firstTemplate.setProcess(process);
@@ -606,11 +607,14 @@ public class MockDatabase {
         firstUserGroup.setTitle("Admin");
         firstUserGroup.setPermission(1);
         List<User> users = new ArrayList<>();
-        User user = serviceManager.getUserService().find(1);
+        User firstUser = serviceManager.getUserService().find(1);
+        User secondUser = serviceManager.getUserService().find(2);
         List<UserGroup> userGroups = new ArrayList<>();
         userGroups.add(firstUserGroup);
-        user.setUserGroups(userGroups);
-        users.add(serviceManager.getUserService().find(1));
+        firstUser.setUserGroups(userGroups);
+        secondUser.setUserGroups(userGroups);
+        users.add(firstUser);
+        users.add(secondUser);
         firstUserGroup.setUsers(users);
         serviceManager.getUserGroupService().save(firstUserGroup);
 
