@@ -16,7 +16,6 @@ import de.sub.goobi.helper.Helper;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Random;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
@@ -129,16 +128,6 @@ public class StatistikForm {
     public Long getAnzahlWerkstuecke() {
         Session session = Helper.getHibernateSession();
         return (Long) session.createQuery("select count(*) " + "from Workpiece").uniqueResult();
-    }
-
-    /**
-     * Get dummy.
-     *
-     * @return Dummy-Rückgabe
-     */
-    public int getDummy() {
-        this.n++;
-        return new Random().nextInt(this.n);
     }
 
     public int getAmountOfCurrentTasks() {
