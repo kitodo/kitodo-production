@@ -69,6 +69,9 @@ public class UserServiceIT {
         Long amount = userService.count(boolQuery.toString());
         assertEquals("User was found!", Long.valueOf(0), amount);
 
+        amount = userService.getAmountOfUsersWithExactlyTheSameLogin("1", "kowal");
+        assertEquals("User was found!", Long.valueOf(0), amount);
+
         BoolQueryBuilder boolQuerySecond = new BoolQueryBuilder();
         boolQuerySecond.must(matchQuery("_id", "1"));
         boolQuerySecond.must(matchQuery("login", "kowal"));
@@ -273,8 +276,8 @@ public class UserServiceIT {
 
         List<SearchResult> users = userService.findByUserGroupId(1);
         Integer actual = users.size();
-        Integer expected = 1;
-        assertEquals("User was not found in index!", expected, actual);
+        Integer expected = 2;
+        assertEquals("Users were not found in index!", expected, actual);
 
         users = userService.findByUserGroupId(3);
         actual = users.size();
@@ -288,7 +291,7 @@ public class UserServiceIT {
 
         List<SearchResult> users = userService.findByUserGroupTitle("Admin");
         Integer actual = users.size();
-        Integer expected = 1;
+        Integer expected = 2;
         assertEquals("User was not found in index!", expected, actual);
 
         users = userService.findByUserGroupTitle("None");
