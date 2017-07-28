@@ -210,6 +210,7 @@ public class MockDatabase {
         batches.add(firstBatch);
         batches.add(secondBatch);
         firstProcess.setBatches(batches);
+        firstProcess.setTemplate(true);
         firstProcess.setDocket(serviceManager.getDocketService().find(1));
         firstProcess.setProject(project);
         firstProcess.setRuleset(serviceManager.getRulesetService().find(1));
@@ -224,6 +225,7 @@ public class MockDatabase {
         secondProcess.setDocket(serviceManager.getDocketService().find(1));
         secondProcess.setProject(project);
         secondProcess.setRuleset(serviceManager.getRulesetService().find(1));
+        secondProcess.setSortHelperStatus("100000000");
         serviceManager.getProcessService().save(secondProcess);
 
         Process thirdProcess = new Process();
@@ -245,6 +247,21 @@ public class MockDatabase {
         project.getProcesses().add(secondProcess);
         project.getProcesses().add(thirdProcess);
 
+        serviceManager.getProjectService().save(project);
+
+        project = serviceManager.getProjectService().find(3);
+        Process archivedProcess = new Process();
+        archivedProcess.setTitle("Second process");
+        archivedProcess.setOutputName("Unreachable");
+        archivedProcess.setWikiField("problem");
+        localDate = new LocalDate(2017, 2, 10);
+        archivedProcess.setCreationDate(localDate.toDate());
+        archivedProcess.setDocket(serviceManager.getDocketService().find(1));
+        archivedProcess.setProject(project);
+        archivedProcess.setSortHelperStatus("100000000");
+        archivedProcess.setRuleset(serviceManager.getRulesetService().find(1));
+        archivedProcess.setTemplate(true);
+        serviceManager.getProcessService().save(thirdProcess);
         serviceManager.getProjectService().save(project);
     }
 

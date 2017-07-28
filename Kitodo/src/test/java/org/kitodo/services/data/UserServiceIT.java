@@ -425,4 +425,35 @@ public class UserServiceIT {
         System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
     }
+
+    @Test
+    public void getAllVisibleUsers() {
+        UserService userService = new UserService();
+
+        List<User> allVisibleUsers = userService.getAllVisibleUsers();
+        assertTrue(allVisibleUsers.size() == 3);
+    }
+
+    @Test
+    public void getAllActiveUsers() {
+        UserService userService = new UserService();
+
+        List<User> allActiveUsers = userService.getAllActiveUsers();
+        assertTrue(allActiveUsers.size() == 2);
+    }
+
+    @Test
+    public void getFilteredUsersByName() {
+        UserService userService = new UserService();
+
+        List<User> allActiveUsers = userService.getFilteredUsersByName("Jan");
+        assertTrue(allActiveUsers.size() == 1);
+        int actual = allActiveUsers.get(0).getId();
+        int expected = 1;
+        assertEquals(actual, expected);
+
+        allActiveUsers = userService.getFilteredUsersByName("owa");
+        assertTrue(allActiveUsers.size() == 2);
+
+    }
 }
