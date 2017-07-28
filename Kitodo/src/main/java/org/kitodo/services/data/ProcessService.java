@@ -445,6 +445,19 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
+     * Find processes if template.
+     *
+     * @param template
+     *            as Boolean
+     * @return list of search results
+     */
+    public List<SearchResult> findByTemplate(Boolean template) throws DataException {
+        QueryBuilder query = createSimpleQuery("template", template, true);
+        System.out.println(query.toString());
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
      * Find processes by id of project.
      *
      * @param id

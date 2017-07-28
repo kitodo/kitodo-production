@@ -14,6 +14,7 @@ package org.kitodo.services.data.base;
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
@@ -22,6 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -313,6 +315,24 @@ public abstract class SearchService<T extends BaseBean> {
     }
 
     /**
+     *
+     * @param key
+     * @param ids
+     * @param contains
+     * @return
+     */
+    protected QueryBuilder createSetQuery(String key, Set<Integer> ids, boolean contains) {
+        if (contains && ids.size() > 0) {
+            return termsQuery(key, ids);
+        } else if (!contains && ids != null) {
+            BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+            return boolQuery.mustNot(termsQuery(key, ids));
+        } else {
+            return matchQuery(key, 0);
+        }
+    }
+
+    /**
      * Used for cases where operator is not necessary to create query - checking
      * only for one parameter.
      *
@@ -332,6 +352,31 @@ public abstract class SearchService<T extends BaseBean> {
         } else if (!contains && id != null) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
             return boolQuery.mustNot(matchQuery(key, id));
+        } else {
+            return matchQuery(key, 0);
+        }
+    }
+
+    /**
+     * Used for cases where operator is not necessary to create query - checking
+     * only for one parameter.
+     *
+     * @param key
+     *            JSON key for searched object
+     * @param condition
+     *            id value for searched object or some object related to
+     *            searched object
+     * @param contains
+     *            determine if results should contain given value or should not
+     *            contain given value
+     * @return query
+     */
+    protected QueryBuilder createSimpleQuery(String key, Boolean condition, boolean contains) {
+        if (contains && condition != null) {
+            return matchQuery(key, condition);
+        } else if (!contains && condition != null) {
+            BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+            return boolQuery.mustNot(matchQuery(key, condition));
         } else {
             return matchQuery(key, 0);
         }
