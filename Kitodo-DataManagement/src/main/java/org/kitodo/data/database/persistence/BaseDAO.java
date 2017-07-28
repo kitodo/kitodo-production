@@ -132,13 +132,9 @@ public abstract class BaseDAO implements Serializable {
      *             add description
      */
     @SuppressWarnings("rawtypes")
-    protected List retrieveObjects(String query) throws DAOException {
-        try {
-            Session session = Helper.getHibernateSession();
-            return session.createQuery(query).list();
-        } catch (HibernateException he) {
-            throw new DAOException(he);
-        }
+    protected List retrieveObjects(String query) {
+        Session session = Helper.getHibernateSession();
+        return session.createQuery(query).list();
     }
 
     /**

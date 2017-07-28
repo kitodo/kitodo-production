@@ -13,11 +13,8 @@ package org.kitodo.data.database.persistence;
 
 import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
 
 public class UserDAO extends BaseDAO {
 
@@ -90,7 +87,7 @@ public class UserDAO extends BaseDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<User> search(String query) throws DAOException {
+    public List<User> search(String query) {
         return retrieveObjects(query);
     }
 
@@ -132,23 +129,15 @@ public class UserDAO extends BaseDAO {
     }
 
     public List<User> getAllVisibleUsers() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("from User where visible is null");
-        return query.list();
+        return search("from User where visible is null");
     }
 
     public List<User> getAllActiveUsers() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("from User where visible is null AND active = 'true'");
-        return query.list();
+        return search("from User where visible is null AND active = 'true'");
     }
 
     public List<User> getFilteredUsersByName(String filter) {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("from User where visible is null AND active = 'true' AND name like '%"
-                + filter + "%' OR surname like '%" + filter + "%'");
-        List list = query.list();
-
-        return list;
+        return search("from User where visible is null AND active = 'true' AND name like '%" + filter
+                + "%' OR surname like '%" + filter + "%'");
     }
 }

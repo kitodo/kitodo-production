@@ -430,7 +430,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myAnzahlList = null;
         List<Process> templates;
         if (!this.showArchivedProjects) {
-            templates = serviceManager.getProcessService().getAllNotArchivedTemplates();
+            templates = serviceManager.getProcessService().getNotArchivedTemplates();
         } else {
             templates = serviceManager.getProcessService().getAllTemplates();
         }
@@ -501,7 +501,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     }
                 } else {
                     if (!this.showArchivedProjects) {
-                        processes = serviceManager.getProcessService().getAllNotArchivedTemplates();
+                        processes = serviceManager.getProcessService().getNotArchivedTemplates();
                     } else {
                         processes = serviceManager.getProcessService().getAllTemplates();
                     }

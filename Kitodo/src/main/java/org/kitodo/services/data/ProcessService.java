@@ -2103,8 +2103,8 @@ public class ProcessService extends TitleSearchService<Process> {
         return processDAO.getNotClosedAndNotArchivedProcesses();
     }
 
-    public List<Process> getAllNotArchivedTemplates() {
-        return processDAO.getAllNotArchivedTemplates();
+    public List<Process> getNotArchivedTemplates() {
+        return processDAO.getNotArchivedTemplates();
     }
 
     public List<Process> getAllTemplates() {

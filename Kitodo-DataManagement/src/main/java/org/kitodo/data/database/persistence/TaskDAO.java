@@ -89,7 +89,7 @@ public class TaskDAO extends BaseDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Task> search(String query) throws DAOException {
+    public List<Task> search(String query) {
         return retrieveObjects(query);
     }
 
@@ -124,29 +124,19 @@ public class TaskDAO extends BaseDAO {
     }
 
     public List<Task> getOpenTasksForCurrentUserWithFilter(int userId) {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("from Task where processingStatus = '2' AND user_id =" + userId);
-        return query.list();
+        return search("from Task where processingStatus = '2' AND user_id =" + userId);
     }
 
     public List<Task> getOpenTasksWithoutCorrectionForCurrentUserWithFilter(Integer userId) {
-        Session session = Helper.getHibernateSession();
-        Query query = session
-                .createQuery("from Task where processingStatus = '2' AND user_id =" + userId + "priority = '10'");
-        return query.list();
+        return search("from Task where processingStatus = '2' AND user_id =" + userId + "priority = '10'");
     }
 
     public List<Task> getOpenNotAutomaticTasksForCurrentUserWithFilter(Integer userId) {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery(
-                "from Task where processingStatus = '2' AND user_id =" + userId + "typeAutomatic = 'false'");
-        return query.list();
+        return search("from Task where processingStatus = '2' AND user_id =" + userId + "typeAutomatic = 'false'");
     }
 
     public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter(Integer userId) {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("from Task where processingStatus = '2' AND user_id =" + userId
+        return search("from Task where processingStatus = '2' AND user_id =" + userId
                 + "priority = '10' AND typeAutomatic = 'false'");
-        return query.list();
     }
 }

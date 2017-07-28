@@ -14,11 +14,8 @@ package org.kitodo.data.database.persistence;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
 
 public class ProcessDAO extends BaseDAO {
 
@@ -53,7 +50,6 @@ public class ProcessDAO extends BaseDAO {
     }
 
     /**
-     *
      * @param process
      *            object
      * @param progress
@@ -70,7 +66,6 @@ public class ProcessDAO extends BaseDAO {
     }
 
     /**
-     *
      * @param list
      *            of processes
      * @throws DAOException
@@ -103,7 +98,7 @@ public class ProcessDAO extends BaseDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Process> search(String query) throws DAOException {
+    public List<Process> search(String query) {
         return retrieveObjects(query);
     }
 
@@ -123,7 +118,7 @@ public class ProcessDAO extends BaseDAO {
 
     /**
      * Update process object after some changes.
-     * 
+     *
      * @param process
      *            object
      */
@@ -133,64 +128,39 @@ public class ProcessDAO extends BaseDAO {
     }
 
     public List<Process> getNotArchivedProcesses() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("select distinct p from Process where project.projectIsArchived = 'true' ");
-        return query.list();
-
+        return search("from Process where project.projectIsArchived = 'true' ");
     }
 
     public List<Process> getNotClosedProcesses() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("select distinct p from Process where sortHelperStatus = '100000000' ");
-        return query.list();
-
+        return search("from Process where sortHelperStatus = '100000000' ");
     }
 
     public List<Process> getNotClosedAndNotArchivedProcesses() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery(
-                "select distinct p from Process where sortHelperStatus = '100000000' AND project.projectIsArchived = 'false' ");
-        return query.list();
-
+        return search("from Process where sortHelperStatus = '100000000' AND project.projectIsArchived = 'false' ");
     }
 
-    public List<Process> getAllNotArchivedTemplates() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery(
-                "select distinct p from Process where project.projectIsArchived = 'true' AND template = 'true' ");
-        return query.list();
+    public List<Process> getNotArchivedTemplates() {
+        return search("from Process where project.projectIsArchived = 'true' AND template = 'true' ");
     }
 
     public List<Process> getAllTemplates() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("select distinct p from Process where template = 'true' ");
-        return query.list();
+        return search("from Process where template = 'true' ");
     }
 
     public List<Process> getAllWithoutTemplates() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery("select distinct p from Process where template = 'false' ");
-        return query.list();
+        return search("from Process where template = 'false' ");
     }
 
     public List<Process> getAllNotArchivedWithoutTemplates() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery(
-                "select distinct p from Process where template = 'false' AND project.projectIsArchived = 'false' ");
-        return query.list();
+        return search("from Process where template = 'false' AND project.projectIsArchived = 'false' ");
     }
 
     public List<Process> getAllNotClosedAndNotArchivedTemplates() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery(
-                "select distinct p from Process where template = 'true' AND project.projectIsArchived = 'false' AND sortHelperStatus = '100000000' ");
-        return query.list();
+        return search(
+                "from Process where template = 'true' AND project.projectIsArchived = 'false' AND sortHelperStatus = '100000000' ");
     }
 
     public List<Process> getAllNotClosedTemplates() {
-        Session session = Helper.getHibernateSession();
-        Query query = session.createQuery(
-                "select distinct p from Process where template = 'true' AND sortHelperStatus = '100000000' ");
-        return query.list();
+        return search("from Process where template = 'true' AND sortHelperStatus = '100000000' ");
     }
 }
