@@ -11,8 +11,6 @@
 
 package de.sub.goobi.forms;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
@@ -40,7 +38,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
@@ -139,13 +136,10 @@ public class BenutzerverwaltungForm extends BasisForm {
             return null;
         }
 
-        Integer id = this.myClass.getId();
+        String id = this.myClass.getId().toString();
 
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery.mustNot(matchQuery("_id", id.toString()));
-        boolQuery.must(matchQuery("login", login));
         try {
-            if (this.serviceManager.getUserService().count(boolQuery.toString()) == 0) {
+            if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
                 this.serviceManager.getUserService().save(this.myClass);
                 return "/newpages/BenutzerAlle";
             } else {

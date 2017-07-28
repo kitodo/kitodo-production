@@ -286,6 +286,24 @@ public class UserService extends SearchService<User> {
     }
 
     /**
+     * Get amount of users with exactly the same login like given but different id.
+     * 
+     * @param id
+     *            of user
+     * @param login
+     *            of user
+     * @return amount of users with exactly the same login like given but different
+     *         id
+     */
+    public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DataException {
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery.mustNot(createSimpleQuery("_id", id, true));
+        boolQuery.must(createSimpleQuery("login", login, true));
+        return count(boolQuery.toString());
+
+    }
+
+    /**
      * Refresh user object after update.
      *
      * @param user
