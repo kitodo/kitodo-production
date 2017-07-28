@@ -128,6 +128,15 @@ public class TemplateService extends SearchService<Template> {
     }
 
     /**
+     * Count all templates.
+     *
+     * @return amount of all templates
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
+    }
+
+    /**
      * Method removes template object from database.
      *
      * @param template

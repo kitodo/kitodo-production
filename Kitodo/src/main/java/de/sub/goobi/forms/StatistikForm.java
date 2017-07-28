@@ -24,7 +24,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
@@ -115,9 +114,14 @@ public class StatistikForm {
      *
      * @return amount of templates
      */
-    public Long getAnzahlVorlagen() {
-        Session session = Helper.getHibernateSession();
-        return (Long) session.createQuery("select count(*) " + "from Template").uniqueResult();
+    public Long getAmountTemplates() {
+        try {
+            return serviceManager.getTemplateService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            return null;
+        }
     }
 
     /**
@@ -125,9 +129,14 @@ public class StatistikForm {
      *
      * @return amount of workpieces
      */
-    public Long getAnzahlWerkstuecke() {
-        Session session = Helper.getHibernateSession();
-        return (Long) session.createQuery("select count(*) " + "from Workpiece").uniqueResult();
+    public Long getAmountWorkpieces() {
+        try {
+            return serviceManager.getWorkpieceService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            return null;
+        }
     }
 
     public int getAmountOfCurrentTasks() {
