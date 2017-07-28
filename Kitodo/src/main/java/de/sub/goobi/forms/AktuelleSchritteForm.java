@@ -52,8 +52,6 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
-import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
@@ -100,7 +98,6 @@ public class AktuelleSchritteForm extends BasisForm {
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
     private HashMap<String, Boolean> anzeigeAnpassen;
-    private IEvaluableFilter myFilteredDataSource;
     private String scriptPath;
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String addToWikiField = "";
@@ -145,23 +142,26 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String filterAlleStart() {
         try {
-            this.myFilteredDataSource = new UserDefinedStepFilter(true);
 
-            this.myFilteredDataSource.getObservable().addObserver(new Helper().createObserver());
-            ((UserDefinedStepFilter) this.myFilteredDataSource).setFilterModes(this.nurOffeneSchritte,
-                    this.nurEigeneSchritte);
-            this.myFilteredDataSource.setFilter(this.filter);
+            List<Task> tasks;
 
-            Criteria crit = this.myFilteredDataSource.getCriteria();
-            if (!this.showAutomaticTasks) {
-                crit.add(Restrictions.eq("typeAutomatic", false));
+            if (!showAutomaticTasks) {
+
+                if (hideCorrectionTasks) {
+                    tasks = serviceManager.getTaskService()
+                            .getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter();
+                } else {
+                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksForCurrentUserWithFilter();
+                }
+            } else {
+                if (hideCorrectionTasks) {
+                    tasks = serviceManager.getTaskService().getOpenTasksWithoutCorrectionForCurrentUserWithFilter();
+                } else {
+                    tasks = serviceManager.getTaskService().getOpenTasksForCurrentUserWithFilter();
+                }
             }
-            if (hideCorrectionTasks) {
-                crit.add(Restrictions.not(Restrictions.eq("priority", 10)));
-            }
 
-            sortList(crit);
-            this.page = new Page(crit, 0);
+            this.page = new Page(0, tasks);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("error on reading database", he.getMessage());
             return null;

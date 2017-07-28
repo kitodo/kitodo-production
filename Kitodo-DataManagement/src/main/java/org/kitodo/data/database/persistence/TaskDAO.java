@@ -122,4 +122,31 @@ public class TaskDAO extends BaseDAO {
                 "select distinct title from " + Task.class.getAnnotation(Table.class).name() + " order by title");
         return query.list();
     }
+
+    public List<Task> getOpenTasksForCurrentUserWithFilter(int userId) {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("from Task where processingStatus = '2' AND user_id =" + userId);
+        return query.list();
+    }
+
+    public List<Task> getOpenTasksWithoutCorrectionForCurrentUserWithFilter(Integer userId) {
+        Session session = Helper.getHibernateSession();
+        Query query = session
+                .createQuery("from Task where processingStatus = '2' AND user_id =" + userId + "priority = '10'");
+        return query.list();
+    }
+
+    public List<Task> getOpenNotAutomaticTasksForCurrentUserWithFilter(Integer userId) {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery(
+                "from Task where processingStatus = '2' AND user_id =" + userId + "typeAutomatic = 'false'");
+        return query.list();
+    }
+
+    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter(Integer userId) {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("from Task where processingStatus = '2' AND user_id =" + userId
+                + "priority = '10' AND typeAutomatic = 'false'");
+        return query.list();
+    }
 }

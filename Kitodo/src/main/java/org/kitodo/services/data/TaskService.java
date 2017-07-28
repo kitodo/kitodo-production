@@ -841,4 +841,23 @@ public class TaskService extends TitleSearchService<Task> {
         }
     }
 
+    public List<Task> getOpenTasksForCurrentUserWithFilter() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenTasksForCurrentUserWithFilter(login.getMyBenutzer().getId());
+    }
+
+    public List<Task> getOpenTasksWithoutCorrectionForCurrentUserWithFilter() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenTasksWithoutCorrectionForCurrentUserWithFilter(login.getMyBenutzer().getId());
+    }
+
+    public List<Task> getOpenNotAutomaticTasksForCurrentUserWithFilter() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenNotAutomaticTasksForCurrentUserWithFilter(login.getMyBenutzer().getId());
+    }
+
+    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter(login.getMyBenutzer().getId());
+    }
 }

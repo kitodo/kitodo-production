@@ -13,8 +13,11 @@ package org.kitodo.data.database.persistence;
 
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.Helper;
 
 public class UserDAO extends BaseDAO {
 
@@ -126,5 +129,26 @@ public class UserDAO extends BaseDAO {
      */
     public void refresh(User user) {
         refreshObject(user);
+    }
+
+    public List<User> getAllVisibleUsers() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("from User where visible is null");
+        return query.list();
+    }
+
+    public List<User> getAllActiveUsers() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("from User where visible is null AND active = 'true'");
+        return query.list();
+    }
+
+    public List<User> getFilteredUsersByName(String filter) {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("from User where visible is null AND active = 'true' AND name like '%"
+                + filter + "%' OR surname like '%" + filter + "%'");
+        List list = query.list();
+
+        return list;
     }
 }

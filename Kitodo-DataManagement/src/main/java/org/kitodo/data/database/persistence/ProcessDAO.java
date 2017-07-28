@@ -14,8 +14,11 @@ package org.kitodo.data.database.persistence;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.Helper;
 
 public class ProcessDAO extends BaseDAO {
 
@@ -127,5 +130,67 @@ public class ProcessDAO extends BaseDAO {
     public void update(Process process) {
         Object object = process;
         updateObject(object);
+    }
+
+    public List<Process> getNotArchivedProcesses() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("select distinct p from Process where project.projectIsArchived = 'true' ");
+        return query.list();
+
+    }
+
+    public List<Process> getNotClosedProcesses() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("select distinct p from Process where sortHelperStatus = '100000000' ");
+        return query.list();
+
+    }
+
+    public List<Process> getNotClosedAndNotArchivedProcesses() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery(
+                "select distinct p from Process where sortHelperStatus = '100000000' AND project.projectIsArchived = 'false' ");
+        return query.list();
+
+    }
+
+    public List<Process> getAllNotArchivedTemplates() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery(
+                "select distinct p from Process where project.projectIsArchived = 'true' AND template = 'true' ");
+        return query.list();
+    }
+
+    public List<Process> getAllTemplates() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("select distinct p from Process where template = 'true' ");
+        return query.list();
+    }
+
+    public List<Process> getAllWithoutTemplates() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery("select distinct p from Process where template = 'false' ");
+        return query.list();
+    }
+
+    public List<Process> getAllNotArchivedWithoutTemplates() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery(
+                "select distinct p from Process where template = 'false' AND project.projectIsArchived = 'false' ");
+        return query.list();
+    }
+
+    public List<Process> getAllNotClosedAndNotArchivedTemplates() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery(
+                "select distinct p from Process where template = 'true' AND project.projectIsArchived = 'false' AND sortHelperStatus = '100000000' ");
+        return query.list();
+    }
+
+    public List<Process> getAllNotClosedTemplates() {
+        Session session = Helper.getHibernateSession();
+        Query query = session.createQuery(
+                "select distinct p from Process where template = 'true' AND sortHelperStatus = '100000000' ");
+        return query.list();
     }
 }

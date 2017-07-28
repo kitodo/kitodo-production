@@ -51,9 +51,6 @@ import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
 import org.goobi.production.flow.statistics.hibernate.UserProjectFilter;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -223,17 +220,8 @@ public class ProjekteForm extends BasisForm {
      * @return page or empty String
      */
     public String filterKein() {
-        try {
-            Session session = Helper.getHibernateSession();
-            session.clear();
-            Criteria crit = session.createCriteria(Project.class);
-            crit.addOrder(Order.asc("title"));
-            this.page = new Page(crit, 0);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("could not read", he.getMessage());
-            logger.error(he.getMessage());
-            return null;
-        }
+        List<Project> projects = serviceManager.getProjectService().findAll();
+        this.page = new Page(0, projects);
         return "/newpages/ProjekteAlle";
     }
 

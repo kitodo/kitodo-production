@@ -2090,4 +2090,40 @@ public class ProcessService extends TitleSearchService<Process> {
 
         return propertiesForDocket;
     }
+
+    public List<Process> getNotArchivedProcesses() {
+        return processDAO.getNotArchivedProcesses();
+    }
+
+    public List<Process> getNotClosedProcesses() {
+        return processDAO.getNotClosedProcesses();
+    }
+
+    public List<Process> getNotClosedAndNotArchivedProcesses() {
+        return processDAO.getNotClosedAndNotArchivedProcesses();
+    }
+
+    public List<Process> getAllNotArchivedTemplates() {
+        return processDAO.getAllNotArchivedTemplates();
+    }
+
+    public List<Process> getAllTemplates() {
+        return processDAO.getAllTemplates();
+    }
+
+    public List<Process> getAllWithoutTemplates() {
+        return processDAO.getAllWithoutTemplates();
+    }
+
+    public List<Process> getAllNotArchivedWithoutTemplates() {
+        return processDAO.getAllNotArchivedWithoutTemplates();
+    }
+
+    public List<Process> getAllNotClosedAndNotArchivedTemplates() {
+        return processDAO.getAllNotClosedAndNotArchivedTemplates();
+    }
+
+    public List<Process> getAllNotClosedTemplates() {
+        return processDAO.getAllNotClosedTemplates();
+    }
 }

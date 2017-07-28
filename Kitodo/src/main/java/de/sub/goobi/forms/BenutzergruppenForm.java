@@ -15,16 +15,14 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -94,11 +92,8 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public String filterKein() {
         try {
-            Session session = Helper.getHibernateSession();
-            session.clear();
-            Criteria crit = session.createCriteria(UserGroup.class);
-            crit.addOrder(Order.asc("title"));
-            this.page = new Page(crit, 0);
+            List<UserGroup> userGroups = serviceManager.getUserGroupService().findAll();
+            this.page = new Page(0, userGroups);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("Error, could not read", he.getMessage());
             return null;

@@ -29,6 +29,10 @@ public class LdapGroupService {
         return ldapGroupDAO.find(id);
     }
 
+    public List<LdapGroup> findAll() {
+        return ldapGroupDAO.findAll();
+    }
+
     public List<LdapGroup> search(String query) throws DAOException {
         return ldapGroupDAO.search(query);
     }

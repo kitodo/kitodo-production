@@ -70,9 +70,6 @@ import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
-import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
-import org.goobi.production.flow.statistics.hibernate.UserProcessesFilter;
-import org.goobi.production.flow.statistics.hibernate.UserTemplatesFilter;
 import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
@@ -80,7 +77,6 @@ import org.goobi.production.properties.Type;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
 import org.kitodo.data.database.beans.Process;
@@ -399,17 +395,24 @@ public class ProzessverwaltungForm extends BasisForm {
         this.statisticsManager = null;
         this.myAnzahlList = null;
 
+        List<Process> processes;
+
         try {
-            this.myFilteredDataSource = new UserProcessesFilter(true);
-            Criteria crit = this.myFilteredDataSource.getCriteria();
-            if (!this.showClosedProcesses) {
-                crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
+            if (!showClosedProcesses) {
+                if (!showArchivedProjects) {
+                    processes = serviceManager.getProcessService().getNotClosedAndNotArchivedProcesses();
+                } else {
+                    processes = serviceManager.getProcessService().getNotClosedProcesses();
+                }
+            } else {
+                if (!this.showArchivedProjects) {
+                    processes = serviceManager.getProcessService().getNotArchivedProcesses();
+                } else {
+                    processes = serviceManager.getProcessService().findAll();
+                }
             }
-            if (!this.showArchivedProjects) {
-                crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
-            }
-            sortList(crit, false);
-            this.page = new Page(crit, 0);
+
+            this.page = new Page(0, processes);
 
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("ProzessverwaltungForm.FilterAktuelleProzesse", he);
@@ -425,18 +428,13 @@ public class ProzessverwaltungForm extends BasisForm {
     public String FilterVorlagen() {
         this.statisticsManager = null;
         this.myAnzahlList = null;
-        try {
-            this.myFilteredDataSource = new UserTemplatesFilter(true);
-            Criteria crit = this.myFilteredDataSource.getCriteria();
-            if (!this.showArchivedProjects) {
-                crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
-            }
-            sortList(crit, false);
-            this.page = new Page(crit, 0);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("ProzessverwaltungForm.FilterVorlagen", he);
-            return null;
+        List<Process> templates;
+        if (!this.showArchivedProjects) {
+            templates = serviceManager.getProcessService().getAllNotArchivedTemplates();
+        } else {
+            templates = serviceManager.getProcessService().getAllTemplates();
         }
+        this.page = new Page(0, templates);
         this.modusAnzeige = "vorlagen";
         return "/newpages/ProzessverwaltungAlle";
     }
@@ -489,43 +487,34 @@ public class ProzessverwaltungForm extends BasisForm {
          */
         try {
 
-            // ... Criteria will persist, because it gets passed on to the
-            // PageObject
-            // but in order to use the extended functions of the
-            // UserDefinedFilter
-            // for statistics, we will have to hold a reference to the instance
-            // of UserDefinedFilter
-            this.myFilteredDataSource = new UserDefinedFilter(this.filter);
-
-            // set observable to replace helper.setMessage
-            this.myFilteredDataSource.getObservable().addObserver(new Helper().createObserver());
-
-            // // calling the criteria as the result of the filter
-            Criteria crit = this.myFilteredDataSource.getCriteria();
+            List<Process> processes;
 
             // first manipulation of the created criteria
 
             /* nur die Vorlagen oder alles */
             if (this.modusAnzeige.equals("vorlagen")) {
-                crit.add(Restrictions.eq("template", Boolean.TRUE));
+                if (!this.showClosedProcesses) {
+                    if (!this.showArchivedProjects) {
+                        processes = serviceManager.getProcessService().getAllNotClosedAndNotArchivedTemplates();
+                    } else {
+                        processes = serviceManager.getProcessService().getAllNotClosedTemplates();
+                    }
+                } else {
+                    if (!this.showArchivedProjects) {
+                        processes = serviceManager.getProcessService().getAllNotArchivedTemplates();
+                    } else {
+                        processes = serviceManager.getProcessService().getAllTemplates();
+                    }
+                }
             } else {
-                crit.add(Restrictions.eq("template", Boolean.FALSE));
-            }
-            /* alle Suchparameter miteinander kombinieren */
-            if (!this.showClosedProcesses && !this.modusAnzeige.equals("vorlagen")) {
-                crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
+                if (!this.showArchivedProjects) {
+                    processes = serviceManager.getProcessService().getAllNotArchivedWithoutTemplates();
+                } else {
+                    processes = serviceManager.getProcessService().getAllWithoutTemplates();
+                }
             }
 
-            if (!this.showArchivedProjects) {
-                crit.createCriteria("project", "project");
-                crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
-                sortList(crit, false);
-            } else {
-                /* noch sortieren */
-                sortList(crit, true);
-            }
-
-            this.page = new Page(crit, 0);
+            this.page = new Page(0, processes);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
             return null;

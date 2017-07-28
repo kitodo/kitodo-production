@@ -42,14 +42,12 @@ public class Page implements Serializable { // implements Iterator
      * Construct a new Page with a Criteria. Page numbers are zero-based, so the
      * first page is page 0.
      *
-     * @param totalResults
-     *            the number of results
-     *
      * @param page
      *            the page number (zero-based)
      */
-    public Page(int totalResults, int page) {
+    public Page(int page, List results) {
         this.page = page;
+        this.results = results;
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (login == null || login.getMyBenutzer() == null) {
             this.pageSize = 10;
@@ -57,7 +55,7 @@ public class Page implements Serializable { // implements Iterator
             this.pageSize = login.getMyBenutzer().getTableSize();
         }
 
-        this.totalResults = totalResults;
+        this.totalResults = results.size();
 
     }
 

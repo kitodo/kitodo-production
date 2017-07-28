@@ -64,4 +64,7 @@ public class LdapGroupDAO extends BaseDAO {
         return retrieveObjects(query);
     }
 
+    public List<LdapGroup> findAll() {
+        return retrieveAllObjects(LdapGroup.class);
+    }
 }

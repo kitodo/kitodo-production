@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -24,10 +25,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -112,18 +109,8 @@ public class DocketForm extends BasisForm {
      * @return page or empty String
      */
     public String filterKein() {
-        try {
-            // HibernateUtil.clearSession();
-            Session session = Helper.getHibernateSession();
-            // session.flush();
-            session.clear();
-            Criteria crit = session.createCriteria(Docket.class);
-            crit.addOrder(Order.asc("title"));
-            this.page = new Page(crit, 0);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
-            return null;
-        }
+        List<Docket> dockets = serviceManager.getDocketService().findAll();
+        this.page = new Page(0, dockets);
         return "/newpages/DocketList";
     }
 
