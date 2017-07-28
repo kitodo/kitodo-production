@@ -13,118 +13,76 @@
 
 <ui:composition
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    >
-    <table cellpadding="3" cellspacing="0" width="100%" class="main_statistikboxen">
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:panelGrid>
+        <f:facet name="header">
+            <p:row>
+                <p:column style="text-align: left" colspan="2"> #{msgs.eigenschaften} </p:column>
+            </p:row>
+        </f:facet>
 
-    <tr>
-        <td class="main_statistikboxen_row1" colspan="2">
-            <h:outputText value="#{msgs.eigenschaften}"/>
-        </td>
-    </tr>
+        <p:row>
+            <p:column> #{msgs.title}:</p:column>
+            <p:column> #{item.localizedTitle}</p:column>
+        </p:row>
 
-    <tr>
-        <td class="main_statistikboxen_row2">
+        <p:row>
+            <p:column> #{msgs.prioritaet}:</p:column>
+            <p:column> #{item.priority}</p:column>
+        </p:row>
 
-            <table border="0" width="90%" cellpadding="2">
-                <tr>
-                    <td width="150">
-                        <h:outputText value="#{msgs.title}:"/>
-                    </td>
-                    <td>
-                        <h:outputText value="#{item.localizedTitle}"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="150">
-                        <h:outputText value="#{msgs.prioritaet}:"/>
-                    </td>
-                    <td>
-                        <h:outputText value="#{item.priority}"/>
-                    </td>
-                </tr>
+        <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
+            <p:row>
+                <p:column>#{msgs.bearbeitungsbeginn}:</p:column>
+                <p:column>#{item.processingBeginAsFormattedString}</p:column>
+            </p:row>
+        </ui:fragment>
 
-                <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.processingBeginAsFormattedString}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+        <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
+            <p:row>
+                <p:column>#{msgs.zuletztBearbeitet}:</p:column>
+                <p:column>#{item.processingTimeAsFormattedString}</p:column>
+            </p:row>
+        </ui:fragment>
 
-                <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.processingTimeAsFormattedString}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+        <ui:fragment rendered="#{item.processingEnd !=null and !HelperForm.anonymized}">
+            <p:row>
+                <p:column>#{msgs.bearbeitungsende}:</p:column>
+                <p:column>#{item.processingEndAsFormattedString}</p:column>
+            </p:row>
+        </ui:fragment>
 
-                <ui:fragment rendered="#{item.processingEnd !=null and !HelperForm.anonymized}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.bearbeitungsende}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.processingEndAsFormattedString}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+        <ui:fragment rendered="#{item.processingUser !=null and item.processingUser.id !=0 and !HelperForm.anonymized}">
+            <p:row>
+                <p:column>#{msgs.letzteAktualisierungDurch}:</p:column>
+                <p:column>#{item.processingUser.fullName}</p:column>
+            </p:row>
+        </ui:fragment>
 
-                <ui:fragment rendered="#{item.processingUser !=null and item.processingUser.id !=0 and !HelperForm.anonymized}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.letzteAktualisierungDurch}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.processingUser.fullName}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+        <ui:fragment rendered="#{item.editTypeEnum !=null}">
+            <p:row>
+                <p:column>#{msgs.aktualisierungstyp}:</p:column>
+                <p:column>#{msgs.get(item.editTypeEnum.title)}</p:column>
+            </p:row>
+        </ui:fragment>
 
-                <ui:fragment rendered="#{item.editTypeEnum !=null}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.aktualisierungstyp}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{msgs.get(item.editTypeEnum.title)}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+        <ui:fragment rendered="#{item.typeAutomaticScriptPath != null and item.typeAutomaticScriptPath != ''}">
+            <p:row>
+                <p:column>#{msgs.automatischerSchritt}:</p:column>
+                <p:column>#{item.typeAutomaticScriptPath}</p:column>
+            </p:row>
+        </ui:fragment>
 
-                <ui:fragment rendered="#{item.typeAutomaticScriptPath != null and item.typeAutomaticScriptPath != ''}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.automatischerSchritt}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.typeAutomaticScriptPath}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+        <ui:fragment rendered="#{item.typeModuleName != null and item.typeModuleName != ''}">
+            <p:row>
+                <p:column>#{msgs.module}:</p:column>
+                <p:column>#{item.tyepModuleName}</p:column>
+            </p:row>
+        </ui:fragment>
 
-                <ui:fragment rendered="#{item.typeModuleName != null and item.typeModuleName != ''}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.module}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.tyepModuleName}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+    </p:panelGrid>
 
-            </table>
-        </td>
-    </tr>
-
-    </table>
 </ui:composition>

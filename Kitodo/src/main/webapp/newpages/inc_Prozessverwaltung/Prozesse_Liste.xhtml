@@ -12,11 +12,12 @@
 -->
 
 <ui:composition
-        xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
 >
 
     <style>
@@ -50,7 +51,6 @@
         <h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"/>
     </h:commandLink>
 
-
     <!-- +++++++++++++++++  Anzeigefilter ++++++++++++++++++++++++ -->
     <t:aliasBeansScope>
         <t:aliasBean alias="#{Form}" value="#{ProzessverwaltungForm}"/>
@@ -59,7 +59,6 @@
             <ui:include src="/newpages/inc/Process_Filter.xhtml"/>
         </f:subview>
     </t:aliasBeansScope>
-
 
     <!-- Datentabelle -->
     <t:dataTable id="auflistung" styleClass="standardTable" width="100%" cellspacing="1px" cellpadding="1px"
@@ -181,28 +180,27 @@
             </h:commandLink>
 
             <h:panelGroup id="auflistungIntern">
-                <t:dataTable id="prozessdetails" styleClass="standardTable" width="90%"
-                             style="margin-left:12px;margin-top:5px" cellspacing="1px" cellpadding="1px"
-                             headerClass="standardTable_Header" rowClasses="standardTable_Row1"
+                <p:dataTable id="prozessdetails" styleClass="standardTable"
+                             style="margin-left:12px;margin-top:5px;width:90%" cellspacing="1px" cellpadding="1px"
+                             headerClass="standardTable_Header" rowStyleClass="standardTable_Row1"
                              rendered="#{item.panelShown}"
-                             columnClasses="standardTable_ColumnSchmal,standardTable_Column,standardTable_ColumnCentered"
-                             var="step" value="#{item.tasks}">
+                             var="step" value="#{item.tasks}" sortBy="#{step.ordering}">
 
-                    <h:column>
+                    <p:column styleClass="standardTable_ColumnSchmal">
                         <f:facet name="header">
                             <h:outputText value="#{msgs.nr}"/>
                         </f:facet>
                         <h:outputText value="#{step.ordering}"/>
-                    </h:column>
+                    </p:column>
 
-                    <h:column>
+                    <p:column styleClass="standardTable_Column">
                         <f:facet name="header">
                             <h:outputText value="#{msgs.title}"/>
                         </f:facet>
                         <h:outputText value="#{step.localizedTitle}"/>
-                    </h:column>
+                    </p:column>
 
-                    <h:column>
+                    <p:column styleClass="standardTable_ColumnCentered" style="width: 60px">
                         <f:facet name="header">
                             <h:outputText value="#{msgs.status}"/>
                         </f:facet>
@@ -215,9 +213,9 @@
                         <h:graphicImage value="#{step.processingStatusEnum.smallImagePath}" alt=""
                                         title="#{msgs.get(step.processingStatusEnum.title)}: #{msgs.get(step.editTypeEnum.title)}"
                                         rendered="#{(step.processingStatusEnum == 'DONE' || step.processingStatusEnum == 'INWORK') and HelperForm.anonymized}"/>
-                    </h:column>
+                    </p:column>
 
-                </t:dataTable>
+                </p:dataTable>
             </h:panelGroup>
         </t:column>
         <!-- +++++++++++++++++  // alle Schritte auflisten mit Ajax ++++++++++++++++++++++++ -->
@@ -254,13 +252,12 @@
                     </h:commandLink>
                 </t:div>
 
-
             </f:facet>
             <h:outputText value="#{item.creationDate}"/>
         </t:column>
 
         <!-- +++++++++++++++++  Status ++++++++++++++++++++++++ -->
-        <t:column style="text-align:center">
+        <t:column style="text-align:center; width:120px">
             <f:facet name="header">
                 <t:div>
                     <!-- Header -->
@@ -298,7 +295,7 @@
             <h:graphicImage value="/newpages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
         </t:column>
 
-        <t:column style="text-align:center">
+        <t:column style="text-align:center; width:20%">
             <f:facet name="header">
                 <t:div>
                     <!-- Header -->
@@ -370,7 +367,8 @@
             <h:commandLink action="#{ProzessverwaltungForm.editProcess}" id="action10"
                            rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
                            title="#{msgs.prozessBearbeiten}">
-                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="edit process" style="margin-right:5px"/>
+                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="edit process"
+                                style="margin-right:5px"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
             </h:commandLink>
@@ -379,7 +377,8 @@
             <h:commandLink action="#{ProzessverwaltungForm.editProcess}" id="action11"
                            rendered="#{(LoginForm.maximaleBerechtigung == 1) and (ProzessverwaltungForm.modusAnzeige=='vorlagen')}"
                            title="#{msgs.prozessBearbeiten}">
-                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="edit template" style="margin-right:5px"/>
+                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="edit template"
+                                style="margin-right:5px"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
             </h:commandLink>
@@ -396,7 +395,8 @@
             <h:commandLink action="#{ProzessverwaltungForm.DownloadMultiTiff}" id="action13"
                            title="#{msgs.multiTiffDownloaden}"
                            rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and LoginForm.maximaleBerechtigung == 1 and 0==1}">
-                <h:graphicImage value="/newpages/images/buttons/view3.gif" alt="multiple tiff export" style="margin-right:3px"/>
+                <h:graphicImage value="/newpages/images/buttons/view3.gif" alt="multiple tiff export"
+                                style="margin-right:3px"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
             </h:commandLink>
 
@@ -425,7 +425,8 @@
                 <h:commandLink action="#{ProzessverwaltungForm.DownloadToHome}" id="action16"
                                title="#{msgs.imHomeVerzeichnisVerlinken}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and !item.imageFolderInUse}">
-                    <h:graphicImage value="/newpages/images/buttons/load_down2.gif" alt="download" style="margin-right:2px"/>
+                    <h:graphicImage value="/newpages/images/buttons/load_down2.gif" alt="download"
+                                    style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
                 </h:commandLink>
 
@@ -434,7 +435,8 @@
                                title="#{msgs.imHomeVerzeichnisVerlinkenTrotzBearbeitung}"
                                onclick="if (!confirm('#{msgs.warningAdminBeforeLinking}')) return"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and item.imageFolderInUse}">
-                    <h:graphicImage value="/newpages/images/buttons/load_down3.gif" alt="download" style="margin-right:2px"/>
+                    <h:graphicImage value="/newpages/images/buttons/load_down3.gif" alt="download"
+                                    style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
                 </h:commandLink>
 
@@ -443,7 +445,8 @@
                                title="#{msgs.ausHomeverzeichnisEntfernen}"
                                onclick="if (!confirm('#{msgs.ausHomeverzeichnisEntfernen}?')) return"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
-                    <h:graphicImage value="/newpages/images/buttons/load_up2.gif" alt="upload" style="margin-right:2px"/>
+                    <h:graphicImage value="/newpages/images/buttons/load_up2.gif" alt="upload"
+                                    style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
                 </h:commandLink>
 
@@ -464,19 +467,20 @@
                     <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
                 </h:commandLink>
 
-
                 <!-- Mets-Export-Schaltknopf -->
                 <h:commandLink action="#{ProzessverwaltungForm.ExportMets}" id="action19" title="#{msgs.exportMets}"
                                rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and item.tifDirectoryExists}">
-                    <h:graphicImage value="/newpages/images/buttons/mets.png" alt="mets export" style="margin-right:2px"/>
+                    <h:graphicImage value="/newpages/images/buttons/mets.png" alt="mets export"
+                                    style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- Mets-Export-Schaltknopf greyed -->
                 <h:graphicImage
-                        rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and !item.tifDirectoryExists}"
-                        value="/newpages/images/buttons/metsGreyed.png" alt="mets export unavailable" style="margin-right:2px"
-                        title="#{msgs.exportMets}"/>
+                    rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and !item.tifDirectoryExists}"
+                    value="/newpages/images/buttons/metsGreyed.png" alt="mets export unavailable"
+                    style="margin-right:2px"
+                    title="#{msgs.exportMets}"/>
 
                 <!-- PDF-Export-Schaltknopf -->
                 <h:commandLink action="#{ProzessverwaltungForm.ExportPdf}" id="action20" title="#{msgs.exportPdf}"
@@ -487,9 +491,9 @@
 
                 <!-- PDF-Export-Schaltknopf greyed -->
                 <h:graphicImage
-                        rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
-                        value="/newpages/images/buttons/pdfGreyed.png" alt="pdf export unavailable" style="margin-right:2px"
-                        title="#{msgs.exportPdf}"/>
+                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
+                    value="/newpages/images/buttons/pdfGreyed.png" alt="pdf export unavailable" style="margin-right:2px"
+                    title="#{msgs.exportPdf}"/>
 
                 <!-- DMS-Export-Schaltknopf -->
                 <h:commandLink action="#{ProzessverwaltungForm.ExportDMS}" id="action21" title="#{msgs.importDms}"
@@ -500,9 +504,9 @@
 
                 <!-- PDF-Export-Schaltknopf greyed -->
                 <h:graphicImage
-                        rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
-                        value="/newpages/images/buttons/dmsGreyed.png" alt="dms export unavailable" style="margin-right:2px"
-                        title="#{msgs.importDms}"/>
+                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
+                    value="/newpages/images/buttons/dmsGreyed.png" alt="dms export unavailable" style="margin-right:2px"
+                    title="#{msgs.importDms}"/>
 
                 <!-- ProzessKopie-Schaltknopf -->
                 <h:commandLink action="#{ProzesskopieForm.prepare}" id="action22"
@@ -543,7 +547,6 @@
                    id="new4">
         <h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"/>
     </h:commandLink>
-
 
     <table width="100%" border="0">
         <tr valign="top">
