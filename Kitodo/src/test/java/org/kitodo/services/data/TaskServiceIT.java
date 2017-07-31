@@ -58,7 +58,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         List<Task> tasks = taskService.findAll();
-        assertEquals("Not all tasks were found in database!", 4, tasks.size());
+        assertEquals("Not all tasks were found in database!", 5, tasks.size());
     }
 
     @Test
@@ -69,22 +69,22 @@ public class TaskServiceIT {
         task.setTitle("To Remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        Task foundTask = taskService.convertSearchResultToObject(taskService.findById(5));
+        Task foundTask = taskService.convertSearchResultToObject(taskService.findById(6));
         assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
 
         taskService.remove(foundTask);
-        foundTask = taskService.convertSearchResultToObject(taskService.findById(5));
+        foundTask = taskService.convertSearchResultToObject(taskService.findById(6));
         assertEquals("Additional task was not removed from database!", null, foundTask);
 
         task = new Task();
         task.setTitle("To remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        foundTask = taskService.convertSearchResultToObject(taskService.findById(6));
+        foundTask = taskService.convertSearchResultToObject(taskService.findById(7));
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
 
-        taskService.remove(6);
-        foundTask = taskService.convertSearchResultToObject(taskService.findById(6));
+        taskService.remove(7);
+        foundTask = taskService.convertSearchResultToObject(taskService.findById(7));
         assertEquals("Additional task was not removed from database!", null, foundTask);
     }
 

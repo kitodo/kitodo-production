@@ -30,7 +30,7 @@ public class DBConnectionTestIT {
 
         long counted = serviceManager.getProcessService().count("from Process");
         Assert.assertNotNull("No Process found", counted);
-        Assert.assertEquals(4, counted);
+        Assert.assertEquals(5, counted);
 
         String title = serviceManager.getProcessService().find(4).getTitle();
         Assert.assertEquals("DBConnectionTest", title);

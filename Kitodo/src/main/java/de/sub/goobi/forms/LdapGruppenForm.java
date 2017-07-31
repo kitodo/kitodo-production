@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;

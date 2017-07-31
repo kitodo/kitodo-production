@@ -142,7 +142,7 @@ public class TaskDAO extends BaseDAO {
      * @return a list of tasks
      */
     public List<Task> getOpenTasksWithoutCorrectionForCurrentUser(Integer userId) {
-        return search("from Task where processingStatus = '2' AND user_id =" + userId + "priority = '10'");
+        return search("from Task where processingStatus = '2' AND user_id =" + userId + " AND priority = '10'");
     }
 
     /**
@@ -153,7 +153,7 @@ public class TaskDAO extends BaseDAO {
      * @return a list of tasks
      */
     public List<Task> getOpenNotAutomaticTasksForCurrentUser(Integer userId) {
-        return search("from Task where processingStatus = '2' AND user_id =" + userId + "typeAutomatic = 'false'");
+        return search("from Task where processingStatus = '2' AND user_id =" + userId + " AND typeAutomatic = 'false'");
     }
 
     /**
@@ -166,6 +166,6 @@ public class TaskDAO extends BaseDAO {
      */
     public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(Integer userId) {
         return search("from Task where processingStatus = '2' AND user_id =" + userId
-                + "priority = '10' AND typeAutomatic = 'false'");
+                + " AND priority = '10' AND typeAutomatic = 'false'");
     }
 }
