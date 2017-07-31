@@ -192,14 +192,29 @@ public class UserService extends SearchService<User> {
         return userDAO.find(id);
     }
 
+    /**
+     * Get al. users.
+     * 
+     * @return A List of all users
+     */
     public List<User> findAll() {
         return userDAO.findAll();
     }
 
+    /**
+     * Get all visible users.
+     * 
+     * @return A list of all visible users
+     */
     public List<User> getAllVisibleUsers() {
         return userDAO.getAllVisibleUsers();
     }
 
+    /**
+     * get all active users.
+     * 
+     * @return a list of all active users
+     */
     public List<User> getAllActiveUsers() {
         return userDAO.getAllActiveUsers();
     }
@@ -723,6 +738,13 @@ public class UserService extends SearchService<User> {
         }
     }
 
+    /**
+     * Get filtered users by name.
+     * 
+     * @param filter
+     *            the name filter
+     * @return a list of filtered users
+     */
     public List<User> getFilteredUsersByName(String filter) {
         return userDAO.getFilteredUsersByName(filter);
     }

@@ -123,19 +123,48 @@ public class TaskDAO extends BaseDAO {
         return query.list();
     }
 
-    public List<Task> getOpenTasksForCurrentUserWithFilter(int userId) {
+    /**
+     * Get open tasks for current user.
+     *
+     * @param userId
+     *            the user id for the current user.
+     * @return a list of tasks
+     */
+    public List<Task> getOpenTasksForCurrentUser(int userId) {
         return search("from Task where processingStatus = '2' AND user_id =" + userId);
     }
 
-    public List<Task> getOpenTasksWithoutCorrectionForCurrentUserWithFilter(Integer userId) {
+    /**
+     * get open tasks without correction for current user.
+     *
+     * @param userId
+     *            the user id for the current user.
+     * @return a list of tasks
+     */
+    public List<Task> getOpenTasksWithoutCorrectionForCurrentUser(Integer userId) {
         return search("from Task where processingStatus = '2' AND user_id =" + userId + "priority = '10'");
     }
 
-    public List<Task> getOpenNotAutomaticTasksForCurrentUserWithFilter(Integer userId) {
+    /**
+     * Get open not automatic tasks for current user
+     * 
+     * @param userId
+     *            the user id for the current user.
+     * @return a list of tasks
+     */
+    public List<Task> getOpenNotAutomaticTasksForCurrentUser(Integer userId) {
         return search("from Task where processingStatus = '2' AND user_id =" + userId + "typeAutomatic = 'false'");
     }
 
-    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter(Integer userId) {
+    /**
+     * Get open not automatic tasks without correction for current user with
+     * filter.
+     * 
+     * @param userId
+     *            the user id for the current user.
+     * @return a list of tasks
+     */
+    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(Integer userId) {
         return search("from Task where processingStatus = '2' AND user_id =" + userId
                 + "priority = '10' AND typeAutomatic = 'false'");
     }

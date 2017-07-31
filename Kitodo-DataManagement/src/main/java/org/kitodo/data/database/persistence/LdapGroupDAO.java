@@ -64,6 +64,11 @@ public class LdapGroupDAO extends BaseDAO {
         return retrieveObjects(query);
     }
 
+    /**
+     * Gets all LDAP Groups.
+     * 
+     * @return a list of ldapgroups
+     */
     public List<LdapGroup> findAll() {
         return retrieveAllObjects(LdapGroup.class);
     }

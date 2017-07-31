@@ -148,16 +148,15 @@ public class AktuelleSchritteForm extends BasisForm {
             if (!showAutomaticTasks) {
 
                 if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService()
-                            .getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter();
+                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser();
                 } else {
-                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksForCurrentUserWithFilter();
+                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksForCurrentUser();
                 }
             } else {
                 if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService().getOpenTasksWithoutCorrectionForCurrentUserWithFilter();
+                    tasks = serviceManager.getTaskService().getOpenTasksWithoutCorrectionForCurrentUser();
                 } else {
-                    tasks = serviceManager.getTaskService().getOpenTasksForCurrentUserWithFilter();
+                    tasks = serviceManager.getTaskService().getOpenTasksForCurrentUser();
                 }
             }
 

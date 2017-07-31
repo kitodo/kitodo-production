@@ -841,23 +841,43 @@ public class TaskService extends TitleSearchService<Task> {
         }
     }
 
-    public List<Task> getOpenTasksForCurrentUserWithFilter() {
+    /**
+     * get open tasks for current user.
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenTasksForCurrentUser() {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenTasksForCurrentUserWithFilter(login.getMyBenutzer().getId());
+        return taskDAO.getOpenTasksForCurrentUser(login.getMyBenutzer().getId());
     }
 
-    public List<Task> getOpenTasksWithoutCorrectionForCurrentUserWithFilter() {
+    /**
+     * get open tasks without correction for current user.
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenTasksWithoutCorrectionForCurrentUser() {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenTasksWithoutCorrectionForCurrentUserWithFilter(login.getMyBenutzer().getId());
+        return taskDAO.getOpenTasksWithoutCorrectionForCurrentUser(login.getMyBenutzer().getId());
     }
 
-    public List<Task> getOpenNotAutomaticTasksForCurrentUserWithFilter() {
+    /**
+     * get open not automatic tasks for current user.
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenNotAutomaticTasksForCurrentUser() {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenNotAutomaticTasksForCurrentUserWithFilter(login.getMyBenutzer().getId());
+        return taskDAO.getOpenNotAutomaticTasksForCurrentUser(login.getMyBenutzer().getId());
     }
 
-    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter() {
+    /**
+     * get open not automatix tasks without correction for current user
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser() {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenNotAutomaticTasksWithoutCorrectionForCurrentUserWithFilter(login.getMyBenutzer().getId());
+        return taskDAO.getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(login.getMyBenutzer().getId());
     }
 }
