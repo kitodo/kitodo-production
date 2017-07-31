@@ -828,16 +828,14 @@ public class IndexingForm {
      * @return the progress of the current indexing process in percent
      */
     private int getProgress(int numberOfObjects, ObjectTypes currentType, int nrOfindexedObjects) {
-        if (numberOfObjects > 0) {
-            int progress = (int) ((nrOfindexedObjects / (float) numberOfObjects) * 100);
-            if (Objects.equals(currentIndexState, currentType) && progress == 100) {
+        int progress = numberOfObjects > 0 ? (int) ((nrOfindexedObjects / (float) numberOfObjects) * 100) : 0;
+        if (Objects.equals(currentIndexState, currentType)) {
+            if (numberOfObjects == 0 || progress == 100) {
                 lastIndexed.put(currentIndexState, LocalDateTime.now());
                 currentIndexState = ObjectTypes.NONE;
                 indexerThread.interrupt();
             }
-            return progress;
-        } else {
-            return 0;
         }
+        return progress;
     }
 }
