@@ -469,7 +469,7 @@
                                                     <h:outputText value="#{indexingForm.allIndexed} / #{indexingForm.totalCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress gt 0 and indexingForm.allIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.indexingInProgress()}"/>
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100}" />
                                                 </td>
