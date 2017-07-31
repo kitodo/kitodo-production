@@ -81,12 +81,11 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                <th>Object Type</th>
+                                                <th><h:outputText value="#{msgs.objectType}"/></th>
                                                 <th><h:outputText value="#{msgs.startIndexing}"/></th>
-                                                <th>Progress</th>
-                                                <th>Indexierte Einträge</th>
-                                                <th>Status</th>
-                                                <th>Last Indexed</th>
+                                                <th><h:outputText value="#{msgs.progress}"/></th>
+                                                <th><h:outputText value="#{msgs.indexedEntries}"/></th>
+                                                <th><h:outputText value="#{msgs.status}"/></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -117,9 +116,6 @@
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == 100}" />
                                                 </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.usersLastIndexedDate}"/>
-                                                </td>
                                             </tr>
 
                                             <!-- User groups -->
@@ -148,9 +144,6 @@
                                                     <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress gt 0 and indexingForm.userGroupIndexingProgress lt 100}"/>
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == 100}" />
-                                                </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.userGroupsLastIndexedDate}"/>
                                                 </td>
                                             </tr>
 
@@ -181,9 +174,6 @@
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == 100}" />
                                                 </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.projectsLastIndexedDate}"/>
-                                                </td>
                                             </tr>
 
                                             <!-- Rulesets -->
@@ -212,9 +202,6 @@
                                                     <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress gt 0 and indexingForm.rulesetsIndexingProgress lt 100}"/>
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == 100}" />
-                                                </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.rulsetsLastIndexedDate}"/>
                                                 </td>
                                             </tr>
 
@@ -245,9 +232,6 @@
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == 100}" />
                                                 </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.docketsLastIndexedDate}"/>
-                                                </td>
                                             </tr>
 
                                             <!-- Tasks -->
@@ -276,9 +260,6 @@
                                                     <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress gt 0 and indexingForm.tasksIndexingProgress lt 100}"/>
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == 100}" />
-                                                </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.tasksLastIndexedDate}"/>
                                                 </td>
                                             </tr>
 
@@ -309,9 +290,6 @@
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == 100}" />
                                                 </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.templatesLastIndexedDate}"/>
-                                                </td>
                                             </tr>
 
                                             <!-- Processes -->
@@ -340,9 +318,6 @@
                                                     <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress gt 0 and indexingForm.processIndexingProgress lt 100}"/>
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == 100}" />
-                                                </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.processesLastIndexedDate}"/>
                                                 </td>
                                             </tr>
 
@@ -373,9 +348,6 @@
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == 100}" />
                                                 </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.batchesLastIndexedDate}"/>
-                                                </td>
                                             </tr>
 
                                             <!-- Properties -->
@@ -405,9 +377,6 @@
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == 100}" />
                                                 </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.propertiesLastIndexedDate}"/>
-                                                </td>
                                             </tr>
 
                                             <!-- Workpieces -->
@@ -436,9 +405,6 @@
                                                     <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress gt 0 and indexingForm.workpieceIndexingProgress lt 100}"/>
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == 100}" />
-                                                </td>
-                                                <td>
-                                                    <h:outputText value="#{indexingForm.workpiecesLastIndexedDate}"/>
                                                 </td>
                                             </tr>
 
@@ -473,9 +439,6 @@
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100}" />
                                                 </td>
-                                                <!--<td>-->
-                                                    <!--<h:outputText value="#{indexingForm.allLastIndexedDate}"/>-->
-                                                <!--</td>-->
                                             </tr>
                                         </tbody>
                                     </table>
