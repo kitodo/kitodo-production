@@ -39,6 +39,8 @@ public class IndexingForm {
         @Override
         public void run() {
             try {
+                indexingAll = true;
+
                 startUserIndexing();
                 indexerThread.join();
                 sleep(pause);
@@ -84,6 +86,7 @@ public class IndexingForm {
                 sleep(pause);
 
                 currentIndexState = ObjectTypes.NONE;
+                indexingAll = false;
 
             } catch (InterruptedException e) {
                 logger.debug("'Index all' process interrupted: " + e.getMessage());
@@ -100,6 +103,8 @@ public class IndexingForm {
     }
 
     private ObjectTypes currentIndexState = ObjectTypes.NONE;
+
+    private boolean indexingAll = false;
 
     private Map<ObjectTypes, LocalDateTime> lastIndexed = new EnumMap<>(ObjectTypes.class);
 
@@ -800,7 +805,7 @@ public class IndexingForm {
      *         progress or not
      */
     public boolean indexingInProgress() {
-        return (!Objects.equals(this.currentIndexState, ObjectTypes.NONE));
+        return (!Objects.equals(this.currentIndexState, ObjectTypes.NONE) || indexingAll);
     }
 
     /**
