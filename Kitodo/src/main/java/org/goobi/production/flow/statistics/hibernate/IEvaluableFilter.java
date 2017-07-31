@@ -24,62 +24,76 @@ import org.hibernate.Criteria;
  * programmers input, holding the result.
  * 
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public interface IEvaluableFilter extends IDataSource {
 
     /**
-     * As an option name could be set, so that user could select filter by name
-     * in case this feature is going to be implemented in leter versions
-     ****************************************************************************/
-    public void setName(String name);
+     * As an option name could be set, so that user could select filter by name in
+     * case this feature is going to be implemented in later versions.
+     * 
+     * @param name
+     *            as String
+     */
+    void setName(String name);
 
     /**
+     * Get name.
+     * 
      * @return name
      */
-    public String getName();
+    String getName();
 
     /**
+     * Get criteria.
+     * 
      * @return Criteria based on the implemented filter
      */
-    public Criteria getCriteria();
+    Criteria getCriteria();
 
     /**
-     * allows the creation of a second filter, independent from the original one
+     * Allows the creation of a second filter, independent from the original one.
      */
-    public IEvaluableFilter clone();
+    IEvaluableFilter clone();
 
     /**
-     * @param Filter
-     *            - allows passing on a String which may define a filter
+     * Set filter.
      * 
+     * @param filter
+     *            allows passing on a String which may define a filter
      */
-    public void setFilter(String Filter);
+    void setFilter(String filter);
 
     /**
+     * Set SQL String.
+     * 
      * @param sqlString
      *            allows passing on a String which may set an sql statement
      */
-    public void setSQL(String sqlString);
+    void setSQL(String sqlString);
 
     /**
+     * Get list of ids.
+     * 
      * @return List containing all ID's from selected filter
      */
-    public List<Integer> getIDList();
+    List<Integer> getIDList();
 
     /**
+     * Get observable.
      * 
      * @return Observable, exposing an Observable Object to register an Observer
      */
 
-    public Observable getObservable();
+    Observable getObservable();
 
     /**
+     * Get step done for exact filter.
      * 
-     * @return Integer step if an exact stepDone filter is set (needed for
-     *         Statistic AP2)
+     * @return Integer step if an exact stepDone filter is set (needed for Statistic
+     *         AP2)
      */
-    public Integer stepDone();
+    Integer stepDone();
 
-    public String stepDoneName();
+    String stepDoneName();
 
 }

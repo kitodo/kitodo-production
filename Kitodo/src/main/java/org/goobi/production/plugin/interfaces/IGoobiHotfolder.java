@@ -19,52 +19,62 @@ import java.util.List;
 public interface IGoobiHotfolder {
 
     /**
+     * Get URI's list with current files.
      * 
      * @return a list with all xml files in GoobiHotfolder
      */
 
-    public List<URI> getCurrentFiles();
+    List<URI> getCurrentFiles();
 
     /**
+     * Get URI's list with files for exact String name.
      * 
      * @param name
-     * @return a list with all filenames containing the name in GoobiHotfolder
+     *            of file
+     * @return a list with all file names containing the name in GoobiHotfolder
      */
 
-    public List<URI> getFilesByName(String name);
+    List<URI> getFilesByName(String name);
 
     /**
+     * Get URI's list with files' names for exact filter.
      * 
      * @param filter
-     * @return a list with all filenames matching the filter
+     *            as FilenameFilter
+     * @return a list with all file names matching the filter
      */
 
-    public List<URI> getFileNamesByFilter(FilenameFilter filter);
+    List<URI> getFileNamesByFilter(FilenameFilter filter);
 
     /**
+     * Get URI's list with files for exact filter.
      * 
      * @param filter
+     *            as FilenameFilter
      * @return a list with all file matching the filter
      */
 
-    public List<URI> getFilesByFilter(FilenameFilter filter);
+    List<URI> getFilesByFilter(FilenameFilter filter);
 
     /**
+     * Get folder as String.
      * 
      * @return hotfolder as string
      */
-    public String getFolderAsString();
+    String getFolderAsString();
 
     /**
+     * Get folder as File.
      * 
      * @return hotfolder as file
      */
-    public File getFolderAsFile();
+    File getFolderAsFile();
 
     /**
+     * Get folder as URI.
      * 
      * @return hotfolder as URI
      */
-    public URI getFolderAsUri();
+    URI getFolderAsUri();
 
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * This interface defines some general dataset for all future kind of
- * statistical questions
+ * statistical questions.
  * 
  * @author Wulf Riebensahm
  * @author Steffen Hankiewicz
@@ -24,9 +24,11 @@ import java.util.List;
 public interface IDataSource extends Serializable {
 
     /**
-     * This method returns the original Data and enables the continued use of
-     * older Statistic functions in the restructured data flow
-     ****************************************************************************/
-    public List<Object> getSourceData();
+     * Get the original Data and enables the continued use of older Statistic
+     * functions in the restructured data flow.
+     * 
+     * @return the original Data
+     */
+    List<Object> getSourceData();
 
 }

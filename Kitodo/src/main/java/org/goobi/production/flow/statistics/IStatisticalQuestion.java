@@ -23,7 +23,7 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
  * This interface defines the required methods for any implementations of
  * statistical requests to be used with the StatisticalManager. There is an
  * extension to this interface for implementations which needs time restriction
- * to be set
+ * to be set.
  * 
  * @author Wulf Riebensahm
  * @author Steffen Hankiewicz
@@ -31,43 +31,46 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 public interface IStatisticalQuestion {
 
     /**
-     * This method returns a list of DataTable Objects, which can be used to
-     * display the results of the data request
+     * Get a list of DataTable Objects, which can be used to display the results of
+     * the data request.
      * 
      * @param dataSource
-     * @return List<DataTable>
+     *            implementation of IDataSource interface
+     * @return List &lt;DataTable&gt;
      */
-    public List<DataTable> getDataTables(IDataSource dataSource);
+    List<DataTable> getDataTables(IDataSource dataSource);
 
     /**
-     * This method is used to set a grouping unit for time based data
+     * This method is used to set a grouping unit for time based data.
      * 
      * @param timeUnit
+     *            TimeUnit
      */
-    public void setTimeUnit(TimeUnit timeUnit);
+    void setTimeUnit(TimeUnit timeUnit);
 
     /**
-     * This method sets the calculation unit needed for specific requests. Since
-     * not all implementations will support this feature future implementations
-     * of this method will throw an UnsupportedOperationException
+     * This method sets the calculation unit needed for specific requests. Since not
+     * all implementations will support this feature future implementations of this
+     * method will throw an UnsupportedOperationException.
      * 
      * @param cu
+     *            CalculationUnit
      */
-    public void setCalculationUnit(CalculationUnit cu);
+    void setCalculationUnit(CalculationUnit cu);
 
     /**
-     * get all IRenderer where the DataTable matrix should be used inverted
+     * Get all IRenderer where the DataTable matrix should be used inverted.
      * 
      * @param inRenderer
      *            as {@link IRenderer}
-     * @return true, if rendering should use invertet {@link DataTable}
+     * @return true, if rendering should use inverted {@link DataTable}
      */
-    public Boolean isRendererInverted(IRenderer inRenderer);
+    Boolean isRendererInverted(IRenderer inRenderer);
 
     /**
-     * get number format pattern
+     * Get number format pattern.
      * 
      * @return number format pattern for rendering the results
      */
-    public String getNumberFormatPattern();
+    String getNumberFormatPattern();
 }

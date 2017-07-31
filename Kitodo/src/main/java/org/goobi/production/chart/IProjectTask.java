@@ -14,35 +14,41 @@ package org.goobi.production.chart;
 public interface IProjectTask {
 
     /**
-     *
+     * Get Task title.
+     * 
      * @return task title
      */
-    public abstract String getTitle();
+    String getTitle();
 
     /**
-     *
+     * Get amount of completed tasks.
+     * 
      * @return number of completed steps
      */
-    public abstract Integer getStepsCompleted();
+    Integer getStepsCompleted();
 
     /**
-     *
+     * Get maximal amounts of tasks.
+     * 
      * @return maximum number of steps
      */
-    public abstract Integer getStepsMax();
+    Integer getStepsMax();
 
     /**
-     *
+     * Set amount of completed tasks.
+     * 
      * @param stepsCompleted
      *            sets number of completed steps
      */
 
-    public abstract void setStepsCompleted(Integer stepsCompleted);
+    void setStepsCompleted(Integer stepsCompleted);
 
     /**
-     *
+     * Set maximal amounts of tasks.
+     * 
      * @param stepsMax
+     *            as Integer
      */
-    public abstract void setStepsMax(Integer stepsMax);
+    void setStepsMax(Integer stepsMax);
 
 }
