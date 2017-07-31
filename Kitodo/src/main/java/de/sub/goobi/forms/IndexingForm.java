@@ -86,7 +86,7 @@ public class IndexingForm {
                 currentIndexState = ObjectTypes.NONE;
 
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.debug("'Index all' process interrupted: " + e.getMessage());
             }
         }
     }
