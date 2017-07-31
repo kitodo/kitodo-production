@@ -48,6 +48,7 @@ public class StepInformation {
 
     /**
      * Set title.
+     * 
      * @param title
      *            the title to set
      */
@@ -57,6 +58,7 @@ public class StepInformation {
 
     /**
      * getAverageStepOrder
+     * 
      * @return the averageStepOrder
      */
     public Double getAverageStepOrder() {
@@ -65,6 +67,7 @@ public class StepInformation {
 
     /**
      * setAverageStepOrder.
+     * 
      * @param averageStepOrder
      *            the averageStepOrder to set
      */
@@ -74,6 +77,7 @@ public class StepInformation {
 
     /**
      * getNumberOfTotalSteps.
+     * 
      * @return the numberOfTotalSteps
      */
     public int getNumberOfTotalSteps() {
@@ -82,6 +86,7 @@ public class StepInformation {
 
     /**
      * setNumberOfTotalSteps.
+     * 
      * @param numberOfTotalSteps
      *            the numberOfTotalSteps to set
      */
@@ -91,6 +96,7 @@ public class StepInformation {
 
     /**
      * getNumberOfTotalImages.
+     * 
      * @return the numberOfTotalImages
      */
     public int getNumberOfTotalImages() {
@@ -99,6 +105,7 @@ public class StepInformation {
 
     /**
      * setNumberOfTotalImages.
+     * 
      * @param numberOfTotalImages
      *            the numberOfTotalImages to set
      */
@@ -108,6 +115,7 @@ public class StepInformation {
 
     /**
      * getTotalProcessCount.
+     * 
      * @return the totalProcessCount
      */
     public int getTotalProcessCount() {
@@ -116,6 +124,7 @@ public class StepInformation {
 
     /**
      * setTotalProcessCount.
+     * 
      * @param totalProcessCount
      *            the totalProcessCount to set
      */
@@ -125,6 +134,7 @@ public class StepInformation {
 
     /**
      * getNumberOfStepsDone.
+     * 
      * @return the numberOfStepsDone
      */
     public int getNumberOfStepsDone() {
@@ -133,6 +143,7 @@ public class StepInformation {
 
     /**
      * setNumberOfStepsDone.
+     * 
      * @param numberOfStepsDone
      *            the numberOfStepsDone to set
      */
@@ -142,6 +153,7 @@ public class StepInformation {
 
     /**
      * getNumberOfImagesDone.
+     * 
      * @return the numberOfImagesDone
      */
     public int getNumberOfImagesDone() {
@@ -150,6 +162,7 @@ public class StepInformation {
 
     /**
      * setNumberOfImagesDone.
+     * 
      * @param numberOfImagesDone
      *            the numberOfImagesDone to set
      */
@@ -159,6 +172,7 @@ public class StepInformation {
 
     /**
      * getProcessCountDone.
+     * 
      * @return the processCountDone
      */
     public int getProcessCountDone() {
@@ -167,6 +181,7 @@ public class StepInformation {
 
     /**
      * setProcessCountDone.
+     * 
      * @param processCountDone
      *            the processCountDone to set
      */

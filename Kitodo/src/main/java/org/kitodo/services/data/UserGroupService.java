@@ -93,8 +93,8 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user group from list of
-     * user groups and re-save task, if false only re-save task object.
+     * Check if IndexAction flag is delete. If true remove user group from list
+     * of user groups and re-save task, if false only re-save task object.
      *
      * @param userGroup
      *            object
@@ -113,8 +113,8 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user group from list of
-     * user groups and re-save user, if false only re-save user object.
+     * Check if IndexAction flag is delete. If true remove user group from list
+     * of user groups and re-save user, if false only re-save user object.
      *
      * @param userGroup
      *            object

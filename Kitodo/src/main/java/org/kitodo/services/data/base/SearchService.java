@@ -136,7 +136,8 @@ public abstract class SearchService<T extends BaseBean> {
      * @param baseBean
      *            object
      */
-    protected void manageDependenciesForIndex(T baseBean) throws CustomResponseException, DAOException, DataException, IOException {
+    protected void manageDependenciesForIndex(T baseBean)
+            throws CustomResponseException, DAOException, DataException, IOException {
 
     }
 

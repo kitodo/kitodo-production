@@ -362,8 +362,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     LocalDate appeared = new LocalDate(year, monthOfYear,
                             getMetadataIntValueByName(dayNode, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
                     for (@SuppressWarnings("unused")
-                        DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
-                            result.add(appeared);
+                    DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
+                        result.add(appeared);
                     }
                 }
             }
@@ -462,8 +462,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private MetsMods buildExportableMetsMods(Process process, HashMap<Integer, String> years,
-            ArrayListMap<LocalDate, String> issues)
-            throws PreferencesException, ReadException, IOException,
+            ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, IOException,
             TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());

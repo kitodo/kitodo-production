@@ -139,8 +139,7 @@ public class ExportMets {
             try {
                 fileService.createDirectoryForUser(targetFolder, myBenutzer.getLogin());
             } catch (Exception e) {
-                Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + targetFolder,
-                        e);
+                Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + targetFolder, e);
             }
         }
         return targetFolder;

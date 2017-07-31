@@ -51,7 +51,8 @@ public class Filter extends BaseBean {
     /**
      * Set filter value.
      *
-     * @param value filter
+     * @param value
+     *            filter
      */
     public void setValue(String value) {
         this.value = value;

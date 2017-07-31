@@ -56,7 +56,8 @@ public class JobCreation {
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
         }
-        //TODO: what is differecene between metsfilename and basepath and metsfile
+        // TODO: what is differecene between metsfilename and basepath and
+        // metsfile
         URI metsfilename = io.getMetsFilename();
         if (logger.isTraceEnabled()) {
             logger.trace("mets filename is " + metsfilename);
@@ -160,8 +161,7 @@ public class JobCreation {
      *            Process object
      */
     @SuppressWarnings("static-access")
-    public static void moveFiles(URI metsfile, URI basepath, Process p)
-            throws IOException {
+    public static void moveFiles(URI metsfile, URI basepath, Process p) throws IOException {
         if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
             URI imagesFolder = basepath;
             if (!fileService.fileExist(imagesFolder)) {

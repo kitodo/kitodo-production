@@ -11,12 +11,12 @@
 
 package org.kitodo.data.elasticsearch;
 
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.InternalSettingsPreparer;
-import org.elasticsearch.plugins.Plugin;
-
 import java.util.Collection;
+
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.InternalSettingsPreparer;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.plugins.Plugin;
 
 /**
  * Class extends standard Node class to give possibility for using own REST

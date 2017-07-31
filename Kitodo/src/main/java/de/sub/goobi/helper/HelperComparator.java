@@ -51,8 +51,10 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     private int compareMetadatenTypen(Object firstObject, Object secondObject) {
         MetadataType firstMetadata = (MetadataType) firstObject;
         MetadataType secondMetadata = (MetadataType) secondObject;
-        String firstName = firstMetadata.getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
-        String secondName = secondMetadata.getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+        String firstName = firstMetadata
+                .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+        String secondName = secondMetadata
+                .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
         if (firstName == null) {
             firstName = "";
         }

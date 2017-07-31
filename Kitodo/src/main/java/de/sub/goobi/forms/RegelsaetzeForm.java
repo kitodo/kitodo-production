@@ -119,7 +119,8 @@ public class RegelsaetzeForm extends BasisForm {
     }
 
     /**
-     * This method initializes the ruleset list without applying any filters whenever the bean is constructed.
+     * This method initializes the ruleset list without applying any filters
+     * whenever the bean is constructed.
      */
     @PostConstruct
     public void initializeRulesetList() {
@@ -132,8 +133,8 @@ public class RegelsaetzeForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for ruleset edit form.
-     * If 'rulesetId' is '0', the form for creating a new ruleset will be displayed.
+     * Method being used as viewAction for ruleset edit form. If 'rulesetId' is
+     * '0', the form for creating a new ruleset will be displayed.
      */
     public void loadRuleset() {
         try {

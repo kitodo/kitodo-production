@@ -190,8 +190,7 @@ public class CourseToGerman {
             buffer.append("nicht ");
         }
 
-        TreeSet<LocalDate> orderedDates = dates instanceof TreeSet ? (TreeSet<LocalDate>) dates
-                : new TreeSet<>(dates);
+        TreeSet<LocalDate> orderedDates = dates instanceof TreeSet ? (TreeSet<LocalDate>) dates : new TreeSet<>(dates);
 
         Iterator<LocalDate> datesIterator = orderedDates.iterator();
 

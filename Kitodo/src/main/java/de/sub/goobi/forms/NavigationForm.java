@@ -13,9 +13,10 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import java.io.Serializable;
 
 @Named("NavigationForm")
 @SessionScoped

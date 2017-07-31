@@ -12,19 +12,25 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import org.apache.commons.lang.LocaleUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIViewRoot;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.LocaleUtils;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
@@ -130,18 +136,20 @@ public class SpracheForm implements Serializable {
         context.getViewRoot().setLocale(locale);
         context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
         // Reload current page to make language change effective
-        context.getExternalContext().redirect(((HttpServletRequest) context.getExternalContext().getRequest()).getRequestURI());
+        context.getExternalContext()
+                .redirect(((HttpServletRequest) context.getExternalContext().getRequest()).getRequestURI());
     }
 
     /**
-     * The procedure switchLanguage is called from /pages/Metadaten2oben.xhtml to
-     * switch the language.
+     * The procedure switchLanguage is called from /pages/Metadaten2oben.xhtml
+     * to switch the language.
      *
      * @return the empty String to point to the JSF framework to remain on the
      *         current page
      */
     public void switchLanguage() throws IOException {
-        String languageCodeCombined = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale().toLanguageTag();
+        String languageCodeCombined = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale()
+                .toLanguageTag();
         switchLanguage(languageCodeCombined);
     }
 
@@ -166,8 +174,8 @@ public class SpracheForm implements Serializable {
                 return frame.getLocale();
         } else {
             /**
-             *  When no locale is given (no Accept-Language Http Request header is present)
-             *  return default language
+             * When no locale is given (no Accept-Language Http Request header
+             * is present) return default language
              */
             String key = ConfigCore.getParameter("language.default", "de");
             Locale locale = new Locale.Builder().setLanguageTag(key).build();

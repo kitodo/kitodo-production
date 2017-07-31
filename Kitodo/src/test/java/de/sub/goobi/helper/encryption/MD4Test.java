@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
-
 import org.junit.Test;
 
 public class MD4Test {

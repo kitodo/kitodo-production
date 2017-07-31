@@ -77,8 +77,8 @@ public class HistoryTypeTest {
         history = prepareData().get(1);
         document = historyType.createDocument(history);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"date\":null,\"numericValue\":2.0,\"stringValue\":\"2\","
-                + "\"process\":2,\"type\":\"grayScale\"}");
+        expected = (JSONObject) parser.parse(
+                "{\"date\":null,\"numericValue\":2.0,\"stringValue\":\"2\"," + "\"process\":2,\"type\":\"grayScale\"}");
         assertEquals("History JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

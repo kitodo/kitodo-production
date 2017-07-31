@@ -11,6 +11,8 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -19,8 +21,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Filter;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Integration tests for FilterService.

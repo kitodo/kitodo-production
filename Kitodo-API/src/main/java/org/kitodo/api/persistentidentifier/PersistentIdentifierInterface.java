@@ -24,7 +24,7 @@ public interface PersistentIdentifierInterface {
      * @return a valid URN (including check digit).
      */
     String generateUnifiedResourceName(String namespace, String libraryIdentifier, String subNamespace,
-                                       String identifier);
+            String identifier);
 
     /**
      * Registers the given urn.

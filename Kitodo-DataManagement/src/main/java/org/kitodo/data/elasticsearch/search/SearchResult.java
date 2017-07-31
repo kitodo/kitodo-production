@@ -53,7 +53,8 @@ public class SearchResult {
      * Set properties of search result.
      *
      * @param properties
-     *            HashMap - key is name of field and value is value of field (possible Integer, String, JSONArray)
+     *            HashMap - key is name of field and value is value of field
+     *            (possible Integer, String, JSONArray)
      */
     public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;

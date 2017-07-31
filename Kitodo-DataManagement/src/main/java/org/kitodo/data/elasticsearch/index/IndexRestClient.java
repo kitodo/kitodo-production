@@ -124,8 +124,7 @@ public class IndexRestClient extends KitodoRestClient {
                 }
             }
         } else {
-            throw new CustomResponseException(
-                    "ElasticSearch failed to add all documents for unknown reason!");
+            throw new CustomResponseException("ElasticSearch failed to add all documents for unknown reason!");
         }
     }
 

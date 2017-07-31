@@ -53,7 +53,8 @@ public class SQLStepRequestByName extends SQLGenerator {
      * @return SQLExpression for MySQL DBMS - default fields stepCount and
      *         intervall
      */
-    public String getSQL(HistoryTypeEnum typeSelection, String stepName, Boolean stepOrderGrouping, Boolean includeLoops) {
+    public String getSQL(HistoryTypeEnum typeSelection, String stepName, Boolean stepOrderGrouping,
+            Boolean includeLoops) {
 
         String timeLimiter = "h.date";
         String groupInnerSelect = "";

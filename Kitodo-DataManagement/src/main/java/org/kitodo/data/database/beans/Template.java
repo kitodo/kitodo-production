@@ -40,7 +40,7 @@ public class Template extends BaseBean {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "template_x_property", joinColumns = {
             @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_template_x_property_template_id")) }, inverseJoinColumns = {
-            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
+                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
     private List<Property> properties;
 
     @Transient

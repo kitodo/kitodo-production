@@ -57,7 +57,7 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      *         intervall
      */
     public String getSQL(HistoryTypeEnum typeSelection, Integer stepOrder, Boolean stepOrderGrouping,
-                         Boolean includeLoops) {
+            Boolean includeLoops) {
 
         String timeLimiter = "h.date";
         String groupInnerSelect = "";

@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.kitodo.filters.FileNameMatchesFilter;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.filters.FileNameMatchesFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -51,8 +51,8 @@ public class ExportPdf extends ExportMets {
     private final FileService fileService = serviceManager.getFileService();
 
     @Override
-    public boolean startExport(Process myProcess, URI inZielVerzeichnis) throws ReadException,
-            IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
+    public boolean startExport(Process myProcess, URI inZielVerzeichnis)
+            throws ReadException, IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
 
         /*
          * Read Document
