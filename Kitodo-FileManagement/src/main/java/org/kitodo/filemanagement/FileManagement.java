@@ -13,12 +13,13 @@ package org.kitodo.filemanagement;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.kitodo.api.filemanagement.FileManagementInterface;
@@ -54,8 +55,52 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public boolean rename(URI uri, String newName) {
+    public void copy(URI sourceResource, URI targetResource) throws IOException {
+
+    }
+
+    @Override
+    public void move(URI sourceUri, URI targetUri) throws IOException {
+
+    }
+
+    @Override
+    public URI rename(URI uri, String newName) {
+        return URI.create("");
+    }
+
+    @Override
+    public boolean fileExist(URI uri) {
         return false;
+    }
+
+    @Override
+    public boolean isFile(URI uri) {
+        return false;
+    }
+
+    @Override
+    public boolean isDirectory(URI directory) {
+        return false;
+    }
+
+    @Override
+    public boolean canRead(URI uri) {
+        return false;
+    }
+
+    @Override
+    public Integer getNumberOfFiles(FilenameFilter filter, URI directory) {
+        return 0;
+    }
+
+    @Override
+    public String getFileNameWithExtension(URI uri) {
+        return "";
+    }
+
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
+        return new ArrayList<>();
     }
 
     @Override
@@ -75,7 +120,7 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
+    public URI create(URI parentFolderUri, String directoryName, boolean file) throws IOException {
         File directory = new File(parentFolderUri.getPath() + File.separator + directoryName);
         if (!directory.mkdir()) {
             throw new IOException("Could not create directory.");
@@ -84,13 +129,7 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public URI createResource(URI parentFolderUri, String fileName) {
-        String path = parentFolderUri.getPath() + File.separator + fileName;
-        return Paths.get(path).toUri();
-    }
-
-    @Override
-    public boolean createSymLink(URI targetUri, URI homeUri) {
+    public boolean createSymLink(URI targetUri, URI homeUri, boolean onlyRead, String userLogin) {
         return false;
     }
 
