@@ -30,17 +30,22 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
-@Named("RegelsaetzeForm")
+@Named("RulesetForm")
 @SessionScoped
-public class RegelsaetzeForm extends BasisForm {
+public class RulesetForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
-    private Ruleset myRegelsatz = new Ruleset();
+    private Ruleset ruleset;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(RegelsaetzeForm.class);
+    private static final Logger logger = LogManager.getLogger(RulesetForm.class);
     private int rulesetId;
 
-    public String Neu() {
-        this.myRegelsatz = new Ruleset();
+    /**
+     * Initialize new Ruleset.
+     *
+     * @return page
+     */
+    public String createNewRuleset() {
+        this.ruleset = new Ruleset();
         this.rulesetId = 0;
         return "/newpages/RegelsaetzeBearbeiten?faces-redirect=true";
     }
@@ -50,11 +55,11 @@ public class RegelsaetzeForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Speichern() {
+    public String saveRuleset() {
         try {
-            if (hasValidRulesetFilePath(myRegelsatz, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
-                serviceManager.getRulesetService().save(myRegelsatz);
-                return "/newpages/RegelsaetzeAlle";
+            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
+                serviceManager.getRulesetService().save(this.ruleset);
+                return "/newpages/RegelsaetzeAlle?faces-redirect=true";
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
                 return null;
@@ -66,8 +71,17 @@ public class RegelsaetzeForm extends BasisForm {
         }
     }
 
-    private boolean hasValidRulesetFilePath(Ruleset r, String pathToRulesets) {
-        File rulesetFile = new File(pathToRulesets + r.getFile());
+    /**
+     * Checks that ruleset file exists.
+     *
+     * @param ruleset
+     *            ruleset
+     * @param pathToRulesets
+     *            path to ruleset
+     * @return true if ruleset file exists
+     */
+    private boolean hasValidRulesetFilePath(Ruleset ruleset, String pathToRulesets) {
+        File rulesetFile = new File(pathToRulesets + ruleset.getFile());
         return rulesetFile.exists();
     }
 
@@ -76,23 +90,23 @@ public class RegelsaetzeForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Loeschen() {
+    public String removeRuleset() {
         try {
-            if (hasAssignedProcesses(myRegelsatz)) {
+            if (hasAssignedProcesses(this.ruleset)) {
                 Helper.setFehlerMeldung("RulesetInUse");
                 return null;
             } else {
-                serviceManager.getRulesetService().remove(myRegelsatz);
+                serviceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return "/newpages/RegelsaetzeAlle";
+        return "/newpages/RegelsaetzeAlle?faces-redirect=true";
     }
 
-    private boolean hasAssignedProcesses(Ruleset r) throws DataException {
-        Integer number = serviceManager.getProcessService().findByRuleset(r).size();
+    private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
+        Integer number = serviceManager.getProcessService().findByRuleset(ruleset).size();
         return number != null && number > 0;
     }
 
@@ -101,10 +115,10 @@ public class RegelsaetzeForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String filterKein() {
+    public String noFiltering() {
         List<Ruleset> rulesets = serviceManager.getRulesetService().findAll();
         this.page = new Page(0, rulesets);
-        return "/newpages/RegelsaetzeAlle";
+        return "/newpages/RegelsaetzeAlle/?faces-redirect=true";
     }
 
     /**
@@ -113,11 +127,11 @@ public class RegelsaetzeForm extends BasisForm {
      */
     @PostConstruct
     public void initializeRulesetList() {
-        filterKein();
+        noFiltering();
     }
 
-    public String FilterKeinMitZurueck() {
-        filterKein();
+    public String filterKeinMitZurueck() {
+        noFiltering();
         return this.zurueck;
     }
 
@@ -128,9 +142,7 @@ public class RegelsaetzeForm extends BasisForm {
     public void loadRuleset() {
         try {
             if (!Objects.equals(this.rulesetId, 0)) {
-                setMyRegelsatz(this.serviceManager.getRulesetService().find(this.rulesetId));
-            } else {
-                setMyRegelsatz(null);
+                setRuleset(this.serviceManager.getRulesetService().find(this.rulesetId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving ruleset with ID '" + this.rulesetId + "'; ", e.getMessage());
@@ -141,13 +153,13 @@ public class RegelsaetzeForm extends BasisForm {
      * Getter und Setter
      */
 
-    public Ruleset getMyRegelsatz() {
-        return this.myRegelsatz;
+    public Ruleset getRuleset() {
+        return this.ruleset;
     }
 
-    public void setMyRegelsatz(Ruleset inPreference) {
+    public void setRuleset(Ruleset inPreference) {
         Helper.getHibernateSession().clear();
-        this.myRegelsatz = inPreference;
+        this.ruleset = inPreference;
     }
 
     public void setRulesetId(int id) {
