@@ -239,9 +239,9 @@ public class MockDatabase {
         thirdProcess.setRuleset(serviceManager.getRulesetService().find(1));
         serviceManager.getProcessService().save(thirdProcess);
 
-        Process test = new Process();
-        test.setTitle("DBConnectionTest");
-        serviceManager.getProcessService().save(test);
+        Process fourthProcess = new Process();
+        fourthProcess.setTitle("DBConnectionTest");
+        serviceManager.getProcessService().save(fourthProcess);
 
         project.getProcesses().add(firstProcess);
         project.getProcesses().add(secondProcess);
@@ -249,20 +249,19 @@ public class MockDatabase {
 
         serviceManager.getProjectService().save(project);
 
-        project = serviceManager.getProjectService().find(3);
-        Process archivedProcess = new Process();
-        archivedProcess.setTitle("Second process");
-        archivedProcess.setOutputName("Unreachable");
-        archivedProcess.setWikiField("problem");
+        Project thirdProject = serviceManager.getProjectService().find(3);
+        Process fifthProcess = new Process();
+        fifthProcess.setTitle("Fifth process");
+        fifthProcess.setOutputName("Unreachable");
+        fifthProcess.setWikiField("problem");
         localDate = new LocalDate(2017, 2, 10);
-        archivedProcess.setCreationDate(localDate.toDate());
-        archivedProcess.setDocket(serviceManager.getDocketService().find(1));
-        archivedProcess.setProject(project);
-        archivedProcess.setSortHelperStatus("100000000");
-        archivedProcess.setRuleset(serviceManager.getRulesetService().find(1));
-        archivedProcess.setTemplate(true);
-        serviceManager.getProcessService().save(thirdProcess);
-        serviceManager.getProjectService().save(project);
+        fifthProcess.setCreationDate(localDate.toDate());
+        fifthProcess.setDocket(serviceManager.getDocketService().find(1));
+        fifthProcess.setProject(thirdProject);
+        fifthProcess.setRuleset(serviceManager.getRulesetService().find(1));
+        fifthProcess.setTemplate(true);
+        serviceManager.getProcessService().save(fifthProcess);
+        serviceManager.getProjectService().save(thirdProject);
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {
@@ -501,6 +500,23 @@ public class MockDatabase {
         userGroup.getTasks().add(firstTask);
         userGroup.getTasks().add(secondTask);
         serviceManager.getUserGroupService().save(userGroup);
+
+        Process fifthProcess = serviceManager.getProcessService().find(5);
+
+        Task fifthTask = new Task();
+        fifthTask.setTitle("Closed");
+        fifthTask.setOrdering(1);
+        fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        fifthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 7, 27);
+        fifthTask.setProcessingBegin(localDate.toDate());
+        fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
+        fifthTask.setProcessingUser(serviceManager.getUserService().find(2));
+        fifthTask.setProcess(fifthProcess);
+        fifthTask.setUsers(serviceManager.getUserService().findAll());
+
+        fifthProcess.getTasks().add(fifthTask);
+        serviceManager.getProcessService().save(fifthProcess);
     }
 
     private static void insertTemplates() throws DAOException, DataException {

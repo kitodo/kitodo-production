@@ -128,39 +128,39 @@ public class ProcessDAO extends BaseDAO {
     }
 
     public List<Process> getNotArchivedProcesses() {
-        return search("from Process where project.projectIsArchived = 'true' ");
+        return search("from Process where project.projectIsArchived = '0' ");
     }
 
     public List<Process> getNotClosedProcesses() {
-        return search("from Process where sortHelperStatus = '100000000' ");
+        return search("from Process where sortHelperStatus != '100000000' ");
     }
 
     public List<Process> getNotClosedAndNotArchivedProcesses() {
-        return search("from Process where sortHelperStatus = '100000000' AND project.projectIsArchived = 'false' ");
+        return search("from Process where sortHelperStatus != '100000000' AND project.projectIsArchived = '0' ");
     }
 
     public List<Process> getNotArchivedTemplates() {
-        return search("from Process where project.projectIsArchived = 'true' AND template = 'true' ");
+        return search("from Process where project.projectIsArchived = '0' AND template = '1' ");
     }
 
     public List<Process> getAllTemplates() {
-        return search("from Process where template = 'true' ");
+        return search("from Process where template = '1' ");
     }
 
     public List<Process> getAllWithoutTemplates() {
-        return search("from Process where template = 'false' ");
+        return search("from Process where template = '0' ");
     }
 
     public List<Process> getAllNotArchivedWithoutTemplates() {
-        return search("from Process where template = 'false' AND project.projectIsArchived = 'false' ");
+        return search("from Process where template = '0' AND project.projectIsArchived = '0' ");
     }
 
     public List<Process> getAllNotClosedAndNotArchivedTemplates() {
         return search(
-                "from Process where template = 'true' AND project.projectIsArchived = 'false' AND sortHelperStatus = '100000000' ");
+                "from Process where template = '1' AND project.projectIsArchived = '0' AND sortHelperStatus != '100000000' ");
     }
 
     public List<Process> getAllNotClosedTemplates() {
-        return search("from Process where template = 'true' AND sortHelperStatus = '100000000' ");
+        return search("from Process where template = '1' AND sortHelperStatus != '100000000' ");
     }
 }

@@ -839,8 +839,8 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as
-     * readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */

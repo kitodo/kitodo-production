@@ -72,7 +72,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<Process> processes = processService.findAll();
-        assertEquals("Not all processes were found in database!", 4, processes.size());
+        assertEquals("Not all processes were found in database!", 5, processes.size());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ProcessServiceIT {
         foundProcess = processService.convertSearchResultToObject(processService.findById(7));
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
-        processService.remove(6);
+        processService.remove(7);
         foundProcess = processService.convertSearchResultToObject(processService.findById(7));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
     }
@@ -655,73 +655,69 @@ public class ProcessServiceIT {
     public void getNotClosedProcesses() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getNotClosedProcesses();
+        List<Process> notClosedProcesses = processService.getNotClosedProcesses();
 
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 2",
-                notArchivedProcesses.size() == 2);
+        assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 4", notClosedProcesses.size() == 4);
     }
 
     @Test
     public void getNotClosedAndNotArchivedProcesses() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getNotClosedAndNotArchivedProcesses();
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 2",
-                notArchivedProcesses.size() == 2);
+        List<Process> notClosedAndNotArchivedProcesses = processService.getNotClosedAndNotArchivedProcesses();
+        assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 3",
+                notClosedAndNotArchivedProcesses.size() == 3);
     }
 
     @Test
     public void getNotArchivedTemplates() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getNotArchivedTemplates();
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 1",
-                notArchivedProcesses.size() == 1);
+        List<Process> notArchivedTemplates = processService.getNotArchivedTemplates();
+        assertTrue("Found " + notArchivedTemplates.size() + " processes, instead of 1",
+                notArchivedTemplates.size() == 1);
     }
 
     @Test
     public void getAllTemplates() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getAllTemplates();
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 2",
-                notArchivedProcesses.size() == 2);
+        List<Process> allTemplates = processService.getAllTemplates();
+        assertTrue("Found " + allTemplates.size() + " processes, instead of 2", allTemplates.size() == 2);
     }
 
     @Test
     public void getAllWithoutTemplates() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getAllWithoutTemplates();
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 2",
-                notArchivedProcesses.size() == 2);
+        List<Process> allWithoutTemplates = processService.getAllWithoutTemplates();
+        assertTrue("Found " + allWithoutTemplates.size() + " processes, instead of 3", allWithoutTemplates.size() == 3);
     }
 
     @Test
     public void getAllNotArchivedWithoutTemplates() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getAllNotArchivedWithoutTemplates();
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 2",
-                notArchivedProcesses.size() == 2);
+        List<Process> notArchivedProcessesWithoutTemplates = processService.getAllNotArchivedWithoutTemplates();
+        assertTrue("Found " + notArchivedProcessesWithoutTemplates.size() + " processes, instead of 2",
+                notArchivedProcessesWithoutTemplates.size() == 2);
     }
 
     @Test
     public void getAllNotClosedAndNotArchivedTemplates() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getAllNotClosedAndNotArchivedTemplates();
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 1",
-                notArchivedProcesses.size() == 1);
+        List<Process> notClosedAndNotArchivedTemplates = processService.getAllNotClosedAndNotArchivedTemplates();
+        assertTrue("Found " + notClosedAndNotArchivedTemplates.size() + " processes, instead of 1",
+                notClosedAndNotArchivedTemplates.size() == 1);
     }
 
     @Test
     public void getAllNotClosedTemplates() {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getAllNotClosedTemplates();
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 2",
-                notArchivedProcesses.size() == 2);
+        List<Process> notClosedTemplates = processService.getAllNotClosedTemplates();
+        assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 1", notClosedTemplates.size() == 1);
     }
 
 }
