@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +29,16 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
+import org.omnifaces.cdi.Push;
+import org.omnifaces.cdi.PushContext;
+import org.omnifaces.util.Ajax;
 
 @Named
 @ApplicationScoped
 public class IndexingForm {
+
+    private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
+    private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
 
     class IndexAllThread extends Thread {
 
@@ -39,6 +47,7 @@ public class IndexingForm {
         @Override
         public void run() {
             try {
+                resetGlobalProgress();
                 indexingAll = true;
 
                 startUserIndexing();
@@ -88,8 +97,30 @@ public class IndexingForm {
                 currentIndexState = ObjectTypes.NONE;
                 indexingAll = false;
 
+                sendMessage(INDEXING_FINISHED_MESSAGE);
+
             } catch (InterruptedException e) {
                 logger.debug("'Index all' process interrupted: " + e.getMessage());
+            }
+        }
+    }
+
+    @Inject
+    @Push(channel = "togglePollingChannel")
+    private PushContext pollingChannel;
+
+    private void sendMessage(String message) {
+        pollingChannel.send(message);
+        if (message.contains(INDEXING_FINISHED_MESSAGE)) {
+            try {
+                for (String id : FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds()) {
+                    if (Objects.equals(id, "indexing_form:indexingTable")) {
+                        Ajax.update("indexing_form:indexingTable");
+                        break;
+                    }
+                }
+            } catch (NullPointerException e) {
+                logger.debug(e.getMessage());
             }
         }
     }
@@ -615,169 +646,94 @@ public class IndexingForm {
         return getProgress(workpieces.size(), ObjectTypes.WORKPIECE, getIndexedWorkpieces());
     }
 
+    private void startIndexing(ObjectTypes type, IndexWorker worker) {
+        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
+            currentIndexState = type;
+            sendMessage(INDEXING_STARTED_MESSAGE + currentIndexState);
+            indexerThread = new Thread((worker));
+            indexerThread.setDaemon(true);
+            indexerThread.start();
+        } else {
+            logger.debug("Cannot start '" + type + "' indexing while a different indexing process running: '"
+                    + currentIndexState + "'");
+        }
+    }
+
     /**
      * Starts the process of indexing batches to the ElasticSearch index.
      */
     public void startBatchIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.BATCH;
-            indexerThread = new Thread((this.batchWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug(
-                    "Cannot start 'Batch' indexing, different indexing process running: '" + currentIndexState + "'");
-        }
+        startIndexing(ObjectTypes.BATCH, batchWorker);
     }
 
     /**
      * Starts the process of indexing dockets to the ElasticSearch index.
      */
     public void startDocketIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.DOCKET;
-            indexerThread = new Thread((this.docketWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug(
-                    "Cannot start 'Docket' indexing, different indexing process running: '" + currentIndexState + "'");
-        }
+        startIndexing(ObjectTypes.DOCKET, docketWorker);
     }
 
     /**
      * Starts the process of indexing processes to the ElasticSearch index.
      */
     public void startProcessIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.PROCESS;
-            indexerThread = new Thread((this.processWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug(
-                    "Cannot start 'Process' indexing, different indexing process running: '" + currentIndexState + "'");
-        }
+        startIndexing(ObjectTypes.PROCESS, processWorker);
     }
 
     /**
      * Starts the process of indexing projects to the ElasticSearch index.
      */
     public void startProjectIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.PROJECT;
-            indexerThread = new Thread((this.projectWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug(
-                    "Cannot start 'Project' indexing, different indexing process running: '" + currentIndexState + "'");
-        }
+        startIndexing(ObjectTypes.PROJECT, projectWorker);
     }
 
     /**
      * Starts the process of indexing properties to the ElasticSearch index.
      */
     public void startPropertyIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.PROPERTY;
-            indexerThread = new Thread((this.propertyWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug("Cannot start 'Property' indexing, different indexing process running: '" + currentIndexState
-                    + "'");
-        }
+        startIndexing(ObjectTypes.PROPERTY, propertyWorker);
     }
 
     /**
      * Starts the process of indexing rulesets to the ElasticSearch index.
      */
     public void startRulesetIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.RULESET;
-            indexerThread = new Thread((this.rulesetWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug(
-                    "Cannot start 'Ruleset' indexing, different indexing process running: '" + currentIndexState + "'");
-        }
+        startIndexing(ObjectTypes.RULESET, rulesetWorker);
     }
 
     /**
      * Starts the process of indexing tasks to the ElasticSearch index.
      */
     public void startTaskIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.TASK;
-            indexerThread = new Thread((this.taskWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug(
-                    "Cannot start 'Task' indexing, different indexing process running: '" + currentIndexState + "'");
-        }
+        startIndexing(ObjectTypes.TASK, taskWorker);
     }
 
     /**
      * Starts the process of indexing templates to the ElasticSearch index.
      */
     public void startTemplateIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.TEMPLATE;
-            indexerThread = new Thread((this.templateWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug("Cannot start 'Template' indexing, different indexing process running: '" + currentIndexState
-                    + "'");
-        }
+        startIndexing(ObjectTypes.TEMPLATE, templateWorker);
     }
 
     /**
      * Starts the process of indexing users to the ElasticSearch index.
      */
     public void startUserIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.USER;
-            indexerThread = new Thread((this.userWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug(
-                    "Cannot start 'User' indexing, different indexing process running: '" + currentIndexState + "'");
-        }
+        startIndexing(ObjectTypes.USER, userWorker);
     }
 
     /**
      * Starts the process of indexing user groups to the ElasticSearch index.
      */
     public void startUserGroupIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.USERGROUP;
-            indexerThread = new Thread((this.usergroupWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug("Cannot start 'Usergroup' indexing, different indexing process running: '" + currentIndexState
-                    + "'");
-        }
+        startIndexing(ObjectTypes.USERGROUP, usergroupWorker);
     }
 
     /**
      * Starts the process of indexing workpieces to the ElasticSearch index.
      */
     public void startWorkpieceIndexing() {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = ObjectTypes.WORKPIECE;
-            indexerThread = new Thread((this.workpieceWorker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug("Cannot start 'Workpiece' indexing, different indexing process running: '" + currentIndexState
-                    + "'");
-        }
+        startIndexing(ObjectTypes.WORKPIECE, workpieceWorker);
     }
 
     /**
@@ -839,8 +795,23 @@ public class IndexingForm {
                 lastIndexed.put(currentIndexState, LocalDateTime.now());
                 currentIndexState = ObjectTypes.NONE;
                 indexerThread.interrupt();
+                sendMessage(INDEXING_FINISHED_MESSAGE + currentType + "!");
             }
         }
         return progress;
+    }
+
+    private void resetGlobalProgress() {
+        indexedBatches = 0;
+        indexedDockets = 0;
+        indexedProcesses = 0;
+        indexedProjects = 0;
+        indexedProperties = 0;
+        indexedRulesetes = 0;
+        indexedTasks = 0;
+        indexedTemplates = 0;
+        indexedUsers = 0;
+        indexedUsergroups = 0;
+        indexedWorkpieces = 0;
     }
 }

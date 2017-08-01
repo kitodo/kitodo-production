@@ -16,13 +16,24 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
 
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
         <h:body>
             <script type="text/javascript">
                 //<![CDATA[
+                    function toggleProgressPolling(message) {
+                        if (message.includes("indexing_started")) {
+                            PF('progressPoll').start();
+                        }
+                        else if (message.includes("indexing_finished")) {
+                            // FIXME: progressPolling should only be deactivated when UI updating is finished!
+                            PF('progressPoll').stop();
+                        }
+                    }
+
                     function toggleIndexingButtons(state) {
                         if(state) {
                             PF('startIndexingBatches').enable();
@@ -72,12 +83,12 @@
                                 <h:outputText id="id3" value="#{msgs.indexing}"/>
                             </h:panelGroup>
                         </h:panelGrid>
-                        <h:form id="user_indexing_form">
+                        <h:form id="indexing_form">
                             <ui:fragment rendered="#{empty indexingForm.serverInformation}">
                                 <h:outputText value="The elastic search server is not running."/>
                             </ui:fragment>
                             <ui:fragment rendered="#{not empty indexingForm.serverInformation}">
-                                <h:panelGroup id="indexingTable">
+                                <p:panel widgetVar="indexingTable" id="indexingTable">
                                     <table>
                                         <thead>
                                             <tr>
@@ -442,9 +453,9 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                </h:panelGroup>
-                                <!-- TODO: polling should be toggled using f:websocket once Kitodo is updated to JSF 2.3 -->
-                                <p:poll update="indexingTable" interval="1"/>
+                                </p:panel>
+                                <p:poll widgetVar="progressPoll" update="indexingTable" interval="1" autoStart="false"/>
+                                <o:socket channel="togglePollingChannel" onmessage="toggleProgressPolling" />
                             </ui:fragment>
                         </h:form>
                     </td>
