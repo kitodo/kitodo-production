@@ -177,7 +177,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * Method saves object to database and document to the index of Elastic Search.
      * This method binds three other methods: save to database, save to index and
      * save dependencies to index.
-     * 
+     *
      * <p>
      * First step sets up the flag indexAction to state Index and saves to database.
      * It informs that object was updated in database but not yet in index. If this

@@ -321,6 +321,14 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
         return findByUserId(getIdFromJSONObject(user));
     }
 
+    public ProjectDTO getById(Integer id) throws DataException {
+        return convertJSONObjectToDTO(findById(id), false);
+    }
+
+    public ProjectDTO getById(Integer id, boolean related) throws DataException {
+        return convertJSONObjectToDTO(findById(id), related);
+    }
+
     /**
      * Get all projects from index an convert them for frontend.
      *

@@ -36,6 +36,7 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.dto.ProcessDTO;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.RulesetService;
@@ -641,6 +642,31 @@ public class FileService {
     }
 
     /**
+     * Get's the URI for a Process Sub-location. Possible Locations are listed
+     * in ProcessSubType.
+     *
+     * @param process
+     *            ProcessDTO object to get the sublocation for
+     * @param processSubType
+     *            The subType
+     * @param resourceName
+     *            the name of the single object (e.g. image) if null, the root
+     *            folder of the sublocation is returned
+     * @return The URI of the requested location
+     */
+    public URI getProcessSubTypeURI(ProcessDTO process, ProcessSubType processSubType, String resourceName) throws IOException {
+
+        URI processDataDirectory = URI.create(process.getProcessBaseUri());
+
+        if (resourceName == null) {
+            resourceName = "";
+        }
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
+                resourceName);
+    }
+
+    /**
      * Get part of the URI for specific process.
      * 
      * @param filter
@@ -655,6 +681,25 @@ public class FileService {
      */
     public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Process process, ProcessSubType processSubType,
             String resourceName) {
+        URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
+        return getSubUris(filter, processSubTypeURI);
+    }
+
+    /**
+     * Get part of the URI for specific process.
+     *
+     * @param filter
+     *            FilenameFilter object
+     * @param process
+     *            ProcessDTO object
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return unmapped URI
+     */
+    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, ProcessDTO process, ProcessSubType processSubType,
+                                               String resourceName) throws IOException {
         URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
         return getSubUris(filter, processSubTypeURI);
     }

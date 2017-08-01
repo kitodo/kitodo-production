@@ -107,8 +107,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save project, if false only re-save project object.
+     * Check if IndexAction flag is delete. If true remove user from list of users
+     * and re-save project, if false only re-save project object.
      *
      * @param user
      *            object
@@ -127,8 +127,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove filter from the
-     * index, if false re-save filter object.
+     * Check if IndexAction flag is delete. If true remove filter from the index, if
+     * false re-save filter object.
      *
      * @param user
      *            object
@@ -146,8 +146,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save task, if false only re-save task object.
+     * Check if IndexAction flag is delete. If true remove user from list of users
+     * and re-save task, if false only re-save task object.
      *
      * @param user
      *            object
@@ -173,8 +173,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save group, if false only re-save group object.
+     * Check if IndexAction flag is delete. If true remove user from list of users
+     * and re-save group, if false only re-save group object.
      *
      * @param user
      *            object
@@ -692,6 +692,81 @@ public class UserService extends SearchService<User, UserDTO> {
      * @return properties list size
      */
     public int getPropertiesSize(User user) {
+        if (user.getFilters() == null) {
+            return 0;
+        } else {
+            return user.getFilters().size();
+        }
+    }
+
+    /**
+     * Get size of user group result.
+     *
+     * @param user
+     *            UserDTO object
+     * @return size
+     */
+    public int getUserGroupSize(UserDTO user) {
+        if (user.getUserGroups() == null) {
+            return 0;
+        } else {
+            return user.getUserGroups().size();
+        }
+    }
+
+    /**
+     * Get size of steps result list.
+     *
+     * @param user
+     *            UserDTO object
+     * @return result size of steps
+     */
+    public int getTasksSize(UserDTO user) {
+        if (user.getTasks() == null) {
+            return 0;
+        } else {
+            return user.getTasks().size();
+        }
+    }
+
+    /**
+     * Get size of processing steps result list.
+     *
+     * @param user
+     *            UserDTO object
+     * @return result size of processing steps
+     */
+    public int getProcessingTasksSize(UserDTO user) {
+        if (user.getProcessingTasks() == null) {
+            return 0;
+        } else {
+            return user.getProcessingTasks().size();
+        }
+    }
+
+    /**
+     * Get size of projects result list.
+     *
+     * @param user
+     *            UserDTO object
+     * @return result size of projects
+     */
+    public int getProjectsSize(UserDTO user) {
+        if (user.getProjects() == null) {
+            return 0;
+        } else {
+            return user.getProjects().size();
+        }
+    }
+
+    /**
+     * Get properties list size.
+     *
+     * @param user
+     *            UserDTO object
+     * @return properties list size
+     */
+    public int getFiltersSize(UserDTO user) {
         if (user.getFilters() == null) {
             return 0;
         } else {

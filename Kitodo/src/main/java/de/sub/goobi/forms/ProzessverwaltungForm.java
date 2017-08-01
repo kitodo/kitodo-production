@@ -1699,7 +1699,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     /**
      * Setter for kitodoScript.
-     * 
+     *
      * @param kitodoScript
      *            the kitodoScript
      */

@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +31,6 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -208,7 +206,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            of the searched user group
      * @return list of JSON objects
      */
-    public List<JSONObject> findByPermission(Integer permission) throws DataException {
+    List<JSONObject> findByPermission(Integer permission) throws DataException {
         QueryBuilder query = createSimpleQuery("permission", permission, true);
         return searcher.findDocuments(query.toString());
     }
@@ -220,7 +218,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            of user
      * @return list of JSON objects with users for specific user group id
      */
-    public List<JSONObject> findByUserId(Integer id) throws DataException {
+    List<JSONObject> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -232,7 +230,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            of user
      * @return list of search result with user groups for specific user login
      */
-    public List<JSONObject> findByUserLogin(String login) throws DataException {
+    List<JSONObject> findByUserLogin(String login) throws DataException {
         JSONObject user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(getIdFromJSONObject(user));
     }

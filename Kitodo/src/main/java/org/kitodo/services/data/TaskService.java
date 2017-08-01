@@ -281,7 +281,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
 
-        List<JSONObject> templateProcesses = serviceManager.getProcessService().findByTemplate(true);
+        List<JSONObject> templateProcesses = serviceManager.getProcessService().findByTemplate(true, null);
         if (templateProcesses.size() > 0) {
             Set<Integer> templates = new HashSet<>();
             for (JSONObject jsonObject : templateProcesses) {
@@ -307,6 +307,86 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
+     * Find tasks by four parameters.
+     * 
+     * @param taskStatus
+     *            as String
+     * @param processingUser
+     *            id of processing user
+     * @return list of task as JSONObject objects
+     */
+    List<JSONObject> findByProcessingStatusAndUser(TaskStatus taskStatus, Integer processingUser, String sort)
+            throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
+        query.must(createSimpleQuery("processingUser", processingUser, true));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    /**
+     * Find tasks by four parameters.
+     * 
+     * @param taskStatus
+     *            as String
+     * @param processingUser
+     *            id of processing user
+     * @param priority
+     *            as Integer
+     * @return list of task as JSONObject objects
+     */
+    List<JSONObject> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
+            Integer priority, String sort) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
+        query.must(createSimpleQuery("processingUser", processingUser, true));
+        query.must(createSimpleQuery("priority", priority, true));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    /**
+     * Find tasks by three parameters.
+     * 
+     * @param taskStatus
+     *            as String
+     * @param processingUser
+     *            id of processing user
+     * @param typeAutomatic
+     *            as boolean
+     * @return list of task as JSONObject objects
+     */
+    List<JSONObject> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
+            boolean typeAutomatic, String sort) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
+        query.must(createSimpleQuery("processingUser", processingUser, true));
+        query.must(createSimpleQuery("typeAutomatic", String.valueOf(typeAutomatic), true));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    /**
+     * Find tasks by four parameters.
+     * 
+     * @param taskStatus
+     *            as String
+     * @param processingUser
+     *            id of processing user
+     * @param priority
+     *            as Integer
+     * @param typeAutomatic
+     *            as boolean
+     * @return list of task as JSONObject objects
+     */
+    List<JSONObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
+            Integer priority, boolean typeAutomatic, String sort) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
+        query.must(createSimpleQuery("processingUser", processingUser, true));
+        query.must(createSimpleQuery("priority", priority, true));
+        query.must(createSimpleQuery("typeAutomatic", String.valueOf(typeAutomatic), true));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
     @SuppressWarnings("unchecked")
@@ -328,6 +408,24 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         taskDTO.setProcessingBegin(getStringPropertyForDTO(jsonObject, "processingBegin"));
         taskDTO.setProcessingEnd(getStringPropertyForDTO(jsonObject, "processingEnd"));
         taskDTO.setTypeImagesWrite(true);
+        if (!related) {
+            taskDTO = convertRelatedJSONObjects(jsonObject, taskDTO);
+        }
+        return taskDTO;
+    }
+
+    private TaskDTO convertRelatedJSONObjects(JSONObject jsonObject, TaskDTO taskDTO) throws DataException {
+        Integer process = getIntegerPropertyForDTO(jsonObject, "process");
+        JSONObject processJSON = serviceManager.getProcessService().findById(process);
+        taskDTO.setProcess(serviceManager.getProcessService().convertJSONObjectToDTO(processJSON, true));
+        Integer processingUser = getIntegerPropertyForDTO(jsonObject, "processingUser");
+        JSONObject processingUserJSON = serviceManager.getUserService().findById(processingUser);
+        taskDTO.setProcessingUser(serviceManager.getUserService().convertJSONObjectToDTO(processingUserJSON, true));
+        taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
+        taskDTO.setUsersSize(taskDTO.getUsers().size());
+        taskDTO.setUserGroups(
+                convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+        // taskDTO.setUserGroupSize(userDTO.getUserGroups().size());
         return taskDTO;
     }
 
@@ -375,9 +473,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * If you change anything in the logic of priorities make sure that you
-     * catch dependencies on this system which are not directly related to
-     * priorities. TODO: check it!
+     * If you change anything in the logic of priorities make sure that you catch
+     * dependencies on this system which are not directly related to priorities.
+     * TODO: check it!
      */
     public Boolean isCorrectionStep(Task task) {
         return (task.getPriority() == 10);
@@ -388,12 +486,26 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return task;
     }
 
-    public String getLocalizedTitle(Task task) {
-        return Helper.getTranslation(task.getTitle());
+    /**
+     * Get localized (translated) title of task.
+     * 
+     * @param title
+     *            as String
+     * @return localized title
+     */
+    public String getLocalizedTitle(String title) {
+        return Helper.getTranslation(title);
     }
 
-    public String getNormalizedTitle(Task task) {
-        return task.getTitle().replace(" ", "_");
+    /**
+     * Get normalized title of task.
+     * 
+     * @param title
+     *            as String
+     * @return normalized title
+     */
+    public String getNormalizedTitle(String title) {
+        return title.replace(" ", "_");
     }
 
     /**
@@ -419,6 +531,36 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @return size
      */
     public int getUserGroupsSize(Task task) {
+        if (task.getUserGroups() == null) {
+            return 0;
+        } else {
+            return task.getUserGroups().size();
+        }
+    }
+
+    /**
+     * Get users' list size.
+     *
+     * @param task
+     *            object
+     * @return size
+     */
+    public int getUsersSize(TaskDTO task) {
+        if (task.getUsers() == null) {
+            return 0;
+        } else {
+            return task.getUsers().size();
+        }
+    }
+
+    /**
+     * Get user groups' list size.
+     *
+     * @param task
+     *            object
+     * @return size
+     */
+    public int getUserGroupsSize(TaskDTO task) {
         if (task.getUserGroups() == null) {
             return 0;
         } else {
@@ -673,8 +815,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get list of paths. TODO: inappropriate name of method - change during
-     * next phase of refactoring
+     * Get list of paths. TODO: inappropriate name of method - change during next
+     * phase of refactoring
      * 
      * @param task
      *            object
@@ -777,8 +919,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
             }
         }
         /*
-         * wenn keine offenen parallelschritte vorhanden sind, die nächsten
-         * Schritte aktivieren
+         * wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte
+         * aktivieren
          */
         if (offeneSchritteGleicherReihenfolge == 0) {
             if (logger.isDebugEnabled()) {
@@ -794,8 +936,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
                 if (reihenfolge == myTask.getOrdering() && myTask.getProcessingStatus() != 3
                         && myTask.getProcessingStatus() != 2) {
                     /*
-                     * den Schritt aktivieren, wenn es kein vollautomatischer
-                     * ist
+                     * den Schritt aktivieren, wenn es kein vollautomatischer ist
                      */
                     if (logger.isDebugEnabled()) {
                         logger.debug("open step " + myTask.getTitle());
@@ -831,7 +972,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         Process po = task.getProcess();
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
         if (po.getSortHelperImages() != serviceManager.getFileService()
-                    .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
+                .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
             po.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)));
             serviceManager.getProcessService().save(po);
         }
@@ -925,42 +1066,62 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * get open tasks for current user.
+     * Get open tasks for current user.
      * 
      * @return The list of tasks.
      */
-    public List<Task> getOpenTasksForCurrentUser() {
+    public List<TaskDTO> getOpenTasksForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenTasksForCurrentUser(login.getMyBenutzer().getId());
+        if (login == null) {
+            return new ArrayList<>();
+        }
+        List<JSONObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, login.getMyBenutzer().getId(),
+                sort);
+        return convertJSONObjectsToDTOs(results, false);
     }
 
     /**
-     * get open tasks without correction for current user.
+     * Get open tasks without correction for current user.
      * 
      * @return The list of tasks.
      */
-    public List<Task> getOpenTasksWithoutCorrectionForCurrentUser() {
+    public List<TaskDTO> getOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenTasksWithoutCorrectionForCurrentUser(login.getMyBenutzer().getId());
+        if (login == null) {
+            return new ArrayList<>();
+        }
+        List<JSONObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK,
+                login.getMyBenutzer().getId(), 10, sort);
+        return convertJSONObjectsToDTOs(results, false);
     }
 
     /**
-     * get open not automatic tasks for current user.
+     * Get open not automatic tasks for current user.
      * 
      * @return The list of tasks.
      */
-    public List<Task> getOpenNotAutomaticTasksForCurrentUser() {
+    public List<TaskDTO> getOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenNotAutomaticTasksForCurrentUser(login.getMyBenutzer().getId());
+        if (login == null) {
+            return new ArrayList<>();
+        }
+        List<JSONObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK,
+                login.getMyBenutzer().getId(), false, sort);
+        return convertJSONObjectsToDTOs(results, false);
     }
 
     /**
-     * get open not automatix tasks without correction for current user
+     * Get open not automatic tasks without correction for current user.
      * 
-     * @return The list of tasks.
+     * @return the list of tasks.
      */
-    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser() {
+    public List<TaskDTO> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return taskDAO.getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(login.getMyBenutzer().getId());
+        if (login == null) {
+            return new ArrayList<>();
+        }
+        List<JSONObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK,
+                login.getMyBenutzer().getId(), 10, false, sort);
+        return convertJSONObjectsToDTOs(results, false);
     }
 }
