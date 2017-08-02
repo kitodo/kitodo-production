@@ -63,6 +63,11 @@
         <param-value>Development</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>org.omnifaces.SOCKET_ENDPOINT_ENABLED</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- WelcomeFile Filter -->
     <!--
         <filter> <filter-name>WelcomeFile Filter</filter-name>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+        <h:body>
+            <script type="text/javascript">
+                //<![CDATA[
+                    function toggleProgressPolling(message) {
+                        if (message.includes("indexing_started")) {
+                            PF('progressPoll').start();
+                        }
+                        else if (message.includes("indexing_finished")) {
+                            // FIXME: progressPolling should only be deactivated when UI updating is finished!
+                            PF('progressPoll').stop();
+                        }
+                    }
+
+                    function toggleIndexingButtons(state) {
+                        if(state) {
+                            PF('startIndexingBatches').enable();
+                            PF('startIndexingDockets').enable();
+                            PF('startIndexingProcesses').enable();
+                            PF('startIndexingProjects').enable();
+                            PF('startIndexingProperties').enable();
+                            PF('startIndexingRulesets').enable();
+                            PF('startIndexingTasks').enable();
+                            PF('startIndexingTemplates').enable();
+                            PF('startIndexingUsers').enable();
+                            PF('startIndexingUserGroups').enable();
+                            PF('startIndexingWorkpieces').enable();
+                            PF('startIndexingAll').enable();
+                        }
+                        else {
+                            PF('startIndexingBatches').disable();
+                            PF('startIndexingDockets').disable();
+                            PF('startIndexingProcesses').disable();
+                            PF('startIndexingProjects').disable();
+                            PF('startIndexingProperties').disable();
+                            PF('startIndexingRulesets').disable();
+                            PF('startIndexingTasks').disable();
+                            PF('startIndexingTemplates').disable();
+                            PF('startIndexingUsers').disable();
+                            PF('startIndexingUserGroups').disable();
+                            PF('startIndexingWorkpieces').disable();
+                            PF('startIndexingAll').disable();
+                        }
+                    }
+                //]]>
+            </script>
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                   style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                   align="center">
+                <tr>
+                    <ui:include src="inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
+                        <!-- Breadcrumb -->
+                        <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
+                            <h:panelGroup id="id1">
+                                <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                <h:outputText id="id3" value="#{msgs.indexing}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        <h:form id="indexing_form">
+                            <ui:fragment rendered="#{empty indexingForm.serverInformation}">
+                                <h:outputText value="The elastic search server is not running."/>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{not empty indexingForm.serverInformation}">
+                                <p:panel widgetVar="indexingTable" id="indexingTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th><h:outputText value="#{msgs.objectType}"/></th>
+                                                <th><h:outputText value="#{msgs.startIndexing}"/></th>
+                                                <th><h:outputText value="#{msgs.progress}"/></th>
+                                                <th><h:outputText value="#{msgs.indexedEntries}"/></th>
+                                                <th><h:outputText value="#{msgs.status}"/></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Users -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.users}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingUsers"
+                                                                     onclick="PF('usersProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startUserIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.userCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="usersProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.userIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedUsers} / #{indexingForm.userCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress gt 0 and indexingForm.userIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- User groups -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.benutzergruppen}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingUserGroups"
+                                                                     onclick="PF('userGroupsProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startUserGroupIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.userGroupCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="userGroupsProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.userGroupIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedUserGroups} / #{indexingForm.userGroupCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress gt 0 and indexingForm.userGroupIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Projects -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.projekte}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingProjects"
+                                                                     onclick="PF('projectsProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startProjectIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.projectCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="projectsProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.projectsIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedProjects} / #{indexingForm.projectCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress gt 0 and indexingForm.projectsIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Rulesets -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.regelsaetze}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingRulesets"
+                                                                     onclick="PF('rulesetsProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startRulesetIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.rulesetCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="rulesetsProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.rulesetsIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedRulesets} / #{indexingForm.rulesetCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress gt 0 and indexingForm.rulesetsIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Dockets -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.dockets}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingDockets"
+                                                                     onclick="PF('docketsProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startDocketIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.docketCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="docketsProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.docketsIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedDockets} / #{indexingForm.docketCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress gt 0 and indexingForm.docketsIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Tasks -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.schritte}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingTasks"
+                                                                     onclick="PF('tasksProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startTaskIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.taskCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="tasksProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.tasksIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedTasks} / #{indexingForm.taskCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress gt 0 and indexingForm.tasksIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Templates -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.prozessvorlagen}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingTemplates"
+                                                                     onclick="PF('templatesProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startTemplateIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.templateCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="templatesProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.templatesIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedTemplates} / #{indexingForm.templateCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress gt 0 and indexingForm.templatesIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Processes -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.prozesse}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingProcesses"
+                                                                     onclick="PF('processesProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startProcessIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.processCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="processesProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.processIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedProcesses} / #{indexingForm.processCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress gt 0 and indexingForm.processIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Batches -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.batches}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingBatches"
+                                                                     onclick="PF('batchesProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startBatchIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.batchCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="batchesProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.batchIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedBatches} / #{indexingForm.batchCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress gt 0 and indexingForm.batchIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Properties -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.eigenschaften}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingProperties"
+                                                                     onclick="PF('propertiesProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startPropertyIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.propertyCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="propertiesProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.propertiesIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedProperties} / #{indexingForm.propertyCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress gt 0 and indexingForm.propertiesIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <!-- Workpieces -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.werkstuecke}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingWorkpieces"
+                                                                     onclick="PF('workpiecesProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startWorkpieceIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.workpieceCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="workpiecesProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.workpieceIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedWorkpieces} / #{indexingForm.workpieceCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress gt 0 and indexingForm.workpieceIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="6"><hr/></td>
+                                            </tr>
+
+                                            <!-- Whole index -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.wholeIndex}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingAll"
+                                                                     onclick="PF('allProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startAllIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress()}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="allProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.allIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.allIndexed} / #{indexingForm.totalCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.indexingInProgress()}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </p:panel>
+                                <p:poll widgetVar="progressPoll" update="indexingTable" interval="1" autoStart="false"/>
+                                <o:socket channel="togglePollingChannel" onmessage="toggleProgressPolling" />
+                            </ui:fragment>
+                        </h:form>
+                    </td>
+                </tr>
+                <ui:include src="inc/tbl_Fuss.xhtml" />
+            </table>
+        </h:body>
+    </f:view>
+
+</html>
