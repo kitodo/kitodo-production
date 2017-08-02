@@ -16,13 +16,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for BatchService class.
@@ -69,22 +69,22 @@ public class BatchServiceIT {
         batch.setTitle("To Remove");
         batch.setType(Batch.Type.SERIAL);
         batchService.save(batch);
-        Batch foundBatch = batchService.convertSearchResultToObject(batchService.findById(5));
+        Batch foundBatch = batchService.convertJSONObjectToObject(batchService.findById(5));
         assertEquals("Additional batch was not inserted in database!", "To Remove", foundBatch.getTitle());
 
         batchService.remove(foundBatch);
-        foundBatch = batchService.convertSearchResultToObject(batchService.findById(5));
+        foundBatch = batchService.convertJSONObjectToObject(batchService.findById(5));
         assertEquals("Additional batch was not removed from database!", null, foundBatch);
 
         batch = new Batch();
         batch.setTitle("To remove");
         batch.setType(Batch.Type.SERIAL);
         batchService.save(batch);
-        foundBatch = batchService.convertSearchResultToObject(batchService.findById(6));
+        foundBatch = batchService.convertJSONObjectToObject(batchService.findById(6));
         assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
 
         batchService.remove(6);
-        foundBatch = batchService.convertSearchResultToObject(batchService.findById(6));
+        foundBatch = batchService.convertJSONObjectToObject(batchService.findById(6));
         assertEquals("Additional batch was not removed from database!", null, foundBatch);
     }
 
@@ -92,8 +92,9 @@ public class BatchServiceIT {
     public void shouldFindById() throws Exception {
         BatchService batchService = new BatchService();
 
-        SearchResult batch = batchService.findById(1);
-        String actual = (String) batch.getProperties().get("title");
+        JSONObject batch = batchService.findById(1);
+        JSONObject jsonObject = (JSONObject) batch.get("_source");
+        String actual = (String) jsonObject.get("title");
         String expected = "First batch";
         assertEquals("Batch was not found in index!", expected, actual);
     }
@@ -102,7 +103,7 @@ public class BatchServiceIT {
     public void shouldFindByTitle() throws Exception {
         BatchService batchService = new BatchService();
 
-        List<SearchResult> batches = batchService.findByTitle("batch", true);
+        List<JSONObject> batches = batchService.findByTitle("batch", true);
         Integer actual = batches.size();
         Integer expected = 3;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -122,7 +123,7 @@ public class BatchServiceIT {
     public void shouldFindByType() throws Exception {
         BatchService batchService = new BatchService();
 
-        List<SearchResult> batches = batchService.findByType(Batch.Type.LOGISTIC, true);
+        List<JSONObject> batches = batchService.findByType(Batch.Type.LOGISTIC, true);
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -137,7 +138,7 @@ public class BatchServiceIT {
     public void shouldFindByTitleAndType() throws Exception {
         BatchService batchService = new BatchService();
 
-        List<SearchResult> batches = batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC);
+        List<JSONObject> batches = batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC);
         Integer actual = batches.size();
         Integer expected = 1;
         assertEquals("Batch was not found in index!", expected, actual);
@@ -152,7 +153,7 @@ public class BatchServiceIT {
     public void shouldFindByTitleOrType() throws Exception {
         BatchService batchService = new BatchService();
 
-        List<SearchResult> batches = batchService.findByTitleOrType("First batch", Batch.Type.SERIAL);
+        List<JSONObject> batches = batchService.findByTitleOrType("First batch", Batch.Type.SERIAL);
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -167,7 +168,7 @@ public class BatchServiceIT {
     public void shouldFindByProcessId() throws Exception {
         BatchService batchService = new BatchService();
 
-        List<SearchResult> batches = batchService.findByProcessId(1);
+        List<JSONObject> batches = batchService.findByProcessId(1);
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -182,7 +183,7 @@ public class BatchServiceIT {
     public void shouldFindByProcessTitle() throws Exception {
         BatchService batchService = new BatchService();
 
-        List<SearchResult> batches = batchService.findByProcessTitle("First process");
+        List<JSONObject> batches = batchService.findByProcessTitle("First process");
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);

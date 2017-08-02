@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.joda.time.LocalDate;
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -24,7 +25,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for TaskService class.
@@ -70,21 +70,21 @@ public class HistoryServiceIT {
         History history = new History();
         history.setStringValue("To Remove");
         historyService.save(history);
-        History foundHistory = historyService.convertSearchResultToObject(historyService.findById(2));
+        History foundHistory = historyService.convertJSONObjectToObject(historyService.findById(2));
         assertEquals("Additional history was not inserted in database!", "To Remove", foundHistory.getStringValue());
 
         historyService.remove(foundHistory);
-        foundHistory = historyService.convertSearchResultToObject(historyService.findById(2));
+        foundHistory = historyService.convertJSONObjectToObject(historyService.findById(2));
         assertEquals("Additional history was not removed from database!", null, foundHistory);
 
         history = new History();
         history.setStringValue("To remove");
         historyService.save(history);
-        foundHistory = historyService.convertSearchResultToObject(historyService.findById(3));
+        foundHistory = historyService.convertJSONObjectToObject(historyService.findById(3));
         assertEquals("Additional history was not inserted in database!", "To remove", foundHistory.getStringValue());
 
         historyService.remove(3);
-        foundHistory = historyService.convertSearchResultToObject(historyService.findById(3));
+        foundHistory = historyService.convertJSONObjectToObject(historyService.findById(3));
         assertEquals("Additional history was not removed from database!", null, foundHistory);
     }
 
@@ -92,14 +92,15 @@ public class HistoryServiceIT {
     public void shouldFindById() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        SearchResult history = historyService.findById(1);
-        String actual = (String) history.getProperties().get("stringValue");
+        JSONObject history = historyService.findById(1);
+        JSONObject jsonObject = (JSONObject) history.get("_source");
+        String actual = (String) jsonObject.get("stringValue");
         String expected = "History";
         assertEquals("History was not found in index!", expected, actual);
 
         history = historyService.findById(2);
-        Integer actualInt = history.getId();
-        Integer expectedInt = null;
+        Integer actualInt = historyService.getIdFromJSONObject(history);
+        Integer expectedInt = 0;
         assertEquals("History was not found in index!", expectedInt, actualInt);
     }
 
@@ -107,7 +108,7 @@ public class HistoryServiceIT {
     public void shouldFindByNumericValue() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        List<SearchResult> history = historyService.findByNumericValue(2.0);
+        List<JSONObject> history = historyService.findByNumericValue(2.0);
         Integer actual = history.size();
         Integer expected = 1;
         assertEquals("History was not found in index!", expected, actual);
@@ -122,8 +123,9 @@ public class HistoryServiceIT {
     public void shouldFindByStringValue() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        List<SearchResult> history = historyService.findByStringValue("History");
-        String actual = (String) history.get(0).getProperties().get("stringValue");
+        List<JSONObject> history = historyService.findByStringValue("History");
+        JSONObject jsonObject = (JSONObject) history.get(0).get("_source");
+        String actual = (String) jsonObject.get("stringValue");
         String expected = "History";
         assertEquals("History was not found in index!", expected, actual);
     }
@@ -132,7 +134,7 @@ public class HistoryServiceIT {
     public void shouldFindByType() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        List<SearchResult> history = historyService.findByType(HistoryTypeEnum.color);
+        List<JSONObject> history = historyService.findByType(HistoryTypeEnum.color);
         Integer actual = history.size();
         Integer expected = 1;
         assertEquals("History was not found in index!", expected, actual);
@@ -148,7 +150,7 @@ public class HistoryServiceIT {
         HistoryService historyService = new HistoryService();
 
         LocalDate localDate = new LocalDate(2017, 1, 14);
-        List<SearchResult> history = historyService.findByDate(localDate.toDate());
+        List<JSONObject> history = historyService.findByDate(localDate.toDate());
         Integer actual = history.size();
         Integer expected = 1;
         assertEquals("History was not found in index!", expected, actual);
@@ -164,14 +166,14 @@ public class HistoryServiceIT {
     public void shouldFindByProcessId() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        SearchResult history = historyService.findByProcessId(1);
-        Integer actual = history.getId();
+        JSONObject history = historyService.findByProcessId(1);
+        Integer actual = historyService.getIdFromJSONObject(history);
         Integer expected = 1;
         assertEquals("History was not found in index!", expected, actual);
 
         history = historyService.findByProcessId(2);
-        actual = history.getId();
-        expected = null;
+        actual = historyService.getIdFromJSONObject(history);
+        expected = 0;
         assertEquals("History was found in index!", expected, actual);
     }
 
@@ -179,7 +181,7 @@ public class HistoryServiceIT {
     public void shouldFindByProcessTitle() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        List<SearchResult> history = historyService.findByProcessTitle("First process");
+        List<JSONObject> history = historyService.findByProcessTitle("First process");
         Integer actual = history.size();
         Integer expected = 1;
         assertEquals("History was not found in index!", expected, actual);
@@ -194,17 +196,17 @@ public class HistoryServiceIT {
     public void shouldFindAllHistoryDocuments() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        List<SearchResult> histories = historyService.findAllDocuments();
+        List<JSONObject> histories = historyService.findAllDocuments();
         assertEquals("Not all histories were found in index!", 1, histories.size());
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldConvertSearchResultsToObjectList() throws Exception {
+    public void shouldConvertJSONObjectsToObjectList() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        List<SearchResult> searchResults = historyService.findAllDocuments();
-        List<History> historys = (List<History>) historyService.convertSearchResultsToObjectList(searchResults,
+        List<JSONObject> searchResults = historyService.findAllDocuments();
+        List<History> historys = (List<History>) historyService.convertJSONObjectsToObjectList(searchResults,
                 "History");
         assertEquals("Not all histories were converted!", 1, historys.size());
     }

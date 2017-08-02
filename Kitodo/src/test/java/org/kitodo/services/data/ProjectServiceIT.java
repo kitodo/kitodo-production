@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 import org.joda.time.LocalDate;
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -26,7 +27,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 
 /**
@@ -73,21 +73,21 @@ public class ProjectServiceIT {
         Project project = new Project();
         project.setTitle("To Remove");
         projectService.save(project);
-        Project foundProject = projectService.convertSearchResultToObject(projectService.findById(4));
+        Project foundProject = projectService.convertJSONObjectToObject(projectService.findById(4));
         assertEquals("Additional project was not inserted in database!", "To Remove", foundProject.getTitle());
 
         projectService.remove(foundProject);
-        foundProject = projectService.convertSearchResultToObject(projectService.findById(4));
+        foundProject = projectService.convertJSONObjectToObject(projectService.findById(4));
         assertEquals("Additional project was not removed from database!", null, foundProject);
 
         project = new Project();
         project.setTitle("To remove");
         projectService.save(project);
-        foundProject = projectService.convertSearchResultToObject(projectService.findById(5));
+        foundProject = projectService.convertJSONObjectToObject(projectService.findById(5));
         assertEquals("Additional project was not inserted in database!", "To remove", foundProject.getTitle());
 
         projectService.remove(5);
-        foundProject = projectService.convertSearchResultToObject(projectService.findById(5));
+        foundProject = projectService.convertJSONObjectToObject(projectService.findById(5));
         assertEquals("Additional project was not removed from database!", null, foundProject);
     }
 
@@ -95,8 +95,9 @@ public class ProjectServiceIT {
     public void shouldFindById() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        SearchResult project = projectService.findById(1);
-        String actual = (String) project.getProperties().get("title");
+        JSONObject project = projectService.findById(1);
+        JSONObject jsonObject = (JSONObject) project.get("_source");
+        String actual = (String) jsonObject.get("title");
         String expected = "First project";
         assertEquals("Project was not found in index!", expected, actual);
     }
@@ -105,7 +106,7 @@ public class ProjectServiceIT {
     public void shouldFindByTitle() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        List<SearchResult> projects = projectService.findByTitle("First project", true);
+        List<JSONObject> projects = projectService.findByTitle("First project", true);
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -116,7 +117,7 @@ public class ProjectServiceIT {
         ProjectService projectService = new ProjectService();
 
         LocalDate localDate = new LocalDate(2016, 10, 20);
-        List<SearchResult> projects = projectService.findByStartDate(localDate.toDate(), SearchCondition.EQUAL);
+        List<JSONObject> projects = projectService.findByStartDate(localDate.toDate(), SearchCondition.EQUAL);
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -137,7 +138,7 @@ public class ProjectServiceIT {
         ProjectService projectService = new ProjectService();
 
         LocalDate localDate = new LocalDate(2017, 9, 15);
-        List<SearchResult> projects = projectService.findByEndDate(localDate.toDate(), SearchCondition.EQUAL);
+        List<JSONObject> projects = projectService.findByEndDate(localDate.toDate(), SearchCondition.EQUAL);
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -157,7 +158,7 @@ public class ProjectServiceIT {
     public void shouldFindByNumberOfPages() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        List<SearchResult> projects = projectService.findByNumberOfPages(30, SearchCondition.EQUAL);
+        List<JSONObject> projects = projectService.findByNumberOfPages(30, SearchCondition.EQUAL);
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -182,7 +183,7 @@ public class ProjectServiceIT {
     public void shouldFindByNumberOfVolumes() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        List<SearchResult> projects = projectService.findByNumberOfVolumes(2, SearchCondition.EQUAL);
+        List<JSONObject> projects = projectService.findByNumberOfVolumes(2, SearchCondition.EQUAL);
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -208,13 +209,13 @@ public class ProjectServiceIT {
     public void shouldFindByProcessId() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        SearchResult project = projectService.findByProcessId(1);
-        Integer actual = project.getId();
+        JSONObject project = projectService.findByProcessId(1);
+        Integer actual = projectService.getIdFromJSONObject(project);
         Integer expected = 1;
         assertEquals("Project were not found in index!", expected, actual);
 
         project = projectService.findByProcessId(4);
-        actual = project.getId();
+        actual = projectService.getIdFromJSONObject(project);
         expected = null;
         assertEquals("Some project was found in index!", expected, actual);
     }
@@ -224,7 +225,7 @@ public class ProjectServiceIT {
     public void shouldFindByProcessTitle() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        List<SearchResult> projects = projectService.findByProcessTitle("First process");
+        List<JSONObject> projects = projectService.findByProcessTitle("First process");
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -239,7 +240,7 @@ public class ProjectServiceIT {
     public void shouldFindByUserId() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        List<SearchResult> projects = projectService.findByUserId(1);
+        List<JSONObject> projects = projectService.findByUserId(1);
         Integer actual = projects.size();
         Integer expected = 2;
         assertEquals("Projects were not found in index!", expected, actual);
@@ -259,7 +260,7 @@ public class ProjectServiceIT {
     public void shouldFindByUserLogin() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        List<SearchResult> projects = projectService.findByUserLogin("kowal");
+        List<JSONObject> projects = projectService.findByUserLogin("kowal");
         Integer actual = projects.size();
         Integer expected = 2;
         assertEquals("Projects were not found in index!", expected, actual);
