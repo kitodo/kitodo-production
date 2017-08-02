@@ -38,6 +38,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.debug>true</maven.compiler.debug>
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
+        <maxAllowedViolations>1</maxAllowedViolations>
     </properties>
 
     <repositories>
@@ -134,7 +135,7 @@
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
                                     <logViolationsToConsole>false</logViolationsToConsole>
-                                    <maxAllowedViolations>570</maxAllowedViolations>
+                                    <maxAllowedViolations>${maxAllowedViolations}</maxAllowedViolations>
                                     <violationSeverity>warning</violationSeverity>
                                 </configuration>
                                 <goals>
