@@ -18,13 +18,13 @@ import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FilterDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.FilterType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.data.base.SearchService;
@@ -141,9 +141,9 @@ public class FilterService extends SearchService<Filter> {
      *            of the searched filter
      * @param contains
      *            of the searched filter
-     * @return list of search results with properties
+     * @return list of JSON objects with properties
      */
-    public List<SearchResult> findByValue(String value, boolean contains) throws DataException {
+    public List<JSONObject> findByValue(String value, boolean contains) throws DataException {
         QueryBuilder query = createSimpleQuery("value", value, contains, Operator.AND);
         return searcher.findDocuments(query.toString());
     }

@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
@@ -28,7 +29,6 @@ import org.kitodo.data.database.persistence.HistoryDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.HistoryType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
@@ -148,9 +148,9 @@ public class HistoryService extends SearchService<History> {
      *
      * @param numericValue
      *            of the searched histories
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByNumericValue(Double numericValue) throws DataException {
+    public List<JSONObject> findByNumericValue(Double numericValue) throws DataException {
         QueryBuilder query = createSimpleQuery("numericValue", numericValue.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -160,9 +160,9 @@ public class HistoryService extends SearchService<History> {
      *
      * @param stringValue
      *            of the searched histories
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByStringValue(String stringValue) throws DataException {
+    public List<JSONObject> findByStringValue(String stringValue) throws DataException {
         QueryBuilder query = createSimpleQuery("stringValue", stringValue, true);
         return searcher.findDocuments(query.toString());
     }
@@ -173,9 +173,9 @@ public class HistoryService extends SearchService<History> {
      *
      * @param type
      *            of the searched histories as HistoryTypeEnum
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByType(HistoryTypeEnum type) throws DataException {
+    public List<JSONObject> findByType(HistoryTypeEnum type) throws DataException {
         QueryBuilder query = createSimpleQuery("type", type.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -185,9 +185,9 @@ public class HistoryService extends SearchService<History> {
      *
      * @param date
      *            of the searched histories as Date
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByDate(Date date) throws DataException {
+    public List<JSONObject> findByDate(Date date) throws DataException {
         QueryBuilder queryBuilder = createSimpleCompareDateQuery("date", date, SearchCondition.EQUAL);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -199,7 +199,7 @@ public class HistoryService extends SearchService<History> {
      *            of process
      * @return search result with history for specific process id
      */
-    public SearchResult findByProcessId(Integer id) throws DataException {
+    public JSONObject findByProcessId(Integer id) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("process", id, true);
         return searcher.findDocument(queryBuilder.toString());
     }
@@ -209,14 +209,14 @@ public class HistoryService extends SearchService<History> {
      *
      * @param processTitle
      *            title of process
-     * @return search results with history for specific process title
+     * @return JSON objects with history for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String processTitle) throws DataException {
-        List<SearchResult> histories = new ArrayList<>();
+    public List<JSONObject> findByProcessTitle(String processTitle) throws DataException {
+        List<JSONObject> histories = new ArrayList<>();
 
-        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
-        for (SearchResult process : processes) {
-            histories.add(findByProcessId(process.getId()));
+        List<JSONObject> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
+        for (JSONObject process : processes) {
+            histories.add(findByProcessId(getIdFromJSONObject(process)));
         }
         return histories;
     }

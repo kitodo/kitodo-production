@@ -31,6 +31,7 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.Session;
 import org.joda.time.LocalDateTime;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -43,7 +44,6 @@ import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.exceptions.DataException;
@@ -318,9 +318,9 @@ public class UserService extends SearchService<User> {
      *
      * @param name
      *            of the searched user
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByName(String name) throws DataException {
+    public List<JSONObject> findByName(String name) throws DataException {
         QueryBuilder query = createSimpleQuery("name", name, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -330,9 +330,9 @@ public class UserService extends SearchService<User> {
      *
      * @param surname
      *            of the searched user
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findBySurname(String surname) throws DataException {
+    public List<JSONObject> findBySurname(String surname) throws DataException {
         QueryBuilder query = createSimpleQuery("surname", surname, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -344,9 +344,9 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @param surname
      *            of the searched user
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByFullName(String name, String surname) throws DataException {
+    public List<JSONObject> findByFullName(String name, String surname) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("name", name, true, Operator.AND));
         query.must(createSimpleQuery("surname", surname, true, Operator.AND));
@@ -358,9 +358,9 @@ public class UserService extends SearchService<User> {
      *
      * @param login
      *            of the searched user
-     * @return search results
+     * @return JSON objects
      */
-    public SearchResult findByLogin(String login) throws DataException {
+    public JSONObject findByLogin(String login) throws DataException {
         QueryBuilder query = createSimpleQuery("login", login, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -372,7 +372,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return search result
      */
-    public SearchResult findByLdapLogin(String ldapLogin) throws DataException {
+    public JSONObject findByLdapLogin(String ldapLogin) throws DataException {
         QueryBuilder query = createSimpleQuery("ldapLogin", ldapLogin, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -382,9 +382,9 @@ public class UserService extends SearchService<User> {
      *
      * @param active
      *            true -active user or false - inactive user
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByActive(boolean active) throws DataException {
+    public List<JSONObject> findByActive(boolean active) throws DataException {
         QueryBuilder query = createSimpleQuery("active", String.valueOf(active), true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -394,9 +394,9 @@ public class UserService extends SearchService<User> {
      *
      * @param location
      *            of the searched user
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByLocation(String location) throws DataException {
+    public List<JSONObject> findByLocation(String location) throws DataException {
         QueryBuilder query = createSimpleQuery("location", location, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -406,9 +406,9 @@ public class UserService extends SearchService<User> {
      *
      * @param metadataLanguage
      *            of the searched user
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByMetadataLanguage(String metadataLanguage) throws DataException {
+    public List<JSONObject> findByMetadataLanguage(String metadataLanguage) throws DataException {
         QueryBuilder query = createSimpleQuery("metadataLanguage", metadataLanguage, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -418,9 +418,9 @@ public class UserService extends SearchService<User> {
      *
      * @param id
      *            of user group
-     * @return list of search results with users for specific user group id
+     * @return list of JSON objects with users for specific user group id
      */
-    public List<SearchResult> findByUserGroupId(Integer id) throws DataException {
+    public List<JSONObject> findByUserGroupId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -430,14 +430,14 @@ public class UserService extends SearchService<User> {
      *
      * @param title
      *            of user group
-     * @return list of search results with users for specific user group title
+     * @return list of JSON objects with users for specific user group title
      */
-    public List<SearchResult> findByUserGroupTitle(String title) throws DataException {
-        List<SearchResult> users = new ArrayList<>();
+    public List<JSONObject> findByUserGroupTitle(String title) throws DataException {
+        List<JSONObject> users = new ArrayList<>();
 
-        List<SearchResult> userGroups = serviceManager.getUserGroupService().findByTitle(title, true);
-        for (SearchResult userGroup : userGroups) {
-            users.addAll(findByUserGroupId(userGroup.getId()));
+        List<JSONObject> userGroups = serviceManager.getUserGroupService().findByTitle(title, true);
+        for (JSONObject userGroup : userGroups) {
+            users.addAll(findByUserGroupId(getIdFromJSONObject(userGroup)));
         }
         return users;
     }
@@ -447,14 +447,14 @@ public class UserService extends SearchService<User> {
      *
      * @param value
      *            of filter
-     * @return list of search results with users for specific filter
+     * @return list of JSON objects with users for specific filter
      */
-    public List<SearchResult> findByFilter(String value) throws DataException {
-        List<SearchResult> users = new ArrayList<>();
+    public List<JSONObject> findByFilter(String value) throws DataException {
+        List<JSONObject> users = new ArrayList<>();
 
-        List<SearchResult> filters = serviceManager.getFilterService().findByValue(value, true);
-        for (SearchResult filter : filters) {
-            users.addAll(findByFilterId(filter.getId()));
+        List<JSONObject> filters = serviceManager.getFilterService().findByValue(value, true);
+        for (JSONObject filter : filters) {
+            users.addAll(findByFilterId(getIdFromJSONObject(filter)));
         }
         return users;
     }
@@ -464,9 +464,9 @@ public class UserService extends SearchService<User> {
      *
      * @param id
      *            of filter
-     * @return list of search results with users for specific filter id
+     * @return list of JSON objects with users for specific filter id
      */
-    private List<SearchResult> findByFilterId(Integer id) throws DataException {
+    private List<JSONObject> findByFilterId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("filters.id", id, true);
         return searcher.findDocuments(query.toString());
     }

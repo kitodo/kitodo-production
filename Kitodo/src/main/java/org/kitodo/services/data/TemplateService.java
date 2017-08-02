@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
@@ -29,7 +30,6 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -177,7 +177,7 @@ public class TemplateService extends SearchService<Template> {
      *            of template
      * @return search result with templates for specific origin
      */
-    public List<SearchResult> findByOrigin(String origin) throws DataException {
+    public List<JSONObject> findByOrigin(String origin) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("origin", origin, true);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -189,7 +189,7 @@ public class TemplateService extends SearchService<Template> {
      *            of process
      * @return search result with templates for specific process id
      */
-    public List<SearchResult> findByProcessId(Integer id) throws DataException {
+    public List<JSONObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("process", id, true);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -199,14 +199,14 @@ public class TemplateService extends SearchService<Template> {
      *
      * @param processTitle
      *            title of process
-     * @return search results with templates for specific process title
+     * @return JSON objects with templates for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String processTitle) throws DataException {
-        List<SearchResult> templates = new ArrayList<>();
+    public List<JSONObject> findByProcessTitle(String processTitle) throws DataException {
+        List<JSONObject> templates = new ArrayList<>();
 
-        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
-        for (SearchResult process : processes) {
-            templates.addAll(findByProcessId(process.getId()));
+        List<JSONObject> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
+        for (JSONObject process : processes) {
+            templates.addAll(findByProcessId(getIdFromJSONObject(process)));
         }
         return templates;
     }
@@ -218,14 +218,14 @@ public class TemplateService extends SearchService<Template> {
      *            of property
      * @param value
      *            of property
-     * @return list of search results with templates for specific property
+     * @return list of JSON objects with templates for specific property
      */
-    public List<SearchResult> findByProperty(String title, String value) throws DataException {
-        List<SearchResult> templates = new ArrayList<>();
+    public List<JSONObject> findByProperty(String title, String value) throws DataException {
+        List<JSONObject> templates = new ArrayList<>();
 
-        List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
-        for (SearchResult property : properties) {
-            templates.addAll(findByPropertyId(property.getId()));
+        List<JSONObject> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+        for (JSONObject property : properties) {
+            templates.addAll(findByPropertyId(getIdFromJSONObject(property)));
         }
         return templates;
     }
@@ -235,9 +235,9 @@ public class TemplateService extends SearchService<Template> {
      *
      * @param id
      *            of property
-     * @return list of search results with templates for specific property id
+     * @return list of JSON objects with templates for specific property id
      */
-    private List<SearchResult> findByPropertyId(Integer id) throws DataException {
+    private List<JSONObject> findByPropertyId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("properties.id", id, true);
         return searcher.findDocuments(query.toString());
     }
