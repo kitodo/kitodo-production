@@ -60,6 +60,8 @@ import org.hibernate.Session;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
+import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
@@ -86,8 +88,6 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.filters.FileNameBeginsAndEndsWithFilter;
-import org.kitodo.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -729,11 +729,12 @@ public class ProcessService extends TitleSearchService<Process> {
         URI testMe;
         try {
             testMe = getImagesTifDirectory(true, process);
+            return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
+                    && fileService.getSubUris(testMe).size() > 0;
         } catch (IOException e) {
+            logger.error(e);
             return false;
         }
-        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                && fileService.getSubUris(testMe).size() > 0;
 
     }
 
@@ -741,7 +742,9 @@ public class ProcessService extends TitleSearchService<Process> {
      * Get images origin directory.
      *
      * @param useFallBack
+     *            as boolean
      * @param process
+     *            object
      * @return path
      */
     public URI getImagesOrigDirectory(boolean useFallBack, Process process) throws IOException {
@@ -826,8 +829,8 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated
-     * with as readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated with as
+     * readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */

@@ -55,10 +55,10 @@ import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.filters.IsDirectoryFilter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -1827,12 +1827,17 @@ public class Metadaten {
         if (logger.isTraceEnabled()) {
             logger.trace("myBild: " + this.myBild);
         }
-        String index = fileService.getFileName(dataList.get(i));
-        if (logger.isTraceEnabled()) {
-            logger.trace("index: " + index);
+        try {
+            String index = fileService.getFileName(dataList.get(i));
+            if (logger.isTraceEnabled()) {
+                logger.trace("index: " + index);
+            }
+            String picture = fileService.getFileName(this.myBild);
+            return index.equals(picture);
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
         }
-        String picture = fileService.getFileName(this.myBild);
-        return index.equals(picture);
     }
 
     private void checkImage() {

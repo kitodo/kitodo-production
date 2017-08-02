@@ -70,7 +70,7 @@ public class FilesystemHelperTest {
         assertFileNotExists("new.xml");
     }
 
-    private void assertFileExists(String fileName) {
+    private void assertFileExists(String fileName) throws IOException {
         FileService fileService = new FileService();
         if (!fileService.fileExist(URI.create(fileName))) {
             fail("File " + fileName + " does not exist.");

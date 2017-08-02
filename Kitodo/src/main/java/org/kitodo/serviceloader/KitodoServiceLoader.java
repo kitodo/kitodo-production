@@ -42,12 +42,12 @@ public class KitodoServiceLoader<T> {
      * 
      * @return A module with type T.
      */
+    @SuppressWarnings("unchecked")
     public T loadModule() {
 
         loadModulesIntoClasspath();
 
-        ServiceLoader<T> loader;
-        loader = ServiceLoader.load(clazz);
+        ServiceLoader<T> loader = ServiceLoader.load(clazz);
 
         return loader.iterator().next();
     }

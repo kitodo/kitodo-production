@@ -11,55 +11,74 @@
 
 package org.kitodo.filemanagement;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
 
-import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 
 public class FileManagementTest {
 
-    private static final String testFolder = "src" + File.separator + "test" + File.separator;
+    private static FileManagement fileManagement = new FileManagement();
 
-    @Test
-    public void testRead() throws IOException {
+    @BeforeClass
+    public static void setUp() throws IOException {
+        fileManagement.create(URI.create(""), "fileTest", false);
+        URI directory = fileManagement.create(URI.create(""), "2", false);
+        fileManagement.create(directory, "meta.xml", true);
+    }
 
-        int testContent = 8;
-
-        File file = new File(testFolder + "test.txt");
-        FileOutputStream os = null;
-        try {
-            os = new FileOutputStream(file);
-            os.write(testContent);
-        } finally {
-            close(os);
-        }
-
-        URI uri = file.toURI();
-
-        FileManagement fileManagement = new FileManagement();
-
-        InputStream is = fileManagement.read(uri);
-
-        Assert.assertEquals("Did not read right content", testContent, is.read());
-
-        is.close();
-        file.delete();
-
+    @AfterClass
+    public static void tearDown() throws IOException {
+        fileManagement.delete(URI.create("fileTest"));
+        fileManagement.delete(URI.create("2"));
     }
 
     @Test
-    public void testWrite() throws IOException {
-        int testContent = 7;
-        File file = new File(testFolder + "test.txt");
+    public void shouldCreateDirectory() throws IOException {
+        URI testDirectory = fileManagement.create(URI.create("fileTest"), "testDirectory", false);
+        Assert.assertTrue("Directory not created", fileManagement.isDirectory(testDirectory));
+        Assert.assertTrue("Directory not created", fileManagement.fileExist(testDirectory));
+    }
 
-        FileManagement fileManagement = new FileManagement();
-        OutputStream outputStream = fileManagement.write(file.toURI());
+    @Test
+    public void shouldCreateResource() throws IOException {
+        URI testDirectory = fileManagement.create(URI.create("fileTest"), "newResource.xml", true);
+        Assert.assertTrue("File not created", fileManagement.fileExist(testDirectory));
+    }
+
+    @Test
+    public void shouldRead() throws IOException {
+        int testContent = 8;
+
+        URI testRead = fileManagement.create(URI.create("fileTest"), "testRead.txt", true);
+        OutputStream outputStream = fileManagement.write(testRead);
+        try {
+            outputStream.write(testContent);
+        } finally {
+            outputStream.close();
+        }
+
+        InputStream inputStream = fileManagement.read(testRead);
+        Assert.assertEquals("Did not read right content", testContent, inputStream.read());
+
+        inputStream.close();
+    }
+
+    @Test
+    public void shouldWrite() throws IOException {
+        int testContent = 7;
+
+        URI testWrite = fileManagement.create(URI.create("fileTest"), "testWrite.txt", true);
+
+        OutputStream outputStream = fileManagement.write(testWrite);
         try {
             outputStream.write(testContent);
         } finally {
@@ -67,85 +86,143 @@ public class FileManagementTest {
             outputStream.close();
         }
 
-        InputStream is = file.toURI().toURL().openStream();
-        Assert.assertEquals("Did not write right content", testContent, is.read());
+        InputStream inputStream = fileManagement.read(testWrite);
+        Assert.assertEquals("Did not write right content", testContent, inputStream.read());
 
-        is.close();
-        file.delete();
-
+        inputStream.close();
     }
 
     @Test
-    public void testDeleteFile() throws IOException {
-        File file = new File(testFolder + "testDelete.txt");
-        FileOutputStream os = null;
-        try {
-            os = new FileOutputStream(file);
-            os.write(5);
-        } finally {
-            close(os);
-        }
-        Assert.assertTrue("File not created", file.exists());
+    public void shouldRenameFile() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "oldName.xml", true);
+        URI oldUri = URI.create("fileTest/oldName.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertEquals(resource, oldUri);
 
-        FileManagement fileManagement = new FileManagement();
-        fileManagement.delete(file.toURI());
-
-        Assert.assertFalse("File not deleted", file.exists());
-
+        fileManagement.rename(resource, "newName.xml");
+        URI newUri = URI.create("fileTest/newName.xml");
+        Assert.assertFalse(fileManagement.fileExist(oldUri));
+        Assert.assertTrue(fileManagement.fileExist(newUri));
     }
 
     @Test
-    public void testDeleteDirectory() throws IOException {
-        File file = new File("src" + File.separator + "test" + File.separator + "testDelete");
-        if (!file.mkdir()) {
-            throw new IOException();
-        }
-        Assert.assertTrue("Directory not created", file.exists());
-        Assert.assertTrue("Directory is not a directory", file.isDirectory());
+    public void shouldCopyDirectory() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "toCopy", false);
+        URI file = fileManagement.create(resource, "fileToCopy.xml", true);
+        URI oldUri = URI.create("fileTest/toCopy/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertEquals(file, oldUri);
 
-        FileManagement fileManagement = new FileManagement();
-        fileManagement.delete(file.toURI());
-
-        Assert.assertFalse("Directory not deleted", file.exists());
-
+        fileManagement.copy(resource, URI.create("fileTest/copiedDirectory"));
+        URI newUri = URI.create("fileTest/copiedDirectory/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertTrue(fileManagement.fileExist(newUri));
     }
 
     @Test
-    public void testCreateDirectory() throws IOException {
+    public void shouldCopyFile() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "fileToCopy.xml", true);
+        URI oldUri = URI.create("fileTest/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertEquals(resource, oldUri);
 
-        String directoryName = "testDir";
-        File file = new File(testFolder + directoryName);
-        Assert.assertFalse("Directory already exists", file.exists());
+        fileManagement.copy(resource, URI.create("fileTest/copiedFile.xml"));
+        URI newUri = URI.create("fileTest/copiedFile.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertTrue(fileManagement.fileExist(newUri));
+    }
 
-        File currentDirFile = new File(testFolder);
-        FileManagement fileManagement = new FileManagement();
-        URI testDir = fileManagement.create(currentDirFile.toURI(), directoryName, false);
-        File testDirFile = new File(testDir);
-        Assert.assertTrue("Directory not created", testDirFile.isDirectory());
-        Assert.assertTrue("Directory not created", testDirFile.exists());
+    @Test
+    public void shouldCopyFileToDirectory() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "fileToCopy.xml", true);
+        URI oldUri = URI.create("fileTest/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertEquals(resource, oldUri);
 
-        FileUtils.deleteDirectory(testDirFile);
+        fileManagement.copy(resource, URI.create("fileTest/newDirectory"));
+        URI newUri = URI.create("fileTest/newDirectory/fileToCopy.xml");
+        Assert.assertTrue(fileManagement.fileExist(oldUri));
+        Assert.assertTrue(fileManagement.fileExist(newUri));
+    }
 
+    @Test
+    public void shouldDeleteFile() throws IOException {
+        URI resource = fileManagement.create(URI.create(""), "testDelete.txt", true);
+        Assert.assertTrue("File not created", fileManagement.fileExist(resource));
+
+        fileManagement.delete(resource);
+        Assert.assertFalse("File not deleted", fileManagement.fileExist(resource));
+    }
+
+    @Test
+    public void shouldMoveDirectory() throws IOException {
+        URI resource = fileManagement.create(URI.create("fileTest"), "testMove", false);
+        URI file = fileManagement.create(resource, "testMove.txt", true);
+        Assert.assertTrue("File not created", fileManagement.fileExist(file));
+
+        fileManagement.move(resource, URI.create("fileTest/moved"));
+        URI movedFile = URI.create("fileTest/moved/testMove.txt");
+        Assert.assertFalse("Directory not deleted", fileManagement.fileExist(resource));
+        Assert.assertTrue("Directory not moved", fileManagement.fileExist(movedFile));
+    }
+
+    @Test
+    public void shouldMoveFile() throws IOException {
+        URI resource = fileManagement.create(URI.create("fileTest"), "testMove.txt", true);
+        Assert.assertTrue("File not created", fileManagement.fileExist(resource));
+
+        URI movedFile = URI.create("fileTest/moved.txt");
+        fileManagement.move(resource, movedFile);
+        Assert.assertFalse("File not deleted", fileManagement.fileExist(resource));
+        Assert.assertTrue("File not moved", fileManagement.fileExist(movedFile));
+    }
+
+    @Test
+    public void shouldDeleteDirectory() throws IOException {
+        URI directory = fileManagement.create(URI.create(""), "testDelete", false);
+
+        Assert.assertTrue("Directory not created", fileManagement.fileExist(directory));
+        Assert.assertTrue("Directory is not a directory", fileManagement.isDirectory(directory));
+
+        fileManagement.delete(directory);
+        Assert.assertFalse("Directory not deleted", fileManagement.fileExist(directory));
+    }
+
+    @Test
+    public void shouldGetFileNameWithExtension() throws Exception {
+        URI resource = fileManagement.create(URI.create("fileTest"), "fileName.xml", true);
+        Assert.assertTrue(fileManagement.fileExist(resource));
+
+        String fileName = fileManagement.getFileNameWithExtension(resource);
+        Assert.assertEquals(fileName, "fileName.xml");
+    }
+
+    @Test
+    public void shouldGetSubUris() throws Exception {
+        URI directory = fileManagement.create(URI.create("fileTest"), "testSub", false);
+        URI firstSub = fileManagement.create(directory, "first.txt", true);
+        URI secondSub = fileManagement.create(directory, "second.xml", true);
+        URI thirdSub = fileManagement.create(directory, "third.jpg", true);
+
+        ArrayList subUris = fileManagement.getSubUris(null, directory);
+        Assert.assertEquals(subUris.get(0), firstSub);
+        Assert.assertEquals(subUris.get(1), secondSub);
+        Assert.assertEquals(subUris.get(2), thirdSub);
+
+        FilenameFilter filter = new FileNameEndsWithFilter(".xml");
+        ArrayList subUrisWithFilter = fileManagement.getSubUris(filter, directory);
+        Assert.assertEquals(subUrisWithFilter.size(), 1);
+        Assert.assertEquals(subUrisWithFilter.get(0), secondSub);
     }
 
     @Test
     public void testCreateProcessLocation() throws IOException {
-        FileManagement fileManagement = new FileManagement();
-        String processFolder = "src/test/testProcess";
+        String processFolder = "testProcess";
 
         URI processLocation = fileManagement.createProcessLocation("testProcess");
         Assert.assertTrue("wrong processLocation", processLocation.toString().contains(processFolder));
 
-        File testFolder = new File(processFolder);
-        FileUtils.deleteDirectory(testFolder);
-
-    }
-
-    private void close(FileOutputStream os) throws IOException {
-        if (os == null) {
-            return;
-        }
-        os.close();
+        fileManagement.delete(processLocation);
     }
 
 }

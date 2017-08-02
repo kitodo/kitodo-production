@@ -21,13 +21,60 @@ public class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
+    private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
+    private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
+
+    /**
+     * Get Kitodo data directory.
+     *
+     * @return String
+     */
+    public static String getKitodoDataDirectory() {
+        return getParameter(METADATA_DIRECTORY);
+    }
+
+    /**
+     * Get Kitodo config directory.
+     *
+     * @return String
+     */
+    public static String getKitodoConfigDirectory() {
+        return getParameter(CONFIG_DIR);
+    }
+
+    /**
+     * Request selected parameter from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static String getParameter(String parameter) {
+        try {
+            return getConfig().getString(parameter);
+        } catch (RuntimeException e) {
+            logger.error(e);
+            return "No configuration found!";
+        }
+    }
+
+    /**
+     * Request selected parameter with given default value from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static String getParameter(String parameter, String defaultIfNull) {
+        try {
+            return getConfig().getString(parameter, defaultIfNull);
+        } catch (RuntimeException e) {
+            return defaultIfNull;
+        }
+    }
 
     /**
      * Gets the configuration.
      *
      * @return the PropertyConfiguration
      */
-    public static PropertiesConfiguration getConfig() {
+    private static PropertiesConfiguration getConfig() {
         if (config == null) {
             synchronized (Config.class) {
                 PropertiesConfiguration initialized = config;
@@ -36,8 +83,8 @@ public class Config {
                     try {
                         initialized = new PropertiesConfiguration(CONFIG_FILE);
                     } catch (ConfigurationException e) {
-                        logger.warn("Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.",
-                                e);
+                        logger.warn(
+                                "Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
                         initialized = new PropertiesConfiguration();
                     }
                     initialized.setListDelimiter('&');

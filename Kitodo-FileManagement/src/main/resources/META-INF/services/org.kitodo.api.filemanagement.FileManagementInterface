@@ -7,8 +7,6 @@
 #
 # For the full copyright and license information, please read the
 # GPL3-License.txt file that was distributed with this source code.
-#####
-# Absolute path to the directory that process directories will be created in,
-# terminated by a directory separator ("/").
-# The servlet container must have write permission to that directory.
-MetadatenVerzeichnis=src/test/resources/
+#
+
+org.kitodo.filemanagement.FileManagement

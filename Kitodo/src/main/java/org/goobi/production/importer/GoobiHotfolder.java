@@ -71,7 +71,13 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<URI> getCurrentFiles() {
-        return fileService.getSubUris(this.folder);
+        List<URI> uris = new ArrayList<>();
+        try {
+            uris = fileService.getSubUris(this.folder);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        return uris;
     }
 
     /**
@@ -84,8 +90,13 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
     @Override
     public List<URI> getFilesByName(String name) {
-        ArrayList<URI> files = fileService.getSubUris(this.folder);
+        ArrayList<URI> files = new ArrayList<>();
         List<URI> answer = new ArrayList<>();
+        try {
+            files = fileService.getSubUris(this.folder);
+        } catch (IOException e) {
+            logger.error(e);
+        }
         for (URI file : files) {
             if (file.toString().contains(name) && !file.toString().contains("anchor")) {
                 answer.add(file);
@@ -99,11 +110,17 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      *
      * @param filter
      *            FilenameFilter object
-     * @return a list with all filenames matching the filter
+     * @return a list with all file names matching the filter
      */
     @Override
     public List<URI> getFileNamesByFilter(FilenameFilter filter) {
-        return fileService.getSubUris(filter, this.folder);
+        ArrayList<URI> fileNames = new ArrayList<>();
+        try {
+            fileNames = fileService.getSubUris(filter, this.folder);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        return fileNames;
     }
 
     /**
@@ -115,7 +132,13 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<URI> getFilesByFilter(FilenameFilter filter) {
-        return fileService.getSubUris(filter, this.folder);
+        ArrayList<URI> files = new ArrayList<>();
+        try {
+            files = fileService.getSubUris(filter, this.folder);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        return files;
     }
 
     @Override

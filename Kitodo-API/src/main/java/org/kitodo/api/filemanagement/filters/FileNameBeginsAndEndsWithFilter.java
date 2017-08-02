@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.filters;
+package org.kitodo.api.filemanagement.filters;
 
 import java.io.File;
 import java.io.FilenameFilter;
