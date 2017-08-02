@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 import de.sub.goobi.config.ConfigCore;
 import org.apache.logging.log4j.LogManager;
@@ -48,7 +49,7 @@ public class FileServiceTest {
     @Ignore("Script is not working")
     public void testCreateMetaDirectory() throws IOException {
         fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
-        File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaScript")));
+        File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
 
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
@@ -58,22 +59,22 @@ public class FileServiceTest {
     @Test
     public void testCreateDirectory() throws IOException {
         URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMeta");
-        File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMeta")));
+        File file = fileService.getFile(URI.create("fileServiceTest/testMeta"));
 
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
         Assert.assertTrue(file.exists());
-        Assert.assertEquals(testMetaUri, unmapUriFromKitodoDataDirectoryUri(file.toURI()));
+        Assert.assertTrue("Incorrect path!", Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
     }
 
     @Test
-    public void testCreateDirectoryWithMissingRoot() {
+    public void testCreateDirectoryWithMissingRoot() throws IOException {
         try {
             fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
         } catch (IOException e) {
             logger.error(e);
         }
-        File file = new File(fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTestMissing/testMeta")));
+        File file = fileService.getFile(URI.create("fileServiceTestMissing/testMeta"));
 
         Assert.assertFalse(file.exists());
     }
@@ -82,14 +83,14 @@ public class FileServiceTest {
     public void testCreateDirectoryWithAlreadyExistingDirectory() throws IOException {
         fileService.createDirectory(URI.create("fileServiceTest"), "testMetaExisting");
 
-        URI file = fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaExisting"));
-        Assert.assertTrue(new File(file).exists());
+        File file = fileService.getFile(URI.create("fileServiceTest/testMetaExisting"));
+        Assert.assertTrue(file.exists());
 
         URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMetaExisting");
-        file = fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaExisting"));
+        file = fileService.getFile(URI.create("fileServiceTest/testMetaExisting"));
 
-        Assert.assertTrue(new File(file).exists());
-        Assert.assertEquals(testMetaUri, unmapUriFromKitodoDataDirectoryUri(file));
+        Assert.assertTrue(file.exists());
+        Assert.assertTrue("Incorrect path!", Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
     }
 
     @Test

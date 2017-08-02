@@ -549,6 +549,17 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
+     * Get title without white spaces.
+     * 
+     * @param process
+     *            object
+     * @return title with '__' instead of ' '
+     */
+    public String getNormalizedTitle(Process process) {
+        return process.getTitle().replace(" ", "__");
+    }
+
+    /**
      * Returns the batches of the desired type for a process.
      *
      * @param type
@@ -703,17 +714,18 @@ public class ProcessService extends TitleSearchService<Process> {
             }
         }
 
-        if (tifOrdner == null) {
-            tifOrdner = URI.create(process.getTitle() + "_" + DIRECTORY_SUFFIX);
-        }
-
         URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
+
+        if (tifOrdner == null) {
+            tifOrdner = URI.create(result.toString() + getNormalizedTitle(process) + "_" + DIRECTORY_SUFFIX);
+        }
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
             fileService.createMetaDirectory(result, tifOrdner.toString());
         }
-        return result;
+
+        return tifOrdner;
     }
 
     /**
@@ -787,15 +799,19 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             }
 
+            URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
+
             if (origOrdner == null) {
-                origOrdner = URI.create(DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX);
+                origOrdner = URI.create(result.toString() + DIRECTORY_PREFIX + "_" + getNormalizedTitle(process) + "_"
+                        + DIRECTORY_SUFFIX);
             }
-            URI rueckgabe = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
+
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
-                fileService.createMetaDirectory(rueckgabe, origOrdner.toString());
+                fileService.createMetaDirectory(result, origOrdner.toString());
             }
-            return rueckgabe;
+
+            return origOrdner;
         } else {
             return getImagesTifDirectory(useFallBack, process);
         }
@@ -1037,8 +1053,15 @@ public class ProcessService extends TitleSearchService<Process> {
         return (int) closed;
     }
 
+    /**
+     * Get full text file path.
+     *
+     * @param process
+     *            object
+     * @return path as a String to the full text file
+     */
     public String getFulltextFilePath(Process process) throws IOException {
-        return getProcessDataDirectory(process) + "fulltext.xml";
+        return getProcessDataDirectory(process) + "/fulltext.xml";
     }
 
     /**
@@ -1062,8 +1085,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
         Fileformat ff = determineFileFormat(type, process);
         try {
-            ff.read(new File(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFileUri))
-                    .toString());
+            ff.read(serviceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setFehlerMeldung("metadataCorrupt");

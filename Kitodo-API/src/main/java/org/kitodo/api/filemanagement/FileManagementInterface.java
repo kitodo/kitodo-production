@@ -11,6 +11,7 @@
 
 package org.kitodo.api.filemanagement;
 
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,5 +221,14 @@ public interface FileManagementInterface {
      * @return true, if deletion was successful.
      */
     boolean deleteSymLink(URI homeUri);
+
+    /**
+     * Temporal method until UGH is used.
+     * 
+     * @param uri
+     *            URI
+     * @return File
+     */
+    File getFile(URI uri);
 
 }

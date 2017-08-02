@@ -372,13 +372,13 @@ public class ExportXmlLog {
 
         try {
             URI metadataFilePath = serviceManager.getFileService().getMetadataFilePath(process);
-            Document metsDoc = new SAXBuilder().build(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFilePath).toString());
+            Document metsDoc = new SAXBuilder().build(serviceManager.getFileService().getFile(metadataFilePath).toString());
             Document anchorDoc = null;
             URI anchorFileName = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
                     .replace("meta.xml", "meta_anchor.xml"));
             if (serviceManager.getFileService().fileExist(anchorFileName)
                     && serviceManager.getFileService().canRead(anchorFileName)) {
-                anchorDoc = new SAXBuilder().build(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFilePath).toString());
+                anchorDoc = new SAXBuilder().build(serviceManager.getFileService().getFile(metadataFilePath).toString());
             }
             HashMap<String, Namespace> namespaces = new HashMap<>();
 

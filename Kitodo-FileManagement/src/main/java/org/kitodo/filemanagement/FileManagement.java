@@ -477,4 +477,9 @@ public class FileManagement implements FileManagementInterface {
         }
         return decodedPath;
     }
+
+    public File getFile(URI uri) {
+        uri = fileMapper.mapAccordingToMappingType(uri);
+        return new File(uri);
+    }
 }

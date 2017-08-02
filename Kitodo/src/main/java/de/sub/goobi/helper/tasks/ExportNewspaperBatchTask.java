@@ -469,7 +469,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         MetsMods result = new MetsMods(ruleSet);
         URI metadataFilePath = serviceManager.getFileService().getMetadataFilePath(process);
-        result.read(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFilePath).toString());
+        result.read(serviceManager.getFileService().getFile(metadataFilePath).toString());
 
         DigitalDocument caudexDigitalis = result.getDigitalDocument();
         int ownYear = getMetadataIntValueByName(

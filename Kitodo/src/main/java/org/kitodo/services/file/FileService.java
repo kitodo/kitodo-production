@@ -509,9 +509,8 @@ public class FileService {
         return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
     }
 
-    private String getTemporaryMetadataFileName(URI fileName) {
-        URI mapped = mapUriToKitodoDataDirectoryUri(fileName);
-        File temporaryFile = new File(mapped);
+    private String getTemporaryMetadataFileName(URI fileName) throws IOException {
+        File temporaryFile = getFile(fileName);
         String directoryPath = temporaryFile.getParentFile().getPath();
         String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
@@ -698,21 +697,6 @@ public class FileService {
     }
 
     /**
-     * Map relative URI to absolute kitodo data directory URI.
-     * 
-     * @param uri
-     *            relative path
-     * @return absolute URI path
-     */
-    public URI mapUriToKitodoDataDirectoryUri(URI uri) {
-        String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
-        if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
-            return Paths.get(ConfigCore.getKitodoDataDirectory(), uri.toString()).toUri();
-        }
-        return uri;
-    }
-
-    /**
      * Gets the URI to the temporal directory.
      *
      * @return the URI to the temporal directory.
@@ -754,6 +738,11 @@ public class FileService {
     public boolean deleteSymLink(URI homeUri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.deleteSymLink(homeUri);
+    }
+
+    public File getFile(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getFile(uri);
     }
 
     private FileManagementInterface getFileManagementModule() throws IOException {
