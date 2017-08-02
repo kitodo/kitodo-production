@@ -12,8 +12,10 @@ and in the script that triggers the build. These changes may be checked in.
 
 To produce the Javadocs a script should be set up that performs these steps:
 * check out kitodo.production and change to the checkout-directory
-* run ```mvn javadoc:aggregate -P generate_developer_docs```
-* copy ${project.build.directory}/site/apidocs/* to the directory that is quoted in kitodo-production/docs/JavaDocs/javadoc_index.md
+* run ```mvn javadoc:aggregate -P generate_developer_docs -Ddoctarget=path_to_desired_dir -Ddocdir=desired_dir```
+The "path_to_desired_dir" parameter names the base directory the documentation is created in. The parameter
+"desired_dir" names the directory where the documentation is created. These paths combined give the path to the "index.html" 
+entry point of the Javadoc. This path must be put into kitodo-production/docs/JavaDocs/javadoc_index.md.
 
 ## how to check locally
 The generated documentation is published by ReadTheDocs. Calling ```http://kitodo-production.readthedocs.io/en/latest/``` 
