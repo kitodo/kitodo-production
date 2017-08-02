@@ -14,16 +14,13 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -78,16 +75,8 @@ public class LdapGruppenForm extends BasisForm {
      * @return page or empty String
      */
     public String filterKein() {
-        try {
-            Session session = Helper.getHibernateSession();
-            session.clear();
-            Criteria crit = session.createCriteria(LdapGroup.class);
-            crit.addOrder(Order.asc("title"));
-            this.page = new Page(crit, 0);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("Error on reading database", he.getMessage());
-            return null;
-        }
+        List<LdapGroup> ldapGroups = serviceManager.getLdapGroupService().findAll();
+        this.page = new Page(0, ldapGroups);
         return "/newpages/LdapGruppenAlle";
     }
 

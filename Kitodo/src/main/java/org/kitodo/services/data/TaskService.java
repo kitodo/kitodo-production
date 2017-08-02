@@ -841,4 +841,43 @@ public class TaskService extends TitleSearchService<Task> {
         }
     }
 
+    /**
+     * get open tasks for current user.
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenTasksForCurrentUser() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenTasksForCurrentUser(login.getMyBenutzer().getId());
+    }
+
+    /**
+     * get open tasks without correction for current user.
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenTasksWithoutCorrectionForCurrentUser() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenTasksWithoutCorrectionForCurrentUser(login.getMyBenutzer().getId());
+    }
+
+    /**
+     * get open not automatic tasks for current user.
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenNotAutomaticTasksForCurrentUser() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenNotAutomaticTasksForCurrentUser(login.getMyBenutzer().getId());
+    }
+
+    /**
+     * get open not automatix tasks without correction for current user
+     * 
+     * @return The list of tasks.
+     */
+    public List<Task> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser() {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        return taskDAO.getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(login.getMyBenutzer().getId());
+    }
 }

@@ -38,12 +38,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -85,21 +80,13 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public String filterKein() {
         this.filter = null;
-        try {
-            Session session = Helper.getHibernateSession();
-            session.clear();
-            Criteria crit = session.createCriteria(User.class);
-            crit.add(Restrictions.isNull("visible"));
-            if (this.hideInactiveUsers) {
-                crit.add(Restrictions.eq("active", true));
-            }
-            crit.addOrder(Order.asc("surname"));
-            crit.addOrder(Order.asc("name"));
-            this.page = new Page(crit, 0);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("Error, could not read", he.getMessage());
-            return null;
+        List<User> users;
+        if (this.hideInactiveUsers) {
+            users = serviceManager.getUserService().getAllActiveUsers();
+        } else {
+            users = serviceManager.getUserService().getAllVisibleUsers();
         }
+        this.page = new Page(0, users);
         return "/newpages/BenutzerAlle";
     }
 
@@ -121,35 +108,17 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Anzeige der gefilterten Nutzer.
      */
     public String filterAlleStart() {
-        try {
-            Session session = Helper.getHibernateSession();
-            session.clear();
-            Criteria crit = session.createCriteria(User.class);
-            crit.add(Restrictions.isNull("visible"));
+        List<User> users;
+        if (this.filter != null && this.filter.length() != 0) {
+            users = serviceManager.getUserService().getFilteredUsersByName(this.filter);
+        } else {
             if (this.hideInactiveUsers) {
-                crit.add(Restrictions.eq("active", true));
+                users = serviceManager.getUserService().getAllVisibleUsers();
+            } else {
+                users = serviceManager.getUserService().getAllActiveUsers();
             }
-
-            if (this.filter != null && this.filter.length() != 0) {
-                Disjunction ex = Restrictions.disjunction();
-                ex.add(Restrictions.like("name", "%" + this.filter + "%"));
-                ex.add(Restrictions.like("surname", "%" + this.filter + "%"));
-                // crit.createCriteria("projekte", "proj");
-                // ex.add(Restrictions.like("proj.titel", "%" + this.filter +
-                // "%"));
-
-                // crit.createCriteria("benutzergruppen", "group");
-                // ex.add(Restrictions.like("group.titel", "%" + this.filter +
-                // "%"));
-                crit.add(ex);
-            }
-            crit.addOrder(Order.asc("surname"));
-            crit.addOrder(Order.asc("name"));
-            this.page = new Page(crit, 0);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("Error, could not read", he.getMessage());
-            return null;
         }
+        this.page = new Page(0, users);
         return "/newpages/BenutzerAlle";
     }
 

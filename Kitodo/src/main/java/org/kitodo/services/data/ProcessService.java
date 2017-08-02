@@ -839,8 +839,8 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as
-     * readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -2089,5 +2089,86 @@ public class ProcessService extends TitleSearchService<Process> {
         }
 
         return propertiesForDocket;
+    }
+
+    /**
+     * Gets all not archvived Processes
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getNotArchivedProcesses() {
+        return processDAO.getNotArchivedProcesses();
+    }
+
+    /**
+     * Get not closed processes.
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getNotClosedProcesses() {
+        return processDAO.getNotClosedProcesses();
+    }
+
+    /**
+     * Get not closed and not archived processes.
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getNotClosedAndNotArchivedProcesses() {
+        return processDAO.getNotClosedAndNotArchivedProcesses();
+    }
+
+    /**
+     * get not archived templates.
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getNotArchivedTemplates() {
+        return processDAO.getNotArchivedTemplates();
+    }
+
+    /**
+     * Get all templates.
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getAllTemplates() {
+        return processDAO.getAllTemplates();
+    }
+
+    /**
+     * get all processes, which are not a template
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getAllWithoutTemplates() {
+        return processDAO.getAllWithoutTemplates();
+    }
+
+    /**
+     * get all not archived processes which are not a template.
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getAllNotArchivedWithoutTemplates() {
+        return processDAO.getAllNotArchivedWithoutTemplates();
+    }
+
+    /**
+     * Get all not closed and not archived templates.
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getAllNotClosedAndNotArchivedTemplates() {
+        return processDAO.getAllNotClosedAndNotArchivedTemplates();
+    }
+
+    /**
+     * Get all not closed templates.
+     *
+     * @return The list of processes.
+     */
+    public List<Process> getAllNotClosedTemplates() {
+        return processDAO.getAllNotClosedTemplates();
     }
 }

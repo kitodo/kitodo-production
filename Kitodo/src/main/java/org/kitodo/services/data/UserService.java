@@ -171,7 +171,7 @@ public class UserService extends SearchService<User> {
     /**
      * Check if IndexAction flag is delete. If true remove user from list of
      * users and re-save group, if false only re-save group object.
-     * 
+     *
      * @param user
      *            object
      */
@@ -192,8 +192,31 @@ public class UserService extends SearchService<User> {
         return userDAO.find(id);
     }
 
+    /**
+     * Get al. users.
+     * 
+     * @return A List of all users
+     */
     public List<User> findAll() {
         return userDAO.findAll();
+    }
+
+    /**
+     * Get all visible users.
+     * 
+     * @return A list of all visible users
+     */
+    public List<User> getAllVisibleUsers() {
+        return userDAO.getAllVisibleUsers();
+    }
+
+    /**
+     * get all active users.
+     * 
+     * @return a list of all active users
+     */
+    public List<User> getAllActiveUsers() {
+        return userDAO.getAllActiveUsers();
     }
 
     /**
@@ -548,7 +571,6 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      * @return result size of projects
-     *
      */
     public int getProjectsSize(User user) {
         if (user.getProjects() == null) {
@@ -714,5 +736,16 @@ public class UserService extends SearchService<User> {
                 serviceManager.getFilterService().remove(filter);
             }
         }
+    }
+
+    /**
+     * Get filtered users by name.
+     * 
+     * @param filter
+     *            the name filter
+     * @return a list of filtered users
+     */
+    public List<User> getFilteredUsersByName(String filter) {
+        return userDAO.getFilteredUsersByName(filter);
     }
 }

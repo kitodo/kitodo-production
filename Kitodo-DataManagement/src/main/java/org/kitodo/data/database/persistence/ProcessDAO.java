@@ -50,7 +50,6 @@ public class ProcessDAO extends BaseDAO {
     }
 
     /**
-     *
      * @param process
      *            object
      * @param progress
@@ -67,7 +66,6 @@ public class ProcessDAO extends BaseDAO {
     }
 
     /**
-     *
      * @param list
      *            of processes
      * @throws DAOException
@@ -100,7 +98,7 @@ public class ProcessDAO extends BaseDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Process> search(String query) throws DAOException {
+    public List<Process> search(String query) {
         return retrieveObjects(query);
     }
 
@@ -120,12 +118,94 @@ public class ProcessDAO extends BaseDAO {
 
     /**
      * Update process object after some changes.
-     * 
+     *
      * @param process
      *            object
      */
     public void update(Process process) {
         Object object = process;
         updateObject(object);
+    }
+
+    /**
+     * Gets all not archvived Processes
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getNotArchivedProcesses() {
+        return search("from Process where project.projectIsArchived = '0' ");
+    }
+
+    /**
+     * Get not closed processes.
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getNotClosedProcesses() {
+        return search("from Process where sortHelperStatus != '100000000' ");
+    }
+
+    /**
+     * Get not closed and not archived processes.
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getNotClosedAndNotArchivedProcesses() {
+        return search("from Process where sortHelperStatus != '100000000' AND project.projectIsArchived = '0' ");
+    }
+
+    /**
+     * get not archived templates.
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getNotArchivedTemplates() {
+        return search("from Process where project.projectIsArchived = '0' AND template = '1' ");
+    }
+
+    /**
+     * Get all templates.
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getAllTemplates() {
+        return search("from Process where template = '1' ");
+    }
+
+    /**
+     * get all processes, which are not a template
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getAllWithoutTemplates() {
+        return search("from Process where template = '0' ");
+    }
+
+    /**
+     * get all not archived processes which are not a template.
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getAllNotArchivedWithoutTemplates() {
+        return search("from Process where template = '0' AND project.projectIsArchived = '0' ");
+    }
+
+    /**
+     * Get all not closed and not archived templates.
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getAllNotClosedAndNotArchivedTemplates() {
+        return search(
+                "from Process where template = '1' AND project.projectIsArchived = '0' AND sortHelperStatus != '100000000' ");
+    }
+
+    /**
+     * Get all not closed templates.
+     * 
+     * @return The list of processes.
+     */
+    public List<Process> getAllNotClosedTemplates() {
+        return search("from Process where template = '1' AND sortHelperStatus != '100000000' ");
     }
 }

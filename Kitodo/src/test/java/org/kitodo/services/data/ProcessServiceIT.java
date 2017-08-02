@@ -72,7 +72,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<Process> processes = processService.findAll();
-        assertEquals("Not all processes were found in database!", 4, processes.size());
+        assertEquals("Not all processes were found in database!", 5, processes.size());
     }
 
     @Test
@@ -82,21 +82,21 @@ public class ProcessServiceIT {
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
-        Process foundProcess = processService.convertSearchResultToObject(processService.findById(5));
+        Process foundProcess = processService.convertSearchResultToObject(processService.findById(6));
         assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
 
         processService.remove(foundProcess);
-        foundProcess = processService.convertSearchResultToObject(processService.findById(5));
+        foundProcess = processService.convertSearchResultToObject(processService.findById(6));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
 
         process = new Process();
         process.setTitle("To remove");
         processService.save(process);
-        foundProcess = processService.convertSearchResultToObject(processService.findById(6));
+        foundProcess = processService.convertSearchResultToObject(processService.findById(7));
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
-        processService.remove(6);
-        foundProcess = processService.convertSearchResultToObject(processService.findById(6));
+        processService.remove(7);
+        foundProcess = processService.convertSearchResultToObject(processService.findById(7));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
     }
 
@@ -640,4 +640,84 @@ public class ProcessServiceIT {
         List<Property> actual = processService.getSortedCorrectionSolutionMessages(process);
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
+
+    @Test
+    public void getNotArchivedProcesses() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notArchivedProcesses = processService.getNotArchivedProcesses();
+
+        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 3",
+                notArchivedProcesses.size() == 3);
+    }
+
+    @Test
+    public void getNotClosedProcesses() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notClosedProcesses = processService.getNotClosedProcesses();
+
+        assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 5", notClosedProcesses.size() == 5);
+    }
+
+    @Test
+    public void getNotClosedAndNotArchivedProcesses() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notClosedAndNotArchivedProcesses = processService.getNotClosedAndNotArchivedProcesses();
+        assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 3",
+                notClosedAndNotArchivedProcesses.size() == 3);
+    }
+
+    @Test
+    public void getNotArchivedTemplates() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notArchivedTemplates = processService.getNotArchivedTemplates();
+        assertTrue("Found " + notArchivedTemplates.size() + " processes, instead of 1",
+                notArchivedTemplates.size() == 1);
+    }
+
+    @Test
+    public void getAllTemplates() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> allTemplates = processService.getAllTemplates();
+        assertTrue("Found " + allTemplates.size() + " processes, instead of 2", allTemplates.size() == 2);
+    }
+
+    @Test
+    public void getAllWithoutTemplates() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> allWithoutTemplates = processService.getAllWithoutTemplates();
+        assertTrue("Found " + allWithoutTemplates.size() + " processes, instead of 3", allWithoutTemplates.size() == 3);
+    }
+
+    @Test
+    public void getAllNotArchivedWithoutTemplates() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notArchivedProcessesWithoutTemplates = processService.getAllNotArchivedWithoutTemplates();
+        assertTrue("Found " + notArchivedProcessesWithoutTemplates.size() + " processes, instead of 2",
+                notArchivedProcessesWithoutTemplates.size() == 2);
+    }
+
+    @Test
+    public void getAllNotClosedAndNotArchivedTemplates() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notClosedAndNotArchivedTemplates = processService.getAllNotClosedAndNotArchivedTemplates();
+        assertTrue("Found " + notClosedAndNotArchivedTemplates.size() + " processes, instead of 1",
+                notClosedAndNotArchivedTemplates.size() == 1);
+    }
+
+    @Test
+    public void getAllNotClosedTemplates() {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notClosedTemplates = processService.getAllNotClosedTemplates();
+        assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 2", notClosedTemplates.size() == 2);
+    }
+
 }

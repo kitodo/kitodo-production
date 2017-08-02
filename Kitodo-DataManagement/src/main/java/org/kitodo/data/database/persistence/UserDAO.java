@@ -87,7 +87,7 @@ public class UserDAO extends BaseDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<User> search(String query) throws DAOException {
+    public List<User> search(String query) {
         return retrieveObjects(query);
     }
 
@@ -126,5 +126,35 @@ public class UserDAO extends BaseDAO {
      */
     public void refresh(User user) {
         refreshObject(user);
+    }
+
+    /**
+     * get all visible users.
+     * 
+     * @return a list of visible users
+     */
+    public List<User> getAllVisibleUsers() {
+        return search("from User where visible is null");
+    }
+
+    /**
+     * Get all active users.
+     * 
+     * @return a list of active users.
+     */
+    public List<User> getAllActiveUsers() {
+        return search("from User where visible is null AND active = 'true'");
+    }
+
+    /**
+     * Get filtered users by name.
+     * 
+     * @param filter
+     *            the filter for the name
+     * @return A list of users.
+     */
+    public List<User> getFilteredUsersByName(String filter) {
+        return search("from User where visible is null AND active = 'true' AND name like '%" + filter
+                + "%' OR surname like '%" + filter + "%'");
     }
 }
