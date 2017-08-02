@@ -259,12 +259,10 @@ public class LoginForm implements Serializable {
         ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, path);
 
         /* alle Dateien durchlaufen und die alten löschen */
-        if (uris != null) {
-            for (URI uri : uris) {
-                URI file = path.resolve(uri);
-                if ((System.currentTimeMillis() - new File(file).lastModified()) > 7200000) {
-                    serviceManager.getFileService().delete(file);
-                }
+        for (URI uri : uris) {
+            URI file = path.resolve(uri);
+            if ((System.currentTimeMillis() - new File(file).lastModified()) > 7200000) {
+                serviceManager.getFileService().delete(file);
             }
         }
     }

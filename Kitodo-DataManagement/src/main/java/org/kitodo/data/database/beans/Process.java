@@ -241,25 +241,25 @@ public class Process extends BaseBean {
         return this.wikiField;
     }
 
+    public void setWikiField(String wikiField) {
+        this.wikiField = wikiField;
+    }
+
     /**
-     * Gets the process Base Uri.
+     * Gets the process base URI.
      */
     public URI getProcessBaseUri() {
         return processBaseUri;
     }
 
     /**
-     * Sets the process base uri
-     * 
+     * Sets the process base URI.
+     *
      * @param processBaseUri
-     *            the given process base uri
+     *            the given process base URI
      */
     public void setProcessBaseUri(URI processBaseUri) {
         this.processBaseUri = processBaseUri;
-    }
-
-    public void setWikiField(String wikiField) {
-        this.wikiField = wikiField;
     }
 
     public Project getProject() {

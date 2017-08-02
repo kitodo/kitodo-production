@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import de.sub.goobi.config.ConfigCore;
 import org.apache.logging.log4j.LogManager;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -62,7 +63,7 @@ public class FileServiceTest {
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
         Assert.assertTrue(file.exists());
-        Assert.assertEquals(testMetaUri, fileService.unmapUriFromKitodoDataDirectoryUri(file.toURI()));
+        Assert.assertEquals(testMetaUri, unmapUriFromKitodoDataDirectoryUri(file.toURI()));
     }
 
     @Test
@@ -88,7 +89,7 @@ public class FileServiceTest {
         file = fileService.mapUriToKitodoDataDirectoryUri(URI.create("fileServiceTest/testMetaExisting"));
 
         Assert.assertTrue(new File(file).exists());
-        Assert.assertEquals(testMetaUri, fileService.unmapUriFromKitodoDataDirectoryUri(file));
+        Assert.assertEquals(testMetaUri, unmapUriFromKitodoDataDirectoryUri(file));
     }
 
     @Test
@@ -489,6 +490,7 @@ public class FileServiceTest {
     public void testCreateBackupFile() throws IOException {
         Process process = new Process();
         process.setId(2);
+        process.setProcessBaseUri(URI.create("2"));
 
         Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.1")));
         Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.2")));
@@ -511,6 +513,24 @@ public class FileServiceTest {
         Assert.assertTrue(fileService.fileExist(URI.create("2/meta.xml.1")));
         Assert.assertTrue(fileService.fileExist(URI.create("2/meta.xml.2")));
         Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.3")));
+    }
+
+    private URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
+        String path = uri.toString();
+        String directory = encodeDirectory(ConfigCore.getKitodoDataDirectory());
+        if (path.contains(directory)) {
+            String[] split = path.split(directory);
+            String shortUri = split[1];
+            return URI.create(shortUri);
+        }
+        return uri;
+    }
+
+    private String encodeDirectory(String directory) {
+        if (directory.contains("\\")) {
+            directory = directory.replace("\\", "/");
+        }
+        return directory;
     }
 
 }

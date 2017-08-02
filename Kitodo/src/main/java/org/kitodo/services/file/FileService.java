@@ -33,7 +33,6 @@ import org.goobi.io.BackupFileRotation;
 import org.hibernate.Hibernate;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
@@ -109,9 +108,63 @@ public class FileService {
     }
 
     /**
-     * This function implements file renaming. Renaming of files is full of
-     * mischief under Windows which unaccountably holds locks on files.
-     * Sometimes running the JVM’s garbage collector puts things right.
+     * Creates a new File.
+     *
+     * @param fileName
+     *            the name of the new file
+     * @return the uri of the new file
+     */
+    public URI createResource(String fileName) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.create(null, fileName, true);
+    }
+
+    /**
+     * Creates a resource at a given URI with a given name.
+     *
+     * @param targetFolder
+     *            the URI of the target folder
+     * @param name
+     *            the name of the new resource
+     * @return the URI of the created resource
+     */
+    public URI createResource(URI targetFolder, String name) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.create(targetFolder, name, true);
+    }
+
+    /**
+     * Writes to a file at a given URI.
+     *
+     * @param uri
+     *            the URI, to write to.
+     * @return an output stream to the file at the given URI or null
+     * @throws IOException
+     *             if write fails
+     */
+    public OutputStream write(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.write(uri);
+    }
+
+    /**
+     * Reads a file at a given URI.
+     *
+     * @param uri
+     *            the uri to read
+     * @return an InputStream to read from or null
+     * @throws IOException
+     *             if read fails
+     */
+    public InputStream read(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.read(uri);
+    }
+
+    /**
+     * This function implements file renaming. Renaming of files is full of mischief
+     * under Windows which unaccountably holds locks on files. Sometimes running the
+     * JVM’s garbage collector puts things right.
      *
      * @param fileUri
      *            File to rename
@@ -195,34 +248,6 @@ public class FileService {
     }
 
     /**
-     * Writes to a file at a given URI.
-     *
-     * @param uri
-     *            the URI, to write to.
-     * @return an output stream to the file at the given URI or null
-     * @throws IOException
-     *             if write fails
-     */
-    public OutputStream write(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.write(uri);
-    }
-
-    /**
-     * Reads a file at a given URI.
-     *
-     * @param uri
-     *            the uri to read
-     * @return an InputStream to read from or null
-     * @throws IOException
-     *             if read fails
-     */
-    public InputStream read(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.read(uri);
-    }
-
-    /**
      * Deletes a resource at a given URI.
      *
      * @param uri
@@ -248,6 +273,44 @@ public class FileService {
     public boolean fileExist(URI uri) throws IOException {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.fileExist(uri);
+    }
+
+    /**
+     * Checks if a resource at a given URI is a file.
+     *
+     * @param uri
+     *            the URI to check, if there is a file
+     * @return true, if it is a file, false otherwise
+     * @throws IOException
+     *             if get of module fails
+     */
+    public boolean isFile(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.isFile(uri);
+    }
+
+    /**
+     * checks, if a URI leads to a directory.
+     *
+     * @param dir
+     *            the uri to check.
+     * @return true, if it is a directory.
+     */
+    public boolean isDirectory(URI dir) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.isDirectory(dir);
+    }
+
+    /**
+     * Checks if an uri is readable.
+     *
+     * @param uri
+     *            the uri to check.
+     * @return true, if it's readable, false otherwise.
+     */
+    public boolean canRead(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.canRead(uri);
     }
 
     /**
@@ -313,6 +376,32 @@ public class FileService {
     }
 
     /**
+     * Get all sub URIs of an URI.
+     *
+     * @param uri
+     *            the URI, to get the sub URIs from
+     * @return a List of sub URIs
+     */
+    public ArrayList<URI> getSubUris(URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getSubUris(null, uri);
+    }
+
+    /**
+     * Get all sub URIs of an URI with a given filter.
+     *
+     * @param filter
+     *            the filter to filter the sub URIs
+     * @param uri
+     *            the URI, to get the sub URIs from
+     * @return a List of sub URIs
+     */
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getSubUris(filter, uri);
+    }
+
+    /**
      * Lists all Files at the given Path.
      *
      * @param file
@@ -340,7 +429,8 @@ public class FileService {
      */
     public void writeMetadataFile(Fileformat gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
-        serviceManager.getFileService().write(process.getProcessBaseUri()).close();
+        serviceManager.getFileService().write(serviceManager.getProcessService().getProcessDataDirectory(process))
+                .close();
 
         RulesetService rulesetService = new RulesetService();
         Fileformat ff;
@@ -415,13 +505,13 @@ public class FileService {
      *            the process to get the metadata.xml for.
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(Process process) {
-        return mapUriToKitodoDataDirectoryUri(getProcessSubTypeURI(process, ProcessSubType.META_XML, null));
+    public URI getMetadataFilePath(Process process) throws IOException {
+        return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
     }
 
     private String getTemporaryMetadataFileName(URI fileName) {
-
-        File temporaryFile = new File(fileName);
+        URI mapped = mapUriToKitodoDataDirectoryUri(fileName);
+        File temporaryFile = new File(mapped);
         String directoryPath = temporaryFile.getParentFile().getPath();
         String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
@@ -435,7 +525,7 @@ public class FileService {
      *            the process to get the imageDirectory for.
      * @return The uri of the Image Directory.
      */
-    public URI getImagesDirectory(Process process) {
+    public URI getImagesDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
     }
 
@@ -446,7 +536,7 @@ public class FileService {
      *            the process tog et the ocr directory for.
      * @return the uri to the ocr directory.
      */
-    public URI getOcrDirectory(Process process) {
+    public URI getOcrDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
     }
 
@@ -457,7 +547,7 @@ public class FileService {
      *            the process to get the import directory for.
      * @return the uri of the import directory
      */
-    public URI getImportDirectory(Process process) {
+    public URI getImportDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
     }
 
@@ -468,7 +558,7 @@ public class FileService {
      *            the process to get the text directory for.
      * @return the uri of the text directory
      */
-    public URI getTxtDirectory(Process process) {
+    public URI getTxtDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
     }
 
@@ -479,7 +569,7 @@ public class FileService {
      *            the process to get the pdf directory for.
      * @return the uri of the pdf directory
      */
-    public URI getPdfDirectory(Process process) {
+    public URI getPdfDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
     }
 
@@ -490,7 +580,7 @@ public class FileService {
      *            the process to get the alto directory for.
      * @return the uri of the alto directory
      */
-    public URI getAltoDirectory(Process process) {
+    public URI getAltoDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
     }
 
@@ -501,7 +591,7 @@ public class FileService {
      *            the process to get the word directory for.
      * @return the uri of the word directory
      */
-    public URI getWordDirectory(Process process) {
+    public URI getWordDirectory(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
     }
 
@@ -512,7 +602,7 @@ public class FileService {
      *            the process to get the template file for.
      * @return the uri of the template file
      */
-    public URI getTemplateFile(Process process) {
+    public URI getTemplateFile(Process process) throws IOException {
         return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
@@ -525,10 +615,13 @@ public class FileService {
      *            the process, the uri is needed for.
      * @return the URI.
      */
-    public URI getProcessBaseUriForExistingProcess(Process process) {
-        String path = process.getId().toString();
-        path = path.replaceAll(" ", "__") + "/";
-        return mapUriToKitodoDataDirectoryUri(URI.create(path));
+    public URI getProcessBaseUriForExistingProcess(Process process) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        URI processBaseUri = process.getProcessBaseUri();
+        if (processBaseUri == null) {
+            process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
+        }
+        return process.getProcessBaseUri();
     }
 
     /**
@@ -544,24 +637,23 @@ public class FileService {
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
+    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) throws IOException {
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
-        String processDataDirectoryPath = new File(processDataDirectory).getPath();
 
         if (resourceName == null) {
             resourceName = "";
         }
-        return Paths.get(processDataDirectoryPath, getProcessSubType(process, processSubType, resourceName)).toUri();
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
+                    resourceName);
     }
 
     /**
-     * Get unmapped part of the URI for specific process.
+     * Get part of the URI for specific process.
      * 
      * @param filter
      *            FilenameFilter object
-     * @param uri
-     *            for unmapping
      * @param process
      *            object
      * @param processSubType
@@ -570,83 +662,10 @@ public class FileService {
      *            as String
      * @return unmapped URI
      */
-    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, URI uri, Process process,
-            ProcessSubType processSubType, String resourceName) {
-        ArrayList<URI> subURIs = new ArrayList<>();
-        try {
-            subURIs = getSubUris(filter, uri);
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        return removeProcessSpecificPartOfUri(subURIs, process, processSubType, resourceName);
-    }
-
-    /**
-     * Remove process specific part of URI e.g 3/images. Lack of this method was
-     * causing error of double uri creation e.g 3/images/3/images/scans_tif
-     * 
-     * @param uriList
-     *            list of URIs for unmap
-     * @param process
-     *            object
-     * @param processSubType
-     *            object
-     * @param resourceName
-     *            as String
-     * @return List of extracted URIs
-     */
-    private ArrayList<URI> removeProcessSpecificPartOfUri(ArrayList<URI> uriList, Process process,
-            ProcessSubType processSubType, String resourceName) {
-        ArrayList<URI> unmappedURI = new ArrayList<>();
-        for (URI uri : uriList) {
-            String uriString = uri.toString();
-            String processSpecificPartOfUri = getProcessSubType(process, processSubType, resourceName);
-            if (uriString.contains(processSpecificPartOfUri)) {
-                String[] split = uriString.split(processSpecificPartOfUri);
-                String shortUri = split[1];
-                unmappedURI.add(URI.create(shortUri));
-            }
-            unmappedURI.add(uri);
-        }
-        return unmappedURI;
-    }
-
-    /**
-     * Get part of URI specific for process and process sub type.
-     * 
-     * @param process
-     *            object
-     * @param processSubType
-     *            object
-     * @param resourceName
-     *            as String
-     * @return process specific part of URI
-     */
-    private String getProcessSubType(Process process, ProcessSubType processSubType, String resourceName) {
-        switch (processSubType) {
-            case IMAGE:
-                return "images/" + resourceName;
-            case IMAGE_SOURCE:
-                return getSourceDirectory(process) + resourceName;
-            case META_XML:
-                return "meta.xml";
-            case TEMPLATE:
-                return "template.xml";
-            case IMPORT:
-                return "import/" + resourceName;
-            case OCR:
-                return "ocr/";
-            case OCR_PDF:
-                return "ocr/" + process.getTitle() + "_pdf/" + resourceName;
-            case OCR_TXT:
-                return "ocr/" + process.getTitle() + "_txt/" + resourceName;
-            case OCR_WORD:
-                return "ocr/" + process.getTitle() + "_wc/" + resourceName;
-            case OCR_ALTO:
-                return "ocr/" + process.getTitle() + "_alto/" + resourceName;
-            default:
-                return "";
-        }
+    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Process process, ProcessSubType processSubType,
+            String resourceName) throws IOException {
+        URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
+        return getSubUris(filter, processSubTypeURI);
     }
 
     /**
@@ -656,14 +675,11 @@ public class FileService {
      *            the process to delete the directories for.
      * @return true, if deletion was successful.
      */
-    public boolean deleteProcessContent(Process process) {
+    public boolean deleteProcessContent(Process process) throws IOException {
         for (ProcessSubType processSubType : ProcessSubType.values()) {
             URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, null);
-            try {
-                FileManagementInterface fileManagementModule = getFileManagementModule();
-                fileManagementModule.delete(processSubTypeURI);
-            } catch (IOException e) {
-                logger.warn("uri " + processSubTypeURI + " could not be deleted");
+            FileManagementInterface fileManagementModule = getFileManagementModule();
+            if (!fileManagementModule.delete(processSubTypeURI)) {
                 return false;
             }
         }
@@ -675,53 +691,10 @@ public class FileService {
      *
      * @param process
      *            the process, to get the source directory for
-     * @return the source directory as a string
+     * @return the source directory as an URI
      */
-    public URI getSourceDirectory(Process process) {
-        URI dir = getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-        FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
-        URI sourceFolder = URI.create("");
-        try {
-            ArrayList<URI> directories = getSubUris(filterDirectory, dir);
-            if (directories == null || directories.size() == 0) {
-                sourceFolder = dir.resolve(process.getTitle() + "_source");
-                if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                    createDirectory(dir, process.getTitle() + "_source");
-                }
-            } else {
-                sourceFolder = dir.resolve(directories.get(0));
-            }
-        } catch (IOException e) {
-            logger.error(e);
-        }
-
-        return sourceFolder;
-    }
-
-    /**
-     * Get all sub URIs of an URI.
-     *
-     * @param uri
-     *            the URI, to get the sub URIs from
-     * @return a List of sub URIs
-     */
-    public ArrayList<URI> getSubUris(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.getSubUris(null, uri);
-    }
-
-    /**
-     * Get all sub URIs of an URI with a given filter.
-     *
-     * @param filter
-     *            the filter to filter the sub URIs
-     * @param uri
-     *            the URI, to get the sub URIs from
-     * @return a List of sub URIs
-     */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.getSubUris(filter, uri);
+    public URI getSourceDirectory(Process process) throws IOException {
+        return getProcessSubTypeURI(process, ProcessSubType.IMAGE_SOURCE, null);
     }
 
     /**
@@ -739,78 +712,6 @@ public class FileService {
         return uri;
     }
 
-    URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
-        return unmapDirectory(uri, ConfigCore.getKitodoDataDirectory());
-    }
-
-    private URI unmapDirectory(URI uri, String directory) {
-        String path = uri.toString();
-        directory = encodeDirectory(directory);
-        if (path.contains(directory)) {
-            String[] split = path.split(directory);
-            String shortUri = split[1];
-            return URI.create(shortUri);
-        }
-        return uri;
-    }
-
-    private String encodeDirectory(String directory) {
-        if (directory.contains("\\")) {
-            directory = directory.replace("\\", "/");
-        }
-        return directory;
-    }
-
-    /**
-     * Creates a new File.
-     *
-     * @param fileName
-     *            the name of the new file
-     * @return the uri of the new file
-     */
-    public URI createResource(String fileName) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.create(null, fileName, true);
-    }
-
-    /**
-     * Creates a resource at a given URI with a given name.
-     *
-     * @param targetFolder
-     *            the URI of the target folder
-     * @param name
-     *            the name of the new resource
-     * @return the URI of the created resource
-     */
-    public URI createResource(URI targetFolder, String name) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.create(targetFolder, name, true);
-    }
-
-    /**
-     * checks, if a URI leads to a directory.
-     *
-     * @param dir
-     *            the uri to check.
-     * @return true, if it is a directory.
-     */
-    public boolean isDirectory(URI dir) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.isDirectory(dir);
-    }
-
-    /**
-     * Checks if an uri is readable.
-     *
-     * @param uri
-     *            the uri to check.
-     * @return true, if it's readable, false otherwise.
-     */
-    public boolean canRead(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.canRead(uri);
-    }
-
     /**
      * Gets the URI to the temporal directory.
      *
@@ -820,22 +721,8 @@ public class FileService {
         return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toUri();
     }
 
-    /**
-     * Checks if a resource at a given URI is a file.
-     *
-     * @param uri
-     *            the URI to check, if there is a file
-     * @return true, if it is a file, false otherwise
-     * @throws IOException
-     *             if get of module fails
-     */
-    public boolean isFile(URI uri) throws IOException {
-        FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.isFile(uri);
-    }
-
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
-            throws WriteException, PreferencesException {
+            throws IOException, WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }
 

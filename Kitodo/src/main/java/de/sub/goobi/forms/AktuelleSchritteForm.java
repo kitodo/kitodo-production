@@ -481,7 +481,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() throws DAOException, DataException {
+    public String schrittDurchBenutzerAbschliessen() throws DAOException, DataException, IOException {
 
         if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
             IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
@@ -791,7 +791,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws NumberFormatException, DAOException, DataException {
+    public String uploadFromHomeAlle() throws NumberFormatException, DAOException, DataException, IOException {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<URI> geprueft = new ArrayList<>();
         /*

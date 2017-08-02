@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.Config;
 
 public class FileManagement implements FileManagementInterface {
@@ -324,8 +325,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI createProcessLocation(String processId) throws IOException {
-        File processRootDirectory = new File(
-                (Config.getKitodoDataDirectory() + File.separator + processId));
+        File processRootDirectory = new File((Config.getKitodoDataDirectory() + File.separator + processId));
         if (!processRootDirectory.exists() && !processRootDirectory.mkdir()) {
             throw new IOException("Could not create processRoot directory.");
         }
@@ -334,11 +334,95 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI createUriForExistingProcess(String processId) {
-        return null;
+        return URI.create(processId);
     }
 
-    public URI getProcessSubTypeUri(URI processBaseUri, ProcessSubType subType, int id) {
-        return null;
+    @Override
+    public URI getProcessSubTypeUri(URI processBaseUri, String processTitle, ProcessSubType subType, String resourceName) {
+        return URI.create(getProcessSubType(processBaseUri.toString(), processTitle, subType, resourceName));
+    }
+
+    /**
+     * Get part of URI specific for process and process sub type.
+     *
+     * @param processTitle
+     *            tile of process
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return process specific part of URI
+     */
+    private String getProcessSubType(String processID, String processTitle, ProcessSubType processSubType,
+            String resourceName) {
+        processTitle = encodeTitle(processTitle);
+
+        switch (processSubType) {
+            case IMAGE:
+                return processID + "/images/" + resourceName;
+            case IMAGE_SOURCE:
+                return getSourceDirectory(processID, processTitle) + resourceName;
+            case META_XML:
+                return processID + "/meta.xml";
+            case TEMPLATE:
+                return processID + "/template.xml";
+            case IMPORT:
+                return processID + "/import/" + resourceName;
+            case OCR:
+                return processID + "/ocr/";
+            case OCR_PDF:
+                return processID + "/ocr/" + processTitle + "_pdf/" + resourceName;
+            case OCR_TXT:
+                return processID + "/ocr/" + processTitle + "_txt/" + resourceName;
+            case OCR_WORD:
+                return processID + "/ocr/" + processTitle + "_wc/" + resourceName;
+            case OCR_ALTO:
+                return processID + "/ocr/" + processTitle + "_alto/" + resourceName;
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * Remove possible white spaces from process titles.
+     * 
+     * @param title
+     *            process title
+     * @return encoded process title
+     */
+    private String encodeTitle(String title) {
+        if (title.contains(" ")) {
+            title = title.replace(" ", "__");
+        }
+        return title;
+    }
+
+    /**
+     * Gets the image source directory.
+     *
+     * @param processTitle
+     *            title of the process, to get the source directory for
+     * @return the source directory as a string
+     */
+    private URI getSourceDirectory(String processId, String processTitle) {
+        URI dir = URI.create(getProcessSubType(processId, processTitle, ProcessSubType.IMAGE, null));
+        FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
+        URI sourceFolder = URI.create("");
+        try {
+            ArrayList<URI> directories = getSubUris(filterDirectory, dir);
+            if (directories.size() == 0) {
+                sourceFolder = dir.resolve(processTitle + "_source");
+                if (Config.getBooleanParameter("createSourceFolder", false)) {
+                    createDirectory(dir, processTitle + "_source");
+                }
+            } else {
+                sourceFolder = dir.resolve(directories.get(0));
+            }
+        } catch (IOException e) {
+            logger.error(e);
+        }
+
+        return sourceFolder;
     }
 
     @Override

@@ -26,7 +26,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -58,26 +57,19 @@ public class WebDav implements Serializable {
      */
 
     public List<URI> uploadAllFromHome(String inVerzeichnis) {
-        List<URI> rueckgabe = new ArrayList<>();
-        User aktuellerBenutzer = Helper.getCurrentUser();
-        URI directoryName;
+        User currentUser = Helper.getCurrentUser();
+        ArrayList<URI> files = new ArrayList<>();
+        FilenameFilter filter = new FileNameEndsWithFilter("]");
 
         try {
-            directoryName = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer).resolve(inVerzeichnis);
+            URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
+            files = fileService.getSubUris(filter, directoryName);
         } catch (Exception ioe) {
             logger.error("Exception uploadFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
-            return rueckgabe;
+            return files;
         }
 
-        URI benutzerHome = directoryName;
-        FilenameFilter filter = new FileNameEndsWithFilter("]");
-        ArrayList<URI> files = new ArrayList<>();
-        try {
-            files = fileService.getSubUris(filter, benutzerHome);
-        } catch (IOException e) {
-            logger.error(e);
-        }
         for (URI data : files) {
             String dataString = data.toString();
             if (dataString.endsWith("/") || dataString.endsWith("\\")) {
@@ -98,23 +90,16 @@ public class WebDav implements Serializable {
     // TODO: Use generic types
     public void removeAllFromHome(List<URI> inList, URI inVerzeichnis) {
         URI verzeichnisAlle;
-        User aktuellerBenutzer = Helper.getCurrentUser();
+        User currentUser = Helper.getCurrentUser();
         try {
-            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
+            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser)
                     .resolve(inVerzeichnis);
+            for (URI name : inList) {
+                fileService.deleteSymLink(verzeichnisAlle.resolve(name));
+            }
         } catch (Exception ioe) {
             logger.error("Exception RemoveFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
-            return;
-        }
-
-        for (Iterator<URI> it = inList.iterator(); it.hasNext();) {
-            URI name = it.next();
-            try {
-                fileService.deleteSymLink(verzeichnisAlle.resolve(name));
-            } catch (IOException e) {
-                logger.error(e);
-            }
         }
     }
 
@@ -143,17 +128,9 @@ public class WebDav implements Serializable {
         URI destination;
         try {
             destination = serviceManager.getUserService().getHomeDirectory(user);
-        } catch (Exception ioe) {
-            logger.error("Exception uploadFromHome(...)", ioe);
-            Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
-            return;
-        }
-
-        /* prüfen, ob Benutzer Massenupload macht */
-        if (user.isWithMassDownload()) {
-            destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
-            destination = Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri();
-            try {
+            if (user.isWithMassDownload()) {
+                destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
+                destination = Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri();
                 if (!fileService.fileExist(destination)
                         && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
                     List<String> param = new ArrayList<>();
@@ -163,15 +140,12 @@ public class WebDav implements Serializable {
                             + Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
                     return;
                 }
-            } catch (IOException e) {
-                logger.error(e);
+                destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
+                fileService.deleteSymLink((destination));
             }
-        }
-        destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
-        try {
-            fileService.deleteSymLink((destination));
-        } catch (IOException e) {
-            logger.error(e);
+        } catch (IOException ioe) {
+            logger.error("Exception uploadFromHome(...)", ioe);
+            Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
         }
     }
 
@@ -204,27 +178,17 @@ public class WebDav implements Serializable {
                 project = Paths.get(userHome + DONEDIRECTORYNAME).toUri();
                 fileService.createDirectoryForUser(project, currentUser.getLogin());
             }
+
+            URI destination = userHome;
+            if (currentUser.isWithMassDownload() && process.getProject() != null) {
+                destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
+            }
+            destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
+
+            fileService.createSymLink(source, destination, onlyRead, currentUser);
         } catch (Exception ioe) {
             logger.error("Exception downloadToHome()", ioe);
             Helper.setFehlerMeldung("Aborted download to home, error", ioe.getMessage());
-            return;
-        }
-
-        URI destination = userHome;
-        if (currentUser.isWithMassDownload() && process.getProject() != null) {
-            destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
-        }
-        destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
-
-        if (logger.isInfoEnabled()) {
-            logger.info("source: " + source);
-            logger.info("destination: " + destination);
-        }
-
-        try {
-            fileService.createSymLink(source, destination, onlyRead, currentUser);
-        } catch (IOException e) {
-            logger.error(e);
         }
     }
 

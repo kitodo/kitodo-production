@@ -22,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 
 public class FileManagementTest {
@@ -223,6 +224,15 @@ public class FileManagementTest {
         Assert.assertTrue("wrong processLocation", processLocation.toString().contains(processFolder));
 
         fileManagement.delete(processLocation);
+    }
+
+    @Test
+    public void shouldGetProcessSubTypeURI() throws IOException {
+        URI processSubTypeURI = fileManagement.getProcessSubTypeUri(URI.create("1"), "test", ProcessSubType.IMAGE, "");
+        Assert.assertEquals("Process subtype URI was incorrectly generated!", URI.create("1/images/"), processSubTypeURI);
+
+        processSubTypeURI = fileManagement.getProcessSubTypeUri(URI.create("1"), "test", ProcessSubType.OCR_ALTO, "");
+        Assert.assertEquals("Process subtype URI was incorrectly generated!", URI.create("1/ocr/test_alto/"), processSubTypeURI);
     }
 
 }

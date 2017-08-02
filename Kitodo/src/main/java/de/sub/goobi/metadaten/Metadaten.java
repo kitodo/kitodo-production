@@ -1658,11 +1658,10 @@ public class Metadaten {
      */
     public void readAllTifFolders() throws IOException {
         this.allTifFolders = new ArrayList<>();
-        URI dir = fileService.getProcessSubTypeURI(this.myProzess, ProcessSubType.IMAGE, null);
 
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
         FilenameFilter filterDirectory = new IsDirectoryFilter();
-        ArrayList<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, dir, this.myProzess,
+        ArrayList<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, this.myProzess,
                 ProcessSubType.IMAGE, "");
         this.allTifFolders.addAll(subUris);
 
@@ -1746,7 +1745,7 @@ public class Metadaten {
                             if (dataList == null) {
                                 return;
                             }
-                        } catch (InvalidImagesException e1) {
+                        } catch (IOException | InvalidImagesException e1) {
                             logger.trace("dataList error");
                             logger.error("Images could not be read", e1);
                             Helper.setFehlerMeldung("images could not be read", e1);

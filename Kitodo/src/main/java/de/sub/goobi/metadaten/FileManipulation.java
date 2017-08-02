@@ -317,9 +317,10 @@ public class FileManipulation {
         DocStruct page = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
-        URI processSubTypeURI = serviceManager.getFileService()
-                .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder);
+        URI processSubTypeURI;
         try {
+            processSubTypeURI = serviceManager.getFileService()
+                    .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder);
             ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
             for (URI currentFile : filesInFolder) {
                 String currentFileName = fileService.getFileName(currentFile);
@@ -340,6 +341,7 @@ public class FileManipulation {
             }
         } catch (IOException e) {
             logger.error(e);
+            return;
         }
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -485,18 +487,14 @@ public class FileManipulation {
      * import files from folder.
      *
      */
-    public List<URI> getAllImportFolder() {
+    public List<URI> getAllImportFolder() throws IOException {
 
         URI tempDirectory = new File(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toURI();
         URI fileuploadFolder = tempDirectory.resolve("fileupload");
 
         allImportFolder = new ArrayList<>();
-        try {
-            if (fileService.isDirectory(fileuploadFolder)) {
-                allImportFolder.addAll(fileService.getSubUris(directoryFilter, fileuploadFolder));
-            }
-        } catch (IOException e) {
-            logger.error(e);
+        if (fileService.isDirectory(fileuploadFolder)) {
+            allImportFolder.addAll(fileService.getSubUris(directoryFilter, fileuploadFolder));
         }
         return allImportFolder;
     }
@@ -535,16 +533,12 @@ public class FileManipulation {
                 if (useMasterFolder) {
                     // check if current import folder is master folder
                     if (fileService.getFileName(subfolder).startsWith(masterPrefix)) {
-                        try {
-                            URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
+                        URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
                                     currentProcess);
-                            ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                            Collections.sort(objectInFolder);
-                            for (URI file : objectInFolder) {
-                                fileService.copyFileToDirectory(file, masterDirectory);
-                            }
-                        } catch (IOException e) {
-                            logger.error(e);
+                        ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
+                        Collections.sort(objectInFolder);
+                        for (URI file : objectInFolder) {
+                            fileService.copyFileToDirectory(file, masterDirectory);
                         }
                     } else {
                         if (fileService.getFileName(subfolder).contains("_")) {
@@ -553,21 +547,16 @@ public class FileManipulation {
                             URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
                                     currentProcess);
                             if (folderName != null) {
-                                try {
-                                    ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                                    Collections.sort(objectInFolder);
-                                    for (URI file : objectInFolder) {
-                                        if (serviceManager.getProcessService()
+                                ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
+                                Collections.sort(objectInFolder);
+                                for (URI file : objectInFolder) {
+                                    if (serviceManager.getProcessService()
                                                 .getImagesTifDirectory(false, currentProcess)
                                                 .equals(folderName + File.separator)) {
-                                            importedFilenames.add(file);
-                                        }
-                                        fileService.copyFileToDirectory(file, folderName);
+                                        importedFilenames.add(file);
                                     }
-                                } catch (IOException e) {
-                                    logger.error(e);
+                                    fileService.copyFileToDirectory(file, folderName);
                                 }
-
                             }
                         }
                     }
@@ -582,15 +571,11 @@ public class FileManipulation {
                             ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
                             Collections.sort(objectInFolder);
                             for (URI file : objectInFolder) {
-                                try {
-                                    if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
+                                if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
                                             .equals(folderName + File.separator)) {
-                                        importedFilenames.add(file);
-                                    }
-                                    fileService.copyFileToDirectory(file, folderName);
-                                } catch (IOException e) {
-                                    logger.error(e);
+                                    importedFilenames.add(file);
                                 }
+                                fileService.copyFileToDirectory(file, folderName);
                             }
                         }
                     }

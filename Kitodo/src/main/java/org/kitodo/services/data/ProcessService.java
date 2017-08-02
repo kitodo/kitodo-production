@@ -668,19 +668,15 @@ public class ProcessService extends TitleSearchService<Process> {
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
-        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
-
-        if (verzeichnisse != null) {
-            for (URI aVerzeichnisse : verzeichnisse) {
-                tifOrdner = aVerzeichnisse;
-            }
+        ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
+        for (URI directory : directories) {
+            tifOrdner = directory;
         }
 
         if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, dir, process, ProcessSubType.IMAGE,
-                        "");
+                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
@@ -806,24 +802,21 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * Get source directory.
-     *
-     * @param process
-     *            object
-     * @return path
-     */
-
-    /**
      * Get process data directory.
      *
      * @param process
      *            object
      * @return path
      */
-    public URI getProcessDataDirectory(Process process) {
-        URI processBaseUri = process.getProcessBaseUri();
-        if (processBaseUri == null) {
-            process.setProcessBaseUri(serviceManager.getFileService().getProcessBaseUriForExistingProcess(process));
+    public URI getProcessDataDirectory(Process process) throws IOException {
+        if (process.getProcessBaseUri() == null) {
+            process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
+            try {
+                save(process);
+            } catch (DataException e) {
+                logger.error(e);
+                return URI.create("");
+            }
         }
         return process.getProcessBaseUri();
     }
@@ -1044,7 +1037,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return (int) closed;
     }
 
-    public String getFulltextFilePath(Process process) {
+    public String getFulltextFilePath(Process process) throws IOException {
         return getProcessDataDirectory(process) + "fulltext.xml";
     }
 
@@ -1069,7 +1062,8 @@ public class ProcessService extends TitleSearchService<Process> {
 
         Fileformat ff = determineFileFormat(type, process);
         try {
-            ff.read(new File(metadataFileUri).toString());
+            ff.read(new File(serviceManager.getFileService().mapUriToKitodoDataDirectoryUri(metadataFileUri))
+                    .toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setFehlerMeldung("metadataCorrupt");
@@ -1102,13 +1096,12 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     private boolean checkForMetadataFile(Process process) {
-        boolean result = true;
-        File f = new File(fileService.getMetadataFilePath(process));
-        if (!f.exists()) {
-            result = false;
+        try {
+            return fileService.fileExist(fileService.getMetadataFilePath(process));
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
         }
-
-        return result;
     }
 
     /**
@@ -1962,18 +1955,16 @@ public class ProcessService extends TitleSearchService<Process> {
             for (URI image : images) {
                 imageStrings.add(image.getPath());
             }
-            if (images != null) {
-                int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
-                int sizeOfImages = images.size();
-                if (sizeOfPagination == sizeOfImages) {
-                    dd.overrideContentFiles(imageStrings);
-                } else {
-                    List<String> param = new ArrayList<>();
-                    param.add(String.valueOf(sizeOfPagination));
-                    param.add(String.valueOf(sizeOfImages));
-                    Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
-                    return false;
-                }
+            int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+            int sizeOfImages = images.size();
+            if (sizeOfPagination == sizeOfImages) {
+                dd.overrideContentFiles(imageStrings);
+            } else {
+                List<String> param = new ArrayList<>();
+                param.add(String.valueOf(sizeOfPagination));
+                param.add(String.valueOf(sizeOfImages));
+                Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                return false;
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
             logger.error(e);
@@ -1989,20 +1980,20 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param myProcess
      *            the process object
-     * @param zielVerzeichnis
+     * @param targetDirectory
      *            the destination directory
      */
-    private void directoryDownload(Process myProcess, URI zielVerzeichnis) throws IOException {
+    private void directoryDownload(Process myProcess, URI targetDirectory) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
+            URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
+                    + processDir.replace("(processtitle)", myProcess.getTitle()));
+            URI destinationDirectory = URI.create(
+                    targetDirectory.toString() + "/" + processDir.replace("(processtitle)", myProcess.getTitle()));
 
-            URI srcDir = getProcessDataDirectory(myProcess)
-                    .resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
-            URI dstDir = zielVerzeichnis.resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
-
-            if (fileService.isDirectory(srcDir)) {
-                fileService.copyFile(srcDir, dstDir);
+            if (fileService.isDirectory(sourceDirectory)) {
+                fileService.copyFile(sourceDirectory, destinationDirectory);
             }
         }
     }

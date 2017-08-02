@@ -172,11 +172,9 @@ public class MetadatenImagesHelper {
         }
         try {
             List<URI> imageNamesInMediaFolder = getDataFiles(process);
-            if (imageNamesInMediaFolder != null) {
-                for (URI imageName : imageNamesInMediaFolder) {
-                    if (!assignedImages.containsKey(imageName)) {
-                        imagesWithoutPageElements.add(imageName);
-                    }
+            for (URI imageName : imageNamesInMediaFolder) {
+                if (!assignedImages.containsKey(imageName)) {
+                    imagesWithoutPageElements.add(imageName);
                 }
             }
         } catch (InvalidImagesException e1) {
@@ -408,7 +406,7 @@ public class MetadatenImagesHelper {
         try {
             if (fileService.fileExist(folder)) {
                 ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
-                if (files == null || files.size() == 0) {
+                if (files.size() == 0) {
                     Helper.setFehlerMeldung("[" + title + "] No objects found");
                     return false;
                 }
@@ -491,16 +489,9 @@ public class MetadatenImagesHelper {
      *            current folder
      * @return sorted list with strings representing images of process
      */
-    public List<URI> getImageFiles(Process myProcess, URI directory) throws InvalidImagesException {
-        URI dir;
-        try {
-            dir = fileService.getProcessSubTypeURI(myProcess, ProcessSubType.IMAGE, null).resolve(directory);
-        } catch (Exception e) {
-            throw new InvalidImagesException(e);
-        }
+    public List<URI> getImageFiles(Process myProcess, URI directory) throws IOException, InvalidImagesException {
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, dir, myProcess,
-                ProcessSubType.IMAGE, "");
+        ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, myProcess, ProcessSubType.IMAGE, "");
         ArrayList<URI> finalFiles = new ArrayList<>();
         for (URI file : files) {
             String newURI = file.toString().replace(directory.toString(), "");
@@ -519,16 +510,11 @@ public class MetadatenImagesHelper {
                     String filename = page.getImageName();
                     String filenamePrefix = filename.replace(Metadaten.getFileExtension(filename), "");
                     for (URI currentImage : dataList) {
-                        try {
-                            String currentFileName = fileService.getFileName(currentImage);
-                            String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),
-                                    "");
-                            if (currentImagePrefix.equals(filenamePrefix)) {
-                                orderedFilenameList.add(currentImage);
-                                break;
-                            }
-                        } catch (IOException e) {
-                            logger.error(e);
+                        String currentFileName = fileService.getFileName(currentImage);
+                        String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),"");
+                        if (currentImagePrefix.equals(filenamePrefix)) {
+                            orderedFilenameList.add(currentImage);
+                            break;
                         }
                     }
                 }
@@ -577,7 +563,7 @@ public class MetadatenImagesHelper {
      *            Process object
      * @return list of Strings
      */
-    public List<URI> getDataFiles(Process myProcess) throws InvalidImagesException {
+    public List<URI> getDataFiles(Process myProcess) throws IOException, InvalidImagesException {
         URI dir;
         try {
             dir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
@@ -585,23 +571,13 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = new ArrayList<>();
         ArrayList<URI> dataList = new ArrayList<>();
-        try {
-            files = fileService.getSubUris(Helper.dataFilter, dir);
-        } catch (IOException e) {
-            logger.error(e);
-        }
+        ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
         if (files.size() > 0) {
             dataList.addAll(files);
-            /* alle Dateien durchlaufen */
-            if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
-            }
-            return dataList;
-        } else {
-            return null;
+            Collections.sort(dataList, new GoobiImageFileComparator());
         }
+        return dataList;
     }
 
 }

@@ -225,18 +225,16 @@ public class MetadatenVerifizierung {
 
         try {
             List<URI> images = mih.getDataFiles(myProcess);
-            if (images != null) {
-                int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
-                int sizeOfImages = images.size();
-                if (sizeOfPagination != sizeOfImages) {
-                    List<String> param = new ArrayList<>();
-                    param.add(String.valueOf(sizeOfPagination));
-                    param.add(String.valueOf(sizeOfImages));
-                    Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
-                    return false;
-                }
+            int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+            int sizeOfImages = images.size();
+            if (sizeOfPagination != sizeOfImages) {
+                List<String> param = new ArrayList<>();
+                param.add(String.valueOf(sizeOfPagination));
+                param.add(String.valueOf(sizeOfImages));
+                Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                return false;
             }
-        } catch (InvalidImagesException e1) {
+        } catch (IOException | InvalidImagesException e1) {
             Helper.setFehlerMeldung(process.getTitle() + ": ", e1);
             ergebnis = false;
         }

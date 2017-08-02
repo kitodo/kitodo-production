@@ -14,6 +14,7 @@ package org.kitodo.production.thread;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -85,6 +86,8 @@ public class TaskScriptThread extends EmptyTask {
                     taskService.close(task, false);
                 } catch (DataException e) {
                     logger.error("Index Error occurred", e);
+                } catch (IOException e) {
+                    logger.error("FileManagement module error occurred", e);
                 }
             }
         }
