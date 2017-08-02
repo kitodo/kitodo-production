@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -954,103 +955,113 @@ public class ProcessService extends TitleSearchService<Process> {
         return Helper.getDateAsFormattedString(process.getCreationDate());
     }
 
-    private HashMap<String, Integer> calculationForProgress(Process process) {
-        HashMap<String, Integer> results = new HashMap<>();
-        int open = 0;
-        int inProcessing = 0;
-        int closed = 0;
-        Hibernate.initialize(process.getTasks());
-        for (Task task : process.getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
-                closed++;
-            } else if (task.getProcessingStatusEnum() == TaskStatus.LOCKED) {
-                open++;
-            } else {
-                inProcessing++;
-            }
-        }
-
-        results.put("open", open);
-        results.put("inProcessing", inProcessing);
-        results.put("closed", closed);
-
-        if ((open + inProcessing + closed) == 0) {
-            results.put("open", 1);
-        }
-
-        return results;
-    }
-
     /**
-     * Old getFortschritt().
+     * Get full progress for process.
      *
      * @param process
      *            object
      * @return string
      */
     public String getProgress(Process process) {
-        HashMap<String, Integer> steps = calculationForProgress(process);
-        double open = 0;
-        double inProcessing = 0;
-        double closed = 0;
+        HashMap<String, Integer> tasks = calculationForProgress(process);
 
-        open = (steps.get("open") * 100)
-                / (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
-        inProcessing = (steps.get("inProcessing") * 100)
-                / (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
-        closed = 100 - open - inProcessing;
+        double closed = (tasks.get("closed") * 100)
+                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        double inProcessing = (tasks.get("inProcessing") * 100)
+                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        double open = (tasks.get("open") * 100)
+                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        double locked = (tasks.get("locked") * 100)
+                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
 
-        java.text.DecimalFormat df = new java.text.DecimalFormat("#000");
-
-        return df.format(closed) + df.format(inProcessing) + df.format(closed);
+        DecimalFormat decimalFormat = new DecimalFormat("#000");
+        return decimalFormat.format(closed) + decimalFormat.format(inProcessing) + decimalFormat.format(open)
+                + decimalFormat.format(locked);
     }
 
     /**
-     * Old getProcess().
-     *
-     * @param process
-     *            object
-     * @return return progress for open steps
-     */
-    public int getProgressOpen(Process process) {
-        HashMap<String, Integer> steps = calculationForProgress(process);
-        return (steps.get("open") * 100) / (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
-    }
-
-    /**
-     * Old getProgressTwo().
-     *
-     * @param process
-     *            object
-     * @return progress for processed steps
-     */
-    public int getProgressInProcessing(Process process) {
-        HashMap<String, Integer> steps = calculationForProgress(process);
-
-        return (steps.get("inProcessing") * 100)
-                / (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
-    }
-
-    /**
-     * Old getProgressThree().
+     * Get progress for closed tasks.
      *
      * @param process
      *            object
      * @return progress for closed steps
      */
     public int getProgressClosed(Process process) {
-        HashMap<String, Integer> steps = calculationForProgress(process);
+        HashMap<String, Integer> tasks = calculationForProgress(process);
 
-        double open = 0;
-        double inProcessing = 0;
-        double closed = 0;
+        return (tasks.get("closed") * 100)
+                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+    }
 
-        open = ((steps.get("open") * 100)
-                / (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed")));
-        inProcessing = (steps.get("inProcessing") * 100)
-                / (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
-        closed = 100 - open - inProcessing;
-        return (int) closed;
+    /**
+     * Get progress for processed tasks.
+     *
+     * @param process
+     *            object
+     * @return progress for processed tasks
+     */
+    public int getProgressInProcessing(Process process) {
+        HashMap<String, Integer> tasks = calculationForProgress(process);
+
+        return (tasks.get("inProcessing") * 100)
+                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+    }
+
+    /**
+     * Get progress for open tasks.
+     *
+     * @param process
+     *            object
+     * @return return progress for open tasks
+     */
+    public int getProgressOpen(Process process) {
+        HashMap<String, Integer> tasks = calculationForProgress(process);
+        return (tasks.get("open") * 100)
+                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+    }
+
+    /**
+     * Get progress for open tasks.
+     *
+     * @param process
+     *            object
+     * @return return progress for open tasks
+     */
+    public int getProgressLocked(Process process) {
+        HashMap<String, Integer> tasks = calculationForProgress(process);
+        return (tasks.get("locked") * 100)
+                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+    }
+
+    private HashMap<String, Integer> calculationForProgress(Process process) {
+        HashMap<String, Integer> results = new HashMap<>();
+        int open = 0;
+        int inProcessing = 0;
+        int closed = 0;
+        int locked = 0;
+        Hibernate.initialize(process.getTasks());
+        for (Task task : process.getTasks()) {
+            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
+                closed++;
+            } else if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
+                open++;
+            } else if (task.getProcessingStatusEnum() == TaskStatus.LOCKED) {
+                locked++;
+            } else {
+                inProcessing++;
+            }
+        }
+
+        results.put("closed", closed);
+        results.put("inProcessing", inProcessing);
+        results.put("open", open);
+        results.put("locked", locked);
+
+        if ((open + inProcessing + closed + locked) == 0) {
+            results.put("locked", 1);
+        }
+
+        return results;
     }
 
     /**

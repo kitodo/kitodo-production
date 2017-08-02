@@ -421,52 +421,49 @@ public class ProcessServiceIT {
         assertEquals("Creation date doesn't match to given plain text!", expected, actual);
     }
 
-    @Ignore("progress contains only 000000")
     @Test
     public void shouldGetProgress() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        // System.out.println("Progress: " +
-        // processService.getProgress(process));
-        boolean condition = processService.getProgress(process).equals("");
-        assertTrue("Progress doesn't match given plain text!", condition);
+        String progress = processService.getProgress(process);
+        assertEquals("Progress doesn't match given plain text!", "000033033033", progress);
     }
 
-    @Ignore("progress is not calculated correctly - method needs to be fix")
-    @Test
-    public void shouldGetProgressOpen() throws Exception {
-        ProcessService processService = new ProcessService();
-
-        Process process = processService.find(2);
-        // System.out.println("Progress: " +
-        // processService.getProgressOpen(process));
-        int condition = processService.getProgressOpen(process);
-        assertEquals("Progress doesn't match given plain text!", 1, condition);
-    }
-
-    @Ignore("progress is not calculated correctly - method needs to be fix")
-    @Test
-    public void shouldGetProgressInProcessing() throws Exception {
-        ProcessService processService = new ProcessService();
-
-        Process process = processService.find(2);
-        // System.out.println("Progress: " +
-        // processService.getProgressInProcessing(process));
-        int condition = processService.getProgressInProcessing(process);
-        assertEquals("Progress doesn't match given plain text!", 1, condition);
-    }
-
-    @Ignore("progress is not calculated correctly - method needs to be fix")
     @Test
     public void shouldGetProgressClosed() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        // System.out.println("Progress: " +
-        // processService.getProgressClosed(process));
         int condition = processService.getProgressClosed(process);
-        assertEquals("Progress doesn't match given plain text!", 1, condition);
+        assertEquals("Progress doesn't match given plain text!", 0, condition);
+    }
+
+    @Test
+    public void shouldGetProgressInProcessing() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        int condition = processService.getProgressInProcessing(process);
+        assertEquals("Progress doesn't match given plain text!", 33, condition);
+    }
+
+    @Test
+    public void shouldGetProgressOpen() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        int condition = processService.getProgressOpen(process);
+        assertEquals("Progress doesn't match given plain text!", 33, condition);
+    }
+
+    @Test
+    public void shouldGetProgressLocked() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        int condition = processService.getProgressLocked(process);
+        assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
     @Test
