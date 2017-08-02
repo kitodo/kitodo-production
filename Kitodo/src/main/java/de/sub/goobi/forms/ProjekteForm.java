@@ -315,9 +315,8 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * The need to commit deleted fileGroups only after the save action requires
-     * a filter, so that those filegroups marked for delete are not shown
-     * anymore.
+     * The need to commit deleted fileGroups only after the save action requires a
+     * filter, so that those filegroups marked for delete are not shown anymore.
      *
      * @return modified ArrayList
      */
@@ -392,8 +391,7 @@ public class ProjekteForm extends BasisForm {
     /**
      * Get statistic manager 4.
      *
-     * @return instance of {@link StatisticsMode#STORAGE}
-     *         {@link StatisticsManager}
+     * @return instance of {@link StatisticsMode#STORAGE} {@link StatisticsManager}
      */
     public StatisticsManager getStatisticsManager4() {
         if (this.statisticsManager4 == null) {
@@ -782,8 +780,8 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for project edit form. If 'itemId' is
-     * '0', the form for creating a new project will be displayed.
+     * Method being used as viewAction for project edit form. If 'itemId' is '0',
+     * the form for creating a new project will be displayed.
      */
     public void loadProject() {
         try {

@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,7 +61,6 @@ import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -79,6 +77,7 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.TaskDTO;
 import org.kitodo.services.ServiceManager;
 
 @Named("AktuelleSchritteForm")
@@ -137,36 +136,28 @@ public class AktuelleSchritteForm extends BasisForm {
         DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
-    /*
-     * Filter
-     */
-
     /**
      * Anzeige der Schritte.
      */
     public String filterAlleStart() {
         try {
-
-            List<Task> tasks;
-
+            List<TaskDTO> tasks;
             if (!showAutomaticTasks) {
-
                 if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser();
+                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(sortList());
                 } else {
-                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksForCurrentUser();
+                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksForCurrentUser(sortList());
                 }
             } else {
                 if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService().getOpenTasksWithoutCorrectionForCurrentUser();
+                    tasks = serviceManager.getTaskService().getOpenTasksWithoutCorrectionForCurrentUser(sortList());
                 } else {
-                    tasks = serviceManager.getTaskService().getOpenTasksForCurrentUser();
+                    tasks = serviceManager.getTaskService().getOpenTasksForCurrentUser(sortList());
                 }
             }
-
             this.page = new Page(0, tasks);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("error on reading database", he.getMessage());
+        } catch (DataException e) {
+            Helper.setFehlerMeldung("Error on reading ElasticSearch: ", e.getMessage());
             return null;
         }
         return "/pages/AktuelleSchritteAlle";
@@ -836,27 +827,8 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return String
      */
-    @SuppressWarnings("unchecked")
     public String DownloadToHomePage() {
-        for (Task task : (List<Task>) this.page.getListReload()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                task.setProcessingStatusEnum(TaskStatus.INWORK);
-                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                mySchritt.setProcessingTime(new Date());
-                User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (ben != null) {
-                    mySchritt.setProcessingUser(ben);
-                }
-                task.setProcessingBegin(new Date());
-                Process proz = task.getProcess();
-                try {
-                    this.serviceManager.getProcessService().save(proz);
-                } catch (DataException e) {
-                    Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
-                }
-                this.myDav.downloadToHome(proz, false);
-            }
-        }
+        download();
         // calcHomeImages();
         Helper.setMeldung(null, "Created directies in user home", "");
         return null;
@@ -867,10 +839,22 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return String
      */
-    @SuppressWarnings("unchecked")
     public String downloadToHomeHits() {
+        download();
+        // calcHomeImages();
+        Helper.setMeldung(null, "Created directories in user home", "");
+        return null;
+    }
 
-        for (Task task : (List<Task>) this.page.getCompleteList()) {
+    @SuppressWarnings("unchecked")
+    private void download() {
+        for (TaskDTO taskDTO : (List<TaskDTO>) this.page.getListReload()) {
+            Task task = new Task();
+            try {
+                task = serviceManager.getTaskService().find(taskDTO.getId());
+            } catch (DAOException e) {
+                logger.error(e);
+            }
             if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
@@ -889,13 +873,9 @@ public class AktuelleSchritteForm extends BasisForm {
                 this.myDav.downloadToHome(proz, false);
             }
         }
-        // calcHomeImages();
-        Helper.setMeldung(null, "Created directories in user home", "");
-        return null;
     }
 
     public String getScriptPath() {
-
         return this.scriptPath;
     }
 
@@ -966,8 +946,9 @@ public class AktuelleSchritteForm extends BasisForm {
         this.pageAnzahlImages = 0;
         User aktuellerBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (aktuellerBenutzer != null && aktuellerBenutzer.isWithMassDownload()) {
-            for (Task task : (List<Task>) this.page.getCompleteList()) {
+            for (TaskDTO taskDTO : (List<TaskDTO>)this.page.getCompleteList()) {
                 try {
+                    Task task = serviceManager.getTaskService().find(taskDTO.getId());
                     if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         // gesamtAnzahlImages +=
                         // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
@@ -975,7 +956,7 @@ public class AktuelleSchritteForm extends BasisForm {
                                 serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))
                                 .size();
                     }
-                } catch (Exception e) {
+                } catch (DAOException | IOException e) {
                     logger.error(e);
                 }
             }
@@ -1099,7 +1080,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void selectionAll() {
-        for (Task task : (List<Task>) this.page.getList()) {
+        for (TaskDTO task : (List<TaskDTO>) this.page.getList()) {
             task.setSelected(true);
         }
     }
@@ -1109,7 +1090,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void selectionNone() {
-        for (Task task : (List<Task>) this.page.getList()) {
+        for (TaskDTO task : (List<TaskDTO>) this.page.getList()) {
             task.setSelected(false);
         }
     }
