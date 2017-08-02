@@ -21,9 +21,10 @@ public class IndexWorker<T> implements Runnable {
      * and list of objects that will be indexed.
      *
      * @param searchService
-     *      SearchService instance used to index the entries in the given 'entries' list.
+     *            SearchService instance used to index the entries in the given
+     *            'entries' list.
      * @param entries
-     *      List of 'entries' that will be indexed.
+     *            List of 'entries' that will be indexed.
      */
     public IndexWorker(SearchService searchService, List<BaseBean> entries) {
         this.searchService = searchService;
@@ -33,28 +34,24 @@ public class IndexWorker<T> implements Runnable {
 
     @Override
     public void run() {
-        this.indexObjects();
-    }
-
-    /**
-     * Return the number of objects that have already been indexed during the current indexing process.
-     *
-     * @return int
-     *      the number of objects indexed during the current indexing run
-     */
-    public int getIndexedObjects() {
-        return this.indexedObjects;
-    }
-
-    private void indexObjects(){
         this.indexedObjects = 0;
         try {
-            for(BaseBean object : entryList) {
+            for (BaseBean object : entryList) {
                 this.searchService.saveToIndex(object);
                 this.indexedObjects++;
             }
         } catch (CustomResponseException | IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    /**
+     * Return the number of objects that have already been indexed during the
+     * current indexing process.
+     *
+     * @return int the number of objects indexed during the current indexing run
+     */
+    public int getIndexedObjects() {
+        return this.indexedObjects;
     }
 }

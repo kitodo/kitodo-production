@@ -50,86 +50,48 @@ public class IndexingForm {
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
     private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
 
-    class IndexAllThread extends Thread {
+    public LocalDateTime getIndexingStartedTime() {
+        return indexingStartedTime;
+    }
 
-        private int pause = 1000;
+    private int pause = 1000;
+
+    class IndexAllThread extends Thread {
 
         @Override
         public void run() {
+            resetGlobalProgress();
+            indexingAll = true;
+
+            startUserIndexing();
+            startUserGroupIndexing();
+            startProjectIndexing();
+            startRulesetIndexing();
+            startDocketIndexing();
+            startTaskIndexing();
+            startTemplateIndexing();
+            startProcessIndexing();
+            startBatchIndexing();
+            startPropertyIndexing();
+            startWorkpieceIndexing();
+            startFilterIndexing();
+
             try {
-                resetGlobalProgress();
-                indexingAll = true;
-
-                startUserIndexing();
-                indexerThread.join();
                 sleep(pause);
-
-                startUserGroupIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startProjectIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startRulesetIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startDocketIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startTaskIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startTemplateIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startProcessIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startBatchIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startPropertyIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startWorkpieceIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                startFilterIndexing();
-                indexerThread.join();
-                sleep(pause);
-
-                currentIndexState = ObjectTypes.NONE;
-                indexingAll = false;
-
-                sendMessage(INDEXING_FINISHED_MESSAGE);
-
             } catch (InterruptedException e) {
-                logger.debug("'Index all' process interrupted: " + e.getMessage());
+                logger.error("Thread interrupted: " + e.getMessage());
             }
-        }
-    }
 
-    @Inject
-    @Push(channel = "togglePollingChannel")
-    private PushContext pollingChannel;
+            currentIndexState = ObjectTypes.NONE;
+            indexingAll = false;
 
-    private void sendMessage(String message) {
-        pollingChannel.send(message);
-        if (message.contains(INDEXING_FINISHED_MESSAGE)) {
+            pollingChannel.send(INDEXING_FINISHED_MESSAGE);
+
             try {
+                String indexingTableID = "indexing_form:indexingTable";
                 for (String id : FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds()) {
-                    if (Objects.equals(id, "indexing_form:indexingTable")) {
-                        Ajax.update("indexing_form:indexingTable");
+                    if (Objects.equals(id, indexingTableID)) {
+                        Ajax.update(indexingTableID);
                         break;
                     }
                 }
@@ -138,6 +100,10 @@ public class IndexingForm {
             }
         }
     }
+
+    @Inject
+    @Push(channel = "togglePollingChannel")
+    private PushContext pollingChannel;
 
     private static final Logger logger = LogManager.getLogger(IndexingForm.class);
 
@@ -152,6 +118,8 @@ public class IndexingForm {
     private boolean indexingAll = false;
 
     private Map<ObjectTypes, LocalDateTime> lastIndexed = new EnumMap<>(ObjectTypes.class);
+
+    private LocalDateTime indexingStartedTime;
 
     private List<Batch> batches = serviceManager.getBatchService().findAll();
     private List<Docket> dockets = serviceManager.getDocketService().findAll();
@@ -695,15 +663,27 @@ public class IndexingForm {
     }
 
     private void startIndexing(ObjectTypes type, IndexWorker worker) {
-        if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
-            currentIndexState = type;
-            sendMessage(INDEXING_STARTED_MESSAGE + currentIndexState);
-            indexerThread = new Thread((worker));
-            indexerThread.setDaemon(true);
-            indexerThread.start();
-        } else {
-            logger.debug("Cannot start '" + type + "' indexing while a different indexing process running: '"
-                    + currentIndexState + "'");
+        int attempts = 0;
+        while (attempts < 10) {
+            try {
+                if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
+                    indexingStartedTime = LocalDateTime.now();
+                    currentIndexState = type;
+                    pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
+                    indexerThread = new Thread((worker));
+                    indexerThread.setDaemon(true);
+                    indexerThread.start();
+                    indexerThread.join();
+                    break;
+                } else {
+                    logger.debug("Cannot start '" + type + "' indexing while a different indexing process running: '"
+                            + currentIndexState + "'");
+                    Thread.sleep(pause);
+                    attempts++;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -850,7 +830,7 @@ public class IndexingForm {
                 lastIndexed.put(currentIndexState, LocalDateTime.now());
                 currentIndexState = ObjectTypes.NONE;
                 indexerThread.interrupt();
-                sendMessage(INDEXING_FINISHED_MESSAGE + currentType + "!");
+                pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
             }
         }
         return progress;
@@ -870,4 +850,5 @@ public class IndexingForm {
         indexedWorkpieces = 0;
         indexedFilter = 0;
     }
+
 }

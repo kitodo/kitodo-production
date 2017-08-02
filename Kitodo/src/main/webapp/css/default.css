@@ -821,3 +821,7 @@ span.jscalendar-DB-title-control-normal-style:hover {
 .sundayNoBlock {
     background-color: #B68A8A;
 }
+
+#indexing_form tr {
+    height: 24px;
+}
