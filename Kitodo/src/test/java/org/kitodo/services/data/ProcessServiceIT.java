@@ -657,7 +657,7 @@ public class ProcessServiceIT {
 
         List<Process> notClosedProcesses = processService.getNotClosedProcesses();
 
-        assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 4", notClosedProcesses.size() == 4);
+        assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 5", notClosedProcesses.size() == 5);
     }
 
     @Test
@@ -717,7 +717,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<Process> notClosedTemplates = processService.getAllNotClosedTemplates();
-        assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 1", notClosedTemplates.size() == 1);
+        assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 2", notClosedTemplates.size() == 2);
     }
 
 }
