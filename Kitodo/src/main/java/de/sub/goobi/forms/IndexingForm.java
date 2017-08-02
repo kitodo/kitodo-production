@@ -94,6 +94,10 @@ public class IndexingForm {
                 indexerThread.join();
                 sleep(pause);
 
+                startFilterIndexing();
+                indexerThread.join();
+                sleep(pause);
+
                 currentIndexState = ObjectTypes.NONE;
                 indexingAll = false;
 
@@ -130,7 +134,7 @@ public class IndexingForm {
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private enum ObjectTypes {
-        BATCH, DOCKET, PROCESS, PROJECT, PROPERTY, RULESET, TASK, TEMPLATE, USER, USERGROUP, WORKPIECE, NONE
+        BATCH, DOCKET, PROCESS, PROJECT, PROPERTY, RULESET, TASK, TEMPLATE, USER, USERGROUP, WORKPIECE, FILTER, NONE
     }
 
     private ObjectTypes currentIndexState = ObjectTypes.NONE;
@@ -150,6 +154,7 @@ public class IndexingForm {
     private List<User> users = serviceManager.getUserService().findAll();
     private List<UserGroup> userGroups = serviceManager.getUserGroupService().findAll();
     private List<Workpiece> workpieces = serviceManager.getWorkpieceService().findAll();
+    private List<Filter> filter = serviceManager.getFilterService().findAll();
 
     private int indexedBatches = 0;
     private int indexedDockets = 0;
@@ -162,6 +167,7 @@ public class IndexingForm {
     private int indexedUsers = 0;
     private int indexedUsergroups = 0;
     private int indexedWorkpieces = 0;
+    private int indexedFilter = 0;
 
     private IndexWorker batchWorker;
     private IndexWorker docketWorker;
@@ -174,6 +180,7 @@ public class IndexingForm {
     private IndexWorker userWorker;
     private IndexWorker usergroupWorker;
     private IndexWorker workpieceWorker;
+    private IndexWorker filterWorker;
 
     private Thread indexerThread;
 
@@ -192,6 +199,7 @@ public class IndexingForm {
         this.userWorker = new IndexWorker(serviceManager.getUserService(), this.users);
         this.usergroupWorker = new IndexWorker(serviceManager.getUserGroupService(), this.userGroups);
         this.workpieceWorker = new IndexWorker(serviceManager.getWorkpieceService(), this.workpieces);
+        this.filterWorker = new IndexWorker(serviceManager.getFilterService(), this.filter);
     }
 
     /**
@@ -294,6 +302,15 @@ public class IndexingForm {
     }
 
     /**
+     * Return the number of filters.
+     *
+     * @return int number of filters
+     */
+    public int getFilterCount() {
+        return this.filter.size();
+    }
+
+    /**
      * Return the total number of all objects that can be indexed.
      *
      * @return int number of all items that can be written to the index
@@ -301,7 +318,7 @@ public class IndexingForm {
     public int getTotalCount() {
         return (this.getBatchCount() + this.getDocketCount() + this.getProcessCount() + this.getProjectCount()
                 + this.getPropertyCount() + this.getRulesetCount() + this.getTaskCount() + this.getTemplateCount()
-                + this.getUserCount() + this.getUserGroupCount() + this.getWorkpieceCount());
+                + this.getUserCount() + this.getUserGroupCount() + this.getWorkpieceCount() + this.getFilterCount());
     }
 
     /**
@@ -425,15 +442,27 @@ public class IndexingForm {
     }
 
     /**
-     * Return the number of currently indexed user workpieces.
+     * Return the number of currently indexed workpieces.
      *
-     * @return int number of currently indexed user workpieces
+     * @return int number of currently indexed workpieces
      */
     public int getIndexedWorkpieces() {
         if (currentIndexState == ObjectTypes.WORKPIECE) {
             indexedWorkpieces = workpieceWorker.getIndexedObjects();
         }
         return indexedWorkpieces;
+    }
+
+    /**
+     * Return the number of currently indexed filters.
+     *
+     * @return int number of currently indexed filters
+     */
+    public int getIndexedFilter() {
+        if (currentIndexState == ObjectTypes.FILTER) {
+            indexedFilter = filterWorker.getIndexedObjects();
+        }
+        return indexedFilter;
     }
 
     /**
@@ -445,7 +474,7 @@ public class IndexingForm {
     public int getAllIndexed() {
         return (getIndexedBatches() + getIndexedDockets() + getIndexedProcesses() + getIndexedProjects()
                 + getIndexedProperties() + getIndexedRulesets() + getIndexedTasks() + getIndexedTemplates()
-                + getIndexedUsers() + getIndexedUserGroups() + getIndexedWorkpieces());
+                + getIndexedUsers() + getIndexedUserGroups() + getIndexedWorkpieces() + getIndexedFilter());
     }
 
     /**
@@ -646,6 +675,15 @@ public class IndexingForm {
         return getProgress(workpieces.size(), ObjectTypes.WORKPIECE, getIndexedWorkpieces());
     }
 
+    /**
+     * Returns the progress of the current filter indexing process in percent.
+     *
+     * @return the filter indexing progress
+     */
+    public int getFilterIndexingProgress() {
+        return getProgress(filter.size(), ObjectTypes.FILTER, getIndexedFilter());
+    }
+
     private void startIndexing(ObjectTypes type, IndexWorker worker) {
         if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
             currentIndexState = type;
@@ -737,6 +775,13 @@ public class IndexingForm {
     }
 
     /**
+     * Starts the process of indexing filters to the ElasticSearch index.
+     */
+    public void startFilterIndexing() {
+        startIndexing(ObjectTypes.FILTER, filterWorker);
+    }
+
+    /**
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexing() {
@@ -813,5 +858,6 @@ public class IndexingForm {
         indexedUsers = 0;
         indexedUsergroups = 0;
         indexedWorkpieces = 0;
+        indexedFilter = 0;
     }
 }
