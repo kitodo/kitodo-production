@@ -155,7 +155,8 @@ public class ProjectTypeTest {
                 + "CatalogIDDigital)\\/ocr\\/alto\\/\",\"folder\":null,\"name\":\"FULLTEXT\",\"mimeType\":\"text\\/"
                 + "xml\",\"suffix\":\"xml\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
                 + "CatalogIDDigital)\\/pdf\\/\",\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/"
-                + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"users\":[{\"id\":1},{\"id\":2}]}");
+                + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"fileFormatInternal\":\"XStream\""
+                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(1);
@@ -173,7 +174,8 @@ public class ProjectTypeTest {
                 + "\\/ocr\\/alto\\/\",\"folder\":null,\"name\":\"FULLTEXT\",\"mimeType\":\"text\\/xml\",\"suffix\":"
                 + "\"xml\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/pdf\\/\","
                 + "\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/pdf\",\"suffix\":\"pdf\"}],"
-                + "\"startDate\":\"2017-01-10\",\"users\":[{\"id\":1},{\"id\":2}]}");
+                + "\"startDate\":\"2017-01-10\",\"fileFormatInternal\":\"XStream\",\"fileFormatDmsExport\":\"XStream\","
+                + "\"users\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(2);
@@ -182,7 +184,8 @@ public class ProjectTypeTest {
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"archived\":\"false\",\"processes\":[],"
                 + "\"numberOfPages\":0,\"endDate\":\"" + dateFormat.format(project.getEndDate())
                 + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
-                + dateFormat.format(project.getEndDate()) + "\",\"users\":[]}");
+                + dateFormat.format(project.getEndDate()) + "\",\"fileFormatInternal\":\"XStream\","
+                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

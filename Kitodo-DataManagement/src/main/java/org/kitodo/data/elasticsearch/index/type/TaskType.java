@@ -29,7 +29,7 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("title", task.getTitle());
         taskObject.put("priority", task.getPriority());
         taskObject.put("ordering", task.getOrdering());
-        String processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().toString()
+        Integer processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
                 : null;
         taskObject.put("processingStatus", processingStatus);
         String processingTime = task.getProcessingTime() != null ? formatDate(task.getProcessingTime()) : null;
@@ -45,6 +45,7 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("typeExportRussian", String.valueOf(task.isTypeExportRussian()));
         taskObject.put("typeImagesRead", String.valueOf(task.isTypeImagesRead()));
         taskObject.put("typeImagesWrite", String.valueOf(task.isTypeImagesWrite()));
+        taskObject.put("typeModuleName", task.getTypeModuleName());
         taskObject.put("batchStep", String.valueOf(task.isBatchStep()));
         Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : null;
         taskObject.put("processingUser", processingUser);

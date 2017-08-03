@@ -29,7 +29,7 @@ public class HistoryType extends BaseType<History> {
         JSONObject historyObject = new JSONObject();
         historyObject.put("numericValue", history.getNumericValue());
         historyObject.put("stringValue", history.getStringValue());
-        historyObject.put("type", history.getHistoryType().toString());
+        historyObject.put("type", history.getHistoryType().getValue());
         String date = history.getDate() != null ? formatDate(history.getDate()) : null;
         historyObject.put("date", date);
         Integer process = history.getProcess() != null ? history.getProcess().getId() : null;

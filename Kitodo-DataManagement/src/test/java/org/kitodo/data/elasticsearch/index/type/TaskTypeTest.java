@@ -119,9 +119,9 @@ public class TaskTypeTest {
                 + "\"homeDirectory\":\"1\",\"typeAutomatic\":\"false\",\"ordering\":1,\"typeMetadata\":\"true\","
                 + "\"priority\":1,\"typeImportFileUpload\":\"false\",\"processingTime\":\"2017-02-17\","
                 + "\"processingBegin\":\"2017-02-01\",\"batchStep\":\"true\",\"users\":[{\"id\":1},{\"id\":2}],"
-                + "\"processingUser\":1,\"processingStatus\":\"DONE\",\"userGroups\":[{\"id\":1},{\"id\":2}],"
+                + "\"processingUser\":1,\"processingStatus\":3,\"userGroups\":[{\"id\":1},{\"id\":2}],"
                 + "\"typeImagesWrite\":\"false\",\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":\"false\","
-                + "\"typeExportRussian\":\"false\"}");
+                + "\"typeExportRussian\":\"false\",\"typeModuleName\":null}");
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(1);
@@ -131,9 +131,9 @@ public class TaskTypeTest {
                 + "\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":2,\"typeMetadata\":\"false\","
                 + "\"title\":\"Rendering\",\"priority\":2,\"typeImportFileUpload\":\"false\","
                 + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-10\",\"batchStep\":\"false\","
-                + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":2,\"processingStatus\":\"INWORK\","
+                + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":2,\"processingStatus\":2,"
                 + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"typeImagesWrite\":\"false\",\"processingEnd\":null,"
-                + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}");
+                + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\",\"typeModuleName\":null}");
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(2);
@@ -143,9 +143,9 @@ public class TaskTypeTest {
                 + "\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":0,"
                 + "\"typeMetadata\":\"false\",\"priority\":0,\"typeImportFileUpload\":\"false\","
                 + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":\"false\",\"users\":[],"
-                + "\"processingUser\":null,\"processingStatus\":\"OPEN\",\"userGroups\":[],"
+                + "\"processingUser\":null,\"processingStatus\":1,\"userGroups\":[],"
                 + "\"typeImagesWrite\":\"false\",\"processingEnd\":null,\"typeImagesRead\":\"false\","
-                + "\"typeExportRussian\":\"false\"}");
+                + "\"typeExportRussian\":\"false\",\"typeModuleName\":null}");
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

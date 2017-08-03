@@ -13,6 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +71,7 @@ public class PropertyTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         PropertyType propertyType = new PropertyType();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         JSONParser parser = new JSONParser();
 
         Property property = prepareData().get(0);
@@ -76,14 +79,16 @@ public class PropertyTypeTest {
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser
                 .parse("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":1},"
-                        + "{\"id\":2}],\"type\":\"process\",\"templates\":[]}");
+                        + "{\"id\":2}],\"type\":\"process\",\"templates\":[],\"creationDate\":\""
+                        + dateFormat.format(property.getCreationDate()) + "\"}");
         assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
 
         property = prepareData().get(1);
         document = propertyType.createDocument(property);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Property2\",\"value\":\"templates\",\"workpieces\":[],"
-                + "\"processes\":[],\"type\":\"template\",\"templates\":[{\"id\":1}]}");
+                + "\"processes\":[],\"type\":\"template\",\"templates\":[{\"id\":1}],\"creationDate\":\""
+                + dateFormat.format(property.getCreationDate()) + "\"}");
         assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
