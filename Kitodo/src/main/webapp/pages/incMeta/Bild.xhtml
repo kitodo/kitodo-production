@@ -222,7 +222,7 @@
                 <!-- gehezu-Schaltknopf -->
                 <h:outputText value="#{msgs.geheZuBild}:" style="margin-left:5px;margin-right:0px;font-size: 12px"
                               title="#{msgs.geheZuImage}"/>
-                <h:inputText value="#{Metadaten.bildNummerGeheZu}"
+                <h:inputText value="#{Metadaten.imageNumberToGo}"
                              onkeypress="return submitEnter('formularBild:goButton',event)"
                              style="width:30px;border-style: solid;border-color: silver;border-width: 1px"/>
                 <h:commandButton value="go" id="goButton"
@@ -243,7 +243,7 @@
                 <!-- Verlinkung des Bildes mit dem gewaehlten Strukturelement -->
                 <h:outputText value="#{msgs.bildVerlinken}:" style="margin-left:13px;font-size: 12px"
                               title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
-                <h:selectBooleanCheckbox value="#{Metadaten.bildZuStrukturelement}"
+                <h:selectBooleanCheckbox value="#{Metadaten.imageToStructuralElement}"
                                          onclick="document.getElementById('formularBild:goButton').click();"
                                          style="margin-left:4px" title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
 
@@ -282,21 +282,21 @@
         </h:commandButton>
 
         <h:outputText value="#{msgs.currentRepresentative}"
-                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
+                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
         <h:outputText value="#{msgs.noFileSelected}"
-                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative and empty Metadaten.currentRepresentativePage}"/>
-        <h:outputText value="#{Metadaten.alleSeiten[Metadaten.currentRepresentativePage].label}"
-                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative and not empty Metadaten.currentRepresentativePage}"/>
-        <h:outputText value="" rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
+                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative and empty Metadaten.currentRepresentativePage}"/>
+        <h:outputText value="#{Metadaten.allPages[Metadaten.currentRepresentativePage].label}"
+                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative and not empty Metadaten.currentRepresentativePage}"/>
+        <h:outputText value="" rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
 
         <h:outputText value="#{msgs.setRepresentative} "
-                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
+                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
         <h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}"
-                         rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}">
-            <f:selectItems value="#{Metadaten.alleSeiten}"/>
+                         rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}">
+            <f:selectItems value="#{Metadaten.allPages}"/>
         </h:selectOneMenu>
-        <h:commandButton action="#{Metadaten.Reload}" value="#{msgs.uebernehmen}"
-                         rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
+        <h:commandButton action="#{Metadaten.reload}" value="#{msgs.uebernehmen}"
+                         rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
     </h:panelGrid>
 
     </h:form>

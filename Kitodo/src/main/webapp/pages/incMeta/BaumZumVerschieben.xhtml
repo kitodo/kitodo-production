@@ -95,7 +95,7 @@
                                            rendered="#{item.node.einfuegenErlaubt and not item.node.selected}">
                                 <h:outputText value="#{item.node.description}"/>
                                 <t:updateActionListener
-                                        property="#{Metadaten.modusStrukturelementVerschieben}"
+                                        property="#{Metadaten.modeMoveStructureElement}"
                                         value="false"/>
                                 <t:updateActionListener
                                         property="#{Metadaten.tempStrukturelement}"
@@ -124,14 +124,14 @@
                         <h:outputText value="#{msgs.abbrechen}"
                                       title="#{msgs.verschiebenAbbrechen}"/>
                         <t:updateActionListener
-                                property="#{Metadaten.modusStrukturelementVerschieben}"
+                                property="#{Metadaten.modeMoveStructureElement}"
                                 value="false"/>
                     </h:commandLink>
 
                     <h:commandButton id="docStructVerschiebenAbbrechen"
                                      action="#{NavigationForm.Reload}" style="display:none">
                         <t:updateActionListener
-                                property="#{Metadaten.modusStrukturelementVerschieben}"
+                                property="#{Metadaten.modeMoveStructureElement}"
                                 value="false"/>
                     </h:commandButton>
                 </div>

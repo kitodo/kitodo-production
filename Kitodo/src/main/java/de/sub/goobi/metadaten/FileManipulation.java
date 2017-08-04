@@ -114,7 +114,7 @@ public class FileManipulation {
             if (logger.isTraceEnabled()) {
                 logger.trace("folder to import: " + currentFolder);
             }
-            URI filename = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getMyProzess(),
+            URI filename = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
                     ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
 
             if (logger.isTraceEnabled()) {
@@ -141,11 +141,11 @@ public class FileManipulation {
             }
             // if file was uploaded into media folder, update pagination
             // sequence
-            if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getMyProzess())
-                    .equals(serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getMyProzess(),
+            if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getProcess())
+                    .equals(serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
                             ProcessSubType.IMAGE, currentFolder + File.separator))) {
                 if (logger.isTraceEnabled()) {
-                    logger.trace("update pagination for " + metadataBean.getMyProzess().getTitle());
+                    logger.trace("update pagination for " + metadataBean.getProcess().getTitle());
                 }
                 updatePagination(filename);
 
@@ -198,8 +198,8 @@ public class FileManipulation {
             metadataBean.createPagination();
         } else {
 
-            Prefs prefs = serviceManager.getRulesetService().getPreferences(metadataBean.getMyProzess().getRuleset());
-            DigitalDocument doc = metadataBean.getDocument();
+            Prefs prefs = serviceManager.getRulesetService().getPreferences(metadataBean.getProcess().getRuleset());
+            DigitalDocument doc = metadataBean.getDigitalDocument();
             DocStruct physical = doc.getPhysicalDocStruct();
 
             List<DocStruct> pageList = physical.getAllChildren();
@@ -314,13 +314,13 @@ public class FileManipulation {
         URI downloadFile = null;
 
         int imageOrder = Integer.parseInt(imageSelection);
-        DocStruct page = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
+        DocStruct page = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
         URI processSubTypeURI;
         try {
             processSubTypeURI = serviceManager.getFileService()
-                    .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder);
+                    .getProcessSubTypeURI(metadataBean.getProcess(), ProcessSubType.IMAGE, currentFolder);
             ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
             for (URI currentFile : filesInFolder) {
                 String currentFileName = fileService.getFileName(currentFile);
@@ -395,7 +395,7 @@ public class FileManipulation {
             Helper.setFehlerMeldung("noFileSelected");
             return;
         }
-        List<DocStruct> allPages = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren();
+        List<DocStruct> allPages = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren();
         List<String> filenamesToMove = new ArrayList<>();
 
         for (String fileIndex : selectedFiles) {
@@ -409,17 +409,17 @@ public class FileManipulation {
         URI tempDirectory = fileService.getTemporalDirectory();
         URI fileuploadFolder = fileService.createDirectory(tempDirectory, "fileupload");
 
-        URI destination = fileuploadFolder.resolve(File.separator + metadataBean.getMyProzess().getTitle());
+        URI destination = fileuploadFolder.resolve(File.separator + metadataBean.getProcess().getTitle());
         if (!fileService.fileExist(destination)) {
-            fileService.createDirectory(fileuploadFolder, metadataBean.getMyProzess().getTitle());
+            fileService.createDirectory(fileuploadFolder, metadataBean.getProcess().getTitle());
         }
 
         for (String filename : filenamesToMove) {
             String prefix = filename.replace(Metadaten.getFileExtension(filename), "");
-            String processTitle = metadataBean.getMyProzess().getTitle();
+            String processTitle = metadataBean.getProcess().getTitle();
             for (URI folder : metadataBean.getAllTifFolders()) {
                 ArrayList<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
-                        .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, folder.toString()));
+                        .getProcessSubTypeURI(metadataBean.getProcess(), ProcessSubType.IMAGE, folder.toString()));
                 for (URI currentFile : filesInFolder) {
 
                     String filenameInFolder = fileService.getFileName(currentFile);
@@ -450,7 +450,7 @@ public class FileManipulation {
             String[] pagesArray = new String[selectedFiles.size()];
             selectedFiles.toArray(pagesArray);
             metadataBean.setAlleSeitenAuswahl(pagesArray);
-            metadataBean.deleteSeltectedPages();
+            metadataBean.deleteSelectedPages();
             selectedFiles = new ArrayList<>();
             deleteFilesAfterMove = false;
         }
@@ -522,7 +522,7 @@ public class FileManipulation {
             useMasterFolder = true;
             masterPrefix = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         }
-        Process currentProcess = metadataBean.getMyProzess();
+        Process currentProcess = metadataBean.getProcess();
         List<URI> importedFilenames = new ArrayList<>();
         for (String importName : selectedFiles) {
             URI importFolderUri = fileService
