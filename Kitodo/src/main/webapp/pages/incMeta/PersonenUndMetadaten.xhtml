@@ -177,7 +177,7 @@
                             </tr>
                         </ui:fragment>
                         <t:dataList var="innerMember" value="#{member.members}"
-                                    rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
+                                    rendered="#{member.class.simpleName eq 'RenderablePersonMetadataGroup'}">
                             <tr>
                                 <ui:fragment rendered="#{member.first and innerMember.first}">
                                     <td rowspan="#{aGroup.rowspan}"
