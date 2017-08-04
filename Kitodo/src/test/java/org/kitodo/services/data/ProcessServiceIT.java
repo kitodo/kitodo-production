@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
@@ -29,9 +28,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.PropertyDTO;
 import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
@@ -226,16 +226,16 @@ public class ProcessServiceIT {
 
     @Ignore("for second process is attached task which is processed by blocked user")
     @Test
-    public void shouldGetBlockedUsers() throws Exception {
+    public void shouldGetBlockedUser() throws Exception {
         ProcessService processService = new ProcessService();
         UserService userService = new UserService();
 
-        Process process = processService.find(1);
-        boolean condition = processService.getBlockedUsers(process) == null;
+        ProcessDTO process = processService.getById(1);
+        boolean condition = processService.getBlockedUser(process) == null;
         assertTrue("Process has blocked user but it shouldn't!", condition);
 
-        process = processService.find(2);
-        condition = processService.getBlockedUsers(process) == userService.find(3);
+        process = processService.getById(2);
+        condition = processService.getBlockedUser(process) == userService.getById(3);
         assertTrue("Blocked user doesn't match to given user!", condition);
     }
 
@@ -244,11 +244,11 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        URI directory = processService.getImagesTifDirectory(true, process);
+        URI directory = processService.getImagesTifDirectory(true, process, null);
         boolean condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
 
-        directory = processService.getImagesTifDirectory(false, process);
+        directory = processService.getImagesTifDirectory(false, process, null);
         condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
         // I don't know what changes this useFallback so I'm testing for both
@@ -375,7 +375,7 @@ public class ProcessServiceIT {
     public void shouldGetBatchId() throws Exception {
         ProcessService processService = new ProcessService();
 
-        Process process = processService.find(1);
+        ProcessDTO process = processService.getById(1);
         String batchId = processService.getBatchID(process);
         boolean condition = batchId.equals("First batch, Third batch");
         assertTrue("BatchId doesn't match to given plain text!", condition);
@@ -409,7 +409,7 @@ public class ProcessServiceIT {
 
         Process process = processService.find(1);
         int actual = processService.getPropertiesSize(process);
-        assertEquals("Properties' size is incorrect!", 2, actual);
+        assertEquals("Properties' size is incorrect!", 3, actual);
     }
 
     @Test
@@ -456,7 +456,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        String progress = processService.getProgress(process);
+        String progress = processService.getProgress(process, null);
         assertEquals("Progress doesn't match given plain text!", "000033033033", progress);
     }
 
@@ -465,7 +465,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        int condition = processService.getProgressClosed(process);
+        int condition = processService.getProgressClosed(process, null);
         assertEquals("Progress doesn't match given plain text!", 0, condition);
     }
 
@@ -474,7 +474,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        int condition = processService.getProgressInProcessing(process);
+        int condition = processService.getProgressInProcessing(process, null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
@@ -483,7 +483,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        int condition = processService.getProgressOpen(process);
+        int condition = processService.getProgressOpen(process, null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
@@ -492,7 +492,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        int condition = processService.getProgressLocked(process);
+        int condition = processService.getProgressLocked(process, null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
@@ -650,103 +650,108 @@ public class ProcessServiceIT {
         // assertEquals("Digital documents are not equal!", expected, actual);
     }
 
-    @Ignore("not sure how it should look")
     @Test
-    public void shouldFilterForCorrectionSolutionMessages() {
+    public void shouldFilterForCorrectionSolutionMessages() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Property> expected = new ArrayList<>();
-        List<Property> actual = processService.filterForCorrectionSolutionMessages(new ArrayList<>());
-        assertEquals("Process properties are not equal to given process properties!", expected, actual);
+        ProcessDTO process = processService.getById(1);
+        List<PropertyDTO> properties = processService.filterForCorrectionSolutionMessages(process.getProperties());
+
+        Integer expected = 2;
+        Integer actual = properties.get(0).getId();
+        assertEquals("Process property id is not equal to given process property id!", expected, actual);
+
+        expected = 3;
+        actual = properties.get(1).getId();
+        assertEquals("Process property id is not equal to given process property id!", expected, actual);
     }
 
-    @Ignore("not sure how it should look")
     @Test
     public void shouldGetSortedCorrectionSolutionMessages() throws Exception {
         ProcessService processService = new ProcessService();
 
-        Process process = processService.find(1);
-        List<Property> expected = new ArrayList<>();
-        List<Property> actual = processService.getSortedCorrectionSolutionMessages(process);
-        assertEquals("Process properties are not equal to given process properties!", expected, actual);
+        ProcessDTO process = processService.getById(1);
+        Integer expected = 2;
+        Integer actual = processService.getSortedCorrectionSolutionMessages(process).size();
+        assertEquals("Size of sorted correction messages is not equal to given size!", expected, actual);
     }
 
     @Test
-    public void getNotArchivedProcesses() {
+    public void getNotArchivedProcesses() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcesses = processService.getNotArchivedProcesses();
+        List<ProcessDTO> notArchivedProcesses = processService.getNotArchivedProcesses(null);
 
         assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 3",
                 notArchivedProcesses.size() == 3);
     }
 
     @Test
-    public void getNotClosedProcesses() {
+    public void getNotClosedProcesses() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> notClosedProcesses = processService.getNotClosedProcesses();
+        List<ProcessDTO> notClosedProcesses = processService.getNotClosedProcesses(null);
 
         assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 5", notClosedProcesses.size() == 5);
     }
 
     @Test
-    public void getNotClosedAndNotArchivedProcesses() {
+    public void getNotClosedAndNotArchivedProcesses() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> notClosedAndNotArchivedProcesses = processService.getNotClosedAndNotArchivedProcesses();
+        List<ProcessDTO> notClosedAndNotArchivedProcesses = processService.getNotClosedAndNotArchivedProcesses(null);
         assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 3",
                 notClosedAndNotArchivedProcesses.size() == 3);
     }
 
     @Test
-    public void getNotArchivedTemplates() {
+    public void getNotArchivedTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedTemplates = processService.getNotArchivedTemplates();
+        List<ProcessDTO> notArchivedTemplates = processService.getNotArchivedTemplates(null);
         assertTrue("Found " + notArchivedTemplates.size() + " processes, instead of 1",
                 notArchivedTemplates.size() == 1);
     }
 
     @Test
-    public void getAllTemplates() {
+    public void getAllTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> allTemplates = processService.getAllTemplates();
+        List<ProcessDTO> allTemplates = processService.getAllTemplates(null);
         assertTrue("Found " + allTemplates.size() + " processes, instead of 2", allTemplates.size() == 2);
     }
 
     @Test
-    public void getAllWithoutTemplates() {
+    public void getAllWithoutTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> allWithoutTemplates = processService.getAllWithoutTemplates();
+        List<ProcessDTO> allWithoutTemplates = processService.getAllWithoutTemplates(null);
         assertTrue("Found " + allWithoutTemplates.size() + " processes, instead of 3", allWithoutTemplates.size() == 3);
     }
 
     @Test
-    public void getAllNotArchivedWithoutTemplates() {
+    public void getAllNotArchivedWithoutTemplates() throws Exception{
         ProcessService processService = new ProcessService();
 
-        List<Process> notArchivedProcessesWithoutTemplates = processService.getAllNotArchivedWithoutTemplates();
+        List<ProcessDTO> notArchivedProcessesWithoutTemplates = processService.getAllNotArchivedWithoutTemplates(null);
         assertTrue("Found " + notArchivedProcessesWithoutTemplates.size() + " processes, instead of 2",
                 notArchivedProcessesWithoutTemplates.size() == 2);
     }
 
     @Test
-    public void getAllNotClosedAndNotArchivedTemplates() {
+    public void getAllNotClosedAndNotArchivedTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> notClosedAndNotArchivedTemplates = processService.getAllNotClosedAndNotArchivedTemplates();
+        List<ProcessDTO> notClosedAndNotArchivedTemplates = processService.getAllNotClosedAndNotArchivedTemplates(null);
         assertTrue("Found " + notClosedAndNotArchivedTemplates.size() + " processes, instead of 1",
                 notClosedAndNotArchivedTemplates.size() == 1);
     }
 
     @Test
-    public void getAllNotClosedTemplates() {
+    public void getAllNotClosedTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<Process> notClosedTemplates = processService.getAllNotClosedTemplates();
+        List<ProcessDTO> notClosedTemplates = processService.getAllNotClosedTemplates(null);
         assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 2", notClosedTemplates.size() == 2);
     }
 

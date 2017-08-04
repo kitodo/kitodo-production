@@ -467,11 +467,11 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shoulFindAllVisibleUsers() throws Exception {
+    public void shouldFindAllVisibleUsers() throws Exception {
         UserService userService = new UserService();
 
         List<UserDTO> allVisibleUsers = userService.findAllVisibleUsers();
-        assertTrue(allVisibleUsers.size() == 3);
+        assertEquals("Size of users is incorrect!", 3, allVisibleUsers.size());
     }
 
     @Test
@@ -490,9 +490,17 @@ public class UserServiceIT {
         assertTrue(allActiveUsers.size() == 1);
         int actual = allActiveUsers.get(0).getId();
         int expected = 1;
-        assertEquals(actual, expected);
+        assertEquals("Size of users is incorrect!", expected, actual);
 
         allActiveUsers = userService.findActiveUsersByName("owa");
         assertTrue(allActiveUsers.size() == 2);
+        actual = allActiveUsers.get(0).getId();
+        expected = 1;
+        assertEquals("Id of first user is incorrect!", expected, actual);
+
+        allActiveUsers = userService.findActiveUsersByName("owa");
+        actual = allActiveUsers.size();
+        expected = 2;
+        assertEquals("Size of users is incorrect!", expected, actual);
     }
 }

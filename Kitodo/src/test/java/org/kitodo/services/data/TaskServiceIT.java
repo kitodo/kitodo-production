@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -96,6 +97,18 @@ public class TaskServiceIT {
     }
 
     @Test
+    public void shouldFindByProcessingStatusAndUser() throws Exception {
+        TaskService taskService = new TaskService();
+
+        List<JSONObject> tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null);
+        assertEquals("Some tasks were found in database!", 0, tasks.size());
+
+        tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null);
+        assertEquals("Not all tasks were found in database!", 1, tasks.size());
+
+    }
+
+    @Test
     public void shouldRemoveTask() throws Exception {
         TaskService taskService = new TaskService();
 
@@ -171,7 +184,7 @@ public class TaskServiceIT {
 
         Task task = taskService.find(3);
         String expected = "Testing_and_Blocking";
-        String actual = taskService.getNormalizedTitle(task);
+        String actual = taskService.getNormalizedTitle(task.getTitle());
         assertEquals("Normalized title of task doesn't match given plain text!", expected, actual);
     }
 
