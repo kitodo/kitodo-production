@@ -351,8 +351,8 @@
             </t:div>
         </f:facet>
     
-        <h:graphicImage alt="" value="#{item.processingStatusEnum.bigImagePath}"
-                        title="#{msgs.get(item.processingStatusEnum.title)}"/>
+        <h:graphicImage alt="" value="#{item.processingStatus.bigImagePath}"
+                        title="#{msgs.get(item.processingStatus.title)}"/>
     
         <h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px"
                       rendered="#{item.priority == 1}"/>
@@ -398,7 +398,7 @@
     
         <!-- Bearbeitung übernehmen-Schaltknopf -->
         <h:commandLink id="take" action="#{AktuelleSchritteForm.schrittDurchBenutzerUebernehmen}"
-                       rendered="#{(item.processingStatusEnum == 'OPEN' and !item.batchStep) || (item.processingStatusEnum == 'OPEN' and item.batchStep and !item.batchSize)}"
+                       rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchSize)}"
                        title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
             <h:graphicImage value="/pages/images/buttons/admin2a.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
@@ -406,7 +406,7 @@
     
         <!-- Bearbeiten-Schaltknopf (eigener Schritt) -->
         <h:link outcome="/newpages/AktuelleSchritteBearbeiten"
-                rendered="#{(item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
+                rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
                 title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
             <h:graphicImage value="/newpages/images/buttons/admin1b.gif" alt="view"/>
             <f:param name="id" value="#{item.id}"/>
@@ -414,7 +414,7 @@
     
         <!-- Bearbeiten-Schaltknopf (fremder Schritt) -->
         <h:commandLink action="#{AktuelleSchritteForm.editStep}" id="view2"
-                       rendered="#{item.processingStatusEnum == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and (!item.batchStep || !item.batchSize)}"
+                       rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and (!item.batchStep || !item.batchSize)}"
                        title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
             <h:graphicImage value="/pages/images/buttons/admin1c.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
@@ -422,14 +422,14 @@
     
         <!-- edit batch step -->
         <h:commandLink id="batch" action="#{AktuelleSchritteForm.takeOverBatch}"
-                       rendered="#{item.processingStatusEnum == 'OPEN' and item.batchStep and item.batchSize}"
+                       rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchSize}"
                        title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
             <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}"/>
         </h:commandLink>
         <!-- edit batch step -->
         <h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.batchesEdit}"
-                       rendered="#{item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and item.batchSize}"
+                       rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and item.batchSize}"
                        title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
             <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}"/>
@@ -437,7 +437,7 @@
     
         <!-- edit batch step -->
         <h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.batchesEdit}"
-                       rendered="#{item.processingStatusEnum == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and item.batchStep and item.batchSize}"
+                       rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and item.batchStep and item.batchSize}"
     
                        title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
     
