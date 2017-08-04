@@ -147,4 +147,13 @@ public class FilterService extends SearchService<Filter> {
         QueryBuilder query = createSimpleQuery("value", value, contains, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    @SuppressWarnings("unchecked")
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), filterType);
+    }
 }
