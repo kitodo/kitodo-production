@@ -52,6 +52,14 @@ public class UserGroupServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
+    public void shouldCountAllUserGroup() throws Exception {
+        UserGroupService userGroupService = new UserGroupService();
+
+        Long amount = userGroupService.count();
+        assertEquals("User groups were not counted correctly!", Long.valueOf(3), amount);
+    }
+
+    @Test
     public void shouldFindUserGroup() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
@@ -171,7 +179,7 @@ public class UserGroupServiceIT {
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
 
-        userGroups = userGroupService.findByUserId(2);
+        userGroups = userGroupService.findByUserId(3);
         actual = userGroups.size();
         expected = 0;
         assertEquals("User groups were found in index!", expected, actual);

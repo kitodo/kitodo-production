@@ -381,8 +381,24 @@ public class ProcessService extends TitleSearchService<Process> {
         return processDAO.search(query);
     }
 
-    public Long count(String query) throws DAOException {
-        return processDAO.count(query);
+    /**
+     * Count all processes.
+     *
+     * @return amount of all processes
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
+    }
+
+    /**
+     * Count processes according to given query.
+     *
+     * @param query
+     *            for index search
+     * @return amount of processes according to given query
+     */
+    public Long count(String query) throws DataException {
+        return searcher.countDocuments(query);
     }
 
     public void refresh(Process process) {
@@ -425,6 +441,19 @@ public class ProcessService extends TitleSearchService<Process> {
      */
     public List<SearchResult> findByWikiField(String wikiField) throws DataException {
         QueryBuilder query = createSimpleQuery("wikiField", wikiField, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes if template.
+     *
+     * @param template
+     *            as Boolean
+     * @return list of search results
+     */
+    public List<SearchResult> findByTemplate(Boolean template) throws DataException {
+        QueryBuilder query = createSimpleQuery("template", template, true);
+        System.out.println(query.toString());
         return searcher.findDocuments(query.toString());
     }
 
@@ -1507,8 +1536,8 @@ public class ProcessService extends TitleSearchService<Process> {
         return new ArrayList<>(filteredList);
     }
 
-    public Long getNumberOfProcessesWithTitle(String title) throws DAOException {
-        return count(createSimpleQuery("title", title, true).toString());
+    public Long getNumberOfProcessesWithTitle(String title) throws DataException {
+        return count(createSimpleQuery("title", title, true, Operator.AND).toString());
     }
 
     /**
@@ -1519,9 +1548,6 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param prefs
      *            The Preferences
      * @return The fileFormat.
-     * @throws IOException
-     * @throws PreferencesException
-     * @throws ReadException
      */
     public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
             throws IOException, PreferencesException, ReadException {

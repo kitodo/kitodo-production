@@ -51,6 +51,15 @@ public class Searcher extends Index {
     }
 
     /**
+     * Count amount of all documents stored in index.
+     * 
+     * @return amount of all documents
+     */
+    public Long countDocuments() throws DataException {
+        return countDocuments(null);
+    }
+
+    /**
      * Count amount of documents responding to given query.
      * 
      * @param query
@@ -60,6 +69,10 @@ public class Searcher extends Index {
     public Long countDocuments(String query) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
+
+        if (query == null) {
+            query = "{\n\"match_all\" : {}\n}";
+        }
 
         String response = restClient.countDocuments(query);
         if (!response.equals("")) {

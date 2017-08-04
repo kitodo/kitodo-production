@@ -27,6 +27,7 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -51,7 +52,7 @@ public class JobCreation {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException, DAOException {
+    public static Process generateProcess(ImportObject io, Process vorlage) throws DataException, IOException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -137,11 +138,11 @@ public class JobCreation {
      *            String
      * @return boolean
      */
-    private static boolean testTitle(String title) throws DAOException {
+    private static boolean testTitle(String title) throws DataException {
         if (title != null) {
-            Long anzahl = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
-            if (anzahl > 0) {
-                Helper.setFehlerMeldung("processTitleAllreadyInUse");
+            Long amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
+            if (amount > 0) {
+                Helper.setFehlerMeldung("processTitleAlreadyInUse");
                 return false;
             }
         } else {

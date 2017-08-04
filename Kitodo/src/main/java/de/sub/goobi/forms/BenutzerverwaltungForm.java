@@ -123,33 +123,30 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * Save user.
+     * Save user if there is not other user with the same login.
      *
      * @return page or empty String
      */
     public String save() {
         Session session = Helper.getHibernateSession();
         session.evict(this.myClass);
-        String bla = this.myClass.getLogin();
+        String login = this.myClass.getLogin();
 
-        if (!isLoginValid(bla)) {
+        if (!isLoginValid(login)) {
             return null;
         }
 
-        Integer blub = this.myClass.getId();
+        String id = this.myClass.getId().toString();
+
         try {
-            /*
-             * prüfen, ob schon ein anderer Benutzer mit gleichem Login
-             * existiert
-             */
-            if (this.serviceManager.getUserService().count("from User where login='" + bla + "'AND id<>" + blub) == 0) {
+            if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
                 this.serviceManager.getUserService().save(this.myClass);
                 return "/newpages/BenutzerAlle";
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
                 return null;
             }
-        } catch (DAOException | DataException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
             return null;

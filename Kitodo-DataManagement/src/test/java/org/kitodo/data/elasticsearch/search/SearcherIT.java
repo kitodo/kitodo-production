@@ -90,7 +90,7 @@ public class SearcherIT {
         Thread.sleep(2000);
         Searcher searcher = new Searcher("testsearch");
 
-        String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
+        String query = "{\n\"match_all\" : {}\n}";
         Long result = searcher.countDocuments(query);
         Long expected = Long.valueOf("2");
         assertEquals("Amount of documents doesn't match to given number!", expected, result);

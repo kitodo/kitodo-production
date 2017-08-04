@@ -46,6 +46,14 @@ public class WorkpieceServiceIT {
     }
 
     @Test
+    public void shouldCountAllWorkpieces() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
+
+        Long amount = workpieceService.count();
+        assertEquals("Workpieces were not counted correctly!", Long.valueOf(2), amount);
+    }
+
+    @Test
     public void shouldFindWorkpiece() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 

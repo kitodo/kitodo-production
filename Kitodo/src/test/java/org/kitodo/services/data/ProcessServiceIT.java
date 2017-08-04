@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -56,6 +58,26 @@ public class ProcessServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllProcesses() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Long amount = processService.count();
+        assertEquals("Processes were not counted correctly!", Long.valueOf(5), amount);
+    }
+
+    @Test
+    public void shouldCountProcessesAccordingToQuery() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        String query = matchQuery("title", "First Process").operator(Operator.AND).toString();
+        Long amount = processService.count(query);
+        assertEquals("Process was not found!", Long.valueOf(1), amount);
+
+        amount = processService.getNumberOfProcessesWithTitle("First Process");
+        assertEquals("Process was not found!", Long.valueOf(1), amount);
     }
 
     @Test

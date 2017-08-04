@@ -25,12 +25,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -224,8 +227,72 @@ public class TaskService extends TitleSearchService<Task> {
         return taskDAO.search(query);
     }
 
-    public Long count(String query) throws DAOException {
-        return taskDAO.count(query);
+    /**
+     * Count all tasks.
+     *
+     * @return amount of all tasks
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
+    }
+
+    /**
+     * Count tasks according to given query.
+     *
+     * @param query
+     *            for index search
+     * @return amount of tasks according to given query
+     */
+    public Long count(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    /**
+     * Get amount of current tasks for current user.
+     * 
+     * @param open
+     *            true or false
+     * @param inProcessing
+     *            true or false
+     * @param user
+     *            current user
+     * @return amount of current tasks for current user
+     */
+    public Long getAmountOfCurrentTasks(boolean open, boolean inProcessing, User user) throws DataException {
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        String processingStatus = TaskStatus.getStatusFromValue(1).toString() + " "
+                + TaskStatus.getStatusFromValue(2).toString();
+
+        if (!open && !inProcessing) {
+            boolQuery.must(createSimpleQuery("processingStatus", processingStatus, true));
+        } else if (open && !inProcessing) {
+            boolQuery.must(createSimpleQuery("processingStatus", TaskStatus.getStatusFromValue(1).toString(), true));
+        } else if (!open && inProcessing) {
+            boolQuery.must(createSimpleQuery("processingStatus", TaskStatus.getStatusFromValue(2).toString(), true));
+        } else {
+            boolQuery.must(createSimpleQuery("processingStatus", processingStatus, true));
+        }
+
+        Set<Integer> userGroups = new HashSet<>();
+        for (UserGroup userGroup : user.getUserGroups()) {
+            userGroups.add(userGroup.getId());
+        }
+        BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
+        nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
+        nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
+        boolQuery.must(nestedBoolQuery);
+
+        List<SearchResult> templateProcesses = serviceManager.getProcessService().findByTemplate(true);
+        if (templateProcesses.size() > 0) {
+            Set<Integer> templates = new HashSet<>();
+            for (SearchResult searchResult : templateProcesses) {
+                templates.add(searchResult.getId());
+            }
+
+            boolQuery.mustNot(createSetQuery("process", templates, true));
+        }
+
+        return count(boolQuery.toString());
     }
 
     /**

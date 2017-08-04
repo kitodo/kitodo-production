@@ -41,7 +41,8 @@ public class SearchRestClient extends KitodoRestClient {
      */
     public String countDocuments(String query) throws DataException {
         String output = "";
-        HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
+        String wrappedQuery = "{\n \"query\": " + query + "\n}";
+        HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_count",
                     Collections.singletonMap("pretty", "true"), entity);

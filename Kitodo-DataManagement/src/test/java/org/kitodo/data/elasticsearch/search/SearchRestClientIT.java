@@ -87,7 +87,7 @@ public class SearchRestClientIT {
     @Test
     public void shouldCountDocuments() throws Exception {
         Thread.sleep(2000);
-        String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
+        String query = "{\n\"match_all\" : {}\n}";
         String result = searchRestClient.countDocuments(query);
 
         boolean condition = result.contains("\"count\" : 2");

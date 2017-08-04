@@ -14,24 +14,17 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 @Named("StatistikForm")
@@ -52,7 +45,7 @@ public class StatistikForm {
     }
 
     /**
-     * The function getAnzahlBenutzer() counts the number of user accounts in
+     * The function getAmountUsers() counts the number of user accounts in
      * the kitodo.production environment. Since user accounts are not hard
      * deleted from the database when the delete button is pressed a where
      * clause is used in the SQL statement to exclude the deleted accounts from
@@ -61,10 +54,11 @@ public class StatistikForm {
      * @return the count of valid user accounts
      */
 
-    public Long getAnzahlBenutzer() {
+    public Long getAmountUsers() {
         try {
-            return serviceManager.getUserService().count("from User where visible is null");
-        } catch (DAOException e) {
+            return serviceManager.getUserService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;
         }
@@ -73,12 +67,13 @@ public class StatistikForm {
     /**
      * Get amount of user groups.
      *
-     * @return Anzahl der Benutzer
+     * @return amount of user groups
      */
-    public Long getAnzahlBenutzergruppen() {
+    public Long getAmountUserGroups() {
         try {
-            return serviceManager.getUserService().count("from UserGroup");
-        } catch (DAOException e) {
+            return serviceManager.getUserGroupService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
             Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
             return null;
         }
@@ -89,10 +84,11 @@ public class StatistikForm {
      *
      * @return amount of processes
      */
-    public Long getAnzahlProzesse() {
+    public Long getAmountProcesses() {
         try {
-            return serviceManager.getProcessService().count("from Process");
-        } catch (DAOException e) {
+            return serviceManager.getProcessService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;
         }
@@ -103,13 +99,13 @@ public class StatistikForm {
      *
      * @return amount of tasks
      */
-    public Long getAnzahlSchritte() {
+    public Long getAmountTasks() {
         try {
-            return serviceManager.getTaskService().count("from Task");
-        } catch (DAOException e) {
-            logger.error("Hibernate error", e);
+            return serviceManager.getTaskService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
-            return Long.valueOf(-1);
+            return null;
         }
     }
 
@@ -118,9 +114,14 @@ public class StatistikForm {
      *
      * @return amount of templates
      */
-    public Long getAnzahlVorlagen() {
-        Session session = Helper.getHibernateSession();
-        return (Long) session.createQuery("select count(*) " + "from Template").uniqueResult();
+    public Long getAmountTemplates() {
+        try {
+            return serviceManager.getTemplateService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            return null;
+        }
     }
 
     /**
@@ -128,119 +129,47 @@ public class StatistikForm {
      *
      * @return amount of workpieces
      */
-    public Long getAnzahlWerkstuecke() {
-        Session session = Helper.getHibernateSession();
-        return (Long) session.createQuery("select count(*) " + "from Workpiece").uniqueResult();
+    public Long getAmountWorkpieces() {
+        try {
+            return serviceManager.getWorkpieceService().count();
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            return null;
+        }
     }
 
-    /**
-     * Get dummy.
-     *
-     * @return Dummy-Rückgabe
-     */
-    public int getDummy() {
-        this.n++;
-        return new Random().nextInt(this.n);
+    public int getAmountOfCurrentTasks() {
+        return getAmountOfCurrentTasks(false, false);
     }
 
-    public int getAnzahlAktuelleSchritte() {
-        return getAnzahlAktuelleSchritte(false, false);
+    public int getAmountOfCurrentOpenTasks() {
+        return getAmountOfCurrentTasks(true, false);
     }
 
-    @SuppressWarnings("unchecked")
-    private int getAnzahlAktuelleSchritte(boolean inOffen, boolean inBearbeitet) {
-        /* aktuellen Benutzer ermitteln */
+    public int getAmountOfCurrentInProcessingTasks() {
+        return getAmountOfCurrentTasks(false, true);
+    }
+
+    private int getAmountOfCurrentTasks(boolean open, boolean inProcessing) {
+        Long amount = Long.valueOf(0);
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login.getMyBenutzer() == null) {
+
+        if (login == null) {
             return 0;
+        } else {
+            if (login.getMyBenutzer() == null) {
+                return 0;
+            }
         }
 
         try {
-            Session session = Helper.getHibernateSession();
-            Criteria crit = session.createCriteria(Task.class);
-
-            /* Liste der IDs */
-            List<Integer> trefferListe = new ArrayList<>();
-
-            /*
-             * die Treffer der Benutzergruppen
-             */
-            Criteria critGruppen = session.createCriteria(Task.class);
-            if (!inOffen && !inBearbeitet) {
-                critGruppen.add(Restrictions.or(Restrictions.eq("processingStatus", 1),
-                        Restrictions.like("processingStatus", 2)));
-            }
-            if (inOffen) {
-                critGruppen.add(Restrictions.eq("processingStatus", 1));
-            }
-            if (inBearbeitet) {
-                critGruppen.add(Restrictions.eq("processingStatus", 2));
-            }
-
-            /* nur Prozesse, die keine Vorlagen sind */
-            critGruppen.createCriteria("process", "proz");
-            critGruppen.add(Restrictions.eq("proz.template", Boolean.FALSE));
-
-            /*
-             * nur Schritte, wo Benutzergruppen des aktuellen Benutzers
-             * eingetragen sind
-             */
-            critGruppen.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
-            critGruppen.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
-
-            /* die Treffer sammeln */
-            for (Iterator<Task> iter = critGruppen.list().iterator(); iter.hasNext();) {
-                Task step = iter.next();
-                trefferListe.add(step.getId());
-            }
-
-            /*
-             * Treffer der Benutzer
-             */
-            Criteria critBenutzer = session.createCriteria(Task.class);
-            if (!inOffen && !inBearbeitet) {
-                critBenutzer.add(Restrictions.or(Restrictions.eq("processingStatus", 1),
-                        Restrictions.like("processingStatus", 2)));
-            }
-            if (inOffen) {
-                critBenutzer.add(Restrictions.eq("processingStatus", 1));
-            }
-            if (inBearbeitet) {
-                critBenutzer.add(Restrictions.eq("processingStatus", 2));
-            }
-
-            /* nur Prozesse, die keine Vorlagen sind */
-            critBenutzer.createCriteria("process", "proz");
-            critBenutzer.add(Restrictions.eq("proz.template", Boolean.FALSE));
-
-            /* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
-            critBenutzer.createCriteria("user", "nutzer");
-            critBenutzer.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
-
-            /* die Treffer sammeln */
-            for (Iterator<Task> iter = critBenutzer.list().iterator(); iter.hasNext();) {
-                Task step = iter.next();
-                trefferListe.add(step.getId());
-            }
-
-            /*
-             * nun nur die Treffer übernehmen, die in der Liste sind
-             */
-            crit.add(Restrictions.in("id", trefferListe));
-            return crit.list().size();
-
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
-            return 0;
+            amount = serviceManager.getTaskService().getAmountOfCurrentTasks(open, inProcessing, login.getMyBenutzer());
+        } catch (DataException e) {
+            logger.error("ElasticSearch problem: ", e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
         }
-    }
-
-    public int getAnzahlAktuelleSchritteOffen() {
-        return getAnzahlAktuelleSchritte(true, false);
-    }
-
-    public int getAnzahlAktuelleSchritteBearbeitung() {
-        return getAnzahlAktuelleSchritte(false, true);
+        return amount.intValue();
     }
 
     public boolean getShowStatistics() {

@@ -28,7 +28,7 @@ public class DBConnectionTestIT {
     public void test() throws Exception {
         ServiceManager serviceManager = new ServiceManager();
 
-        long counted = serviceManager.getProcessService().count("from Process");
+        long counted = serviceManager.getProcessService().count();
         Assert.assertNotNull("No Process found", counted);
         Assert.assertEquals(5, counted);
 

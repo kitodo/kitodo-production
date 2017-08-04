@@ -709,15 +709,14 @@ public class ProzesskopieForm implements Serializable {
 
             /* prüfen, ob der Prozesstitel schon verwendet wurde */
             if (this.prozessKopie.getTitle() != null) {
-                long anzahl = 0;
+                long amount = 0;
                 try {
-                    anzahl = serviceManager.getProcessService()
-                            .count("from Process where title='" + this.prozessKopie.getTitle() + "'");
-                } catch (DAOException e) {
+                    amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
+                } catch (DataException e) {
                     Helper.setFehlerMeldung("Error on reading process information", e.getMessage());
                     valide = false;
                 }
-                if (anzahl > 0) {
+                if (amount > 0) {
                     valide = false;
                     Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
                             + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));

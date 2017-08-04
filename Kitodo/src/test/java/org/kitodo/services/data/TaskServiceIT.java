@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 /**
@@ -42,6 +43,32 @@ public class TaskServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllTasks() throws Exception {
+        TaskService taskService = new TaskService();
+
+        Long amount = taskService.count();
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(5), amount);
+    }
+
+    @Test
+    public void shouldCountTasksAccordingToQuery() throws Exception {
+        TaskService taskService = new TaskService();
+        UserService userService = new UserService();
+
+        Long amount = taskService.getAmountOfCurrentTasks(true, true, userService.find(1));
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
+
+        amount = taskService.getAmountOfCurrentTasks(true, false, userService.find(1));
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(1), amount);
+
+        amount = taskService.getAmountOfCurrentTasks(false, true, userService.find(1));
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(1), amount);
+
+        amount = taskService.getAmountOfCurrentTasks(true, false, userService.find(2));
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(1), amount);
     }
 
     @Test

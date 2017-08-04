@@ -116,14 +116,23 @@ public class WorkpieceService extends SearchService<Workpiece> {
     }
 
     /**
-     * Search Batch objects by given query.
+     * Search Workpiece objects by given query.
      *
      * @param query
      *            as String
-     * @return list of Batch objects
+     * @return list of Workpiece objects
      */
     public List<Workpiece> search(String query) throws DAOException {
         return workpieceDAO.search(query);
+    }
+
+    /**
+     * Count all workpieces.
+     *
+     * @return amount of all workpieces
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
     }
 
     /**

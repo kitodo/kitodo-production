@@ -265,8 +265,42 @@ public class UserService extends SearchService<User> {
         return userDAO.search(query, namedParameter, parameter);
     }
 
-    public Long count(String query) throws DAOException {
-        return userDAO.count(query);
+    /**
+     * Count all users.
+     *
+     * @return amount of all users
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
+    }
+
+    /**
+     * Count users according to given query.
+     *
+     * @param query
+     *            for index search
+     * @return amount of users according to given query
+     */
+    public Long count(String query) throws DataException {
+        return searcher.countDocuments(query);
+    }
+
+    /**
+     * Get amount of users with exactly the same login like given but different id.
+     * 
+     * @param id
+     *            of user
+     * @param login
+     *            of user
+     * @return amount of users with exactly the same login like given but different
+     *         id
+     */
+    public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DataException {
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery.mustNot(createSimpleQuery("_id", id, true));
+        boolQuery.must(createSimpleQuery("login", login, true));
+        return count(boolQuery.toString());
+
     }
 
     /**
