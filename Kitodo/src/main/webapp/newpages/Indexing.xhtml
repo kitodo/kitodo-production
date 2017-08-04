@@ -419,6 +419,35 @@
                                                 </td>
                                             </tr>
 
+                                            <!-- Filter -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.filter}"/></td>
+                                                <td>
+                                                    <p:commandButton widgetVar="startIndexingFilter"
+                                                                     onclick="PF('filterProgress').start();toggleIndexingButtons(false);"
+                                                                     value="#{msgs.startIndexing}"
+                                                                     action="#{indexingForm.startFilterIndexing()}"
+                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.filterCount lt 1}"/>
+                                                </td>
+                                                <td>
+                                                    <p:progressBar widgetVar="filterProgress"
+                                                                   ajax="true"
+                                                                   value="#{indexingForm.filterIndexingProgress}"
+                                                                   labelTemplate="{value}%"
+                                                                   global="false"
+                                                                   style="width: 100px;">
+                                                    </p:progressBar>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{indexingForm.indexedFilter} / #{indexingForm.filterCount}"/>
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress gt 0 and indexingForm.filterIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == 100}" />
+                                                </td>
+                                            </tr>
+
                                             <tr>
                                                 <td colspan="6"><hr/></td>
                                             </tr>
