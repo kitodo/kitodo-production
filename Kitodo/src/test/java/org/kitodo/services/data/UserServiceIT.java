@@ -487,8 +487,7 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         List<UserDTO> allActiveUsers = userService.findActiveUsersByName("Jan");
-        assertTrue(allActiveUsers.size() == 1);
-        int actual = allActiveUsers.get(0).getId();
+        int actual = allActiveUsers.size();
         int expected = 1;
         assertEquals("Size of users is incorrect!", expected, actual);
 
