@@ -25,6 +25,10 @@
     <artifactId>OpacPica-Plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <maxAllowedViolations>36</maxAllowedViolations>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>net.xeoh</groupId>
