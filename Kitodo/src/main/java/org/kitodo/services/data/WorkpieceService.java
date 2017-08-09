@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Workpiece;
@@ -29,7 +30,6 @@ import org.kitodo.data.database.persistence.WorkpieceDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkpieceType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -176,7 +176,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            of process
      * @return search result with workpieces for specific process id
      */
-    public List<SearchResult> findByProcessId(Integer id) throws DataException {
+    public List<JSONObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("process", id, true);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -186,14 +186,14 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *
      * @param processTitle
      *            title of process
-     * @return search results with workpieces for specific process title
+     * @return JSON objects with workpieces for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String processTitle) throws DataException {
-        List<SearchResult> workpieces = new ArrayList<>();
+    public List<JSONObject> findByProcessTitle(String processTitle) throws DataException {
+        List<JSONObject> workpieces = new ArrayList<>();
 
-        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
-        for (SearchResult process : processes) {
-            workpieces.addAll(findByProcessId(process.getId()));
+        List<JSONObject> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
+        for (JSONObject process : processes) {
+            workpieces.addAll(findByProcessId(getIdFromJSONObject(process)));
         }
         return workpieces;
     }
@@ -205,14 +205,14 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            of property
      * @param value
      *            of property
-     * @return list of search results with workpieces for specific property
+     * @return list of JSON objects with workpieces for specific property
      */
-    public List<SearchResult> findByProperty(String title, String value) throws DataException {
-        List<SearchResult> workpieces = new ArrayList<>();
+    public List<JSONObject> findByProperty(String title, String value) throws DataException {
+        List<JSONObject> workpieces = new ArrayList<>();
 
-        List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
-        for (SearchResult property : properties) {
-            workpieces.addAll(findByPropertyId(property.getId()));
+        List<JSONObject> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+        for (JSONObject property : properties) {
+            workpieces.addAll(findByPropertyId(getIdFromJSONObject(property)));
         }
         return workpieces;
     }
@@ -222,9 +222,9 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *
      * @param id
      *            of property
-     * @return list of search results with workpieces for specific property id
+     * @return list of JSON objects with workpieces for specific property id
      */
-    private List<SearchResult> findByPropertyId(Integer id) throws DataException {
+    private List<JSONObject> findByPropertyId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("properties.id", id, true);
         return searcher.findDocuments(query.toString());
     }

@@ -92,22 +92,21 @@ public class Searcher extends Index {
      *
      * @param id
      *            of searched document
-     * @return search result
+     * @return JSONObject
      */
-    public SearchResult findDocument(Integer id) throws DataException {
+    public JSONObject findDocument(Integer id) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(id);
         if (!response.equals("")) {
             try {
-                JSONObject result = (JSONObject) parser.parse(response);
-                return convertJsonStringToSearchResult(result);
+                return (JSONObject) parser.parse(response);
             } catch (ParseException e) {
                 throw new DataException(e);
             }
         } else {
-            return new SearchResult();
+            return new JSONObject();
         }
     }
 
@@ -119,9 +118,8 @@ public class Searcher extends Index {
      *            as String
      * @return search result
      */
-    public SearchResult findDocument(String query) throws DataException {
+    public JSONObject findDocument(String query) throws DataException {
         SearchRestClient restClient = initiateRestClient();
-        SearchResult searchResult = new SearchResult();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(query);
@@ -131,15 +129,15 @@ public class Searcher extends Index {
                 JSONObject hits = (JSONObject) jsonObject.get("hits");
                 JSONArray inHits = (JSONArray) hits.get("hits");
                 if (!inHits.isEmpty()) {
-                    searchResult = convertJsonStringToSearchResult((JSONObject) inHits.get(0));
+                    return (JSONObject) inHits.get(0);
                 }
             } else {
-                searchResult = convertJsonStringToSearchResult(jsonObject);
+                return jsonObject;
             }
         } catch (ParseException e) {
             throw new DataException(e);
         }
-        return searchResult;
+        return new JSONObject();
     }
 
     /**
@@ -147,11 +145,11 @@ public class Searcher extends Index {
      *
      * @param query
      *            as String
-     * @return list of SearchResult objects
+     * @return list of JSON objects
      */
-    public List<SearchResult> findDocuments(String query) throws DataException {
+    public List<JSONObject> findDocuments(String query) throws DataException {
         SearchRestClient restClient = initiateRestClient();
-        List<SearchResult> searchResults = new ArrayList<>();
+        List<JSONObject> searchResults = new ArrayList<>();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(query);
@@ -162,33 +160,17 @@ public class Searcher extends Index {
                 JSONArray inHits = (JSONArray) hits.get("hits");
                 if (!inHits.isEmpty()) {
                     for (Object hit : inHits) {
-                        searchResults.add(convertJsonStringToSearchResult((JSONObject) hit));
+                        searchResults.add((JSONObject) hit);
                     }
                 }
             } else {
-                searchResults.add(convertJsonStringToSearchResult(jsonObject));
+                searchResults.add(jsonObject);
             }
         } catch (ParseException e) {
             throw new DataException(e);
         }
 
         return searchResults;
-    }
-
-    @SuppressWarnings("unchecked")
-    private SearchResult convertJsonStringToSearchResult(JSONObject jsonObject) {
-        SearchResult searchResult = new SearchResult();
-
-        searchResult.setId(Integer.valueOf(jsonObject.get("_id").toString()));
-        HashMap<String, Object> properties = new HashMap<>();
-        JSONObject result = (JSONObject) jsonObject.get("_source");
-        Set<Map.Entry<String, Object>> entries = result.entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-            properties.put(entry.getKey(), entry.getValue());
-        }
-        searchResult.setProperties(properties);
-
-        return searchResult;
     }
 
     private SearchRestClient initiateRestClient() {

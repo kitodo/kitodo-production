@@ -30,12 +30,12 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
@@ -77,8 +77,8 @@ public abstract class SearchService<T extends BaseBean> {
     public abstract void saveToIndex(T baseBean) throws CustomResponseException, IOException;
 
     /**
-     * Method necessary for get from database object by id. It is used in
-     * removeById method.
+     * Method necessary for get from database object by id. It is used in removeById
+     * method.
      *
      * @param id
      *            of object
@@ -87,8 +87,8 @@ public abstract class SearchService<T extends BaseBean> {
     public abstract T find(Integer id) throws DAOException;
 
     /**
-     * Method necessary for conversion of SearchResult objects to exact bean
-     * objects called from database.
+     * Method necessary for conversion of JSON objects to exact bean objects called
+     * from database.
      *
      * @param query
      *            as String
@@ -144,21 +144,20 @@ public abstract class SearchService<T extends BaseBean> {
     }
 
     /**
-     * Method saves object to database and document to the index of Elastic
-     * Search. This method binds three other methods: save to database, save to
-     * index and save dependencies to index.
+     * Method saves object to database and document to the index of Elastic Search.
+     * This method binds three other methods: save to database, save to index and
+     * save dependencies to index.
      * 
      * <p>
-     * First step sets up the flag indexAction to state Index and saves to
-     * database. It informs that object was updated in database but not yet in
-     * index. If this step fails, method breaks. If it is successful, method
-     * saves changes to index, first document and next its dependencies. If one
-     * of this steps fails, method retries up to 5 times operations on index. If
-     * it continues to fail, method breaks. If save to index was successful,
-     * indexAction flag is changed to Done and database is again updated. There
-     * is possibility that last step fails and in that case, even if index is up
-     * to date, in some point of the future it will be reindexed by
-     * administrator.
+     * First step sets up the flag indexAction to state Index and saves to database.
+     * It informs that object was updated in database but not yet in index. If this
+     * step fails, method breaks. If it is successful, method saves changes to
+     * index, first document and next its dependencies. If one of this steps fails,
+     * method retries up to 5 times operations on index. If it continues to fail,
+     * method breaks. If save to index was successful, indexAction flag is changed
+     * to Done and database is again updated. There is possibility that last step
+     * fails and in that case, even if index is up to date, in some point of the
+     * future it will be reindexed by administrator.
      * </p>
      *
      * @param baseBean
@@ -257,7 +256,7 @@ public abstract class SearchService<T extends BaseBean> {
      *
      * @return list of all documents
      */
-    public List<SearchResult> findAllDocuments() throws DataException {
+    public List<JSONObject> findAllDocuments() throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -269,12 +268,12 @@ public abstract class SearchService<T extends BaseBean> {
      *            of the searched user
      * @return search result
      */
-    public SearchResult findById(Integer id) throws DataException {
+    public JSONObject findById(Integer id) throws DataException {
         return searcher.findDocument(id);
     }
 
     /**
-     * Convert list of SearchResult object to list of bean objects.
+     * Convert list of JSONObject object to list of bean objects.
      *
      * @param searchResults
      *            list of results from ElasticSearch
@@ -282,14 +281,14 @@ public abstract class SearchService<T extends BaseBean> {
      *            name
      * @return list of beans
      */
-    public List<? extends BaseBean> convertSearchResultsToObjectList(List<SearchResult> searchResults, String table)
+    public List<? extends BaseBean> convertJSONObjectsToObjectList(List<JSONObject> searchResults, String table)
             throws DAOException {
         StringBuilder query = new StringBuilder();
         query.append("FROM ");
         query.append(table);
         query.append(" WHERE id IN (");
-        for (SearchResult searchResult : searchResults) {
-            query.append(searchResult.getId());
+        for (JSONObject searchResult : searchResults) {
+            query.append(getIdFromJSONObject(searchResult));
             query.append(",");
         }
         query.deleteCharAt(query.length() - 1);
@@ -298,28 +297,49 @@ public abstract class SearchService<T extends BaseBean> {
     }
 
     /**
-     * Convert SearchResult object to bean object.
+     * Convert JSONObject object to bean object.
      *
      * @param searchResult
      *            result from ElasticSearch
      * @return bean object
      */
-    public T convertSearchResultToObject(SearchResult searchResult) throws DAOException {
-        if (searchResult.getId() == null) {
+    public T convertJSONObjectToObject(JSONObject searchResult) throws DAOException {
+        if (getIdFromJSONObject(searchResult) == 0) {
             // TODO: maybe here could be used some instancing of generic
             // class...
             return null;
         } else {
-            return find(searchResult.getId());
+            return find(getIdFromJSONObject(searchResult));
         }
     }
 
     /**
-     *
+     * Get id from JSON object returned form ElasticSearch.
+     * 
+     * @param jsonObject
+     *            returned form ElasticSearch
+     * @return id as Integer
+     */
+    public Integer getIdFromJSONObject(JSONObject jsonObject) {
+        Object id = jsonObject.get("_id");
+        if (id != null) {
+            return Integer.valueOf(id.toString());
+        }
+        return 0;
+    }
+
+    /**
+     * Create query for set of data.
+     * 
      * @param key
+     *            JSON key for searched object
      * @param ids
+     *            set of id values for searched objects or some objects related to
+     *            searched object
      * @param contains
-     * @return
+     *            determine if results should contain given value or should not
+     *            contain given value
+     * @return query
      */
     protected QueryBuilder createSetQuery(String key, Set<Integer> ids, boolean contains) {
         if (contains && ids.size() > 0) {
@@ -516,10 +536,10 @@ public abstract class SearchService<T extends BaseBean> {
     }
 
     /**
-     * Return server information provided by the indexer and gathered by the rest client..
+     * Return server information provided by the indexer and gathered by the rest
+     * client.
      *
-     * @return String
-     *             information about the server
+     * @return String information about the server
      */
     public String getServerInformation() {
         return indexer.getServerInformation();

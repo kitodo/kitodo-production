@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,7 +24,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for WorkpieceService class.
@@ -72,23 +72,23 @@ public class WorkpieceServiceIT {
         Workpiece workpiece = new Workpiece();
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
-        Workpiece foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(3));
+        Workpiece foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(3));
         assertEquals("Additional workpiece was not inserted in database!", "First process",
                 foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(workpiece);
-        foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(3));
+        foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(3));
         assertEquals("Additional workpiece was not removed from database!", null, foundWorkpiece);
 
         workpiece = new Workpiece();
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
-        foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(4));
+        foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(4));
         assertEquals("Additional workpiece was not inserted in database!", "First process",
                 foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(4);
-        foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(4));
+        foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(4));
         assertEquals("Additional workpiece was not removed from database!", null, foundWorkpiece);
     }
 
@@ -96,8 +96,8 @@ public class WorkpieceServiceIT {
     public void shouldFindById() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        SearchResult workpiece = workpieceService.findById(1);
-        Integer actual = workpiece.getId();
+        JSONObject workpiece = workpieceService.findById(1);
+        Integer actual = workpieceService.getIdFromJSONObject(workpiece);
         Integer expected = 1;
         assertEquals("Workpiece was not found in index!", expected, actual);
     }
@@ -106,7 +106,7 @@ public class WorkpieceServiceIT {
     public void shouldFindByProcessId() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        List<SearchResult> workpieces = workpieceService.findByProcessId(1);
+        List<JSONObject> workpieces = workpieceService.findByProcessId(1);
         Integer actual = workpieces.size();
         Integer expected = 2;
         assertEquals("Workpiece were not found in index!", expected, actual);
@@ -121,7 +121,7 @@ public class WorkpieceServiceIT {
     public void shouldFindByProcessTitle() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        List<SearchResult> workpieces = workpieceService.findByProcessTitle("First process");
+        List<JSONObject> workpieces = workpieceService.findByProcessTitle("First process");
         Integer actual = workpieces.size();
         Integer expected = 2;
         assertEquals("Workpiece was not found in index!", expected, actual);
@@ -136,7 +136,7 @@ public class WorkpieceServiceIT {
     public void shouldFindByProperty() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        List<SearchResult> workpieces = workpieceService.findByProperty("FirstWorkpiece Property", "first value");
+        List<JSONObject> workpieces = workpieceService.findByProperty("FirstWorkpiece Property", "first value");
         Integer actual = workpieces.size();
         Integer expected = 1;
         assertEquals("Workpiece was not found in index!", expected, actual);

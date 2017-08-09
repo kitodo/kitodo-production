@@ -23,6 +23,7 @@ import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.Netty4Plugin;
+import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -99,10 +100,15 @@ public class SearcherIT {
     @Test
     public void shouldFindDocumentById() throws Exception {
         Searcher searcher = new Searcher("testsearch");
-        SearchResult result = searcher.findDocument(1);
+        JSONObject result = searcher.findDocument(1);
+        JSONObject jsonObject = (JSONObject) result.get("_source");
+        String actual = (String) jsonObject.get("title");
 
-        boolean condition = result.getId().equals(1) == result.getProperties().get("title").equals("Batch1");
-        assertTrue("Incorrect result - id or title don't match to given plain text!", condition);
+        boolean condition = getIdFromJSONObject(result).equals(1);
+        assertTrue("Incorrect result - id doesn't match to given plain text!", condition);
+
+        condition = actual.equals("Batch1");
+        assertTrue("Incorrect result - title doesn't match to given plain text!", condition);
     }
 
     @Test
@@ -111,23 +117,25 @@ public class SearcherIT {
         Searcher searcher = new Searcher("testsearch");
 
         String query = "{\n\"match_all\" : {}\n}";
-        SearchResult result = searcher.findDocument(query);
-        Integer id = result.getId();
+        JSONObject result = searcher.findDocument(query);
+        JSONObject jsonObject = (JSONObject) result.get("_source");
+        Integer id = getIdFromJSONObject(result);
         assertEquals("Incorrect result - id doesn't match to given number!", 1, id.intValue());
-        String title = (String) result.getProperties().get("title");
+        String title = (String) jsonObject.get("title");
         assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch1", title);
 
         query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
         result = searcher.findDocument(query);
-        id = result.getId();
+        jsonObject = (JSONObject) result.get("_source");
+        id = getIdFromJSONObject(result);
         assertEquals("Incorrect result - id doesn't match to given plain text!", 1, id.intValue());
-        title = (String) result.getProperties().get("title");
+        title = (String) jsonObject.get("title");
         assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch1", title);
 
         query = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
         result = searcher.findDocument(query);
-        id = result.getId();
-        assertEquals("Incorrect result - id has another value than null!", null, id);
+        id = getIdFromJSONObject(result);
+        assertEquals("Incorrect result - id has another value than null!", Integer.valueOf(0), id);
     }
 
     @Test
@@ -136,8 +144,8 @@ public class SearcherIT {
         Searcher searcher = new Searcher("testsearch");
 
         String query = "{\n\"match_all\" : {}\n}";
-        List<SearchResult> result = searcher.findDocuments(query);
-        Integer id = result.get(0).getId();
+        List<JSONObject> result = searcher.findDocuments(query);
+        Integer id = getIdFromJSONObject(result.get(0));
         assertEquals("Incorrect result - id doesn't match to given int values!", 1, id.intValue());
 
         int size = result.size();
@@ -145,7 +153,7 @@ public class SearcherIT {
 
         query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
         result = searcher.findDocuments(query);
-        id = result.get(0).getId();
+        id = getIdFromJSONObject(result.get(0));
         assertEquals("Incorrect result - id doesn't match to given int values!", 1, id.intValue());
         size = result.size();
         assertEquals("Incorrect result - size doesn't match to given int value!", 1, size);
@@ -162,5 +170,17 @@ public class SearcherIT {
         restClient.setIndex(testIndexName);
         restClient.setType("testsearch");
         return restClient;
+    }
+
+    /**
+     * Get id from JSON object returned form ElasticSearch.
+     * @param jsonObject returned form ElasticSearch
+     * @return id as Integer
+     */
+    private static Integer getIdFromJSONObject(JSONObject jsonObject) {
+        if (jsonObject.get("_id") != null) {
+            return Integer.valueOf(jsonObject.get("_id").toString());
+        }
+        return 0;
     }
 }

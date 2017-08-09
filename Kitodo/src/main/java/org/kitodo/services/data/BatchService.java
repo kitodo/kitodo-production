@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -33,7 +34,6 @@ import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -173,9 +173,9 @@ public class BatchService extends TitleSearchService<Batch> {
      *
      * @param type
      *            of the searched batches
-     * @return list of search results with batches of exact type
+     * @return list of JSON objects with batches of exact type
      */
-    public List<SearchResult> findByType(Batch.Type type, boolean contains) throws DataException {
+    public List<JSONObject> findByType(Batch.Type type, boolean contains) throws DataException {
         QueryBuilder query = createSimpleQuery("type", type.toString(), contains);
         return searcher.findDocuments(query.toString());
     }
@@ -188,9 +188,9 @@ public class BatchService extends TitleSearchService<Batch> {
      *            of the searched batches
      * @param type
      *            of the searched batches
-     * @return list of search results with batches of exact type
+     * @return list of JSON objects with batches of exact type
      */
-    public List<SearchResult> findByTitleAndType(String title, Batch.Type type) throws DataException {
+    public List<JSONObject> findByTitleAndType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("type", type.toString(), true));
@@ -206,7 +206,7 @@ public class BatchService extends TitleSearchService<Batch> {
      *            of the searched batch
      * @return search result
      */
-    public List<SearchResult> findByTitleOrType(String title, Batch.Type type) throws DataException {
+    public List<JSONObject> findByTitleOrType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true, Operator.AND));
         query.should(createSimpleQuery("type", type.toString(), true));
@@ -218,9 +218,9 @@ public class BatchService extends TitleSearchService<Batch> {
      *
      * @param id
      *            of process
-     * @return list of search results with batches for specific process id
+     * @return list of JSON objects with batches for specific process id
      */
-    public List<SearchResult> findByProcessId(Integer id) throws DataException {
+    public List<JSONObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -230,14 +230,14 @@ public class BatchService extends TitleSearchService<Batch> {
      *
      * @param title
      *            of process
-     * @return list of search results with batches for specific process title
+     * @return list of JSON objects with batches for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String title) throws DataException {
-        List<SearchResult> batches = new ArrayList<>();
+    public List<JSONObject> findByProcessTitle(String title) throws DataException {
+        List<JSONObject> batches = new ArrayList<>();
 
-        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(title, true);
-        for (SearchResult process : processes) {
-            batches.addAll(findByProcessId(process.getId()));
+        List<JSONObject> processes = serviceManager.getProcessService().findByTitle(title, true);
+        for (JSONObject process : processes) {
+            batches.addAll(findByProcessId(getIdFromJSONObject(process)));
         }
         return batches;
     }

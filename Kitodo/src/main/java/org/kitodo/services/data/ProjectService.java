@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -36,7 +37,6 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
@@ -185,9 +185,9 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of the searched projects as Date
      * @param searchCondition
      *            as SearchCondition - bigger, smaller and so on
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
+    public List<JSONObject> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("startDate", startDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -199,9 +199,9 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of the searched projects as Date
      * @param searchCondition
      *            as SearchCondition - bigger, smaller and so on
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
+    public List<JSONObject> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("endDate", endDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -213,9 +213,9 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as Integer
      * @param searchCondition
      *            as SearchCondition - bigger, smaller and so on
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
+    public List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
             throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfPages", numberOfPages, searchCondition);
         return searcher.findDocuments(query.toString());
@@ -228,9 +228,9 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as Integer
      * @param searchCondition
      *            as SearchCondition - bigger, smaller and so on
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
+    public List<JSONObject> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
             throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfVolumes", numberOfVolumes, searchCondition);
         return searcher.findDocuments(query.toString());
@@ -242,9 +242,9 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param archived
      *            if true - find archived projects, if false - find not archived
      *            projects
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByArchived(Boolean archived) throws DataException {
+    public List<JSONObject> findByArchived(Boolean archived) throws DataException {
         QueryBuilder query = createSimpleQuery("archived", archived.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -256,7 +256,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of process
      * @return search result
      */
-    public SearchResult findByProcessId(Integer id) throws DataException {
+    public JSONObject findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.id", id, true);
         return searcher.findDocument(query.toString());
     }
@@ -266,14 +266,14 @@ public class ProjectService extends TitleSearchService<Project> {
      *
      * @param title
      *            of process
-     * @return list of search results with projects for specific process title
+     * @return list of JSON objects with projects for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String title) throws DataException {
-        List<SearchResult> projects = new ArrayList<>();
+    public List<JSONObject> findByProcessTitle(String title) throws DataException {
+        List<JSONObject> projects = new ArrayList<>();
 
-        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(title, true);
-        for (SearchResult process : processes) {
-            projects.add(findByProcessId(process.getId()));
+        List<JSONObject> processes = serviceManager.getProcessService().findByTitle(title, true);
+        for (JSONObject process : processes) {
+            projects.add(findByProcessId(getIdFromJSONObject(process)));
         }
         return projects;
     }
@@ -283,9 +283,9 @@ public class ProjectService extends TitleSearchService<Project> {
      *
      * @param id
      *            of user
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByUserId(Integer id) throws DataException {
+    public List<JSONObject> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -297,9 +297,9 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of user
      * @return list of search result with projects for specific user login
      */
-    public List<SearchResult> findByUserLogin(String login) throws DataException {
-        SearchResult user = serviceManager.getUserService().findByLogin(login);
-        return findByUserId(user.getId());
+    public List<JSONObject> findByUserLogin(String login) throws DataException {
+        JSONObject user = serviceManager.getUserService().findByLogin(login);
+        return findByUserId(getIdFromJSONObject(user));
     }
 
     /**

@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,7 +24,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for TemplateService class.
@@ -72,22 +72,22 @@ public class TemplateServiceIT {
         template.setOrigin("To Remove");
         template.setProcess(process);
         templateService.save(template);
-        Template foundTemplate = templateService.convertSearchResultToObject(templateService.findById(3));
+        Template foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(3));
         assertEquals("Additional template was not inserted in database!", "To Remove", foundTemplate.getOrigin());
 
         templateService.remove(foundTemplate);
-        foundTemplate = templateService.convertSearchResultToObject(templateService.findById(3));
+        foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(3));
         assertEquals("Additional template was not removed from database!", null, foundTemplate);
 
         template = new Template();
         template.setOrigin("To remove");
         template.setProcess(process);
         templateService.save(template);
-        foundTemplate = templateService.convertSearchResultToObject(templateService.findById(4));
+        foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(4));
         assertEquals("Additional template was not inserted in database!", "To remove", foundTemplate.getOrigin());
 
         templateService.remove(4);
-        foundTemplate = templateService.convertSearchResultToObject(templateService.findById(4));
+        foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(4));
         assertEquals("Additional template was not removed from database!", null, foundTemplate);
     }
 
@@ -95,8 +95,8 @@ public class TemplateServiceIT {
     public void shouldFindById() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        SearchResult template = templateService.findById(1);
-        Integer actual = template.getId();
+        JSONObject template = templateService.findById(1);
+        Integer actual = templateService.getIdFromJSONObject(template);
         Integer expected = 1;
         assertEquals("Template was not found in index!", expected, actual);
     }
@@ -105,7 +105,7 @@ public class TemplateServiceIT {
     public void shouldFindByOrigin() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        List<SearchResult> templates = templateService.findByOrigin("test");
+        List<JSONObject> templates = templateService.findByOrigin("test");
         Integer actual = templates.size();
         Integer expected = 1;
         assertEquals("Template was not found in index!", expected, actual);
@@ -120,7 +120,7 @@ public class TemplateServiceIT {
     public void shouldFindByProcessId() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        List<SearchResult> templates = templateService.findByProcessId(1);
+        List<JSONObject> templates = templateService.findByProcessId(1);
         Integer actual = templates.size();
         Integer expected = 2;
         assertEquals("Workpiece were not found in index!", expected, actual);
@@ -135,7 +135,7 @@ public class TemplateServiceIT {
     public void shouldFindByProcessTitle() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        List<SearchResult> templates = templateService.findByProcessTitle("First process");
+        List<JSONObject> templates = templateService.findByProcessTitle("First process");
         Integer actual = templates.size();
         Integer expected = 2;
         assertEquals("Workpiece was not found in index!", expected, actual);
@@ -150,7 +150,7 @@ public class TemplateServiceIT {
     public void shouldFindByProperty() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        List<SearchResult> templates = templateService.findByProperty("firstTemplate title", "first value");
+        List<JSONObject> templates = templateService.findByProperty("firstTemplate title", "first value");
         Integer actual = templates.size();
         Integer expected = 1;
         assertEquals("Template was not found in index!", expected, actual);

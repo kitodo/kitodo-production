@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -26,7 +27,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for UserGroupService class.
@@ -77,12 +77,12 @@ public class UserGroupServiceIT {
         userGroupService.save(userGroup);
         Thread.sleep(1000);
         UserGroup foundUserGroup = userGroupService
-                .convertSearchResultToObject(userGroupService.findByTitle("To Remove", true).get(0));
+                .convertJSONObjectToObject(userGroupService.findByTitle("To Remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundUserGroup.getTitle());
 
         userGroupService.remove(foundUserGroup);
         foundUserGroup = userGroupService
-                .convertSearchResultToObject(userGroupService.findById(foundUserGroup.getId()));
+                .convertJSONObjectToObject(userGroupService.findById(foundUserGroup.getId()));
         assertEquals("Additional user group was not removed from database!", null, foundUserGroup);
 
         userGroup = new UserGroup();
@@ -90,12 +90,12 @@ public class UserGroupServiceIT {
         userGroupService.save(userGroup);
         Thread.sleep(1000);
         foundUserGroup = userGroupService
-                .convertSearchResultToObject(userGroupService.findByTitle("To remove", true).get(0));
+                .convertJSONObjectToObject(userGroupService.findByTitle("To remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To remove", foundUserGroup.getTitle());
 
         userGroupService.remove(foundUserGroup.getId());
         exception.expect(DAOException.class);
-        userGroupService.convertSearchResultToObject(userGroupService.findByTitle("To remove", true).get(0));
+        userGroupService.convertJSONObjectToObject(userGroupService.findByTitle("To remove", true).get(0));
     }
 
     @Test
@@ -129,8 +129,9 @@ public class UserGroupServiceIT {
     public void shouldFindById() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        SearchResult userGroup = userGroupService.findById(1);
-        String actual = (String) userGroup.getProperties().get("title");
+        JSONObject userGroup = userGroupService.findById(1);
+        JSONObject jsonObject = (JSONObject) userGroup.get("_source");
+        String actual = (String) jsonObject.get("title");
         String expected = "Admin";
         assertEquals("User group was not found in index!", expected, actual);
     }
@@ -139,7 +140,7 @@ public class UserGroupServiceIT {
     public void shouldFindByTitle() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        List<SearchResult> userGroups = userGroupService.findByTitle("Admin", true);
+        List<JSONObject> userGroups = userGroupService.findByTitle("Admin", true);
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
@@ -154,7 +155,7 @@ public class UserGroupServiceIT {
     public void shouldFindByPermission() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        List<SearchResult> userGroups = userGroupService.findByPermission(1);
+        List<JSONObject> userGroups = userGroupService.findByPermission(1);
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
@@ -174,7 +175,7 @@ public class UserGroupServiceIT {
     public void shouldFindByUserId() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        List<SearchResult> userGroups = userGroupService.findByUserId(1);
+        List<JSONObject> userGroups = userGroupService.findByUserId(1);
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
@@ -189,7 +190,7 @@ public class UserGroupServiceIT {
     public void shouldFindByUserLogin() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        List<SearchResult> userGroups = userGroupService.findByUserLogin("kowal");
+        List<JSONObject> userGroups = userGroupService.findByUserLogin("kowal");
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);

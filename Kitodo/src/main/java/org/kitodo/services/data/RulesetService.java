@@ -23,13 +23,13 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -129,7 +129,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of the searched ruleset
      * @return search result
      */
-    public SearchResult findByFile(String file) throws DataException {
+    public JSONObject findByFile(String file) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("file", file, true);
         return searcher.findDocument(queryBuilder.toString());
     }
@@ -139,9 +139,9 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *
      * @param fileContent
      *            of the searched ruleset
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByFileContent(String fileContent) throws DataException {
+    public List<JSONObject> findByFileContent(String fileContent) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("fileContent", fileContent, true);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -155,7 +155,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of the searched ruleset
      * @return search result
      */
-    public SearchResult findByTitleAndFile(String title, String file) throws DataException {
+    public JSONObject findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("file", file, true, Operator.AND));
@@ -171,7 +171,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of the searched ruleset
      * @return search result
      */
-    public List<SearchResult> findByTitleOrFile(String title, String file) throws DataException {
+    public List<JSONObject> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true));
         query.should(createSimpleQuery("file", file, true));

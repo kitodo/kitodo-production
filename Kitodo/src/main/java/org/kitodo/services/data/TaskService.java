@@ -33,12 +33,12 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.hibernate.Session;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -54,7 +54,6 @@ import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -282,11 +281,11 @@ public class TaskService extends TitleSearchService<Task> {
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
 
-        List<SearchResult> templateProcesses = serviceManager.getProcessService().findByTemplate(true);
+        List<JSONObject> templateProcesses = serviceManager.getProcessService().findByTemplate(true);
         if (templateProcesses.size() > 0) {
             Set<Integer> templates = new HashSet<>();
-            for (SearchResult searchResult : templateProcesses) {
-                templates.add(searchResult.getId());
+            for (JSONObject jsonObject : templateProcesses) {
+                templates.add(getIdFromJSONObject(jsonObject));
             }
 
             boolQuery.mustNot(createSetQuery("process", templates, true));
@@ -300,9 +299,9 @@ public class TaskService extends TitleSearchService<Task> {
      *
      * @param id
      *            of process
-     * @return list of search results with tasks for specific process id
+     * @return list of JSON objects with tasks for specific process id
      */
-    public List<SearchResult> findByProcessId(Integer id) throws DataException {
+    public List<JSONObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("process", id, true);
         return searcher.findDocuments(query.toString());
     }

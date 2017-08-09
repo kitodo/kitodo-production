@@ -58,6 +58,7 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.json.simple.JSONObject;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -85,7 +86,6 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
@@ -244,9 +244,9 @@ public class ProcessService extends TitleSearchService<Process> {
             serviceManager.getTaskService().saveToIndex(task);
         }
 
-        List<SearchResult> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
-        for (SearchResult test : searchResults) {
-            Integer id = test.getId();
+        List<JSONObject> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
+        for (JSONObject object : searchResults) {
+            Integer id = getIdFromJSONObject(object);
             index.add(id);
         }
 
@@ -410,9 +410,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param outputName
      *            as String
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByOutputName(String outputName) throws DataException {
+    public List<JSONObject> findByOutputName(String outputName) throws DataException {
         QueryBuilder query = createSimpleQuery("outputName", outputName, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -424,9 +424,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of the searched processes as Date
      * @param searchCondition
      *            as SearchCondition - bigger, smaller and so on
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByCreationDate(Date creationDate, SearchCondition searchCondition)
+    public List<JSONObject> findByCreationDate(Date creationDate, SearchCondition searchCondition)
             throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("creationDate", creationDate, searchCondition);
         return searcher.findDocuments(query.toString());
@@ -437,9 +437,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param wikiField
      *            as String
-     * @return list of search results
+     * @return list of JSON objects
      */
-    public List<SearchResult> findByWikiField(String wikiField) throws DataException {
+    public List<JSONObject> findByWikiField(String wikiField) throws DataException {
         QueryBuilder query = createSimpleQuery("wikiField", wikiField, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -451,7 +451,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            as Boolean
      * @return list of search results
      */
-    public List<SearchResult> findByTemplate(Boolean template) throws DataException {
+    public List<JSONObject> findByTemplate(Boolean template) throws DataException {
         QueryBuilder query = createSimpleQuery("template", template, true);
         System.out.println(query.toString());
         return searcher.findDocuments(query.toString());
@@ -462,9 +462,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param id
      *            of project
-     * @return list of search results with processes for specific process id
+     * @return list of JSON objects with processes for specific process id
      */
-    public List<SearchResult> findByProjectId(Integer id) throws DataException {
+    public List<JSONObject> findByProjectId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("project", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -474,9 +474,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param docket
      *            of project
-     * @return list of search results with processes for specific docket
+     * @return list of JSON objects with processes for specific docket
      */
-    public List<SearchResult> findByDocket(Docket docket) throws DataException {
+    public List<JSONObject> findByDocket(Docket docket) throws DataException {
         QueryBuilder query = createSimpleQuery("docket_id", docket.getId(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -486,9 +486,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param ruleset
      *            of project
-     * @return list of search results with processes for specific ruleset
+     * @return list of JSON objects with processes for specific ruleset
      */
-    public List<SearchResult> findByRuleset(Ruleset ruleset) throws DataException {
+    public List<JSONObject> findByRuleset(Ruleset ruleset) throws DataException {
         QueryBuilder query = createSimpleQuery("ruleset", ruleset.getId(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -498,14 +498,14 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param title
      *            of process
-     * @return list of search results with processes for specific process id
+     * @return list of JSON objects with processes for specific process id
      */
-    public List<SearchResult> findByProjectTitle(String title) throws DataException {
-        List<SearchResult> processes = new ArrayList<>();
+    public List<JSONObject> findByProjectTitle(String title) throws DataException {
+        List<JSONObject> processes = new ArrayList<>();
 
-        List<SearchResult> projects = serviceManager.getProjectService().findByTitle(title, true);
-        for (SearchResult project : projects) {
-            processes.addAll(findByProjectId(project.getId()));
+        List<JSONObject> projects = serviceManager.getProjectService().findByTitle(title, true);
+        for (JSONObject project : projects) {
+            processes.addAll(findByProjectId(getIdFromJSONObject(project)));
         }
         return processes;
     }
@@ -515,9 +515,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param id
      *            of process
-     * @return list of search results with processes for specific batch id
+     * @return list of JSON objects with processes for specific batch id
      */
-    public List<SearchResult> findByBatchId(Integer id) throws DataException {
+    public List<JSONObject> findByBatchId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("batches.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -527,14 +527,14 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param title
      *            of batch
-     * @return list of search results with processes for specific batch title
+     * @return list of JSON objects with processes for specific batch title
      */
-    public List<SearchResult> findByBatchTitle(String title) throws DataException {
-        List<SearchResult> processes = new ArrayList<>();
+    public List<JSONObject> findByBatchTitle(String title) throws DataException {
+        List<JSONObject> processes = new ArrayList<>();
 
-        List<SearchResult> batches = serviceManager.getBatchService().findByTitle(title, true);
-        for (SearchResult batch : batches) {
-            processes.addAll(findByBatchId(batch.getId()));
+        List<JSONObject> batches = serviceManager.getBatchService().findByTitle(title, true);
+        for (JSONObject batch : batches) {
+            processes.addAll(findByBatchId(getIdFromJSONObject(batch)));
         }
         return processes;
     }
@@ -546,14 +546,14 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of property
      * @param value
      *            of property
-     * @return list of search results with processes for specific property
+     * @return list of JSON objects with processes for specific property
      */
-    public List<SearchResult> findByProperty(String title, String value) throws DataException {
-        List<SearchResult> processes = new ArrayList<>();
+    public List<JSONObject> findByProperty(String title, String value) throws DataException {
+        List<JSONObject> processes = new ArrayList<>();
 
-        List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
-        for (SearchResult property : properties) {
-            processes.addAll(findByPropertyId(property.getId()));
+        List<JSONObject> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+        for (JSONObject property : properties) {
+            processes.addAll(findByPropertyId(getIdFromJSONObject(property)));
         }
         return processes;
     }
@@ -563,9 +563,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param id
      *            of property
-     * @return list of search results with processes for specific property id
+     * @return list of JSON objects with processes for specific property id
      */
-    private List<SearchResult> findByPropertyId(Integer id) throws DataException {
+    private List<JSONObject> findByPropertyId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("properties.id", id, true);
         return searcher.findDocuments(query.toString());
     }

@@ -16,13 +16,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for RulesetService class.
@@ -65,8 +65,9 @@ public class RulesetServiceIT {
     public void shouldFindById() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        SearchResult ruleset = rulesetService.findById(1);
-        String actual = (String) ruleset.getProperties().get("title");
+        JSONObject ruleset = rulesetService.findById(1);
+        JSONObject jsonObject = (JSONObject) ruleset.get("_source");
+        String actual = (String) jsonObject.get("title");
         String expected = "SLUBDD";
         assertEquals("Ruleset was not found in index!", expected, actual);
     }
@@ -75,7 +76,7 @@ public class RulesetServiceIT {
     public void shouldFindByTitle() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        List<SearchResult> rulesets = rulesetService.findByTitle("SLUBDD", true);
+        List<JSONObject> rulesets = rulesetService.findByTitle("SLUBDD", true);
         Integer actual = rulesets.size();
         Integer expected = 1;
         assertEquals("Ruleset was not found in index!", expected, actual);
@@ -85,8 +86,9 @@ public class RulesetServiceIT {
     public void shouldFindByFile() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        SearchResult ruleset = rulesetService.findByFile("ruleset_slubdd.xml");
-        String actual = (String) ruleset.getProperties().get("file");
+        JSONObject ruleset = rulesetService.findByFile("ruleset_slubdd.xml");
+        JSONObject jsonObject = (JSONObject) ruleset.get("_source");
+        String actual = (String) jsonObject.get("file");
         String expected = "ruleset_slubdd.xml";
         assertEquals("Ruleset was not found in index!", expected, actual);
     }
@@ -95,14 +97,14 @@ public class RulesetServiceIT {
     public void shouldFindByTitleAndFile() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        SearchResult ruleset = rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml");
-        Integer actual = ruleset.getId();
+        JSONObject ruleset = rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml");
+        Integer actual = rulesetService.getIdFromJSONObject(ruleset);
         Integer expected = 2;
         assertEquals("Ruleset was not found in index!", expected, actual);
 
         ruleset = rulesetService.findByTitleAndFile("SLUBDD", "none");
-        actual = ruleset.getId();
-        expected = null;
+        actual = rulesetService.getIdFromJSONObject(ruleset);
+        expected = 0;
         assertEquals("Ruleset was found in index!", expected, actual);
     }
 
@@ -110,7 +112,7 @@ public class RulesetServiceIT {
     public void shouldFindByTitleOrFile() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        List<SearchResult> ruleset = rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml");
+        List<JSONObject> ruleset = rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml");
         Integer actual = ruleset.size();
         Integer expected = 2;
         assertEquals("Rulesets were not found in index!", expected, actual);
@@ -130,7 +132,7 @@ public class RulesetServiceIT {
     public void shouldFindAllRulesetsDocuments() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        List<SearchResult> rulesets = rulesetService.findAllDocuments();
+        List<JSONObject> rulesets = rulesetService.findAllDocuments();
         assertEquals("Not all rulesets were found in index!", 2, rulesets.size());
     }
 
@@ -141,31 +143,31 @@ public class RulesetServiceIT {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("To Remove");
         rulesetService.save(ruleset);
-        Ruleset foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(3));
+        Ruleset foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(3));
         assertEquals("Additional ruleset was not inserted in database!", "To Remove", foundRuleset.getTitle());
 
         rulesetService.remove(ruleset);
-        foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(3));
+        foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(3));
         assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
 
         ruleset = new Ruleset();
         ruleset.setTitle("To remove");
         rulesetService.save(ruleset);
-        foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(4));
+        foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(4));
         assertEquals("Additional ruleset was not inserted in database!", "To remove", foundRuleset.getTitle());
 
         rulesetService.remove(4);
-        foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(4));
+        foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(4));
         assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldConvertSearchResultsToObjectList() throws Exception {
+    public void shouldConvertJSONObjectsToObjectList() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        List<SearchResult> searchResults = rulesetService.findAllDocuments();
-        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertSearchResultsToObjectList(searchResults,
+        List<JSONObject> searchResults = rulesetService.findAllDocuments();
+        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertJSONObjectsToObjectList(searchResults,
                 "Ruleset");
         assertEquals("Not all rulesets were converted!", 2, rulesets.size());
     }

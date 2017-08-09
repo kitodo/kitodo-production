@@ -15,13 +15,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for PropertyService class.
@@ -100,21 +100,21 @@ public class PropertyServiceIT {
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.save(property);
-        Property foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(7));
+        Property foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(7));
         assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
 
         propertyService.remove(foundProperty);
-        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(7));
+        foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(7));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
 
         property = new Property();
         property.setTitle("To remove");
         propertyService.save(property);
-        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(8));
+        foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(8));
         assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
 
         propertyService.remove(8);
-        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(8));
+        foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(8));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
     }
 
@@ -122,8 +122,8 @@ public class PropertyServiceIT {
     public void shouldFindById() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        SearchResult property = propertyService.findById(1);
-        Integer actual = property.getId();
+        JSONObject property = propertyService.findById(1);
+        Integer actual = propertyService.getIdFromJSONObject(property);
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
     }
@@ -132,7 +132,7 @@ public class PropertyServiceIT {
     public void shouldFindByValue() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        List<SearchResult> properties = propertyService.findByValue("second", true);
+        List<JSONObject> properties = propertyService.findByValue("second", true);
         Integer actual = properties.size();
         Integer expected = 3;
         assertEquals("Properties were not found in index!", expected, actual);
@@ -147,7 +147,7 @@ public class PropertyServiceIT {
     public void shouldFindByTitleAndValue() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        List<SearchResult> properties = propertyService.findByTitleAndValue("secondProcessProperty", "second");
+        List<JSONObject> properties = propertyService.findByTitleAndValue("secondProcessProperty", "second");
         Integer actual = properties.size();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);

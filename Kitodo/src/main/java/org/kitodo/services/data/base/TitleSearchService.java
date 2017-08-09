@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 
@@ -40,7 +40,7 @@ public abstract class TitleSearchService<T extends BaseBean> extends SearchServi
      *            should not contain
      * @return list of search result
      */
-    public List<SearchResult> findByTitle(String title, boolean contains) throws DataException {
+    public List<JSONObject> findByTitle(String title, boolean contains) throws DataException {
         QueryBuilder query = createSimpleQuery("title", title, contains, Operator.AND);
         return searcher.findDocuments(query.toString());
     }

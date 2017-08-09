@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -31,7 +32,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
@@ -104,21 +104,21 @@ public class ProcessServiceIT {
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
-        Process foundProcess = processService.convertSearchResultToObject(processService.findById(6));
+        Process foundProcess = processService.convertJSONObjectToObject(processService.findById(6));
         assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
 
         processService.remove(foundProcess);
-        foundProcess = processService.convertSearchResultToObject(processService.findById(6));
+        foundProcess = processService.convertJSONObjectToObject(processService.findById(6));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
 
         process = new Process();
         process.setTitle("To remove");
         processService.save(process);
-        foundProcess = processService.convertSearchResultToObject(processService.findById(7));
+        foundProcess = processService.convertJSONObjectToObject(processService.findById(7));
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
         processService.remove(7);
-        foundProcess = processService.convertSearchResultToObject(processService.findById(7));
+        foundProcess = processService.convertJSONObjectToObject(processService.findById(7));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
     }
 
@@ -126,8 +126,8 @@ public class ProcessServiceIT {
     public void shouldFindById() throws Exception {
         ProcessService processService = new ProcessService();
 
-        SearchResult process = processService.findById(1);
-        Integer actual = process.getId();
+        JSONObject process = processService.findById(1);
+        Integer actual = processService.getIdFromJSONObject(process);
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
     }
@@ -136,7 +136,7 @@ public class ProcessServiceIT {
     public void shouldFindByTitle() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<SearchResult> process = processService.findByTitle("First process", true);
+        List<JSONObject> process = processService.findByTitle("First process", true);
         Integer actual = process.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -146,7 +146,7 @@ public class ProcessServiceIT {
     public void shouldFindByOutputName() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<SearchResult> process = processService.findByOutputName("Test");
+        List<JSONObject> process = processService.findByOutputName("Test");
         Integer actual = process.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -156,7 +156,7 @@ public class ProcessServiceIT {
     public void shouldFindByWikiField() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<SearchResult> process = processService.findByWikiField("wiki");
+        List<JSONObject> process = processService.findByWikiField("wiki");
         Integer actual = process.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -166,7 +166,7 @@ public class ProcessServiceIT {
     public void shouldFindByBatchId() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<SearchResult> processes = processService.findByBatchId(1);
+        List<JSONObject> processes = processService.findByBatchId(1);
         Integer actual = processes.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -181,7 +181,7 @@ public class ProcessServiceIT {
     public void shouldFindByBatchTitle() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<SearchResult> processes = processService.findByBatchTitle("First batch");
+        List<JSONObject> processes = processService.findByBatchTitle("First batch");
         Integer actual = processes.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -196,7 +196,7 @@ public class ProcessServiceIT {
     public void shouldFindByProperty() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<SearchResult> processes = processService.findByProperty("Process Property", "first value");
+        List<JSONObject> processes = processService.findByProperty("Process Property", "first value");
         Integer actual = processes.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
