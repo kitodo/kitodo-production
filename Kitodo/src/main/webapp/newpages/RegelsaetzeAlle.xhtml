@@ -62,8 +62,7 @@
                                     </h3>
 
                                     <!-- newUser-Schaltknopf -->
-                                    <h:commandLink id="id5" action="#{RegelsaetzeForm.Neu}"
-                                                   immediate="true"
+                                    <h:commandLink id="id5" action="#{RulesetForm.createNewRuleset}"
                                                    rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                         <h:outputText id="id6" value="#{msgs.neuenRegelsatzAnlegen}"/>
                                     </h:commandLink>
@@ -80,7 +79,7 @@
                                                  rowClasses="standardTable_Row1,standardTable_Row2"
                                                  columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
                                                  style="margin-top: 10px;"
-                                                 var="item" value="#{RegelsaetzeForm.page.listReload}">
+                                                 var="item" value="#{RulesetForm.page.listReload}">
 
                                         <h:column id="id9">
                                             <f:facet name="header">
@@ -126,9 +125,8 @@
                                         </h:column>
 
                                     </t:dataTable>
-                                    <h:commandLink id="id52" action="#{RegelsaetzeForm.Neu}"
-                                                   immediate="true"
-                                                   rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (RegelsaetzeForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
+                                    <h:commandLink id="id52" action="#{RulesetForm.createNewRuleset}"
+                                                   rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (RulesetForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
                                         <h:outputText id="id62" value="#{msgs.neuenRegelsatzAnlegen}"/>
                                     </h:commandLink>
                                     <table width="100%" border="0">
@@ -139,7 +137,7 @@
                                             <td align="center">
                                                 <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                                 <t:aliasBean alias="#{mypage}"
-                                                             value="#{RegelsaetzeForm.page}">
+                                                             value="#{RulesetForm.page}">
                                                     <ui:include src="/newpages/inc/datascroller.xhtml"/>
                                                 </t:aliasBean>
                                                 <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
