@@ -1,0 +1,93 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui">
+    <div class="wrapper">
+
+        <section id="portal-logo">
+            <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" width="160"/>
+            <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
+        </section>
+
+        <section id="portal-search">
+            <h:form id="search-form" action="">
+                <p:inputText id="search-field" a:placeholder="Suche nach Projekten, Vorgängen, Aufgaben oder Benutzern" />
+                <button type="submit"><i class="fa fa-search"/></button>
+            </h:form>
+        </section>
+
+        <section id="portal-nav">
+            <nav id="header-nav" role="navigation">
+                <ul>
+                    <li>
+                        <a href="#"><i class="fa fa-bell-o fa-lg"/><span class="batch-count bc-alert">25</span></a>
+                        <ul>
+                            <li><h3>Meine Aufgaben</h3></li>
+                            <li><a href=""><span class="nav-item-col">Scannen</span><span class="nav-item-col">Projekt 1</span><span class="nav-item-col"><i class="fa fa-check-square-o fa-lg nc-info"></i></span></a></li>
+                            <li><a href=""><span class="nav-item-col">Scannen</span><span class="nav-item-col">Projekt 1</span><span class="nav-item-col"><i class="fa fa-check-square-o fa-lg nc-info"></i></span></a></li>
+                            <li><a href=""><span class="nav-item-col">Scannen</span><span class="nav-item-col">Projekt 2</span><span class="nav-item-col"><i class="fa fa-check-square-o fa-lg nc-alert"></i></span></a></li>
+                            <li><a href="">alle meine Aufgaben (25)</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-user-o fa-lg"/><span class="batch-count bc-info">7</span></a>
+                        <ul>
+                            <li><h3>Aktive Benutzer</h3></li>
+                            <li><a href=""><span class="nav-item-col">Simone Musterfrau</span><span class="nav-item-col">Gruppe 2</span><span class="nav-item-col">V</span></a></li>
+                            <li><a href=""><span class="nav-item-col">John Doe</span><span class="nav-item-col">Gruppe 1</span><span class="nav-item-col">B</span></a></li>
+                            <li><a href=""><span class="nav-item-col">Dieter Mustermann</span><span class="nav-item-col">Gruppe 2</span><span class="nav-item-col">B</span></a></li>
+                            <li><a href="">alle aktiven Benutzer (7)</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-th fa-lg"/></a>
+                        <ul>
+                            <li><h3>Dashboard <i>(Admin)</i></h3></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-folder-open fa-lg"/>Projekte</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-hourglass-3 fa-lg"/>Vorgänge</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-bell fa-lg"/>Aufgaben</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-files-o fa-lg"/>Batches</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-file-text-o fa-lg"/>Vorlagen</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-list-ol fa-lg"/>Laufzettel</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-clipboard fa-lg"/>Regelsätze</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-list-alt fa-lg"/>LDAP-Gruppen</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-commenting fa-lg"/>Hinweise</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-user fa-lg"/>Benutzer</a></li>
+                            <li class="nav-pic-text"><a href=""><i class="fa fa-users fa-lg"/>Benutzergruppen</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-user-circle-o fa-lg"/></a>
+                        <ul id="nav-user">
+                            <li><h3>Max Mustermann <i>(Admin)</i></h3></li>
+                            <li><a href="">Sprache: Deutsch</a></li>
+                            <li><a href="">Benutzerdaten &amp; Einstellungen</a></li>
+                            <li><a href="">Passwort ändern</a></li>
+                            <li><a href="">Abmelden</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+
+    </div>
+
+    <ul id="breadcrumb">
+        <li><a href="">Navigation</a></li>
+        <li><a href="">Navigation (Admin)</a></li>
+    </ul>
+
+</ui:composition>
