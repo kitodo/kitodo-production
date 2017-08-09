@@ -29,8 +29,8 @@
                             PF('progressPoll').start();
                         }
                         else if (message.includes("indexing_finished")) {
-                            // FIXME: progressPolling should only be deactivated when UI updating is finished!
                             PF('progressPoll').stop();
+                            $('.refreshTable').click();
                         }
                     }
 
@@ -47,6 +47,7 @@
                             PF('startIndexingUsers').enable();
                             PF('startIndexingUserGroups').enable();
                             PF('startIndexingWorkpieces').enable();
+                            PF('startIndexingFilter').enable();
                             PF('startIndexingAll').enable();
                         }
                         else {
@@ -61,6 +62,7 @@
                             PF('startIndexingUsers').disable();
                             PF('startIndexingUserGroups').disable();
                             PF('startIndexingWorkpieces').disable();
+                            PF('startIndexingFilter').disable();
                             PF('startIndexingAll').disable();
                         }
                     }
@@ -477,12 +479,14 @@
                                                 <td>
                                                     <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.indexingInProgress()}"/>
                                                     <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100 and not indexingForm.indexingInProgress()}" />
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <h:outputText value="Indexing started by '#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}' at #{indexingForm.indexingStartedTime}" rendered="#{not empty indexingForm.indexingStartedTime}"/>
                                 </p:panel>
+                                <p:commandButton class="refreshTable" update="indexingTable" style="visibility: hidden;"/>
                                 <p:poll widgetVar="progressPoll" update="indexingTable" interval="1" autoStart="false"/>
                                 <o:socket channel="togglePollingChannel" onmessage="toggleProgressPolling" />
                             </ui:fragment>
