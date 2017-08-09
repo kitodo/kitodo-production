@@ -47,9 +47,9 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -101,7 +101,7 @@ import org.kitodo.services.file.FileService;
  */
 
 @Named("ProzessverwaltungForm")
-@SessionScoped
+@ViewScoped
 public class ProzessverwaltungForm extends BasisForm {
     private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
@@ -440,8 +440,8 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * This method initializes the process list without any filter whenever the
-     * bean is constructed.
+     * This method initializes the process list without any filter whenever the bean
+     * is constructed.
      */
     @PostConstruct
     public void initializeProcessList() {
@@ -973,8 +973,8 @@ public class ProzessverwaltungForm extends BasisForm {
     public void DownloadToHome() {
         /*
          * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
-         * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
-         * ansonsten Download
+         * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde, ansonsten
+         * Download
          */
         if (!serviceManager.getProcessService().isImageFolderInUse(this.myProzess)) {
             WebDav myDav = new WebDav();
@@ -998,9 +998,9 @@ public class ProzessverwaltungForm extends BasisForm {
         WebDav myDav = new WebDav();
         for (Process proz : (List<Process>) this.page.getListReload()) {
             /*
-             * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer
-             * in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
-             * ansonsten Download
+             * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
+             * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde, ansonsten
+             * Download
              */
             if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
                 myDav.downloadToHome(proz, false);
@@ -1662,8 +1662,8 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * ist called via jsp at the end of building a chart in include file
-     * Prozesse_Liste_Statistik.jsp and resets the statistics so that with the
+     * is called via jsf at the end of building a chart in include file
+     * Prozesse_Liste_Statistik.xhtml and resets the statistics so that with the
      * next reload a chart is not shown anymore.
      */
     public String getResetStatistic() {
