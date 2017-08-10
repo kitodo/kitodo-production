@@ -225,7 +225,9 @@
                                                                       height="380px" width="430px"
                                                                       dynamic="true" modal="true"
                                                                       onHide="#{NavigationForm.Reload()}">
-                                                                <ui:include src="BenutzerBearbeitenPopup.xhtml"/>
+                                                                <f:subview id="addUserToGroupSubView">
+                                                                    <ui:include src="BenutzerBearbeitenPopup.xhtml"/>
+                                                                </f:subview>
                                                             </p:dialog>
                                                         </h:panelGroup>
 
@@ -257,7 +259,9 @@
                                                                       height="380px" width="430px"
                                                                       dynamic="true" modal="true"
                                                                       onHide="#{NavigationForm.Reload()}">
-                                                                <ui:include src="BenutzerBearbeitenPopupProjekte.xhtml"/>
+                                                                <f:subview id="addUserToProjectSubView">
+                                                                    <ui:include src="BenutzerBearbeitenPopupProjekte.xhtml"/>
+                                                                </f:subview>
                                                             </p:dialog>
                                                         </h:panelGroup>
 

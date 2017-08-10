@@ -800,4 +800,12 @@ public class ProjekteForm extends BasisForm {
         return this.itemId;
     }
 
+    /**
+     * Return list of projects
+     *
+     * @return list of projects
+     */
+    public List<Project> getProjects() {
+        return serviceManager.getProjectService().findAll();
+    }
 }

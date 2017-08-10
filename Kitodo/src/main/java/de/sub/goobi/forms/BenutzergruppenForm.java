@@ -160,4 +160,12 @@ public class BenutzergruppenForm extends BasisForm {
         return this.userGroupId;
     }
 
+    /**
+     * Return list of user groups
+     *
+     * @return list of user groups
+     */
+    public List<UserGroup> getUsergroups() {
+        return serviceManager.getUserGroupService().findAll();
+    }
 }
