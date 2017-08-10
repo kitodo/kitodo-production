@@ -1672,7 +1672,7 @@ public class Metadaten {
         }
 
         if (!this.allTifFolders.contains(this.currentTifFolder)) {
-            this.currentTifFolder = serviceManager.getProcessService().getImagesTifDirectory(true, this.process);
+            this.currentTifFolder = serviceManager.getProcessService().getImagesTifDirectory(true, this.process, null);
         }
     }
 
@@ -1782,11 +1782,11 @@ public class Metadaten {
                         }
                         if (!fileService.fileExist(tiffconverterpfad)) {
                             tiffconverterpfad = serviceManager.getProcessService()
-                                    .getImagesTifDirectory(true, this.process).resolve(this.image);
+                                    .getImagesTifDirectory(true, this.process, null).resolve(this.image);
                             Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
                                     "image " + this.image + " does not exist in folder " + this.currentTifFolder
                                             + ", using image from " + new File(serviceManager.getProcessService()
-                                                    .getImagesTifDirectory(true, this.process)).getName());
+                                                    .getImagesTifDirectory(true, this.process, null)).getName());
                         }
                         this.imageHelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.imageSize,
                                 this.imageRotation);

@@ -117,7 +117,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
         try {
             myMap.put("ruleset", serviceManager.getFileService()
                 .createResource(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile()));
-            myMap.put("tifdirectory", serviceManager.getProcessService().getImagesTifDirectory(false, p));
+            myMap.put("tifdirectory", serviceManager.getProcessService().getImagesTifDirectory(false, p, null));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));

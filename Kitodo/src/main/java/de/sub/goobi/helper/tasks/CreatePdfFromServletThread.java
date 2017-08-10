@@ -121,7 +121,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 }
                 StringBuilder url = new StringBuilder();
                 FilenameFilter filter = Helper.imageNameFilter;
-                URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
+                URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess(), null);
                 ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
                 ArrayList<String> filenames = new ArrayList<>();
                 for (URI data : meta) {

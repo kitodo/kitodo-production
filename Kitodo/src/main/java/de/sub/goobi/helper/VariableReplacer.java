@@ -112,7 +112,7 @@ public class VariableReplacer {
                     .getFileName(serviceManager.getProcessService().getProcessDataDirectory(this.process))
                     .replace("\\", "/");
             String tifpath = fileService
-                    .getFileName(serviceManager.getProcessService().getImagesTifDirectory(false, this.process))
+                    .getFileName(serviceManager.getProcessService().getImagesTifDirectory(false, this.process, null))
                     .replace("\\", "/");
             String imagepath = fileService.getFileName(fileService.getImagesDirectory(this.process)).replace("\\", "/");
             String origpath = fileService

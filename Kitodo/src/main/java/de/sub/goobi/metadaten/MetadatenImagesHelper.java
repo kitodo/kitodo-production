@@ -103,7 +103,7 @@ public class MetadatenImagesHelper {
             MetadataType metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
             try {
                 Metadata mdForPath = new Metadata(metadataTypeForPath);
-                URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process);
+                URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process, null);
                 String pathString = new File(pathURI).getPath();
                 mdForPath.setValue(pathString);
                 physicaldocstruct.addMetadata(mdForPath);
@@ -115,7 +115,7 @@ public class MetadatenImagesHelper {
 
         if (directory == null) {
             checkIfImagesValid(process.getTitle(),
-                    serviceManager.getProcessService().getImagesTifDirectory(true, process));
+                    serviceManager.getProcessService().getImagesTifDirectory(true, process, null));
         } else {
             checkIfImagesValid(process.getTitle(),
                     fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
@@ -148,7 +148,7 @@ public class MetadatenImagesHelper {
                 if (page.getImageName() != null) {
                     URI imageFile = null;
                     if (directory == null) {
-                        imageFile = serviceManager.getProcessService().getImagesTifDirectory(true, process)
+                        imageFile = serviceManager.getProcessService().getImagesTifDirectory(true, process, null)
                                 .resolve(page.getImageName());
                     } else {
                         imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE,
@@ -313,7 +313,7 @@ public class MetadatenImagesHelper {
      */
     private ContentFile createContentFile(Process process, URI image) throws IOException {
         ContentFile contentFile = new ContentFile();
-        URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process).resolve(image);
+        URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process, null).resolve(image);
         contentFile.setLocation(path.getPath());
         return contentFile;
     }
@@ -571,7 +571,7 @@ public class MetadatenImagesHelper {
     public List<URI> getDataFiles(Process myProcess) throws InvalidImagesException {
         URI dir;
         try {
-            dir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
+            dir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess, null);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
