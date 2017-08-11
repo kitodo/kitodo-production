@@ -131,7 +131,7 @@ public class Searcher extends Index {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
-        String response = restClient.getDocument(query, sort);
+        String response = restClient.getDocument(query, sort, 0, 1);
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(response);
             if (jsonObject.containsKey("hits")) {
@@ -157,7 +157,7 @@ public class Searcher extends Index {
      * @return list of JSON objects
      */
     public List<JSONObject> findDocuments(String query) throws DataException {
-        return findDocuments(query, null);
+        return findDocuments(query, null, null, null);
     }
 
     /**
@@ -165,16 +165,38 @@ public class Searcher extends Index {
      *
      * @param query
      *            as String
+     * @return list of JSON objects
+     */
+    public List<JSONObject> findDocuments(String query, String sort) throws DataException {
+        return findDocuments(query, sort, null, null);
+    }
+
+    /**
+     * Find many documents by query, offset and size of results.
+     *
+     * @param query
+     *            as String
+     * @return list of JSON objects
+     */
+    public List<JSONObject> findDocuments(String query, Integer offset, Integer size) throws DataException {
+        return findDocuments(query, null, offset, size);
+    }
+
+    /**
+     * Find many documents by query, sort condition, offset and size of result set.
+     *
+     * @param query
+     *            as String
      * @param sort
      *            as String
      * @return list of JSON objects
      */
-    public List<JSONObject> findDocuments(String query, String sort) throws DataException {
+    public List<JSONObject> findDocuments(String query, String sort, Integer offset, Integer size) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         List<JSONObject> searchResults = new ArrayList<>();
         JSONParser parser = new JSONParser();
 
-        String response = restClient.getDocument(query, sort);
+        String response = restClient.getDocument(query, sort, offset, size);
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(response);
             if (jsonObject.containsKey("hits")) {
