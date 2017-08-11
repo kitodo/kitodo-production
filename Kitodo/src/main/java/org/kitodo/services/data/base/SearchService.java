@@ -312,6 +312,16 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
+     * Display all documents for exact type.
+     *
+     * @return list of all documents
+     */
+    public List<JSONObject> findAllDocuments(String sort) throws DataException {
+        QueryBuilder queryBuilder = matchAllQuery();
+        return searcher.findDocuments(queryBuilder.toString(), sort);
+    }
+
+    /**
      * Find user with exact id.
      *
      * @param id
