@@ -66,7 +66,7 @@ public class SearchRestClient extends KitodoRestClient {
      *            of searched document
      * @return http entity as String
      */
-    public String getDocument(Integer id) throws DataException {
+    String getDocument(Integer id) throws DataException {
         String output = "";
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
@@ -85,15 +85,22 @@ public class SearchRestClient extends KitodoRestClient {
     }
 
     /**
-     * Get document by query.
+     * Get document by query with possible sort of results.
      *
      * @param query
      *            to find a document
+     * @param sort as String with sort conditions
      * @return http entity as String
      */
-    public String getDocument(String query) throws DataException {
+    String getDocument(String query, String sort) throws DataException {
         String output = "";
-        String wrappedQuery = "{\n \"query\": " + query + "\n}";
+        String wrappedQuery;
+        if (sort != null) {
+            String wrappedSort = "{\n \"sort\": [" + sort + "]\n";
+            wrappedQuery = wrappedSort + ",\n \"query\": " + query + "\n}";
+        } else {
+            wrappedQuery = "{\n \"query\": " + query + "\n}";
+        }
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search",

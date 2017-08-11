@@ -106,7 +106,7 @@ public class SearchRestClientIT {
     public void shouldGetDocumentByQuery() throws Exception {
         Thread.sleep(2000);
         String query = "{\n\"match_all\" : {}\n}";
-        String result = searchRestClient.getDocument(query);
+        String result = searchRestClient.getDocument(query, null);
 
         boolean condition = result.contains("\"total\" : 2");
         assertTrue("Get of document has failed!", condition);
