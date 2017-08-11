@@ -125,7 +125,8 @@ public class IndexRestClient extends KitodoRestClient {
         String query = "{\n \"properties\": {\n\"" + field
                 + "\": { \n\"type\": \"text\",\n\"fielddata\": true\n}\n  }\n}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest("PUT", "/" + this.getIndex() + "/_mapping/" + type,
+        Response indexResponse = restClient.performRequest("PUT",
+                "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types",
                 Collections.<String, String>emptyMap(), entity);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
