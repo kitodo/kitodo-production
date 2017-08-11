@@ -79,6 +79,8 @@ public class SearcherIT {
         indexRestClient.createIndex();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
+        indexRestClient.addDocument(MockEntity.createEntities().get(3), 3);
+        indexRestClient.enableSortingByTextField("testsearch", "title");
     }
 
     @After
@@ -93,7 +95,7 @@ public class SearcherIT {
 
         String query = "{\n\"match_all\" : {}\n}";
         Long result = searcher.countDocuments(query);
-        Long expected = Long.valueOf("2");
+        Long expected = Long.valueOf("3");
         assertEquals("Amount of documents doesn't match to given number!", expected, result);
     }
 
@@ -139,6 +141,21 @@ public class SearcherIT {
     }
 
     @Test
+    public void shouldFindDocumentByQueryAndSort() throws Exception {
+        Thread.sleep(2000);
+        Searcher searcher = new Searcher("testsearch");
+
+        String query = "{\n\"match_all\" : {}\n}";
+        String sort = "{\"title\" : {\"order\" : \"desc\"}}";
+        JSONObject result = searcher.findDocument(query, sort);
+        JSONObject jsonObject = (JSONObject) result.get("_source");
+        Integer id = getIdFromJSONObject(result);
+        assertEquals("Incorrect result - id doesn't match to given number!", 2, id.intValue());
+        String title = (String) jsonObject.get("title");
+        assertEquals("Incorrect result - title doesn't match to given plain text!", "Sort", title);
+    }
+
+    @Test
     public void shouldFindDocumentsByQuery() throws Exception {
         Thread.sleep(2000);
         Searcher searcher = new Searcher("testsearch");
@@ -149,7 +166,7 @@ public class SearcherIT {
         assertEquals("Incorrect result - id doesn't match to given int values!", 1, id.intValue());
 
         int size = result.size();
-        assertEquals("Incorrect result - size doesn't match to given int value!", 2, size);
+        assertEquals("Incorrect result - size doesn't match to given int value!", 3, size);
 
         query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
         result = searcher.findDocuments(query);
@@ -162,6 +179,18 @@ public class SearcherIT {
         result = searcher.findDocuments(query);
         size = result.size();
         assertEquals("Incorrect result - size is bigger than 0!", 0, size);
+    }
+
+    @Test
+    public void shouldFindDocumentsByQueryAndSort() throws Exception {
+        Thread.sleep(2000);
+        Searcher searcher = new Searcher("testsearch");
+
+        String query = "{\n\"match_all\" : {}\n}";
+        String sort = "{\"title\" : {\"order\" : \"desc\"}}";
+        List<JSONObject> result = searcher.findDocuments(query, sort);
+        Integer id = getIdFromJSONObject(result.get(0));
+        assertEquals("Incorrect result - id doesn't match to given int values!", 2, id.intValue());
     }
 
     private static IndexRestClient initializeIndexRestClient() {

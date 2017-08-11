@@ -49,9 +49,13 @@ public class MockEntity {
         HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
         documents.put(1, entity);
 
-        jsonString = "{\"title\":\"Batch2\",\"type\":\"null\",\"processes\":[]}";
+        jsonString = "{\"title\":\"Sort\",\"type\":\"null\",\"processes\":[]}";
         entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
         documents.put(2, entity);
+
+        jsonString = "{\"title\":\"Batch2\",\"type\":\"null\",\"processes\":[]}";
+        entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
+        documents.put(3, entity);
 
         return documents;
     }
