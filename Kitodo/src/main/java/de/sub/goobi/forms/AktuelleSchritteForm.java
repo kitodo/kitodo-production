@@ -49,6 +49,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
@@ -177,23 +179,29 @@ public class AktuelleSchritteForm extends BasisForm {
         filterAlleStart();
     }
 
-    private void sortList(Criteria inCrit) {
-        inCrit.addOrder(Order.desc("priority"));
-
-        Order order = Order.asc("proc.title");
+    /**
+     * It is possible that sorting by related object can be hard to achieve. Right
+     * now it is replaced with sorting by id.
+     * 
+     * @return sort clause for query
+     */
+    private String sortList() {
+        String sort = SortBuilders.fieldSort("priority").order(SortOrder.ASC).toString();
+        // TODO: find out if it's possible to sort by related objects
+        // Order order = Order.asc("proc.title");
         if (this.sortierung.equals("schrittAsc")) {
-            order = Order.asc("title");
+            sort += ", " + SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("schrittDesc")) {
-            order = Order.desc("title");
+            sort += ", " + SortBuilders.fieldSort("title").order(SortOrder.DESC).toString();
         }
         if (this.sortierung.equals("prozessAsc")) {
-            order = Order.asc("proc.title");
+            sort += ", " + SortBuilders.fieldSort("process").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("prozessDesc")) {
-            order = Order.desc("proc.title");
+            sort += ", " + SortBuilders.fieldSort("process").order(SortOrder.DESC).toString();
         }
-        if (this.sortierung.equals("batchAsc")) {
+        /*if (this.sortierung.equals("batchAsc")) {
             order = Order.asc("proc.batchID");
         }
         if (this.sortierung.equals("batchDesc")) {
@@ -204,27 +212,26 @@ public class AktuelleSchritteForm extends BasisForm {
         }
         if (this.sortierung.equals("prozessdateDesc")) {
             order = Order.desc("proc.creationDate");
-        }
+        }*/
         if (this.sortierung.equals("projektAsc")) {
-            order = Order.asc("project.title");
+            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("projektDesc")) {
-            order = Order.desc("project.title");
+            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.DESC).toString();
         }
         if (this.sortierung.equals("modulesAsc")) {
-            order = Order.asc("typeModuleName");
+            sort += ", " + SortBuilders.fieldSort("typeModuleName").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("modulesDesc")) {
-            order = Order.desc("typeModuleName");
+            sort += ", " + SortBuilders.fieldSort("typeModuleName").order(SortOrder.DESC).toString();
         }
         if (this.sortierung.equals("statusAsc")) {
-            order = Order.asc("processingStatus");
+            sort += ", " + SortBuilders.fieldSort("processingStatus").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("statusDesc")) {
-            order = Order.desc("processingStatus");
+            sort += ", " + SortBuilders.fieldSort("processingStatus").order(SortOrder.DESC).toString();
         }
-
-        inCrit.addOrder(order);
+        return sort;
     }
 
     /**
@@ -261,8 +268,7 @@ public class AktuelleSchritteForm extends BasisForm {
                                     HistoryTypeEnum.taskInWork, this.mySchritt.getProcess()));
                     try {
                         /*
-                         * den Prozess aktualisieren, so dass der
-                         * Sortierungshelper gespeichert wird
+                         * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
                          */
                         this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
                     } catch (DataException e) {
@@ -272,8 +278,7 @@ public class AktuelleSchritteForm extends BasisForm {
                         this.flagWait = false;
                     }
                     /*
-                     * wenn es ein Image-Schritt ist, dann gleich die Images ins
-                     * Home
+                     * wenn es ein Image-Schritt ist, dann gleich die Images ins Home
                      */
 
                     if (this.mySchritt.isTypeImagesRead() || this.mySchritt.isTypeImagesWrite()) {
