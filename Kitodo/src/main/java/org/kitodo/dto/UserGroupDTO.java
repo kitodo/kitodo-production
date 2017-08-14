@@ -20,6 +20,7 @@ public class UserGroupDTO extends BaseDTO {
 
     private String title;
     private List<UserDTO> users;
+    private Integer usersSize;
     private boolean panelShown = false;
 
     /**
@@ -58,6 +59,25 @@ public class UserGroupDTO extends BaseDTO {
      */
     public void setUsers(List<UserDTO> users) {
         this.users = users;
+    }
+
+    /**
+     * Get size of users.
+     * 
+     * @return size of users as Integer
+     */
+    public Integer getUsersSize() {
+        return usersSize;
+    }
+
+    /**
+     * Set size of users.
+     * 
+     * @param usersSize
+     *            as Integer
+     */
+    public void setUsersSize(Integer usersSize) {
+        this.usersSize = usersSize;
     }
 
     /**

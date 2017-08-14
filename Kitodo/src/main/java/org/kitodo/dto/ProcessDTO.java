@@ -28,6 +28,7 @@ public class ProcessDTO extends BaseDTO {
     private List<BatchDTO> batches;
     private List<TaskDTO> tasks;
     private List<PropertyDTO> properties;
+    private Integer propertiesSize;
     private List<PropertyDTO> sortedCorrectionSolutionMessages;
     private UserDTO blockedUsers;
     private Integer progressClosed;
@@ -40,6 +41,7 @@ public class ProcessDTO extends BaseDTO {
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
     private Integer sortHelperMetadata;
+    private boolean containsUnreachableSteps;
     private boolean imageFolderInUse = false;
     private boolean tifDirectoryExists = false;
     private boolean panelShown = false;
@@ -233,6 +235,25 @@ public class ProcessDTO extends BaseDTO {
      */
     public void setProperties(List<PropertyDTO> properties) {
         this.properties = properties;
+    }
+
+    /**
+     * Get size od properties.
+     *
+     * @return size of properties
+     */
+    public Integer getPropertiesSize() {
+        return propertiesSize;
+    }
+
+    /**
+     * Set size of properties.
+     *
+     * @param propertiesSize
+     *            as Integer
+     */
+    public void setPropertiesSize(Integer propertiesSize) {
+        this.propertiesSize = propertiesSize;
     }
 
     /**
@@ -461,6 +482,25 @@ public class ProcessDTO extends BaseDTO {
      */
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
+    }
+
+    /**
+     * Get information if process contains unreachable tasks.
+     * 
+     * @return true or false
+     */
+    public boolean isContainsUnreachableSteps() {
+        return containsUnreachableSteps;
+    }
+
+    /**
+     * Set information if process contains unreachable tasks.
+     * 
+     * @param containsUnreachableSteps
+     *            as boolean
+     */
+    public void setContainsUnreachableSteps(boolean containsUnreachableSteps) {
+        this.containsUnreachableSteps = containsUnreachableSteps;
     }
 
     /**
