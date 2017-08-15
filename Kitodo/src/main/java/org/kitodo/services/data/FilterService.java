@@ -27,12 +27,13 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.FilterType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.FilterDTO;
 import org.kitodo.services.data.base.SearchService;
 
 /**
  * Service for Filter bean.
  */
-public class FilterService extends SearchService<Filter> {
+public class FilterService extends SearchService<Filter, FilterDTO> {
 
     private FilterDAO filterDAO = new FilterDAO();
     private FilterType filterType = new FilterType();
@@ -51,6 +52,7 @@ public class FilterService extends SearchService<Filter> {
      * @param filter
      *            object
      */
+    @Override
     public void saveToDatabase(Filter filter) throws DAOException {
         filterDAO.save(filter);
     }
@@ -61,6 +63,7 @@ public class FilterService extends SearchService<Filter> {
      * @param filter
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Filter filter) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -76,6 +79,7 @@ public class FilterService extends SearchService<Filter> {
      *            as Integer
      * @return Property
      */
+    @Override
     public Filter find(Integer id) throws DAOException {
         return filterDAO.find(id);
     }
@@ -96,6 +100,7 @@ public class FilterService extends SearchService<Filter> {
      *            as String
      * @return list of properties
      */
+    @Override
     public List<Filter> search(String query) throws DAOException {
         return filterDAO.search(query);
     }
@@ -116,6 +121,7 @@ public class FilterService extends SearchService<Filter> {
      * @param filter
      *            object
      */
+    @Override
     public void removeFromDatabase(Filter filter) throws DAOException {
         filterDAO.remove(filter);
     }
@@ -126,6 +132,7 @@ public class FilterService extends SearchService<Filter> {
      * @param id
      *            of property object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         filterDAO.remove(id);
     }
@@ -136,6 +143,7 @@ public class FilterService extends SearchService<Filter> {
      * @param filter
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Filter filter) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -165,5 +173,10 @@ public class FilterService extends SearchService<Filter> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), filterType);
+    }
+
+    @Override
+    public FilterDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 }

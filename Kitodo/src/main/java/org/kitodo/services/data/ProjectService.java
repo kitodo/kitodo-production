@@ -40,10 +40,11 @@ import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class ProjectService extends TitleSearchService<Project> {
+public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
 
     private List<StepInformation> commonWorkFlow = null;
     private ProjectDAO projectDAO = new ProjectDAO();
@@ -65,6 +66,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     public void saveToDatabase(Project project) throws DAOException {
         projectDAO.save(project);
     }
@@ -75,6 +77,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -89,6 +92,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Project project)
             throws CustomResponseException, DataException, IOException {
         manageProcessesDependenciesForIndex(project);
@@ -132,6 +136,7 @@ public class ProjectService extends TitleSearchService<Project> {
         }
     }
 
+    @Override
     public Project find(Integer id) throws DAOException {
         return projectDAO.find(id);
     }
@@ -156,6 +161,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     public void removeFromDatabase(Project project) throws DAOException {
         projectDAO.remove(project);
     }
@@ -166,6 +172,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param id
      *            of project object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         projectDAO.remove(id);
     }
@@ -176,6 +183,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -184,6 +192,7 @@ public class ProjectService extends TitleSearchService<Project> {
         }
     }
 
+    @Override
     public List<Project> search(String query) throws DAOException {
         return projectDAO.search(query);
     }
@@ -319,6 +328,11 @@ public class ProjectService extends TitleSearchService<Project> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), projectType);
+    }
+
+    @Override
+    public ProjectDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 
     /**

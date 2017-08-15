@@ -32,12 +32,13 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.RulesetDTO;
 import org.kitodo.services.data.base.TitleSearchService;
 
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
-public class RulesetService extends TitleSearchService<Ruleset> {
+public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
 
@@ -58,6 +59,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      * @param ruleset
      *            object
      */
+    @Override
     public void saveToDatabase(Ruleset ruleset) throws DAOException {
         rulesetDAO.save(ruleset);
     }
@@ -68,6 +70,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      * @param ruleset
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -76,6 +79,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
         }
     }
 
+    @Override
     public Ruleset find(Integer id) throws DAOException {
         return rulesetDAO.find(id);
     }
@@ -84,6 +88,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
         return rulesetDAO.findAll();
     }
 
+    @Override
     public List<Ruleset> search(String query) throws DAOException {
         return rulesetDAO.search(query);
     }
@@ -104,6 +109,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      * @param ruleset
      *            object
      */
+    @Override
     public void removeFromDatabase(Ruleset ruleset) throws DAOException {
         rulesetDAO.remove(ruleset);
     }
@@ -114,6 +120,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      * @param id
      *            of ruleset object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         rulesetDAO.remove(id);
     }
@@ -124,6 +131,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      * @param ruleset
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -195,6 +203,11 @@ public class RulesetService extends TitleSearchService<Ruleset> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), rulesetType);
+    }
+
+    @Override
+    public RulesetDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 
     /**

@@ -85,12 +85,12 @@ public class UserGroupServiceIT {
         userGroupService.save(userGroup);
         Thread.sleep(1000);
         UserGroup foundUserGroup = userGroupService
-                .convertJSONObjectToObject(userGroupService.findByTitle("To Remove", true).get(0));
+                .convertJSONObjectToBean(userGroupService.findByTitle("To Remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundUserGroup.getTitle());
 
         userGroupService.remove(foundUserGroup);
         foundUserGroup = userGroupService
-                .convertJSONObjectToObject(userGroupService.findById(foundUserGroup.getId()));
+                .convertJSONObjectToBean(userGroupService.findById(foundUserGroup.getId()));
         assertEquals("Additional user group was not removed from database!", null, foundUserGroup);
 
         userGroup = new UserGroup();
@@ -98,12 +98,12 @@ public class UserGroupServiceIT {
         userGroupService.save(userGroup);
         Thread.sleep(1000);
         foundUserGroup = userGroupService
-                .convertJSONObjectToObject(userGroupService.findByTitle("To remove", true).get(0));
+                .convertJSONObjectToBean(userGroupService.findByTitle("To remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To remove", foundUserGroup.getTitle());
 
         userGroupService.remove(foundUserGroup.getId());
         exception.expect(DAOException.class);
-        userGroupService.convertJSONObjectToObject(userGroupService.findByTitle("To remove", true).get(0));
+        userGroupService.convertJSONObjectToBean(userGroupService.findByTitle("To remove", true).get(0));
     }
 
     @Test

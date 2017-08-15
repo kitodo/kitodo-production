@@ -19,12 +19,13 @@ import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.BaseDTO;
 
 /**
  * Class for implementing methods used by service classes which search for title
  * in ElasticSearch index.
  */
-public abstract class TitleSearchService<T extends BaseBean> extends SearchService<T> {
+public abstract class TitleSearchService<T extends BaseBean, S extends BaseDTO> extends SearchService<T, S> {
 
     public TitleSearchService(Searcher searcher) {
         super(searcher);

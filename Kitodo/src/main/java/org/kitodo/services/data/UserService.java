@@ -47,10 +47,11 @@ import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class UserService extends SearchService<User> {
+public class UserService extends SearchService<User, UserDTO> {
 
     private UserDAO userDAO = new UserDAO();
     private UserType userType = new UserType();
@@ -71,6 +72,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     public void saveToDatabase(User user) throws DAOException {
         userDAO.save(user);
     }
@@ -81,6 +83,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -95,6 +98,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(User user) throws CustomResponseException, IOException {
         manageFiltersDependenciesForIndex(user);
         manageProjectsDependenciesForIndex(user);
@@ -188,6 +192,7 @@ public class UserService extends SearchService<User> {
         }
     }
 
+    @Override
     public User find(Integer id) throws DAOException {
         return userDAO.find(id);
     }
@@ -225,6 +230,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     public void removeFromDatabase(User user) throws DAOException {
         userDAO.remove(user);
     }
@@ -235,6 +241,7 @@ public class UserService extends SearchService<User> {
      * @param id
      *            of template object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         userDAO.remove(id);
     }
@@ -245,6 +252,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -253,6 +261,7 @@ public class UserService extends SearchService<User> {
         }
     }
 
+    @Override
     public List<User> search(String query) throws DAOException {
         return userDAO.search(query);
     }
@@ -467,6 +476,11 @@ public class UserService extends SearchService<User> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userType);
+    }
+
+    @Override
+    public UserDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 
     /**

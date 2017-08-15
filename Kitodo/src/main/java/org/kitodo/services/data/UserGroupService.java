@@ -31,10 +31,11 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class UserGroupService extends TitleSearchService<UserGroup> {
+public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO> {
 
     private UserGroupDAO userGroupDAO = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
@@ -49,6 +50,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
         this.indexer = new Indexer<>(UserGroup.class);
     }
 
+    @Override
     public UserGroup find(Integer id) throws DAOException {
         return userGroupDAO.find(id);
     }
@@ -73,6 +75,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
+    @Override
     public void saveToDatabase(UserGroup userGroup) throws DAOException {
         userGroupDAO.save(userGroup);
     }
@@ -83,6 +86,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -97,6 +101,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         manageTasksDependenciesForIndex(userGroup);
         manageUsersDependenciesForIndex(userGroup);
@@ -148,6 +153,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
+    @Override
     public void removeFromDatabase(UserGroup userGroup) throws DAOException {
         userGroupDAO.remove(userGroup);
     }
@@ -158,6 +164,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param id
      *            of template object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         userGroupDAO.remove(id);
     }
@@ -168,6 +175,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -176,6 +184,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
         }
     }
 
+    @Override
     public List<UserGroup> search(String query) throws DAOException {
         return userGroupDAO.search(query);
     }
@@ -233,6 +242,11 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userGroupType);
+    }
+
+    @Override
+    public UserGroupDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 
     /**

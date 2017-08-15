@@ -127,21 +127,21 @@ public class PropertyServiceIT {
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.save(property);
-        Property foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(7));
+        Property foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(7));
         assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
 
         propertyService.remove(foundProperty);
-        foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(7));
+        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(7));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
 
         property = new Property();
         property.setTitle("To remove");
         propertyService.save(property);
-        foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(8));
+        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
         assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
 
         propertyService.remove(8);
-        foundProperty = propertyService.convertJSONObjectToObject(propertyService.findById(8));
+        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
     }
 

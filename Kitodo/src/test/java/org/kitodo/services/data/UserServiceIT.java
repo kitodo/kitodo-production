@@ -113,7 +113,7 @@ public class UserServiceIT {
         user.setLogin("Remove");
         userService.save(user);
         Thread.sleep(1000);
-        User foundUser = userService.convertJSONObjectToObject(userService.findByLogin("Remove"));
+        User foundUser = userService.convertJSONObjectToBean(userService.findByLogin("Remove"));
         assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
 
         userService.remove(foundUser);
@@ -124,7 +124,7 @@ public class UserServiceIT {
         user.setLogin("remove");
         userService.save(user);
         Thread.sleep(1000);
-        foundUser = userService.convertJSONObjectToObject(userService.findByLogin("remove"));
+        foundUser = userService.convertJSONObjectToBean(userService.findByLogin("remove"));
         assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
 
         userService.remove(foundUser.getId());

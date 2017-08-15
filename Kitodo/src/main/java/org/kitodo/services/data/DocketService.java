@@ -30,9 +30,10 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.DocketType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.DocketDTO;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class DocketService extends TitleSearchService<Docket> {
+public class DocketService extends TitleSearchService<Docket, DocketDTO> {
 
     private DocketDAO docketDAO = new DocketDAO();
     private DocketType docketType = new DocketType();
@@ -46,6 +47,7 @@ public class DocketService extends TitleSearchService<Docket> {
         this.indexer = new Indexer<>(Docket.class);
     }
 
+    @Override
     public Docket find(Integer id) throws DAOException {
         return docketDAO.find(id);
     }
@@ -60,6 +62,7 @@ public class DocketService extends TitleSearchService<Docket> {
      * @param docket
      *            object
      */
+    @Override
     public void saveToDatabase(Docket docket) throws DAOException {
         docketDAO.save(docket);
     }
@@ -70,6 +73,7 @@ public class DocketService extends TitleSearchService<Docket> {
      * @param docket
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -84,6 +88,7 @@ public class DocketService extends TitleSearchService<Docket> {
      * @param docket
      *            object
      */
+    @Override
     public void removeFromDatabase(Docket docket) throws DAOException {
         docketDAO.remove(docket);
     }
@@ -94,6 +99,7 @@ public class DocketService extends TitleSearchService<Docket> {
      * @param id
      *            of docket object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         docketDAO.remove(id);
     }
@@ -105,6 +111,7 @@ public class DocketService extends TitleSearchService<Docket> {
      *            object
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void removeFromIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         if (docket != null) {
@@ -112,6 +119,7 @@ public class DocketService extends TitleSearchService<Docket> {
         }
     }
 
+    @Override
     public List<Docket> search(String query) throws DAOException {
         return docketDAO.search(query);
     }
@@ -177,5 +185,10 @@ public class DocketService extends TitleSearchService<Docket> {
     public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), docketType);
+    }
+
+    @Override
+    public DocketDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 }

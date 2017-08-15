@@ -56,6 +56,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.TaskDTO;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -66,7 +67,7 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 
-public class TaskService extends TitleSearchService<Task> {
+public class TaskService extends TitleSearchService<Task, TaskDTO> {
 
     private TaskDAO taskDAO = new TaskDAO();
     private TaskType taskType = new TaskType();
@@ -87,6 +88,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param task
      *            object
      */
+    @Override
     public void saveToDatabase(Task task) throws DAOException {
         taskDAO.save(task);
     }
@@ -97,6 +99,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param task
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -112,6 +115,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param task
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         manageProcessDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
@@ -171,6 +175,7 @@ public class TaskService extends TitleSearchService<Task> {
         }
     }
 
+    @Override
     public Task find(Integer id) throws DAOException {
         return taskDAO.find(id);
     }
@@ -194,6 +199,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param task
      *            object
      */
+    @Override
     public void removeFromDatabase(Task task) throws DAOException {
         taskDAO.remove(task);
     }
@@ -204,6 +210,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param id
      *            of task object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         taskDAO.remove(id);
     }
@@ -214,6 +221,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param task
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -222,6 +230,7 @@ public class TaskService extends TitleSearchService<Task> {
         }
     }
 
+    @Override
     public List<Task> search(String query) throws DAOException {
         return taskDAO.search(query);
     }
@@ -304,6 +313,11 @@ public class TaskService extends TitleSearchService<Task> {
     public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), taskType);
+    }
+
+    @Override
+    public TaskDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 
     /**

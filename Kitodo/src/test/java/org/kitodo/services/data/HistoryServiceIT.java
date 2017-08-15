@@ -97,21 +97,21 @@ public class HistoryServiceIT {
         History history = new History();
         history.setStringValue("To Remove");
         historyService.save(history);
-        History foundHistory = historyService.convertJSONObjectToObject(historyService.findById(2));
+        History foundHistory = historyService.convertJSONObjectToBean(historyService.findById(2));
         assertEquals("Additional history was not inserted in database!", "To Remove", foundHistory.getStringValue());
 
         historyService.remove(foundHistory);
-        foundHistory = historyService.convertJSONObjectToObject(historyService.findById(2));
+        foundHistory = historyService.convertJSONObjectToBean(historyService.findById(2));
         assertEquals("Additional history was not removed from database!", null, foundHistory);
 
         history = new History();
         history.setStringValue("To remove");
         historyService.save(history);
-        foundHistory = historyService.convertJSONObjectToObject(historyService.findById(3));
+        foundHistory = historyService.convertJSONObjectToBean(historyService.findById(3));
         assertEquals("Additional history was not inserted in database!", "To remove", foundHistory.getStringValue());
 
         historyService.remove(3);
-        foundHistory = historyService.convertJSONObjectToObject(historyService.findById(3));
+        foundHistory = historyService.convertJSONObjectToBean(historyService.findById(3));
         assertEquals("Additional history was not removed from database!", null, foundHistory);
     }
 
@@ -233,7 +233,7 @@ public class HistoryServiceIT {
         HistoryService historyService = new HistoryService();
 
         List<JSONObject> searchResults = historyService.findAllDocuments();
-        List<History> historys = (List<History>) historyService.convertJSONObjectsToObjectList(searchResults,
+        List<History> historys = (List<History>) historyService.convertJSONObjectsToBeanList(searchResults,
                 "History");
         assertEquals("Not all histories were converted!", 1, historys.size());
     }

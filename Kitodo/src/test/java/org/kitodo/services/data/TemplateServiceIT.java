@@ -80,22 +80,22 @@ public class TemplateServiceIT {
         template.setOrigin("To Remove");
         template.setProcess(process);
         templateService.save(template);
-        Template foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(3));
+        Template foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(3));
         assertEquals("Additional template was not inserted in database!", "To Remove", foundTemplate.getOrigin());
 
         templateService.remove(foundTemplate);
-        foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(3));
+        foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(3));
         assertEquals("Additional template was not removed from database!", null, foundTemplate);
 
         template = new Template();
         template.setOrigin("To remove");
         template.setProcess(process);
         templateService.save(template);
-        foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(4));
+        foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(4));
         assertEquals("Additional template was not inserted in database!", "To remove", foundTemplate.getOrigin());
 
         templateService.remove(4);
-        foundTemplate = templateService.convertJSONObjectToObject(templateService.findById(4));
+        foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(4));
         assertEquals("Additional template was not removed from database!", null, foundTemplate);
     }
 

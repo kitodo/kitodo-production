@@ -170,21 +170,21 @@ public class RulesetServiceIT {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("To Remove");
         rulesetService.save(ruleset);
-        Ruleset foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(3));
+        Ruleset foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(3));
         assertEquals("Additional ruleset was not inserted in database!", "To Remove", foundRuleset.getTitle());
 
         rulesetService.remove(ruleset);
-        foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(3));
+        foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(3));
         assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
 
         ruleset = new Ruleset();
         ruleset.setTitle("To remove");
         rulesetService.save(ruleset);
-        foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(4));
+        foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(4));
         assertEquals("Additional ruleset was not inserted in database!", "To remove", foundRuleset.getTitle());
 
         rulesetService.remove(4);
-        foundRuleset = rulesetService.convertJSONObjectToObject(rulesetService.findById(4));
+        foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(4));
         assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
     }
 
@@ -194,7 +194,7 @@ public class RulesetServiceIT {
         RulesetService rulesetService = new RulesetService();
 
         List<JSONObject> searchResults = rulesetService.findAllDocuments();
-        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertJSONObjectsToObjectList(searchResults,
+        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertJSONObjectsToBeanList(searchResults,
                 "Ruleset");
         assertEquals("Not all rulesets were converted!", 2, rulesets.size());
     }

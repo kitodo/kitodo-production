@@ -32,10 +32,11 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkpieceType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.WorkpieceDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class WorkpieceService extends SearchService<Workpiece> {
+public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
 
     private WorkpieceDAO workpieceDAO = new WorkpieceDAO();
     private WorkpieceType workpieceType = new WorkpieceType();
@@ -56,6 +57,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
+    @Override
     public void saveToDatabase(Workpiece workpiece) throws DAOException {
         workpieceDAO.save(workpiece);
     }
@@ -66,6 +68,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -80,6 +83,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         manageProcessDependenciesForIndex(workpiece);
         managePropertiesDependenciesForIndex(workpiece);
@@ -107,6 +111,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
         }
     }
 
+    @Override
     public Workpiece find(Integer id) throws DAOException {
         return workpieceDAO.find(id);
     }
@@ -122,6 +127,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            as String
      * @return list of Workpiece objects
      */
+    @Override
     public List<Workpiece> search(String query) throws DAOException {
         return workpieceDAO.search(query);
     }
@@ -142,6 +148,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
+    @Override
     public void removeFromDatabase(Workpiece workpiece) throws DAOException {
         workpieceDAO.remove(workpiece);
     }
@@ -152,6 +159,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param id
      *            of workpiece object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         workpieceDAO.remove(id);
     }
@@ -162,6 +170,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -237,6 +246,11 @@ public class WorkpieceService extends SearchService<Workpiece> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), workpieceType);
+    }
+
+    @Override
+    public WorkpieceDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+        return null;
     }
 
     /**
