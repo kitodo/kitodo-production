@@ -63,6 +63,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 
 @Named("ProjekteForm")
@@ -220,7 +221,12 @@ public class ProjekteForm extends BasisForm {
      * @return page or empty String
      */
     public String filterKein() {
-        List<Project> projects = serviceManager.getProjectService().findAll();
+        List<ProjectDTO> projects = new ArrayList<>();
+        try {
+            projects = serviceManager.getProjectService().getAll();
+        } catch (DataException e) {
+            logger.error(e);
+        }
         this.page = new Page(0, projects);
         return "/pages/ProjekteAlle";
     }

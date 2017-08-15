@@ -206,7 +206,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
+    List<JSONObject> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("startDate", startDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -220,7 +220,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
+    List<JSONObject> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("endDate", endDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -234,7 +234,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
+    List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
             throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfPages", numberOfPages, searchCondition);
         return searcher.findDocuments(query.toString());
@@ -249,7 +249,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
+    List<JSONObject> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
             throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfVolumes", numberOfVolumes, searchCondition);
         return searcher.findDocuments(query.toString());
@@ -263,7 +263,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            projects
      * @return list of JSON objects
      */
-    public List<JSONObject> findByArchived(Boolean archived) throws DataException {
+    List<JSONObject> findByArchived(Boolean archived) throws DataException {
         QueryBuilder query = createSimpleQuery("archived", archived.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -304,7 +304,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            of user
      * @return list of JSON objects
      */
-    public List<JSONObject> findByUserId(Integer id) throws DataException {
+    List<JSONObject> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -316,9 +316,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            of user
      * @return list of search result with projects for specific user login
      */
-    public List<JSONObject> findByUserLogin(String login) throws DataException {
+    List<JSONObject> findByUserLogin(String login) throws DataException {
         JSONObject user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(getIdFromJSONObject(user));
+    }
+
+    /**
+     * Get all projects from index an convert them for frontend.
+     *
+     * @return list of ProjectDTO objects
+     */
+    public List<ProjectDTO> getAll() throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
     /**
