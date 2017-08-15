@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -197,13 +196,9 @@ public class HelperForm implements Serializable {
     public List<SelectItem> getCssFiles() {
         List<SelectItem> list = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        try {
-            ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
-            for (URI uri : uris) {
-                list.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
-            }
-        } catch (IOException e) {
-            logger.error(e);
+        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
+        for (URI uri : uris) {
+            list.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
         }
         return list;
     }
@@ -219,15 +214,11 @@ public class HelperForm implements Serializable {
      */
     public String getCssLinkIfExists(String cssFileName) {
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        try {
-            ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
-            for (URI uri : uris) {
-                if ((CSS_PATH + uri).equals(cssFileName)) {
-                    return cssFileName;
-                }
+        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
+        for (URI uri : uris) {
+            if ((CSS_PATH + uri).equals(cssFileName)) {
+                return cssFileName;
             }
-        } catch (IOException e) {
-            logger.error(e);
         }
         return CSS_PATH + "/default.css";
     }

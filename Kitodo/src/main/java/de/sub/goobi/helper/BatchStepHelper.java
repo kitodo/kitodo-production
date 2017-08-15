@@ -896,7 +896,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException, IOException {
+    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException {
 
         // for (ProcessProperty pp : this.processPropertyList) {
         // this.processProperty = pp;

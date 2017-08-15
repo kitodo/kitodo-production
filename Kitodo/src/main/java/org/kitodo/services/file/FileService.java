@@ -186,7 +186,7 @@ public class FileService {
      *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfFiles(URI directory) throws IOException {
+    public Integer getNumberOfFiles(URI directory) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getNumberOfFiles(null, directory);
     }
@@ -199,7 +199,7 @@ public class FileService {
      *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfImageFiles(URI directory) throws IOException {
+    public Integer getNumberOfImageFiles(URI directory) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getNumberOfFiles(Helper.imageNameFilter, directory);
     }
@@ -267,10 +267,8 @@ public class FileService {
      * @param uri
      *            the URI, to check, if there is a file
      * @return true, if the file exists
-     * @throws IOException
-     *             if get of module fails
      */
-    public boolean fileExist(URI uri) throws IOException {
+    public boolean fileExist(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.fileExist(uri);
     }
@@ -281,10 +279,8 @@ public class FileService {
      * @param uri
      *            the URI to check, if there is a file
      * @return true, if it is a file, false otherwise
-     * @throws IOException
-     *             if get of module fails
      */
-    public boolean isFile(URI uri) throws IOException {
+    public boolean isFile(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.isFile(uri);
     }
@@ -296,7 +292,7 @@ public class FileService {
      *            the uri to check.
      * @return true, if it is a directory.
      */
-    public boolean isDirectory(URI dir) throws IOException {
+    public boolean isDirectory(URI dir) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.isDirectory(dir);
     }
@@ -308,7 +304,7 @@ public class FileService {
      *            the uri to check.
      * @return true, if it's readable, false otherwise.
      */
-    public boolean canRead(URI uri) throws IOException {
+    public boolean canRead(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.canRead(uri);
     }
@@ -319,10 +315,8 @@ public class FileService {
      * @param uri
      *            the URI, to get the filename from.
      * @return the name of the file
-     * @throws IOException
-     *             if get of module fails
      */
-    public String getFileName(URI uri) throws IOException {
+    public String getFileName(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         String fileNameWithExtension = fileManagementModule.getFileNameWithExtension(uri);
         if (fileNameWithExtension.contains(".")) {
@@ -337,10 +331,8 @@ public class FileService {
      * @param uri
      *            the URI, to get the filename from
      * @return the name of the file
-     * @throws IOException
-     *             if get of module fails
      */
-    public String getFileNameWithExtension(URI uri) throws IOException {
+    public String getFileNameWithExtension(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getFileNameWithExtension(uri);
     }
@@ -382,7 +374,7 @@ public class FileService {
      *            the URI, to get the sub URIs from
      * @return a List of sub URIs
      */
-    public ArrayList<URI> getSubUris(URI uri) throws IOException {
+    public ArrayList<URI> getSubUris(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSubUris(null, uri);
     }
@@ -396,7 +388,7 @@ public class FileService {
      *            the URI, to get the sub URIs from
      * @return a List of sub URIs
      */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) throws IOException {
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSubUris(filter, uri);
     }
@@ -505,11 +497,11 @@ public class FileService {
      *            the process to get the metadata.xml for.
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(Process process) throws IOException {
+    public URI getMetadataFilePath(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
     }
 
-    private String getTemporaryMetadataFileName(URI fileName) throws IOException {
+    private String getTemporaryMetadataFileName(URI fileName) {
         File temporaryFile = getFile(fileName);
         String directoryPath = temporaryFile.getParentFile().getPath();
         String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
@@ -524,7 +516,7 @@ public class FileService {
      *            the process to get the imageDirectory for.
      * @return The uri of the Image Directory.
      */
-    public URI getImagesDirectory(Process process) throws IOException {
+    public URI getImagesDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
     }
 
@@ -535,7 +527,7 @@ public class FileService {
      *            the process tog et the ocr directory for.
      * @return the uri to the ocr directory.
      */
-    public URI getOcrDirectory(Process process) throws IOException {
+    public URI getOcrDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
     }
 
@@ -546,7 +538,7 @@ public class FileService {
      *            the process to get the import directory for.
      * @return the uri of the import directory
      */
-    public URI getImportDirectory(Process process) throws IOException {
+    public URI getImportDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
     }
 
@@ -557,7 +549,7 @@ public class FileService {
      *            the process to get the text directory for.
      * @return the uri of the text directory
      */
-    public URI getTxtDirectory(Process process) throws IOException {
+    public URI getTxtDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
     }
 
@@ -568,7 +560,7 @@ public class FileService {
      *            the process to get the pdf directory for.
      * @return the uri of the pdf directory
      */
-    public URI getPdfDirectory(Process process) throws IOException {
+    public URI getPdfDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
     }
 
@@ -579,7 +571,7 @@ public class FileService {
      *            the process to get the alto directory for.
      * @return the uri of the alto directory
      */
-    public URI getAltoDirectory(Process process) throws IOException {
+    public URI getAltoDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
     }
 
@@ -590,7 +582,7 @@ public class FileService {
      *            the process to get the word directory for.
      * @return the uri of the word directory
      */
-    public URI getWordDirectory(Process process) throws IOException {
+    public URI getWordDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
     }
 
@@ -601,7 +593,7 @@ public class FileService {
      *            the process to get the template file for.
      * @return the uri of the template file
      */
-    public URI getTemplateFile(Process process) throws IOException {
+    public URI getTemplateFile(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
@@ -614,7 +606,7 @@ public class FileService {
      *            the process, the uri is needed for.
      * @return the URI.
      */
-    public URI getProcessBaseUriForExistingProcess(Process process) throws IOException {
+    public URI getProcessBaseUriForExistingProcess(Process process) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         URI processBaseUri = process.getProcessBaseUri();
         if (processBaseUri == null) {
@@ -636,7 +628,7 @@ public class FileService {
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) throws IOException {
+    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
 
@@ -662,7 +654,7 @@ public class FileService {
      * @return unmapped URI
      */
     public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Process process, ProcessSubType processSubType,
-            String resourceName) throws IOException {
+            String resourceName) {
         URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
         return getSubUris(filter, processSubTypeURI);
     }
@@ -692,7 +684,7 @@ public class FileService {
      *            the process, to get the source directory for
      * @return the source directory as an URI
      */
-    public URI getSourceDirectory(Process process) throws IOException {
+    public URI getSourceDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.IMAGE_SOURCE, null);
     }
 
@@ -706,7 +698,7 @@ public class FileService {
     }
 
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
-            throws IOException, WriteException, PreferencesException {
+            throws WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }
 
@@ -718,10 +710,8 @@ public class FileService {
      * @param homeUri
      *            the home URI
      * @return true, if link creation was successful
-     * @throws IOException
-     *             if get of module fails
      */
-    public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) throws IOException {
+    public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.createSymLink(homeUri, targetUri, onlyRead, user.getLogin());
     }
@@ -732,20 +722,18 @@ public class FileService {
      * @param homeUri
      *            the URI of the home folder, where the link should be deleted
      * @return true, if deletion was successful
-     * @throws IOException
-     *             if get of module fails
      */
-    public boolean deleteSymLink(URI homeUri) throws IOException {
+    public boolean deleteSymLink(URI homeUri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.deleteSymLink(homeUri);
     }
 
-    public File getFile(URI uri) throws IOException {
+    public File getFile(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getFile(uri);
     }
 
-    private FileManagementInterface getFileManagementModule() throws IOException {
+    private FileManagementInterface getFileManagementModule() {
         KitodoServiceLoader<FileManagementInterface> loader = new KitodoServiceLoader<>(FileManagementInterface.class);
         return loader.loadModule();
     }

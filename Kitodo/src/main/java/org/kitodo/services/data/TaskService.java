@@ -714,7 +714,7 @@ public class TaskService extends TitleSearchService<Task> {
         return processService.getBatchesInitialized(task.getProcess()).size() > 0;
     }
 
-    public void close(Task task, boolean requestFromGUI) throws DataException, IOException {
+    public void close(Task task, boolean requestFromGUI) throws DataException {
         Integer processId = task.getProcess().getId();
         if (logger.isDebugEnabled()) {
             logger.debug("closing step with id " + task.getId() + " and process id " + processId);

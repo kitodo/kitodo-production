@@ -230,7 +230,7 @@ public class BackupFileRotationTest {
         assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content);
     }
 
-    private void assertFileExists(String fileName) throws IOException {
+    private void assertFileExists(String fileName) {
         boolean fileExist = fileService.fileExist(URI.create(fileName));
         if (!fileExist) {
             fail("File " + fileName + " does not exist.");

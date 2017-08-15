@@ -56,7 +56,7 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public URI getImagesTifDirectory(boolean useFallBack) throws IOException {
+    public URI getImagesTifDirectory(boolean useFallBack) {
         URI dir = getImagesDirectory();
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
@@ -111,14 +111,9 @@ public class FolderInformation {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean getTifDirectoryExists() {
-        try {
-            URI testMe = getImagesTifDirectory(true);
-            return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                    && fileService.getSubUris(testMe).size() > 0;
-        } catch (IOException e) {
-            logger.error(e);
-            return false;
-        }
+        URI testMe = getImagesTifDirectory(true);
+        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
+                && fileService.getSubUris(testMe).size() > 0;
     }
 
     /**
@@ -128,7 +123,7 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public URI getImagesOrigDirectory(boolean useFallBack) throws IOException {
+    public URI getImagesOrigDirectory(boolean useFallBack) {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             URI dir = getImagesDirectory();
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -169,7 +164,7 @@ public class FolderInformation {
         }
     }
 
-    private URI iterateOverDirectories(URI directory, String suffix) throws IOException {
+    private URI iterateOverDirectories(URI directory, String suffix) {
         ArrayList<URI> folderList = fileService.getSubUris(directory);
         for (URI folder : folderList) {
             if (folder.toString().endsWith(suffix)) {
@@ -263,17 +258,12 @@ public class FolderInformation {
         }
         /* Verzeichnis einlesen */
         ArrayList<URI> dataList = new ArrayList<>();
-        try {
-            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
-            if (files.size() > 0) {
-                dataList.addAll(files);
-                Collections.sort(dataList, new GoobiImageURIComparator());
-            }
-            return dataList;
-        } catch (IOException e) {
-            logger.error(e);
-            return dataList;
+        ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+        if (files.size() > 0) {
+            dataList.addAll(files);
+            Collections.sort(dataList, new GoobiImageURIComparator());
         }
+        return dataList;
     }
 
     private static class GoobiImageURIComparator implements Comparator<URI> {

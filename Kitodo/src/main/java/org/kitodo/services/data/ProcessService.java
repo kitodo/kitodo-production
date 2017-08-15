@@ -854,7 +854,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return path
      */
-    public URI getProcessDataDirectory(Process process) throws IOException {
+    public URI getProcessDataDirectory(Process process) {
         if (process.getProcessBaseUri() == null) {
             process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
             try {
@@ -1100,7 +1100,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return path as a String to the full text file
      */
-    public String getFulltextFilePath(Process process) throws IOException {
+    public String getFulltextFilePath(Process process) {
         return getProcessDataDirectory(process) + "/fulltext.xml";
     }
 
@@ -1158,12 +1158,7 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     private boolean checkForMetadataFile(Process process) {
-        try {
-            return fileService.fileExist(fileService.getMetadataFilePath(process));
-        } catch (IOException e) {
-            logger.error(e);
-            return false;
-        }
+        return fileService.fileExist(fileService.getMetadataFilePath(process));
     }
 
     /**
