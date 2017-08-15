@@ -37,6 +37,7 @@ import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
+import org.kitodo.dto.ProcessDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -268,7 +269,19 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
 
     @Override
     public BatchDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
-        return null;
+        BatchDTO batchDTO = new BatchDTO();
+        batchDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        batchDTO.setType(getStringPropertyForDTO(jsonObject, "type"));
+        return batchDTO;
+    }
+
+    List<ProcessDTO> convertProcessesToDTOList(JSONObject jsonObject) throws DataException {
+        List<ProcessDTO> processDTOS = new ArrayList<>();
+        for (Integer process : getRelatedPropertyForDTO(jsonObject, "processes")) {
+            JSONObject result = serviceManager.getProcessService().findById(process);
+            processDTOS.add(serviceManager.getProcessService().convertJSONObjectToDTO(result));
+        }
+        return processDTOS;
     }
 
     /**

@@ -40,7 +40,9 @@ import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -332,7 +334,35 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
 
     @Override
     public ProjectDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
-        return null;
+        ProjectDTO projectDTO = new ProjectDTO();
+        projectDTO.setId(getIdFromJSONObject(jsonObject));
+        projectDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        projectDTO.setStartDate(getStringPropertyForDTO(jsonObject, "startDate"));
+        projectDTO.setEndDate(getStringPropertyForDTO(jsonObject, "endDate"));
+        projectDTO.setFileFormatDmsExport(getStringPropertyForDTO(jsonObject, "fileFormatDmsExport"));
+        projectDTO.setFileFormatInternal(getStringPropertyForDTO(jsonObject, "fileFormatInternal"));
+        projectDTO.setNumberOfPages(getIntegerPropertyForDTO(jsonObject, "numberOfPages"));
+        projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(jsonObject, "numberOfVolumes"));
+        //projectDTO.setProjectIsArchived(getStringPropertyForDTO(jsonObject, "archived"));
+        return projectDTO;
+    }
+
+    List<ProcessDTO> convertProcessesToDTOList(JSONObject jsonObject) throws DataException {
+        List<ProcessDTO> processDTOS = new ArrayList<>();
+        for (Integer process : getRelatedPropertyForDTO(jsonObject, "processes")) {
+            JSONObject result = serviceManager.getProcessService().findById(process);
+            processDTOS.add(serviceManager.getProcessService().convertJSONObjectToDTO(result));
+        }
+        return processDTOS;
+    }
+
+    List<UserDTO> convertUsersToDTOList(JSONObject jsonObject) throws DataException {
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (Integer user : getRelatedPropertyForDTO(jsonObject, "users")) {
+            JSONObject result = serviceManager.getUserService().findById(user);
+            userDTOS.add(serviceManager.getUserService().convertJSONObjectToDTO(result));
+        }
+        return userDTOS;
     }
 
     /**

@@ -246,7 +246,12 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
 
     @Override
     public PropertyDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
-        return null;
+        PropertyDTO propertyDTO = new PropertyDTO();
+        propertyDTO.setId(getIdFromJSONObject(jsonObject));
+        propertyDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        propertyDTO.setValue(getStringPropertyForDTO(jsonObject, "value"));
+        propertyDTO.setCreationDate(getStringPropertyForDTO(jsonObject, "creationDate"));
+        return propertyDTO;
     }
 
     /**

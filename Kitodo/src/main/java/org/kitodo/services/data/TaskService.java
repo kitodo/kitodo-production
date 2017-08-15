@@ -317,7 +317,18 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
 
     @Override
     public TaskDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
-        return null;
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setId(getIdFromJSONObject(jsonObject));
+        taskDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        taskDTO.setPriority(getIntegerPropertyForDTO(jsonObject, "priority"));
+        taskDTO.setOrdering(getIntegerPropertyForDTO(jsonObject, "ordering"));
+        Integer taskStatus = getIntegerPropertyForDTO(jsonObject, "processingStatus");
+        taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
+        taskDTO.setProcessingTime(getStringPropertyForDTO(jsonObject, "processingTime"));
+        taskDTO.setProcessingBegin(getStringPropertyForDTO(jsonObject, "processingBegin"));
+        taskDTO.setProcessingEnd(getStringPropertyForDTO(jsonObject, "processingEnd"));
+        taskDTO.setTypeImagesWrite(true);
+        return taskDTO;
     }
 
     /**

@@ -207,7 +207,10 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
 
     @Override
     public RulesetDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
-        return null;
+        RulesetDTO rulesetDTO = new RulesetDTO();
+        rulesetDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        rulesetDTO.setFile(getStringPropertyForDTO(jsonObject, "file"));
+        return rulesetDTO;
     }
 
     /**

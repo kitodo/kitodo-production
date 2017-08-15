@@ -47,7 +47,11 @@ import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.FilterDTO;
+import org.kitodo.dto.ProjectDTO;
+import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
@@ -199,7 +203,7 @@ public class UserService extends SearchService<User, UserDTO> {
 
     /**
      * Get al. users.
-     * 
+     *
      * @return A List of all users
      */
     public List<User> findAll() {
@@ -208,7 +212,7 @@ public class UserService extends SearchService<User, UserDTO> {
 
     /**
      * Get all visible users.
-     * 
+     *
      * @return A list of all visible users
      */
     public List<User> getAllVisibleUsers() {
@@ -217,7 +221,7 @@ public class UserService extends SearchService<User, UserDTO> {
 
     /**
      * get all active users.
-     * 
+     *
      * @return a list of all active users
      */
     public List<User> getAllActiveUsers() {
@@ -286,7 +290,7 @@ public class UserService extends SearchService<User, UserDTO> {
 
     /**
      * Get amount of users with exactly the same login like given but different id.
-     * 
+     *
      * @param id
      *            of user
      * @param login
@@ -480,7 +484,50 @@ public class UserService extends SearchService<User, UserDTO> {
 
     @Override
     public UserDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
-        return null;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(getIdFromJSONObject(jsonObject));
+        userDTO.setLogin(getStringPropertyForDTO(jsonObject, "login"));
+        userDTO.setName(getStringPropertyForDTO(jsonObject, "name"));
+        userDTO.setSurname(getStringPropertyForDTO(jsonObject, "surname"));
+        userDTO.setLdapLogin(getStringPropertyForDTO(jsonObject, "ldapLogin"));
+        userDTO.setLocation(getStringPropertyForDTO(jsonObject, "location"));
+        //userDTO.setFullName(getFullName(userDTO));
+        return userDTO;
+    }
+    List<FilterDTO> convertFiltersToDTOList(JSONObject jsonObject) throws DataException {
+        List<FilterDTO> filterDTOS = new ArrayList<>();
+        for (Integer filter : getRelatedPropertyForDTO(jsonObject, "filters")) {
+            JSONObject result = serviceManager.getFilterService().findById(filter);
+            filterDTOS.add(serviceManager.getFilterService().convertJSONObjectToDTO(result));
+        }
+        return filterDTOS;
+    }
+
+    List<ProjectDTO> convertProjectsToDTOList(JSONObject jsonObject) throws DataException {
+        List<ProjectDTO> projectDTOS = new ArrayList<>();
+        for (Integer project : getRelatedPropertyForDTO(jsonObject, "projects")) {
+            JSONObject result = serviceManager.getProjectService().findById(project);
+            projectDTOS.add(serviceManager.getProjectService().convertJSONObjectToDTO(result));
+        }
+        return projectDTOS;
+    }
+
+    List<TaskDTO> convertTasksToDTOList(JSONObject jsonObject) throws DataException {
+        List<TaskDTO> taskDTOS = new ArrayList<>();
+        for (Integer task : getRelatedPropertyForDTO(jsonObject, "tasks")) {
+            JSONObject result = serviceManager.getTaskService().findById(task);
+            taskDTOS.add(serviceManager.getTaskService().convertJSONObjectToDTO(result));
+        }
+        return taskDTOS;
+    }
+
+    List<UserGroupDTO> convertUserGroupsToDTOList(JSONObject jsonObject) throws DataException {
+        List<UserGroupDTO> userGroupDTOS = new ArrayList<>();
+        for (Integer userGroup : getRelatedPropertyForDTO(jsonObject, "userGroups")) {
+            JSONObject result = serviceManager.getUserGroupService().findById(userGroup);
+            userGroupDTOS.add(serviceManager.getUserGroupService().convertJSONObjectToDTO(result));
+        }
+        return userGroupDTOS;
     }
 
     /**
@@ -778,7 +825,7 @@ public class UserService extends SearchService<User, UserDTO> {
 
     /**
      * Get filtered users by name.
-     * 
+     *
      * @param filter
      *            the name filter
      * @return a list of filtered users

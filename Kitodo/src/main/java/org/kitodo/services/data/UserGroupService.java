@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +32,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -246,7 +248,19 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
 
     @Override
     public UserGroupDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
-        return null;
+        UserGroupDTO userGroupDTO = new UserGroupDTO();
+        userGroupDTO.setId(getIdFromJSONObject(jsonObject));
+        userGroupDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        return userGroupDTO;
+    }
+
+    List<UserDTO> convertUsersToDTOList(JSONObject jsonObject) throws DataException {
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (Integer user : getRelatedPropertyForDTO(jsonObject, "users")) {
+            JSONObject result = serviceManager.getUserService().findById(user);
+            userDTOS.add(serviceManager.getUserService().convertJSONObjectToDTO(result));
+        }
+        return userDTOS;
     }
 
     /**
