@@ -381,6 +381,23 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
+     * Convert related JSONObject object to bean object.
+     *
+     * @param jsonObject
+     *            result from ElasticSearch
+     * @return bean object
+     */
+    protected <Z extends BaseBean, O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject,
+            String key, SearchService<Z, O> service) throws DataException {
+        List<O> listDTO = new ArrayList<>();
+        for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
+            JSONObject result = service.findById(id);
+            listDTO.add(service.convertJSONObjectToDTO(result));
+        }
+        return listDTO;
+    }
+
+    /**
      * Get id from JSON object returned form ElasticSearch.
      * 
      * @param jsonObject
@@ -465,7 +482,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
             return boolQuery.mustNot(matchQuery(key, condition));
         } else {
-            return matchQuery(key, 0);
+            return matchQuery(key, false);
         }
     }
 

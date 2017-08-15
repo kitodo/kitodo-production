@@ -255,12 +255,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     List<UserDTO> convertUsersToDTOList(JSONObject jsonObject) throws DataException {
-        List<UserDTO> userDTOS = new ArrayList<>();
-        for (Integer user : getRelatedPropertyForDTO(jsonObject, "users")) {
-            JSONObject result = serviceManager.getUserService().findById(user);
-            userDTOS.add(serviceManager.getUserService().convertJSONObjectToDTO(result));
-        }
-        return userDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService());
     }
 
     /**

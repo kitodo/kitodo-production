@@ -348,21 +348,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     List<ProcessDTO> convertProcessesToDTOList(JSONObject jsonObject) throws DataException {
-        List<ProcessDTO> processDTOS = new ArrayList<>();
-        for (Integer process : getRelatedPropertyForDTO(jsonObject, "processes")) {
-            JSONObject result = serviceManager.getProcessService().findById(process);
-            processDTOS.add(serviceManager.getProcessService().convertJSONObjectToDTO(result));
-        }
-        return processDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService());
     }
 
     List<UserDTO> convertUsersToDTOList(JSONObject jsonObject) throws DataException {
-        List<UserDTO> userDTOS = new ArrayList<>();
-        for (Integer user : getRelatedPropertyForDTO(jsonObject, "users")) {
-            JSONObject result = serviceManager.getUserService().findById(user);
-            userDTOS.add(serviceManager.getUserService().convertJSONObjectToDTO(result));
-        }
-        return userDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService());
     }
 
     /**

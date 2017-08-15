@@ -276,12 +276,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     }
 
     List<ProcessDTO> convertProcessesToDTOList(JSONObject jsonObject) throws DataException {
-        List<ProcessDTO> processDTOS = new ArrayList<>();
-        for (Integer process : getRelatedPropertyForDTO(jsonObject, "processes")) {
-            JSONObject result = serviceManager.getProcessService().findById(process);
-            processDTOS.add(serviceManager.getProcessService().convertJSONObjectToDTO(result));
-        }
-        return processDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService());
     }
 
     /**

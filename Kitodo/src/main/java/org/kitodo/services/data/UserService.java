@@ -494,40 +494,21 @@ public class UserService extends SearchService<User, UserDTO> {
         //userDTO.setFullName(getFullName(userDTO));
         return userDTO;
     }
+
     List<FilterDTO> convertFiltersToDTOList(JSONObject jsonObject) throws DataException {
-        List<FilterDTO> filterDTOS = new ArrayList<>();
-        for (Integer filter : getRelatedPropertyForDTO(jsonObject, "filters")) {
-            JSONObject result = serviceManager.getFilterService().findById(filter);
-            filterDTOS.add(serviceManager.getFilterService().convertJSONObjectToDTO(result));
-        }
-        return filterDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "filters", serviceManager.getFilterService());
     }
 
     List<ProjectDTO> convertProjectsToDTOList(JSONObject jsonObject) throws DataException {
-        List<ProjectDTO> projectDTOS = new ArrayList<>();
-        for (Integer project : getRelatedPropertyForDTO(jsonObject, "projects")) {
-            JSONObject result = serviceManager.getProjectService().findById(project);
-            projectDTOS.add(serviceManager.getProjectService().convertJSONObjectToDTO(result));
-        }
-        return projectDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService());
     }
 
     List<TaskDTO> convertTasksToDTOList(JSONObject jsonObject) throws DataException {
-        List<TaskDTO> taskDTOS = new ArrayList<>();
-        for (Integer task : getRelatedPropertyForDTO(jsonObject, "tasks")) {
-            JSONObject result = serviceManager.getTaskService().findById(task);
-            taskDTOS.add(serviceManager.getTaskService().convertJSONObjectToDTO(result));
-        }
-        return taskDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService());
     }
 
     List<UserGroupDTO> convertUserGroupsToDTOList(JSONObject jsonObject) throws DataException {
-        List<UserGroupDTO> userGroupDTOS = new ArrayList<>();
-        for (Integer userGroup : getRelatedPropertyForDTO(jsonObject, "userGroups")) {
-            JSONObject result = serviceManager.getUserGroupService().findById(userGroup);
-            userGroupDTOS.add(serviceManager.getUserGroupService().convertJSONObjectToDTO(result));
-        }
-        return userGroupDTOS;
+        return convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService());
     }
 
     /**
