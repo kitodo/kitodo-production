@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.dto.UserDTO;
 
 /**
  * Tests for UserService class.
@@ -466,33 +467,32 @@ public class UserServiceIT {
     }
 
     @Test
-    public void getAllVisibleUsers() {
+    public void getAllVisibleUsers() throws Exception {
         UserService userService = new UserService();
 
-        List<User> allVisibleUsers = userService.getAllVisibleUsers();
+        List<UserDTO> allVisibleUsers = userService.getAllVisibleUsers();
         assertTrue(allVisibleUsers.size() == 3);
     }
 
     @Test
-    public void getAllActiveUsers() {
+    public void getAllActiveUsers() throws Exception {
         UserService userService = new UserService();
 
-        List<User> allActiveUsers = userService.getAllActiveUsers();
+        List<UserDTO> allActiveUsers = userService.getAllActiveUsers();
         assertTrue(allActiveUsers.size() == 2);
     }
 
     @Test
-    public void getFilteredUsersByName() {
+    public void shouldGetActiveUsersByName() throws Exception {
         UserService userService = new UserService();
 
-        List<User> allActiveUsers = userService.getFilteredUsersByName("Jan");
+        List<UserDTO> allActiveUsers = userService.getActiveUsersByName("Jan");
         assertTrue(allActiveUsers.size() == 1);
         int actual = allActiveUsers.get(0).getId();
         int expected = 1;
         assertEquals(actual, expected);
 
-        allActiveUsers = userService.getFilteredUsersByName("owa");
+        allActiveUsers = userService.getActiveUsersByName("owa");
         assertTrue(allActiveUsers.size() == 2);
-
     }
 }

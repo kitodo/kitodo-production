@@ -44,6 +44,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzerverwaltungForm")
@@ -79,11 +80,11 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public String filterKein() {
         this.filter = null;
-        List<User> users;
-        if (this.hideInactiveUsers) {
-            users = serviceManager.getUserService().getAllActiveUsers();
-        } else {
-            users = serviceManager.getUserService().getAllVisibleUsers();
+        List<UserDTO> users = new ArrayList<>();
+        try {
+            users = getUsers();
+        } catch (DataException e) {
+            logger.error(e);
         }
         this.page = new Page(0, users);
         return "/pages/BenutzerAlle";
@@ -107,18 +108,26 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Anzeige der gefilterten Nutzer.
      */
     public String filterAlleStart() {
-        List<User> users;
-        if (this.filter != null && this.filter.length() != 0) {
-            users = serviceManager.getUserService().getFilteredUsersByName(this.filter);
-        } else {
-            if (this.hideInactiveUsers) {
-                users = serviceManager.getUserService().getAllVisibleUsers();
+        List<UserDTO> users = new ArrayList<>();
+        try {
+            if (this.filter != null && this.filter.length() != 0) {
+                users = serviceManager.getUserService().getActiveUsersByName(this.filter);
             } else {
-                users = serviceManager.getUserService().getAllActiveUsers();
+                users = getUsers();
             }
+        } catch (DataException e) {
+            logger.error(e);
         }
         this.page = new Page(0, users);
         return "/pages/BenutzerAlle";
+    }
+
+    private List<UserDTO> getUsers() throws DataException {
+        if (this.hideInactiveUsers) {
+            return serviceManager.getUserService().getAllActiveUsers();
+        } else {
+            return serviceManager.getUserService().getAllVisibleUsers();
+        }
     }
 
     /**
