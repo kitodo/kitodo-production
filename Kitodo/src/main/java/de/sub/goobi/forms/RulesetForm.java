@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.RulesetDTO;
 import org.kitodo.services.ServiceManager;
 
 @Named("RulesetForm")
@@ -107,7 +109,7 @@ public class RulesetForm extends BasisForm {
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
         Integer number = serviceManager.getProcessService().findByRuleset(ruleset).size();
-        return number != null && number > 0;
+        return number > 0;
     }
 
     /**
@@ -116,7 +118,12 @@ public class RulesetForm extends BasisForm {
      * @return page or empty String
      */
     public String noFiltering() {
-        List<Ruleset> rulesets = serviceManager.getRulesetService().findAll();
+        List<RulesetDTO> rulesets = new ArrayList<>();
+        try {
+            rulesets = serviceManager.getRulesetService().getAll();
+        } catch (DataException e) {
+            logger.error(e);
+        }
         this.page = new Page(0, rulesets);
         return "/pages/RegelsaetzeAlle/?faces-redirect=true";
     }

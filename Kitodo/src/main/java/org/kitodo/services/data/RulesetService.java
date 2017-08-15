@@ -197,6 +197,15 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
     }
 
     /**
+     * Get all rulesets from index an convert them for frontend.
+     *
+     * @return list of DocketDTO objects
+     */
+    public List<RulesetDTO> getAll() throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(), false);
+    }
+
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
     @SuppressWarnings("unchecked")
