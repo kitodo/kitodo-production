@@ -13,6 +13,7 @@ package org.kitodo.services.data.base;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
@@ -605,6 +606,10 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
                 assert false : searchCondition;
         }
         return query;
+    }
+
+    protected QueryBuilder createSimpleWildcardQuery(String key, String value) {
+        return queryStringQuery(key + ": *" + value + "*");
     }
 
     /**
