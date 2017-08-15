@@ -141,7 +141,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
      *            of the searched docket
      * @return search result
      */
-    public JSONObject findByFile(String file) throws DataException {
+    JSONObject findByFile(String file) throws DataException {
         QueryBuilder query = createSimpleQuery("file", file, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -155,7 +155,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
      *            of the searched docket
      * @return search result
      */
-    public JSONObject findByTitleAndFile(String title, String file) throws DataException {
+    JSONObject findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("file", file, true, Operator.AND));
@@ -171,11 +171,20 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
      *            of the searched docket
      * @return search result
      */
-    public List<JSONObject> findByTitleOrFile(String title, String file) throws DataException {
+    List<JSONObject> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true, Operator.AND));
         query.should(createSimpleQuery("file", file, true, Operator.AND));
         return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Get all dockets from index an convert them for frontend.
+     *
+     * @return list of DocketDTO objects
+     */
+    public List<DocketDTO> getAll() throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
     /**

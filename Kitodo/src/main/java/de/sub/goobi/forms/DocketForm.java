@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.DocketDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 
@@ -109,7 +111,12 @@ public class DocketForm extends BasisForm {
      * @return page or empty String
      */
     public String filterKein() {
-        List<Docket> dockets = serviceManager.getDocketService().findAll();
+        List<DocketDTO> dockets = new ArrayList<>();
+        try {
+            dockets = serviceManager.getDocketService().getAll();
+        } catch (DataException e) {
+            logger.error(e);
+        }
         this.page = new Page(0, dockets);
         return "/pages/DocketList";
     }
