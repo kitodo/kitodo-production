@@ -268,15 +268,19 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     }
 
     @Override
-    public BatchDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+    public BatchDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         BatchDTO batchDTO = new BatchDTO();
         batchDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
         batchDTO.setType(getStringPropertyForDTO(jsonObject, "type"));
+        if (!related) {
+            batchDTO = convertRelatedJSONObjects(jsonObject, batchDTO);
+        }
         return batchDTO;
     }
 
-    List<ProcessDTO> convertProcessesToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService());
+    private BatchDTO convertRelatedJSONObjects(JSONObject jsonObject, BatchDTO batchDTO) throws DataException {
+        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
+        return batchDTO;
     }
 
     /**

@@ -124,7 +124,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            return from find methods
      * @return DTO object
      */
-    public abstract S convertJSONObjectToDTO(JSONObject jsonObject) throws DataException;
+    public abstract S convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException;
 
     /**
      * Method removes object from database.
@@ -327,13 +327,16 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *
      * @param jsonObjects
      *            list of SearchResult objects
+     * @param related
+     *            determines if converted object is related to some other object (if
+     *            so, objects related to it are not included in conversion)
      * @return list of DTO object
      */
-    public List<S> convertJSONObjectsToDTOs(List<JSONObject> jsonObjects) throws DataException {
+    public List<S> convertJSONObjectsToDTOs(List<JSONObject> jsonObjects, boolean related) throws DataException {
         List<S> results = new ArrayList<>();
 
         for (JSONObject jsonObject : jsonObjects) {
-            results.add(convertJSONObjectToDTO(jsonObject));
+            results.add(convertJSONObjectToDTO(jsonObject, related));
         }
 
         return results;
@@ -386,6 +389,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *
      * @param jsonObject
      *            result from ElasticSearch
+     * @param key
+     *            name of related property
      * @return bean object
      */
     protected <Z extends BaseBean, O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject,
@@ -393,7 +398,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
         List<O> listDTO = new ArrayList<>();
         for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
             JSONObject result = service.findById(id);
-            listDTO.add(service.convertJSONObjectToDTO(result));
+            listDTO.add(service.convertJSONObjectToDTO(result, true));
         }
         return listDTO;
     }

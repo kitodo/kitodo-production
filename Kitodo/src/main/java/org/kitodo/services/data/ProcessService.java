@@ -579,7 +579,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     @Override
-    public ProcessDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+    public ProcessDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         return null;
     }
 

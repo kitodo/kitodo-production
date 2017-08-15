@@ -316,7 +316,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     @Override
-    public TaskDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+    public TaskDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(getIdFromJSONObject(jsonObject));
         taskDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));

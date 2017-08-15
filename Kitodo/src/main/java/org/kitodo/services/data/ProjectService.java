@@ -40,9 +40,7 @@ import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -333,7 +331,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     @Override
-    public ProjectDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+    public ProjectDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(getIdFromJSONObject(jsonObject));
         projectDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
@@ -344,15 +342,16 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
         projectDTO.setNumberOfPages(getIntegerPropertyForDTO(jsonObject, "numberOfPages"));
         projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(jsonObject, "numberOfVolumes"));
         //projectDTO.setProjectIsArchived(getStringPropertyForDTO(jsonObject, "archived"));
+        if (!related) {
+            projectDTO = convertRelatedJSONObjects(jsonObject, projectDTO);
+        }
         return projectDTO;
     }
 
-    List<ProcessDTO> convertProcessesToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService());
-    }
-
-    List<UserDTO> convertUsersToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService());
+    private ProjectDTO convertRelatedJSONObjects(JSONObject jsonObject, ProjectDTO projectDTO) throws DataException {
+        projectDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
+        projectDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
+        return projectDTO;
     }
 
     /**

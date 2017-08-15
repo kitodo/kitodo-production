@@ -250,7 +250,7 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
     }
 
     @Override
-    public HistoryDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+    public HistoryDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         return null;
     }
 }

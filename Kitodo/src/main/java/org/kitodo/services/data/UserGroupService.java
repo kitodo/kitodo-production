@@ -247,15 +247,19 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
-    public UserGroupDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+    public UserGroupDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         UserGroupDTO userGroupDTO = new UserGroupDTO();
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
         userGroupDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        if (!related) {
+            userGroupDTO = convertRelatedJSONObjects(jsonObject, userGroupDTO);
+        }
         return userGroupDTO;
     }
 
-    List<UserDTO> convertUsersToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService());
+    private UserGroupDTO convertRelatedJSONObjects(JSONObject jsonObject, UserGroupDTO userGroupDTO) throws DataException {
+        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
+        return userGroupDTO;
     }
 
     /**

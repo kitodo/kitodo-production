@@ -47,9 +47,6 @@ import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.FilterDTO;
-import org.kitodo.dto.ProjectDTO;
-import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
@@ -483,7 +480,7 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     @Override
-    public UserDTO convertJSONObjectToDTO(JSONObject jsonObject) throws DataException {
+    public UserDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(getIdFromJSONObject(jsonObject));
         userDTO.setLogin(getStringPropertyForDTO(jsonObject, "login"));
@@ -492,23 +489,18 @@ public class UserService extends SearchService<User, UserDTO> {
         userDTO.setLdapLogin(getStringPropertyForDTO(jsonObject, "ldapLogin"));
         userDTO.setLocation(getStringPropertyForDTO(jsonObject, "location"));
         //userDTO.setFullName(getFullName(userDTO));
+        if (!related) {
+            userDTO = convertRelatedJSONObjects(jsonObject, userDTO);
+        }
         return userDTO;
     }
 
-    List<FilterDTO> convertFiltersToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "filters", serviceManager.getFilterService());
-    }
-
-    List<ProjectDTO> convertProjectsToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService());
-    }
-
-    List<TaskDTO> convertTasksToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService());
-    }
-
-    List<UserGroupDTO> convertUserGroupsToDTOList(JSONObject jsonObject) throws DataException {
-        return convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService());
+    private UserDTO convertRelatedJSONObjects(JSONObject jsonObject, UserDTO userDTO) throws DataException {
+        userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, "filters", serviceManager.getFilterService()));
+        userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
+        userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
+        userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+        return userDTO;
     }
 
     /**
