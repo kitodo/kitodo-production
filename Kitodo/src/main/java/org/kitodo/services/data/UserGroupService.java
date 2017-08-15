@@ -238,6 +238,17 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
+     * Get all user groups from index and covert results to format accepted by
+     * frontend.
+     *
+     * @return list of UserGroupDTO objects
+     */
+    public List<UserGroupDTO> getAll() throws DataException {
+        List<JSONObject> jsonObjects = findAllDocuments();
+        return convertJSONObjectsToDTOs(jsonObjects, false);
+    }
+
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
     @SuppressWarnings("unchecked")

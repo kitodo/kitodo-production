@@ -22,17 +22,21 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzergruppenForm")
 @SessionScoped
 public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
+    private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup myBenutzergruppe = new UserGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
@@ -92,10 +96,11 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public String filterKein() {
         try {
-            List<UserGroup> userGroups = serviceManager.getUserGroupService().findAll();
+            List<UserGroupDTO> userGroups = serviceManager.getUserGroupService().getAll();
             this.page = new Page(0, userGroups);
-        } catch (HibernateException he) {
-            Helper.setFehlerMeldung("Error, could not read", he.getMessage());
+        } catch (DataException e) {
+            Helper.setFehlerMeldung("Error, could not read", e.getMessage());
+            logger.error(e);
             return null;
         }
         return "/pages/BenutzergruppenAlle";
