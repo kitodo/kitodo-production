@@ -136,6 +136,8 @@ public class ProzessverwaltungForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
     private static String DONEDIRECTORYNAME = "fertig/";
+    private int processId;
+    private int taskId;
 
     /**
      * Constructor.
@@ -2435,5 +2437,68 @@ public class ProzessverwaltungForm extends BasisForm {
         pp.setContainer(0);
         this.processPropertyList.add(pp);
         this.processProperty = pp;
+    }
+
+    /**
+     * Return the id of the current process
+     *
+     * @return int processId
+     */
+    public int getProcessId() {
+        return this.processId;
+    }
+
+    /**
+     * Set the id of the current process
+     *
+     * @param processId
+     */
+    public void setProcessId(int processId) {
+        this.processId = processId;
+    }
+
+    /**
+     * Method being used as viewAction for process edit form. If 'processId' is '0',
+     * the form for creating a new process will be displayed.
+     */
+    public void loadMyProcess() {
+        try {
+            if (!Objects.equals(this.processId, null)) {
+                setMyProzess(this.serviceManager.getProcessService().find(this.processId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving process with ID '" + this.processId + "'; ", e.getMessage());
+        }
+    }
+
+    /**
+     * Return the id of the current task
+     *
+     * @return int taskId
+     */
+    public int getTaskId() {
+        return this.taskId;
+    }
+
+    /**
+     * Set the id of the current task
+     *
+     * @param taskId
+     */
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+    }
+
+    /**
+     * Method being used as viewAction for task form.
+     */
+    public void loadMyTask() {
+        try {
+            if (!Objects.equals(this.taskId, null)) {
+                setMySchritt(this.serviceManager.getTaskService().find(this.taskId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving task with ID '" + this.taskId + "'; ", e.getMessage());
+        }
     }
 }
