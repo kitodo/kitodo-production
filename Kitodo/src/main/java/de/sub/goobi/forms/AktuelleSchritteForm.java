@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -112,6 +113,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private List<ProcessProperty> processPropertyList;
     private ProcessProperty processProperty;
     private transient ServiceManager serviceManager = new ServiceManager();
+    private int stepId;
 
     /**
      * Constructor.
@@ -1478,5 +1480,36 @@ public class AktuelleSchritteForm extends BasisForm {
             isp.execute();
         }
         return null;
+    }
+
+    /**
+     * Return the id of the current step
+     *
+     * @return int stepId
+     */
+    public int getStepId() {
+        return this.stepId;
+    }
+
+    /**
+     * Set the id of the current step
+     *
+     * @param stepId
+     */
+    public void setStepId(int stepId) {
+        this.stepId = stepId;
+    }
+
+    /**
+     * Method being used as viewAction for AktuelleSchritteForm.
+     */
+    public void loadMyStep() {
+        try {
+            if (!Objects.equals(this.stepId, null)) {
+                setMySchritt(this.serviceManager.getTaskService().find(this.stepId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving task with ID '" + this.stepId + "'; ", e.getMessage());
+        }
     }
 }
