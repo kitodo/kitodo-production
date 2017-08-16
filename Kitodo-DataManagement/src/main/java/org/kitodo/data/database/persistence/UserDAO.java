@@ -134,7 +134,7 @@ public class UserDAO extends BaseDAO {
      * @return a list of visible users
      */
     public List<User> getAllVisibleUsers() {
-        return search("from User where visible is null");
+        return search("from User where visible = 1");
     }
 
     /**
@@ -143,7 +143,7 @@ public class UserDAO extends BaseDAO {
      * @return a list of active users.
      */
     public List<User> getAllActiveUsers() {
-        return search("from User where visible is null AND active = 'true'");
+        return search("from User where visible = 1 AND active = 'true'");
     }
 
     /**
@@ -154,7 +154,7 @@ public class UserDAO extends BaseDAO {
      * @return A list of users.
      */
     public List<User> getFilteredUsersByName(String filter) {
-        return search("from User where visible is null AND active = 'true' AND name like '%" + filter
+        return search("from User where visible = 1 AND active = 'true' AND name like '%" + filter
                 + "%' OR surname like '%" + filter + "%'");
     }
 }
