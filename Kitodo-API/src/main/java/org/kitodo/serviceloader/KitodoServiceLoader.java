@@ -27,14 +27,15 @@ import java.util.ServiceLoader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigMain;
 
 public class KitodoServiceLoader<T> {
     private Class clazz;
+    private String pluginPath;
     private static final Logger logger = LogManager.getLogger(KitodoServiceLoader.class);
 
-    public KitodoServiceLoader(Class clazz) {
+    public KitodoServiceLoader(Class clazz, String pluginPath) {
         this.clazz = clazz;
+        this.pluginPath = pluginPath;
     }
 
     /**
@@ -57,9 +58,9 @@ public class KitodoServiceLoader<T> {
      * can find them.
      */
     private void loadModulesIntoClasspath() {
-        Path pluginFolder = FileSystems.getDefault().getPath(ConfigMain.getParameter("pluginFolder"));
+        Path pluginFolder = FileSystems.getDefault().getPath(pluginPath);
 
-        URLClassLoader sysLoader = null;
+        URLClassLoader sysLoader;
         try {
             DirectoryStream<Path> stream = Files.newDirectoryStream(pluginFolder, "*.jar");
             for (Path f : stream) {
