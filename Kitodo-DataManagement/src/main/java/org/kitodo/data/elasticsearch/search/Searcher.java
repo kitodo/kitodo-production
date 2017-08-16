@@ -12,10 +12,7 @@
 package org.kitodo.data.elasticsearch.search;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -119,10 +116,22 @@ public class Searcher extends Index {
      * @return search result
      */
     public JSONObject findDocument(String query) throws DataException {
+        return findDocument(query, null);
+    }
+
+    /**
+     * Find document by query. It returns only first found document (last
+     * inserted or first matching to sort condition!).
+     *
+     * @param query
+     *            as String
+     * @return search result
+     */
+    public JSONObject findDocument(String query, String sort) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
-        String response = restClient.getDocument(query);
+        String response = restClient.getDocument(query, sort);
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(response);
             if (jsonObject.containsKey("hits")) {
@@ -148,11 +157,24 @@ public class Searcher extends Index {
      * @return list of JSON objects
      */
     public List<JSONObject> findDocuments(String query) throws DataException {
+        return findDocuments(query, null);
+    }
+
+    /**
+     * Find many documents by query and sort condition.
+     *
+     * @param query
+     *            as String
+     * @param sort
+     *            as String
+     * @return list of JSON objects
+     */
+    public List<JSONObject> findDocuments(String query, String sort) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         List<JSONObject> searchResults = new ArrayList<>();
         JSONParser parser = new JSONParser();
 
-        String response = restClient.getDocument(query);
+        String response = restClient.getDocument(query, sort);
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(response);
             if (jsonObject.containsKey("hits")) {

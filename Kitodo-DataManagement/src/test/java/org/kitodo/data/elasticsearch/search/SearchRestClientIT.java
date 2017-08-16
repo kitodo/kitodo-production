@@ -77,6 +77,7 @@ public class SearchRestClientIT {
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
+        indexRestClient.addDocument(MockEntity.createEntities().get(3), 3);
     }
 
     @After
@@ -90,7 +91,7 @@ public class SearchRestClientIT {
         String query = "{\n\"match_all\" : {}\n}";
         String result = searchRestClient.countDocuments(query);
 
-        boolean condition = result.contains("\"count\" : 2");
+        boolean condition = result.contains("\"count\" : 3");
         assertTrue("Count of documents has failed!", condition);
     }
 
@@ -106,9 +107,9 @@ public class SearchRestClientIT {
     public void shouldGetDocumentByQuery() throws Exception {
         Thread.sleep(2000);
         String query = "{\n\"match_all\" : {}\n}";
-        String result = searchRestClient.getDocument(query);
+        String result = searchRestClient.getDocument(query, null);
 
-        boolean condition = result.contains("\"total\" : 2");
+        boolean condition = result.contains("\"total\" : 3");
         assertTrue("Get of document has failed!", condition);
     }
 
