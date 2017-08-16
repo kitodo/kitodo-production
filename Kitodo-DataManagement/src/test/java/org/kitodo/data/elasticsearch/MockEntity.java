@@ -57,6 +57,10 @@ public class MockEntity {
         entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
         documents.put(3, entity);
 
+        jsonString = "{\"title\":\"Order\",\"type\":\"null\",\"processes\":[]}";
+        entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
+        documents.put(4, entity);
+
         return documents;
     }
 }

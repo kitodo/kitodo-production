@@ -89,15 +89,26 @@ public class SearchRestClient extends KitodoRestClient {
      *
      * @param query
      *            to find a document
-     * @param sort as String with sort conditions
+     * @param sort
+     *            as String with sort conditions
+     * @param offset
+     *            as Integer
+     * @param size as Integer
      * @return http entity as String
      */
-    String getDocument(String query, String sort) throws DataException {
+    String getDocument(String query, String sort, Integer offset, Integer size) throws DataException {
         String output = "";
         String wrappedQuery;
-        if (sort != null) {
-            String wrappedSort = "{\n \"sort\": [" + sort + "]\n";
-            wrappedQuery = wrappedSort + ",\n \"query\": " + query + "\n}";
+        if (sort != null && offset != null && size != null) {
+            String wrappedPagination = "\"from\":" + offset + ",\"size\":" + size;
+            String wrappedSort = ",\n \"sort\": [" + sort + "]\n";
+            wrappedQuery = "{\n" + wrappedPagination + wrappedSort + ",\n \"query\": " + query + "\n}";
+        } else if (sort != null && offset == null && size == null) {
+            String wrappedSort = "\n \"sort\": [" + sort + "]\n";
+            wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
+        } else if (sort == null && offset != null && size != null) {
+            String wrappedPagination = "\"from\":" + offset + ",\"size\":" + size;
+            wrappedQuery = "{\n" + wrappedPagination + ",\n \"query\": " + query + "\n}";
         } else {
             wrappedQuery = "{\n \"query\": " + query + "\n}";
         }
