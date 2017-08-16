@@ -20,7 +20,7 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="/newpages/inc/head.xhtml" />
+        <ui:include src="/pages/inc/head.xhtml" />
         <h:body>
             <h:outputScript target="body">
                 <![CDATA[
@@ -187,9 +187,9 @@
             </h:outputScript>
             <table cellspacing="5" cellpadding="0" class="layoutTable"
                        align="center">
-                <ui:include src="/newpages/inc/tbl_Kopf.xhtml" />
+                <ui:include src="/pages/inc/tbl_Kopf.xhtml" />
                 <tr>
-                    <ui:include src="/newpages/inc/tbl_Navigation.xhtml" />
+                    <ui:include src="/pages/inc/tbl_Navigation.xhtml" />
                     <td valign="top" class="layoutInhalt">
 
                         <!-- ===================== Page main frame ===================== -->
@@ -291,7 +291,7 @@
                                                 <h:commandLink title="#{msgs['calendar.block.addFirst']}"
                                                                rendered="#{CalendarForm.blank}" styleClass="actionLink">
                                                     <h:graphicImage style="vertical-align: text-bottom;" alt=""
-                                                                    value="/newpages/images/buttons/edit_20.gif"
+                                                                    value="/pages/images/buttons/edit_20.gif"
                                                                     rendered="#{CalendarForm.blank}"/>
                                                 </h:commandLink>
                                                 <h:commandLink title="#{msgs['calendar.block.add']}"
@@ -299,7 +299,7 @@
                                                                onclick="if(!addClickQuery()){return false;}"
                                                                rendered="#{not CalendarForm.blank}" styleClass="actionLink">
                                                     <h:graphicImage style="vertical-align: text-bottom;" alt=""
-                                                                    value="/newpages/images/buttons/star_blue.gif"
+                                                                    value="/pages/images/buttons/star_blue.gif"
                                                                     rendered="#{not CalendarForm.blank}"/>
                                                 </h:commandLink>
                                                 <h:commandLink title="#{msgs['calendar.block.remove']}"
@@ -308,7 +308,7 @@
                                                                onclick="if(!removeClickQuery()){return false;}"
                                                                styleClass="actionLink">
                                                     <h:graphicImage alt="delete"
-                                                            value="/newpages/images/buttons/waste1_20px.gif"/>
+                                                            value="/pages/images/buttons/waste1_20px.gif"/>
                                                 </h:commandLink>
                                             </div>
 
@@ -336,7 +336,7 @@
                                                                        styleClass="rightText"
                                                                        style="margin-left: 8px; margin-top: -2px;">
                                                             <h:graphicImage alt="delete"
-                                                                    value="/newpages/images/buttons/waste1_20px.gif"/>
+                                                                    value="/pages/images/buttons/waste1_20px.gif"/>
                                                         </h:commandLink>
 
 
@@ -414,7 +414,7 @@
                                                 <h:commandLink title="#{msgs['calendar.issue.add']}"
                                                                action="#{CalendarForm.addIssueClick}">
                                                     <h:graphicImage style="margin-left: -5px;" alt="add"
-                                                                    value="/newpages/images/buttons/star_blue.gif"/>
+                                                                    value="/pages/images/buttons/star_blue.gif"/>
                                                 </h:commandLink>
 
                                             </div>
@@ -546,7 +546,7 @@
 
                     </td>
                 </tr>
-                <ui:include src="/newpages/inc/tbl_Fuss.xhtml" />
+                <ui:include src="/pages/inc/tbl_Fuss.xhtml" />
             </table>
         </h:body>
     </f:view>

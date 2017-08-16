@@ -25,14 +25,14 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     >
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="/newpages/inc/head.xhtml" />
+        <ui:include src="/pages/inc/head.xhtml" />
         <h:body>
 
             <table cellspacing="5" cellpadding="0" class="layoutTable"
                        align="center">
-                <ui:include src="/newpages/inc/tbl_Kopf.xhtml" />
+                <ui:include src="/pages/inc/tbl_Kopf.xhtml" />
                 <tr>
-                    <ui:include src="/newpages/inc/tbl_Navigation.xhtml" />
+                    <ui:include src="/pages/inc/tbl_Navigation.xhtml" />
                     <td valign="top" class="layoutInhalt">
 
                         <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
@@ -40,11 +40,11 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup>
-                                    <h:link value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                    <h:link value="#{msgs.startseite}" outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:link value="#{msgs.prozessverwaltung}" outcome="/newpages/ProzessverwaltungAlle"/>
+                                    <h:link value="#{msgs.prozessverwaltung}" outcome="/pages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:link value="#{msgs.prozessDetails}" outcome="/newpages/ProzessverwaltungBearbeiten"/>
+                                    <h:link value="#{msgs.prozessDetails}" outcome="/pages/ProzessverwaltungBearbeiten"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText value="#{msgs.werkstueckDetails}"/>
                                 </h:panelGroup>
@@ -66,11 +66,11 @@
                                                     tooltip="true"/>
 
                                         <!-- Werkstueckdetails -->
-                                        <ui:include src="/newpages/inc_Prozessverwaltung/werkstueck_box_Details.xhtml" />
+                                        <ui:include src="/pages/inc_Prozessverwaltung/werkstueck_box_Details.xhtml" />
 
                                         <!-- Werkstueckeigenschaften -->
                                         <ui:include
-                                        src="/newpages/inc_Prozessverwaltung/werkstueck_box_Eigenschaften.xhtml" />
+                                        src="/pages/inc_Prozessverwaltung/werkstueck_box_Eigenschaften.xhtml" />
 
                                     </td>
                                 </tr>
@@ -80,7 +80,7 @@
 
                     </td>
                 </tr>
-                <ui:include src="/newpages/inc/tbl_Fuss.xhtml" />
+                <ui:include src="/pages/inc/tbl_Fuss.xhtml" />
             </table>
 
         </h:body>

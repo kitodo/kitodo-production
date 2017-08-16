@@ -180,7 +180,7 @@
                 </h4>
                 <h:outputText value="#{element.htmlTableRenderer.rendering}" escape="false"/>
                 <h:commandLink action="#{ProzessverwaltungForm.CreateExcel}" title="#{msgs.createExcel}">
-                    <h:graphicImage alt="create excel" value="/newpages/images/buttons/excel20.png"/>
+                    <h:graphicImage alt="create excel" value="/pages/images/buttons/excel20.png"/>
                     <h:outputText value="  #{msgs.createExcel}"/>
                     <t:updateActionListener value="#{element}" property="#{ProzessverwaltungForm.myCurrentTable}"/>
                 </h:commandLink>
@@ -200,7 +200,7 @@
                                   rendered="#{element.dataTable.showableInTable}"/>
                     <h:commandLink action="#{ProzessverwaltungForm.CreateExcel}" title="#{msgs.createExcel}"
                                    rendered="#{element.dataTable.showableInTable}">
-                        <h:graphicImage alt="create excel" value="/newpages/images/buttons/excel20.png"/>
+                        <h:graphicImage alt="create excel" value="/pages/images/buttons/excel20.png"/>
                         <h:outputText value="  #{msgs.createExcel}"/>
                         <t:updateActionListener value="#{element}" property="#{ProzessverwaltungForm.myCurrentTable}"/>
                     </h:commandLink>

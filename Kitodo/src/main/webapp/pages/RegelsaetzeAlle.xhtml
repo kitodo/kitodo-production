@@ -46,7 +46,7 @@
                                      styleClass="layoutInhaltKopf">
                             <h:panelGroup id="id1">
                                 <h:link id="id2" value="#{msgs.startseite}"
-                                               outcome="/newpages/Main"/>
+                                               outcome="/pages/Main"/>
                                 <f:verbatim> &#8250;&#8250; </f:verbatim>
                                 <h:outputText id="id3" value="#{msgs.regelsaetze}"/>
                             </h:panelGroup>
@@ -101,11 +101,11 @@
                                                               value="#{msgs.metadatenSortierungNachRegelsatz}"/>
                                             </f:facet>
                                             <h:graphicImage id="id17"
-                                                            value="/newpages/images/check_true.gif"
+                                                            value="/pages/images/check_true.gif"
                                                             rendered="#{item.orderMetadataByRuleset}"
                                                             alt="order metadata by ruleset"/>
                                             <h:graphicImage id="id18"
-                                                            value="/newpages/images/check_false.gif"
+                                                            value="/pages/images/check_false.gif"
                                                             rendered="#{!item.orderMetadataByRuleset}"
                                                             alt="do not order metadata by ruleset"/>
                                         </t:column>
@@ -116,10 +116,10 @@
                                                 <h:outputText id="id20" value="#{msgs.auswahl}"/>
                                             </f:facet>
                                             <!-- Bearbeiten-Schaltknopf -->
-                                            <h:link id="id21" outcome="/newpages/RegelsaetzeBearbeiten"
+                                            <h:link id="id21" outcome="/pages/RegelsaetzeBearbeiten"
                                                            title="#{msgs.regelsatzBearbeiten}">
                                                 <h:graphicImage id="id22" alt="edit ruleset"
-							value="/newpages/images/buttons/edit.gif"/>
+							value="/pages/images/buttons/edit.gif"/>
                                                 <f:param name="id" value="#{item.id}"/>
                                             </h:link>
                                         </h:column>
@@ -138,7 +138,7 @@
                                                 <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                                 <t:aliasBean alias="#{mypage}"
                                                              value="#{RulesetForm.page}">
-                                                    <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                                    <ui:include src="/pages/inc/datascroller.xhtml"/>
                                                 </t:aliasBean>
                                                 <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
                                             </td>

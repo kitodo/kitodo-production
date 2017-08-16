@@ -41,7 +41,7 @@ public class NavigationForm implements Serializable {
     }
 
     public String BenutzerBearbeiten() {
-        return "/newpages/BenutzerBearbeiten";
+        return "/pages/BenutzerBearbeiten";
     }
 
     /**

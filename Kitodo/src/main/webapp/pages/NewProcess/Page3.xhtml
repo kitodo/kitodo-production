@@ -43,10 +43,10 @@
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="utid32">
                                     <h:link id="utid33" value="#{msgs.startseite}"
-                                                   outcome="/newpages/Main"/>
+                                                   outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:link id="utid34" value="#{msgs.prozessverwaltung}"
-                                                   outcome="/newpages/ProzessverwaltungAlle"/>
+                                                   outcome="/pages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="utid35"
                                                   value="#{msgs.einenNeuenProzessAnlegen}"/>
@@ -83,8 +83,8 @@
                                                         <h:commandLink id="utid21"
                                                                        action="#{ProzesskopieForm.downloadDocket}">
                                                             <h:graphicImage id="utid24"
-                                                                            alt="/newpages/images/buttons/laufzettel_wide.png"
-                                                                            value="/newpages/images/buttons/laufzettel_wide.png"
+                                                                            alt="/pages/images/buttons/laufzettel_wide.png"
+                                                                            value="/pages/images/buttons/laufzettel_wide.png"
                                                                             style="vertical-align:middle"/>
                                                             <h:outputText value="#{msgs.laufzettelDrucken}"/>
                                                         </h:commandLink>
@@ -92,8 +92,8 @@
                                                         <h:commandLink id="utid20"
                                                                        action="#{ProzesskopieForm.prepare}">
                                                             <h:graphicImage id="utid25"
-                                                                            alt="/newpages/images/buttons/star_blue.gif"
-                                                                            value="/newpages/images/buttons/star_blue.gif"
+                                                                            alt="/pages/images/buttons/star_blue.gif"
+                                                                            value="/pages/images/buttons/star_blue.gif"
                                                                             style="vertical-align:middle"/>
                                                             <h:outputText value="#{msgs.weiterenVorgangAnlegen}"/>
                                                         </h:commandLink>
@@ -106,8 +106,8 @@
                                                             <t:updateActionListener value=""
                                                                                     property="#{ProzessverwaltungForm.modusBearbeiten}"/>
                                                             <h:graphicImage id="utid23"
-                                                                            alt="/newpages/images/buttons/edit_20.gif"
-                                                                            value="/newpages/images/buttons/edit_20.gif"
+                                                                            alt="/pages/images/buttons/edit_20.gif"
+                                                                            value="/pages/images/buttons/edit_20.gif"
                                                                             style="vertical-align:middle"/>
 
                                                             <h:outputText value="#{msgs.denErzeugtenBandOeffnen}"/>

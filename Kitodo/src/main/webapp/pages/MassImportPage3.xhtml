@@ -46,9 +46,9 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf" id="projgrid112">
                                 <h:panelGroup id="id1">
-                                    <h:link value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                    <h:link value="#{msgs.startseite}" outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:link value="#{msgs.prozessverwaltung}" outcome="/newpages/ProzessverwaltungAlle"/>
+                                    <h:link value="#{msgs.prozessverwaltung}" outcome="/pages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText value="#{msgs.MassImport}"/>
                                 </h:panelGroup>
@@ -82,7 +82,7 @@
                                                         <h:commandLink id="utid21" action="#{MassImportForm.downloadDocket}">
                                                             <h:graphicImage id="utid24"
                                                                             alt="download docket"
-                                                                            value="/newpages/images/buttons/laufzettel_wide.png"
+                                                                            value="/pages/images/buttons/laufzettel_wide.png"
                                                                             style="vertical-align:middle"/>
                                                             <h:outputText value="#{msgs.laufzettelDrucken}"/>
                                                         </h:commandLink>
@@ -90,7 +90,7 @@
                                                         <h:commandLink id="utid20" action="#{MassImportForm.prepare}">
                                                             <h:graphicImage id="utid25"
                                                                             alt="prepare"
-                                                                            value="/newpages/images/buttons/star_blue.gif"
+                                                                            value="/pages/images/buttons/star_blue.gif"
                                                                             style="vertical-align:middle"/>
                                                             <h:outputText value="#{msgs.weiterenVorgangAnlegen}"/>
                                                         </h:commandLink>

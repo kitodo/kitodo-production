@@ -179,7 +179,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess = new Process();
         this.myNewProcessTitle = "";
         this.modusBearbeiten = "prozess";
-        return "/newpages/ProzessverwaltungBearbeiten";
+        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -192,7 +192,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myNewProcessTitle = "";
         this.myProzess.setTemplate(true);
         this.modusBearbeiten = "prozess";
-        return "/newpages/ProzessverwaltungBearbeiten";
+        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -203,7 +203,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String editProcess() {
         Reload();
 
-        return "/newpages/ProzessverwaltungBearbeiten";
+        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -419,7 +419,7 @@ public class ProzessverwaltungForm extends BasisForm {
             return null;
         }
         this.modusAnzeige = "aktuell";
-        return "/newpages/ProzessverwaltungAlle";
+        return "/pages/ProzessverwaltungAlle";
     }
 
     /**
@@ -436,7 +436,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
         this.page = new Page(0, templates);
         this.modusAnzeige = "vorlagen";
-        return "/newpages/ProzessverwaltungAlle";
+        return "/pages/ProzessverwaltungAlle";
     }
 
     /**
@@ -472,7 +472,7 @@ public class ProzessverwaltungForm extends BasisForm {
             pkf.setProzessVorlage(einziger);
             return pkf.prepare();
         } else {
-            return "/newpages/ProzessverwaltungAlle";
+            return "/pages/ProzessverwaltungAlle";
         }
     }
 
@@ -525,7 +525,7 @@ public class ProzessverwaltungForm extends BasisForm {
             logger.error(e);
         }
 
-        return "/newpages/ProzessverwaltungAlle";
+        return "/pages/ProzessverwaltungAlle";
     }
 
     private void sortList(Criteria inCrit, boolean addCriteria) {
@@ -676,7 +676,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String SchrittNeu() {
         this.mySchritt = new Task();
         this.modusBearbeiten = "schritt";
-        return "/newpages/inc_Prozessverwaltung/schritt";
+        return "/pages/inc_Prozessverwaltung/schritt";
     }
 
     /**
@@ -703,7 +703,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getTasks().remove(this.mySchritt);
         Speichern();
         deleteSymlinksFromUserHomes();
-        return "/newpages/ProzessverwaltungBearbeiten";
+        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     private void deleteSymlinksFromUserHomes() {
@@ -780,7 +780,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getTemplates().add(this.myVorlage);
         this.myVorlage.setProcess(this.myProzess);
         Speichern();
-        return "/newpages/inc_Prozessverwaltung/vorlage";
+        return "/pages/inc_Prozessverwaltung/vorlage";
     }
 
     /**
@@ -799,7 +799,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String VorlageLoeschen() {
         this.myProzess.getTemplates().remove(this.myVorlage);
         Speichern();
-        return "/newpages/ProzessverwaltungBearbeiten";
+        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -810,7 +810,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getWorkpieces().add(this.myWerkstueck);
         this.myWerkstueck.setProcess(this.myProzess);
         Speichern();
-        return "/newpages/ProzessverwaltungBearbeitenWerkstueck";
+        return "/pages/ProzessverwaltungBearbeitenWerkstueck";
     }
 
     /**
@@ -829,7 +829,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String WerkstueckLoeschen() {
         this.myProzess.getWorkpieces().remove(this.myWerkstueck);
         Speichern();
-        return "/newpages/ProzessverwaltungBearbeiten";
+        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**

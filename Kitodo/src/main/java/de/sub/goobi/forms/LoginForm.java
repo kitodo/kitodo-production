@@ -70,7 +70,7 @@ public class LoginForm implements Serializable {
         if (mySession != null) {
             mySession.invalidate();
         }
-        return "/newpages/Main";
+        return "/pages/Main";
     }
 
     /**
@@ -179,7 +179,7 @@ public class LoginForm implements Serializable {
      */
     public String EinloggenAls() {
         if (getMaximaleBerechtigung() != 1) {
-            return "/newpages/Main";
+            return "/pages/Main";
         }
         this.myBenutzer = null;
         Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
@@ -194,7 +194,7 @@ public class LoginForm implements Serializable {
             Helper.setFehlerMeldung("could not read database", e.getMessage());
             return null;
         }
-        return "/newpages/Main";
+        return "/pages/Main";
     }
 
     /*

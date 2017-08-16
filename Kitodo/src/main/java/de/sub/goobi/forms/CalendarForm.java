@@ -1046,7 +1046,7 @@ public class CalendarForm implements Serializable {
             Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
             return null;
         }
-        return "/newpages/granularity";
+        return "/pages/granularity";
     }
 
     /**

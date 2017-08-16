@@ -21,7 +21,7 @@
     xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="/newpages/inc/head.xhtml" />
+        <ui:include src="/pages/inc/head.xhtml" />
         <h:body style="margin:0px;padding:0px">
 
             <h:outputText value="#{msgs.benutzergruppenHinzufuegen}"
@@ -61,7 +61,7 @@
                                 <h:commandLink
                                         action="#{ProzessverwaltungForm.BenutzergruppeHinzufuegen}"
                                         title="#{msgs.uebernehmen}">
-                                    <h:graphicImage value="/newpages/images/buttons/addUser.gif" alt="add user"/>
+                                    <h:graphicImage value="/pages/images/buttons/addUser.gif" alt="add user"/>
                                     <t:updateActionListener
                                             property="#{ProzessverwaltungForm.myBenutzergruppe}"
                                             value="#{item}"/>
@@ -77,7 +77,7 @@
                                     <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                     <t:aliasBean alias="#{mypage}"
                                                  value="#{BenutzergruppenForm.page}">
-                                        <ui:include src="/newpages/inc/datascroller.xhtml">
+                                        <ui:include src="/pages/inc/datascroller.xhtml">
                                             <ui:param name="formName" value="userGroupForm"/>
                                         </ui:include>
                                     </t:aliasBean>

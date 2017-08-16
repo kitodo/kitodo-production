@@ -211,7 +211,7 @@ public class ProzesskopieForm implements Serializable {
 
     public static final String DIRECTORY_SUFFIX = "_tif";
 
-    static final String NAVI_FIRST_PAGE = "/newpages/NewProcess/Page1";
+    static final String NAVI_FIRST_PAGE = "/pages/NewProcess/Page1";
 
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
@@ -763,7 +763,7 @@ public class ProzesskopieForm implements Serializable {
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         } else {
-            return "/newpages/NewProcess/Page2";
+            return "/pages/NewProcess/Page2";
         }
     }
 
@@ -1071,7 +1071,7 @@ public class ProzesskopieForm implements Serializable {
                 myThread.start();
             }
         }
-        return "/newpages/NewProcess/Page3";
+        return "/pages/NewProcess/Page3";
 
     }
 

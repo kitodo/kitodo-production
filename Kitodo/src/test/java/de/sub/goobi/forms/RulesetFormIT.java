@@ -22,7 +22,7 @@ public class RulesetFormIT {
 
     @Test
     public void shouldRedirectAtRulesetCreation(){
-        String shouldRedirect = "/newpages/RegelsaetzeBearbeiten?faces-redirect=true";
+        String shouldRedirect = "/pages/RegelsaetzeBearbeiten?faces-redirect=true";
         String Redirect = rulesetForm.createNewRuleset();
         assertEquals("Should redirect to RegelsaetzeBearbeiten",shouldRedirect,Redirect);
     }

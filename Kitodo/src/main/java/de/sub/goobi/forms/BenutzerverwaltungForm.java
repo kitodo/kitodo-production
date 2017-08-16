@@ -70,7 +70,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.myClass.setLdapLogin("");
         this.myClass.setPasswordDecrypted("Passwort");
         this.userId = 0;
-        return "/newpages/BenutzerBearbeiten?faces-redirect=true";
+        return "/pages/BenutzerBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -87,7 +87,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             users = serviceManager.getUserService().getAllVisibleUsers();
         }
         this.page = new Page(0, users);
-        return "/newpages/BenutzerAlle";
+        return "/pages/BenutzerAlle";
     }
 
     /**
@@ -119,7 +119,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
         }
         this.page = new Page(0, users);
-        return "/newpages/BenutzerAlle";
+        return "/pages/BenutzerAlle";
     }
 
     /**
@@ -141,7 +141,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
                 this.serviceManager.getUserService().save(this.myClass);
-                return "/newpages/BenutzerAlle";
+                return "/pages/BenutzerAlle";
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
                 return null;
@@ -207,7 +207,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             logger.error(e);
             return null;
         }
-        return "/newpages/BenutzerAlle";
+        return "/pages/BenutzerAlle";
     }
 
     /**

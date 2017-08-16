@@ -52,10 +52,10 @@
                                          styleClass="layoutInhaltKopf" id="projectgrid1">
                                 <h:panelGroup id="id1">
                                     <h:link id="id2" value="#{msgs.startseite}"
-                                                   outcome="/newpages/Main"/>
+                                                   outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:link id="id3" value="#{msgs.projekte}"
-                                                   outcome="/newpages/ProjekteAlle"/>
+                                                   outcome="/pages/ProjekteAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.neuesProjektAnlegen}"
                                                   rendered="#{ProjekteForm.myProjekt.id == null}"/>
@@ -90,7 +90,7 @@
                                                 <td class="eingabeBoxen_row1" align="right">
                                                     <h:commandLink id="id10" action="#{NavigationForm.Reload}">
                                                         <h:graphicImage id="id11" alt="reload"
-                                                                        value="/newpages/images/reload.gif"/>
+                                                                        value="/pages/images/reload.gif"/>
                                                     </h:commandLink>
                                                 </td>
                                             </tr>
@@ -109,20 +109,20 @@
                                                                        tabContentStyleClass="tabContent">
 
                                                         <t:panelTab label="#{msgs.details}">
-                                                            <ui:include src="/newpages/inc_editProjects/detailsTab.xhtml"/>
+                                                            <ui:include src="/pages/inc_editProjects/detailsTab.xhtml"/>
                                                         </t:panelTab>
 
                                                         <t:panelTab label="#{msgs.technischeDaten}">
-                                                            <ui:include src="/newpages/inc_editProjects/technicalDataTab.xhtml"/>
+                                                            <ui:include src="/pages/inc_editProjects/technicalDataTab.xhtml"/>
                                                         </t:panelTab>
 
                                                         <t:panelTab label="#{msgs.metsParamater}">
-                                                            <ui:include src="/newpages/inc_editProjects/metsParameterTab.xhtml"/>
+                                                            <ui:include src="/pages/inc_editProjects/metsParameterTab.xhtml"/>
                                                         </t:panelTab>
 
                                                         <t:panelTab label="#{msgs.statistik}"
                                                             rendered="#{ProjekteForm.myProjekt.id != null and !HelperForm.anonymized}">
-                                                            <ui:include src="/newpages/inc_editProjects/statisticsTab.xhtml"/>
+                                                            <ui:include src="/pages/inc_editProjects/statisticsTab.xhtml"/>
                                                         </t:panelTab>
                                                     </t:panelTabbedPane>
                                                 </td>
@@ -131,7 +131,7 @@
                                             <tr>
                                                 <td class="eingabeBoxen_row3" align="left">
                                                     <h:button id="id121" value="#{msgs.abbrechen}"
-                                                              outcome="/newpages/ProjekteAlle" immediate="true"/>
+                                                              outcome="/pages/ProjekteAlle" immediate="true"/>
                                                 </td>
                                                 <td class="eingabeBoxen_row3" align="right">
                                                     <h:commandButton id="id122" value="#{msgs.loeschen}"

@@ -25,19 +25,19 @@
         <h:body style="margin:0px;padding:0px">
             <h:form id="userpopupform">
                 <!-- ===================== Popup-Rahmen ======================
-                <h:graphicImage id="id0" value="/newpages/images/popup/oben.gif" width="430"
+                <h:graphicImage id="id0" value="/pages/images/popup/oben.gif" width="430"
                                 style="position:absolute;left:0;top:0;z-index:1" />
-                <h:graphicImage id="id1" value="/newpages/images/popup/links.gif" height="360"
+                <h:graphicImage id="id1" value="/pages/images/popup/links.gif" height="360"
                                 style="position:absolute;left:0;top:19" />
-                <h:graphicImage id="id2" value="/newpages/images/popup/rechts.gif" height="360"
+                <h:graphicImage id="id2" value="/pages/images/popup/rechts.gif" height="360"
                                 style="position:absolute;left:426;top:19" />
-                <h:graphicImage id="id3" value="/newpages/images/popup/unten.gif" width="430"
+                <h:graphicImage id="id3" value="/pages/images/popup/unten.gif" width="430"
                                 style="position:absolute;left:0;top:377" />
 
                 <h:form id="hmmmForm1">
                     <jp:closePopupFrame>
                         <h:commandLink id="id4" action="#{NavigationForm.JeniaPopupCloseAction}">
-                            <h:graphicImage id="id5" value="/newpages/images/popup/close.gif"
+                            <h:graphicImage id="id5" value="/pages/images/popup/close.gif"
                                             style="position:absolute;left:410;top:2;z-index:2" />
                         </h:commandLink>
                     </jp:closePopupFrame>
@@ -80,7 +80,7 @@
                                     <h:commandLink
                                             action="#{BenutzerverwaltungForm.addToGroup}"
                                             title="#{msgs.uebernehmen}">
-                                        <h:graphicImage id="id14" alt="add user" value="/newpages/images/buttons/addUser.gif"/>
+                                        <h:graphicImage id="id14" alt="add user" value="/pages/images/buttons/addUser.gif"/>
                                         <f:param id="id15" name="ID" value="#{item.id}"/>
                                     </h:commandLink>
                                 </h:column>
@@ -93,7 +93,7 @@
                                         <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                         <t:aliasBean alias="#{mypage}"
                                                      value="#{BenutzergruppenForm.page}">
-                                            <ui:include src="/newpages/inc/datascroller.xhtml">
+                                            <ui:include src="/pages/inc/datascroller.xhtml">
                                                 <ui:param name="formName" value="userEditForm"/>
                                             </ui:include>
                                         </t:aliasBean>

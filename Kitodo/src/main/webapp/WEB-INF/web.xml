@@ -308,11 +308,11 @@
     <!-- Error pages -->
     <error-page>
         <error-code>500</error-code>
-        <location>/newpages/error.jsf</location>
+        <location>/pages/error.jsf</location>
     </error-page>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/newpages/error.jsf</location>
+        <location>/pages/error.jsf</location>
     </error-page>
 
     <servlet>

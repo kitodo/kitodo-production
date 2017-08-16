@@ -80,7 +80,7 @@
                         <!-- Breadcrumb -->
                         <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
                             <h:panelGroup id="id1">
-                                <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                <h:link id="id2" value="#{msgs.startseite}" outcome="/pages/Main"/>
                                 <f:verbatim> &#8250;&#8250; </f:verbatim>
                                 <h:outputText id="id3" value="#{msgs.indexing}"/>
                             </h:panelGroup>
@@ -125,9 +125,9 @@
                                                     <h:outputText value="#{indexingForm.indexedUsers} / #{indexingForm.userCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress gt 0 and indexingForm.userIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress gt 0 and indexingForm.userIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -154,9 +154,9 @@
                                                     <h:outputText value="#{indexingForm.indexedUserGroups} / #{indexingForm.userGroupCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress gt 0 and indexingForm.userGroupIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress gt 0 and indexingForm.userGroupIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -183,9 +183,9 @@
                                                     <h:outputText value="#{indexingForm.indexedProjects} / #{indexingForm.projectCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress gt 0 and indexingForm.projectsIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress gt 0 and indexingForm.projectsIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -212,9 +212,9 @@
                                                     <h:outputText value="#{indexingForm.indexedRulesets} / #{indexingForm.rulesetCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress gt 0 and indexingForm.rulesetsIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress gt 0 and indexingForm.rulesetsIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -241,9 +241,9 @@
                                                     <h:outputText value="#{indexingForm.indexedDockets} / #{indexingForm.docketCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress gt 0 and indexingForm.docketsIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress gt 0 and indexingForm.docketsIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -270,9 +270,9 @@
                                                     <h:outputText value="#{indexingForm.indexedTasks} / #{indexingForm.taskCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress gt 0 and indexingForm.tasksIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress gt 0 and indexingForm.tasksIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -299,9 +299,9 @@
                                                     <h:outputText value="#{indexingForm.indexedTemplates} / #{indexingForm.templateCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress gt 0 and indexingForm.templatesIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress gt 0 and indexingForm.templatesIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -328,9 +328,9 @@
                                                     <h:outputText value="#{indexingForm.indexedProcesses} / #{indexingForm.processCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress gt 0 and indexingForm.processIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress gt 0 and indexingForm.processIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -357,9 +357,9 @@
                                                     <h:outputText value="#{indexingForm.indexedBatches} / #{indexingForm.batchCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress gt 0 and indexingForm.batchIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress gt 0 and indexingForm.batchIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -386,9 +386,9 @@
                                                     <h:outputText value="#{indexingForm.indexedProperties} / #{indexingForm.propertyCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress gt 0 and indexingForm.propertiesIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress gt 0 and indexingForm.propertiesIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -415,9 +415,9 @@
                                                     <h:outputText value="#{indexingForm.indexedWorkpieces} / #{indexingForm.workpieceCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress gt 0 and indexingForm.workpieceIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress gt 0 and indexingForm.workpieceIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -444,9 +444,9 @@
                                                     <h:outputText value="#{indexingForm.indexedFilter} / #{indexingForm.filterCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress gt 0 and indexingForm.filterIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress gt 0 and indexingForm.filterIndexingProgress lt 100}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == 100}" />
                                                 </td>
                                             </tr>
 
@@ -477,9 +477,9 @@
                                                     <h:outputText value="#{indexingForm.allIndexed} / #{indexingForm.totalCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/newpages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.indexingInProgress()}"/>
-                                                    <p:graphicImage alt="failed" value="/newpages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/newpages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100 and not indexingForm.indexingInProgress()}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.indexingInProgress()}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100 and not indexingForm.indexingInProgress()}" />
                                                 </td>
                                             </tr>
                                         </tbody>

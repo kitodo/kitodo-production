@@ -41,7 +41,7 @@
                                 id="action1" action="#{ProzessverwaltungForm.UploadFromHomeAlle}"
                                 title="#{msgs.verzeichnisFertigAusHomeverzeichnisEntfernen}"
                                 onclick="if (!confirm('#{msgs.upload}?')) return">
-                            <h:graphicImage value="/newpages/images/buttons/load_up_set_20px.gif" alt="upload set"
+                            <h:graphicImage value="/pages/images/buttons/load_up_set_20px.gif" alt="upload set"
                                             style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.verzeichnisFertigAusHomeverzeichnisEntfernen}"/>
                         </h:commandLink>
@@ -52,7 +52,7 @@
                             <span class="toggle" data-for="toggle-9">
                                 <h:commandLink id="downloadswitcher">
                                     <f:ajax render="download"/>
-                                    <h:graphicImage value="/newpages/images/buttons/load_down_set_20px.gif"
+                                    <h:graphicImage value="/pages/images/buttons/load_down_set_20px.gif"
                                                     alt="download set"
                                                     style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.imHomeVerzeichnisVerlinken}"/>
@@ -96,7 +96,7 @@
                             <span class="toggle" data-for="toggle-1">
                                 <h:commandLink id="agoraswitcher">
                                     <f:ajax render="agoradownload"/>
-                                    <h:graphicImage value="/newpages/images/buttons/dms.png" alt="dms"
+                                    <h:graphicImage value="/pages/images/buttons/dms.png" alt="dms"
                                                     style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.metadatenFuerDMSExportieren}"/>
                                 </h:commandLink>
@@ -140,7 +140,7 @@
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-2">
-                                <h:graphicImage value="/newpages/images/buttons/step_for_20px.gif" alt="step forward"
+                                <h:graphicImage value="/pages/images/buttons/step_for_20px.gif" alt="step forward"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.bearbeitungsstatusHochsetzen}"/>
                             </span>
@@ -183,7 +183,7 @@
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-3">
-                                <h:graphicImage value="/newpages/images/buttons/step_back_20px.gif" alt="step backward"
+                                <h:graphicImage value="/pages/images/buttons/step_back_20px.gif" alt="step backward"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.bearbeitungsstatusRuntersetzen}"/>
                             </span>
@@ -227,7 +227,7 @@
                                 rendered="#{LoginForm.maximaleBerechtigung == 1 and ProzessverwaltungForm.modusAnzeige=='aktuell'  and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-4">
-                                <h:graphicImage value="/newpages/images/buttons/admin4b.gif" alt="edit"
+                                <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="edit"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.kitodoScriptAusfuehren}"/>
                             </span>
@@ -347,7 +347,7 @@
                         <h:panelGroup
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
 
-                            <h:graphicImage value="/newpages/images/buttons/excel20.png" alt="excel export"
+                            <h:graphicImage value="/pages/images/buttons/excel20.png" alt="excel export"
                                             style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                             <h:commandLink action="#{ProzessverwaltungForm.generateResult}" title="#{msgs.createExcel}">
                                 <h:outputText value="#{msgs.createExcel}"/>
@@ -356,7 +356,7 @@
 
                         <h:panelGroup
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
-                            <h:graphicImage value="/newpages/images/buttons/pdf.png" alt="pdf export"
+                            <h:graphicImage value="/pages/images/buttons/pdf.png" alt="pdf export"
                                             style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                             <h:commandLink action="#{ProzessverwaltungForm.generateResultAsPdf}"
                                            title="#{msgs.createPdf}">
@@ -369,7 +369,7 @@
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-5">
-                                <h:graphicImage value="/newpages/images/buttons/statistik1_20px.gif" alt="statistics"
+                                <h:graphicImage value="/pages/images/buttons/statistik1_20px.gif" alt="statistics"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.anzahlMetadatenUndImagesErmitteln}"/>
                             </span>
@@ -408,7 +408,7 @@
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-6">
-                                <h:graphicImage value="/newpages/images/buttons/statistik4_20px.gif" alt="statistics"
+                                <h:graphicImage value="/pages/images/buttons/statistik4_20px.gif" alt="statistics"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.statistischeAuswertung}"/>
                             </span>
@@ -495,7 +495,7 @@
                         <h:panelGroup>
 
                             <span class="toggle" data-for="toggle-7">
-                                <h:graphicImage value="/newpages/images/buttons/view3.gif" alt="view"
+                                <h:graphicImage value="/pages/images/buttons/view3.gif" alt="view"
                                                 style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.filterAnpassen}"/>
                             </span>
@@ -525,7 +525,7 @@
                         <h:panelGroup>
 
                             <span class="toggle" data-for="toggle-8">
-                                <h:graphicImage value="/newpages/images/buttons/view3.gif" alt="view"
+                                <h:graphicImage value="/pages/images/buttons/view3.gif" alt="view"
                                                 style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.anzeigeAnpassen}"/>
                             </span>

@@ -47,7 +47,7 @@ public class RulesetForm extends BasisForm {
     public String createNewRuleset() {
         this.ruleset = new Ruleset();
         this.rulesetId = 0;
-        return "/newpages/RegelsaetzeBearbeiten?faces-redirect=true";
+        return "/pages/RegelsaetzeBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -59,7 +59,7 @@ public class RulesetForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(this.ruleset);
-                return "/newpages/RegelsaetzeAlle?faces-redirect=true";
+                return "/pages/RegelsaetzeAlle?faces-redirect=true";
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
                 return null;
@@ -102,7 +102,7 @@ public class RulesetForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return "/newpages/RegelsaetzeAlle?faces-redirect=true";
+        return "/pages/RegelsaetzeAlle?faces-redirect=true";
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
@@ -118,7 +118,7 @@ public class RulesetForm extends BasisForm {
     public String noFiltering() {
         List<Ruleset> rulesets = serviceManager.getRulesetService().findAll();
         this.page = new Page(0, rulesets);
-        return "/newpages/RegelsaetzeAlle/?faces-redirect=true";
+        return "/pages/RegelsaetzeAlle/?faces-redirect=true";
     }
 
     /**

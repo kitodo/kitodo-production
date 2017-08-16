@@ -50,7 +50,7 @@
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
                                     <h:link id="id2" value="#{msgs.startseite}"
-                                                   outcome="/newpages/Main"/>
+                                                   outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:link id="id3" value="#{msgs.regelsaetze}"
                                                    outcome="RegelsaetzeAlle"/>
@@ -88,7 +88,7 @@
                                                 <td class="eingabeBoxen_row1" align="right">
                                                     <h:commandLink id="id10" action="#{NavigationForm.Reload}">
                                                         <h:graphicImage id="id11" alt="reload"
-                                                                        value="/newpages/images/reload.gif"/>
+                                                                        value="/pages/images/reload.gif"/>
                                                     </h:commandLink>
                                                 </td>
                                             </tr>
@@ -134,7 +134,7 @@
                                             <tr>
                                                 <td class="eingabeBoxen_row3" align="left">
                                                     <p:button id="id21" value="#{msgs.abbrechen}"
-                                                              outcome="/newpages/RegelsaetzeAlle?faces-redirect=true" immediate="true"/>
+                                                              outcome="/pages/RegelsaetzeAlle?faces-redirect=true" immediate="true"/>
                                                 </td>
                                                 <td class="eingabeBoxen_row3" align="right">
                                                     <p:commandButton id="id22" value="#{msgs.loeschen}"

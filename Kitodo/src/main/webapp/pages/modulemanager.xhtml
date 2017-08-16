@@ -44,7 +44,7 @@
                             <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
                                     <h:link id="id2" value="#{msgs.startseite}"
-                                                   outcome="/newpages/Main"/>
+                                                   outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.aktiveModule}"/>
                                 </h:panelGroup>
@@ -121,7 +121,7 @@
                                                                                rendered="#{item.moduleClient.status=='not active'}"
                                                                                title="initialize">
                                                                     <h:graphicImage alt="start task"
-                                                                            value="/newpages/images/icons/start_task.gif"/>
+                                                                            value="/pages/images/icons/start_task.gif"/>
                                                                     <t:updateActionListener value="#{item}"
                                                                                             property="#{ModuleServerForm.myModule}"/>
                                                                 </h:commandLink>
@@ -130,7 +130,7 @@
                                                                                rendered="#{item.moduleClient.status=='active'}"
                                                                                title="shutdown">
                                                                     <h:graphicImage id="id20" alt="stop task"
-                                                                                    value="/newpages/images/icons/stop_task.gif"/>
+                                                                                    value="/pages/images/icons/stop_task.gif"/>
                                                                     <t:updateActionListener value="#{item}"
                                                                                             property="#{ModuleServerForm.myModule}"/>
                                                                 </h:commandLink>
@@ -139,7 +139,7 @@
                                                                         action="#{ModuleServerForm.startShortSessionTest}"
                                                                         title="shortsession">
                                                                     <h:graphicImage alt="execute task"
-                                                                            value="/newpages/images/icons/execute_task.gif"/>
+                                                                            value="/pages/images/icons/execute_task.gif"/>
                                                                     <t:updateActionListener value="#{item}"
                                                                                             property="#{ModuleServerForm.myModule}"/>
                                                                 </h:commandLink>

@@ -50,10 +50,10 @@
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
                                     <h:link id="id2" value="#{msgs.startseite}"
-                                                   outcome="/newpages/Main"/>
+                                                   outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:link id="id3" value="#{msgs.benutzergruppen}"
-                                                   outcome="/newpages/BenutzergruppenAlle"/>
+                                                   outcome="/pages/BenutzergruppenAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.neueBenutzergruppeAnlegen}"
                                                   rendered="#{BenutzergruppenForm.myBenutzergruppe.id == null}"/>
@@ -133,7 +133,7 @@
                                             <tr>
                                                 <td class="eingabeBoxen_row3" align="left">
                                                     <h:button id="id21" value="#{msgs.abbrechen}"
-                                                              outcome="/newpages/BenutzergruppenAlle" immediate="true"/>
+                                                              outcome="/pages/BenutzergruppenAlle" immediate="true"/>
                                                 </td>
                                                 <td class="eingabeBoxen_row3" align="right">
 

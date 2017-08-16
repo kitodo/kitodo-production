@@ -152,7 +152,7 @@
 
                 <h:commandLink action="#{Form.CreateExcel}" title="#{msgs.createExcel}"
                                rendered="#{element.dataTable.showableInTable and (Form.statisticsManager1.targetResultOutput== 'table' || Form.statisticsManager1.targetResultOutput=='chartAndTable')}">
-                    <h:graphicImage value="/newpages/images/buttons/excel20.png" alt="create excel"/>
+                    <h:graphicImage value="/pages/images/buttons/excel20.png" alt="create excel"/>
                     <h:outputText value="  #{msgs.createExcel}"/>
                     <t:updateActionListener value="#{element}" property="#{Form.myCurrentTable}"/>
                 </h:commandLink>

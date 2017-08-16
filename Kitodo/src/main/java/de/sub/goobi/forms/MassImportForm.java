@@ -117,7 +117,7 @@ public class MassImportForm implements Serializable {
             return null;
         }
         initializePossibleDigitalCollections();
-        return "/newpages/MassImport";
+        return "/pages/MassImport";
     }
 
     /**
@@ -329,7 +329,7 @@ public class MassImportForm implements Serializable {
             this.plugin.deleteFiles(this.selectedFilenames);
         }
         this.records = "";
-        return "/newpages/MassImportFormPage3";
+        return "/pages/MassImportFormPage3";
     }
 
     /**
@@ -767,12 +767,12 @@ public class MassImportForm implements Serializable {
             @SuppressWarnings("unchecked")
             List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
             if (list != null) {
-                return "/newpages/MultiMassImportPage2";
+                return "/pages/MultiMassImportPage2";
             }
         } catch (Exception e) {
             logger.error(e);
         }
-        return "/newpages/MassImportFormPage2";
+        return "/pages/MassImportFormPage2";
     }
 
     /**

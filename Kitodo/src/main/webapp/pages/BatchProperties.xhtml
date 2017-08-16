@@ -35,9 +35,9 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:link id="id3" value="#{msgs.batches}" outcome="/newpages/BatchesAll"/>
+                                    <h:link id="id3" value="#{msgs.batches}" outcome="/pages/BatchesAll"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText value="#{msgs.batchProperties}"/>
                                 </h:panelGroup>
@@ -86,7 +86,7 @@
 
                                                                 <h:commandLink action="#{NavigationForm.Reload}">
                                                                     <h:graphicImage alt="reload"
-                                                                                    value="/newpages/images/buttons/reload_doc.gif"
+                                                                                    value="/pages/images/buttons/reload_doc.gif"
                                                                                     style="vertical-align:middle;margin-bottom:5px;"/>
                                                                     <h:outputText value="#{msgs.showDataForProcess}"/>
                                                                 </h:commandLink>
@@ -139,7 +139,7 @@
                                                                                 <h:commandLink action="BatchProperties"
                                                                                                title="#{msgs.bearbeiten}">
                                                                                     <h:graphicImage alt="edit"
-                                                                                            value="/newpages/images/buttons/edit.gif"/>
+                                                                                            value="/pages/images/buttons/edit.gif"/>
                                                                                     <t:updateActionListener
                                                                                             property="#{BatchForm.batchHelper.processProperty}"
                                                                                             value="#{proc}"/>
@@ -184,7 +184,7 @@
                                                                                         <h:commandLink action="BatchProperties"
                                                                                                        title="#{msgs.bearbeiten}">
                                                                                             <h:graphicImage alt="edit"
-                                                                                                    value="/newpages/images/buttons/edit.gif"/>
+                                                                                                    value="/pages/images/buttons/edit.gif"/>
                                                                                             <t:updateActionListener
                                                                                                     property="#{BatchForm.batchHelper.container}"
                                                                                                     value="#{container}"/>

@@ -121,7 +121,7 @@
                                         value="#{item}"
                                         property="#{ProjekteForm.myFilegroup}"/>
                                 <p:graphicImage id="id86"
-                                                value="/newpages/images/buttons/edit_20.gif"/>
+                                                value="/pages/images/buttons/edit_20.gif"/>
                             </p:commandLink>
 
                             <p:dialog
@@ -132,7 +132,7 @@
                                     modal="true"
                                     onHide="#{NavigationForm.Reload()}">
                                 <ui:include
-                                        src="/newpages/ProjektFilegroupPopup.xhtml"/>
+                                        src="/pages/ProjektFilegroupPopup.xhtml"/>
                             </p:dialog>
                         </h:panelGroup>
 
@@ -142,7 +142,7 @@
                                 title="#{msgs.filegroupLoeschen}"
                                 onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')) return">
                             <h:graphicImage alt="delete"
-                                            value="/newpages/images/buttons/waste1a_20px.gif"/>
+                                            value="/pages/images/buttons/waste1a_20px.gif"/>
                             <t:updateActionListener
                                     property="#{ProjekteForm.myFilegroup}"
                                     value="#{item}"/>
@@ -157,7 +157,7 @@
                             oncomplete="PF('addFileGroupDialog').show()"
                             styleClass="standardlink">
                         <t:updateActionListener
-                                value="/newpages/ProjektFilegroupPopup"
+                                value="/pages/ProjektFilegroupPopup"
                                 property="#{ProjekteForm.zurueck}"/>
                     </p:commandLink>
                     <p:dialog widgetVar="addFileGroupDialog"
@@ -166,7 +166,7 @@
                               modal="true" dynamic="true"
                               onHide="#{NavigationForm.Reload()}">
                         <ui:include
-                                src="/newpages/ProjektFilegroupPopup.xhtml"/>
+                                src="/pages/ProjektFilegroupPopup.xhtml"/>
                     </p:dialog>
                 </h:panelGroup>
             </h:panelGroup>

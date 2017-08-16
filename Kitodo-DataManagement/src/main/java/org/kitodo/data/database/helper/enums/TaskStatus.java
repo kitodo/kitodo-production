@@ -80,7 +80,7 @@ public enum TaskStatus {
      * @return file name for small image
      */
     public String getSmallImagePath() {
-        return "/newpages/images/status/" + this.imageSmall;
+        return "/pages/images/status/" + this.imageSmall;
     }
 
     /**
@@ -89,7 +89,7 @@ public enum TaskStatus {
      * @return file name for big image
      */
     public String getBigImagePath() {
-        return "/newpages/images/status/" + this.imageBig;
+        return "/pages/images/status/" + this.imageBig;
     }
 
     /**

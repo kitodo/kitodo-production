@@ -97,14 +97,14 @@
                                                  title="#{msgs.seitenzaehlung}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
-                                            value="/newpages/images/buttons/paginierung_seite_inactive.svg"
+                                            value="/pages/images/buttons/paginierung_seite_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="1"
                                                             property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginationPagesProImage==1}"
-                                        value="/newpages/images/buttons/paginierung_seite.svg"
+                                        value="/pages/images/buttons/paginierung_seite.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlung}"/>
 
@@ -112,14 +112,14 @@
                                                  title="#{msgs.spaltenzaehlung}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
-                                            value="/newpages/images/buttons/paginierung_spalte_inactive.svg"
+                                            value="/pages/images/buttons/paginierung_spalte_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="2"
                                                             property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginationPagesProImage==2}"
-                                        value="/newpages/images/buttons/paginierung_spalte.svg"
+                                        value="/pages/images/buttons/paginierung_spalte.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.spaltenzaehlung}"/>
 
@@ -127,14 +127,14 @@
                                                  title="#{msgs.blattzaehlung}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
-                                            value="/newpages/images/buttons/paginierung_blatt_inactive.svg"
+                                            value="/pages/images/buttons/paginierung_blatt_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="3"
                                                             property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginationPagesProImage==3}"
-                                        value="/newpages/images/buttons/paginierung_blatt.svg"
+                                        value="/pages/images/buttons/paginierung_blatt.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.blattzaehlung}"/>
 
@@ -143,14 +143,14 @@
                                         title="#{msgs.blattzaehlungrectoverso}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
-                                            value="/newpages/images/buttons/paginierung_blatt_rectoverso_inactive.svg"
+                                            value="/pages/images/buttons/paginierung_blatt_rectoverso_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="4"
                                                             property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginationPagesProImage==4}"
-                                        value="/newpages/images/buttons/paginierung_blatt_rectoverso.svg"
+                                        value="/pages/images/buttons/paginierung_blatt_rectoverso.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.blattzaehlungrectoverso}"/>
 
@@ -159,14 +159,14 @@
                                         title="#{msgs.seitenzaehlungrectoverso}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage alt=""
-                                            value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.svg"
+                                            value="/pages/images/buttons/paginierung_seite_rectoverso_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="5"
                                                             property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginationPagesProImage==5}"
-                                        value="/newpages/images/buttons/paginierung_seite_rectoverso.svg"
+                                        value="/pages/images/buttons/paginierung_seite_rectoverso.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlungrectoverso}"/>
 
@@ -175,14 +175,14 @@
                                         title="#{msgs.seitenzaehlungdoppelseiten}">
                                     <f:ajax render="PaginierungActionBox,myMessages,mygrid10"/>
                                     <h:graphicImage alt=""
-                                            value="/newpages/images/buttons/paginierung_doppelseite_inactive.svg"
+                                            value="/pages/images/buttons/paginierung_doppelseite_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="6"
                                                             property="#{Metadaten.paginationPagesProImage}"/>
                                 </h:commandLink>
                                 <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginationPagesProImage==6}"
-                                        value="/newpages/images/buttons/paginierung_doppelseite.svg"
+                                        value="/pages/images/buttons/paginierung_doppelseite.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlungdoppelseiten}"/>
 
@@ -226,7 +226,7 @@
                         <tr>
                             <td class="eingabeBoxen_row2">
                                 <h:commandLink action="#{Metadaten.moveSeltectedPagesUp}">
-                                    <h:graphicImage value="/newpages/images/buttons/up_20px.gif" alt="move up"
+                                    <h:graphicImage value="/pages/images/buttons/up_20px.gif" alt="move up"
                                                     style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.moveSeltectedPagesUp}"/>
                                 </h:commandLink>
@@ -235,7 +235,7 @@
                         <tr>
                             <td class="eingabeBoxen_row2">
                                 <h:commandLink action="#{Metadaten.moveSelectedPagesDown}">
-                                    <h:graphicImage value="/newpages/images/buttons/down_20px.gif" alt="move down"
+                                    <h:graphicImage value="/pages/images/buttons/down_20px.gif" alt="move down"
                                                     style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.moveSeltectedPagesDown}"/>
                                 </h:commandLink>
@@ -245,7 +245,7 @@
                             <td class="eingabeBoxen_row2">
                                 <h:commandLink action="#{Metadaten.deleteSelectedPages}"
                                                onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return false">
-                                    <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" alt="delete"
+                                    <h:graphicImage value="/pages/images/buttons/waste1a_20px.gif" alt="delete"
                                                     style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.deleteSeltectedPages}"/>
                                 </h:commandLink>
@@ -254,7 +254,7 @@
                         <tr>
                             <td class="eingabeBoxen_row2">
                                 <h:commandLink action="#{Metadaten.reOrderPagination}">
-                                    <h:graphicImage value="/newpages/images/buttons/reload.gif" alt="reload"
+                                    <h:graphicImage value="/pages/images/buttons/reload.gif" alt="reload"
                                                     style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.reOrder}"/>
                                 </h:commandLink>

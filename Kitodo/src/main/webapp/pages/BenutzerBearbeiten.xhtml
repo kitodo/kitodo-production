@@ -48,9 +48,9 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:link id="id3" value="#{msgs.benutzerverwaltung}" outcome="/newpages/BenutzerAlle"/>
+                                    <h:link id="id3" value="#{msgs.benutzerverwaltung}" outcome="/pages/BenutzerAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.neuenBenutzerAnlegen}"
                                                   rendered="#{BenutzerverwaltungForm.myClass.id == null}"/>
@@ -83,7 +83,7 @@
                                                 <td class="eingabeBoxen_row1" align="right">
                                                     <h:commandLink id="id10" action="#{NavigationForm.Reload}">
                                                         <h:graphicImage alt="reload" id="id11"
-                                                                        value="/newpages/images/reload.gif"/>
+                                                                        value="/pages/images/reload.gif"/>
                                                     </h:commandLink>
                                                 </td>
                                             </tr>
@@ -177,7 +177,7 @@
                                                                            action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}"
                                                                            rendered="#{BenutzerverwaltungForm.myClass.id != null}">
                                                                 <h:graphicImage alt="save configuration" id="id33"
-                                                                                value="/newpages/images/buttons/key3.gif"/>
+                                                                                value="/pages/images/buttons/key3.gif"/>
                                                                 <t:updateActionListener
                                                                         property="#{BenutzerverwaltungForm.myClass}"
                                                                         value="#{BenutzerverwaltungForm.myClass}"/>
@@ -287,7 +287,7 @@
                                             <tr>
                                                 <td class="eingabeBoxen_row3" align="left">
                                                     <h:button id="id58" value="#{msgs.abbrechen}"
-                                                              outcome="/newpages/BenutzerAlle" immediate="true"/>
+                                                              outcome="/pages/BenutzerAlle" immediate="true"/>
                                                 </td>
 
                                                 <td class="eingabeBoxen_row3" align="right">

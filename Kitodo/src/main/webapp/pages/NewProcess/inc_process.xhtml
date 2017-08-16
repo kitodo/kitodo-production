@@ -36,7 +36,7 @@
     </h:selectOneMenu>
     <h:commandLink action="#{ProzesskopieForm.templateAuswahlAuswerten}" rendered="#{ProzesskopieForm.useTemplates}"
                    title="#{msgs.AuswaehlenAusVorhandenenProzessen}">
-        <h:graphicImage alt="" value="/newpages/images/buttons/copy.gif"
+        <h:graphicImage alt="" value="/pages/images/buttons/copy.gif"
                         style="vertical-align:middle; margin-right:3px"/>
         <h:outputText value="#{msgs.uebernehmen}"/>
     </h:commandLink>
@@ -67,7 +67,7 @@
                  onkeypress="return checkOpac('OpacRequest',event)"/>
     <h:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery"
                    rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
-        <h:graphicImage alt="query opac" value="/newpages/images/buttons/opac.gif"
+        <h:graphicImage alt="query opac" value="/pages/images/buttons/opac.gif"
                         style="vertical-align:middle; margin-right:3px"/>
         <h:outputText value="#{msgs.uebernehmen}"/>
     </h:commandLink>

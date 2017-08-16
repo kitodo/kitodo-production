@@ -120,7 +120,7 @@ public class GranularityForm {
         CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course,
                 generateBatches);
         TaskManager.addTask(createProcesses);
-        return "/newpages/taskmanager";
+        return "/pages/taskmanager";
     }
 
     /**

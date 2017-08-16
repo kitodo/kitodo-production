@@ -97,7 +97,7 @@
 
                                     <h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}"
                                                    rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id and proc.currentStepAccessCondition != 'READ'}">
-                                        <h:graphicImage value="/newpages/images/buttons/edit.gif" alt="edit"/>
+                                        <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.processProperty}" value="#{proc}"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.container}" value="0"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
@@ -108,7 +108,7 @@
 
                                     <h:commandLink action="#{AktuelleSchritteForm.duplicateProperty}" title="#{msgs.duplicate}"
                                                    rendered="#{proc.duplicationAllowed}">
-                                        <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
+                                        <h:graphicImage value="/pages/images/buttons/copy.gif" alt="copy"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.processProperty}" value="#{proc}"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.container}" value="0"/>
                                     </h:commandLink>
@@ -148,7 +148,7 @@
                                         <h:panelGroup
                                                 rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id and process_item.currentStepAccessCondition != 'READ'}">
                                             <h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}">
-                                                <h:graphicImage value="/newpages/images/buttons/edit.gif" alt="edit"/>
+                                                <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.container}"
                                                                         value="#{container}"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
@@ -159,7 +159,7 @@
 
                                             <h:commandLink action="#{AktuelleSchritteForm.duplicateContainer}" title="#{msgs.duplicate}"
                                                            rendered="#{process_item.duplicationAllowed}">
-                                                <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="edit"/>
+                                                <h:graphicImage value="/pages/images/buttons/copy.gif" alt="edit"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.container}"
                                                                         value="#{container}"/>
                                             </h:commandLink>

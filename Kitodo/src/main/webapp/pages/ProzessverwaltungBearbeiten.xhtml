@@ -41,9 +41,9 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:link id="id3" value="#{msgs.prozessverwaltung}" outcome="/newpages/ProzessverwaltungAlle"/>
+                                    <h:link id="id3" value="#{msgs.prozessverwaltung}" outcome="/pages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.einenNeuenProzessAnlegen}"
                                                   rendered="#{ProzessverwaltungForm.myProzess.id == null}"/>

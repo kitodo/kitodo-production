@@ -49,7 +49,7 @@ public class SecurityCheckFilter implements Filter {
         HttpServletResponse hres = (HttpServletResponse) response;
         HttpSession session = hreq.getSession();
 
-        if (session.isNew() && !hreq.getRequestURI().contains("newpages/Main.jsf")) {
+        if (session.isNew() && !hreq.getRequestURI().contains("pages/Main.jsf")) {
             hres.sendRedirect(hreq.getContextPath());
             return;
         }

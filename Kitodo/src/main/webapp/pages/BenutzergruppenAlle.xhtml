@@ -45,7 +45,7 @@
                             <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
                                     <h:link id="id2" value="#{msgs.startseite}"
-                                                   outcome="/newpages/Main"/>
+                                                   outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.benutzergruppen}"/>
                                 </h:panelGroup>
@@ -87,7 +87,7 @@
                                                     <h:outputText id="id9" value="#{msgs.benutzergruppe}"/>
                                                 </f:facet>
 
-                                                <ui:include src="/newpages/inc/ajaxPlusMinusButton.xhtml" />
+                                                <ui:include src="/pages/inc/ajaxPlusMinusButton.xhtml" />
                                                 <t:dataTable id="id11" styleClass="standardTable" width="90%"
                                                              style="margin-left:12px;margin-top:5px" cellspacing="1px"
                                                              cellpadding="1px" headerClass="standardTable_Header"
@@ -110,11 +110,11 @@
                                                     <h:outputText id="id15" value="#{msgs.auswahl}"/>
                                                 </f:facet>
                                                 <!-- Bearbeiten-Schaltknopf -->
-                                                <h:link id="id16" outcome="/newpages/BenutzergruppenBearbeiten"
+                                                <h:link id="id16" outcome="/pages/BenutzergruppenBearbeiten"
                                                                title="#{msgs.benutzerBearbeiten}">
                                                     <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage id="id17" alt="edit"
-                                                                    value="/newpages/images/buttons/edit.gif"/>
+                                                                    value="/pages/images/buttons/edit.gif"/>
                                                 </h:link>
                                             </h:column>
 
@@ -139,7 +139,7 @@
 
                                                     <t:aliasBean alias="#{mypage}"
                                                                  value="#{BenutzergruppenForm.page}">
-                                                        <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                                        <ui:include src="/pages/inc/datascroller.xhtml"/>
                                                     </t:aliasBean>
                                                     <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
                                                 </td>

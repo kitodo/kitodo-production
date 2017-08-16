@@ -40,7 +40,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String Neu() {
         this.myBenutzergruppe = new UserGroup();
         this.userGroupId = 0;
-        return "/newpages/BenutzergruppenBearbeiten?faces-redirect=true";
+        return "/pages/BenutzergruppenBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -51,7 +51,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
-            return "/newpages/BenutzergruppenAlle?faces-redirect=true";
+            return "/pages/BenutzergruppenAlle?faces-redirect=true";
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             return null;
@@ -82,7 +82,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
             return null;
         }
-        return "/newpages/BenutzergruppenAlle?faces-redirect=true";
+        return "/pages/BenutzergruppenAlle?faces-redirect=true";
     }
 
     /**
@@ -98,7 +98,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Error, could not read", he.getMessage());
             return null;
         }
-        return "/newpages/BenutzergruppenAlle";
+        return "/pages/BenutzergruppenAlle";
     }
 
     /**

@@ -31,7 +31,7 @@
         <t:aliasBean alias="#{showUserRelatedFilter}" value="#{true}"/>
         <t:aliasBean alias="#{showHits}" value="#{true}"/>
         <f:subview id="sub1">
-            <ui:include src="/newpages/inc/Step_Filter.xhtml"/>
+            <ui:include src="/pages/inc/Step_Filter.xhtml"/>
         </f:subview>
     </t:aliasBeansScope>
     
@@ -51,18 +51,18 @@
                 <h:outputText value="#{msgs.auswahl2}"/>
                 <h:commandLink action="#{AktuelleSchritteForm.selectionAll}" id="selectAll"
                                title="#{msgs.alleAuswaehlen}" style="margin-left:10px">
-                    <h:graphicImage value="/newpages/images/check_true.gif" alt="select all"/>
+                    <h:graphicImage value="/pages/images/check_true.gif" alt="select all"/>
                 </h:commandLink>
                 <h:commandLink action="#{AktuelleSchritteForm.selectionNone}" id="selectnone"
                                title="#{msgs.auswahlEntfernen}" style="margin-left:5px">
-                    <h:graphicImage value="/newpages/images/check_false.gif" alt="select none"/>
+                    <h:graphicImage value="/pages/images/check_false.gif" alt="select none"/>
                 </h:commandLink>
             </t:div>
         </f:facet>
         <h:commandLink id="myself1">
-            <h:graphicImage value="/newpages/images/check_true.gif" style="margin-right:4px"
+            <h:graphicImage value="/pages/images/check_true.gif" style="margin-right:4px"
                             rendered="#{item.selected}" alt="select all"/>
-            <h:graphicImage value="/newpages/images/check_false.gif" style="margin-right:4px"
+            <h:graphicImage value="/pages/images/check_false.gif" style="margin-right:4px"
                             rendered="#{!item.selected}" alt="select none"/>
             <t:updateActionListener value="#{item.selected?false:true}" property="#{item.selected}"/>
             <f:ajax render="myself1"/>
@@ -85,21 +85,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort1"
                                rendered="#{AktuelleSchritteForm.sortierung=='schrittAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="schrittDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort2"
                                rendered="#{AktuelleSchritteForm.sortierung=='schrittDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="schrittAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort3"
                                rendered="#{AktuelleSchritteForm.sortierung!='schrittDesc' and AktuelleSchritteForm.sortierung!='schrittAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="schrittAsc"/>
                 </h:commandLink>
@@ -107,8 +107,8 @@
         </f:facet>
     
         <h:commandLink id="myself" style="color:black">
-            <h:graphicImage value="/newpages/images/plus.gif" alt="plus" style="margin-right:4px" rendered="#{!item.panelShown}"/>
-            <h:graphicImage value="/newpages/images/minus.gif" alt="minus" style="margin-right:4px" rendered="#{item.panelShown}"/>
+            <h:graphicImage value="/pages/images/plus.gif" alt="plus" style="margin-right:4px" rendered="#{!item.panelShown}"/>
+            <h:graphicImage value="/pages/images/minus.gif" alt="minus" style="margin-right:4px" rendered="#{item.panelShown}"/>
             <t:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}"/>
             <h:outputText value="#{item.title}"/>
             <f:ajax render="auflistungIntern myself"/>
@@ -131,21 +131,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort6"
                                rendered="#{AktuelleSchritteForm.sortierung=='prozessAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="prozessDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort7"
                                rendered="#{AktuelleSchritteForm.sortierung=='prozessDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="prozessAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort8"
                                rendered="#{AktuelleSchritteForm.sortierung!='prozessDesc' and AktuelleSchritteForm.sortierung!='prozessAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="prozessAsc"/>
                 </h:commandLink>
@@ -154,7 +154,7 @@
         <h:panelGrid columns="2">
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
             <h:commandLink action="ProzessverwaltungBearbeiten" id="edit1" title="#{msgs.prozessBearbeiten}">
-                <h:graphicImage value="/newpages/images/buttons/goInto.gif" style="margin-right:3px" alt="edit"/>
+                <h:graphicImage value="/pages/images/buttons/goInto.gif" style="margin-right:3px" alt="edit"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item.process}"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
             </h:commandLink>
@@ -170,21 +170,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort10"
                                rendered="#{AktuelleSchritteForm.sortierung=='prozessdateAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="prozessdateDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort11"
                                rendered="#{AktuelleSchritteForm.sortierung=='prozessdateDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="prozessdateAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort12"
                                rendered="#{AktuelleSchritteForm.sortierung!='prozessdateDesc' and AktuelleSchritteForm.sortierung!='prozessdateAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="prozessdateAsc"/>
                 </h:commandLink>
@@ -201,21 +201,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort13"
                                rendered="#{AktuelleSchritteForm.sortierung=='modulesAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="modulesDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort14"
                                rendered="#{AktuelleSchritteForm.sortierung=='modulesDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="modulesAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort15"
                                rendered="#{AktuelleSchritteForm.sortierung!='modulesDesc' and AktuelleSchritteForm.sortierung!='modulesAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="modulesAsc"/>
                 </h:commandLink>
@@ -232,21 +232,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort16"
                                rendered="#{AktuelleSchritteForm.sortierung=='projektAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="projektDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort17"
                                rendered="#{AktuelleSchritteForm.sortierung=='projektDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="projektAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort18"
                                rendered="#{AktuelleSchritteForm.sortierung!='projektDesc' and AktuelleSchritteForm.sortierung!='projektAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="projektAsc"/>
                 </h:commandLink>
@@ -264,21 +264,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort19"
                                rendered="#{AktuelleSchritteForm.sortierung=='sperrungenAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="sperrungenDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort20"
                                rendered="#{AktuelleSchritteForm.sortierung=='sperrungenDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="sperrungenAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort21"
                                rendered="#{AktuelleSchritteForm.sortierung!='sperrungenDesc' and AktuelleSchritteForm.sortierung!='sperrungenAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="sperrungenAsc"/>
                 </h:commandLink>
@@ -296,21 +296,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort19a"
                                rendered="#{AktuelleSchritteForm.sortierung=='batchAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="batchDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort20a"
                                rendered="#{AktuelleSchritteForm.sortierung=='batchDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="batchAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort21a"
                                rendered="#{AktuelleSchritteForm.sortierung!='batchDesc' and AktuelleSchritteForm.sortierung!='batchAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="batchAsc"/>
                 </h:commandLink>
@@ -327,21 +327,21 @@
                 <!-- Sortierung Asc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort22"
                                rendered="#{AktuelleSchritteForm.sortierung=='statusAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
+                    <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="statusDesc"/>
                 </h:commandLink>
                 <!-- Sortierung Desc -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort23"
                                rendered="#{AktuelleSchritteForm.sortierung=='statusDesc'}">
-                    <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
+                    <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="statusAsc"/>
                 </h:commandLink>
                 <!-- Sortierung none -->
                 <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" id="sort24"
                                rendered="#{AktuelleSchritteForm.sortierung!='statusDesc' and AktuelleSchritteForm.sortierung!='statusAsc'}">
-                    <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
+                    <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                     style="vertical-align:middle;margin-left:5px"/>
                     <t:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="statusAsc"/>
                 </h:commandLink>
@@ -397,7 +397,7 @@
         <h:commandLink id="take" action="#{AktuelleSchritteForm.schrittDurchBenutzerUebernehmen}"
                        rendered="#{(item.processingStatusEnum == 'OPEN' and !item.batchStep) || (item.processingStatusEnum == 'OPEN' and item.batchStep and !item.batchSize)}"
                        title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-            <h:graphicImage value="/newpages/images/buttons/admin2a.gif" alt="edit"/>
+            <h:graphicImage value="/pages/images/buttons/admin2a.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
         </h:commandLink>
     
@@ -405,7 +405,7 @@
         <h:commandLink action="#{AktuelleSchritteForm.editStep}" id="view1"
                        rendered="#{(item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
                        title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
-            <h:graphicImage value="/newpages/images/buttons/admin1b.gif" alt="edit"/>
+            <h:graphicImage value="/pages/images/buttons/admin1b.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
         </h:commandLink>
     
@@ -413,7 +413,7 @@
         <h:commandLink action="#{AktuelleSchritteForm.editStep}" id="view2"
                        rendered="#{item.processingStatusEnum == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and (!item.batchStep || !item.batchSize)}"
                        title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
-            <h:graphicImage value="/newpages/images/buttons/admin1c.gif" alt="edit"/>
+            <h:graphicImage value="/pages/images/buttons/admin1c.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
         </h:commandLink>
     
@@ -421,14 +421,14 @@
         <h:commandLink id="batch" action="#{AktuelleSchritteForm.takeOverBatch}"
                        rendered="#{item.processingStatusEnum == 'OPEN' and item.batchStep and item.batchSize}"
                        title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-            <h:graphicImage value="/newpages/images/buttons/admin3a.gif" alt="edit"/>
+            <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}"/>
         </h:commandLink>
         <!-- edit batch step -->
         <h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.batchesEdit}"
                        rendered="#{item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and item.batchSize}"
                        title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-            <h:graphicImage value="/newpages/images/buttons/admin3.gif" alt="edit"/>
+            <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}"/>
         </h:commandLink>
     
@@ -439,7 +439,7 @@
                        title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
     
     
-            <h:graphicImage value="/newpages/images/buttons/admin3c.gif" alt="edit"/>
+            <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
             <t:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}"/>
         </h:commandLink>
     </t:column>
@@ -449,7 +449,7 @@
     
     <!-- ===================== Datascroller für die Ergebnisse ====================== -->
     <t:aliasBean alias="#{mypage}" value="#{AktuelleSchritteForm.page}">
-    <ui:include src="/newpages/inc/datascroller.xhtml"/>
+    <ui:include src="/pages/inc/datascroller.xhtml"/>
     </t:aliasBean>
     <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
     

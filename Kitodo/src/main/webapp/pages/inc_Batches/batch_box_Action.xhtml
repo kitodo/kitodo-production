@@ -40,7 +40,7 @@
                                                title="#{script}">
                                     <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.script}"
                                                             value="#{script}"/>
-                                    <h:graphicImage value="/newpages/images/buttons/admin4b.gif" alt="execute action"
+                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute action"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.scriptAusfuehren}: #{script}"/>
                                 </h:commandLink>
@@ -54,7 +54,7 @@
                             <h:commandLink id="action9"
                                            rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typeExportDMS}"
                                            action="#{AktuelleSchritteForm.batchHelper.exportDMS}" title="#{msgs.importDms}">
-                                <h:graphicImage value="/newpages/images/buttons/dms.png" alt="export to dms"
+                                <h:graphicImage value="/pages/images/buttons/dms.png" alt="export to dms"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.importDms}"/>
                             </h:commandLink>
@@ -63,7 +63,7 @@
                             <h:panelGroup>
 
                                 <span class="toggle" data-for="toggle-1">
-                                    <h:graphicImage value="/newpages/images/buttons/step_back_20px.gif" alt="step back"
+                                    <h:graphicImage value="/pages/images/buttons/step_back_20px.gif" alt="step back"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.korrekturmeldungAnVorherigeStationSenden}"/>
                                 </span>
@@ -107,7 +107,7 @@
 
                                 <span class="toggle" data-for="toggle-2">
 
-                                    <h:graphicImage value="/newpages/images/buttons/step_for_20px.gif" alt="step forward"
+                                    <h:graphicImage value="/pages/images/buttons/step_for_20px.gif" alt="step forward"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}"/>
                                 </span>
@@ -149,7 +149,7 @@
                                            action="#{AktuelleSchritteForm.batchHelper.batchDurchBenutzerZurueckgeben}"
                                            title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
                                            onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
-                                <h:graphicImage value="/newpages/images/buttons/cancel3.gif" alt="cancel"
+                                <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}"/>
                             </h:commandLink>
@@ -158,7 +158,7 @@
                                            action="#{AktuelleSchritteForm.batchHelper.batchDurchBenutzerAbschliessen}"
                                            title="#{msgs.diesenSchrittAbschliessen}"
                                            onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
-                                <h:graphicImage value="/newpages/images/buttons/ok.gif" alt="ok"
+                                <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.diesenSchrittAbschliessen}"/>
                             </h:commandLink>

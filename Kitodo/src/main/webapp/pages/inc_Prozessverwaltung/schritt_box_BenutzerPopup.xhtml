@@ -21,22 +21,22 @@
     xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="/newpages/inc/head.xhtml" />
+        <ui:include src="/pages/inc/head.xhtml" />
         <h:body style="margin:0px;padding:0px">
             <!-- ===================== Popup-Rahmen ======================
-            <h:graphicImage value="/newpages/images/popup/oben.gif" width="430"
+            <h:graphicImage value="/pages/images/popup/oben.gif" width="430"
                             style="position:absolute;left:0;top:0;z-index:1" />
-            <h:graphicImage value="/newpages/images/popup/links.gif" height="360"
+            <h:graphicImage value="/pages/images/popup/links.gif" height="360"
                             style="position:absolute;left:0;top:19" />
-            <h:graphicImage value="/newpages/images/popup/rechts.gif" height="360"
+            <h:graphicImage value="/pages/images/popup/rechts.gif" height="360"
                             style="position:absolute;left:426;top:19" />
-            <h:graphicImage value="/newpages/images/popup/unten.gif" width="430"
+            <h:graphicImage value="/pages/images/popup/unten.gif" width="430"
                             style="position:absolute;left:0;top:377" />
 
             <h:form id="hmmmForm1">
                 <jp:closePopupFrame>
                     <h:commandLink action="#{NavigationForm.JeniaPopupCloseAction}">
-                        <h:graphicImage value="/newpages/images/popup/close.gif"
+                        <h:graphicImage value="/pages/images/popup/close.gif"
                                         style="position:absolute;left:410;top:2;z-index:2" />
                     </h:commandLink>
                 </jp:closePopupFrame>
@@ -79,7 +79,7 @@
                                 <h:commandLink
                                         action="#{ProzessverwaltungForm.BenutzerHinzufuegen}"
                                         title="#{msgs.uebernehmen}">
-                                    <h:graphicImage alt="add user" value="/newpages/images/buttons/addUser.gif"/>
+                                    <h:graphicImage alt="add user" value="/pages/images/buttons/addUser.gif"/>
                                     <t:updateActionListener
                                             property="#{ProzessverwaltungForm.myBenutzer}" value="#{item}"/>
                                 </h:commandLink>
@@ -94,7 +94,7 @@
                                     <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                     <t:aliasBean alias="#{mypage}"
                                                  value="#{BenutzerverwaltungForm.page}">
-                                        <ui:include src="/newpages/inc/datascroller.xhtml">
+                                        <ui:include src="/pages/inc/datascroller.xhtml">
                                             <ui:param name="formName" value="userForm"/>
                                         </ui:include>
                                     </t:aliasBean>

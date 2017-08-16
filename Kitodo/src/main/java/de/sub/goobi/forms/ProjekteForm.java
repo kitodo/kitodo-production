@@ -147,13 +147,13 @@ public class ProjekteForm extends BasisForm {
         this.projectProgressImage = null;
         this.projectStatImages = null;
         this.projectStatVolumes = null;
-        return "/newpages/ProjekteAlle";
+        return "/pages/ProjekteAlle";
     }
 
     public String newProject() {
         this.myProjekt = new Project();
         this.itemId = 0;
-        return "/newpages/ProjekteBearbeiten?faces-redirect=true";
+        return "/pages/ProjekteBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -166,7 +166,7 @@ public class ProjekteForm extends BasisForm {
         this.commitFileGroups();
         try {
             serviceManager.getProjectService().save(this.myProjekt);
-            return "/newpages/ProjekteAlle";
+            return "/pages/ProjekteAlle";
         } catch (DataException e) {
             Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
             logger.error(e);
@@ -211,7 +211,7 @@ public class ProjekteForm extends BasisForm {
                 return null;
             }
         }
-        return "/newpages/ProjekteAlle";
+        return "/pages/ProjekteAlle";
     }
 
     /**
@@ -222,7 +222,7 @@ public class ProjekteForm extends BasisForm {
     public String filterKein() {
         List<Project> projects = serviceManager.getProjectService().findAll();
         this.page = new Page(0, projects);
-        return "/newpages/ProjekteAlle";
+        return "/pages/ProjekteAlle";
     }
 
     /**
@@ -285,7 +285,7 @@ public class ProjekteForm extends BasisForm {
         // to be deleted fileGroups ids are listed
         // and deleted after a commit
         this.deletedFileGroups.add(this.myFilegroup.getId());
-        return "/newpages/ProjekteBearbeiten";
+        return "/pages/ProjekteBearbeiten";
     }
 
     /*

@@ -45,7 +45,7 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.ldapgruppen}"/>
                                 </h:panelGroup>
@@ -107,11 +107,11 @@
                                                         <h:outputText id="id19" value="#{msgs.auswahl}"/>
                                                     </f:facet>
                                                     <!-- Bearbeiten-Schaltknopf -->
-                                                    <h:link id="id20" outcome="/newpages/LdapGruppenBearbeiten"
+                                                    <h:link id="id20" outcome="/pages/LdapGruppenBearbeiten"
                                                                    title="#{msgs.ldapgruppeBearbeiten}">
                                                         <f:param name="id" value="#{item.id}"/>
                                                         <h:graphicImage id="id21" alt="edit"
-                                                                        value="/newpages/images/buttons/edit.gif"/>
+                                                                        value="/pages/images/buttons/edit.gif"/>
                                                     </h:link>
                                                 </t:column>
                                             </t:dataTable>
@@ -132,7 +132,7 @@
                                                         <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                                         <t:aliasBean alias="#{mypage}"
                                                                      value="#{LdapGruppenForm.page}">
-                                                            <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                                            <ui:include src="/pages/inc/datascroller.xhtml"/>
                                                         </t:aliasBean>
                                                         <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
                                                     </td>

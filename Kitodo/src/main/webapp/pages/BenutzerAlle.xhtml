@@ -46,7 +46,7 @@
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
                                     <h:link id="id2" value="#{msgs.startseite}"
-                                                   outcome="/newpages/Main"/>
+                                                   outcome="/pages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.benutzerverwaltung}"/>
                                 </h:panelGroup>
@@ -100,7 +100,7 @@
                                                         action="#{BenutzerverwaltungForm.filterAlleStart}"
                                                         title="#{msgs.filterAnwenden}" style="margin-left:5px">
                                                     <h:graphicImage id="id13" alt="reload"
-                                                                    value="/newpages/images/buttons/reload.gif"/>
+                                                                    value="/pages/images/buttons/reload.gif"/>
                                                 </h:commandLink>
 
 
@@ -171,17 +171,17 @@
                                                     <h:outputText id="id31" value="#{msgs.auswahl}"/>
                                                 </f:facet>
                                                 <!-- Bearbeiten-Schaltknopf -->
-                                                <h:link id="id32" outcome="/newpages/BenutzerBearbeiten"
+                                                <h:link id="id32" outcome="/pages/BenutzerBearbeiten"
                                                                title="#{msgs.benutzerBearbeiten}">
                                                     <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage id="id33" alt="edit"
-                                                                    value="/newpages/images/buttons/edit.gif"/>
+                                                                    value="/pages/images/buttons/edit.gif"/>
                                                 </h:link>
 
                                                 <!-- LdapKonfiguration schreiben-Schaltknopf -->
                                                 <!-- 										<h:commandLink id="id34" title="#{msgs.ldapKonfigurationSchreiben}"
                                                                                                            action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}">
-                                                <h:graphicImage id="id35" value="/newpages/images/buttons/key3.gif" />
+                                                <h:graphicImage id="id35" value="/pages/images/buttons/key3.gif" />
                                                 <x:updateActionListener
                                                         property="#{BenutzerverwaltungForm.myClass}" value="#{item}" />
                                             </h:commandLink>
@@ -190,7 +190,7 @@
                                                 <h:commandLink id="id36" title="#{msgs.benutzerprofilLaden}"
                                                                action="#{LoginForm.EinloggenAls}" style="margin-left:15px">
                                                     <h:graphicImage alt="load user profile"
-                                                            value="/newpages/images/buttons/change_user3_20px.gif"/>
+                                                            value="/pages/images/buttons/change_user3_20px.gif"/>
                                                     <f:param id="id37" name="ID" value="#{item.id}"/>
                                                 </h:commandLink>
 
@@ -217,7 +217,7 @@
                                                     <!-- ===================== Datascroller für die Ergebnisse ====================== -->
                                                     <t:aliasBean alias="#{mypage}"
                                                                  value="#{BenutzerverwaltungForm.page}">
-                                                        <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                                        <ui:include src="/pages/inc/datascroller.xhtml"/>
                                                     </t:aliasBean>
                                                     <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
                                                 </td>
