@@ -37,7 +37,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-import org.hibernate.Session;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
@@ -49,7 +48,6 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -408,6 +406,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         taskDTO.setProcessingBegin(getStringPropertyForDTO(jsonObject, "processingBegin"));
         taskDTO.setProcessingEnd(getStringPropertyForDTO(jsonObject, "processingEnd"));
         taskDTO.setTypeImagesWrite(true);
+        taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(jsonObject, "users"));
+        taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(jsonObject, "userGroups"));
         if (!related) {
             taskDTO = convertRelatedJSONObjects(jsonObject, taskDTO);
         }
@@ -422,10 +422,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         JSONObject processingUserJSON = serviceManager.getUserService().findById(processingUser);
         taskDTO.setProcessingUser(serviceManager.getUserService().convertJSONObjectToDTO(processingUserJSON, true));
         taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
-        taskDTO.setUsersSize(taskDTO.getUsers().size());
         taskDTO.setUserGroups(
                 convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
-        // taskDTO.setUserGroupSize(userDTO.getUserGroups().size());
         return taskDTO;
     }
 
@@ -531,36 +529,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @return size
      */
     public int getUserGroupsSize(Task task) {
-        if (task.getUserGroups() == null) {
-            return 0;
-        } else {
-            return task.getUserGroups().size();
-        }
-    }
-
-    /**
-     * Get users' list size.
-     *
-     * @param task
-     *            object
-     * @return size
-     */
-    public int getUsersSize(TaskDTO task) {
-        if (task.getUsers() == null) {
-            return 0;
-        } else {
-            return task.getUsers().size();
-        }
-    }
-
-    /**
-     * Get user groups' list size.
-     *
-     * @param task
-     *            object
-     * @return size
-     */
-    public int getUserGroupsSize(TaskDTO task) {
         if (task.getUserGroups() == null) {
             return 0;
         } else {
@@ -841,25 +809,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         }
         return answer;
 
-    }
-
-    /**
-     * Get the current object for this row.
-     *
-     * @return the current object representing a row.
-     */
-    public Task getCurrent(Task task) {
-        boolean hasOpen = HibernateUtilOld.hasOpenSession();
-        Session session = Helper.getHibernateSession();
-
-        Task current = (Task) session.get(Task.class, task.getId());
-        if (current == null) {
-            current = (Task) session.load(Task.class, task.getId());
-        }
-        if (!hasOpen) {
-            session.close();
-        }
-        return current;
     }
 
     /**

@@ -260,6 +260,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         UserGroupDTO userGroupDTO = new UserGroupDTO();
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
         userGroupDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(jsonObject, "users"));
         if (!related) {
             userGroupDTO = convertRelatedJSONObjects(jsonObject, userGroupDTO);
         }
@@ -289,20 +290,5 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
 
     public void setPermissionAsString(UserGroup userGroup, String permission) {
         userGroup.setPermission(Integer.parseInt(permission));
-    }
-
-    /**
-     * Get tasks' list size.
-     *
-     * @param userGroup
-     *            object
-     * @return size
-     */
-    public int getTasksSize(UserGroup userGroup) {
-        if (userGroup.getTasks() == null) {
-            return 0;
-        } else {
-            return userGroup.getTasks().size();
-        }
     }
 }

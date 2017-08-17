@@ -659,6 +659,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
         processDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(jsonObject, "properties"));
         if (!related) {
             processDTO = convertRelatedJSONObjects(jsonObject, processDTO);
         }
@@ -674,7 +675,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
         processDTO.setProperties(convertRelatedJSONObjectToDTO(jsonObject, "properties", serviceManager.getPropertyService()));
-        //processDTO.setPropertiesSize(getPropertiesSize(processDTO));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
