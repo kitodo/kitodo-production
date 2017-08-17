@@ -160,6 +160,7 @@ public class SearchForm {
     /**
      * Initialise drop down list of user list.
      */
+    @SuppressWarnings("unchecked")
     protected void initUserList() {
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(User.class);
@@ -352,6 +353,7 @@ public class SearchForm {
      *
      * @return String
      */
+    @SuppressWarnings("unchecked")
     public String filter() {
         String search = "";
         if (!this.processTitle.isEmpty()) {

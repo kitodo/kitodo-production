@@ -59,6 +59,7 @@ public class MockDatabase {
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final ServiceManager serviceManager = new ServiceManager();
 
+    @SuppressWarnings("unchecked")
     public static void insertProcessesFull() throws Exception {
         final String nodeName = "corenode";
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");

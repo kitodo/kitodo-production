@@ -219,6 +219,7 @@ public class PropertyService extends TitleSearchService<Property> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
+    @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), propertyType);

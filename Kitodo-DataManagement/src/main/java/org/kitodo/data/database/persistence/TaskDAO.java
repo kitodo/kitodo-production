@@ -116,6 +116,7 @@ public class TaskDAO extends BaseDAO {
         return (Task) loadObjects(Task.class, id);
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getTaskTitlesDistict() {
         Session session = Helper.getHibernateSession();
         Query query = session.createSQLQuery(

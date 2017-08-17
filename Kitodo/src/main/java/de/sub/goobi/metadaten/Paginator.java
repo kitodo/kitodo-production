@@ -195,6 +195,7 @@ public class Paginator {
         return sequence;
     }
 
+    @SuppressWarnings("unchecked")
     private List determineSequenceFromPaginationType(int start, int end) {
         List sequence = null;
         int increment = paginationMode.equals(Mode.COLUMNS) ? 2 : 1;
