@@ -33,6 +33,14 @@ public class KitodoServiceLoader<T> {
     private String pluginPath;
     private static final Logger logger = LogManager.getLogger(KitodoServiceLoader.class);
 
+    /**
+     * Constructor for KitodoServiceLoader.
+     * 
+     * @param clazz
+     *            interface class of module to load
+     * @param pluginPath
+     *            path to plugin folder
+     */
     public KitodoServiceLoader(Class clazz, String pluginPath) {
         this.clazz = clazz;
         this.pluginPath = pluginPath;
@@ -54,8 +62,8 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Loads jars from the pluginsFolder to the classpath, so the ServiceLoader
-     * can find them.
+     * Loads jars from the pluginsFolder to the classpath, so the ServiceLoader can
+     * find them.
      */
     private void loadModulesIntoClasspath() {
         Path pluginFolder = FileSystems.getDefault().getPath(pluginPath);
