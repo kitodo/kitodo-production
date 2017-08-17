@@ -672,6 +672,23 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
+     * Get size of related objects returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject as Object
+     * @return size of array with related objects
+     */
+    protected int getSizeOfRelatedPropertyForDTO(Object object, String key) {
+        JSONObject jsonObject = (JSONObject) object;
+        jsonObject = (JSONObject) jsonObject.get("_source");
+        if (jsonObject != null) {
+            JSONArray jsonArray = (JSONArray) jsonObject.get(key);
+            return  jsonArray.size();
+        }
+        return 0;
+    }
+
+    /**
      * Converts id value returned from ElasticSearch index.
      *
      * @param object
