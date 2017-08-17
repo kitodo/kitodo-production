@@ -441,7 +441,7 @@ public class EmptyTask extends Thread implements INameableTask {
      */
     protected void setNameDetail(String detail) {
         StringBuilder composer = new StringBuilder(119);
-        composer.append(((INameableTask) this).getDisplayName());
+        composer.append(this.getDisplayName());
         if (detail != null) {
             composer.append(": ");
             composer.append(detail);

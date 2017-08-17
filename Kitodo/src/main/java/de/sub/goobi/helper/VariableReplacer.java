@@ -362,7 +362,7 @@ public class VariableReplacer {
     private String getMetadataValue(DocStruct inDocstruct, MetadataType mdt) {
         List<? extends Metadata> mds = inDocstruct.getAllMetadataByType(mdt);
         if (mds.size() > 0) {
-            return ((Metadata) mds.get(0)).getValue();
+            return mds.get(0).getValue();
         } else {
             return null;
         }
