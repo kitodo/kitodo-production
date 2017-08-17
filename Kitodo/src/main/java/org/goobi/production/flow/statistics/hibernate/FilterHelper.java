@@ -556,7 +556,7 @@ public class FilterHelper {
 
         // to collect and return feedback about erroneous use of filter
         // expressions
-        String message = "";
+        StringBuilder message = new StringBuilder();
 
         StrTokenizer tokenizer = new StrTokenizer(inFilter, ' ', '\"');
 
@@ -622,15 +622,14 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message + createHistoricFilter(conjSteps, tok, flagSteps);
+                message.append(createHistoricFilter(conjSteps, tok, flagSteps));
 
             } else if (tokLowerCase.startsWith(FilterString.STEPINWORK)
                     || tokLowerCase.startsWith(FilterString.SCHRITTINARBEIT)) {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.INWORK, false, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.INWORK, false, filterPrefix));
 
                 // new keyword stepLocked implemented
             } else if (tokLowerCase.startsWith(FilterString.STEPLOCKED)
@@ -638,8 +637,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.LOCKED, false, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.LOCKED, false, filterPrefix));
 
                 // new keyword stepOpen implemented
             } else if (tokLowerCase.startsWith(FilterString.STEPOPEN)
@@ -647,8 +645,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.OPEN, false, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.OPEN, false, filterPrefix));
 
                 // new keyword stepDone implemented
             } else if (tokLowerCase.startsWith(FilterString.STEPDONE)
@@ -656,8 +653,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.DONE, false, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.DONE, false, filterPrefix));
 
                 // new keyword stepDoneTitle implemented, replacing so far
                 // undocumented
@@ -731,8 +727,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.INWORK, true, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.INWORK, true, filterPrefix));
 
                 // new keyword stepLocked implemented
             } else if (tokLowerCase.startsWith("-" + FilterString.STEPLOCKED)
@@ -740,8 +735,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.LOCKED, true, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.LOCKED, true, filterPrefix));
 
                 // new keyword stepOpen implemented
             } else if (tokLowerCase.startsWith("-" + FilterString.STEPOPEN)
@@ -749,8 +743,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.OPEN, true, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.OPEN, true, filterPrefix));
 
                 // new keyword stepDone implemented
             } else if (tokLowerCase.startsWith("-" + FilterString.STEPDONE)
@@ -758,8 +751,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message = message
-                        + (createStepFilters(returnParameters, conjSteps, tok, TaskStatus.DONE, true, filterPrefix));
+                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.DONE, true, filterPrefix));
 
                 // new keyword stepDoneTitle implemented, replacing so far
                 // undocumented
@@ -901,7 +893,7 @@ public class FilterHelper {
                 inCrit.add(conjBatches);
             }
         }
-        return message;
+        return message.toString();
     }
 
     /**

@@ -119,7 +119,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
                     contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
                 }
-                String url = "";
+                StringBuilder url = new StringBuilder();
                 FilenameFilter filter = Helper.imageNameFilter;
                 URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
                 ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
@@ -131,7 +131,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 }
                 Collections.sort(filenames, new MetadatenHelper(null, null));
                 for (String f : filenames) {
-                    url = url + f + "$";
+                    url.append(f);
+                    url.append("$");
                 }
                 String imageString = url.substring(0, url.length() - 1);
                 String targetFileName = "&targetFileName=" + this.getProcess().getTitle() + ".pdf";

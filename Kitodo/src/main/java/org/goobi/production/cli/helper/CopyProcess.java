@@ -331,20 +331,21 @@ public class CopyProcess extends ProzesskopieForm {
                     try {
                         if (field.getMetadata().equals("ListOfCreators")) {
                             /* bei Autoren die Namen zusammenstellen */
-                            String myautoren = "";
+                            StringBuilder authors = new StringBuilder();
                             if (myTempStruct.getAllPersons() != null) {
                                 for (Person p : myTempStruct.getAllPersons()) {
-                                    myautoren += p.getLastname();
+                                    authors.append(p.getLastname());
                                     if (StringUtils.isNotBlank(p.getFirstname())) {
-                                        myautoren += ", " + p.getFirstname();
+                                        authors.append(", ");
+                                        authors.append(p.getFirstname());
                                     }
-                                    myautoren += "; ";
+                                    authors.append("; ");
                                 }
-                                if (myautoren.endsWith("; ")) {
-                                    myautoren = myautoren.substring(0, myautoren.length() - 2);
+                                if (authors.toString().endsWith("; ")) {
+                                    authors.substring(0, authors.length() - 2);
                                 }
                             }
-                            field.setValue(myautoren);
+                            field.setValue(authors.toString());
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
                             MetadataType mdt = UghHelper.getMetadataType(
@@ -1089,7 +1090,7 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     @SuppressWarnings("rawtypes")
     public void calculateProcessTitle() {
-        String newTitle = "";
+        StringBuilder newTitle = new StringBuilder();
         String titeldefinition = "";
         ConfigProjects cp = null;
         try {
@@ -1151,7 +1152,7 @@ public class CopyProcess extends ProzesskopieForm {
              * übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'")) {
-                newTitle += myString.substring(1, myString.length() - 1);
+                newTitle.append(myString.substring(1, myString.length() - 1));
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (Iterator secondIterator = this.additionalFields.iterator(); secondIterator.hasNext();) {
@@ -1170,16 +1171,16 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        newTitle += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
+                        newTitle.append(calcProcessTitleCheck(myField.getTitle(), myField.getValue()));
                     }
                 }
             }
         }
 
-        if (newTitle.endsWith("_")) {
-            newTitle = newTitle.substring(0, newTitle.length() - 1);
+        if (newTitle.toString().endsWith("_")) {
+            newTitle.substring(0, newTitle.length() - 1);
         }
-        this.prozessKopie.setTitle(newTitle);
+        this.prozessKopie.setTitle(newTitle.toString());
         calculateTiffHeader();
     }
 
