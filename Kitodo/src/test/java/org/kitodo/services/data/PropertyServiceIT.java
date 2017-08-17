@@ -50,7 +50,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         Long amount = propertyService.count();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(6), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class PropertyServiceIT {
 
         String query = matchQuery("type", "process").operator(Operator.AND).toString();
         Long amount = propertyService.count(query);
-        assertEquals("Properties were not counted correctly!", Long.valueOf(2), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         Long amount = propertyService.countDatabaseRows();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(6), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test

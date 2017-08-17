@@ -377,8 +377,8 @@ public class UserServiceIT {
     public void shouldGetUserGroupSize() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
-        int actual = userService.getUserGroupSize(user);
+        UserDTO user = userService.getById(1);
+        int actual = user.getUserGroupSize();
         assertEquals("User groups' size is incorrect!", 1, actual);
     }
 
@@ -386,12 +386,12 @@ public class UserServiceIT {
     public void shouldGetTasksSize() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(2);
-        int actual = userService.getTasksSize(user);
+        UserDTO user = userService.getById(2);
+        int actual = user.getTasksSize();
         assertEquals("Tasks' size is incorrect!", 2, actual);
 
-        user = userService.find(3);
-        actual = userService.getTasksSize(user);
+        user = userService.getById(3);
+        actual = user.getTasksSize();
         assertEquals("Tasks' size is incorrect!", 1, actual);
     }
 
@@ -399,8 +399,8 @@ public class UserServiceIT {
     public void shouldGetProcessingTasksSize() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
-        int actual = userService.getProcessingTasksSize(user);
+        UserDTO user = userService.getById(1);
+        int actual = user.getProcessingTasksSize();
         assertEquals("Processing tasks' size is incorrect!", 1, actual);
     }
 
@@ -408,21 +408,21 @@ public class UserServiceIT {
     public void shouldGetProjectsSize() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
-        int actual = userService.getProjectsSize(user);
+        UserDTO user = userService.getById(1);
+        int actual = user.getProjectsSize();
         assertEquals("Projects' size is incorrect!", 2, actual);
 
-        user = userService.find(2);
-        actual = userService.getProjectsSize(user);
+        user = userService.getById(2);
+        actual = user.getProjectsSize();
         assertEquals("Projects' size is incorrect!", 1, actual);
     }
 
     @Test
-    public void shouldGetPropertiesSize() throws Exception {
+    public void shouldGetFiltersSize() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
-        int actual = userService.getPropertiesSize(user);
+        UserDTO user = userService.getById(1);
+        int actual = user.getFiltersSize();
         assertEquals("Properties' size is incorrect!", 2, actual);
     }
 
