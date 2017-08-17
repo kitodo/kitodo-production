@@ -366,23 +366,22 @@
             </f:facet>
 
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
-            <h:link outcome="/newpages/ProzessverwaltungBearbeiten"
+            <h:link outcome="/pages/ProzessverwaltungBearbeiten"
                     rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
                     title="#{msgs.prozessBearbeiten}">
-                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="edit process"
+                <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit process"
                                 style="margin-right:5px"/>
                 <f:param name="id" value="#{item.id}" />
             </h:link>
 
             <!-- Bearbeiten-Schaltknopf: Vorlagen -->
-            <h:commandLink action="#{ProzessverwaltungForm.editProcess}" id="action11"
-                           rendered="#{(LoginForm.maximaleBerechtigung == 1) and (ProzessverwaltungForm.modusAnzeige=='vorlagen')}"
-                           title="#{msgs.prozessBearbeiten}">
+            <h:link outcome="/pages/ProzessverwaltungBearbeiten"
+                    rendered="#{(LoginForm.maximaleBerechtigung == 1) and ProzessverwaltungForm.modusAnzeige=='vorlagen'}"
+                    title="#{msgs.prozessBearbeiten}">
                 <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit template"
                                 style="margin-right:5px"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
-            </h:commandLink>
+                <f:param name="id" value="#{item.id}" />
+            </h:link>
 
             <!-- tif-Header-Schaltknopf -->
             <h:commandLink action="#{ProzessverwaltungForm.DownloadTiffHeader}" id="action12"
