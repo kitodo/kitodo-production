@@ -16,50 +16,50 @@ import java.util.List;
 
 public interface IProperty {
 
-    public abstract String getName();
+    String getName();
 
-    public abstract void setName(String name);
+    void setName(String name);
 
-    public abstract int getContainer();
+    int getContainer();
 
-    public abstract void setContainer(int container);
+    void setContainer(int container);
 
-    public abstract String getValidation();
+    String getValidation();
 
-    public abstract void setValidation(String validation);
+    void setValidation(String validation);
 
-    public abstract Type getType();
+    Type getType();
 
-    public abstract void setType(Type type);
+    void setType(Type type);
 
-    public abstract String getValue();
+    String getValue();
 
-    public abstract void setValue(String value);
+    void setValue(String value);
 
-    public abstract List<String> getPossibleValues();
+    List<String> getPossibleValues();
 
-    public abstract void setPossibleValues(List<String> possibleValues);
+    void setPossibleValues(List<String> possibleValues);
 
-    public abstract List<String> getProjects();
+    List<String> getProjects();
 
-    public abstract void setProjects(List<String> projects);
+    void setProjects(List<String> projects);
 
-    public abstract List<ShowStepCondition> getShowStepConditions();
+    List<ShowStepCondition> getShowStepConditions();
 
-    public abstract void setShowStepConditions(List<ShowStepCondition> showStepConditions);
+    void setShowStepConditions(List<ShowStepCondition> showStepConditions);
 
-    public abstract AccessCondition getShowProcessGroupAccessCondition();
+    AccessCondition getShowProcessGroupAccessCondition();
 
-    public abstract void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition);
+    void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition);
 
-    public abstract boolean isValid();
+    boolean isValid();
 
-    public void setDateValue(Date inDate);
+    void setDateValue(Date inDate);
 
-    public Date getDateValue();
+    Date getDateValue();
 
-    public abstract IProperty getClone(int containerNumber);
+    IProperty getClone(int containerNumber);
 
-    public abstract void transfer();
+    void transfer();
 
 }

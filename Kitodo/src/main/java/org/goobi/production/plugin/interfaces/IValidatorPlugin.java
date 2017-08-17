@@ -16,12 +16,11 @@ import org.kitodo.data.database.beans.Task;
 
 public interface IValidatorPlugin extends IPlugin {
 
-    public void initialize(Process inProcess);
+    void initialize(Process inProcess);
 
-    public boolean validate();
+    boolean validate();
 
-    public Task getStep();
+    Task getStep();
 
-    public void setStep(Task step);
-
+    void setStep(Task step);
 }

@@ -19,7 +19,7 @@ public enum StepReturnValue {
     private int id;
     private String value;
 
-    private StepReturnValue(int id, String title) {
+    StepReturnValue(int id, String title) {
         this.setId(id);
         this.setValue(title);
     }

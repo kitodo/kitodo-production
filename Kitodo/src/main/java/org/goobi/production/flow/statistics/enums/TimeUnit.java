@@ -46,7 +46,7 @@ public enum TimeUnit {
      * @param inTitle
      *            title as String
      */
-    private TimeUnit(String inId, String inTitle, String inKeyword, String inSingularTitle, Boolean visible,
+    TimeUnit(String inId, String inTitle, String inKeyword, String inSingularTitle, Boolean visible,
             Double dayFactor) {
         id = inId;
         title = inTitle;

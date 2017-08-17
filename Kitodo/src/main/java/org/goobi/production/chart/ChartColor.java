@@ -19,7 +19,7 @@ public enum ChartColor {
 
     private Color color;
 
-    private ChartColor(int red, int green, int blue) {
+    ChartColor(int red, int green, int blue) {
         color = new Color(red, green, blue);
     }
 

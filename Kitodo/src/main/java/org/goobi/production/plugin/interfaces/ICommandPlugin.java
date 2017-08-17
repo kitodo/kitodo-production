@@ -20,18 +20,18 @@ import org.goobi.production.cli.CommandResponse;
 
 public interface ICommandPlugin extends IPlugin {
 
-    public void setParameterMap(HashMap<String, String> parameterMap);
+    void setParameterMap(HashMap<String, String> parameterMap);
 
-    public CommandResponse validate();
+    CommandResponse validate();
 
-    public CommandResponse execute();
+    CommandResponse execute();
 
-    public CommandResponse help();
+    CommandResponse help();
 
-    public boolean usesHttpSession();
+    boolean usesHttpSession();
 
-    public void setHttpResponse(HttpServletResponse resp);
+    void setHttpResponse(HttpServletResponse resp);
 
-    public void setHttpRequest(HttpServletRequest resp);
+    void setHttpRequest(HttpServletRequest resp);
 
 }

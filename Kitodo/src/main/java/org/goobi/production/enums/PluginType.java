@@ -27,7 +27,7 @@ public enum PluginType {
     private Class<IPlugin> interfaz;
 
     @SuppressWarnings("unchecked")
-    private PluginType(int id, String name, Class<? extends IPlugin> inInterfaz) {
+    PluginType(int id, String name, Class<? extends IPlugin> inInterfaz) {
         this.id = id;
         this.name = name;
         this.interfaz = (Class<IPlugin>) inInterfaz;

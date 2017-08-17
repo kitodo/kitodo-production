@@ -27,51 +27,51 @@ import ugh.dl.Prefs;
 
 public interface IImportPlugin extends IPlugin {
 
-    public void setPrefs(Prefs prefs);
+    void setPrefs(Prefs prefs);
 
-    public void setData(Record r);
+    void setData(Record r);
 
-    public Fileformat convertData() throws ImportPluginException;
+    Fileformat convertData() throws ImportPluginException;
 
-    public String getImportFolder();
+    String getImportFolder();
 
-    public String getProcessTitle();
+    String getProcessTitle();
 
-    public List<ImportObject> generateFiles(List<Record> records);
+    List<ImportObject> generateFiles(List<Record> records);
 
-    public void setImportFolder(String folder);
+    void setImportFolder(String folder);
 
-    public List<Record> splitRecords(String records);
+    List<Record> splitRecords(String records);
 
-    public List<Record> generateRecordsFromFile();
+    List<Record> generateRecordsFromFile();
 
-    public List<Record> generateRecordsFromFilenames(List<String> filenames);
+    List<Record> generateRecordsFromFilenames(List<String> filenames);
 
-    public void setFile(File importFile);
+    void setFile(File importFile);
 
-    public List<String> splitIds(String ids);
+    List<String> splitIds(String ids);
 
-    public List<ImportType> getImportTypes();
+    List<ImportType> getImportTypes();
 
-    public List<ImportProperty> getProperties();
+    List<ImportProperty> getProperties();
 
-    public List<String> getAllFilenames();
+    List<String> getAllFilenames();
 
-    public void deleteFiles(List<String> selectedFilenames);
+    void deleteFiles(List<String> selectedFilenames);
 
-    public List<? extends DocstructElement> getCurrentDocStructs();
+    List<? extends DocstructElement> getCurrentDocStructs();
 
-    public String deleteDocstruct();
+    String deleteDocstruct();
 
-    public String addDocstruct();
+    String addDocstruct();
 
-    public List<String> getPossibleDocstructs();
+    List<String> getPossibleDocstructs();
 
-    public DocstructElement getDocstruct();
+    DocstructElement getDocstruct();
 
-    public void setDocstruct(DocstructElement dse);
+    void setDocstruct(DocstructElement dse);
 
-    public void setOpacCatalogue(String opacCatalogue);
+    void setOpacCatalogue(String opacCatalogue);
 
-    public void setKitodoConfigDirectory(String configDir);
+    void setKitodoConfigDirectory(String configDir);
 }

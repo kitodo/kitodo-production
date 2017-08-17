@@ -17,10 +17,10 @@ import org.goobi.production.enums.PluginType;
 
 public interface IPlugin extends Plugin {
 
-    public PluginType getType();
+    PluginType getType();
 
-    public String getTitle();
+    String getTitle();
 
-    public String getDescription();
+    String getDescription();
 
 }

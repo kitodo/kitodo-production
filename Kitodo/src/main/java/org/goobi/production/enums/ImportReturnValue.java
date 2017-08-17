@@ -19,7 +19,7 @@ public enum ImportReturnValue {
     private int id;
     private String value;
 
-    private ImportReturnValue(int id, String title) {
+    ImportReturnValue(int id, String title) {
         this.setId(id);
         this.setValue(title);
     }
