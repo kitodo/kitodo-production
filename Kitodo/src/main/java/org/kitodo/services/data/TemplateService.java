@@ -268,19 +268,4 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
         templateDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(jsonObject, "properties"));
         return templateDTO;
     }
-
-    /**
-     * Get size of properties list.
-     *
-     * @param template
-     *            object
-     * @return size of properties list
-     */
-    public int getPropertiesSize(Template template) {
-        if (template.getProperties() == null) {
-            return 0;
-        } else {
-            return template.getProperties().size();
-        }
-    }
 }
