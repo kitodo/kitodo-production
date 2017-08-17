@@ -30,7 +30,7 @@ import org.kitodo.data.database.beans.Process;
 public class FileServiceTest {
 
     private static FileService fileService = new FileService();
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(FileService.class);
+    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(FileServiceTest.class);
 
     @BeforeClass
     public static void setUp() throws IOException {
