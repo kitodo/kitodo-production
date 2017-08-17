@@ -173,7 +173,7 @@ public class SpracheForm implements Serializable {
             } else
                 return frame.getLocale();
         } else {
-            /**
+            /*
              * When no locale is given (no Accept-Language Http Request header
              * is present) return default language
              */
