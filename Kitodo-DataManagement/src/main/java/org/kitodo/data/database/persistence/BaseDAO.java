@@ -128,8 +128,6 @@ public abstract class BaseDAO implements Serializable {
      * @param query
      *            string
      * @return list of results
-     * @throws DAOException
-     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query) {

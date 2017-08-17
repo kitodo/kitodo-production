@@ -126,9 +126,10 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     /**
-     * Set status of loops included
+     * Set status of loops included.
      *
      * @param includeLoops
+     *            as Boolean
      */
     public void setIncludeLoops(Boolean includeLoops) {
         this.flagIncludeLoops = includeLoops;
@@ -309,10 +310,11 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     /**
-     * returns a DataTable populated with the specified events
+     * Returns a DataTable populated with the specified events.
      *
      * @param requestedType
-     * @return
+     *            as HistoryTypeEnum
+     * @return DataTable with all tasks
      */
     private DataTable getAllSteps(HistoryTypeEnum requestedType) {
 
@@ -427,9 +429,10 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     /**
-     * sets the terminating Step for this view
+     * Sets the terminating Step for this view.
      *
      * @param terminatingStep
+     *            as String
      */
     public void setTerminatingStep(String terminatingStep) {
         this.terminatingStep = terminatingStep;
@@ -437,7 +440,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     /**
-     *
+     * Get selectable tasks.
+     * 
      * @return List of Steps that are selectable for this View
      */
 

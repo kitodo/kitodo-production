@@ -106,8 +106,8 @@ public abstract class SQLGenerator {
     /**
      * Generates time format from {@link TimeUnit}.
      *
-     * @param fieldExpression
-     * @param timeUnit
+     * @param fieldExpression as String
+     * @param timeUnit as TimeUnit object
      * @return String - simple date format
      */
     protected static String getIntervallExpression(TimeUnit timeUnit, String fieldExpression) {

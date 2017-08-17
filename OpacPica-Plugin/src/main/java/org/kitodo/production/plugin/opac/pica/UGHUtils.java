@@ -173,7 +173,7 @@ class UGHUtils {
      * the value passed-in is returned. Which mapping is used depends on the
      * availability of a user context, @see {@link #open(String)}.
      *
-     * @param inLanguages
+     * @param inLanguage
      *            values to replace
      * @return replacements
      */

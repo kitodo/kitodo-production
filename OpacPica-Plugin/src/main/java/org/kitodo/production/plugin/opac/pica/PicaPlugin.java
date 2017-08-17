@@ -381,7 +381,8 @@ public class PicaPlugin implements Plugin {
      * DocType (Gattung) ermitteln.
      *
      * @param inHit
-     * @return
+     *          input element
+     * @return empty String
      */
     @SuppressWarnings("unchecked")
     private static String getGattung(Element inHit) {
@@ -417,6 +418,7 @@ public class PicaPlugin implements Plugin {
      * 021A-9) ermitteln.
      *
      * @param inHit
+     *          input element
      * @return PPN
      */
     @SuppressWarnings("unchecked")

@@ -1240,7 +1240,6 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param process
      *            object
-     * @return empty string?
      */
     public void downloadDocket(Process process) throws IOException {
 

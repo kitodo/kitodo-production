@@ -96,6 +96,7 @@ public class ExportXmlLog {
      * @param os
      *            the OutputStream to write the contents to
      * @throws IOException
+    -     *             add description
      */
     public void startExport(Process process, OutputStream os, String xslt) throws IOException {
         try {
