@@ -18,6 +18,6 @@ public class Command implements CommandInterface {
 
     @Override
     public CommandResult runCommand(Integer id, String command) {
-        return null;
+        throw new RuntimeException("Not implemented, yet");
     }
 }
