@@ -59,7 +59,7 @@ import java.util.List;
  * term “beagle” in the field “4”). Search fields are referenced by the integers
  * used to reference them in PICA library catalogues (i.e. “4” = title, “7” =
  * ISBN, “8” = ISSN, “12” = Record identifier, …; for a list of supported fields
- * see /Goobi/pages/NewProcess/inc_process.jsp, lines 61 et sqq.)
+ * see /Kitodo/src/main/webapp/pages/NewProcess/inc_process.xhtml)
  * </p>
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
