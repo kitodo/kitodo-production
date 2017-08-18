@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Bean für die Sperrung der Metadaten.
@@ -72,11 +71,10 @@ public class MetadatenSperrung implements Serializable {
     public void alleBenutzerSperrungenAufheben(Integer inBenutzerID) {
         String inBenutzerString = String.valueOf(inBenutzerID.intValue());
         HashMap<Integer, HashMap<String, String>> temp = new HashMap<>(sperrungen);
-        for (Iterator<Integer> iter = temp.keySet().iterator(); iter.hasNext();) {
-            Integer myKey = iter.next();
-            HashMap<String, String> intern = sperrungen.get(myKey);
+        for (Integer key : temp.keySet()) {
+            HashMap<String, String> intern = sperrungen.get(key);
             if (intern.get("Benutzer").equals(inBenutzerString)) {
-                sperrungen.remove(myKey);
+                sperrungen.remove(key);
             }
         }
     }

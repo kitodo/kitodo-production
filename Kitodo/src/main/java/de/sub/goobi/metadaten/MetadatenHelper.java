@@ -160,10 +160,8 @@ public class MetadatenHelper implements Comparator<Object> {
          * alle Seiten hinzufügen
          */
         if (inOldDocstruct.getAllToReferences() != null) {
-            // TODO: get rid of Iterators, use a for Loop instead
-            for (Iterator<Reference> iterator = inOldDocstruct.getAllToReferences().iterator(); iterator.hasNext();) {
-                Reference p = iterator.next();
-                newDocstruct.addReferenceTo(p.getTarget(), p.getType());
+            for (Reference reference : inOldDocstruct.getAllToReferences()) {
+                newDocstruct.addReferenceTo(reference.getTarget(), reference.getType());
             }
         }
 
@@ -255,14 +253,14 @@ public class MetadatenHelper implements Comparator<Object> {
 
         if (alleDS != null) {
             /* anschliessend die Childs entfernen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.removeChild(iter.next());
+            for (DocStruct child : alleDS) {
+                parent.removeChild(child);
             }
 
             /* anschliessend die Childliste korrigieren */
             // parent.addChild(myStrukturelement);
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
+            for (DocStruct child : alleDS) {
+                parent.addChild(child);
             }
         }
     }

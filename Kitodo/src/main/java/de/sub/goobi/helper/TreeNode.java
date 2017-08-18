@@ -124,9 +124,8 @@ public class TreeNode {
 
     private void expandNode(TreeNode inNode, boolean inExpand) {
         inNode.expanded = inExpand;
-        for (Iterator<TreeNode> iter = inNode.children.iterator(); iter.hasNext();) {
-            TreeNode t = iter.next();
-            expandNode(t, inExpand);
+        for (TreeNode treeNode : inNode.children) {
+            expandNode(treeNode, inExpand);
         }
     }
 

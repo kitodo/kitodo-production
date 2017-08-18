@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
@@ -312,10 +311,9 @@ public class LoginForm implements Serializable {
     public int getMaximaleBerechtigung() {
         int result = 0;
         if (this.myBenutzer != null) {
-            for (Iterator<UserGroup> iter = this.myBenutzer.getUserGroups().iterator(); iter.hasNext();) {
-                UserGroup element = iter.next();
-                if (element.getPermission() < result || result == 0) {
-                    result = element.getPermission();
+            for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
+                if (userGroup.getPermission() < result || result == 0) {
+                    result = userGroup.getPermission();
                 }
             }
         }

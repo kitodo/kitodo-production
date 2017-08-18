@@ -21,7 +21,6 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -157,10 +156,9 @@ public class MetadatenVerifizierung {
         }
 
         if (this.docStructsOhneSeiten.size() != 0) {
-            for (Iterator<DocStruct> iter = this.docStructsOhneSeiten.iterator(); iter.hasNext();) {
-                DocStruct ds = iter.next();
+            for (DocStruct docStructWithoutPages : this.docStructsOhneSeiten) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationStructure")
-                        + ds.getType().getNameByLanguage(metadataLanguage));
+                        + docStructWithoutPages.getType().getNameByLanguage(metadataLanguage));
             }
             ergebnis = false;
         }
@@ -176,10 +174,9 @@ public class MetadatenVerifizierung {
             ergebnis = false;
         }
         if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
-            for (Iterator<String> iter = seitenOhneDocstructs.iterator(); iter.hasNext();) {
-                String seite = iter.next();
+            for (String pageWithoutDocStruct : seitenOhneDocstructs) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationPages"),
-                        seite);
+                        pageWithoutDocStruct);
             }
             ergebnis = false;
         }
@@ -190,10 +187,9 @@ public class MetadatenVerifizierung {
         List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<>(),
                 metadataLanguage);
         if (mandatoryList.size() != 0) {
-            for (Iterator<String> iter = mandatoryList.iterator(); iter.hasNext();) {
-                String temp = iter.next();
+            for (String mandatory : mandatoryList) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataMandatoryElement"),
-                        temp);
+                        mandatory);
             }
             ergebnis = false;
         }
@@ -205,9 +201,8 @@ public class MetadatenVerifizierung {
         List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<>(),
                 inPrefs, metadataLanguage);
         if (configuredList.size() != 0) {
-            for (Iterator<String> iter = configuredList.iterator(); iter.hasNext();) {
-                String temp = iter.next();
-                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataInvalidData"), temp);
+            for (String configured : configuredList) {
+                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataInvalidData"), configured);
             }
             ergebnis = false;
         }
@@ -274,8 +269,7 @@ public class MetadatenVerifizierung {
         }
         /* alle Kinder des aktuellen DocStructs durchlaufen */
         if (inStruct.getAllChildren() != null) {
-            for (Iterator<DocStruct> iter = inStruct.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct child = iter.next();
+            for (DocStruct child : inStruct.getAllChildren()) {
                 checkDocStructsOhneSeiten(child);
             }
         }
@@ -290,20 +284,18 @@ public class MetadatenVerifizierung {
         }
 
         /* alle Seiten durchlaufen und prüfen ob References existieren */
-        for (Iterator<DocStruct> firstIterator = boundbook.getAllChildren().iterator(); firstIterator.hasNext();) {
-            DocStruct ds = firstIterator.next();
-            List<Reference> refs = ds.getAllFromReferences();
+        for (DocStruct docStruct : boundbook.getAllChildren()) {
+            List<Reference> refs = docStruct.getAllFromReferences();
             String physical = "";
             String logical = "";
             if (refs.size() == 0) {
 
-                for (Iterator<Metadata> secondIterator = ds.getAllMetadata().iterator(); secondIterator.hasNext();) {
-                    Metadata md = secondIterator.next();
-                    if (md.getType().getName().equals("logicalPageNumber")) {
-                        logical = " (" + md.getValue() + ")";
+                for (Metadata metadata : docStruct.getAllMetadata()) {
+                    if (metadata.getType().getName().equals("logicalPageNumber")) {
+                        logical = " (" + metadata.getValue() + ")";
                     }
-                    if (md.getType().getName().equals("physPageNumber")) {
-                        physical = md.getValue();
+                    if (metadata.getType().getName().equals("physPageNumber")) {
+                        physical = metadata.getValue();
                     }
                 }
                 rueckgabe.add(physical + logical);

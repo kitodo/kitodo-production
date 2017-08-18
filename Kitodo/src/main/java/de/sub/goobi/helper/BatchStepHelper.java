@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -571,11 +570,10 @@ public class BatchStepHelper {
                         .add(Restrictions.le("ordering", this.currentStep.getOrdering()))
                         .add(Restrictions.gt("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
                         .createCriteria("process").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
-                for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-                    Task step = iter.next();
-                    step.setProcessingStatusEnum(TaskStatus.LOCKED);
-                    step = serviceManager.getTaskService().setCorrectionStep(step);
-                    step.setProcessingEnd(null);
+                for (Task task : alleSchritteDazwischen) {
+                    task.setProcessingStatusEnum(TaskStatus.LOCKED);
+                    task = serviceManager.getTaskService().setCorrectionStep(task);
+                    task.setProcessingEnd(null);
                 }
             }
             /*
@@ -695,18 +693,17 @@ public class BatchStepHelper {
                         .add(Restrictions.ge("ordering", this.currentStep.getOrdering()))
                         .add(Restrictions.le("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
                         .createCriteria("process").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
-                for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-                    Task step = iter.next();
-                    step.setProcessingStatusEnum(TaskStatus.DONE);
-                    step.setProcessingEnd(now);
-                    step.setPriority(0);
-                    if (step.getId().intValue() == temp.getId().intValue()) {
-                        step.setProcessingStatusEnum(TaskStatus.OPEN);
-                        step = serviceManager.getTaskService().setCorrectionStep(step);
-                        step.setProcessingEnd(null);
-                        step.setProcessingTime(now);
+                for (Task task : alleSchritteDazwischen) {
+                    task.setProcessingStatusEnum(TaskStatus.DONE);
+                    task.setProcessingEnd(now);
+                    task.setPriority(0);
+                    if (task.getId().intValue() == temp.getId().intValue()) {
+                        task.setProcessingStatusEnum(TaskStatus.OPEN);
+                        task = serviceManager.getTaskService().setCorrectionStep(task);
+                        task.setProcessingEnd(null);
+                        task.setProcessingTime(now);
                     }
-                    this.serviceManager.getTaskService().save(step);
+                    this.serviceManager.getTaskService().save(task);
                 }
 
                 Property processProperty = new Property();

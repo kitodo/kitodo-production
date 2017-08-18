@@ -155,29 +155,28 @@ public class ImportRussland {
 
     private void setJournalDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
         /* zunächst alle Details durchlaufen und der Zeitschrift hinzufügenl */
-        for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
-            String meinDetail = iter.next();
-            String meineDetailNr = meinDetail.substring(0, 3);
+        for (String journalDetail : inListe) {
+            String meineDetailNr = journalDetail.substring(0, 3);
             // logger.debug("---- " + meinDetail);
 
             /* Zeitschrift Titel russisch */
             if (meineDetailNr.equals("020")) {
-                addMetadata(this.logicalTopstruct, "RUSMainTitle", meinDetail);
+                addMetadata(this.logicalTopstruct, "RUSMainTitle", journalDetail);
             }
 
             /* Zeitschrift Herausgeber (wiederholbar) */
             if (meineDetailNr.equals("030")) {
-                addMetadata(this.logicalTopstruct, "RUSPublisher", meinDetail);
+                addMetadata(this.logicalTopstruct, "RUSPublisher", journalDetail);
             }
 
             /* Zeitschrift Ort (wiederholbar) */
             if (meineDetailNr.equals("040")) {
-                addMetadata(this.logicalTopstruct, "RUSPlaceOfPublication", meinDetail);
+                addMetadata(this.logicalTopstruct, "RUSPlaceOfPublication", journalDetail);
             }
 
             /* Verlag / Publishing house - russisch */
             if (meineDetailNr.equals("042")) {
-                addMetadata(this.logicalTopstruct, "RUSPublicationHouse", meinDetail);
+                addMetadata(this.logicalTopstruct, "RUSPublicationHouse", journalDetail);
             }
         }
     }
@@ -186,18 +185,17 @@ public class ImportRussland {
         DocStruct ds = this.logicalTopstruct.getAllChildren().get(0);
         // logger.info(ds.getType().getName());
         /* zunächst alle Details durchlaufen und dem Band hinzufügenl */
-        for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
-            String meinDetail = iter.next();
-            String meineDetailNr = meinDetail.substring(0, 3);
+        for (String bandDetail : inListe) {
+            String meineDetailNr = bandDetail.substring(0, 3);
 
             /* Band Herausgeber (wiederholbar) */
             if (meineDetailNr.equals("060")) {
-                addMetadata(ds, "RUSPublisher", meinDetail);
+                addMetadata(ds, "RUSPublisher", bandDetail);
             }
 
             /* Band Ort (wiederholbar) */
             if (meineDetailNr.equals("070")) {
-                addMetadata(ds, "RUSPlaceOfPublication", meinDetail);
+                addMetadata(ds, "RUSPlaceOfPublication", bandDetail);
             }
         }
     }
@@ -211,12 +209,9 @@ public class ImportRussland {
          * ermitteln
          */
         String zblID = "";
-        for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
-            String meinDetail = iter.next();
-            if (meinDetail.substring(0, 3).equals("090")) {
-                // logger.info("ZBL-Identifier ist " +
-                // meinDetail.substring(4).trim());
-                zblID = meinDetail.substring(4).trim();
+        for (String articleDetail : inListe) {
+            if (articleDetail.substring(0, 3).equals("090")) {
+                zblID = articleDetail.substring(4).trim();
                 break;
             }
         }
@@ -245,16 +240,15 @@ public class ImportRussland {
                      * jetzt alle Artikel durchlaufen, bis der richtige Artikel
                      * gefunden wurde
                      */
-                    for (Iterator<DocStruct> firstIterator = listArtikel.iterator(); firstIterator.hasNext();) {
-                        DocStruct artikel = firstIterator.next();
+                    for (DocStruct article : listArtikel) {
                         // logger.info(artikel.getType().getName());
-                        if (artikel.getAllMetadataByType(metadataTypeId).size() > 0
-                                || artikel.getAllMetadataByType(metadataTypeTempId).size() > 0) {
+                        if (article.getAllMetadataByType(metadataTypeId).size() > 0
+                                || article.getAllMetadataByType(metadataTypeTempId).size() > 0) {
                             Metadata md;
-                            if (artikel.getAllMetadataByType(metadataTypeId).size() > 0) {
-                                md = artikel.getAllMetadataByType(metadataTypeId).get(0);
+                            if (article.getAllMetadataByType(metadataTypeId).size() > 0) {
+                                md = article.getAllMetadataByType(metadataTypeId).get(0);
                             } else {
-                                md = artikel.getAllMetadataByType(metadataTypeTempId).get(0);
+                                md = article.getAllMetadataByType(metadataTypeTempId).get(0);
                             }
                             // logger.debug(md.getValue());
                             if (md.getValue().equals(zblID)) {
@@ -265,25 +259,24 @@ public class ImportRussland {
                                  * jetzt alle Details durchlaufen und dem
                                  * Artikel hinzufügenl
                                  */
-                                for (Iterator<String> secondIterator = inListe.iterator(); secondIterator.hasNext();) {
-                                    String meinDetail = secondIterator.next();
-                                    String meineDetailNr = meinDetail.substring(0, 3);
+                                for (String detail : inListe) {
+                                    String meineDetailNr = detail.substring(0, 3);
 
                                     /* Artikel Autor russisch (wiederholbar) */
                                     if (meineDetailNr.equals("120")) {
-                                        addPerson(artikel, "Author", meinDetail);
+                                        addPerson(article, "Author", detail);
                                     }
 
                                     /* Artikel Autor-Variation (wiederholbar) */
                                     if (meineDetailNr.equals("130")) {
-                                        addPerson(artikel, "AuthorVariation", meinDetail);
+                                        addPerson(article, "AuthorVariation", detail);
                                     }
 
                                     /*
                                      * Artikel Autor-Kontributor (wiederholbar)
                                      */
                                     if (meineDetailNr.equals("140")) {
-                                        addPerson(artikel, "Contributor", meinDetail);
+                                        addPerson(article, "Contributor", detail);
                                     }
 
                                     /*
@@ -291,24 +284,24 @@ public class ImportRussland {
                                      * (wiederholbar)
                                      */
                                     if (meineDetailNr.equals("150")) {
-                                        addMetadata(artikel, "PersonAsSubject", meinDetail);
+                                        addMetadata(article, "PersonAsSubject", detail);
                                     }
 
                                     /* Artikel Titel russisch */
                                     if (meineDetailNr.equals("170")) {
-                                        addMetadata(artikel, "RUSMainTitle", meinDetail);
+                                        addMetadata(article, "RUSMainTitle", detail);
                                     }
 
                                     /*
                                      * Artikel Klassifikation UDK (wiederholbar)
                                      */
                                     if (meineDetailNr.equals("190")) {
-                                        addMetadata(artikel, "ClassificationUDK", meinDetail);
+                                        addMetadata(article, "ClassificationUDK", detail);
                                     }
 
                                     /* Artikel Keywords russisch */
                                     if (meineDetailNr.equals("210")) {
-                                        addMetadata(artikel, "RUSKeyword", meinDetail);
+                                        addMetadata(article, "RUSKeyword", detail);
                                     }
                                 }
                                 return;
@@ -335,8 +328,7 @@ public class ImportRussland {
          */
         if (inStrukturelement.getAllVisibleMetadata() != null) {
             LinkedList<Metadata> listMetas = new LinkedList<>(inStrukturelement.getAllMetadata());
-            for (Iterator<Metadata> iter = listMetas.iterator(); iter.hasNext();) {
-                Metadata meta = iter.next();
+            for (Metadata meta : listMetas) {
                 String myMetaName = meta.getType().getName();
 
                 /*

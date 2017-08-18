@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
+import de.sub.goobi.helper.TreeNode;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
@@ -948,8 +949,8 @@ public class Metadaten {
          * den Ausklapp-Zustand aller Knoten erfassen
          */
         if (this.treeNodeStruct != null) {
-            for (Iterator iter = this.treeNodeStruct.getChildrenAsList().iterator(); iter.hasNext();) {
-                map = (HashMap) iter.next();
+            for (HashMap childrenList : this.treeNodeStruct.getChildrenAsList()) {
+                map = childrenList;
                 nodes = (TreeNodeStruct3) map.get("node");
                 if (nodes.isExpanded()) {
                     status.add(nodes.getStruct());
@@ -975,8 +976,8 @@ public class Metadaten {
         /*
          * den Ausklappzustand nach dem neu-Einlesen wieder herstellen
          */
-        for (Iterator iter = this.treeNodeStruct.getChildrenAsListAlle().iterator(); iter.hasNext();) {
-            map = (HashMap) iter.next();
+        for (HashMap childrenList : this.treeNodeStruct.getChildrenAsListAlle()) {
+            map = childrenList;
             nodes = (TreeNodeStruct3) map.get("node");
             // Ausklappstatus wiederherstellen
             if (status.contains(nodes.getStruct())) {
@@ -1077,9 +1078,8 @@ public class Metadaten {
         /*
          * die Selektion kenntlich machen
          */
-        for (Iterator iter = this.treeNodeStruct.getChildrenAsListAlle().iterator(); iter.hasNext();) {
-            HashMap map = (HashMap) iter.next();
-            TreeNodeStruct3 nodes = (TreeNodeStruct3) map.get("node");
+        for (HashMap childrenList : this.treeNodeStruct.getChildrenAsListAlle()) {
+            TreeNodeStruct3 nodes = (TreeNodeStruct3) childrenList.get("node");
             // Selection wiederherstellen
             if (this.docStruct == nodes.getStruct()) {
                 nodes.setSelected(true);
@@ -1176,14 +1176,12 @@ public class Metadaten {
             List<DocStruct> alleDS = new ArrayList<>();
 
             /* alle Elemente des Parents durchlaufen */
-            for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct tempDS = iter.next();
-
+            for (DocStruct docStruct : parent.getAllChildren()) {
                 /* wenn das aktuelle Element das gesuchte ist */
-                if (tempDS == this.docStruct) {
+                if (docStruct == this.docStruct) {
                     alleDS.add(ds);
                 }
-                alleDS.add(tempDS);
+                alleDS.add(docStruct);
             }
 
             /* anschliessend alle Childs entfernen */
@@ -1211,11 +1209,10 @@ public class Metadaten {
             List<DocStruct> alleDS = new ArrayList<>();
 
             /* alle Elemente des Parents durchlaufen */
-            for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct tempDS = iter.next();
-                alleDS.add(tempDS);
+            for (DocStruct docStruct : parent.getAllChildren()) {
+                alleDS.add(docStruct);
                 /* wenn das aktuelle Element das gesuchte ist */
-                if (tempDS == this.docStruct) {
+                if (docStruct == this.docStruct) {
                     alleDS.add(ds);
                 }
             }
@@ -1313,8 +1310,7 @@ public class Metadaten {
         }
 
         if (log.getAllChildren() != null) {
-            for (Iterator<DocStruct> iter = log.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct child = iter.next();
+            for (DocStruct child : log.getAllChildren()) {
                 List<Reference> childRefs = child.getAllReferences("to");
                 for (Reference toAdd : childRefs) {
                     boolean match = false;
@@ -2012,29 +2008,23 @@ public class Metadaten {
 
                     /* die Liste aller erlaubten Metadatenelemente erstellen */
                     List<String> erlaubte = new ArrayList<>();
-                    for (Iterator<MetadataType> it = this.docStruct.getAddableMetadataTypes().iterator(); it
-                            .hasNext();) {
-                        MetadataType mt = it.next();
-                        erlaubte.add(mt.getName());
+                    for (MetadataType metadataType : this.docStruct.getAddableMetadataTypes()) {
+                        erlaubte.add(metadataType.getName());
                     }
 
                     /*
                      * wenn der Metadatentyp in der Liste der erlaubten Typen,
                      * dann hinzufügen
                      */
-                    for (Iterator<Metadata> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllMetadata()
-                            .iterator(); it.hasNext();) {
-                        Metadata m = it.next();
-                        if (erlaubte.contains(m.getType().getName())) {
-                            this.docStruct.addMetadata(m);
+                    for (Metadata metadata : addrdf.getDigitalDocument().getLogicalDocStruct().getAllMetadata()) {
+                        if (erlaubte.contains(metadata.getType().getName())) {
+                            this.docStruct.addMetadata(metadata);
                         }
                     }
 
-                    for (Iterator<Person> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons()
-                            .iterator(); it.hasNext();) {
-                        Person m = it.next();
-                        if (erlaubte.contains(m.getType().getName())) {
-                            this.docStruct.addPerson(m);
+                    for (Person person : addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons()) {
+                        if (erlaubte.contains(person.getType().getName())) {
+                            this.docStruct.addPerson(person);
                         }
                     }
 
@@ -2217,8 +2207,7 @@ public class Metadaten {
         /* alle Kinder des aktuellen DocStructs durchlaufen */
         this.docStruct.getAllReferences("to").removeAll(this.docStruct.getAllReferences("to"));
         if (this.docStruct.getAllChildren() != null) {
-            for (Iterator<DocStruct> iter = this.docStruct.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct child = iter.next();
+            for (DocStruct child : this.docStruct.getAllChildren()) {
                 List<Reference> childRefs = child.getAllReferences("to");
                 for (Reference toAdd : childRefs) {
                     boolean match = false;
@@ -2284,10 +2273,8 @@ public class Metadaten {
              * dann zuweisen
              */
             if (this.docStruct.getAllToReferences("logical_physical") != null) {
-                for (Iterator<Reference> iter = this.docStruct.getAllToReferences("logical_physical").iterator(); iter
-                        .hasNext();) {
-                    Reference obj = iter.next();
-                    if (obj.getTarget() == this.allPagesNew[aktuelleID].getMd().getDocStruct()) {
+                for (Reference reference : this.docStruct.getAllToReferences("logical_physical")) {
+                    if (reference.getTarget() == this.allPagesNew[aktuelleID].getMd().getDocStruct()) {
                         schonEnthalten = true;
                         break;
                     }
@@ -2753,16 +2740,15 @@ public class Metadaten {
         }
 
         // alle erlaubten Typen durchlaufen
-        for (Iterator<String> iter = temp.getType().getAllAllowedDocStructTypes().iterator(); iter.hasNext();) {
-            String dst = iter.next();
-            if (this.docStruct.getType().getName().equals(dst)) {
+        for (String allAllowedDocStructTypes : temp.getType().getAllAllowedDocStructTypes()) {
+            if (this.docStruct.getType().getName().equals(allAllowedDocStructTypes)) {
                 inTreeStruct.setEinfuegenErlaubt(true);
                 break;
             }
         }
 
-        for (Iterator iter = inTreeStruct.getChildren().iterator(); iter.hasNext();) {
-            TreeNodeStruct3 kind = (TreeNodeStruct3) iter.next();
+        for (TreeNode treeNode : inTreeStruct.getChildren()) {
+            TreeNodeStruct3 kind = (TreeNodeStruct3) treeNode;
             runThroughTree(kind);
         }
     }

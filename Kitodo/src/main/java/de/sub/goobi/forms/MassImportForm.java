@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
@@ -141,39 +140,30 @@ public class MassImportForm implements Serializable {
             Element root = doc.getRootElement();
             /* alle Projekte durchlaufen */
             List<Element> projekte = root.getChildren();
-            for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
-                Element projekt = iter.next();
-
+            for (Element project : projekte) {
                 // collect default collections
-                if (projekt.getName().equals("default")) {
-                    List<Element> myCols = projekt.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
-
-                        if (col.getAttribute("default") != null
-                                && col.getAttributeValue("default").equalsIgnoreCase("true")) {
-                            digitalCollections.add(col.getText());
+                if (project.getName().equals("default")) {
+                    List<Element> myCols = project.getChildren("DigitalCollection");
+                    for (Element digitalCollection : myCols) {
+                        if (digitalCollection.getAttribute("default") != null
+                                && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                            digitalCollections.add(digitalCollection.getText());
                         }
-
-                        defaultCollections.add(col.getText());
+                        defaultCollections.add(digitalCollection.getText());
                     }
                 } else {
                     // run through the projects
-                    List<Element> projektnamen = projekt.getChildren("name");
-                    for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-                        Element projektname = iterator.next();
+                    List<Element> projektnamen = project.getChildren("name");
+                    for (Element projectName : projektnamen) {
                         // all all collections to list
-                        if (projektname.getText().equalsIgnoreCase(this.template.getProject().getTitle())) {
-                            List<Element> myCols = projekt.getChildren("DigitalCollection");
-                            for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                                Element col = it2.next();
-
-                                if (col.getAttribute("default") != null
-                                        && col.getAttributeValue("default").equalsIgnoreCase("true")) {
-                                    digitalCollections.add(col.getText());
+                        if (projectName.getText().equalsIgnoreCase(this.template.getProject().getTitle())) {
+                            List<Element> myCols = project.getChildren("DigitalCollection");
+                            for (Element digitalCollection : myCols) {
+                                if (digitalCollection.getAttribute("default") != null
+                                        && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                                    digitalCollections.add(digitalCollection.getText());
                                 }
-
-                                this.possibleDigitalCollections.add(col.getText());
+                                this.possibleDigitalCollections.add(digitalCollection.getText());
                             }
                         }
                     }

@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -51,35 +50,29 @@ public class DigitalCollections {
         Element root = doc.getRootElement();
         /* alle Projekte durchlaufen */
         List<Element> projekte = root.getChildren();
-        for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
-            Element projekt = iter.next();
-            List<Element> projektnamen = projekt.getChildren("name");
-            for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-                Element projectName = iterator.next();
-
+        for (Element project : projekte) {
+            List<Element> projektnamen = project.getChildren("name");
+            for (Element projectName : projektnamen) {
                 /*
                  * wenn der Projektname aufgeführt wird, dann alle Digitalen
                  * Collectionen in die Liste
                  */
                 if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
-                    List<Element> myCols = projekt.getChildren("DigitalCollection");
-                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
-                        Element col = secondIterator.next();
-                        result.add(col.getText());
+                    List<Element> myCols = project.getChildren("DigitalCollection");
+                    for (Element digitalCollection : myCols) {
+                        result.add(digitalCollection.getText());
                     }
                 }
             }
         }
         // If result is empty, get „default“
         if (result.size() == 0) {
-            List<Element> primaryChildrenIterator = root.getChildren();
-            for (Iterator<Element> iterator = primaryChildrenIterator.iterator(); iterator.hasNext();) {
-                Element child = iterator.next();
+            List<Element> children = root.getChildren();
+            for (Element child : children) {
                 if (child.getName().equals("default")) {
                     List<Element> myCols = child.getChildren("DigitalCollection");
-                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
-                        Element col = secondIterator.next();
-                        result.add(col.getText());
+                    for (Element digitalCollection : myCols) {
+                        result.add(digitalCollection.getText());
                     }
                 }
             }
