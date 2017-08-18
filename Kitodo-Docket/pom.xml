@@ -80,6 +80,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <outputDirectory>../Kitodo/modules/</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>development</id>
@@ -107,14 +121,6 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.3.1</version>
-                        <configuration>
-                            <outputDirectory>../Kitodo/plugins/</outputDirectory>
-                        </configuration>
-                    </plugin>
-                    <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
                         <version>3.0.2</version>
                         <executions>
@@ -128,7 +134,7 @@
                                     <outputDirectory>${pluginFolder}</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>../Kitodo/plugins/</directory>
+                                            <directory>../Kitodo/modules/</directory>
                                             <include>*.jar</include>
                                             <filtering>false</filtering>
                                         </resource>
