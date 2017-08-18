@@ -2,3 +2,5 @@
 /config-local
 # Maven
 **/target/
+# Tests
+/Kitodo/modules
