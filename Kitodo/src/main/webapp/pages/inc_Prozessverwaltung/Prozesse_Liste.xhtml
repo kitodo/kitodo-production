@@ -366,14 +366,13 @@
             </f:facet>
 
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
-            <h:commandLink action="#{ProzessverwaltungForm.editProcess}" id="action10"
-                           rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
-                           title="#{msgs.prozessBearbeiten}">
-                <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit process"
+            <h:link outcome="/newpages/ProzessverwaltungBearbeiten"
+                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
+                    title="#{msgs.prozessBearbeiten}">
+                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="edit process"
                                 style="margin-right:5px"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
-            </h:commandLink>
+                <f:param name="id" value="#{item.id}" />
+            </h:link>
 
             <!-- Bearbeiten-Schaltknopf: Vorlagen -->
             <h:commandLink action="#{ProzessverwaltungForm.editProcess}" id="action11"
