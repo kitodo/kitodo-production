@@ -51,11 +51,12 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
-    public UserGroup find(Integer id) throws DAOException {
+    public UserGroup getById(Integer id) throws DAOException {
         return userGroupDAO.find(id);
     }
 
-    public List<UserGroup> findAll() {
+    @Override
+    public List<UserGroup> getAll() {
         return userGroupDAO.findAll();
     }
 
@@ -185,7 +186,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
-    public List<UserGroup> search(String query) throws DAOException {
+    public List<UserGroup> getByQuery(String query) throws DAOException {
         return userGroupDAO.search(query);
     }
 
@@ -241,7 +242,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *
      * @return list of UserGroupDTO objects
      */
-    public List<UserGroupDTO> getAll() throws DataException {
+    public List<UserGroupDTO> findAll() throws DataException {
         List<JSONObject> jsonObjects = findAllDocuments();
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
@@ -252,7 +253,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), userGroupType);
+        indexer.performMultipleRequests(getAll(), userGroupType);
     }
 
     @Override

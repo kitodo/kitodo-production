@@ -101,12 +101,13 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
         }
     }
 
-
-    public Batch find(Integer id) throws DAOException {
+    @Override
+    public Batch getById(Integer id) throws DAOException {
         return batchDAO.find(id);
     }
 
-    public List<Batch> findAll() {
+    @Override
+    public List<Batch> getAll() {
         return batchDAO.findAll();
     }
 
@@ -117,7 +118,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
      *            as String
      * @return list of Batch objects
      */
-    public List<Batch> search(String query) throws DAOException {
+    public List<Batch> getByQuery(String query) throws DAOException {
         return batchDAO.search(query);
     }
 
@@ -263,7 +264,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), batchType);
+        indexer.performMultipleRequests(getAll(), batchType);
     }
 
     @Override

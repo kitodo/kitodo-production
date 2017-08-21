@@ -105,7 +105,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
      * @return Property
      */
     @Override
-    public Property find(Integer id) throws DAOException {
+    public Property getById(Integer id) throws DAOException {
         return propertyDAO.find(id);
     }
 
@@ -114,7 +114,8 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
      * 
      * @return list of all properties
      */
-    public List<Property> findAll() {
+    @Override
+    public List<Property> getAll() {
         return propertyDAO.findAll();
     }
 
@@ -163,7 +164,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
      * @return list of properties
      */
     @Override
-    public List<Property> search(String query) throws DAOException {
+    public List<Property> getByQuery(String query) throws DAOException {
         return propertyDAO.search(query);
     }
 
@@ -241,7 +242,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), propertyType);
+        indexer.performMultipleRequests(getAll(), propertyType);
     }
 
     @Override

@@ -137,11 +137,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     @Override
-    public Project find(Integer id) throws DAOException {
+    public Project getById(Integer id) throws DAOException {
         return projectDAO.find(id);
     }
 
-    public List<Project> findAll() {
+    @Override
+    public List<Project> getAll() {
         return projectDAO.findAll();
     }
 
@@ -193,7 +194,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     @Override
-    public List<Project> search(String query) throws DAOException {
+    public List<Project> getByQuery(String query) throws DAOException {
         return projectDAO.search(query);
     }
 
@@ -326,7 +327,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *
      * @return list of ProjectDTO objects
      */
-    public List<ProjectDTO> getAll() throws DataException {
+    public List<ProjectDTO> findAll() throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
@@ -336,7 +337,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), projectType);
+        indexer.performMultipleRequests(getAll(), projectType);
     }
 
     @Override
