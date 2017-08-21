@@ -63,6 +63,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -74,9 +76,7 @@ import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.goobi.production.properties.Type;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.Order;
 import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
 import org.kitodo.data.database.beans.Process;
@@ -528,50 +528,39 @@ public class ProzessverwaltungForm extends BasisForm {
         return "/newpages/ProzessverwaltungAlle";
     }
 
-    private void sortList(Criteria inCrit, boolean addCriteria) {
-        Order order = Order.asc("title");
+    private String sortList() {
+        String sort = SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
         if (this.sortierung.equals("titelAsc")) {
-            order = Order.asc("title");
+            sort += "," + SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("titelDesc")) {
-            order = Order.desc("title");
+            sort += "," + SortBuilders.fieldSort("title").order(SortOrder.DESC).toString();
         }
         if (this.sortierung.equals("batchAsc")) {
-            order = Order.asc("batch_id");
+            sort += ", " + SortBuilders.fieldSort("batches.id").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("batchDesc")) {
-            order = Order.desc("batch_id");
+            sort += ", " + SortBuilders.fieldSort("batches.id").order(SortOrder.DESC).toString();
         }
-
         if (this.sortierung.equals("projektAsc")) {
-            if (addCriteria) {
-                inCrit.createCriteria("project", "project");
-            }
-            order = Order.asc("project.title");
+            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
         }
-
         if (this.sortierung.equals("projektDesc")) {
-            if (addCriteria) {
-                inCrit.createCriteria("project", "project");
-            }
-            order = Order.desc("project.title");
+            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.DESC).toString();
         }
-
         if (this.sortierung.equals("vorgangsdatumAsc")) {
-            order = Order.asc("creationDate");
+            sort += "," + SortBuilders.fieldSort("creationDate").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("vorgangsdatumDesc")) {
-            order = Order.desc("creationDate");
+            sort += "," + SortBuilders.fieldSort("creationDate").order(SortOrder.DESC).toString();
         }
-
         if (this.sortierung.equals("fortschrittAsc")) {
-            order = Order.asc("sortHelperStatus");
+            sort += "," + SortBuilders.fieldSort("sortHelperStatus").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("fortschrittDesc")) {
-            order = Order.desc("sortHelperStatus");
+            sort += "," + SortBuilders.fieldSort("sortHelperStatus").order(SortOrder.DESC).toString();
         }
-
-        inCrit.addOrder(order);
+        return sort;
     }
 
     /**
