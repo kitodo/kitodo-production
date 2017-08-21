@@ -22,9 +22,12 @@ import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.exceptions.DAOException;
 
 /**
  * Tests for DocketService class.
@@ -45,6 +48,9 @@ public class DocketServiceIT {
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
     }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountAllDockets() throws Exception {
@@ -75,7 +81,7 @@ public class DocketServiceIT {
     public void shouldFindDocket() throws Exception {
         DocketService docketService = new DocketService();
 
-        Docket docket = docketService.find(1);
+        Docket docket = docketService.getById(1);
         boolean condition = docket.getTitle().equals("default") && docket.getFile().equals("docket.xsl");
         assertTrue("Docket was not found in database!", condition);
     }
@@ -84,7 +90,7 @@ public class DocketServiceIT {
     public void shouldFindAllDockets() {
         DocketService docketService = new DocketService();
 
-        List<Docket> dockets = docketService.findAll();
+        List<Docket> dockets = docketService.getAll();
         assertEquals("Not all dockets were found in database!", 2, dockets.size());
     }
 
@@ -92,9 +98,7 @@ public class DocketServiceIT {
     public void shouldFindById() throws Exception {
         DocketService docketService = new DocketService();
 
-        JSONObject docket = docketService.findById(1);
-        JSONObject jsonObject = (JSONObject) docket.get("_source");
-        String actual = (String) jsonObject.get("title");
+        String actual = docketService.findById(1).getTitle();
         String expected = "default";
         assertEquals("Docket was not found in index!", expected, actual);
     }
@@ -170,21 +174,21 @@ public class DocketServiceIT {
         Docket docket = new Docket();
         docket.setTitle("To Remove");
         docketService.save(docket);
-        Docket foundDocket = docketService.convertJSONObjectToBean(docketService.findById(3));
+        Docket foundDocket = docketService.getById(3);
         assertEquals("Additional docket was not inserted in database!", "To Remove", foundDocket.getTitle());
 
         docketService.remove(foundDocket);
-        foundDocket = docketService.convertJSONObjectToBean(docketService.findById(3));
-        assertEquals("Additional docket was not removed from database!", null, foundDocket);
+        exception.expect(DAOException.class);
+        docketService.getById(3);
 
         docket = new Docket();
         docket.setTitle("To remove");
         docketService.save(docket);
-        foundDocket = docketService.convertJSONObjectToBean(docketService.findById(4));
+        foundDocket = docketService.getById(4);
         assertEquals("Additional docket was not inserted in database!", "To remove", foundDocket.getTitle());
 
         docketService.remove(4);
-        foundDocket = docketService.convertJSONObjectToBean(docketService.findById(4));
-        assertEquals("Additional docket was not removed from database!", null, foundDocket);
+        exception.expect(DAOException.class);
+        docketService.getById(4);
     }
 }

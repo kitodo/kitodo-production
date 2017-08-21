@@ -446,7 +446,7 @@ public class MockDatabase {
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
         firstTask.setProcess(firstProcess);
-        firstTask.setUsers(serviceManager.getUserService().findAll());
+        firstTask.setUsers(serviceManager.getUserService().getAll());
         firstTask.getUserGroups().add(userGroup);
         firstProcess.getTasks().add(firstTask);
         serviceManager.getProcessService().save(firstProcess);
@@ -497,7 +497,7 @@ public class MockDatabase {
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         fourthTask.setProcessingUser(serviceManager.getUserService().find(2));
         fourthTask.setProcess(secondProcess);
-        fourthTask.setUsers(serviceManager.getUserService().findAll());
+        fourthTask.setUsers(serviceManager.getUserService().getAll());
 
         secondProcess.getTasks().add(secondTask);
         secondProcess.getTasks().add(thirdTask);
@@ -527,7 +527,7 @@ public class MockDatabase {
         fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
         fifthTask.setProcessingUser(serviceManager.getUserService().find(2));
         fifthTask.setProcess(fifthProcess);
-        fifthTask.setUsers(serviceManager.getUserService().findAll());
+        fifthTask.setUsers(serviceManager.getUserService().getAll());
 
         fifthProcess.getTasks().add(fifthTask);
         serviceManager.getProcessService().save(fifthProcess);

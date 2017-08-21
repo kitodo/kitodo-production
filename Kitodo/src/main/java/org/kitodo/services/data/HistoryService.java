@@ -254,6 +254,7 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
     public HistoryDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         HistoryDTO historyDTO = new HistoryDTO();
         historyDTO.setId(getIdFromJSONObject(jsonObject));
+        historyDTO.setStringValue(getStringPropertyForDTO(jsonObject,"stringValue"));
         return historyDTO;
     }
 }

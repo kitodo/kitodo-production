@@ -92,7 +92,7 @@ public class UserServiceIT {
     public void shouldFindUser() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         boolean condition = user.getName().equals("Jan") && user.getSurname().equals("Kowalski");
         assertTrue("User was not found in database!", condition);
     }
@@ -101,7 +101,7 @@ public class UserServiceIT {
     public void shouldFindAllUsers() {
         UserService userService = new UserService();
 
-        List<User> users = userService.findAll();
+        List<User> users = userService.getAll();
         boolean result = users.size() == 3 || users.size() == 4 || users.size() == 5 || users.size() == 6;
         assertTrue("Not all users were found in database!", result);
     }
@@ -118,7 +118,7 @@ public class UserServiceIT {
         assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
 
         userService.remove(foundUser);
-        foundUser = userService.find(foundUser.getId());
+        foundUser = userService.getById(foundUser.getId());
         assertEquals("Additional user was not removed from database!", null, foundUser.getLogin());
 
         user = new User();
@@ -129,7 +129,7 @@ public class UserServiceIT {
         assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
 
         userService.remove(foundUser.getId());
-        foundUser = userService.find(foundUser.getId());
+        foundUser = userService.getById(foundUser.getId());
         assertEquals("Additional user was not removed from database!", null, foundUser.getLogin());
     }
 
@@ -145,29 +145,27 @@ public class UserServiceIT {
         User user = new User();
         user.setLogin("Cascade");
         user.getUserGroups()
-                .add(userGroupService.search("FROM UserGroup WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
+                .add(userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
         userService.saveToDatabase(user);
-        User foundUser = userService.search("FROM User WHERE login = 'Cascade'").get(0);
+        User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
 
         userService.removeFromDatabase(foundUser);
-        int size = userService.search("FROM User WHERE login = 'Cascade'").size();
+        int size = userService.getByQuery("FROM User WHERE login = 'Cascade'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
-        size = userGroupService.search("FROM UserGroup WHERE title = 'Cascade Group'").size();
+        size = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group'").size();
         assertEquals("User Group was removed from database!", 1, size);
 
         userGroupService
-                .removeFromDatabase(userGroupService.search("FROM UserGroup WHERE title = 'Cascade Group'").get(0));
+                .removeFromDatabase(userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group'").get(0));
     }
 
     @Test
     public void shouldFindById() throws Exception {
         UserService userService = new UserService();
 
-        JSONObject user = userService.findById(1);
-        JSONObject jsonObject = (JSONObject) user.get("_source");
-        String actual = (String) jsonObject.get("login");
+        String actual = userService.findById(1).getLogin();
         String expected = "kowal";
         assertEquals("User was not found in index!", expected, actual);
     }
@@ -329,11 +327,11 @@ public class UserServiceIT {
     public void shouldGetTableSize() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         int actual = userService.getTableSize(user);
         assertEquals("Table size is incorrect!", 20, actual);
 
-        user = userService.find(2);
+        user = userService.getById(2);
         actual = userService.getTableSize(user);
         assertEquals("Table size is incorrect!", 10, actual);
     }
@@ -342,11 +340,11 @@ public class UserServiceIT {
     public void shouldGetSessionTimeout() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         int actual = userService.getSessionTimeout(user);
         assertEquals("Session timeout is incorrect!", 7200, actual);
 
-        user = userService.find(2);
+        user = userService.getById(2);
         actual = userService.getSessionTimeout(user);
         assertEquals("Session timeout is incorrect!", 9000, actual);
     }
@@ -355,7 +353,7 @@ public class UserServiceIT {
     public void shouldGetSessionTimeoutInMinutes() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         int actual = userService.getSessionTimeoutInMinutes(user);
         assertEquals("Session timeout in minutes is incorrect!", 120, actual);
     }
@@ -364,11 +362,11 @@ public class UserServiceIT {
     public void shouldGetCss() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         boolean condition = userService.getCss(user).equals("/css/fancy.css");
         assertTrue("Css file is incorrect!", condition);
 
-        user = userService.find(2);
+        user = userService.getById(2);
         condition = userService.getCss(user).equals("/css/default.css");
         assertTrue("Css file is incorrect!", condition);
     }
@@ -377,7 +375,7 @@ public class UserServiceIT {
     public void shouldGetUserGroupSize() throws Exception {
         UserService userService = new UserService();
 
-        UserDTO user = userService.getById(1);
+        UserDTO user = userService.findById(1);
         int actual = user.getUserGroupSize();
         assertEquals("User groups' size is incorrect!", 1, actual);
     }
@@ -386,11 +384,11 @@ public class UserServiceIT {
     public void shouldGetTasksSize() throws Exception {
         UserService userService = new UserService();
 
-        UserDTO user = userService.getById(2);
+        UserDTO user = userService.findById(2);
         int actual = user.getTasksSize();
         assertEquals("Tasks' size is incorrect!", 2, actual);
 
-        user = userService.getById(3);
+        user = userService.findById(3);
         actual = user.getTasksSize();
         assertEquals("Tasks' size is incorrect!", 1, actual);
     }
@@ -399,7 +397,7 @@ public class UserServiceIT {
     public void shouldGetProcessingTasksSize() throws Exception {
         UserService userService = new UserService();
 
-        UserDTO user = userService.getById(1);
+        UserDTO user = userService.findById(1);
         int actual = user.getProcessingTasksSize();
         assertEquals("Processing tasks' size is incorrect!", 1, actual);
     }
@@ -408,11 +406,11 @@ public class UserServiceIT {
     public void shouldGetProjectsSize() throws Exception {
         UserService userService = new UserService();
 
-        UserDTO user = userService.getById(1);
+        UserDTO user = userService.findById(1);
         int actual = user.getProjectsSize();
         assertEquals("Projects' size is incorrect!", 2, actual);
 
-        user = userService.getById(2);
+        user = userService.findById(2);
         actual = user.getProjectsSize();
         assertEquals("Projects' size is incorrect!", 1, actual);
     }
@@ -421,7 +419,7 @@ public class UserServiceIT {
     public void shouldGetFiltersSize() throws Exception {
         UserService userService = new UserService();
 
-        UserDTO user = userService.getById(1);
+        UserDTO user = userService.findById(1);
         int actual = user.getFiltersSize();
         assertEquals("Properties' size is incorrect!", 2, actual);
     }
@@ -431,7 +429,7 @@ public class UserServiceIT {
     public void shouldCheckIfIsPasswordCorrect() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         boolean condition = userService.isPasswordCorrect(user, "test");
         assertTrue("User's password is incorrect!", condition);
     }
@@ -440,7 +438,7 @@ public class UserServiceIT {
     public void shouldGetFullName() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         boolean condition = userService.getFullName(user).equals("Kowalski, Jan");
         assertTrue("Full name of user is incorrect!", condition);
     }
@@ -450,7 +448,7 @@ public class UserServiceIT {
     public void shouldGetHomeDirectory() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
+        User user = userService.getById(1);
         String homeDirectory = ConfigCore.getParameter("dir_Users");
         boolean condition = userService.getHomeDirectory(user).equals(homeDirectory + "kowal" + File.separator);
         System.out.println("1. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
@@ -460,7 +458,7 @@ public class UserServiceIT {
         // LDAP group)
         // but not sure how to test because it depends on config.properties
         // ldap_use
-        user = userService.find(2);
+        user = userService.getById(2);
         condition = userService.getHomeDirectory(user).toString().contains("nowak");
         System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
@@ -479,7 +477,7 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         List<UserDTO> allActiveUsers = userService.findAllActiveUsers();
-        assertTrue(allActiveUsers.size() == 2);
+        assertEquals("Size of users is incorrect!", 2, allActiveUsers.size());
     }
 
     @Test

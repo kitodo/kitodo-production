@@ -23,9 +23,12 @@ import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.History;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
@@ -47,6 +50,9 @@ public class HistoryServiceIT {
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
     }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountAllHistories() throws Exception {
@@ -77,7 +83,7 @@ public class HistoryServiceIT {
     public void shouldFindHistory() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        History history = historyService.find(1);
+        History history = historyService.getById(1);
         boolean condition = history.getNumericValue().equals(2.0) && history.getStringValue().equals("History");
         assertTrue("History was not found in database!", condition);
     }
@@ -86,7 +92,7 @@ public class HistoryServiceIT {
     public void shouldFindAllHistories() {
         HistoryService historyService = new HistoryService();
 
-        List<History> histories = historyService.findAll();
+        List<History> histories = historyService.getAll();
         assertEquals("Not all histories were found in database!", 1, histories.size());
     }
 
@@ -97,36 +103,33 @@ public class HistoryServiceIT {
         History history = new History();
         history.setStringValue("To Remove");
         historyService.save(history);
-        History foundHistory = historyService.convertJSONObjectToBean(historyService.findById(2));
+        History foundHistory = historyService.getById(2);
         assertEquals("Additional history was not inserted in database!", "To Remove", foundHistory.getStringValue());
 
         historyService.remove(foundHistory);
-        foundHistory = historyService.convertJSONObjectToBean(historyService.findById(2));
-        assertEquals("Additional history was not removed from database!", null, foundHistory);
+        exception.expect(DAOException.class);
+        historyService.getById(2);
 
         history = new History();
         history.setStringValue("To remove");
         historyService.save(history);
-        foundHistory = historyService.convertJSONObjectToBean(historyService.findById(3));
+        foundHistory = historyService.getById(3);
         assertEquals("Additional history was not inserted in database!", "To remove", foundHistory.getStringValue());
 
         historyService.remove(3);
-        foundHistory = historyService.convertJSONObjectToBean(historyService.findById(3));
-        assertEquals("Additional history was not removed from database!", null, foundHistory);
+        exception.expect(DAOException.class);
+        historyService.getById(3);
     }
 
     @Test
     public void shouldFindById() throws Exception {
         HistoryService historyService = new HistoryService();
 
-        JSONObject history = historyService.findById(1);
-        JSONObject jsonObject = (JSONObject) history.get("_source");
-        String actual = (String) jsonObject.get("stringValue");
+        String actual = historyService.findById(1).getStringValue();
         String expected = "History";
         assertEquals("History was not found in index!", expected, actual);
 
-        history = historyService.findById(2);
-        Integer actualInt = historyService.getIdFromJSONObject(history);
+        Integer actualInt = historyService.findById(2).getId();
         Integer expectedInt = 0;
         assertEquals("History was not found in index!", expectedInt, actualInt);
     }

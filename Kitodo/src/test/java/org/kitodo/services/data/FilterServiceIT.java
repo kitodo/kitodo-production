@@ -73,7 +73,7 @@ public class FilterServiceIT {
     public void shouldFindFilter() throws Exception {
         FilterService filterService = new FilterService();
 
-        Filter filter = filterService.find(1);
+        Filter filter = filterService.getById(1);
         String actual = filter.getValue();
         String expected = "\"id:1\"";
         assertEquals("Filter was not found in database!", expected, actual);
@@ -83,7 +83,7 @@ public class FilterServiceIT {
     public void shouldFindAllFilters() throws Exception {
         FilterService filterService = new FilterService();
 
-        List<Filter> filters = filterService.findAll();
+        List<Filter> filters = filterService.getAll();
         assertEquals("Not all filters were found in database!", 2, filters.size());
     }
 }

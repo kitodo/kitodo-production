@@ -38,7 +38,7 @@ public class LdapGroupServiceIT {
     public void shouldFindLdapGroup() throws Exception {
         LdapGroupService ldapGroupService = new LdapGroupService();
 
-        LdapGroup ldapGroup = ldapGroupService.find(1);
+        LdapGroup ldapGroup = ldapGroupService.getById(1);
         boolean condition = ldapGroup.getTitle().equals("LG") && ldapGroup.getDisplayName().equals("Name");
         assertTrue("LDAP group was not found in database!", condition);
     }

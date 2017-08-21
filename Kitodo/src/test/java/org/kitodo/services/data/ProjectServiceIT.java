@@ -26,9 +26,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 
 /**
@@ -50,6 +53,9 @@ public class ProjectServiceIT {
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
     }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountAllProjects() throws Exception {
@@ -80,7 +86,7 @@ public class ProjectServiceIT {
     public void shouldFindProject() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        Project project = projectService.find(1);
+        Project project = projectService.getById(1);
         boolean condition = project.getTitle().equals("First project") && project.getNumberOfPages().equals(30);
         assertTrue("Project was not found in database!", condition);
     }
@@ -89,7 +95,7 @@ public class ProjectServiceIT {
     public void shouldFindAllProjects() {
         ProjectService projectService = new ProjectService();
 
-        List<Project> projects = projectService.findAll();
+        List<Project> projects = projectService.getAll();
         assertEquals("Not all projects were found in database!", 3, projects.size());
     }
 
@@ -100,31 +106,29 @@ public class ProjectServiceIT {
         Project project = new Project();
         project.setTitle("To Remove");
         projectService.save(project);
-        Project foundProject = projectService.convertJSONObjectToBean(projectService.findById(4));
+        Project foundProject = projectService.getById(4);
         assertEquals("Additional project was not inserted in database!", "To Remove", foundProject.getTitle());
 
         projectService.remove(foundProject);
-        foundProject = projectService.convertJSONObjectToBean(projectService.findById(4));
-        assertEquals("Additional project was not removed from database!", null, foundProject);
+        exception.expect(DAOException.class);
+        projectService.getById(4);
 
         project = new Project();
         project.setTitle("To remove");
         projectService.save(project);
-        foundProject = projectService.convertJSONObjectToBean(projectService.findById(5));
+        foundProject = projectService.getById(5);
         assertEquals("Additional project was not inserted in database!", "To remove", foundProject.getTitle());
 
         projectService.remove(5);
-        foundProject = projectService.convertJSONObjectToBean(projectService.findById(5));
-        assertEquals("Additional project was not removed from database!", null, foundProject);
+        exception.expect(DAOException.class);
+        projectService.getById(5);
     }
 
     @Test
     public void shouldFindById() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        JSONObject project = projectService.findById(1);
-        JSONObject jsonObject = (JSONObject) project.get("_source");
-        String actual = (String) jsonObject.get("title");
+        String actual = projectService.findById(1).getTitle();
         String expected = "First project";
         assertEquals("Project was not found in index!", expected, actual);
     }
@@ -308,7 +312,7 @@ public class ProjectServiceIT {
         ProjectService projectService = new ProjectService();
 
         // test passes... but it can mean that something is wrong...
-        Project project = projectService.find(1);
+        Project project = projectService.getById(1);
         List<StepInformation> expected = new ArrayList<>();
         List<StepInformation> actual = projectService.getWorkFlow(project);
         assertEquals("Work flow doesn't match to given work flow!", expected, actual);

@@ -71,7 +71,7 @@ public class UserGroupServiceIT {
     public void shouldFindUserGroup() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        UserGroup userGroup = userGroupService.find(1);
+        UserGroup userGroup = userGroupService.getById(1);
         boolean condition = userGroup.getTitle().equals("Admin") && userGroup.getPermission().equals(1);
         assertTrue("User group was not found in database!", condition);
     }
@@ -89,9 +89,8 @@ public class UserGroupServiceIT {
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundUserGroup.getTitle());
 
         userGroupService.remove(foundUserGroup);
-        foundUserGroup = userGroupService
-                .convertJSONObjectToBean(userGroupService.findById(foundUserGroup.getId()));
-        assertEquals("Additional user group was not removed from database!", null, foundUserGroup);
+        exception.expect(DAOException.class);
+        userGroupService.getById(foundUserGroup.getId());
 
         userGroup = new UserGroup();
         userGroup.setTitle("To remove");
@@ -117,29 +116,27 @@ public class UserGroupServiceIT {
 
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("Cascados Group");
-        userGroup.getUsers().add(userService.search("FROM User WHERE login = 'Cascados' ORDER BY id DESC").get(0));
+        userGroup.getUsers().add(userService.getByQuery("FROM User WHERE login = 'Cascados' ORDER BY id DESC").get(0));
         userGroupService.saveToDatabase(userGroup);
 
-        UserGroup foundUserGroup = userGroupService.search("FROM UserGroup WHERE title = 'Cascados Group'").get(0);
+        UserGroup foundUserGroup = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascados Group", foundUserGroup.getTitle());
 
         userGroupService.removeFromDatabase(foundUserGroup);
-        int size = userGroupService.search("FROM UserGroup WHERE title = 'Cascados Group'").size();
+        int size = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
-        size = userService.search("FROM User WHERE login = 'Cascados'").size();
+        size = userService.getByQuery("FROM User WHERE login = 'Cascados'").size();
         assertEquals("User was removed from database!", 1, size);
 
-        userService.removeFromDatabase(userService.search("FROM User WHERE login = 'Cascados'").get(0));
+        userService.removeFromDatabase(userService.getByQuery("FROM User WHERE login = 'Cascados'").get(0));
     }
 
     @Test
     public void shouldFindById() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        JSONObject userGroup = userGroupService.findById(1);
-        JSONObject jsonObject = (JSONObject) userGroup.get("_source");
-        String actual = (String) jsonObject.get("title");
+        String actual = userGroupService.findById(1).getTitle();
         String expected = "Admin";
         assertEquals("User group was not found in index!", expected, actual);
     }
@@ -213,11 +210,11 @@ public class UserGroupServiceIT {
     public void shouldGetPermissionAsString() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        UserGroup userGroup = userGroupService.find(1);
+        UserGroup userGroup = userGroupService.getById(1);
         String actual = userGroupService.getPermissionAsString(userGroup);
         assertEquals("Permission string doesn't match to given plain text!", "1", actual);
 
-        userGroup = userGroupService.find(3);
+        userGroup = userGroupService.getById(3);
         actual = userGroupService.getPermissionAsString(userGroup);
         assertEquals("Permission string doesn't match to given plain text!", "4", actual);
     }
