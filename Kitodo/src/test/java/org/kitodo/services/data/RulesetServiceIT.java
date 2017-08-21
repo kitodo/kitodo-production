@@ -189,17 +189,6 @@ public class RulesetServiceIT {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void shouldConvertJSONObjectsToObjectList() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
-        List<JSONObject> searchResults = rulesetService.findAllDocuments();
-        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertJSONObjectsToBeanList(searchResults,
-                "Ruleset");
-        assertEquals("Not all rulesets were converted!", 2, rulesets.size());
-    }
-
-    @Test
     public void shouldGetPreferences() throws Exception {
         RulesetService rulesetService = new RulesetService();
 

@@ -343,30 +343,6 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
-     * Convert list of JSONObject object to list of bean objects.
-     *
-     * @param jsonObjects
-     *            list of results from ElasticSearch
-     * @param table
-     *            name
-     * @return list of beans
-     */
-    public List<? extends BaseBean> convertJSONObjectsToBeanList(List<JSONObject> jsonObjects, String table)
-            throws DAOException {
-        StringBuilder query = new StringBuilder();
-        query.append("FROM ");
-        query.append(table);
-        query.append(" WHERE id IN (");
-        for (JSONObject jsonObject : jsonObjects) {
-            query.append(getIdFromJSONObject(jsonObject));
-            query.append(",");
-        }
-        query.deleteCharAt(query.length() - 1);
-        query.append(")");
-        return search(query.toString());
-    }
-
-    /**
      * Convert JSONObject object to bean object.
      *
      * @param jsonObject

@@ -226,15 +226,4 @@ public class HistoryServiceIT {
         List<JSONObject> histories = historyService.findAllDocuments();
         assertEquals("Not all histories were found in index!", 1, histories.size());
     }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void shouldConvertJSONObjectsToObjectList() throws Exception {
-        HistoryService historyService = new HistoryService();
-
-        List<JSONObject> searchResults = historyService.findAllDocuments();
-        List<History> historys = (List<History>) historyService.convertJSONObjectsToBeanList(searchResults,
-                "History");
-        assertEquals("Not all histories were converted!", 1, historys.size());
-    }
 }

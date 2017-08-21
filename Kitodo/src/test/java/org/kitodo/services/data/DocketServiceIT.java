@@ -187,14 +187,4 @@ public class DocketServiceIT {
         foundDocket = docketService.convertJSONObjectToBean(docketService.findById(4));
         assertEquals("Additional docket was not removed from database!", null, foundDocket);
     }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void shouldConvertJSONObjectsToObjectList() throws Exception {
-        DocketService docketService = new DocketService();
-
-        List<JSONObject> searchResults = docketService.findAllDocuments();
-        List<Docket> dockets = (List<Docket>) docketService.convertJSONObjectsToBeanList(searchResults, "Docket");
-        assertEquals("Not all dockets were converted!", 2, dockets.size());
-    }
 }
