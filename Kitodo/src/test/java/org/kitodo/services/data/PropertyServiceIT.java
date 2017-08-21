@@ -11,10 +11,12 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,6 +43,31 @@ public class PropertyServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllProperties() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        Long amount = propertyService.count();
+        assertEquals("Properties were not counted correctly!", Long.valueOf(6), amount);
+    }
+
+    @Test
+    public void shouldCountAllPropertiesAccordingToQuery() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        String query = matchQuery("type", "process").operator(Operator.AND).toString();
+        Long amount = propertyService.count(query);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(2), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForProperties() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        Long amount = propertyService.countDatabaseRows();
+        assertEquals("Properties were not counted correctly!", Long.valueOf(6), amount);
     }
 
     @Test

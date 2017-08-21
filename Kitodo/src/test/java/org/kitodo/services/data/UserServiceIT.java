@@ -80,6 +80,14 @@ public class UserServiceIT {
     }
 
     @Test
+    public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
+        UserService userService = new UserService();
+
+        Long amount = userService.countDatabaseRows();
+        assertEquals("Users were not counted correctly!", Long.valueOf(3), amount);
+    }
+
+    @Test
     public void shouldFindUser() throws Exception {
         UserService userService = new UserService();
 

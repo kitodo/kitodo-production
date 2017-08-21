@@ -54,6 +54,14 @@ public class TemplateServiceIT {
     }
 
     @Test
+    public void shouldCountAllDatabaseRowsForTemplates() throws Exception {
+        TemplateService templateService = new TemplateService();
+
+        Long amount = templateService.countDatabaseRows();
+        assertEquals("Templates were not counted correctly!", Long.valueOf(2), amount);
+    }
+
+    @Test
     public void shouldFindTemplate() throws Exception {
         TemplateService templateService = new TemplateService();
 

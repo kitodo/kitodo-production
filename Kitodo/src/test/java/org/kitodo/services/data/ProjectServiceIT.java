@@ -11,12 +11,14 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
@@ -47,6 +49,31 @@ public class ProjectServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllProjects() throws Exception {
+        ProjectService projectService = new ProjectService();
+
+        Long amount = projectService.count();
+        assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
+    }
+
+    @Test
+    public void shouldCountAllProjectsAccordingToQuery() throws Exception {
+        ProjectService projectService = new ProjectService();
+
+        String query = matchQuery("title", "First project").operator(Operator.AND).toString();
+        Long amount = projectService.count(query);
+        assertEquals("Projects were not counted correctly!", Long.valueOf(1), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForProjects() throws Exception {
+        ProjectService projectService = new ProjectService();
+
+        Long amount = projectService.countDatabaseRows();
+        assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test

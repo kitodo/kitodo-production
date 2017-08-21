@@ -11,10 +11,12 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,6 +42,31 @@ public class FilterServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllFilters() throws Exception {
+        FilterService filterService = new FilterService();
+
+        Long amount = filterService.count();
+        assertEquals("Filters were not counted correctly!", Long.valueOf(2), amount);
+    }
+
+    @Test
+    public void shouldCountAllFiltersAccordingToQuery() throws Exception {
+        FilterService filterService = new FilterService();
+
+        String query = matchQuery("value", "\"id:1\"").operator(Operator.AND).toString();
+        Long amount = filterService.count(query);
+        assertEquals("Filters were not counted correctly!", Long.valueOf(1), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForFilters() throws Exception {
+        FilterService filterService = new FilterService();
+
+        Long amount = filterService.countDatabaseRows();
+        assertEquals("Filters were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
