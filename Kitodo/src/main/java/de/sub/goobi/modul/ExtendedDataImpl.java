@@ -19,7 +19,6 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Process;
@@ -236,9 +235,7 @@ public class ExtendedDataImpl extends DataImpl {
          * Prozesseigenschaften
          */
         if (type.equals("") || type.equals(isProcess)) {
-            // TODO: Use for loops
-            for (Iterator<Property> iterator = p.getProperties().iterator(); iterator.hasNext();) {
-                Property processProperty = iterator.next();
+            for (Property processProperty : p.getProperties()) {
                 if (!processProperty.getTitle().startsWith("#")) {
                     gpps.add(new GoobiProcessProperty(processProperty.getTitle(),
                             String.valueOf(processProperty.getId().intValue()), processProperty.getValue()));
@@ -258,9 +255,7 @@ public class ExtendedDataImpl extends DataImpl {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
             Workpiece w = p.getWorkpieces().get(count);
-            // TODO: Use for loops
-            for (Iterator<Property> iterator = w.getProperties().iterator(); iterator.hasNext();) {
-                Property workpieceProperty = iterator.next();
+            for (Property workpieceProperty : w.getProperties()) {
                 if (!workpieceProperty.getTitle().startsWith("#")) {
                     gpps.add(new GoobiProcessProperty(workpieceProperty.getTitle(),
                             String.valueOf(workpieceProperty.getId().intValue()), workpieceProperty.getValue()));
@@ -280,9 +275,7 @@ public class ExtendedDataImpl extends DataImpl {
                 throw new GoobiException(1500, "Template does not exist");
             }
             Template v = p.getTemplates().get(count);
-            // TODO: Use for loops
-            for (Iterator<Property> iterator = v.getProperties().iterator(); iterator.hasNext();) {
-                Property templateProperty = iterator.next();
+            for (Property templateProperty : v.getProperties()) {
                 if (!templateProperty.getTitle().startsWith("#")) {
                     gpps.add(new GoobiProcessProperty(templateProperty.getTitle(),
                             String.valueOf(templateProperty.getId().intValue()), templateProperty.getValue()));

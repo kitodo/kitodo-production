@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -219,10 +218,9 @@ public class BenutzerverwaltungForm extends BasisForm {
         int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
 
         List<UserGroup> neu = new ArrayList<>();
-        for (Iterator<UserGroup> iter = this.myClass.getUserGroups().iterator(); iter.hasNext();) {
-            UserGroup element = iter.next();
-            if (element.getId() != gruppenID) {
-                neu.add(element);
+        for (UserGroup userGroup : this.myClass.getUserGroups()) {
+            if (userGroup.getId() != gruppenID) {
+                neu.add(userGroup);
             }
         }
         this.myClass.setUserGroups(neu);
@@ -259,10 +257,9 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String ausProjektLoeschen() {
         int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
         List<Project> neu = new ArrayList<>();
-        for (Iterator<Project> iter = this.myClass.getProjects().iterator(); iter.hasNext();) {
-            Project element = iter.next();
-            if (element.getId() != projektID) {
-                neu.add(element);
+        for (Project project : this.myClass.getProjects()) {
+            if (project.getId() != projektID) {
+                neu.add(project);
             }
         }
         this.myClass.setProjects(neu);

@@ -18,7 +18,6 @@ import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -126,9 +125,8 @@ public class HelperForm implements Serializable {
     public List<SelectItem> getRegelsaetze() throws DAOException {
         List<SelectItem> myPrefs = new ArrayList<>();
         List<Ruleset> temp = serviceManager.getRulesetService().search("from Ruleset ORDER BY title");
-        for (Iterator<Ruleset> iter = temp.iterator(); iter.hasNext();) {
-            Ruleset an = iter.next();
-            myPrefs.add(new SelectItem(an, an.getTitle(), null));
+        for (Ruleset ruleset : temp) {
+            myPrefs.add(new SelectItem(ruleset, ruleset.getTitle(), null));
         }
         return myPrefs;
     }

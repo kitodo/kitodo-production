@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -395,11 +394,10 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      */
     @SuppressWarnings("unchecked")
     private static String getFieldValueFromRecord(Element record, String[] field) {
-        for (Iterator<Element> iter = record.getChildren().iterator(); iter.hasNext();) {
-            Element tempElement = iter.next();
-            String feldname = tempElement.getAttributeValue("tag");
-            if (feldname.equals(field[0])) {
-                return getSubelementValue(tempElement, field[1]);
+        for (Element child : (List<Element>) record.getChildren()) {
+            String fieldName = child.getAttributeValue("tag");
+            if (fieldName.equals(field[0])) {
+                return getSubelementValue(child, field[1]);
             }
         }
         return "";
@@ -418,14 +416,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      */
     @SuppressWarnings("unchecked")
     private static String getSubelementValue(Element inElement, String attributeValue) {
-        String rueckgabe = "";
-        for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
-            Element subElement = iter.next();
+        String result = "";
+        for (Element subElement : (List<Element>) inElement.getChildren()) {
             if (subElement.getAttributeValue("code").equals(attributeValue)) {
-                rueckgabe = subElement.getValue();
+                result = subElement.getValue();
             }
         }
-        return rueckgabe;
+        return result;
     }
 
     @Override

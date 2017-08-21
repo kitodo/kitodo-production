@@ -643,12 +643,11 @@ public class AktuelleSchritteForm extends BasisForm {
                     .add(Restrictions.le("ordering", this.mySchritt.getOrdering()))
                     .add(Restrictions.gt("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
                     .createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
-            for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-                Task step = iter.next();
-                step.setProcessingStatusEnum(TaskStatus.LOCKED);
-                step = serviceManager.getTaskService().setCorrectionStep(step);
-                step.setProcessingEnd(null);
-                serviceManager.getTaskService().save(step);
+            for (Task task : alleSchritteDazwischen) {
+                task.setProcessingStatusEnum(TaskStatus.LOCKED);
+                task = serviceManager.getTaskService().setCorrectionStep(task);
+                task.setProcessingEnd(null);
+                serviceManager.getTaskService().save(task);
             }
 
             /*
@@ -710,21 +709,20 @@ public class AktuelleSchritteForm extends BasisForm {
                     .add(Restrictions.ge("ordering", this.mySchritt.getOrdering()))
                     .add(Restrictions.le("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
                     .createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
-            for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-                Task step = iter.next();
-                step.setProcessingStatusEnum(TaskStatus.DONE);
-                step.setProcessingEnd(now);
-                step.setPriority(0);
-                if (step.getId().intValue() == temp.getId().intValue()) {
-                    step.setProcessingStatusEnum(TaskStatus.OPEN);
-                    step = serviceManager.getTaskService().setCorrectionStep(step);
-                    step.setProcessingEnd(null);
+            for (Task task : alleSchritteDazwischen) {
+                task.setProcessingStatusEnum(TaskStatus.DONE);
+                task.setProcessingEnd(now);
+                task.setPriority(0);
+                if (task.getId().intValue() == temp.getId().intValue()) {
+                    task.setProcessingStatusEnum(TaskStatus.OPEN);
+                    task = serviceManager.getTaskService().setCorrectionStep(task);
+                    task.setProcessingEnd(null);
                     // step.setBearbeitungsbeginn(null);
-                    step.setProcessingTime(now);
+                    task.setProcessingTime(now);
                 }
                 mySchritt.setProcessingTime(new Date());
                 mySchritt.setProcessingUser(ben);
-                serviceManager.getTaskService().save(step);
+                serviceManager.getTaskService().save(task);
             }
 
             /*
@@ -840,18 +838,17 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public String DownloadToHomePage() {
-        for (Iterator<Task> iter = this.page.getListReload().iterator(); iter.hasNext();) {
-            Task step = iter.next();
-            if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                step.setProcessingStatusEnum(TaskStatus.INWORK);
-                step.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+        for (Task task : (List<Task>) this.page.getListReload()) {
+            if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
+                task.setProcessingStatusEnum(TaskStatus.INWORK);
+                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 mySchritt.setProcessingTime(new Date());
                 User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 if (ben != null) {
                     mySchritt.setProcessingUser(ben);
                 }
-                step.setProcessingBegin(new Date());
-                Process proz = step.getProcess();
+                task.setProcessingBegin(new Date());
+                Process proz = task.getProcess();
                 try {
                     this.serviceManager.getProcessService().save(proz);
                 } catch (DataException e) {
@@ -873,18 +870,17 @@ public class AktuelleSchritteForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public String downloadToHomeHits() {
 
-        for (Iterator<Task> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
-            Task step = iter.next();
-            if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                step.setProcessingStatusEnum(TaskStatus.INWORK);
-                step.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+        for (Task task : (List<Task>) this.page.getCompleteList()) {
+            if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
+                task.setProcessingStatusEnum(TaskStatus.INWORK);
+                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 mySchritt.setProcessingTime(new Date());
                 User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 if (ben != null) {
                     mySchritt.setProcessingUser(ben);
                 }
-                step.setProcessingBegin(new Date());
-                Process proz = step.getProcess();
+                task.setProcessingBegin(new Date());
+                Process proz = task.getProcess();
                 try {
                     this.serviceManager.getProcessService().save(proz);
                 } catch (DataException e) {
@@ -970,14 +966,13 @@ public class AktuelleSchritteForm extends BasisForm {
         this.pageAnzahlImages = 0;
         User aktuellerBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (aktuellerBenutzer != null && aktuellerBenutzer.isWithMassDownload()) {
-            for (Iterator<Task> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
-                Task step = iter.next();
+            for (Task task : (List<Task>) this.page.getCompleteList()) {
                 try {
-                    if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
+                    if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         // gesamtAnzahlImages +=
                         // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
                         this.gesamtAnzahlImages += serviceManager.getFileService().getSubUris(
-                                serviceManager.getProcessService().getImagesOrigDirectory(false, step.getProcess()))
+                                serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))
                                 .size();
                     }
                 } catch (Exception e) {
@@ -1104,9 +1099,8 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void selectionAll() {
-        for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
-            Task s = iter.next();
-            s.setSelected(true);
+        for (Task task : (List<Task>) this.page.getList()) {
+            task.setSelected(true);
         }
     }
 
@@ -1115,9 +1109,8 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void selectionNone() {
-        for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
-            Task s = iter.next();
-            s.setSelected(false);
+        for (Task task : (List<Task>) this.page.getList()) {
+            task.setSelected(false);
         }
     }
 

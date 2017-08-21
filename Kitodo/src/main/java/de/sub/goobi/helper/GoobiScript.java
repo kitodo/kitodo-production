@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -349,8 +348,7 @@ public class GoobiScript {
              */
             Task firstTask = null;
             Task secondTask = null;
-            for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                Task task = iterator.next();
+            for (Task task : proz.getTasks()) {
                 if (task.getTitle().equals(this.myParameters.get("swap1title")) && task.getOrdering() == firstOrder) {
                     firstTask = task;
                 }
@@ -397,10 +395,9 @@ public class GoobiScript {
          */
         for (Process proz : inProzesse) {
             if (proz.getTasks() != null) {
-                for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                    Task s = iterator.next();
-                    if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
-                        proz.getTasks().remove(s);
+                for (Task task : proz.getTasks()) {
+                    if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
+                        proz.getTasks().remove(task);
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DataException e) {
@@ -488,12 +485,11 @@ public class GoobiScript {
          */
         for (Process proz : inProzesse) {
             if (proz.getTasks() != null) {
-                for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                    Task s = iterator.next();
-                    if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
-                        s.setTypeAutomaticScriptPath(this.myParameters.get("script"));
-                        s.setScriptName1(this.myParameters.get("label"));
-                        s.setTypeScriptStep(true);
+                for (Task task : proz.getTasks()) {
+                    if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
+                        task.setTypeAutomaticScriptPath(this.myParameters.get("script"));
+                        task.setScriptName1(this.myParameters.get("label"));
+                        task.setTypeScriptStep(true);
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DataException e) {
@@ -532,10 +528,9 @@ public class GoobiScript {
          */
         for (Process proz : inProzesse) {
             if (proz.getTasks() != null) {
-                for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                    Task s = iterator.next();
-                    if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
-                        s.setTypeModuleName(this.myParameters.get("module"));
+                for (Task task : proz.getTasks()) {
+                    if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
+                        task.setTypeModuleName(this.myParameters.get("module"));
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DataException e) {
@@ -596,30 +591,29 @@ public class GoobiScript {
          */
         for (Process proz : inProzesse) {
             if (proz.getTasks() != null) {
-                for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                    Task s = iterator.next();
-                    if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
+                for (Task task : proz.getTasks()) {
+                    if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
 
                         if (property.equals("metadata")) {
-                            s.setTypeMetadata(Boolean.parseBoolean(value));
+                            task.setTypeMetadata(Boolean.parseBoolean(value));
                         }
                         if (property.equals("automatic")) {
-                            s.setTypeAutomatic(Boolean.parseBoolean(value));
+                            task.setTypeAutomatic(Boolean.parseBoolean(value));
                         }
                         if (property.equals("batch")) {
-                            s.setBatchStep(Boolean.parseBoolean(value));
+                            task.setBatchStep(Boolean.parseBoolean(value));
                         }
                         if (property.equals("readimages")) {
-                            s.setTypeImagesRead(Boolean.parseBoolean(value));
+                            task.setTypeImagesRead(Boolean.parseBoolean(value));
                         }
                         if (property.equals("writeimages")) {
-                            s.setTypeImagesWrite(Boolean.parseBoolean(value));
+                            task.setTypeImagesWrite(Boolean.parseBoolean(value));
                         }
                         if (property.equals("validate")) {
-                            s.setTypeCloseVerify(Boolean.parseBoolean(value));
+                            task.setTypeCloseVerify(Boolean.parseBoolean(value));
                         }
                         if (property.equals("exportdms")) {
-                            s.setTypeExportDMS(Boolean.parseBoolean(value));
+                            task.setTypeExportDMS(Boolean.parseBoolean(value));
                         }
 
                         try {
@@ -666,12 +660,11 @@ public class GoobiScript {
          * Durchführung der Action
          */
         for (Process proz : inProzesse) {
-            for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                Task s = iterator.next();
-                if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
+            for (Task task : proz.getTasks()) {
+                if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
                     serviceManager.getTaskService().setProcessingStatusAsString(this.myParameters.get("status"));
                     try {
-                        serviceManager.getTaskService().save(s);
+                        serviceManager.getTaskService().save(task);
                     } catch (DataException e) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
                                 e);
@@ -711,12 +704,11 @@ public class GoobiScript {
          * Durchführung der Action
          */
         for (Process proz : inProzesse) {
-            for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                Task s = iterator.next();
-                if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
-                    s.setOrdering(Integer.parseInt(this.myParameters.get("number")));
+            for (Task task : proz.getTasks()) {
+                if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
+                    task.setOrdering(Integer.parseInt(this.myParameters.get("number")));
                     try {
-                        serviceManager.getTaskService().save(s);
+                        serviceManager.getTaskService().save(task);
                     } catch (DataException e) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
                                 e);
@@ -766,18 +758,17 @@ public class GoobiScript {
          * Durchführung der Action
          */
         for (Process proz : inProzesse) {
-            for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                Task s = iterator.next();
-                if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
-                    List<User> myBenutzer = s.getUsers();
-                    if (myBenutzer == null) {
-                        myBenutzer = new ArrayList<>();
-                        s.setUsers(myBenutzer);
+            for (Task task : proz.getTasks()) {
+                if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
+                    List<User> users = task.getUsers();
+                    if (users == null) {
+                        users = new ArrayList<>();
+                        task.setUsers(users);
                     }
-                    if (!myBenutzer.contains(myUser)) {
-                        myBenutzer.add(myUser);
+                    if (!users.contains(myUser)) {
+                        users.add(myUser);
                         try {
-                            serviceManager.getTaskService().save(s);
+                            serviceManager.getTaskService().save(task);
                         } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving - " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving - " + proz.getTitle(), e);
@@ -826,18 +817,17 @@ public class GoobiScript {
          * Durchführung der Action
          */
         for (Process proz : inProzesse) {
-            for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                Task s = iterator.next();
-                if (s.getTitle().equals(this.myParameters.get("steptitle"))) {
-                    List<UserGroup> myBenutzergruppe = s.getUserGroups();
-                    if (myBenutzergruppe == null) {
-                        myBenutzergruppe = new ArrayList<>();
-                        s.setUserGroups(myBenutzergruppe);
+            for (Task task : proz.getTasks()) {
+                if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
+                    List<UserGroup> userGroups = task.getUserGroups();
+                    if (userGroups == null) {
+                        userGroups = new ArrayList<>();
+                        task.setUserGroups(userGroups);
                     }
-                    if (!myBenutzergruppe.contains(myGroup)) {
-                        myBenutzergruppe.add(myGroup);
+                    if (!userGroups.contains(myGroup)) {
+                        userGroups.add(myGroup);
                         try {
-                            serviceManager.getTaskService().save(s);
+                            serviceManager.getTaskService().save(task);
                         } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving - " + proz.getTitle(), e);
                             return;

@@ -11,7 +11,6 @@
 
 package de.sub.goobi.statistik;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.jfree.data.general.Dataset;
@@ -41,12 +40,11 @@ public class StatistikBenutzergruppen {
                  * von dem Schritt alle verantwortlichen Benutzergruppen
                  * ermitteln und im Diagramm erfassen
                  */
-                for (Iterator<UserGroup> secondIterator = step.getUserGroups().iterator(); secondIterator.hasNext();) {
-                    UserGroup group = secondIterator.next();
-                    if (dataset.getIndex(group.getTitle()) != -1) {
-                        dataset.setValue(group.getTitle(), dataset.getValue(group.getTitle()).intValue() + 1);
+                for (UserGroup userGroup : step.getUserGroups()) {
+                    if (dataset.getIndex(userGroup.getTitle()) != -1) {
+                        dataset.setValue(userGroup.getTitle(), dataset.getValue(userGroup.getTitle()).intValue() + 1);
                     } else {
-                        dataset.setValue(group.getTitle(), 1);
+                        dataset.setValue(userGroup.getTitle(), 1);
                     }
                 }
 

@@ -12,7 +12,6 @@
 package de.sub.goobi.helper;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Process;
@@ -186,13 +185,12 @@ public class BeanHelper {
              * Eigenschaften des Schritts
              */
             List<Property> myProperties = new ArrayList<>();
-            for (Iterator<Property> iterator = workpiece.getProperties().iterator(); iterator.hasNext();) {
-                Property property = iterator.next();
+            for (Property workpieceProperty : workpiece.getProperties()) {
                 Property propertyNew = new Property();
-                propertyNew.setObligatory(property.isObligatory());
-                propertyNew.setType(property.getType());
-                propertyNew.setTitle(property.getTitle());
-                propertyNew.setValue(property.getValue());
+                propertyNew.setObligatory(workpieceProperty.isObligatory());
+                propertyNew.setType(workpieceProperty.getType());
+                propertyNew.setTitle(workpieceProperty.getTitle());
+                propertyNew.setValue(workpieceProperty.getValue());
                 propertyNew.getWorkpieces().add(workpieceNew);
                 myProperties.add(propertyNew);
             }
@@ -214,13 +212,12 @@ public class BeanHelper {
      */
     public static void copyProperties(Process processTemplate, Process processCopy) {
         List<Property> myProperties = new ArrayList<>();
-        for (Iterator<Property> iterator = processTemplate.getProperties().iterator(); iterator.hasNext();) {
-            Property property = iterator.next();
+        for (Property templateProperty : processTemplate.getProperties()) {
             Property propertyNew = new Property();
-            propertyNew.setObligatory(property.isObligatory());
-            propertyNew.setType(property.getType());
-            propertyNew.setTitle(property.getTitle());
-            propertyNew.setValue(property.getValue());
+            propertyNew.setObligatory(templateProperty.isObligatory());
+            propertyNew.setType(templateProperty.getType());
+            propertyNew.setTitle(templateProperty.getTitle());
+            propertyNew.setValue(templateProperty.getValue());
             propertyNew.getProcesses().add(processCopy);
             myProperties.add(propertyNew);
         }
@@ -250,13 +247,12 @@ public class BeanHelper {
              * Eigenschaften des Schritts
              */
             List<Property> myProperties = new ArrayList<>();
-            for (Iterator<Property> iterator = template.getProperties().iterator(); iterator.hasNext();) {
-                Property property = iterator.next();
+            for (Property templateProperty : template.getProperties()) {
                 Property propertyNew = new Property();
-                propertyNew.setObligatory(property.isObligatory());
-                propertyNew.setType(property.getType());
-                propertyNew.setTitle(property.getTitle());
-                propertyNew.setValue(property.getValue());
+                propertyNew.setObligatory(templateProperty.isObligatory());
+                propertyNew.setType(templateProperty.getType());
+                propertyNew.setTitle(templateProperty.getTitle());
+                propertyNew.setValue(templateProperty.getValue());
                 propertyNew.getTemplates().add(templateNew);
                 myProperties.add(propertyNew);
             }

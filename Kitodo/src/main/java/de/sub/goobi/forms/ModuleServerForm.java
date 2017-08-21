@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -187,11 +186,11 @@ public class ModuleServerForm implements Serializable {
             SAXBuilder builder = new SAXBuilder();
             Document doc = builder.build(new File(fileName));
             Element root = doc.getRootElement();
+            List<Element> children = root.getChildren();
             /* alle Module durchlaufen */
-            for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {
-                Element myModule = iter.next();
-                rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"), myModule.getAttributeValue("url"),
-                        null, myModule.getAttributeValue("description")));
+            for (Element child : children) {
+                rueckgabe.add(new ModuleDesc(child.getAttributeValue("name"), child.getAttributeValue("url"),
+                        null, child.getAttributeValue("description")));
             }
         } catch (JDOMException e1) {
             Helper.setFehlerMeldung("Error on reading, JDOMException: ",

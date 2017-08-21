@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -123,12 +122,10 @@ public class SessionForm {
 
     @SuppressWarnings({"rawtypes", "unchecked" })
     private void sessionsAufraeumen(int time) {
-        List temp = new ArrayList(this.alleSessions);
-        for (Iterator iter = temp.iterator(); iter.hasNext();) {
-            HashMap map = (HashMap) iter.next();
-            long differenz = System.currentTimeMillis() - ((Long) map.get("last2")).longValue();
-            if (differenz / 1000 > time || map.get("address") == null || (map.get("user").equals("- ausgeloggt - "))) {
-                this.alleSessions.remove(map);
+        for (HashMap session : (List<HashMap>) new ArrayList(this.alleSessions)) {
+            long difference = System.currentTimeMillis() - ((Long) session.get("last2")).longValue();
+            if (difference / 1000 > time || session.get("address") == null || (session.get("user").equals("- ausgeloggt - "))) {
+                this.alleSessions.remove(session);
             }
         }
     }
@@ -143,11 +140,10 @@ public class SessionForm {
     public void sessionAktualisieren(HttpSession insession) {
         boolean gefunden = false;
         this.aktuelleZeit = this.formatter.format(new Date());
-        for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
-            HashMap map = (HashMap) iter.next();
-            if (map.get("id").equals(insession.getId())) {
-                map.put("last", this.formatter.format(new Date()));
-                map.put("last2", Long.valueOf(System.currentTimeMillis()));
+        for (HashMap session : (List<HashMap>) this.alleSessions) {
+            if (session.get("id").equals(insession.getId())) {
+                session.put("last", this.formatter.format(new Date()));
+                session.put("last2", Long.valueOf(System.currentTimeMillis()));
                 gefunden = true;
                 break;
             }
@@ -169,17 +165,16 @@ public class SessionForm {
     @SuppressWarnings({"unchecked", "rawtypes" })
     public void sessionBenutzerAktualisieren(HttpSession insession, User inBenutzer) {
         // logger.debug("sessionBenutzerAktualisieren-start");
-        for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
-            HashMap map = (HashMap) iter.next();
-            if (map.get("id").equals(insession.getId())) {
+        for (HashMap session : (List<HashMap>) this.alleSessions) {
+            if (session.get("id").equals(insession.getId())) {
                 if (inBenutzer != null) {
                     insession.setAttribute("User", serviceManager.getUserService().getFullName(inBenutzer));
-                    map.put("user", serviceManager.getUserService().getFullName(inBenutzer));
-                    map.put("userid", inBenutzer.getId());
+                    session.put("user", serviceManager.getUserService().getFullName(inBenutzer));
+                    session.put("userid", inBenutzer.getId());
                     insession.setMaxInactiveInterval(serviceManager.getUserService().getSessionTimeout(inBenutzer));
                 } else {
-                    map.put("user", "- ausgeloggt - ");
-                    map.put("userid", 0);
+                    session.put("user", "- ausgeloggt - ");
+                    session.put("userid", 0);
                 }
                 break;
             }
@@ -192,10 +187,9 @@ public class SessionForm {
     @SuppressWarnings("rawtypes")
     public boolean userActiveInOtherSession(HttpSession insession, User inBenutzer) {
         boolean rueckgabe = false;
-        for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
-            HashMap map = (HashMap) iter.next();
-            boolean sessiongleich = map.get("id").equals(insession.getId());
-            boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) map.get("userid")).intValue();
+        for (HashMap session : (List<HashMap>) this.alleSessions) {
+            boolean sessiongleich = session.get("id").equals(insession.getId());
+            boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) session.get("userid")).intValue();
             if (!sessiongleich && nutzergleich) {
                 rueckgabe = true;
                 break;
@@ -215,12 +209,11 @@ public class SessionForm {
     @SuppressWarnings({"unchecked", "rawtypes" })
     public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, User inBenutzer) {
         List alleSessionKopie = new ArrayList(this.alleSessions);
-        for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {
-            HashMap map = (HashMap) iter.next();
-            boolean sessiongleich = map.get("id").equals(inSession.getId());
-            boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) map.get("userid")).intValue();
+        for (HashMap sessionCopy : (List<HashMap>) alleSessionKopie) {
+            boolean sessiongleich = sessionCopy.get("id").equals(inSession.getId());
+            boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) sessionCopy.get("userid")).intValue();
             if (!sessiongleich && nutzergleich) {
-                HttpSession tempSession = (HttpSession) map.get("session");
+                HttpSession tempSession = (HttpSession) sessionCopy.get("session");
                 try {
                     if (tempSession != null) {
                         tempSession.invalidate();
@@ -228,7 +221,7 @@ public class SessionForm {
                 } catch (RuntimeException e) {
                     logger.error(e);
                 }
-                this.alleSessions.remove(map);
+                this.alleSessions.remove(sessionCopy);
             }
         }
     }

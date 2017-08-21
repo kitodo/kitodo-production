@@ -15,7 +15,6 @@ import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -114,8 +113,7 @@ public class ExportDms_CorrectRusdml {
 
         /* alle Kinder des aktuellen DocStructs durchlaufen */
         if (inStruct.getAllChildren() != null) {
-            for (Iterator<DocStruct> iter = inStruct.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct child = iter.next();
+            for (DocStruct child : inStruct.getAllChildren()) {
                 evaluateRusdmlDocStructPages(child);
             }
         }
@@ -235,10 +233,9 @@ public class ExportDms_CorrectRusdml {
     private void rusdmlDropPersons(DocStruct inStruct) {
         if (inStruct.getAllPersons() != null) {
             List<Person> kopie = new ArrayList<>(inStruct.getAllPersons());
-            for (Iterator<Person> iter = kopie.iterator(); iter.hasNext();) {
-                Metadata meta = iter.next();
-                if (meta.getType().getName().equals("ZBLAuthor")) {
-                    inStruct.getAllPersons().remove(meta);
+            for (Person personCopy : kopie) {
+                if (personCopy.getType().getName().equals("ZBLAuthor")) {
+                    inStruct.getAllPersons().remove(personCopy);
                 }
             }
         }

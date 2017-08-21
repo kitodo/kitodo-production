@@ -16,7 +16,6 @@ import de.sub.goobi.helper.PaginatingCriteria;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
@@ -195,10 +194,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     @SuppressWarnings("unchecked")
     private void createIDListFromCriteria(Criteria crit) {
         myIds = new ArrayList<>();
-        for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it
-                .hasNext();) {
-            Process p = (Process) it.next();
-            myIds.add(p.getId());
+        for (Process process : (List<Process>) crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
+            myIds.add(process.getId());
             myCriteria = null;
         }
     }

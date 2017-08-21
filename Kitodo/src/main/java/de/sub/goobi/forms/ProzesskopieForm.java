@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1430,39 +1429,30 @@ public class ProzesskopieForm implements Serializable {
             Element root = doc.getRootElement();
             /* alle Projekte durchlaufen */
             List<Element> projekte = root.getChildren();
-            for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
-                Element projekt = iter.next();
-
+            for (Element project : projekte) {
                 // collect default collections
-                if (projekt.getName().equals("default")) {
-                    List<Element> myCols = projekt.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
-
-                        if (col.getAttribute("default") != null
-                                && col.getAttributeValue("default").equalsIgnoreCase("true")) {
-                            digitalCollections.add(col.getText());
+                if (project.getName().equals("default")) {
+                    List<Element> myCols = project.getChildren("DigitalCollection");
+                    for (Element digitalCollection : myCols) {
+                        if (digitalCollection.getAttribute("default") != null
+                                && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                            digitalCollections.add(digitalCollection.getText());
                         }
-
-                        defaultCollections.add(col.getText());
+                        defaultCollections.add(digitalCollection.getText());
                     }
                 } else {
                     // run through the projects
-                    List<Element> projektnamen = projekt.getChildren("name");
-                    for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-                        Element projektname = iterator.next();
+                    List<Element> projektnamen = project.getChildren("name");
+                    for (Element projectName : projektnamen) {
                         // all all collections to list
-                        if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
-                            List<Element> myCols = projekt.getChildren("DigitalCollection");
-                            for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                                Element col = it2.next();
-
-                                if (col.getAttribute("default") != null
-                                        && col.getAttributeValue("default").equalsIgnoreCase("true")) {
-                                    digitalCollections.add(col.getText());
+                        if (projectName.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
+                            List<Element> myCols = project.getChildren("DigitalCollection");
+                            for (Element digitalCollection : myCols) {
+                                if (digitalCollection.getAttribute("default") != null
+                                        && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                                    digitalCollections.add(digitalCollection.getText());
                                 }
-
-                                this.possibleDigitalCollection.add(col.getText());
+                                this.possibleDigitalCollection.add(digitalCollection.getText());
                             }
                         }
                     }
@@ -1694,26 +1684,24 @@ public class ProzesskopieForm implements Serializable {
                 }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
-                    AdditionalField myField = it2.next();
-
+                for (AdditionalField additionalField : this.additionalFields) {
                     /*
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
                      * atstsl einsetzen, sofern noch nicht vorhanden
                      */
-                    if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
-                            && myField.getShowDependingOnDoctype()
-                            && (myField.getValue() == null || myField.getValue().equals(""))) {
+                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
+                            && additionalField.getShowDependingOnDoctype()
+                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
                         if (atstsl == null || atstsl.length() == 0) {
                             atstsl = createAtstsl(currentTitle, currentAuthors);
                         }
-                        myField.setValue(this.atstsl);
+                        additionalField.setValue(this.atstsl);
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
-                            && myField.getValue() != null) {
-                        newTitle.append(calculateProcessTitleCheck(myField.getTitle(), myField.getValue()));
+                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                            && additionalField.getValue() != null) {
+                        newTitle.append(calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }
@@ -1806,27 +1794,26 @@ public class ProzesskopieForm implements Serializable {
                 }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
-                    AdditionalField myField = it2.next();
-                    if ((myField.getTitle().equals("Titel") || myField.getTitle().equals("Title"))
-                            && myField.getValue() != null && !myField.getValue().equals("")) {
-                        title = myField.getValue();
+                for (AdditionalField additionalField : this.additionalFields) {
+                    if (additionalField.getTitle().equals("Titel") || additionalField.getTitle().equals("Title")
+                            && additionalField.getValue() != null && !additionalField.getValue().equals("")) {
+                        title = additionalField.getValue();
                     }
                     /*
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
                      * atstsl einsetzen, sofern noch nicht vorhanden
                      */
-                    if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
-                            && myField.getShowDependingOnDoctype()
-                            && (myField.getValue() == null || myField.getValue().equals(""))) {
-                        myField.setValue(this.atstsl);
+                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
+                            && additionalField.getShowDependingOnDoctype()
+                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
+                        additionalField.setValue(this.atstsl);
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
-                            && myField.getValue() != null) {
-                        this.tifHeader_imagedescription += calculateProcessTitleCheck(myField.getTitle(),
-                                myField.getValue());
+                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                            && additionalField.getValue() != null) {
+                        this.tifHeader_imagedescription += calculateProcessTitleCheck(additionalField.getTitle(),
+                                additionalField.getValue());
                     }
 
                 }
