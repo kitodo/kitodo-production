@@ -146,13 +146,17 @@ public class WebInterface extends HttpServlet {
     }
 
     private void generateHelp(HttpServletResponse resp) throws IOException {
-        String allHelp = "";
+        StringBuilder allHelp = new StringBuilder();
         List<IPlugin> mycommands = PluginLoader.getPluginList(PluginType.Command);
         for (IPlugin iPlugin : mycommands) {
             ICommandPlugin icp = (ICommandPlugin) iPlugin;
-            allHelp += "<h4>" + icp.help().getTitle() + "</h4>" + icp.help().getMessage() + "<br/><br/>";
+            allHelp.append("<h4>");
+            allHelp.append(icp.help().getTitle());
+            allHelp.append("</h4>");
+            allHelp.append(icp.help().getMessage());
+            allHelp.append("<br/><br/>");
         }
-        generateAnswer(resp, 200, "Goobi Web API Help", allHelp);
+        generateAnswer(resp, 200, "Goobi Web API Help", allHelp.toString());
     }
 
     private void generateAnswer(HttpServletResponse resp, int status, String title, String message) throws IOException {

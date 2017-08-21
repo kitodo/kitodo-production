@@ -1087,7 +1087,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann
              * dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
              */
-            if (this.page == null && (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
+            if (this.page == null && Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
                 filterAlleStart();
             }
             Integer inParam = Integer.valueOf(param);

@@ -72,9 +72,9 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
         // use a clone on the filter and apply the projection on the clone
         crit.setProjection(proj);
 
-        StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(this.getClass()).getTitle());
+        String title = StatisticsMode.getByClassName(this.getClass()).getTitle();
 
-        DataTable dtbl = new DataTable(title.toString());
+        DataTable dtbl = new DataTable(title);
         dtbl.setShowableInPieChart(true);
         DataRow dRow = new DataRow(Helper.getTranslation("count"));
 

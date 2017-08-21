@@ -63,9 +63,9 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
             crit.createCriteria("process", "proz");
             crit.add(Restrictions.in("proz.id", originalFilter.getIDList()));
         }
-        StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(this.getClass()).getTitle());
+        String title = StatisticsMode.getByClassName(this.getClass()).getTitle();
 
-        DataTable dtbl = new DataTable(title.toString());
+        DataTable dtbl = new DataTable(title);
         dtbl.setShowableInPieChart(true);
         DataRow dRow = new DataRow(Helper.getTranslation("count"));
 

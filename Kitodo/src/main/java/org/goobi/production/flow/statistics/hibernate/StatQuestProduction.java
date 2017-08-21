@@ -142,7 +142,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         if (stepname == null || stepname.equals("")) {
             title.append(")");
         } else {
-            title.append(", " + stepname + " )");
+            title.append(", ");
+            title.append(stepname);
+            title.append(" )");
         }
 
         // building table for the Table

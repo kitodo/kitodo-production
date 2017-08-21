@@ -199,20 +199,21 @@ public class GUIExceptionWrapper extends Exception {
      * @return stack trace as String
      */
     private String getStackTrace(StackTraceElement[] stackTrace) {
-        String stackTraceReturn = "";
+        StringBuilder stackTraceReturn = new StringBuilder();
         String tempTraceReturn = "";
         Integer counter = 0;
         for (StackTraceElement itStackTrace : stackTrace) {
             // only taking those elements from the stack trace, which contain
             // goobi and the top level element
             if (counter++ == 1 || itStackTrace.toString().toLowerCase().contains("goobi")) {
-                stackTraceReturn = stackTraceReturn + "<br/>" + itStackTrace.toString();
+                stackTraceReturn.append("<br/>");
+                stackTraceReturn.append(itStackTrace.toString());
                 tempTraceReturn = "";
             } else {
                 if (tempTraceReturn.length() < 1) {
-                    stackTraceReturn = stackTraceReturn + "<br/> ---- skipping non goobi class(es) .";
+                    stackTraceReturn.append("<br/> ---- skipping non goobi class(es) .");
                 } else {
-                    stackTraceReturn = stackTraceReturn + " .";
+                    stackTraceReturn.append(" .");
                 }
                 tempTraceReturn = "<br/>" + itStackTrace.toString();
             }

@@ -147,16 +147,16 @@ public class MetadatumImpl implements Metadatum {
         for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
             i.setIsSelected(false);
         }
-        String val = "";
+        StringBuilder val = new StringBuilder();
         for (SelectItem sel : items) {
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
                 if (i.getLabel().equals(sel.getValue())) {
                     i.setIsSelected(true);
-                    val += i.getValue();
+                    val.append(i.getValue());
                 }
             }
         }
-        setWert(val);
+        setWert(val.toString());
     }
 
     @Override
@@ -199,16 +199,17 @@ public class MetadatumImpl implements Metadatum {
     @Override
     public void setSelectedItems(List<String> selectedItems) {
 
-        String val = "";
+        StringBuilder val = new StringBuilder();
         for (String sel : selectedItems) {
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
                 if (i.getLabel().equals(sel)) {
-                    val += i.getValue() + ";";
+                    val.append(i.getValue());
+                    val.append(";");
                 }
             }
         }
 
-        setWert(val);
+        setWert(val.toString());
     }
 
     @Override

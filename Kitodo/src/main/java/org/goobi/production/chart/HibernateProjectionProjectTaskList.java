@@ -84,7 +84,7 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
             while (it.hasNext()) {
                 Object[] row = (Object[]) it.next();
                 rowCount++;
-                String message = "";
+                StringBuilder message = new StringBuilder();
                 int i;
 
                 String shorttitle;
@@ -123,7 +123,8 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 
                 // TODO remove following lines all the way to system.out
                 for (i = 0; i < row.length; i++) {
-                    message = message + "|" + row[i];
+                    message.append("|");
+                    message.append(row[i]);
                 }
                 logger.debug(Integer.toString(rowCount) + message);
 

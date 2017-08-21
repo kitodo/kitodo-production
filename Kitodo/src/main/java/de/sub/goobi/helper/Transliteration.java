@@ -21,204 +21,204 @@ public class Transliteration {
      * @return String
      */
     public String transliterateISO(String inString) {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         char[] arr = inString.toCharArray();
         for (char sign : arr) {
             switch (sign) {
                 case 0x410:
-                    s = s + "A";
+                    s.append("A");
                     break;
                 case 0x430:
-                    s = s + "a";
+                    s.append("a");
                     break;
                 case 0x411:
-                    s = s + "B";
+                    s.append("B");
                     break;
                 case 0x431:
-                    s = s + "b";
+                    s.append("b");
                     break;
                 case 0x412:
-                    s = s + "V";
+                    s.append("V");
                     break;
                 case 0x432:
-                    s = s + "v";
+                    s.append("v");
                     break;
                 case 0x413:
-                    s = s + "G";
+                    s.append("G");
                     break;
                 case 0x433:
-                    s = s + "g";
+                    s.append("g");
                     break;
                 case 0x414:
-                    s = s + "D";
+                    s.append("D");
                     break;
                 case 0x434:
-                    s = s + "d";
+                    s.append("d");
                     break;
                 case 0x415:
-                    s = s + "E";
+                    s.append("E");
                     break;
                 case 0x435:
-                    s = s + "e";
+                    s.append("e");
                     break;
                 case 0x0CB:
-                    s = s + "\u00CB";
+                    s.append("\u00CB");
                     break;
                 case 0x451:
-                    s = s + "\u00EB";
+                    s.append("\u00EB");
                     break;
                 case 0x416:
-                    s = s + "\u017D";
+                    s.append("\u017D");
                     break;
                 case 0x436:
-                    s = s + "\u017E";
+                    s.append("\u017E");
                     break;
                 case 0x417:
-                    s = s + "Z";
+                    s.append("Z");
                     break;
                 case 0x437:
-                    s = s + "z";
+                    s.append("z");
                     break;
                 case 0x418:
-                    s = s + "I";
+                    s.append("I");
                     break;
                 case 0x438:
-                    s = s + "i";
+                    s.append("i");
                     break;
                 case 0x419:
-                    s = s + "J";
+                    s.append("J");
                     break;
                 case 0x439:
-                    s = s + "j";
+                    s.append("j");
                     break;
                 case 0x41A:
-                    s = s + "K";
+                    s.append("K");
                     break;
                 case 0x43A:
-                    s = s + "k";
+                    s.append("k");
                     break;
                 case 0x41B:
-                    s = s + "L";
+                    s.append("L");
                     break;
                 case 0x43B:
-                    s = s + "l";
+                    s.append("l");
                     break;
                 case 0x41C:
-                    s = s + "M";
+                    s.append("M");
                     break;
                 case 0x43C:
-                    s = s + "m";
+                    s.append("m");
                     break;
                 case 0x41D:
-                    s = s + "N";
+                    s.append("N");
                     break;
                 case 0x43D:
-                    s = s + "n";
+                    s.append("n");
                     break;
                 case 0x41E:
-                    s = s + "O";
+                    s.append("O");
                     break;
                 case 0x43E:
-                    s = s + "o";
+                    s.append("o");
                     break;
                 case 0x41F:
-                    s = s + "P";
+                    s.append("P");
                     break;
                 case 0x43F:
-                    s = s + "p";
+                    s.append("p");
                     break;
                 case 0x420:
-                    s = s + "R";
+                    s.append("R");
                     break;
                 case 0x440:
-                    s = s + "r";
+                    s.append("r");
                     break;
                 case 0x421:
-                    s = s + "S";
+                    s.append("S");
                     break;
                 case 0x441:
-                    s = s + "s";
+                    s.append("s");
                     break;
                 case 0x422:
-                    s = s + "T";
+                    s.append("T");
                     break;
                 case 0x442:
-                    s = s + "t";
+                    s.append("t");
                     break;
                 case 0x423:
-                    s = s + "U";
+                    s.append("U");
                     break;
                 case 0x443:
-                    s = s + "u";
+                    s.append("u");
                     break;
                 case 0x424:
-                    s = s + "F";
+                    s.append("F");
                     break;
                 case 0x444:
-                    s = s + "f";
+                    s.append("f");
                     break;
                 case 0x425:
-                    s = s + "H";
+                    s.append("H");
                     break;
                 case 0x445:
-                    s = s + "h";
+                    s.append("h");
                     break;
                 case 0x426:
-                    s = s + "C";
+                    s.append("C");
                     break;
                 case 0x446:
-                    s = s + "c";
+                    s.append("c");
                     break;
                 case 0x427:
-                    s = s + "\u010C";
+                    s.append("\u010C");
                     break;
                 case 0x447:
-                    s = s + "\u010D";
+                    s.append("\u010D");
                     break;
                 case 0x428:
-                    s = s + "\u0160";
+                    s.append("\u0160");
                     break;
                 case 0x448:
-                    s = s + "\u0161";
+                    s.append("\u0161");
                     break;
                 case 0x429:
-                    s = s + "\u015C";
+                    s.append("\u015C");
                     break;
                 case 0x449:
-                    s = s + "\u015D";
+                    s.append("\u015D");
                     break;
                 case 0x44A:
-                    s = s + "\u201D";
+                    s.append("\u201D");
                     break;
                 case 0x44B:
-                    s = s + "y";
+                    s.append("y");
                     break;
                 case 0x44C:
-                    s = s + "'";
+                    s.append("'");
                     break;
                 case 0x42D:
-                    s = s + "\u00C8";
+                    s.append("\u00C8");
                     break;
                 case 0x44D:
-                    s = s + "\u00E8";
+                    s.append("\u00E8");
                     break;
                 case 0x42E:
-                    s = s + "\u01D3";
+                    s.append("\u01D3");
                     break;
                 case 0x44E:
-                    s = s + "\u01D4";
+                    s.append("\u01D4");
                     break;
                 case 0x42F:
-                    s = s + "\u01CD";
+                    s.append("\u01CD");
                     break;
                 case 0x44F:
-                    s = s + "\u01CE";
+                    s.append("\u01CE");
                     break;
                 default:
-                    s = s + sign;
+                    s.append(sign);
             }
         }
-        return s;
+        return s.toString();
     }
 
     /**
@@ -229,203 +229,203 @@ public class Transliteration {
      * @return String
      */
     public String transliterateDIN(String inString) {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         char[] arr = inString.toCharArray();
         for (char sign : arr) {
             switch (sign) {
                 case 0x410:
-                    s = s + "A";
+                    s.append("A");
                     break;
                 case 0x430:
-                    s = s + "a";
+                    s.append("a");
                     break;
                 case 0x411:
-                    s = s + "B";
+                    s.append("B");
                     break;
                 case 0x431:
-                    s = s + "b";
+                    s.append("b");
                     break;
                 case 0x412:
-                    s = s + "V";
+                    s.append("V");
                     break;
                 case 0x432:
-                    s = s + "v";
+                    s.append("v");
                     break;
                 case 0x413:
-                    s = s + "G";
+                    s.append("G");
                     break;
                 case 0x433:
-                    s = s + "g";
+                    s.append("g");
                     break;
                 case 0x414:
-                    s = s + "D";
+                    s.append("D");
                     break;
                 case 0x434:
-                    s = s + "d";
+                    s.append("d");
                     break;
                 case 0x415:
-                    s = s + "E";
+                    s.append("E");
                     break;
                 case 0x435:
-                    s = s + "e";
+                    s.append("e");
                     break;
                 case 0x0CB:
-                    s = s + "\u00CB";
+                    s.append("\u00CB");
                     break;
                 case 0x451:
-                    s = s + "\u00EB";
+                    s.append("\u00EB");
                     break;
                 case 0x416:
-                    s = s + "\u017D";
+                    s.append("\u017D");
                     break;
                 case 0x436:
-                    s = s + "\u017E";
+                    s.append("\u017E");
                     break;
                 case 0x417:
-                    s = s + "Z";
+                    s.append("Z");
                     break;
                 case 0x437:
-                    s = s + "z";
+                    s.append("z");
                     break;
                 case 0x418:
-                    s = s + "I";
+                    s.append("I");
                     break;
                 case 0x438:
-                    s = s + "i";
+                    s.append("i");
                     break;
                 case 0x419:
-                    s = s + "J";
+                    s.append("J");
                     break;
                 case 0x439:
-                    s = s + "j";
+                    s.append("j");
                     break;
                 case 0x41A:
-                    s = s + "K";
+                    s.append("K");
                     break;
                 case 0x43A:
-                    s = s + "k";
+                    s.append("k");
                     break;
                 case 0x41B:
-                    s = s + "L";
+                    s.append("L");
                     break;
                 case 0x43B:
-                    s = s + "l";
+                    s.append("l");
                     break;
                 case 0x41C:
-                    s = s + "M";
+                    s.append("M");
                     break;
                 case 0x43C:
-                    s = s + "m";
+                    s.append("m");
                     break;
                 case 0x41D:
-                    s = s + "N";
+                    s.append("N");
                     break;
                 case 0x43D:
-                    s = s + "n";
+                    s.append("n");
                     break;
                 case 0x41E:
-                    s = s + "O";
+                    s.append("O");
                     break;
                 case 0x43E:
-                    s = s + "o";
+                    s.append("o");
                     break;
                 case 0x41F:
-                    s = s + "P";
+                    s.append("P");
                     break;
                 case 0x43F:
-                    s = s + "p";
+                    s.append("p");
                     break;
                 case 0x420:
-                    s = s + "R";
+                    s.append("R");
                     break;
                 case 0x440:
-                    s = s + "r";
+                    s.append("r");
                     break;
                 case 0x421:
-                    s = s + "S";
+                    s.append("S");
                     break;
                 case 0x441:
-                    s = s + "s";
+                    s.append("s");
                     break;
                 case 0x422:
-                    s = s + "T";
+                    s.append("T");
                     break;
                 case 0x442:
-                    s = s + "t";
+                    s.append("t");
                     break;
                 case 0x423:
-                    s = s + "U";
+                    s.append("U");
                     break;
                 case 0x443:
-                    s = s + "u";
+                    s.append("u");
                     break;
                 case 0x424:
-                    s = s + "F";
+                    s.append("F");
                     break;
                 case 0x444:
-                    s = s + "f";
+                    s.append("f");
                     break;
                 case 0x425:
-                    s = s + "Ch";
+                    s.append("Ch");
                     break;
                 case 0x445:
-                    s = s + "ch";
+                    s.append("ch");
                     break;
                 case 0x426:
-                    s = s + "C";
+                    s.append("C");
                     break;
                 case 0x446:
-                    s = s + "c";
+                    s.append("c");
                     break;
                 case 0x427:
-                    s = s + "\u010C";
+                    s.append("\u010C");
                     break;
                 case 0x447:
-                    s = s + "\u010D";
+                    s.append("\u010D");
                     break;
                 case 0x428:
-                    s = s + "\u0160";
+                    s.append("\u0160");
                     break;
                 case 0x448:
-                    s = s + "\u0161";
+                    s.append("\u0161");
                     break;
                 case 0x429:
-                    s = s + "\u0160" + "\u010D";
+                    s.append("\u0160" + "\u010D");
                     break;
                 case 0x449:
-                    s = s + "\u0161" + "\u010D";
+                    s.append("\u0161" + "\u010D");
                     break;
                 case 0x44A:
-                    s = s + "\u201D";
+                    s.append("\u201D");
                     break;
                 case 0x44B:
-                    s = s + "y";
+                    s.append("y");
                     break;
                 case 0x44C:
-                    s = s + "'";
+                    s.append("'");
                     break;
                 case 0x42D:
-                    s = s + "\u0116";
+                    s.append("\u0116");
                     break;
                 case 0x44D:
-                    s = s + "\u0117";
+                    s.append("\u0117");
                     break;
                 case 0x42E:
-                    s = s + "Ju";
+                    s.append("Ju");
                     break;
                 case 0x44E:
-                    s = s + "ju";
+                    s.append("ju");
                     break;
                 case 0x42F:
-                    s = s + "Ja";
+                    s.append("Ja");
                     break;
                 case 0x44F:
-                    s = s + "ja";
+                    s.append("ja");
                     break;
                 default:
-                    s = s + sign;
+                    s.append(sign);
             }
         }
-        return s;
+        return s.toString();
     }
 }

@@ -89,15 +89,27 @@ public class TiffHeader {
     public String getTiffAlles() {
         String lineBreak = "\r\n";
         StringBuffer strBuf = new StringBuffer();
-        strBuf.append("#" + lineBreak);
-        strBuf.append("# Configuration file for TIFFWRITER.pl" + lineBreak);
-        strBuf.append("#" + lineBreak);
-        strBuf.append("# - overwrites tiff-tags." + lineBreak);
-        strBuf.append("#" + lineBreak);
-        strBuf.append("#" + lineBreak);
-        strBuf.append("Artist=" + this.artist + lineBreak);
-        strBuf.append("Documentname=" + getDocumentName() + lineBreak);
-        strBuf.append("ImageDescription=" + getImageDescription() + lineBreak);
+        strBuf.append("#");
+        strBuf.append(lineBreak);
+        strBuf.append("# Configuration file for TIFFWRITER.pl");
+        strBuf.append(lineBreak);
+        strBuf.append("#");
+        strBuf.append(lineBreak);
+        strBuf.append("# - overwrites tiff-tags.");
+        strBuf.append(lineBreak);
+        strBuf.append("#");
+        strBuf.append(lineBreak);
+        strBuf.append("#");
+        strBuf.append(lineBreak);
+        strBuf.append("Artist=");
+        strBuf.append(this.artist);
+        strBuf.append(lineBreak);
+        strBuf.append("Documentname=");
+        strBuf.append(getDocumentName());
+        strBuf.append(lineBreak);
+        strBuf.append("ImageDescription=");
+        strBuf.append(getImageDescription());
+        strBuf.append(lineBreak);
         return strBuf.toString();
     }
 
