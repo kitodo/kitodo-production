@@ -176,7 +176,7 @@ public class HistoryService extends SearchService<History> {
      * @return list of JSON objects
      */
     public List<JSONObject> findByType(HistoryTypeEnum type) throws DataException {
-        QueryBuilder query = createSimpleQuery("type", type.toString(), true);
+        QueryBuilder query = createSimpleQuery("type", type.getValue(), true);
         return searcher.findDocuments(query.toString());
     }
 

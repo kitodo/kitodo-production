@@ -259,17 +259,18 @@ public class TaskService extends TitleSearchService<Task> {
      */
     public Long getAmountOfCurrentTasks(boolean open, boolean inProcessing, User user) throws DataException {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        String processingStatus = TaskStatus.getStatusFromValue(1).toString() + " "
-                + TaskStatus.getStatusFromValue(2).toString();
+        Set<Integer> processingStatus = new HashSet<>();
+        processingStatus.add(1);
+        processingStatus.add(2);
 
         if (!open && !inProcessing) {
-            boolQuery.must(createSimpleQuery("processingStatus", processingStatus, true));
+            boolQuery.must(createSetQuery("processingStatus", processingStatus, true));
         } else if (open && !inProcessing) {
-            boolQuery.must(createSimpleQuery("processingStatus", TaskStatus.getStatusFromValue(1).toString(), true));
+            boolQuery.must(createSimpleQuery("processingStatus", 1, true));
         } else if (!open && inProcessing) {
-            boolQuery.must(createSimpleQuery("processingStatus", TaskStatus.getStatusFromValue(2).toString(), true));
+            boolQuery.must(createSimpleQuery("processingStatus", 2, true));
         } else {
-            boolQuery.must(createSimpleQuery("processingStatus", processingStatus, true));
+            boolQuery.must(createSetQuery("processingStatus", processingStatus, true));
         }
 
         Set<Integer> userGroups = new HashSet<>();

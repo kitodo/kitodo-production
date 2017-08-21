@@ -32,6 +32,8 @@ public class ProcessType extends BaseType<Process> {
         String creationDate = process.getCreationDate() != null ? formatDate(process.getCreationDate()) : null;
         processObject.put("creationDate", creationDate);
         processObject.put("wikiField", process.getWikiField());
+        processObject.put("sortHelperStatus", process.getSortHelperStatus());
+        processObject.put("processBaseUri", process.getProcessBaseUri());
         processObject.put("template", process.isTemplate());
         Integer project = process.getProject() != null ? process.getProject().getId() : null;
         processObject.put("project", project);

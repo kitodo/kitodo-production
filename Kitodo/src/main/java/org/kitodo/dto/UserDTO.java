@@ -1,0 +1,402 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+package org.kitodo.dto;
+
+import java.util.List;
+
+/**
+ * User DTO object.
+ */
+public class UserDTO extends BaseDTO {
+
+    private String login;
+    private String name;
+    private String surname;
+    private String fullName;
+    private String location;
+    private String ldapLogin;
+    private boolean active = true;
+    private Integer sessionTimeout = 7200;
+    private Integer sessionTimeoutInMinutes = 7200;
+    private List<FilterDTO> filters;
+    private Integer filtersSize;
+    private List<UserGroupDTO> userGroups;
+    private Integer userGroupSize;
+    private List<ProjectDTO> projects;
+    private Integer projectsSize;
+    private List<TaskDTO> tasks;
+    private Integer tasksSize;
+    private List<TaskDTO> processingTasks;
+    private Integer processingTasksSize;
+
+    /**
+     * Get login.
+     * 
+     * @return login as String
+     */
+    public String getLogin() {
+        return login;
+    }
+
+    /**
+     * Set login.
+     *
+     * @param login
+     *            as String
+     */
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    /**
+     * Get name.
+     * 
+     * @return first name as String
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set name.
+     * 
+     * @param name
+     *            as String
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Get surname.
+     * 
+     * @return surname as String
+     */
+    public String getSurname() {
+        return surname;
+    }
+
+    /**
+     * Set surname.
+     * 
+     * @param surname
+     *            as String
+     */
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    /**
+     * Get full name of user.
+     *
+     * @return full name of user as String
+     */
+    public String getFullName() {
+        return this.fullName;
+    }
+
+    /**
+     * Set full name.
+     *
+     * @param fullName
+     *            as String
+     */
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    /**
+     * Get location.
+     * 
+     * @return location as String
+     */
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * Set location.
+     * 
+     * @param location
+     *            as String
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    /**
+     * Get LDAP login.
+     * 
+     * @return LDAP login as String
+     */
+    public String getLdapLogin() {
+        return ldapLogin;
+    }
+
+    /**
+     * Set LDAP login.
+     * 
+     * @param ldapLogin
+     *            as String
+     */
+    public void setLdapLogin(String ldapLogin) {
+        this.ldapLogin = ldapLogin;
+    }
+
+    /**
+     * Get information if user is active.
+     *
+     * @return true or false
+     */
+    public boolean isActive() {
+        return this.active;
+    }
+
+    /**
+     * Set information if user is active.
+     * 
+     * @param active
+     *            as boolean
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    /**
+     * Get session timeout.
+     * 
+     * @return session timeout as Integer
+     */
+    public Integer getSessionTimeout() {
+        return this.sessionTimeout;
+    }
+
+    /**
+     * Set session timeout.
+     * 
+     * @param sessionTimeout
+     *            as Integer
+     */
+    public void setSessionTimeout(Integer sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
+    /**
+     * Get session timeout in minutes.
+     * 
+     * @return session timeout in minutes as Integer
+     */
+    public Integer getSessionTimeoutInMinutes() {
+        return this.sessionTimeoutInMinutes;
+    }
+
+    /**
+     * Set session timeout in minutes.
+     * 
+     * @param sessionTimeoutInMinutes
+     *            as Integer
+     */
+    public void setSessionTimeoutInMinutes(Integer sessionTimeoutInMinutes) {
+        this.sessionTimeoutInMinutes = sessionTimeoutInMinutes;
+    }
+
+    /**
+     * Get list of filters.
+     * 
+     * @return list of filters as FilterDTO
+     */
+    public List<FilterDTO> getFilters() {
+        return filters;
+    }
+
+    /**
+     * Set list of filters.
+     * 
+     * @param filters
+     *            list of filters as FilterDTO
+     */
+    public void setFilters(List<FilterDTO> filters) {
+        this.filters = filters;
+    }
+
+    /**
+     * Get size of filters.
+     *
+     * @return size
+     */
+    public Integer getFiltersSize() {
+        return filtersSize;
+    }
+
+    /**
+     * Set size of filters.
+     * 
+     * @param filtersSize
+     *            as Integer
+     */
+    public void setFiltersSize(Integer filtersSize) {
+        this.filtersSize = filtersSize;
+    }
+
+    /**
+     * Get list of user's groups.
+     *
+     * @return list of user's groups as UserGroupDTO
+     */
+    public List<UserGroupDTO> getUserGroups() {
+        return userGroups;
+    }
+
+    /**
+     * Set list of user's groups.
+     *
+     * @param userGroups
+     *            list of user's groups as UserGroupDTO
+     */
+    public void setUserGroups(List<UserGroupDTO> userGroups) {
+        this.userGroups = userGroups;
+    }
+
+    /**
+     * Get size of user group.
+     *
+     * @return size
+     */
+    public int getUserGroupSize() {
+        return userGroupSize;
+    }
+
+    /**
+     * Set size of user group.
+     * 
+     * @param userGroupSize
+     *            as Integer
+     */
+    public void setUserGroupSize(Integer userGroupSize) {
+        this.userGroupSize = userGroupSize;
+    }
+
+    /**
+     * Get list of projects.
+     * 
+     * @return list of projects as ProjectDTO
+     */
+    public List<ProjectDTO> getProjects() {
+        return projects;
+    }
+
+    /**
+     * Set list of projects.
+     * 
+     * @param projects
+     *            list of projects as ProjectDTO
+     */
+    public void setProjects(List<ProjectDTO> projects) {
+        this.projects = projects;
+    }
+
+    /**
+     * Get size of projects result list.
+     *
+     * @return result size of projects
+     *
+     */
+    public int getProjectsSize() {
+        return projectsSize;
+    }
+
+    /**
+     * Set size of project list.
+     * 
+     * @param projectsSize
+     *            size of project list as Integer
+     */
+    public void setProjectsSize(Integer projectsSize) {
+        this.projectsSize = projectsSize;
+    }
+
+    /**
+     * Get list of tasks.
+     *
+     * @return list of tasks as TaskDTO
+     */
+    public List<TaskDTO> getTasks() {
+        return tasks;
+    }
+
+    /**
+     * Set list of tasks.
+     * 
+     * @param tasks
+     *            list of tasks as TaskDTO
+     */
+    public void setTasks(List<TaskDTO> tasks) {
+        this.tasks = tasks;
+    }
+
+    /**
+     * Get size of processing task list.
+     *
+     * @return size of task list as Integer
+     */
+    public Integer getTasksSize() {
+        return tasksSize;
+    }
+
+    /**
+     * Set size of task list.
+     *
+     * @param tasksSize
+     *            as Integer
+     */
+    public void setTasksSize(Integer tasksSize) {
+        this.tasksSize = tasksSize;
+    }
+
+    /**
+     * Get list of processing tasks.
+     *
+     * @return list of processing tasks as TaskDTO
+     */
+    public List<TaskDTO> getProcessingTasks() {
+        return processingTasks;
+    }
+
+    /**
+     * Set list of processing tasks.
+     * 
+     * @param processingTasks
+     *            list of processing tasks as TaskDTO
+     */
+    public void setProcessingTasks(List<TaskDTO> processingTasks) {
+        this.processingTasks = processingTasks;
+    }
+
+    /**
+     * Get size of processing task list.
+     * 
+     * @return size of processing task list as Integer
+     */
+    public Integer getProcessingTasksSize() {
+        return processingTasksSize;
+    }
+
+    /**
+     * Set size of processing task list.
+     * 
+     * @param processingTasksSize
+     *            as Integer
+     */
+    public void setProcessingTasksSize(Integer processingTasksSize) {
+        this.processingTasksSize = processingTasksSize;
+    }
+}

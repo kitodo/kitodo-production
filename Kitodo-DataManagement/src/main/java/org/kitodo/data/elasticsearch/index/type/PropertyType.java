@@ -29,6 +29,8 @@ public class PropertyType extends BaseType<Property> {
         JSONObject propertyObject = new JSONObject();
         propertyObject.put("title", property.getTitle());
         propertyObject.put("value", property.getValue());
+        String creationDate = property.getCreationDate() != null ? formatDate(property.getCreationDate()) : null;
+        propertyObject.put("creationDate", creationDate);
         propertyObject.put("processes", addObjectRelation(property.getProcesses()));
         propertyObject.put("templates", addObjectRelation(property.getTemplates()));
         propertyObject.put("workpieces", addObjectRelation(property.getWorkpieces()));

@@ -38,6 +38,8 @@ public class ProjectType extends BaseType<Project> {
         projectObject.put("endDate", endDate);
         projectObject.put("numberOfPages", project.getNumberOfPages());
         projectObject.put("numberOfVolumes", project.getNumberOfVolumes());
+        projectObject.put("fileFormatDmsExport", project.getFileFormatDmsExport());
+        projectObject.put("fileFormatInternal", project.getFileFormatInternal());
         String archived = project.getProjectIsArchived() != null ? project.getProjectIsArchived().toString() : null;
         projectObject.put("archived", archived);
         projectObject.put("processes", addObjectRelation(project.getProcesses()));

@@ -29,6 +29,7 @@ public class RulesetType extends BaseType<Ruleset> {
         JSONObject rulesetObject = new JSONObject();
         rulesetObject.put("title", ruleset.getTitle());
         rulesetObject.put("file", ruleset.getFile());
+        rulesetObject.put("orderMetadataByRuleset", ruleset.isOrderMetadataByRuleset());
         rulesetObject.put("fileContent", "");
 
         return new NStringEntity(rulesetObject.toJSONString(), ContentType.APPLICATION_JSON);
