@@ -20,7 +20,7 @@ public class MockitoTest {
      * 
      * ProcessConverter converter = spy(new ProcessConverter());
      * when(converter.getProzessService()).thenReturn(processService);
-     * when(processService.find(any(Integer.class))).thenReturn(newProzess);
+     * when(processService.getById(any(Integer.class))).thenReturn(newProzess);
      * 
      * Object nullObject = converter.getAsObject(null,null, null);
      * Assert.assertNull(nullObject); Object object =

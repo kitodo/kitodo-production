@@ -95,7 +95,7 @@ public class SRUResponse {
      * be returned if the total is higher then the number of rows requested (or
      * defaulted).
      * </p>
-     * 
+     *
      * @return int The number of records that match this search.
      */
     public int getTotalResults() {
