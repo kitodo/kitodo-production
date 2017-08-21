@@ -405,21 +405,12 @@
         </h:commandLink>
     
         <!-- Bearbeiten-Schaltknopf (eigener Schritt) -->
-<<<<<<< HEAD:Kitodo/src/main/webapp/pages/inc_AktuelleSchritte/Schritte_Liste.xhtml
-        <h:commandLink action="#{AktuelleSchritteForm.editStep}" id="view1"
-                       rendered="#{(item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
-                       title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
-            <h:graphicImage value="/pages/images/buttons/admin1b.gif" alt="edit"/>
-            <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
-        </h:commandLink>
-=======
         <h:link outcome="/newpages/AktuelleSchritteBearbeiten"
                 rendered="#{(item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatusEnum == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
                 title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
             <h:graphicImage value="/newpages/images/buttons/admin1b.gif" alt="view"/>
             <f:param name="id" value="#{item.id}"/>
         </h:link>
->>>>>>> Fix loading of objects in AktuelleSchritteForm:Kitodo/src/main/webapp/newpages/inc_AktuelleSchritte/Schritte_Liste.xhtml
     
         <!-- Bearbeiten-Schaltknopf (fremder Schritt) -->
         <h:commandLink action="#{AktuelleSchritteForm.editStep}" id="view2"
