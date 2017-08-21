@@ -51,7 +51,7 @@ public class User extends BaseBean {
     private boolean active = true;
 
     @Column(name = "visible")
-    private String visible;
+    private boolean visible = true;
 
     @Column(name = "location")
     private String location;
@@ -156,11 +156,11 @@ public class User extends BaseBean {
         this.active = active;
     }
 
-    public String isVisible() {
+    public boolean isVisible() {
         return this.visible;
     }
 
-    public void setVisible(String visible) {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
@@ -312,7 +312,7 @@ public class User extends BaseBean {
      */
 
     public User selfDestruct() {
-        this.visible = "deleted";
+        this.visible = false;
         this.login = null;
         this.active = false;
         this.name = null;
