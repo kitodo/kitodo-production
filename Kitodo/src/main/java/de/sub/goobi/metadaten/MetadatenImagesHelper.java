@@ -419,62 +419,51 @@ public class MetadatenImagesHelper {
         /*
          * alle Bilder durchlaufen und dafür die Seiten anlegen
          */
-        try {
-            if (fileService.fileExist(folder)) {
-                ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
-                if (files.size() == 0) {
-                    Helper.setFehlerMeldung("[" + title + "] No objects found");
-                    return false;
-                }
-
-                this.myLastImage = files.size();
-                if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-                    List<URI> filesDirs = files;
-                    Collections.sort(filesDirs);
-                    int counter = 1;
-                    int myDiff = 0;
-                    String currentFileName = null;
-                    try {
-                        for (Iterator<URI> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
-                            currentFileName = fileService.getFileName(iterator.next());
-                            int curFileNumber = Integer
-                                    .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
-                            if (curFileNumber != counter + myDiff) {
-                                Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
-                                        + " but found File " + currentFileName);
-                                myDiff = curFileNumber - counter;
-                                isValid = false;
-                            }
-                        }
-                    } catch (NumberFormatException e1) {
-                        isValid = false;
-                        Helper.setFehlerMeldung(
-                                "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
-                    }
-                    return isValid;
-                }
-                return true;
+        if (fileService.fileExist(folder)) {
+            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
+            if (files.size() == 0) {
+                Helper.setFehlerMeldung("[" + title + "] No objects found");
+                return false;
             }
-            Helper.setFehlerMeldung("[" + title + "] No image-folder found");
-            return false;
-        } catch (IOException e) {
-            logger.error(e);
-            return false;
+
+            this.myLastImage = files.size();
+            if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+                List<URI> filesDirs = files;
+                Collections.sort(filesDirs);
+                int counter = 1;
+                int myDiff = 0;
+                String currentFileName = null;
+                try {
+                    for (Iterator<URI> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
+                        currentFileName = fileService.getFileName(iterator.next());
+                        int curFileNumber = Integer
+                                    .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
+                        if (curFileNumber != counter + myDiff) {
+                            Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
+                                    + " but found File " + currentFileName);
+                            myDiff = curFileNumber - counter;
+                            isValid = false;
+                        }
+                    }
+                } catch (NumberFormatException e1) {
+                    isValid = false;
+                    Helper.setFehlerMeldung(
+                            "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
+                }
+                return isValid;
+            }
+            return true;
         }
+        Helper.setFehlerMeldung("[" + title + "] No image-folder found");
+        return false;
     }
 
     public static class GoobiImageFileComparator implements Comparator<URI> {
 
         @Override
         public int compare(URI firstUri, URI secondUri) {
-            String firstString = "";
-            String secondString = "";
-            try {
-                firstString = fileService.getFileName(firstUri);
-                secondString = fileService.getFileName(secondUri);
-            } catch (IOException e) {
-                logger.error(e);
-            }
+            String firstString = fileService.getFileName(firstUri);
+            String secondString = fileService.getFileName(secondUri);
             String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
             firstString = firstString.substring(0, firstString.lastIndexOf("."));
             secondString = secondString.substring(0, secondString.lastIndexOf("."));
@@ -505,7 +494,7 @@ public class MetadatenImagesHelper {
      *            current folder
      * @return sorted list with strings representing images of process
      */
-    public List<URI> getImageFiles(Process myProcess, URI directory) throws IOException, InvalidImagesException {
+    public List<URI> getImageFiles(Process myProcess, URI directory) {
         /* Verzeichnis einlesen */
         ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, myProcess, ProcessSubType.IMAGE, "");
         ArrayList<URI> finalFiles = new ArrayList<>();
@@ -579,7 +568,7 @@ public class MetadatenImagesHelper {
      *            Process object
      * @return list of Strings
      */
-    public List<URI> getDataFiles(Process myProcess) throws IOException, InvalidImagesException {
+    public List<URI> getDataFiles(Process myProcess) throws InvalidImagesException {
         URI dir;
         try {
             dir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);

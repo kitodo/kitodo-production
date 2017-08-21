@@ -71,13 +71,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<URI> getCurrentFiles() {
-        List<URI> uris = new ArrayList<>();
-        try {
-            uris = fileService.getSubUris(this.folder);
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        return uris;
+        return fileService.getSubUris(this.folder);
     }
 
     /**
@@ -90,13 +84,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
     @Override
     public List<URI> getFilesByName(String name) {
-        ArrayList<URI> files = new ArrayList<>();
+        ArrayList<URI> files = fileService.getSubUris(this.folder);
         List<URI> answer = new ArrayList<>();
-        try {
-            files = fileService.getSubUris(this.folder);
-        } catch (IOException e) {
-            logger.error(e);
-        }
         for (URI file : files) {
             if (file.toString().contains(name) && !file.toString().contains("anchor")) {
                 answer.add(file);
@@ -114,13 +103,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<URI> getFileNamesByFilter(FilenameFilter filter) {
-        ArrayList<URI> fileNames = new ArrayList<>();
-        try {
-            fileNames = fileService.getSubUris(filter, this.folder);
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        return fileNames;
+        return fileService.getSubUris(filter, this.folder);
     }
 
     /**
@@ -132,13 +115,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<URI> getFilesByFilter(FilenameFilter filter) {
-        ArrayList<URI> files = new ArrayList<>();
-        try {
-            files = fileService.getSubUris(filter, this.folder);
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        return files;
+        return fileService.getSubUris(filter, this.folder);
     }
 
     @Override

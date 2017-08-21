@@ -62,12 +62,8 @@ public class ExtendedProzessImpl extends ProcessImpl {
     @Override
     public String getFullTextFile(String sessionId) throws GoobiException {
         super.getFullTextFile(sessionId);
-        try {
-            return serviceManager.getProcessService()
+        return serviceManager.getProcessService()
                     .getFulltextFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
-        } catch (IOException e) {
-            throw new GoobiException(254, e.getMessage());
-        }
     }
 
     /**
@@ -83,12 +79,8 @@ public class ExtendedProzessImpl extends ProcessImpl {
     @Override
     public String getImageDir(String sessionId) throws GoobiException {
         super.getImageDir(sessionId);
-        try {
-            return serviceManager.getFileService()
+        return serviceManager.getFileService()
                     .getImagesDirectory(ModuleServerForm.getProcessFromShortSession(sessionId)).toString();
-        } catch (IOException e) {
-            throw new GoobiException(254, e.getMessage());
-        }
     }
 
     /**
@@ -103,12 +95,8 @@ public class ExtendedProzessImpl extends ProcessImpl {
     @Override
     public String getMetadataFile(String sessionId) throws GoobiException {
         super.getMetadataFile(sessionId);
-        try {
-            return serviceManager.getFileService()
+        return serviceManager.getFileService()
                     .getMetadataFilePath(ModuleServerForm.getProcessFromShortSession(sessionId)).toString();
-        } catch (IOException e) {
-            throw new GoobiException(254, e.getMessage());
-        }
     }
 
     /**

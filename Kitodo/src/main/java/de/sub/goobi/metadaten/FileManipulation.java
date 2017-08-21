@@ -317,30 +317,24 @@ public class FileManipulation {
         DocStruct page = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
-        URI processSubTypeURI;
-        try {
-            processSubTypeURI = serviceManager.getFileService()
+        URI processSubTypeURI = serviceManager.getFileService()
                     .getProcessSubTypeURI(metadataBean.getProcess(), ProcessSubType.IMAGE, currentFolder);
-            ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
-            for (URI currentFile : filesInFolder) {
-                String currentFileName = fileService.getFileName(currentFile);
-                String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
-                if (filenamePrefix.equals(currentFileNamePrefix)) {
-                    downloadFile = currentFile;
-                    break;
-                }
+        ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
+        for (URI currentFile : filesInFolder) {
+            String currentFileName = fileService.getFileName(currentFile);
+            String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
+            if (filenamePrefix.equals(currentFileNamePrefix)) {
+                downloadFile = currentFile;
+                break;
             }
+        }
 
-            if (downloadFile == null || !fileService.fileExist(downloadFile)) {
-                List<String> paramList = new ArrayList<>();
-                // paramList.add(metadataBean.getMyProzess().getTitel());
-                paramList.add(filenamePrefix);
-                paramList.add(currentFolder);
-                Helper.setFehlerMeldung(Helper.getTranslation("MetsEditorMissingFile", paramList));
-                return;
-            }
-        } catch (IOException e) {
-            logger.error(e);
+        if (downloadFile == null || !fileService.fileExist(downloadFile)) {
+            List<String> paramList = new ArrayList<>();
+            // paramList.add(metadataBean.getMyProzess().getTitel());
+            paramList.add(filenamePrefix);
+            paramList.add(currentFolder);
+            Helper.setFehlerMeldung(Helper.getTranslation("MetsEditorMissingFile", paramList));
             return;
         }
 
@@ -487,7 +481,7 @@ public class FileManipulation {
      * import files from folder.
      *
      */
-    public List<URI> getAllImportFolder() throws IOException {
+    public List<URI> getAllImportFolder() {
 
         URI tempDirectory = new File(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toURI();
         URI fileuploadFolder = tempDirectory.resolve("fileupload");
@@ -616,13 +610,7 @@ public class FileManipulation {
     }
 
     private static boolean matchesFileConfiguration(URI file) {
-        String fileName = null;
-
-        try {
-            fileName = fileService.getFileName(file);
-        } catch (IOException e) {
-            logger.error(e);
-        }
+        String fileName = fileService.getFileName(file);
 
         if (fileName == null) {
             return false;

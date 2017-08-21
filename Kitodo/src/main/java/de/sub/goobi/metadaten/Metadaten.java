@@ -1740,15 +1740,9 @@ public class Metadaten {
                         if (logger.isTraceEnabled()) {
                             logger.trace("currentTifFolder: " + this.currentTifFolder);
                         }
-                        try {
-                            dataList = this.imageHelper.getImageFiles(this.process, this.currentTifFolder);
-                            if (dataList == null) {
-                                return;
-                            }
-                        } catch (IOException | InvalidImagesException e1) {
-                            logger.trace("dataList error");
-                            logger.error("Images could not be read", e1);
-                            Helper.setFehlerMeldung("images could not be read", e1);
+                        dataList = this.imageHelper.getImageFiles(this.process, this.currentTifFolder);
+                        if (dataList == null) {
+                            return;
                         }
                     }
                     /* das aktuelle tif erfassen */
@@ -1826,17 +1820,12 @@ public class Metadaten {
         if (logger.isTraceEnabled()) {
             logger.trace("myBild: " + this.image);
         }
-        try {
-            String index = fileService.getFileName(dataList.get(i));
-            if (logger.isTraceEnabled()) {
-                logger.trace("index: " + index);
-            }
-            String picture = fileService.getFileName(this.image);
-            return index.equals(picture);
-        } catch (IOException e) {
-            logger.error(e);
-            return false;
+        String index = fileService.getFileName(dataList.get(i));
+        if (logger.isTraceEnabled()) {
+            logger.trace("index: " + index);
         }
+        String picture = fileService.getFileName(this.image);
+        return index.equals(picture);
     }
 
     private void checkImage() {

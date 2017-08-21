@@ -149,7 +149,7 @@ public class BackupFileRotation {
         }
     }
 
-    private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) throws IOException {
+    private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
 
         ArrayList<URI> filteredUris = new ArrayList<>();
         FilenameFilter filter = new FileNameMatchesFilter(filterFormat);
