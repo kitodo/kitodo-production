@@ -734,7 +734,8 @@ public class FileService {
     }
 
     private FileManagementInterface getFileManagementModule() {
-        KitodoServiceLoader<FileManagementInterface> loader = new KitodoServiceLoader<>(FileManagementInterface.class);
+        KitodoServiceLoader<FileManagementInterface> loader = new KitodoServiceLoader<>(FileManagementInterface.class,
+                ConfigCore.getParameter("pluginFolder"));
         return loader.loadModule();
     }
 }

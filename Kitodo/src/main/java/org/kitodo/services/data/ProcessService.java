@@ -1304,9 +1304,9 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     private DocketInterface initialiseDocketModule() {
-        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
-        DocketInterface module = loader.loadModule();
-        return module;
+        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class,
+                ConfigCore.getParameter("pluginFolder"));
+        return loader.loadModule();
     }
 
     /**
@@ -1317,7 +1317,6 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return first open task
      */
     public Task getFirstOpenStep(Process process) {
-
         for (Task step : process.getTasks()) {
             if (step.getProcessingStatusEnum().equals(TaskStatus.OPEN)
                     || step.getProcessingStatusEnum().equals(TaskStatus.INWORK)) {
