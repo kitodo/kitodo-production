@@ -21,20 +21,20 @@ public interface IGoobiJob {
      * overwrite this method.
      *
      */
-    public abstract void execute(JobExecutionContext context);
+    void execute(JobExecutionContext context);
 
     /**
      * override this method to let the job be called automatically.
      */
-    public abstract void execute();
+    void execute();
 
-    public abstract void setIsRunning(Boolean inisRunning);
+    void setIsRunning(Boolean inisRunning);
 
-    public abstract Boolean getIsRunning();
+    Boolean getIsRunning();
 
     /**
      * getter for JobName.
      */
-    public abstract String getJobName();
+    String getJobName();
 
 }

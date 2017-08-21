@@ -19,18 +19,18 @@ import org.kitodo.data.database.beans.Task;
 
 public interface IStepPlugin extends IPlugin {
 
-    public void initialize(Task stepobject, String returnPath);
+    void initialize(Task stepobject, String returnPath);
 
-    public boolean execute();
+    boolean execute();
 
-    public String cancel();
+    String cancel();
 
-    public String finish();
+    String finish();
 
-    public HashMap<String, StepReturnValue> validate();
+    HashMap<String, StepReturnValue> validate();
 
-    public Task getStep();
+    Task getStep();
 
-    public PluginGuiType getPluginGuiType();
+    PluginGuiType getPluginGuiType();
 
 }

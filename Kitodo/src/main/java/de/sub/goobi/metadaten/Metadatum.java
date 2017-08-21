@@ -22,41 +22,41 @@ import ugh.dl.Metadata;
 
 public interface Metadatum {
 
-    public abstract ArrayList<Item> getWert();
+    ArrayList<Item> getWert();
 
-    public abstract void setWert(String inWert);
+    void setWert(String inWert);
 
-    public abstract String getTyp();
+    String getTyp();
 
-    public abstract void setTyp(String inTyp);
+    void setTyp(String inTyp);
 
-    public abstract int getIdentifier();
+    int getIdentifier();
 
-    public abstract void setIdentifier(int identifier);
+    void setIdentifier(int identifier);
 
-    public abstract Metadata getMd();
+    Metadata getMd();
 
-    public abstract void setMd(Metadata md);
+    void setMd(Metadata md);
 
     /**
      * new functions for use of display configuration whithin xml files.
      *
      */
-    public abstract String getOutputType();
+    String getOutputType();
 
-    public abstract List<SelectItem> getItems();
+    List<SelectItem> getItems();
 
-    public abstract void setItems(List<SelectItem> items);
+    void setItems(List<SelectItem> items);
 
-    public abstract List<String> getSelectedItems();
+    List<String> getSelectedItems();
 
-    public abstract void setSelectedItems(List<String> selectedItems);
+    void setSelectedItems(List<String> selectedItems);
 
-    public abstract String getSelectedItem();
+    String getSelectedItem();
 
-    public abstract void setSelectedItem(String selectedItem);
+    void setSelectedItem(String selectedItem);
 
-    public abstract void setValue(String value);
+    void setValue(String value);
 
-    public abstract String getValue();
+    String getValue();
 }

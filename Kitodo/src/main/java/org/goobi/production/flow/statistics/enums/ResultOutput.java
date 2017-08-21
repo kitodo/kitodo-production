@@ -34,7 +34,7 @@ public enum ResultOutput {
      * @param inId
      *            id as string
      */
-    private ResultOutput(String inId, String inTitle) {
+    ResultOutput(String inId, String inTitle) {
         id = inId;
         title = inTitle;
     }

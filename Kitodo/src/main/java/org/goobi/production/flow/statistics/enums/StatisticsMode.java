@@ -50,7 +50,7 @@ public enum StatisticsMode {
     /**
      * private constructor.
      */
-    private StatisticsMode(String inTitle, Class<? extends IStatisticalQuestion> inQuestion, Boolean renderIncludeLoops,
+    StatisticsMode(String inTitle, Class<? extends IStatisticalQuestion> inQuestion, Boolean renderIncludeLoops,
             Boolean isSimpleStatistic, Boolean restrictDate) {
         title = inTitle;
         if (inQuestion != null) {
