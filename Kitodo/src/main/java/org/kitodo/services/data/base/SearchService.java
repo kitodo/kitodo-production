@@ -369,8 +369,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            name of related property
      * @return bean object
      */
-    protected <Z extends BaseBean, O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject,
-            String key, SearchService<Z, O> service) throws DataException {
+    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject,
+            String key, SearchService<?, O> service) throws DataException {
         List<O> listDTO = new ArrayList<>();
         for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
             JSONObject result = service.findById(id);
