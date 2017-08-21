@@ -94,6 +94,7 @@
         <module>Kitodo-FileManagement</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>
+        <module>Kitodo-Command</module>
         <module>Kitodo</module>
     </modules>
 
