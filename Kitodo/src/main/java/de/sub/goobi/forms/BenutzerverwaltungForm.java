@@ -244,7 +244,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String addToGroup() {
         Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            UserGroup usergroup = serviceManager.getUserGroupService().find(gruppenID);
+            UserGroup usergroup = serviceManager.getUserGroupService().getById(gruppenID);
             for (UserGroup b : this.myClass.getUserGroups()) {
                 if (b.equals(usergroup)) {
                     return null;
@@ -283,7 +283,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String zuProjektHinzufuegen() {
         Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            Project project = serviceManager.getProjectService().find(projektID);
+            Project project = serviceManager.getProjectService().getById(projektID);
             for (Project p : this.myClass.getProjects()) {
                 if (p.equals(project)) {
                     return null;
@@ -315,7 +315,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         Helper.getHibernateSession().flush();
         Helper.getHibernateSession().clear();
         try {
-            this.myClass = serviceManager.getUserService().find(inMyClass.getId());
+            this.myClass = serviceManager.getUserService().getById(inMyClass.getId());
         } catch (DAOException e) {
             this.myClass = inMyClass;
         }
@@ -338,7 +338,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public void setLdapGruppeAuswahl(Integer inAuswahl) {
         if (inAuswahl != 0) {
             try {
-                this.myClass.setLdapGroup(serviceManager.getLdapGroupService().find(inAuswahl));
+                this.myClass.setLdapGroup(serviceManager.getLdapGroupService().getById(inAuswahl));
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Error on writing to database", "");
                 logger.error(e);
@@ -351,7 +351,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public List<SelectItem> getLdapGruppeAuswahlListe() throws DAOException {
         List<SelectItem> myLdapGruppen = new ArrayList<>();
-        List<LdapGroup> temp = serviceManager.getLdapGroupService().search("from LdapGroup ORDER BY title");
+        List<LdapGroup> temp = serviceManager.getLdapGroupService().getByQuery("from LdapGroup ORDER BY title");
         for (LdapGroup gru : temp) {
             myLdapGruppen.add(new SelectItem(gru.getId(), gru.getTitle(), null));
         }
@@ -393,7 +393,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public void loadMyClass() {
         try {
             if (!Objects.equals(this.userId, 0)) {
-                setMyClass(this.serviceManager.getUserService().find(this.userId));
+                setMyClass(this.serviceManager.getUserService().getById(this.userId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving user with ID '" + this.userId + "'; ", e.getMessage());

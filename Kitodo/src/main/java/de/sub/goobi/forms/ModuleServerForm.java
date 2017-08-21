@@ -390,7 +390,7 @@ public class ModuleServerForm implements Serializable {
     public static Process getProcessFromShortSession(String sessionId) throws GoobiException {
         String prozessidStr = getProcessIDFromShortSession(sessionId);
         try {
-            Process tempProz = serviceManager.getProcessService().find(Integer.parseInt(prozessidStr));
+            Process tempProz = serviceManager.getProcessService().getById(Integer.parseInt(prozessidStr));
             Helper.getHibernateSession().flush();
             Helper.getHibernateSession().clear();
             if (tempProz != null && tempProz.getId() != null) {

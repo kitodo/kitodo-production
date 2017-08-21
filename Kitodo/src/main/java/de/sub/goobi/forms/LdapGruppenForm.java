@@ -75,7 +75,7 @@ public class LdapGruppenForm extends BasisForm {
      * @return page or empty String
      */
     public String filterKein() {
-        List<LdapGroup> ldapGroups = serviceManager.getLdapGroupService().findAll();
+        List<LdapGroup> ldapGroups = serviceManager.getLdapGroupService().getAll();
         this.page = new Page(0, ldapGroups);
         return "/pages/LdapGruppenAlle";
     }
@@ -87,7 +87,7 @@ public class LdapGruppenForm extends BasisForm {
     public void loadLdapGroup() {
         try {
             if (!Objects.equals(this.itemId, 0)) {
-                setMyLdapGruppe(this.serviceManager.getLdapGroupService().find(this.itemId));
+                setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(this.itemId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving Ldap group with ID '" + this.itemId + "'; ", e.getMessage());

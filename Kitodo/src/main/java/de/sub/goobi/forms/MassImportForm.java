@@ -103,7 +103,7 @@ public class MassImportForm implements Serializable {
      */
     public String prepare(int id) {
         try {
-            this.template = serviceManager.getProcessService().find(id);
+            this.template = serviceManager.getProcessService().getById(id);
         } catch (DAOException e) {
             logger.error(e.getMessage());
             return null;

@@ -266,7 +266,7 @@ public class ProzesskopieForm implements Serializable {
     public String prepare(int id) {
         atstsl = "";
         try {
-            this.prozessVorlage = serviceManager.getProcessService().find(id);
+            this.prozessVorlage = serviceManager.getProcessService().getById(id);
         } catch (DAOException e) {
             logger.error(e.getMessage());
             Helper.setFehlerMeldung("Process " + id + " not found.");
@@ -404,7 +404,7 @@ public class ProzesskopieForm implements Serializable {
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         User aktuellerNutzer = loginForm.getMyBenutzer();
         try {
-            aktuellerNutzer = serviceManager.getUserService().find(loginForm.getMyBenutzer().getId());
+            aktuellerNutzer = serviceManager.getUserService().getById(loginForm.getMyBenutzer().getId());
         } catch (DAOException e) {
             logger.error(e);
         }
@@ -624,7 +624,7 @@ public class ProzesskopieForm implements Serializable {
      */
     public String templateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
-        Process tempProzess = serviceManager.getProcessService().find(this.auswahl);
+        Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
             /* erstes Werkstück durchlaufen */
             Workpiece werk = tempProzess.getWorkpieces().get(0);
@@ -1071,7 +1071,7 @@ public class ProzesskopieForm implements Serializable {
         /* damit die Sortierung stimmt nochmal einlesen */
         Helper.getHibernateSession().refresh(this.prozessKopie);
 
-        List<Task> tasks = serviceManager.getProcessService().find(prozessKopie.getId()).getTasks();
+        List<Task> tasks = serviceManager.getProcessService().getById(prozessKopie.getId()).getTasks();
         for (Task t : tasks) {
             if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
                 TaskScriptThread myThread = new TaskScriptThread(t);

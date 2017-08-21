@@ -87,7 +87,7 @@ public class LoginForm implements Serializable {
             /* prüfen, ob schon ein Benutzer mit dem Login existiert */
             List<User> treffer;
             try {
-                treffer = serviceManager.getUserService().search("from User where login = :username", "username",
+                treffer = serviceManager.getUserService().getByQuery("from User where login = :username", "username",
                         this.login);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not read database", e.getMessage());
@@ -183,7 +183,7 @@ public class LoginForm implements Serializable {
         this.myBenutzer = null;
         Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            this.myBenutzer = serviceManager.getUserService().find(loginId);
+            this.myBenutzer = serviceManager.getUserService().getById(loginId);
             /* in der Session den Login speichern */
             SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
             temp.sessionBenutzerAktualisieren(
@@ -213,7 +213,7 @@ public class LoginForm implements Serializable {
                 /* wenn alles korrekt, dann jetzt speichern */
                 Ldap myLdap = new Ldap();
                 myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
-                User temp = serviceManager.getUserService().find(this.myBenutzer.getId());
+                User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
                 temp.setPasswordDecrypted(this.passwortAendernNeu1);
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
@@ -234,7 +234,7 @@ public class LoginForm implements Serializable {
      */
     public String BenutzerkonfigurationSpeichern() {
         try {
-            User temp = serviceManager.getUserService().find(this.myBenutzer.getId());
+            User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
             temp.setTableSize(this.myBenutzer.getTableSize());
             temp.setMetadataLanguage(this.myBenutzer.getMetadataLanguage());
             temp.setConfigProductionDateShow(this.myBenutzer.isConfigProductionDateShow());

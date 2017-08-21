@@ -124,7 +124,7 @@ public class HelperForm implements Serializable {
 
     public List<SelectItem> getRegelsaetze() throws DAOException {
         List<SelectItem> myPrefs = new ArrayList<>();
-        List<Ruleset> temp = serviceManager.getRulesetService().search("from Ruleset ORDER BY title");
+        List<Ruleset> temp = serviceManager.getRulesetService().getByQuery("from Ruleset ORDER BY title");
         for (Ruleset ruleset : temp) {
             myPrefs.add(new SelectItem(ruleset, ruleset.getTitle(), null));
         }
@@ -134,7 +134,7 @@ public class HelperForm implements Serializable {
     public List<SelectItem> getDockets() {
         List<SelectItem> answer = new ArrayList<>();
         try {
-            List<Docket> temp = serviceManager.getDocketService().search("from Docket ORDER BY title");
+            List<Docket> temp = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
             for (Docket d : temp) {
                 answer.add(new SelectItem(d, d.getTitle(), null));
             }
