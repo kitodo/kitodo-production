@@ -263,7 +263,7 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
 
     @Override
     public TemplateDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
-        return null;
+        return new TemplateDTO();
     }
 
     /**

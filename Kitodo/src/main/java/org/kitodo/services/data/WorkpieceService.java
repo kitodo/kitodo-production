@@ -250,7 +250,7 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
 
     @Override
     public WorkpieceDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
-        return null;
+        return new WorkpieceDTO();
     }
 
     /**
