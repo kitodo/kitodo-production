@@ -19,7 +19,6 @@ import de.sub.goobi.helper.TreeNode;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -672,7 +671,7 @@ public class Metadaten {
         Modes.setBindState(BindState.edit);
         try {
             Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
-            this.process = serviceManager.getProcessService().find(id);
+            this.process = serviceManager.getProcessService().getById(id);
         } catch (NumberFormatException | DAOException e1) {
             Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
             return Helper.getRequestParameter("zurueck");
@@ -1792,7 +1791,7 @@ public class Metadaten {
                                 this.imageRotation);
                         logger.trace("scaleFile");
                     } catch (Exception e) {
-                        Helper.setFehlerMeldung("could not find image folder", e);
+                        Helper.setFehlerMeldung("could not getById image folder", e);
                         logger.error(e);
                     }
                     break;
@@ -3221,7 +3220,7 @@ public class Metadaten {
 
     /**
      * Checks whether a given meta-data group type is available for adding. This
-     * can be used by a RenderableMetadataGroup to find out whether it can be
+     * can be used by a RenderableMetadataGroup to getById out whether it can be
      * copied or not.
      *
      * @param type

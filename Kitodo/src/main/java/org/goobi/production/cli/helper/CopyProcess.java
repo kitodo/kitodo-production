@@ -135,7 +135,7 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public String prepare(int id) {
         try {
-            this.prozessVorlage = serviceManager.getProcessService().find(id);
+            this.prozessVorlage = serviceManager.getProcessService().getById(id);
         } catch (DAOException e) {
             logger.error(e.getMessage());
             return null;
@@ -401,7 +401,7 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public String templateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
-        Process tempProzess = serviceManager.getProcessService().find(this.auswahl);
+        Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
             /* erstes Werkstück durchlaufen */
             Workpiece werk = tempProzess.getWorkpieces().get(0);

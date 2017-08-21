@@ -36,7 +36,6 @@ import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -201,7 +200,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         Process process = null;
         try {
             if (processesIterator == null) {
-                batch = serviceManager.getBatchService().find(batchId);
+                batch = serviceManager.getBatchService().getById(batchId);
                 processesIterator = batch.getProcesses().iterator();
             }
             if (action == 1) {

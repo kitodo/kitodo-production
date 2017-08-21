@@ -91,7 +91,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                             if (size == list.size()) {
                                 hotfolder.lock();
                                 logger.trace("9");
-                                Process template = serviceManager.getProcessService().find(hotfolder.getTemplate());
+                                Process template = serviceManager.getProcessService().getById(hotfolder.getTemplate());
                                 serviceManager.getProcessService().refresh(template);
                                 logger.trace("10");
                                 List<URI> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
@@ -279,7 +279,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         URI anchorUri = fileService.createResource(dir,
                                 processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                         fileService.delete(anchorUri);
-                        List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
+                        List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
                         for (Task t : tasks) {
                             if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
                                 TaskScriptThread myThread = new TaskScriptThread(t);

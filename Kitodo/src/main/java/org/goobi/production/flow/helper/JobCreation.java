@@ -107,7 +107,7 @@ public class JobCreation {
                 p = cp.createProcess(io);
                 if (p != null && p.getId() != null) {
                     moveFiles(metsfile, basepath, p);
-                    List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
+                    List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
                     for (Task t : tasks) {
                         if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
                             Thread myThread = new TaskScriptThread(t);

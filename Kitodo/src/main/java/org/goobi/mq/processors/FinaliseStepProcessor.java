@@ -58,7 +58,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     protected void process(MapMessageObjectReader ticket) throws Exception {
         AktuelleSchritteForm dialog = new AktuelleSchritteForm();
         Integer stepID = ticket.getMandatoryInteger("id");
-        dialog.setMySchritt(serviceManager.getTaskService().find(stepID));
+        dialog.setMySchritt(serviceManager.getTaskService().getById(stepID));
         if (ticket.hasField("properties")) {
             updateProperties(dialog, ticket.getMapOfStringToString("properties"));
         }
