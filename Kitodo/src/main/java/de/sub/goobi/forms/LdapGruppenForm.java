@@ -36,7 +36,7 @@ public class LdapGruppenForm extends BasisForm {
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
         this.itemId = 0;
-        return "/newpages/LdapGruppenBearbeiten?faces-redirect=true";
+        return "/pages/LdapGruppenBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -47,7 +47,7 @@ public class LdapGruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
-            return "/newpages/LdapGruppenAlle?faces-redirect=true";
+            return "/pages/LdapGruppenAlle?faces-redirect=true";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Could not save", e.getMessage());
             return null;
@@ -66,7 +66,7 @@ public class LdapGruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
             return null;
         }
-        return "/newpages/LdapGruppenAlle";
+        return "/pages/LdapGruppenAlle";
     }
 
     /**
@@ -77,7 +77,7 @@ public class LdapGruppenForm extends BasisForm {
     public String filterKein() {
         List<LdapGroup> ldapGroups = serviceManager.getLdapGroupService().findAll();
         this.page = new Page(0, ldapGroups);
-        return "/newpages/LdapGruppenAlle";
+        return "/pages/LdapGruppenAlle";
     }
 
     /**

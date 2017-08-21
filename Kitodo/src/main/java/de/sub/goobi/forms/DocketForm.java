@@ -48,7 +48,7 @@ public class DocketForm extends BasisForm {
     public String Neu() {
         this.myDocket = new Docket();
         this.docketId = 0;
-        return "/newpages/DocketEdit?faces-redirect=true";
+        return "/pages/DocketEdit?faces-redirect=true";
     }
 
     /**
@@ -60,7 +60,7 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return "/newpages/DocketList?faces-redirect=true";
+                return "/pages/DocketList?faces-redirect=true";
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
@@ -94,7 +94,7 @@ public class DocketForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return "/newpages/DocketList?faces-redirect=true";
+        return "/pages/DocketList?faces-redirect=true";
     }
 
     private boolean hasAssignedProcesses(Docket d) throws DataException {
@@ -111,7 +111,7 @@ public class DocketForm extends BasisForm {
     public String filterKein() {
         List<Docket> dockets = serviceManager.getDocketService().findAll();
         this.page = new Page(0, dockets);
-        return "/newpages/DocketList";
+        return "/pages/DocketList";
     }
 
     /**

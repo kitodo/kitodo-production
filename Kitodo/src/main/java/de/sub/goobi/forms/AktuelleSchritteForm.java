@@ -167,7 +167,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("error on reading database", he.getMessage());
             return null;
         }
-        return "/newpages/AktuelleSchritteAlle";
+        return "/pages/AktuelleSchritteAlle";
     }
 
     /**
@@ -293,7 +293,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } finally {
             this.flagWaitLock.unlock();
         }
-        return "/newpages/AktuelleSchritteBearbeiten";
+        return "/pages/AktuelleSchritteBearbeiten";
     }
 
     /**
@@ -305,7 +305,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         Helper.getHibernateSession().refresh(mySchritt);
 
-        return "/newpages/AktuelleSchritteBearbeiten";
+        return "/pages/AktuelleSchritteBearbeiten";
     }
 
     /**
@@ -394,7 +394,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "/newpages/batchesEdit";
+        return "/pages/batchesEdit";
     }
 
     /**
@@ -429,7 +429,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
             currentStepsOfBatch = crit.list();
         } else {
-            return "/newpages/AktuelleSchritteBearbeiten";
+            return "/pages/AktuelleSchritteBearbeiten";
         }
         // if only one step is assigned for this batch, use the single
 
@@ -437,10 +437,10 @@ public class AktuelleSchritteForm extends BasisForm {
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
-            return "/newpages/AktuelleSchritteBearbeiten";
+            return "/pages/AktuelleSchritteBearbeiten";
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "/newpages/batchesEdit";
+        return "/pages/batchesEdit";
     }
 
     @Deprecated
@@ -477,7 +477,7 @@ public class AktuelleSchritteForm extends BasisForm {
             logger.error("Task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
-        return "/newpages/AktuelleSchritteAlle";
+        return "/pages/AktuelleSchritteAlle";
     }
 
     /**

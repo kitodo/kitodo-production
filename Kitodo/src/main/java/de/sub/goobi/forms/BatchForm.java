@@ -215,7 +215,7 @@ public class BatchForm extends BasisForm {
     public String filterAlleStart() {
         filterBatches();
         filterProcesses();
-        return "/newpages/BatchesAll";
+        return "/pages/BatchesAll";
     }
 
     /**
@@ -417,7 +417,7 @@ public class BatchForm extends BasisForm {
                 try {
                     batch = serviceManager.getBatchService().find(selectedBatches.get(0));
                     this.batchHelper = new BatchProcessHelper(batch);
-                    return "/newpages/BatchProperties";
+                    return "/pages/BatchProperties";
                 } catch (DAOException e) {
                     logger.error(e);
                     Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -476,10 +476,10 @@ public class BatchForm extends BasisForm {
                         return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
                     case NEWSPAPER:
                         TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-                        return "/newpages/taskmanager";
+                        return "/pages/taskmanager";
                     case SERIAL:
                         TaskManager.addTask(new ExportSerialBatchTask(batch));
-                        return "/newpages/taskmanager";
+                        return "/pages/taskmanager";
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }

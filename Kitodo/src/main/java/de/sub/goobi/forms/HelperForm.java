@@ -49,8 +49,8 @@ public class HelperForm implements Serializable {
     private static final long serialVersionUID = -5872893771807845586L;
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(HelperForm.class);
-    public static final String MAIN_JSF_PATH = "/newpages";
-    public static final String IMAGE_PATH = "/newpages/images";
+    public static final String MAIN_JSF_PATH = "/pages";
+    public static final String IMAGE_PATH = "/pages/images";
     public static final String CSS_PATH = "/css";
 
     public String getBuildVersion() {
@@ -228,7 +228,7 @@ public class HelperForm implements Serializable {
     }
 
     public String getLogoUrl() {
-        return getServletPathWithHostAsUrl() + "/newpages/images/template/kitodo-homepage-logo.svg";
+        return getServletPathWithHostAsUrl() + "/pages/images/template/kitodo-homepage-logo.svg";
     }
 
     public boolean getMassImportAllowed() {

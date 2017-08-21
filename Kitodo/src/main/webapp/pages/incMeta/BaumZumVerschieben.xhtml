@@ -37,7 +37,7 @@
                                  closePopupOnExitingPopup="true" displayAtDistanceX="15"
                                  displayAtDistanceY="-40">
 
-                            <h:graphicImage value="/newpages/images/spacer.gif" alt=""
+                            <h:graphicImage value="/pages/images/spacer.gif" alt=""
                                             rendered="#{item.node.hasChildren}"
                                             style="border: 0px none;margin-top:1px;margin-left:#{item.niveau * 15 + 5};"/>
 
@@ -83,10 +83,10 @@
                                 </div>
                             </f:facet>
 
-                            <h:graphicImage value="/newpages/images/document.png" alt=""
+                            <h:graphicImage value="/pages/images/document.png" alt=""
                                             rendered="#{item.node.hasChildren}"
                                             style="margin-right:2px;vertical-align:middle"/>
-                            <h:graphicImage value="/newpages/images/document.png" alt=""
+                            <h:graphicImage value="/pages/images/document.png" alt=""
                                             rendered="#{!item.node.hasChildren}"
                                             style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17};"/>
 
@@ -119,7 +119,7 @@
                 <div style="border: 2px dashed silver">
                     <h:commandLink target="_self" action="#{NavigationForm.Reload}"
                                    style="margin:5px" title="#{msgs.verschiebenAbbrechen}">
-                        <h:graphicImage value="/newpages/images/buttons/cancel1.gif" alt="cancel"
+                        <h:graphicImage value="/pages/images/buttons/cancel1.gif" alt="cancel"
                                         style="border: 0px;vertical-align:middle;"/>
                         <h:outputText value="#{msgs.abbrechen}"
                                       title="#{msgs.verschiebenAbbrechen}"/>

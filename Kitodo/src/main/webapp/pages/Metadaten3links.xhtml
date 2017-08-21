@@ -21,7 +21,7 @@
     >
 
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="/newpages/inc/head.xhtml" />
+        <ui:include src="/pages/inc/head.xhtml" />
 
         <h:body style="margin:2px 2px 2px 2px;background-color:#CBE5FC;" onload="reloadRightFrame();">
 
@@ -49,7 +49,7 @@
                                              action="Metadaten3links" style="color:#E7C342;display:none">
                             </t:commandButton>
 
-                            <h:graphicImage id="veid3" alt="print" url="/newpages/images/print.png"
+                            <h:graphicImage id="veid3" alt="print" url="/pages/images/print.png"
                                             onclick="self.window.print()" styleClass="action"
                                             style="position:absolute;right:5px"/>
 
@@ -61,10 +61,10 @@
                                     <h:commandLink action="#{NavigationForm.Reload}" target="links">
                                         <t:updateActionListener property="#{item.node.expanded}"
                                                                 value="#{not item.node.expanded}"/>
-                                        <h:graphicImage value="/newpages/images/plus.gif" alt=""
+                                        <h:graphicImage value="/pages/images/plus.gif" alt=""
                                                         rendered="#{item.node.hasChildren and not item.node.expanded}"
                                                         style="border: 0px none;margin-top:0px;margin-right:3px;margin-left:#{item.niveau * 10 + 5}px;"/>
-                                        <h:graphicImage value="/newpages/images/minus.gif" alt=""
+                                        <h:graphicImage value="/pages/images/minus.gif" alt=""
                                                         rendered="#{item.node.hasChildren and item.node.expanded}"
                                                         style="border: 0px none;margin-top:0px;margin-right:3px;margin-left:#{item.niveau * 10 + 5}px;"/>
                                     </h:commandLink>
@@ -116,10 +116,10 @@
                                             </div>
                                         </f:facet>
 
-                                        <h:graphicImage value="/newpages/images/document.png" alt=""
+                                        <h:graphicImage value="/pages/images/document.png" alt=""
                                                         rendered="#{item.node.hasChildren}"
                                                         style="margin-right:2px;vertical-align:middle"/>
-                                        <h:graphicImage value="/newpages/images/document.png" alt=""
+                                        <h:graphicImage value="/pages/images/document.png" alt=""
                                                         rendered="#{!item.node.hasChildren}"
                                                         style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17}px;"/>
 
