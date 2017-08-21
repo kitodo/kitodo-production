@@ -95,8 +95,19 @@ public class BatchDAO extends BaseDAO {
     }
 
     /**
-     * The method removeAll() removes all batches specified by the given IDs
-     * from the database.
+     * Count all rows in database.
+     * 
+     * @param query
+     *            for counting objects
+     * @return amount of rows in database according to given query
+     */
+    public Long count(String query) throws DAOException {
+        return retrieveAmount(query);
+    }
+
+    /**
+     * The method removeAll() removes all batches specified by the given IDs from
+     * the database.
      *
      * @param ids
      *            of batches to delete
@@ -111,8 +122,8 @@ public class BatchDAO extends BaseDAO {
     }
 
     /**
-     * The function reattach() reattaches a batch to a Hibernate session, i.e.
-     * for accessing properties that are lazy loaded.
+     * The function reattach() reattaches a batch to a Hibernate session, i.e. for
+     * accessing properties that are lazy loaded.
      *
      * @param batch
      *            object to reattach

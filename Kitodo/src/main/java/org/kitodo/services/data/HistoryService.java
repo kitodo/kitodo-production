@@ -109,6 +109,16 @@ public class HistoryService extends SearchService<History> {
         return historyDAO.search(query);
     }
 
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return historyDAO.count("FROM History");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return historyDAO.count(query);
+    }
+
     /**
      * Method removes history object from database.
      *

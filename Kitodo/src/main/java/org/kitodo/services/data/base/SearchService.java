@@ -97,6 +97,22 @@ public abstract class SearchService<T extends BaseBean> {
     public abstract List<T> search(String query) throws DAOException;
 
     /**
+     * Count all rows in database.
+     *
+     * @return amount of all rows
+     */
+    public abstract Long countDatabaseRows() throws DAOException;
+
+    /**
+     * Count rows in database according to given query.
+     *
+     * @param query
+     *            for database search
+     * @return amount of rows in database according to given query
+     */
+    public abstract Long countDatabaseRows(String query) throws DAOException;
+
+    /**
      * Method removes object from database.
      *
      * @param baseBean
@@ -249,6 +265,26 @@ public abstract class SearchService<T extends BaseBean> {
                 }
             }
         }
+    }
+
+    /**
+     * Count all objects in index.
+     *
+     * @return amount of all objects
+     */
+    public Long count() throws DataException {
+        return searcher.countDocuments();
+    }
+
+    /**
+     * Count objects according to given query.
+     *
+     * @param query
+     *            for index search
+     * @return amount of objects according to given query
+     */
+    public Long count(String query) throws DataException {
+        return searcher.countDocuments(query);
     }
 
     /**

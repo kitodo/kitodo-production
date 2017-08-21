@@ -116,6 +116,16 @@ public class BatchService extends TitleSearchService<Batch> {
         return batchDAO.search(query);
     }
 
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return batchDAO.count("FROM Batch");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return batchDAO.count(query);
+    }
+
     /**
      * Method removes batch object from database.
      *

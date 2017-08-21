@@ -126,13 +126,14 @@ public class WorkpieceService extends SearchService<Workpiece> {
         return workpieceDAO.search(query);
     }
 
-    /**
-     * Count all workpieces.
-     *
-     * @return amount of all workpieces
-     */
-    public Long count() throws DataException {
-        return searcher.countDocuments();
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return workpieceDAO.count("FROM Workpiece");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return workpieceDAO.count(query);
     }
 
     /**
