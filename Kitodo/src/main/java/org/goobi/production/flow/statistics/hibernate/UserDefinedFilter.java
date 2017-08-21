@@ -190,7 +190,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     /**
      * creates an ID list from the criteria in parameter.
      *
-     * @param crit
+     * @param crit as Criteria object
      */
     @SuppressWarnings("unchecked")
     private void createIDListFromCriteria(Criteria crit) {

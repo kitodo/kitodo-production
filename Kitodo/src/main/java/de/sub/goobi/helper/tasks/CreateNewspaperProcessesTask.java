@@ -296,8 +296,6 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            issues to add
      * @param publicationRun
      *            verbal description of the course of appearance
-     * @throws TypeNotAllowedForParentException
-     *             if this DocStruct is not allowed for a parent
      */
     private void createLogicalStructure(ProzesskopieForm newProcess, List<IndividualIssue> issues,
             String publicationRun) {
@@ -400,9 +398,6 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            list of individual issues in the process
      * @param processTitle
      *            the title of the process
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
      */
     private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle) throws DataException {
         if (createBatches != null) {

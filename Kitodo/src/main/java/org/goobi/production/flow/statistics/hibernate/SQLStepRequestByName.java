@@ -116,8 +116,10 @@ public class SQLStepRequestByName extends SQLGenerator {
     }
 
     /**
+     * Check if sorting is included.
      *
      * @param include
+     *            as Boolean
      * @return SQL snippet for Order by clause
      */
 
@@ -130,8 +132,10 @@ public class SQLStepRequestByName extends SQLGenerator {
     }
 
     /**
+     * Check if listing is included.
      *
      * @param include
+     *            as Boolean
      * @return SQL snippet for Select clause
      */
     private String addedListing(Boolean include) {
@@ -143,8 +147,10 @@ public class SQLStepRequestByName extends SQLGenerator {
     }
 
     /**
+     * Check if grouping is included.
      *
      * @param include
+     *            as Boolean
      * @return SQL snippet for Group by clause
      */
     private String addedGrouping(Boolean include) {
@@ -156,10 +162,12 @@ public class SQLStepRequestByName extends SQLGenerator {
     }
 
     /**
+     * Get SQL max task order.
      *
      * @param eventSelection
-     * @return SQL String to retrieve the highest numericvalue (stepOrder) for
-     *         the event defined in eventSelection
+     *            as HistoryTypeEnum
+     * @return SQL String to retrieve the highest numericValue (stepOrder) for the
+     *         event defined in eventSelection
      */
     public String getSQLMaxStepOrder(HistoryTypeEnum eventSelection) {
 
@@ -183,10 +191,12 @@ public class SQLStepRequestByName extends SQLGenerator {
     }
 
     /**
-     *
+     * Get SQL min task order.
+     * 
      * @param eventSelection
-     * @return SQL String to retrieve the lowest numericvalue (stepOrder) for
-     *         the event defined in eventSelection
+     *            as HistoryTypeEnum
+     * @return SQL String to retrieve the lowest numericValue (stepOrder) for the
+     *         event defined in eventSelection
      */
     public String getSQLMinStepOrder(HistoryTypeEnum eventSelection) {
 

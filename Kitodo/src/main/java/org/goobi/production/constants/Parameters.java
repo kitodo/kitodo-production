@@ -53,11 +53,6 @@ public class Parameters {
     public static final String CATALOGUE_TIMEOUT = "catalogue.timeout";
 
     /**
-     * Points to a folder on the file system that contains Production
-     * configuration files.
-     */
-
-    /**
      * Whether during an export to the DMS the images will be copied. Defaults
      * to true.
      */

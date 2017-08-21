@@ -145,6 +145,7 @@ class GetOpac {
      * @param query
      *            The query string you are looking for.
      * @param timeout
+     *            http.socket.timeout for catalog
      * @return returns the number of hits.
      * @throws IOException
      *             If connection to catalogue system failed
@@ -164,6 +165,7 @@ class GetOpac {
      *            the number of hits to return. Set to a value lesser than 1 to
      *            return all hits.
      * @param timeout
+     *            http.socket.timeout for catalog
      * @return returns the root node of the retrieved and formatted xml.
      * @throws IOException
      *             If connection to catalogue system failed
@@ -184,6 +186,7 @@ class GetOpac {
      * @param end
      *            The index of the first result NOT to be returned
      * @param timeout
+     *            http.socket.timeout for catalog
      * @return returns the root node of the retrieved and formatted xml.
      * @throws IOException
      *             If connection to catalogue system failed
@@ -206,6 +209,7 @@ class GetOpac {
      *            The index of the first result NOT to be returned. Set to -1 to
      *            return all hits from the start.
      * @param timeout
+     *            http.socket.timeout for catalog
      * @return returns the root node of the retrieved xml. Beware, it is raw and
      *         pretty messy! It is recommended that you use
      *         retrieveXMLPicaPlus()
@@ -256,6 +260,7 @@ class GetOpac {
      * @param numberOfHits
      *            The index of the hit to return
      * @param timeout
+     *            http.socket.timeout for catalog
      * @throws IOException
      *             If the connection failed
      */
@@ -273,6 +278,7 @@ class GetOpac {
      * @param query
      *            The query you are looking for.
      * @param timeout
+     *            http.socket.timeout for catalog
      * @return The search result as xml string.
      * @throws IOException
      *             If connection to catalogue system failed.

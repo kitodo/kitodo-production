@@ -413,16 +413,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws DAOException
-     *             if an error occurs while saving the fact that the process has
-     *             been swapped back in to the database
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
-     * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while
-     *             it is waiting for the shell script to create the directory to
-     *             finish
      */
     static String getMetsPointerURL(Process process) throws PreferencesException, ReadException, IOException {
         VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),

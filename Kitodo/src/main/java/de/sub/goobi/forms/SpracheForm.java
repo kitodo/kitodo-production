@@ -143,9 +143,6 @@ public class SpracheForm implements Serializable {
     /**
      * The procedure switchLanguage is called from /pages/Metadaten2oben.xhtml
      * to switch the language.
-     *
-     * @return the empty String to point to the JSF framework to remain on the
-     *         current page
      */
     public void switchLanguage() throws IOException {
         String languageCodeCombined = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale()
@@ -173,7 +170,7 @@ public class SpracheForm implements Serializable {
             } else
                 return frame.getLocale();
         } else {
-            /**
+            /*
              * When no locale is given (no Accept-Language Http Request header
              * is present) return default language
              */

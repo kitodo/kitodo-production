@@ -47,8 +47,8 @@ class Converter {
     /**
      * constructor (parameterless constructor is set to private).
      *
-     * @param Object
-     *            which will get converted
+     * @param obj
+     *            as Object which will get converted
      */
     protected Converter(Object obj) {
         this();
