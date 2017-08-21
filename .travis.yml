@@ -13,7 +13,7 @@ jdk:
 sudo: required
 
 addons:
-  firefox: "53.0"
+  firefox: "55.0"
 
 
 env: DB=mysql
@@ -27,6 +27,7 @@ script: mvn clean install -Pselenium,all-tests,flyway,checkstyle-findbugs,!devel
 install: true
 
 before_install:
+
 
 before_script:
   - cp config/database.yml.travis config/database.yml
