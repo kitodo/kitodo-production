@@ -112,6 +112,7 @@ public class PropertyDAO extends BaseDAO {
      * 
      * @return a list of titles.
      */
+    @SuppressWarnings("unchecked")
     public List<String> findWorkpiecePropertiesTitlesDistinct() {
         Session session = Helper.getHibernateSession();
         Query query = session
@@ -125,6 +126,7 @@ public class PropertyDAO extends BaseDAO {
      * 
      * @return a list of titles.
      */
+    @SuppressWarnings("unchecked")
     public List<String> findTemplatePropertiesTitlesDistinct() {
         Session session = Helper.getHibernateSession();
         Query query = session
@@ -138,6 +140,7 @@ public class PropertyDAO extends BaseDAO {
      * 
      * @return a list of titles.
      */
+    @SuppressWarnings("unchecked")
     public List<String> findProcessPropertiesTitlesDistinct() {
         Session session = Helper.getHibernateSession();
         Query query = session

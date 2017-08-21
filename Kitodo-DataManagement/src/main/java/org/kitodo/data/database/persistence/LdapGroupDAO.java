@@ -69,6 +69,7 @@ public class LdapGroupDAO extends BaseDAO {
      * 
      * @return a list of ldapgroups
      */
+    @SuppressWarnings("unchecked")
     public List<LdapGroup> findAll() {
         return retrieveAllObjects(LdapGroup.class);
     }

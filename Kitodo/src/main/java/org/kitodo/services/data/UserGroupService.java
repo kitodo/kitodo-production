@@ -228,6 +228,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
+    @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userGroupType);

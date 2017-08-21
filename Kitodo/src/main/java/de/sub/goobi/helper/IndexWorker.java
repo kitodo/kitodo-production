@@ -33,6 +33,7 @@ public class IndexWorker<T> implements Runnable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void run() {
         this.indexedObjects = 0;
         try {
