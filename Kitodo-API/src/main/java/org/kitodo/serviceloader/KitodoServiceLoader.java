@@ -30,7 +30,7 @@ import org.apache.logging.log4j.Logger;
 
 public class KitodoServiceLoader<T> {
     private Class clazz;
-    private String pluginPath;
+    private String modulePath;
     private static final Logger logger = LogManager.getLogger(KitodoServiceLoader.class);
 
     /**
@@ -38,12 +38,12 @@ public class KitodoServiceLoader<T> {
      * 
      * @param clazz
      *            interface class of module to load
-     * @param pluginPath
-     *            path to plugin folder
+     * @param modulePath
+     *            path to module folder
      */
-    public KitodoServiceLoader(Class clazz, String pluginPath) {
+    public KitodoServiceLoader(Class clazz, String modulePath) {
         this.clazz = clazz;
-        this.pluginPath = pluginPath;
+        this.modulePath = modulePath;
     }
 
     /**
@@ -66,11 +66,11 @@ public class KitodoServiceLoader<T> {
      * find them.
      */
     private void loadModulesIntoClasspath() {
-        Path pluginFolder = FileSystems.getDefault().getPath(pluginPath);
+        Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
         URLClassLoader sysLoader;
         try {
-            DirectoryStream<Path> stream = Files.newDirectoryStream(pluginFolder, "*.jar");
+            DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar");
             for (Path f : stream) {
                 File loc = new File(f.toString());
                 sysLoader = (URLClassLoader) this.getClass().getClassLoader();
