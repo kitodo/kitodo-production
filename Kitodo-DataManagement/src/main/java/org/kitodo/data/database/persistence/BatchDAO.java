@@ -38,7 +38,11 @@ public class BatchDAO extends BaseDAO {
      *             if a HibernateException is thrown
      */
     public Batch find(Integer id) throws DAOException {
-        return (Batch) retrieveObject(Batch.class, id);
+        Batch result = (Batch) retrieveObject(Batch.class, id);
+        if (result == null) {
+            throw new DAOException("Object can not be found in database");
+        }
+        return result;
     }
 
     /**

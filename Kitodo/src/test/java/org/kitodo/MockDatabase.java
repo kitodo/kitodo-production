@@ -69,7 +69,9 @@ public class MockDatabase {
         Map settingsMap = prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
         Settings settings = Settings.builder().put(settingsMap).build();
 
-        if (serviceManager.getBatchService().getById(1) == null) {
+        try {
+            serviceManager.getBatchService().getById(1);
+        } catch (DAOException e) {
             removeOldDataDirectories("target/" + nodeName);
 
             node = new ExtendedNode(settings, asList(Netty4Plugin.class));
