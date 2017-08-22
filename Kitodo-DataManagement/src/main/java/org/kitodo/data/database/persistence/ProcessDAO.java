@@ -69,8 +69,8 @@ public class ProcessDAO extends BaseDAO {
      * @param list
      *            of processes
      * @throws DAOException
-     *             an exception that can be thrown from the underlying
-     *             saveList() procedure failure.
+     *             an exception that can be thrown from the underlying saveList()
+     *             procedure failure.
      */
     public void saveList(List<Process> list) throws DAOException {
         List<Object> l = new ArrayList<>();
@@ -125,5 +125,33 @@ public class ProcessDAO extends BaseDAO {
     public void update(Process process) {
         Object object = process;
         updateObject(object);
+    }
+
+    /**
+     * Get all process templates.
+     * 
+     * @return list of all process templates as Process objects
+     */
+    public List<Process> getProcessTemplates() {
+        return search("FROM Process WHERE template = 0 AND inChoiceListShown = 1 ORDER BY title ASC");
+    }
+
+    /**
+     * Get process templates for users.
+     * 
+     * @param projects
+     *            list of project ids fof user's projects
+     * @return list of all process templates for user as Process objects
+     */
+    public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
+        StringBuilder query = new StringBuilder();
+        query.append("FROM Process WHERE template = 0 AND inChoiceListShown = 1 AND project_id IN ");
+        for (Integer projectId : projects) {
+            query.append(projectId);
+            query.append(", ");
+        }
+        query.setLength(query.length() - 2);
+        query.append(" ORDER BY title ASC");
+        return search(query.toString());
     }
 }
