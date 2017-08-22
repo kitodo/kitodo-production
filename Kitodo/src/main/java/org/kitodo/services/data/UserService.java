@@ -485,7 +485,7 @@ public class UserService extends SearchService<User, UserDTO> {
      *
      * @return a list of all visible users as UserDTO
      */
-    public List<UserDTO> getAllVisibleUsers() throws DataException {
+    public List<UserDTO> findAllVisibleUsers() throws DataException {
         List<JSONObject> jsonObjects = findAllDocuments();
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
@@ -495,7 +495,7 @@ public class UserService extends SearchService<User, UserDTO> {
      *
      * @return a list of all active users as UserDTO
      */
-    public List<UserDTO> getAllActiveUsers() throws DataException {
+    public List<UserDTO> findAllActiveUsers() throws DataException {
         List<JSONObject> jsonObjects = findByActive(true);
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
@@ -507,7 +507,7 @@ public class UserService extends SearchService<User, UserDTO> {
      *            the name filter
      * @return a list of filtered users
      */
-    public List<UserDTO> getActiveUsersByName(String name) throws DataException {
+    public List<UserDTO> findActiveUsersByName(String name) throws DataException {
         List<JSONObject> jsonObjects = findByActiveAndName(true, name);
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
