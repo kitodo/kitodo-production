@@ -53,12 +53,6 @@ import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.goobi.production.plugin.PluginLoader;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -393,40 +387,39 @@ public class ProzesskopieForm implements Serializable {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProzessTemplates() {
-        List<SelectItem> myProzessTemplates = new ArrayList<>();
-        Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Process.class);
-        crit.add(Restrictions.eq("template", Boolean.FALSE));
-        crit.add(Restrictions.eq("inChoiceListShown", Boolean.TRUE));
-        crit.addOrder(Order.asc("title"));
+        List<SelectItem> processTemplates = new ArrayList<>();
 
         /* Einschränkung auf bestimmte Projekte, wenn kein Admin */
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        User aktuellerNutzer = loginForm.getMyBenutzer();
-        try {
-            aktuellerNutzer = serviceManager.getUserService().getById(loginForm.getMyBenutzer().getId());
-        } catch (DAOException e) {
-            logger.error(e);
-        }
-        if (aktuellerNutzer != null) {
-            /*
-             * wenn die maximale Berechtigung nicht Admin ist, dann nur
-             * bestimmte
-             */
-            if (loginForm.getMaximaleBerechtigung() > 1) {
-                Hibernate.initialize(aktuellerNutzer);
-                Disjunction dis = Restrictions.disjunction();
-                for (Project proj : aktuellerNutzer.getProjects()) {
-                    dis.add(Restrictions.eq("project", proj));
+        List<Process> processes = serviceManager.getProcessService().getProcessTemplates();
+        if (loginForm != null) {
+            User currentUser = loginForm.getMyBenutzer();
+            try {
+                currentUser = serviceManager.getUserService().getById(loginForm.getMyBenutzer().getId());
+            } catch (DAOException e) {
+                logger.error(e);
+            }
+            if (currentUser != null) {
+                /*
+                 * wenn die maximale Berechtigung nicht Admin ist, dann nur
+                 * bestimmte
+                 */
+                if (loginForm.getMaximaleBerechtigung() > 1) {
+                    ArrayList<Integer> projectIds = new ArrayList<>();
+                    for (Project project : currentUser.getProjects()) {
+                        projectIds.add(project.getId());
+                    }
+                    if (projectIds.size() > 0) {
+                        processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
+                    }
                 }
-                crit.add(dis);
             }
         }
 
-        for (Object proz : crit.list()) {
-            myProzessTemplates.add(new SelectItem(((Process) proz).getId(), ((Process) proz).getTitle(), null));
+        for (Process process : processes) {
+            processTemplates.add(new SelectItem(process.getId(), process.getTitle(), null));
         }
-        return myProzessTemplates;
+        return processTemplates;
     }
 
     /**
