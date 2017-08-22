@@ -1084,4 +1084,20 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
                 login.getMyBenutzer().getId(), 10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
+    public List<Task> getCurrentTasksOfBatch(String title, Integer batchID) {
+        return taskDAO.getCurrentTasksOfBatch(title, batchID);
+    }
+
+    public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
+        return taskDAO.getAllTasksInBetween(orderingMax, orderingMin, processId);
+    }
+
+    public List<Task> getNextTasksForProblemSolution(Integer ordering, Integer processId) {
+        return taskDAO.getNextTasksForProblemSolution(ordering, processId);
+    }
+
+    public List<Task> getPreviousTaskForProblemReporting(Integer ordering, Integer processId) {
+        return taskDAO.getPreviousTaskForProblemReporting(ordering, processId);
+    }
 }
