@@ -626,7 +626,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *
      * @param object
      *            JSONObject as Object
-     * @return display properties as String
+     * @return display properties as Integer
      */
     protected Integer getIntegerPropertyForDTO(Object object, String key) {
         JSONObject jsonObject = (JSONObject) object;
@@ -645,7 +645,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *
      * @param object
      *            JSONObject as Object
-     * @return display properties as String
+     * @return display properties as list of Integers
      */
     protected List<Integer> getRelatedPropertyForDTO(Object object, String key) {
         JSONObject jsonObject = (JSONObject) object;
