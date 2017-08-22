@@ -123,4 +123,62 @@ public class TaskDAO extends BaseDAO {
                 "select distinct title from " + Task.class.getAnnotation(Table.class).name() + " order by title");
         return query.list();
     }
+
+    /**
+     * Get current tasks with exact title for batch with exact id.
+     * 
+     * @param title
+     *            of task as String
+     * @param batchId
+     *            id of batch as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getCurrentTasksOfBatch(String title, Integer batchId) {
+        return search("FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = '" + title
+                + "' AND batchStep = 1 AND b.id = " + batchId);
+    }
+
+    /**
+     * Get all tasks between two given ordering of tasks for given process id.
+     * 
+     * @param orderingMax
+     *            as Integer
+     * @param orderingMin
+     *            as Integer
+     * @param processId
+     *            id of process for which tasks are searched as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
+        return search("FROM Task WHERE process_id = " + processId + " AND ordering <= " + orderingMin
+                + " AND ordering >= " + orderingMax + " ORDER BY ordering ASC");
+    }
+
+    /**
+     * Get next tasks for problem solution for given process id.
+     * 
+     * @param ordering
+     *            of Task for which it searches next ones as Integer
+     * @param processId
+     *            id of process for which tasks are searched as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getNextTasksForProblemSolution(Integer ordering, Integer processId) {
+        return search(
+                "FROM Task WHERE process_id = " + processId + " AND ordering > " + ordering + " AND priority = 10");
+    }
+
+    /**
+     * Get previous tasks for problem solution for given process id.
+     * 
+     * @param ordering
+     *            of Task for which it searches previous ones as Integer
+     * @param processId
+     *            id of process for which tasks are searched as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getPreviousTaskForProblemReporting(Integer ordering, Integer processId) {
+        return search("FROM Task WHERE process_id = " + processId + " AND ordering < " + ordering
+                + " ORDER BY ordering DESC");
+    }
 }
