@@ -2409,4 +2409,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     public List<ProcessDTO> findAllNotClosedTemplates(String sort) throws DataException {
         return convertJSONObjectsToDTOs(findBySortHelperStatusAndTemplate(false, true, sort), false);
     }
+
+    public List<Process> getProcessTemplates() {
+        return processDAO.getProcessTemplates();
+    }
+
+    public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
+        return processDAO.getProcessTemplatesForUser(projects);
+    }
 }
