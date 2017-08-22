@@ -60,10 +60,6 @@ import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
@@ -306,12 +302,11 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    @SuppressWarnings("unchecked")
     public String takeOverBatch() {
         // find all steps with same batch id and step status
         List<Task> currentStepsOfBatch = new ArrayList<>();
 
-        String steptitle = this.mySchritt.getTitle();
+        String taskTitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
                 Type.LOGISTIC);
         if (batches.size() > 1) {
@@ -321,16 +316,7 @@ public class AktuelleSchritteForm extends BasisForm {
         if (batches.size() != 0) {
             Integer batchNumber = batches.iterator().next().getId();
             // only steps with same title
-            Session session = Helper.getHibernateSession();
-            Criteria crit = session.createCriteria(Task.class);
-            crit.add(Restrictions.eq("title", steptitle));
-            // only steps with same batchid
-            crit.createCriteria("process", "proc");
-            crit.createCriteria("proc.batches", "bat");
-            crit.add(Restrictions.eq("bat.id", batchNumber));
-            crit.add(Restrictions.eq("batchStep", true));
-
-            currentStepsOfBatch = crit.list();
+            currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
         } else {
             return schrittDurchBenutzerUebernehmen();
         }
@@ -395,12 +381,11 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    @SuppressWarnings("unchecked")
     public String batchesEdit() {
         // find all steps with same batch id and step status
         List<Task> currentStepsOfBatch = new ArrayList<>();
 
-        String steptitle = this.mySchritt.getTitle();
+        String taskTitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
                 Type.LOGISTIC);
         if (batches.size() > 1) {
@@ -410,17 +395,7 @@ public class AktuelleSchritteForm extends BasisForm {
         if (batches.size() != 0) {
             Integer batchNumber = batches.iterator().next().getId();
             // only steps with same title
-
-            Session session = Helper.getHibernateSession();
-            Criteria crit = session.createCriteria(Task.class);
-            crit.add(Restrictions.eq("title", steptitle));
-            // only steps with same batchid
-            crit.createCriteria("process", "proc");
-            crit.createCriteria("proc.batches", "bat");
-            crit.add(Restrictions.eq("bat.id", batchNumber));
-            crit.add(Restrictions.eq("batchStep", true));
-
-            currentStepsOfBatch = crit.list();
+            currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
         } else {
             return "/pages/AktuelleSchritteBearbeiten";
         }
@@ -569,11 +544,9 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Korrekturmeldung an vorherige Schritte.
      */
-    @SuppressWarnings("unchecked")
     public List<Task> getPreviousStepsForProblemReporting() {
-        return Helper.getHibernateSession().createCriteria(Task.class)
-                .add(Restrictions.lt("ordering", this.mySchritt.getOrdering())).addOrder(Order.desc("ordering"))
-                .createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
+        return serviceManager.getTaskService().getPreviousTaskForProblemReporting(
+                this.mySchritt.getOrdering(), this.mySchritt.getProcess().getId());
     }
 
     public int getSizeOfPreviousStepsForProblemReporting() {
@@ -585,7 +558,6 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return problem as String
      */
-    @SuppressWarnings("unchecked")
     public String reportProblem() {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
@@ -630,11 +602,9 @@ public class AktuelleSchritteForm extends BasisForm {
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
              * wieder schliessen
              */
-            List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-                    .add(Restrictions.le("ordering", this.mySchritt.getOrdering()))
-                    .add(Restrictions.gt("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
-                    .createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
-            for (Task task : alleSchritteDazwischen) {
+            List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
+                    temp.getOrdering(), this.mySchritt.getOrdering(), this.mySchritt.getProcess().getId());
+            for (Task task : allTasksInBetween) {
                 task.setProcessingStatusEnum(TaskStatus.LOCKED);
                 task = serviceManager.getTaskService().setCorrectionStep(task);
                 task.setProcessingEnd(null);
@@ -658,12 +628,9 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Problem-behoben-Meldung an nachfolgende Schritte.
      */
-    @SuppressWarnings("unchecked")
     public List<Task> getNextStepsForProblemSolution() {
-        return Helper.getHibernateSession().createCriteria(Task.class)
-                .add(Restrictions.gt("ordering", this.mySchritt.getOrdering())).add(Restrictions.eq("priority", 10))
-                .addOrder(Order.asc("ordering")).createCriteria("process")
-                .add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
+        return serviceManager.getTaskService().getNextTasksForProblemSolution(
+                this.mySchritt.getOrdering(), this.mySchritt.getProcess().getId());
     }
 
     public int getSizeOfNextStepsForProblemSolution() {
@@ -675,7 +642,6 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return String
      */
-    @SuppressWarnings("unchecked")
     public String solveProblem() {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
@@ -696,11 +662,9 @@ public class AktuelleSchritteForm extends BasisForm {
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
              * wieder schliessen
              */
-            List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-                    .add(Restrictions.ge("ordering", this.mySchritt.getOrdering()))
-                    .add(Restrictions.le("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
-                    .createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
-            for (Task task : alleSchritteDazwischen) {
+            List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
+                    temp.getOrdering(), this.mySchritt.getOrdering(), this.mySchritt.getProcess().getId());
+            for (Task task : allTasksInBetween) {
                 task.setProcessingStatusEnum(TaskStatus.DONE);
                 task.setProcessingEnd(now);
                 task.setPriority(0);
