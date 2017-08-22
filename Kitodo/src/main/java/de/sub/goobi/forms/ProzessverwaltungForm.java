@@ -173,15 +173,12 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * New.
-     *
-     * @return page
+     * Create new process.
      */
-    public String Neu() {
+    private void newProcess() {
         this.myProzess = new Process();
         this.myNewProcessTitle = "";
         this.modusBearbeiten = "prozess";
-        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -2465,8 +2462,11 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void loadMyProcess() {
         try {
-            if (!Objects.equals(this.processId, null)) {
+            if (this.processId != 0) {
                 setMyProzess(this.serviceManager.getProcessService().find(this.processId));
+            }
+            else {
+                newProcess();
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving process with ID '" + this.processId + "'; ", e.getMessage());
