@@ -258,7 +258,7 @@ public class UserService extends SearchService<User, UserDTO> {
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return userDAO.count("FROM User WHERE visible IS NULL");
+        return userDAO.count("FROM User WHERE deleted = 0");
     }
 
     @Override
