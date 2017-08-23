@@ -11,11 +11,13 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
@@ -44,6 +46,31 @@ public class HistoryServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllHistories() throws Exception {
+        HistoryService historyService = new HistoryService();
+
+        Long amount = historyService.count();
+        assertEquals("Histories were not counted correctly!", Long.valueOf(1), amount);
+    }
+
+    @Test
+    public void shouldCountAllPropertiesAccordingToQuery() throws Exception {
+        HistoryService historyService = new HistoryService();
+
+        String query = matchQuery("stringValue", "History").operator(Operator.AND).toString();
+        Long amount = historyService.count(query);
+        assertEquals("Histories were not counted correctly!", Long.valueOf(1), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForProperties() throws Exception {
+        HistoryService historyService = new HistoryService();
+
+        Long amount = historyService.countDatabaseRows();
+        assertEquals("Histories were not counted correctly!", Long.valueOf(1), amount);
     }
 
     @Test

@@ -100,6 +100,16 @@ public class FilterService extends SearchService<Filter> {
         return filterDAO.search(query);
     }
 
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return filterDAO.count("FROM Filter");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return filterDAO.count(query);
+    }
+
     /**
      * Method removes filter object from database.
      *

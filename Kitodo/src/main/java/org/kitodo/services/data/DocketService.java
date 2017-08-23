@@ -116,7 +116,13 @@ public class DocketService extends TitleSearchService<Docket> {
         return docketDAO.search(query);
     }
 
-    public Long count(String query) throws DAOException {
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return docketDAO.count("FROM Docket");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
         return docketDAO.count(query);
     }
 

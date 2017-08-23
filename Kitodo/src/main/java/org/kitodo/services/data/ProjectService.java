@@ -140,6 +140,16 @@ public class ProjectService extends TitleSearchService<Project> {
         return projectDAO.findAll();
     }
 
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return projectDAO.count("FROM Project");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return projectDAO.count(query);
+    }
+
     /**
      * Method removes project object from database.
      *

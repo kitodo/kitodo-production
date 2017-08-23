@@ -381,24 +381,14 @@ public class ProcessService extends TitleSearchService<Process> {
         return processDAO.search(query);
     }
 
-    /**
-     * Count all processes.
-     *
-     * @return amount of all processes
-     */
-    public Long count() throws DataException {
-        return searcher.countDocuments();
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return processDAO.count("FROM Process");
     }
 
-    /**
-     * Count processes according to given query.
-     *
-     * @param query
-     *            for index search
-     * @return amount of processes according to given query
-     */
-    public Long count(String query) throws DataException {
-        return searcher.countDocuments(query);
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return processDAO.count(query);
     }
 
     public void refresh(Process process) {

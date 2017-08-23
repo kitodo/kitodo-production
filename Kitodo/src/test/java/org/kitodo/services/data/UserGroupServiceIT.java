@@ -52,10 +52,18 @@ public class UserGroupServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllUserGroup() throws Exception {
+    public void shouldCountAllUserGroups() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
         Long amount = userGroupService.count();
+        assertEquals("User groups were not counted correctly!", Long.valueOf(3), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
+        UserGroupService userGroupService = new UserGroupService();
+
+        Long amount = userGroupService.countDatabaseRows();
         assertEquals("User groups were not counted correctly!", Long.valueOf(3), amount);
     }
 

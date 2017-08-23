@@ -88,6 +88,16 @@ public class RulesetService extends TitleSearchService<Ruleset> {
         return rulesetDAO.search(query);
     }
 
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return rulesetDAO.count("FROM Ruleset");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return rulesetDAO.count(query);
+    }
+
     /**
      * Method removes ruleset object from database.
      *

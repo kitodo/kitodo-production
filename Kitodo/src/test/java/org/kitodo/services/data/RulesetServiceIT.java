@@ -11,11 +11,13 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,6 +44,31 @@ public class RulesetServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllRulesets() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        Long amount = rulesetService.count();
+        assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), amount);
+    }
+
+    @Test
+    public void shouldCountAllRulesetsAccordingToQuery() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        String query = matchQuery("title", "SLUBDD").operator(Operator.AND).toString();
+        Long amount = rulesetService.count(query);
+        assertEquals("Rulesets were not counted correctly!", Long.valueOf(1), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForRulesets() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        Long amount = rulesetService.countDatabaseRows();
+        assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test

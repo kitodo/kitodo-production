@@ -127,13 +127,14 @@ public class TemplateService extends SearchService<Template> {
         return templateDAO.search(query);
     }
 
-    /**
-     * Count all templates.
-     *
-     * @return amount of all templates
-     */
-    public Long count() throws DataException {
-        return searcher.countDocuments();
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return templateDAO.count("FROM Template");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return templateDAO.count(query);
     }
 
     /**

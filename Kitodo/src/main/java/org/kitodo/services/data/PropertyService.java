@@ -113,6 +113,16 @@ public class PropertyService extends TitleSearchService<Property> {
         return propertyDAO.findAll();
     }
 
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return propertyDAO.count("FROM Property");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return propertyDAO.count(query);
+    }
+
     /**
      * Gets all titles from workpieceproperties.
      *

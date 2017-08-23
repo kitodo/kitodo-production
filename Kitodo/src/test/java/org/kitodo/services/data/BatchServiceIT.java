@@ -11,11 +11,13 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,6 +44,31 @@ public class BatchServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllBatches() throws Exception {
+        BatchService batchService = new BatchService();
+
+        Long amount = batchService.count();
+        assertEquals("Batches were not counted correctly!", Long.valueOf(4), amount);
+    }
+
+    @Test
+    public void shouldCountAllBatchesAccordingToQuery() throws Exception {
+        BatchService batchService = new BatchService();
+
+        String query = matchQuery("title", "First batch").operator(Operator.AND).toString();
+        Long amount = batchService.count(query);
+        assertEquals("Batches were not counted correctly!", Long.valueOf(1), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForBatches() throws Exception {
+        BatchService batchService = new BatchService();
+
+        Long amount = batchService.countDatabaseRows();
+        assertEquals("Batches were not counted correctly!", Long.valueOf(4), amount);
     }
 
     @Test

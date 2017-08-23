@@ -57,6 +57,16 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
         return userGroupDAO.findAll();
     }
 
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return userGroupDAO.count("FROM UserGroup");
+    }
+
+    @Override
+    public Long countDatabaseRows(String query) throws DAOException {
+        return userGroupDAO.count(query);
+    }
+
     /**
      * Method saves workpiece object to database.
      *
@@ -168,15 +178,6 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
 
     public List<UserGroup> search(String query) throws DAOException {
         return userGroupDAO.search(query);
-    }
-
-    /**
-     * Count all user groups stored in index.
-     * 
-     * @return all user groups
-     */
-    public Long count() throws DataException {
-        return searcher.countDocuments();
     }
 
     /**

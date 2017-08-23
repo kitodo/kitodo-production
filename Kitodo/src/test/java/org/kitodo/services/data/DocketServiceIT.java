@@ -11,11 +11,13 @@
 
 package org.kitodo.services.data;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,6 +44,31 @@ public class DocketServiceIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldCountAllDockets() throws Exception {
+        DocketService docketService = new DocketService();
+
+        Long amount = docketService.count();
+        assertEquals("Dockets were not counted correctly!", Long.valueOf(2), amount);
+    }
+
+    @Test
+    public void shouldCountAllDocketsAccordingToQuery() throws Exception {
+        DocketService docketService = new DocketService();
+
+        String query = matchQuery("title", "default").operator(Operator.AND).toString();
+        Long amount = docketService.count(query);
+        assertEquals("Dockets were not counted correctly!", Long.valueOf(1), amount);
+    }
+
+    @Test
+    public void shouldCountAllDatabaseRowsForDockets() throws Exception {
+        DocketService docketService = new DocketService();
+
+        Long amount = docketService.countDatabaseRows();
+        assertEquals("Dockets were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
