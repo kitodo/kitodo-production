@@ -1369,9 +1369,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
             return true;
         }
         for (TaskDTO task : process.getTasks()) {
-            /*if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
+            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
                 return true;
-            }*/
+            }
         }
         return false;
     }

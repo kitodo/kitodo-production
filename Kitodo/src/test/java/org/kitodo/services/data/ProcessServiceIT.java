@@ -581,6 +581,10 @@ public class ProcessServiceIT {
         Process process = processService.find(3);
         boolean condition = processService.getContainsUnreachableSteps(process);
         assertTrue("Process doesn't contain unreachable tasks!", condition);
+
+        ProcessDTO processDTO = processService.getById(3);
+        condition = processService.getContainsUnreachableSteps(processDTO);
+        assertTrue("Process DTO doesn't contain unreachable tasks!", condition);
     }
 
     @Test
