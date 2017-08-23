@@ -456,8 +456,20 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * @return list of JSON objects with processes for specific process id
      */
     public List<JSONObject> findByProjectId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("project", id, true);
-        return searcher.findDocuments(query.toString());
+        return searcher.findDocuments(getQueryProjectId(id).toString());
+    }
+
+    public Long findCountForSortHelperImages(Integer projectId) throws DataException {
+        return findCountAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
+    }
+
+    public Double findSumForSortHelperImages(Integer projectId) throws DataException {
+        return findSumAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
+
+    }
+
+    private QueryBuilder getQueryProjectId(Integer id) {
+        return createSimpleQuery("project", id, true);
     }
 
     /**
