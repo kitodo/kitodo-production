@@ -485,7 +485,7 @@ public class ExportDms extends ExportMets {
         /*
          * dann den Ausgangspfad ermitteln
          */
-        URI tifOrdner = serviceManager.getProcessService().getImagesTifDirectory(true, process, null);
+        URI tifOrdner = serviceManager.getProcessService().getImagesTifDirectory(true, process);
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren

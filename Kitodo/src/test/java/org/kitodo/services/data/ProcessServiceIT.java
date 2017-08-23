@@ -244,11 +244,11 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        URI directory = processService.getImagesTifDirectory(true, process, null);
+        URI directory = processService.getImagesTifDirectory(true, process);
         boolean condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
 
-        directory = processService.getImagesTifDirectory(false, process, null);
+        directory = processService.getImagesTifDirectory(false, process);
         condition = directory.getRawPath().contains("First__process_tif");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
         // I don't know what changes this useFallback so I'm testing for both

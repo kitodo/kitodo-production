@@ -210,7 +210,7 @@ public class MetadatenVerifizierung {
         MetadatenImagesHelper mih = new MetadatenImagesHelper(inPrefs, dd);
         try {
             if (!mih.checkIfImagesValid(process.getTitle(),
-                    serviceManager.getProcessService().getImagesTifDirectory(true, process, null))) {
+                    serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
                 ergebnis = false;
             }
         } catch (Exception e) {

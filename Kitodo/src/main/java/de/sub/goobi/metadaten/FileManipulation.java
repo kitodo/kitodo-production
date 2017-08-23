@@ -141,7 +141,7 @@ public class FileManipulation {
             }
             // if file was uploaded into media folder, update pagination
             // sequence
-            if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getProcess(), null)
+            if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getProcess())
                     .equals(serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
                             ProcessSubType.IMAGE, currentFolder + File.separator))) {
                 if (logger.isTraceEnabled()) {
@@ -545,7 +545,7 @@ public class FileManipulation {
                                 Collections.sort(objectInFolder);
                                 for (URI file : objectInFolder) {
                                     if (serviceManager.getProcessService()
-                                                .getImagesTifDirectory(false, currentProcess, null)
+                                                .getImagesTifDirectory(false, currentProcess)
                                                 .equals(folderName + File.separator)) {
                                         importedFilenames.add(file);
                                     }
@@ -565,7 +565,7 @@ public class FileManipulation {
                             ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
                             Collections.sort(objectInFolder);
                             for (URI file : objectInFolder) {
-                                if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess, null)
+                                if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
                                             .equals(folderName + File.separator)) {
                                     importedFilenames.add(file);
                                 }

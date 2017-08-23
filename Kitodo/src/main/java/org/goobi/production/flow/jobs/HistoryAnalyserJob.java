@@ -88,7 +88,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
         }
         /* imagesWork */
         Integer numberWork = FileUtils.getNumberOfFiles(
-                new File(serviceManager.getProcessService().getImagesTifDirectory(true, inProcess, null)), ".tif");
+                new File(serviceManager.getProcessService().getImagesTifDirectory(true, inProcess)), ".tif");
         if (updateHistoryEvent(inProcess, HistoryTypeEnum.imagesWorkDiff, numberWork.longValue())) {
             updated = true;
         }

@@ -809,13 +809,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            object
      * @return tif directory
      */
-    public URI getImagesTifDirectory(boolean useFallBack, Process process, ProcessDTO processDTO) throws IOException {
-        URI dir;
-        if (process == null) {
-            dir = fileService.getProcessSubTypeURI(processDTO, ProcessSubType.IMAGE, null);
-        } else {
-            dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-        }
+    public URI getImagesTifDirectory(boolean useFallBack, Process process) throws IOException {
+        URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -830,12 +825,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList;
-                if (process == null) {
-                    folderList = fileService.getSubUrisForProcess(null, processDTO, ProcessSubType.IMAGE, "");
-                } else {
-                    folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
-                }
+                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
@@ -866,8 +856,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
         if (tifOrdner == null) {
             if (process == null) {
-                tifOrdner = URI.create(result.toString() + getNormalizedTitle(processDTO.getTitle()) + "_" + DIRECTORY_SUFFIX);
-            } else {
                 tifOrdner = URI.create(result.toString() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
             }
         }
@@ -888,24 +876,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     public Boolean checkIfTifDirectoryExists(Process process) {
         URI testMe;
         try {
-            testMe = getImagesTifDirectory(true, process, null);
-            return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                    && fileService.getSubUris(testMe).size() > 0;
-        } catch (IOException e) {
-            logger.error(e);
-            return false;
-        }
-    }
-
-    /**
-     * Check if Tif directory exists.
-     *
-     * @return true if the Tif-Image-Directory exists, false if not
-     */
-    public Boolean checkIfTifDirectoryExists(ProcessDTO process) {
-        URI testMe;
-        try {
-            testMe = getImagesTifDirectory(true, null, process);
+            testMe = getImagesTifDirectory(true, process);
             return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
                     && fileService.getSubUris(testMe).size() > 0;
         } catch (IOException e) {
@@ -981,7 +952,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
             return origOrdner;
         } else {
-            return getImagesTifDirectory(useFallBack, process, null);
+            return getImagesTifDirectory(useFallBack, process);
         }
     }
 
@@ -1558,7 +1529,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
             logger.debug("exception: " + e);
         }
         try {
-            URI folder = this.getImagesTifDirectory(false, process, null);
+            URI folder = this.getImagesTifDirectory(false, process);
             String folderName = fileService.getFileName(folder);
             folderName = folderName.substring(0, folderName.lastIndexOf("_"));
             folderName = folderName + "_" + methodName;
