@@ -39,12 +39,42 @@ public class SearchRestClient extends KitodoRestClient {
      *            to find a document
      * @return http entity as String
      */
-    public String countDocuments(String query) throws DataException {
+    String countDocuments(String query) throws DataException {
         String output = "";
         String wrappedQuery = "{\n \"query\": " + query + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_count",
+                    Collections.singletonMap("pretty", "true"), entity);
+            output = EntityUtils.toString(response.getEntity());
+        } catch (ResponseException e) {
+            if (e.getResponse().getStatusLine().getStatusCode() == 404) {
+                logger.debug(e.getMessage());
+            } else {
+                throw new DataException(e);
+            }
+        } catch (IOException e) {
+            throw new DataException(e);
+        }
+        return output;
+    }
+
+    /**
+     * Aggregate documents responding to given query and aggregation's conditions.
+     * Possible aggregation types are sum, count or terms.
+     *
+     * @param query
+     *            to find a document
+     * @param aggregation
+     *            conditions as String
+     * @return http entity as String
+     */
+    String aggregateDocuments(String query, String aggregation) throws DataException {
+        String output = "";
+        String wrappedQuery = "{\n \"query\": " + query + "\n,\n \"aggs\": " + aggregation + "\n}";
+        HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
+        try {
+            Response response = restClient.performRequest("POST", "/" + index + "/" + type + "/_search?size=0",
                     Collections.singletonMap("pretty", "true"), entity);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
@@ -93,7 +123,8 @@ public class SearchRestClient extends KitodoRestClient {
      *            as String with sort conditions
      * @param offset
      *            as Integer
-     * @param size as Integer
+     * @param size
+     *            as Integer
      * @return http entity as String
      */
     String getDocument(String query, String sort, Integer offset, Integer size) throws DataException {
