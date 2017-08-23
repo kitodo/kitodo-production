@@ -49,7 +49,7 @@ public class Searcher extends Index {
 
     /**
      * Count amount of all documents stored in index.
-     * 
+     *
      * @return amount of all documents
      */
     public Long countDocuments() throws DataException {
@@ -58,7 +58,7 @@ public class Searcher extends Index {
 
     /**
      * Count amount of documents responding to given query.
-     * 
+     *
      * @param query
      *            of searched documents
      * @return amount of documents as Long
@@ -67,11 +67,7 @@ public class Searcher extends Index {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
-        if (query == null) {
-            query = "{\n\"match_all\" : {}\n}";
-        }
-
-        String response = restClient.countDocuments(query);
+        String response = restClient.countDocuments(overrideNullQuery(query));
         if (!response.equals("")) {
             try {
                 JSONObject result = (JSONObject) parser.parse(response);
@@ -82,6 +78,39 @@ public class Searcher extends Index {
         } else {
             return new Long(0);
         }
+    }
+
+    /**
+     * Aggregate documents responding to given query.
+     *
+     * @param query
+     *            of searched documents
+     * @param aggregation
+     *            condition as String
+     * @return aggregate documents as JSONObject
+     */
+    public JSONObject aggregateDocuments(String query, String aggregation) throws DataException {
+        SearchRestClient restClient = initiateRestClient();
+        JSONParser parser = new JSONParser();
+
+        String response = restClient.aggregateDocuments(overrideNullQuery(query), aggregation);
+        if (!response.equals("")) {
+            try {
+                JSONObject result = (JSONObject) parser.parse(response);
+                return (JSONObject) result.get("aggregations");
+            } catch (ParseException e) {
+                throw new DataException(e);
+            }
+        } else {
+            return new JSONObject();
+        }
+    }
+
+    private String overrideNullQuery(String query) {
+        if (query == null) {
+            return "{\n\"match_all\" : {}\n}";
+        }
+        return query;
     }
 
     /**
@@ -120,8 +149,8 @@ public class Searcher extends Index {
     }
 
     /**
-     * Find document by query. It returns only first found document (last
-     * inserted or first matching to sort condition!).
+     * Find document by query. It returns only first found document (last inserted
+     * or first matching to sort condition!).
      *
      * @param query
      *            as String
@@ -191,7 +220,8 @@ public class Searcher extends Index {
      *            as String
      * @return list of JSON objects
      */
-    public List<JSONObject> findDocuments(String query, String sort, Integer offset, Integer size) throws DataException {
+    public List<JSONObject> findDocuments(String query, String sort, Integer offset, Integer size)
+            throws DataException {
         SearchRestClient restClient = initiateRestClient();
         List<JSONObject> searchResults = new ArrayList<>();
         JSONParser parser = new JSONParser();
