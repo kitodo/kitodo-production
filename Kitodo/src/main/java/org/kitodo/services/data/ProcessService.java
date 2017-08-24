@@ -861,10 +861,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
         if (tifOrdner == null) {
-            if (process == null) {
-                tifOrdner = URI
-                        .create(result.toString() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
-            }
+            tifOrdner = URI.create(result.toString() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
         }
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
