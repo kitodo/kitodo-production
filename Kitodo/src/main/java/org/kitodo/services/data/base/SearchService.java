@@ -313,8 +313,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
 
     /**
      * Display all documents for exact type.
-     *
-     * @return list of all documents
+     * @param sort possible sort query according to which results will be sorted
+     * @return sorted list of all documents
      */
     public List<JSONObject> findAllDocuments(String sort) throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
@@ -701,6 +701,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *
      * @param object
      *            JSONObject as Object
+     * @param key of property which need to be counted
      * @return size of array with related objects
      */
     protected int getSizeOfRelatedPropertyForDTO(Object object, String key) {

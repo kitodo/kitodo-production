@@ -1015,9 +1015,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open tasks for current user.
+     * Get open tasks for current user sorted according to sort query.
+     * @param sort possible sort query according to which results will be sorted
      * 
-     * @return The list of tasks.
+     * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> getOpenTasksForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -1030,9 +1031,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open tasks without correction for current user.
-     * 
-     * @return The list of tasks.
+     * Get open tasks without correction for current user sorted according to sort query.
+     * @param sort possible sort query according to which results will be sorted
+     * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> getOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -1045,9 +1046,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open not automatic tasks for current user.
-     * 
-     * @return The list of tasks.
+     * Get open not automatic tasks for current user sorted according to sort query.
+     * @param sort possible sort query according to which results will be sorted
+     * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> getOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -1060,9 +1061,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open not automatic tasks without correction for current user.
-     * 
-     * @return the list of tasks.
+     * Get open not automatic tasks without correction for current user sorted according to sort query.
+     * @param sort possible sort query according to which results will be sorted
+     * @return the list of tasks as TaskDTO objects
      */
     public List<TaskDTO> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
