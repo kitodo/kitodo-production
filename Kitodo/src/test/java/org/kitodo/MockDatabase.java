@@ -205,6 +205,7 @@ public class MockDatabase {
         firstProcess.setWikiField("wiki");
         LocalDate localDate = new LocalDate(2016, 10, 20);
         firstProcess.setCreationDate(localDate.toDate());
+        firstProcess.setSortHelperImages(20);
         List<Batch> batches = new ArrayList<>();
         Batch firstBatch = serviceManager.getBatchService().getById(1);
         Batch secondBatch = serviceManager.getBatchService().getById(3);
@@ -227,6 +228,7 @@ public class MockDatabase {
         secondProcess.setWikiField("field");
         localDate = new LocalDate(2017, 1, 20);
         secondProcess.setCreationDate(localDate.toDate());
+        secondProcess.setSortHelperImages(30);
         secondProcess.setDocket(serviceManager.getDocketService().getById(1));
         secondProcess.setProject(project);
         secondProcess.setRuleset(serviceManager.getRulesetService().getById(1));
