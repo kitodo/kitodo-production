@@ -451,7 +451,7 @@ public class FileService {
         boolean backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
-            renameFile(metadataFileUri, temporaryMetadataFileName);
+            renameFile(URI.create(temporaryMetadataFileName), metadataFileUri.getRawPath());
             removePrefixFromRelatedMetsAnchorFilesFor(URI.create(temporaryMetadataFileName));
         }
 
