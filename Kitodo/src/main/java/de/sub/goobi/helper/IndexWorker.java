@@ -12,18 +12,17 @@
 package de.sub.goobi.helper;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.data.base.SearchService;
 
-public class IndexWorker<T> implements Runnable {
+public class IndexWorker implements Runnable {
 
-    private int indexedObjects;
-    private List<BaseBean> entryList;
+    private int indexedObjects = 0;
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(IndexWorker.class);
 
@@ -32,15 +31,10 @@ public class IndexWorker<T> implements Runnable {
      * and list of objects that will be indexed.
      *
      * @param searchService
-     *            SearchService instance used to index the entries in the given
-     *            'entries' list.
-     * @param entries
-     *            List of 'entries' that will be indexed.
+     *            SearchService instance used for indexing
      */
-    public IndexWorker(SearchService searchService, List<BaseBean> entries) {
+    public IndexWorker(SearchService searchService) {
         this.searchService = searchService;
-        this.indexedObjects = 0;
-        this.entryList = entries;
     }
 
     @Override
@@ -48,11 +42,11 @@ public class IndexWorker<T> implements Runnable {
     public void run() {
         this.indexedObjects = 0;
         try {
-            for (BaseBean object : entryList) {
-                this.searchService.saveToIndex(object);
+            for (Object object : searchService.findAll()) {
+                this.searchService.saveToIndex((BaseBean) object);
                 this.indexedObjects++;
             }
-        } catch (CustomResponseException | IOException e) {
+        } catch (CustomResponseException | IOException | DAOException e) {
             logger.error(e.getMessage());
         }
     }
@@ -64,6 +58,6 @@ public class IndexWorker<T> implements Runnable {
      * @return int the number of objects indexed during the current indexing run
      */
     public int getIndexedObjects() {
-        return this.indexedObjects;
+        return indexedObjects;
     }
 }

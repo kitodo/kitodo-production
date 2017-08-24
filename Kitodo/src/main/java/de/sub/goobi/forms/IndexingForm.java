@@ -16,7 +16,6 @@ import de.sub.goobi.helper.IndexWorker;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,21 +27,11 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.SearchService;
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
 import org.omnifaces.util.Ajax;
@@ -54,6 +43,8 @@ public class IndexingForm {
     private static IndexRestClient indexRestClient = new IndexRestClient();
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
     private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
+    private static final String INDEXING_TABLE_ID = "indexing_form:indexingTable";
+    private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
 
     public LocalDateTime getIndexingStartedTime() {
         return indexingStartedTime;
@@ -92,22 +83,17 @@ public class IndexingForm {
 
             pollingChannel.send(INDEXING_FINISHED_MESSAGE);
 
-            try {
-                String indexingTableID = "indexing_form:indexingTable";
-                for (String id : FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds()) {
-                    if (Objects.equals(id, indexingTableID)) {
-                        Ajax.update(indexingTableID);
-                        break;
-                    }
+            for (String id : FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds()) {
+                if (Objects.equals(id, INDEXING_TABLE_ID)) {
+                    Ajax.update(INDEXING_TABLE_ID);
+                    break;
                 }
-            } catch (NullPointerException e) {
-                logger.debug(e.getMessage());
             }
         }
     }
 
     @Inject
-    @Push(channel = "togglePollingChannel")
+    @Push(channel = POLLING_CHANNEL_NAME)
     private PushContext pollingChannel;
 
     private static final Logger logger = LogManager.getLogger(IndexingForm.class);
@@ -125,19 +111,6 @@ public class IndexingForm {
     private Map<ObjectTypes, LocalDateTime> lastIndexed = new EnumMap<>(ObjectTypes.class);
 
     private LocalDateTime indexingStartedTime;
-
-    private List<Batch> batches = serviceManager.getBatchService().findAll();
-    private List<Docket> dockets = serviceManager.getDocketService().findAll();
-    private List<Process> processes = serviceManager.getProcessService().findAll();
-    private List<Project> projects = serviceManager.getProjectService().findAll();
-    private List<Property> properties = serviceManager.getPropertyService().findAll();
-    private List<Ruleset> rulesets = serviceManager.getRulesetService().findAll();
-    private List<Task> tasks = serviceManager.getTaskService().findAll();
-    private List<Template> templates = serviceManager.getTemplateService().findAll();
-    private List<User> users = serviceManager.getUserService().findAll();
-    private List<UserGroup> userGroups = serviceManager.getUserGroupService().findAll();
-    private List<Workpiece> workpieces = serviceManager.getWorkpieceService().findAll();
-    private List<Filter> filter = serviceManager.getFilterService().findAll();
 
     private int indexedBatches = 0;
     private int indexedDockets = 0;
@@ -165,143 +138,152 @@ public class IndexingForm {
     private IndexWorker workpieceWorker;
     private IndexWorker filterWorker;
 
-    private Thread indexerThread;
+    private Thread indexerThread = null;
 
     /**
      * Standard constructor.
      */
     public IndexingForm() {
-        this.batchWorker = new IndexWorker(serviceManager.getBatchService(), this.batches);
-        this.docketWorker = new IndexWorker(serviceManager.getDocketService(), this.dockets);
-        this.processWorker = new IndexWorker(serviceManager.getProcessService(), this.processes);
-        this.projectWorker = new IndexWorker(serviceManager.getProjectService(), this.projects);
-        this.propertyWorker = new IndexWorker(serviceManager.getPropertyService(), this.properties);
-        this.rulesetWorker = new IndexWorker(serviceManager.getRulesetService(), this.rulesets);
-        this.taskWorker = new IndexWorker(serviceManager.getTaskService(), this.tasks);
-        this.templateWorker = new IndexWorker(serviceManager.getTemplateService(), this.templates);
-        this.userWorker = new IndexWorker(serviceManager.getUserService(), this.users);
-        this.usergroupWorker = new IndexWorker(serviceManager.getUserGroupService(), this.userGroups);
-        this.workpieceWorker = new IndexWorker(serviceManager.getWorkpieceService(), this.workpieces);
-        this.filterWorker = new IndexWorker(serviceManager.getFilterService(), this.filter);
+        this.batchWorker = new IndexWorker(serviceManager.getBatchService());
+        this.docketWorker = new IndexWorker(serviceManager.getDocketService());
+        this.processWorker = new IndexWorker(serviceManager.getProcessService());
+        this.projectWorker = new IndexWorker(serviceManager.getProjectService());
+        this.propertyWorker = new IndexWorker(serviceManager.getPropertyService());
+        this.rulesetWorker = new IndexWorker(serviceManager.getRulesetService());
+        this.taskWorker = new IndexWorker(serviceManager.getTaskService());
+        this.templateWorker = new IndexWorker(serviceManager.getTemplateService());
+        this.userWorker = new IndexWorker(serviceManager.getUserService());
+        this.usergroupWorker = new IndexWorker(serviceManager.getUserGroupService());
+        this.workpieceWorker = new IndexWorker(serviceManager.getWorkpieceService());
+        this.filterWorker = new IndexWorker(serviceManager.getFilterService());
+    }
+
+    private long getCount(SearchService searchService) {
+        try {
+            return searchService.countDatabaseRows();
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            return 0;
+        }
     }
 
     /**
      * Return the number of batches.
      *
-     * @return int number of batches
+     * @return long number of batches
      */
-    public int getBatchCount() {
-        return this.batches.size();
+    public long getBatchCount() {
+        return getCount(serviceManager.getBatchService());
     }
 
     /**
      * Return the number of dockets.
      *
-     * @return int number of dockets
+     * @return long number of dockets
      */
-    public int getDocketCount() {
-        return this.dockets.size();
+    public long getDocketCount() {
+        return getCount(serviceManager.getDocketService());
     }
 
     /**
      * Return the number of processes.
      *
-     * @return int number of processes
+     * @return long number of processes
      */
-    public int getProcessCount() {
-        return this.processes.size();
+    public long getProcessCount() {
+        return getCount(serviceManager.getProcessService());
     }
 
     /**
      * Return the number of projects.
      *
-     * @return int number of projects
+     * @return long number of projects
      */
-    public int getProjectCount() {
-        return this.projects.size();
+    public long getProjectCount() {
+        return getCount(serviceManager.getProjectService());
     }
 
     /**
      * Return the number of properties.
      *
-     * @return int number of properties
+     * @return long number of properties
      */
-    public int getPropertyCount() {
-        return this.properties.size();
+    public long getPropertyCount() {
+        return getCount(serviceManager.getPropertyService());
     }
 
     /**
      * Return the number of rulesets.
      *
-     * @return int number of rulesets
+     * @return long number of rulesets
      */
-    public int getRulesetCount() {
-        return this.rulesets.size();
+    public long getRulesetCount() {
+        return getCount(serviceManager.getRulesetService());
     }
 
     /**
      * Return the number of tasks.
      *
-     * @return int number of tasks
+     * @return long number of tasks
      */
-    public int getTaskCount() {
-        return this.tasks.size();
+    public long getTaskCount() {
+        return getCount(serviceManager.getTaskService());
     }
 
     /**
      * Return the number of templates.
      *
-     * @return int number of templates
+     * @return long number of templates
      */
-    public int getTemplateCount() {
-        return this.templates.size();
+    public long getTemplateCount() {
+        return getCount(serviceManager.getTemplateService());
     }
 
     /**
      * Return the number of users.
      *
-     * @return int number of users
+     * @return long number of users
      */
-    public int getUserCount() {
-        return this.users.size();
+    public long getUserCount() {
+        return getCount(serviceManager.getUserService());
     }
 
     /**
      * Return the number of user groups.
      *
-     * @return int number of user groups
+     * @return long number of user groups
      */
-    public int getUserGroupCount() {
-        return this.userGroups.size();
+    public long getUserGroupCount() {
+        return getCount(serviceManager.getUserGroupService());
     }
 
     /**
      * Return the number of workpieces.
      *
-     * @return int number of workpieces
+     * @return long number of workpieces
      */
-    public int getWorkpieceCount() {
-        return this.workpieces.size();
+    public long getWorkpieceCount() {
+        return getCount(serviceManager.getWorkpieceService());
     }
 
     /**
      * Return the number of filters.
      *
-     * @return int number of filters
+     * @return long number of filters
      */
-    public int getFilterCount() {
-        return this.filter.size();
+    public long getFilterCount() {
+        return getCount(serviceManager.getFilterService());
     }
 
     /**
      * Return the total number of all objects that can be indexed.
      *
-     * @return int number of all items that can be written to the index
+     * @return long number of all items that can be written to the index
      */
-    public int getTotalCount() {
-        return (this.getBatchCount() + this.getDocketCount() + this.getProcessCount() + this.getProjectCount()
-                + this.getPropertyCount() + this.getRulesetCount() + this.getTaskCount() + this.getTemplateCount()
-                + this.getUserCount() + this.getUserGroupCount() + this.getWorkpieceCount() + this.getFilterCount());
+    public long getTotalCount() {
+        return (getBatchCount() + getDocketCount() + getProcessCount() + getProjectCount() + getPropertyCount()
+                + getRulesetCount() + getTaskCount() + getTemplateCount() + getUserCount() + getUserGroupCount()
+                + getWorkpieceCount() + getFilterCount());
     }
 
     /**
@@ -565,7 +547,7 @@ public class IndexingForm {
      * @return the batch indexing progress
      */
     public int getBatchIndexingProgress() {
-        return getProgress(batches.size(), ObjectTypes.BATCH, getIndexedBatches());
+        return getProgress(getBatchCount(), ObjectTypes.BATCH, getIndexedBatches());
     }
 
     /**
@@ -574,7 +556,7 @@ public class IndexingForm {
      * @return the docket indexing progress
      */
     public int getDocketsIndexingProgress() {
-        return getProgress(dockets.size(), ObjectTypes.DOCKET, getIndexedDockets());
+        return getProgress(getDocketCount(), ObjectTypes.DOCKET, getIndexedDockets());
     }
 
     /**
@@ -583,7 +565,7 @@ public class IndexingForm {
      * @return the process indexing progress
      */
     public int getProcessIndexingProgress() {
-        return getProgress(processes.size(), ObjectTypes.PROCESS, getIndexedProcesses());
+        return getProgress(getProcessCount(), ObjectTypes.PROCESS, getIndexedProcesses());
     }
 
     /**
@@ -592,7 +574,7 @@ public class IndexingForm {
      * @return the project indexing progress
      */
     public int getProjectsIndexingProgress() {
-        return getProgress(projects.size(), ObjectTypes.PROJECT, getIndexedProjects());
+        return getProgress(getProjectCount(), ObjectTypes.PROJECT, getIndexedProjects());
     }
 
     /**
@@ -601,7 +583,7 @@ public class IndexingForm {
      * @return the properties indexing progress
      */
     public int getPropertiesIndexingProgress() {
-        return getProgress(properties.size(), ObjectTypes.PROPERTY, getIndexedProperties());
+        return getProgress(getPropertyCount(), ObjectTypes.PROPERTY, getIndexedProperties());
     }
 
     /**
@@ -610,7 +592,7 @@ public class IndexingForm {
      * @return the ruleset indexing progress
      */
     public int getRulesetsIndexingProgress() {
-        return getProgress(rulesets.size(), ObjectTypes.RULESET, getIndexedRulesets());
+        return getProgress(getRulesetCount(), ObjectTypes.RULESET, getIndexedRulesets());
     }
 
     /**
@@ -619,7 +601,7 @@ public class IndexingForm {
      * @return the template indexing progress
      */
     public int getTemplatesIndexingProgress() {
-        return getProgress(templates.size(), ObjectTypes.TEMPLATE, getIndexedTemplates());
+        return getProgress(getTemplateCount(), ObjectTypes.TEMPLATE, getIndexedTemplates());
     }
 
     /**
@@ -628,7 +610,7 @@ public class IndexingForm {
      * @return the task indexing progress
      */
     public int getTasksIndexingProgress() {
-        return getProgress(tasks.size(), ObjectTypes.TASK, getIndexedTasks());
+        return getProgress(getTaskCount(), ObjectTypes.TASK, getIndexedTasks());
     }
 
     /**
@@ -637,7 +619,7 @@ public class IndexingForm {
      * @return the user indexing progress
      */
     public int getUserIndexingProgress() {
-        return getProgress(users.size(), ObjectTypes.USER, getIndexedUsers());
+        return getProgress(getUserCount(), ObjectTypes.USER, getIndexedUsers());
     }
 
     /**
@@ -646,7 +628,7 @@ public class IndexingForm {
      * @return the usergroup indexing progress
      */
     public int getUserGroupIndexingProgress() {
-        return getProgress(userGroups.size(), ObjectTypes.USERGROUP, getIndexedUserGroups());
+        return getProgress(getUserGroupCount(), ObjectTypes.USERGROUP, getIndexedUserGroups());
     }
 
     /**
@@ -655,7 +637,7 @@ public class IndexingForm {
      * @return the workpiece indexing progress
      */
     public int getWorkpieceIndexingProgress() {
-        return getProgress(workpieces.size(), ObjectTypes.WORKPIECE, getIndexedWorkpieces());
+        return getProgress(getWorkpieceCount(), ObjectTypes.WORKPIECE, getIndexedWorkpieces());
     }
 
     /**
@@ -664,7 +646,7 @@ public class IndexingForm {
      * @return the filter indexing progress
      */
     public int getFilterIndexingProgress() {
-        return getProgress(filter.size(), ObjectTypes.FILTER, getIndexedFilter());
+        return getProgress(getFilterCount(), ObjectTypes.FILTER, getIndexedFilter());
     }
 
     private void startIndexing(ObjectTypes type, IndexWorker worker) {
@@ -820,7 +802,8 @@ public class IndexingForm {
      * the list of entries to be indexed is empty, this will return "0".
      *
      * @param numberOfObjects
-     *            the number of existing objects of the given ObjectType
+     *            the number of existing objects of the given ObjectType in the
+     *            database
      * @param currentType
      *            the ObjectType for which the progress will be determined
      * @param nrOfindexedObjects
@@ -829,7 +812,7 @@ public class IndexingForm {
      *
      * @return the progress of the current indexing process in percent
      */
-    private int getProgress(int numberOfObjects, ObjectTypes currentType, int nrOfindexedObjects) {
+    private int getProgress(long numberOfObjects, ObjectTypes currentType, long nrOfindexedObjects) {
         int progress = numberOfObjects > 0 ? (int) ((nrOfindexedObjects / (float) numberOfObjects) * 100) : 0;
         if (Objects.equals(currentIndexState, currentType)) {
             if (numberOfObjects == 0 || progress == 100) {
