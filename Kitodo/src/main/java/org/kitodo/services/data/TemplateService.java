@@ -265,6 +265,7 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
     public TemplateDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         TemplateDTO templateDTO = new TemplateDTO();
         templateDTO.setId(getIdFromJSONObject(jsonObject));
+        templateDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(jsonObject, "properties"));
         return templateDTO;
     }
 

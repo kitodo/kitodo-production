@@ -174,8 +174,8 @@ public class TemplateServiceIT {
     public void shouldGetPropertiesSize() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        //TemplateDTO template = templateService.find(1);
-        //int actual = template.getPropertiesSize();
-        //assertEquals("Template's properties size is not equal to given value!", 2, actual);
+        TemplateDTO template = templateService.getById(1);
+        int actual = template.getPropertiesSize();
+        assertEquals("Template's properties size is not equal to given value!", 2, actual);
     }
 }
