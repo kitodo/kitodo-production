@@ -11,6 +11,7 @@
 
 package org.kitodo.services;
 
+import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.BatchService;
 import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
@@ -46,6 +47,7 @@ public class ServiceManager {
     private UserService userService;
     private WorkpieceService workpieceService;
     private FileService fileService;
+    private CommandService commandService;
 
     private void initializeBatchService() {
         if (batchService == null) {
@@ -140,6 +142,12 @@ public class ServiceManager {
     private void initializeFileService() {
         if (fileService == null) {
             fileService = new FileService();
+        }
+    }
+
+    private void initializeCommandService() {
+        if (commandService == null) {
+            commandService = new CommandService();
         }
     }
 
@@ -311,6 +319,16 @@ public class ServiceManager {
     public FileService getFileService() {
         initializeFileService();
         return fileService;
+    }
+
+    /**
+     * Initialize CommandService if it is not yet initialized and next return it.
+     *
+     * @return CommandService object
+     */
+    public CommandService getCommandService() {
+        initializeCommandService();
+        return commandService;
     }
 
 }

@@ -23,5 +23,4 @@ public interface CommandInterface {
      * @return A commandResult, which contains id and resultmessages.
      */
     CommandResult runCommand(Integer id, String command);
-
 }

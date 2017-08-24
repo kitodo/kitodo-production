@@ -11,13 +11,114 @@
 
 package org.kitodo.command;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import org.kitodo.api.command.CommandInterface;
 import org.kitodo.api.command.CommandResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Command implements CommandInterface {
 
+    private static final Logger logger = LogManager.getLogger(Command.class);
+
+    /**
+     * Method executes a script.
+     *
+     * @param id
+     *            The id, to identify the command and it's results.
+     * @param command
+     *            The command as a String.
+     * @return The command result.
+     */
     @Override
     public CommandResult runCommand(Integer id, String command) {
-        throw new RuntimeException("Not implemented, yet");
+
+        CommandResult commandResult = null;
+        Process process = null;
+        String[] callSequence = command.split("[\\r\\n\\s]+");
+
+        try {
+            process = new ProcessBuilder(callSequence).start();
+            ArrayList<String> outputMessage = inputStreamArrayToList(process.getInputStream());
+            ArrayList<String> errorMessage = inputStreamArrayToList(process.getErrorStream());
+            int errCode = process.waitFor();
+
+            ArrayList<String> outputAndError = new ArrayList<>(outputMessage);
+            outputAndError.addAll(errorMessage);
+
+            commandResult = new CommandResult(id, command, errCode == 0, outputAndError);
+
+        } catch (IOException | InterruptedException exception) {
+            if (exception instanceof IOException) {
+
+                ArrayList<String> errorMessages = new ArrayList<>();
+                errorMessages.add("IOException");
+                errorMessages.add(exception.getMessage());
+                commandResult = new CommandResult(id, command, false, errorMessages);
+                System.out.println("");
+            }
+
+            if (exception instanceof InterruptedException) {
+
+                ArrayList<String> errorMessages = new ArrayList<>();
+                errorMessages.add("InterruptedException");
+                commandResult = new CommandResult(id, command, false, errorMessages);
+            }
+            return commandResult;
+
+        } finally {
+            if (process != null) {
+                closeStream(process.getInputStream());
+                closeStream(process.getOutputStream());
+                closeStream(process.getErrorStream());
+            }
+        }
+        return commandResult;
+    }
+
+    /**
+     * The method reads an InputStream and returns it as a ArrayList.
+     *
+     * @param myInputStream
+     *            The Stream to convert.
+     * @return A ArrayList holding the single lines.
+     */
+    public static ArrayList<String> inputStreamArrayToList(InputStream myInputStream) {
+        ArrayList<String> result = new ArrayList<>();
+        Scanner inputLines = null;
+        try {
+            inputLines = new Scanner(myInputStream, "UTF-8");
+            while (inputLines.hasNextLine()) {
+                String myLine = inputLines.nextLine();
+                result.add(myLine);
+            }
+        } finally {
+            if (inputLines != null) {
+                inputLines.close();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This behaviour was already implemented. I can’t say if it’s necessary.
+     *
+     * @param inputStream
+     *            A stream to close.
+     */
+    private static void closeStream(Closeable inputStream) {
+        if (inputStream == null) {
+            return;
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            logger.warn("Could not close stream.", e);
+        }
     }
 }

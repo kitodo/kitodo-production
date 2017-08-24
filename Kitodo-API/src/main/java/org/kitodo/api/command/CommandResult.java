@@ -81,4 +81,28 @@ public class CommandResult {
     public ArrayList<String> getMessages() {
         return messages;
     }
+
+    /**
+     * Indicates whether a CommandResults is "equal to" this one.
+     *
+     * @param object
+     *            The reference CommandResults with which to compare.
+     * @return True if CommandResults are equal.
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == null)
+            return false;
+
+        if (object == this)
+            return true;
+
+        if (!object.getClass().equals(getClass()))
+            return false;
+
+        CommandResult that = (CommandResult) object;
+
+        return this.id == that.id && this.successful == that.successful && this.command.equals(that.command)
+                && this.messages.equals(that.messages);
+    }
 }
