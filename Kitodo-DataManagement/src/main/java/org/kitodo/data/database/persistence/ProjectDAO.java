@@ -87,4 +87,12 @@ public class ProjectDAO extends BaseDAO {
     public Long count(String query) throws DAOException {
         return retrieveAmount(query);
     }
+
+    public List<Project> getAllProjectsSortedByTitle() throws DAOException {
+        return search("FROM Project ORDER BY title ASC");
+    }
+
+    public List<Project> getAllNotArchivedProjectsSortedByTitle() throws DAOException {
+        return search("FROM Project WHERE projectIsArchived = 0 ORDER BY title ASC");
+    }
 }
