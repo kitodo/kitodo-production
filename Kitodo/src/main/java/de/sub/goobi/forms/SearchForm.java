@@ -27,13 +27,9 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
@@ -100,22 +96,20 @@ public class SearchForm {
      */
     protected void initProjects() {
         int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
-        Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Project.class);
 
-        crit.addOrder(Order.asc("title"));
-        if (restriction > 2) {
-            crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
-        }
+        List<Project> projects;
 
         try {
-            @SuppressWarnings("unchecked")
-            List<Project> projektList = crit.list();
-            for (Project p : projektList) {
+            if (restriction > 2) {
+                projects = serviceManager.getProjectService().getAllNotArchivedProjectsSortedByTitle();
+            } else {
+                projects = serviceManager.getProjectService().getAllProjectsSortedByTitle();
+            }
+            for (Project p : projects) {
                 this.projects.add(p.getTitle());
             }
-        } catch (HibernateException hbe) {
-            logger.warn("Catched HibernateException. List of projects could be empty!");
+        } catch (DAOException e) {
+            logger.warn("Catch DAOException. List of projects could be empty!");
         }
     }
 
@@ -160,16 +154,9 @@ public class SearchForm {
     /**
      * Initialise drop down list of user list.
      */
-    @SuppressWarnings("unchecked")
     protected void initUserList() {
-        Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(User.class);
-        crit.add(Restrictions.isNull("isVisible"));
-        crit.add(Restrictions.eq("istActive", true));
-        crit.addOrder(Order.asc("surname"));
-        crit.addOrder(Order.asc("name"));
         try {
-            this.user.addAll(crit.list());
+            this.user.addAll(serviceManager.getUserService().getAllActiveUsersSortedByNameAndSurname());
         } catch (RuntimeException rte) {
             logger.warn("Catched RuntimeException. List of users could be empty!");
         }
