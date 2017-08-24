@@ -508,6 +508,15 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
+     * Get all active users sorted by surname and name.
+     *
+     * @return sorted list of all active users as User objects
+     */
+    public List<User> getAllActiveUsersSortedByNameAndSurname() {
+        return userDAO.getAllActiveUsersSortedByNameAndSurname();
+    }
+
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
     @SuppressWarnings("unchecked")
