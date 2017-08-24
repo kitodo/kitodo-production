@@ -331,6 +331,14 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
         return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
+    public List<Project> getAllProjectsSortedByTitle() throws DAOException {
+        return projectDAO.getAllProjectsSortedByTitle();
+    }
+
+    public List<Project> getAllNotArchivedProjectsSortedByTitle() throws DAOException {
+        return projectDAO.getAllNotArchivedProjectsSortedByTitle();
+    }
+
     /**
      * Method adds all object found in database to Elastic Search index.
      */
