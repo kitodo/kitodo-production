@@ -32,10 +32,11 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.TemplateDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class TemplateService extends SearchService<Template> {
+public class TemplateService extends SearchService<Template, TemplateDTO> {
 
     private TemplateDAO templateDAO = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
@@ -56,6 +57,7 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
+    @Override
     public void saveToDatabase(Template template) throws DAOException {
         templateDAO.save(template);
     }
@@ -66,6 +68,7 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -80,6 +83,7 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Template template) throws CustomResponseException, IOException {
         manageProcessDependenciesForIndex(template);
         managePropertiesDependenciesForIndex(template);
@@ -108,6 +112,7 @@ public class TemplateService extends SearchService<Template> {
         }
     }
 
+    @Override
     public Template find(Integer id) throws DAOException {
         return templateDAO.find(id);
     }
@@ -123,6 +128,7 @@ public class TemplateService extends SearchService<Template> {
      *            as String
      * @return list of Template objects
      */
+    @Override
     public List<Template> search(String query) throws DAOException {
         return templateDAO.search(query);
     }
@@ -143,6 +149,7 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
+    @Override
     public void removeFromDatabase(Template template) throws DAOException {
         templateDAO.remove(template);
     }
@@ -153,6 +160,7 @@ public class TemplateService extends SearchService<Template> {
      * @param id
      *            of template object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         templateDAO.remove(id);
     }
@@ -163,6 +171,7 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -250,6 +259,11 @@ public class TemplateService extends SearchService<Template> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), templateType);
+    }
+
+    @Override
+    public TemplateDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        return new TemplateDTO();
     }
 
     /**

@@ -13,6 +13,7 @@ package org.kitodo.services.data.base;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
@@ -21,6 +22,7 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -39,12 +42,13 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.BaseDTO;
 
 /**
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseBean> {
+public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);
     protected Searcher searcher;
@@ -111,6 +115,16 @@ public abstract class SearchService<T extends BaseBean> {
      * @return amount of rows in database according to given query
      */
     public abstract Long countDatabaseRows(String query) throws DAOException;
+
+    /**
+     * Method converts JSON object object to DTO. Necessary for displaying in the
+     * frontend.
+     *
+     * @param jsonObject
+     *            return from find methods
+     * @return DTO object
+     */
+    public abstract S convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException;
 
     /**
      * Method removes object from database.
@@ -309,44 +323,60 @@ public abstract class SearchService<T extends BaseBean> {
     }
 
     /**
-     * Convert list of JSONObject object to list of bean objects.
+     * Convert list of JSONObject object to list of DTO objects.
      *
-     * @param searchResults
-     *            list of results from ElasticSearch
-     * @param table
-     *            name
-     * @return list of beans
+     * @param jsonObjects
+     *            list of SearchResult objects
+     * @param related
+     *            determines if converted object is related to some other object (if
+     *            so, objects related to it are not included in conversion)
+     * @return list of DTO object
      */
-    public List<? extends BaseBean> convertJSONObjectsToObjectList(List<JSONObject> searchResults, String table)
-            throws DAOException {
-        StringBuilder query = new StringBuilder();
-        query.append("FROM ");
-        query.append(table);
-        query.append(" WHERE id IN (");
-        for (JSONObject searchResult : searchResults) {
-            query.append(getIdFromJSONObject(searchResult));
-            query.append(",");
+    public List<S> convertJSONObjectsToDTOs(List<JSONObject> jsonObjects, boolean related) throws DataException {
+        List<S> results = new ArrayList<>();
+
+        for (JSONObject jsonObject : jsonObjects) {
+            results.add(convertJSONObjectToDTO(jsonObject, related));
         }
-        query.deleteCharAt(query.length() - 1);
-        query.append(")");
-        return search(query.toString());
+
+        return results;
     }
 
     /**
      * Convert JSONObject object to bean object.
      *
-     * @param searchResult
+     * @param jsonObject
      *            result from ElasticSearch
      * @return bean object
      */
-    public T convertJSONObjectToObject(JSONObject searchResult) throws DAOException {
-        if (getIdFromJSONObject(searchResult) == 0) {
+    public T convertJSONObjectToBean(JSONObject jsonObject) throws DAOException {
+        Integer id = getIdFromJSONObject(jsonObject);
+        if (id == 0) {
             // TODO: maybe here could be used some instancing of generic
             // class...
             return null;
         } else {
-            return find(getIdFromJSONObject(searchResult));
+            return find(id);
         }
+    }
+
+    /**
+     * Convert related JSONObject object to bean object.
+     *
+     * @param jsonObject
+     *            result from ElasticSearch
+     * @param key
+     *            name of related property
+     * @return bean object
+     */
+    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject,
+            String key, SearchService<?, O> service) throws DataException {
+        List<O> listDTO = new ArrayList<>();
+        for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
+            JSONObject result = service.findById(id);
+            listDTO.add(service.convertJSONObjectToDTO(result, true));
+        }
+        return listDTO;
     }
 
     /**
@@ -434,7 +464,7 @@ public abstract class SearchService<T extends BaseBean> {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
             return boolQuery.mustNot(matchQuery(key, condition));
         } else {
-            return matchQuery(key, 0);
+            return matchQuery(key, false);
         }
     }
 
@@ -559,6 +589,10 @@ public abstract class SearchService<T extends BaseBean> {
         return query;
     }
 
+    protected QueryBuilder createSimpleWildcardQuery(String key, String value) {
+        return queryStringQuery(key + ": *" + value + "*");
+    }
+
     /**
      * Format date according to format used during the indexing of documents.
      *
@@ -569,6 +603,75 @@ public abstract class SearchService<T extends BaseBean> {
     protected String formatDate(Date date) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
+    }
+
+    /**
+     * Converts properties' values returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject as Object
+     * @return display properties as String
+     */
+    protected String getStringPropertyForDTO(Object object, String key) {
+        JSONObject jsonObject = (JSONObject) object;
+        jsonObject = (JSONObject) jsonObject.get("_source");
+        if (jsonObject != null) {
+            return (String) jsonObject.get(key);
+        }
+        return "";
+    }
+
+    /**
+     * Converts properties' values returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject as Object
+     * @return display properties as Integer
+     */
+    protected Integer getIntegerPropertyForDTO(Object object, String key) {
+        JSONObject jsonObject = (JSONObject) object;
+        jsonObject = (JSONObject) jsonObject.get("_source");
+        if (jsonObject != null) {
+            Long returned = (Long) jsonObject.get(key);
+            if (returned != null) {
+                return returned.intValue();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Converts properties' values returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject as Object
+     * @return display properties as list of Integers
+     */
+    protected List<Integer> getRelatedPropertyForDTO(Object object, String key) {
+        JSONObject jsonObject = (JSONObject) object;
+        jsonObject = (JSONObject) jsonObject.get("_source");
+        if (jsonObject != null) {
+            JSONArray jsonArray = (JSONArray) jsonObject.get(key);
+            List<Integer> ids = new ArrayList<>();
+            for (Object singleObject : jsonArray) {
+                ids.add(convertIdForDTO(singleObject));
+            }
+            return ids;
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Converts id value returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject as Object
+     * @return id as Integer
+     */
+    private Integer convertIdForDTO(Object object) {
+        JSONObject jsonObject = (JSONObject) object;
+        Long longId = (Long) jsonObject.get("id");
+        return longId.intValue();
     }
 
     /**

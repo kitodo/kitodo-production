@@ -112,21 +112,21 @@ public class ProcessServiceIT {
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
-        Process foundProcess = processService.convertJSONObjectToObject(processService.findById(6));
+        Process foundProcess = processService.convertJSONObjectToBean(processService.findById(6));
         assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
 
         processService.remove(foundProcess);
-        foundProcess = processService.convertJSONObjectToObject(processService.findById(6));
+        foundProcess = processService.convertJSONObjectToBean(processService.findById(6));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
 
         process = new Process();
         process.setTitle("To remove");
         processService.save(process);
-        foundProcess = processService.convertJSONObjectToObject(processService.findById(7));
+        foundProcess = processService.convertJSONObjectToBean(processService.findById(7));
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
         processService.remove(7);
-        foundProcess = processService.convertJSONObjectToObject(processService.findById(7));
+        foundProcess = processService.convertJSONObjectToBean(processService.findById(7));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
     }
 

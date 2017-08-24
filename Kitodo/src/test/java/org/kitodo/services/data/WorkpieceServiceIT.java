@@ -80,23 +80,23 @@ public class WorkpieceServiceIT {
         Workpiece workpiece = new Workpiece();
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
-        Workpiece foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(3));
+        Workpiece foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(3));
         assertEquals("Additional workpiece was not inserted in database!", "First process",
                 foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(workpiece);
-        foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(3));
+        foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(3));
         assertEquals("Additional workpiece was not removed from database!", null, foundWorkpiece);
 
         workpiece = new Workpiece();
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
-        foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(4));
+        foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(4));
         assertEquals("Additional workpiece was not inserted in database!", "First process",
                 foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(4);
-        foundWorkpiece = workpieceService.convertJSONObjectToObject(workpieceService.findById(4));
+        foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(4));
         assertEquals("Additional workpiece was not removed from database!", null, foundWorkpiece);
     }
 

@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.dto.UserDTO;
 
 /**
  * Tests for UserService class.
@@ -113,7 +114,7 @@ public class UserServiceIT {
         user.setLogin("Remove");
         userService.save(user);
         Thread.sleep(1000);
-        User foundUser = userService.convertJSONObjectToObject(userService.findByLogin("Remove"));
+        User foundUser = userService.convertJSONObjectToBean(userService.findByLogin("Remove"));
         assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
 
         userService.remove(foundUser);
@@ -124,7 +125,7 @@ public class UserServiceIT {
         user.setLogin("remove");
         userService.save(user);
         Thread.sleep(1000);
-        foundUser = userService.convertJSONObjectToObject(userService.findByLogin("remove"));
+        foundUser = userService.convertJSONObjectToBean(userService.findByLogin("remove"));
         assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
 
         userService.remove(foundUser.getId());
@@ -466,33 +467,32 @@ public class UserServiceIT {
     }
 
     @Test
-    public void getAllVisibleUsers() {
+    public void getAllVisibleUsers() throws Exception {
         UserService userService = new UserService();
 
-        List<User> allVisibleUsers = userService.getAllVisibleUsers();
+        List<UserDTO> allVisibleUsers = userService.getAllVisibleUsers();
         assertTrue(allVisibleUsers.size() == 3);
     }
 
     @Test
-    public void getAllActiveUsers() {
+    public void getAllActiveUsers() throws Exception {
         UserService userService = new UserService();
 
-        List<User> allActiveUsers = userService.getAllActiveUsers();
+        List<UserDTO> allActiveUsers = userService.getAllActiveUsers();
         assertTrue(allActiveUsers.size() == 2);
     }
 
     @Test
-    public void getFilteredUsersByName() {
+    public void shouldGetActiveUsersByName() throws Exception {
         UserService userService = new UserService();
 
-        List<User> allActiveUsers = userService.getFilteredUsersByName("Jan");
+        List<UserDTO> allActiveUsers = userService.getActiveUsersByName("Jan");
         assertTrue(allActiveUsers.size() == 1);
         int actual = allActiveUsers.get(0).getId();
         int expected = 1;
         assertEquals(actual, expected);
 
-        allActiveUsers = userService.getFilteredUsersByName("owa");
+        allActiveUsers = userService.getActiveUsersByName("owa");
         assertTrue(allActiveUsers.size() == 2);
-
     }
 }

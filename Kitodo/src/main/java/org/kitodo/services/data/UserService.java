@@ -47,10 +47,11 @@ import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class UserService extends SearchService<User> {
+public class UserService extends SearchService<User, UserDTO> {
 
     private UserDAO userDAO = new UserDAO();
     private UserType userType = new UserType();
@@ -71,6 +72,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     public void saveToDatabase(User user) throws DAOException {
         userDAO.save(user);
     }
@@ -81,6 +83,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -95,6 +98,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(User user) throws CustomResponseException, IOException {
         manageFiltersDependenciesForIndex(user);
         manageProjectsDependenciesForIndex(user);
@@ -188,35 +192,18 @@ public class UserService extends SearchService<User> {
         }
     }
 
+    @Override
     public User find(Integer id) throws DAOException {
         return userDAO.find(id);
     }
 
     /**
      * Get al. users.
-     * 
+     *
      * @return A List of all users
      */
     public List<User> findAll() {
         return userDAO.findAll();
-    }
-
-    /**
-     * Get all visible users.
-     * 
-     * @return A list of all visible users
-     */
-    public List<User> getAllVisibleUsers() {
-        return userDAO.getAllVisibleUsers();
-    }
-
-    /**
-     * get all active users.
-     * 
-     * @return a list of all active users
-     */
-    public List<User> getAllActiveUsers() {
-        return userDAO.getAllActiveUsers();
     }
 
     /**
@@ -225,6 +212,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     public void removeFromDatabase(User user) throws DAOException {
         userDAO.remove(user);
     }
@@ -235,6 +223,7 @@ public class UserService extends SearchService<User> {
      * @param id
      *            of template object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         userDAO.remove(id);
     }
@@ -245,6 +234,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -253,6 +243,7 @@ public class UserService extends SearchService<User> {
         }
     }
 
+    @Override
     public List<User> search(String query) throws DAOException {
         return userDAO.search(query);
     }
@@ -277,7 +268,7 @@ public class UserService extends SearchService<User> {
 
     /**
      * Get amount of users with exactly the same login like given but different id.
-     * 
+     *
      * @param id
      *            of user
      * @param login
@@ -309,7 +300,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of JSON objects
      */
-    public List<JSONObject> findByName(String name) throws DataException {
+    List<JSONObject> findByName(String name) throws DataException {
         QueryBuilder query = createSimpleQuery("name", name, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -321,7 +312,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of JSON objects
      */
-    public List<JSONObject> findBySurname(String surname) throws DataException {
+    List<JSONObject> findBySurname(String surname) throws DataException {
         QueryBuilder query = createSimpleQuery("surname", surname, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -335,7 +326,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of JSON objects
      */
-    public List<JSONObject> findByFullName(String name, String surname) throws DataException {
+    List<JSONObject> findByFullName(String name, String surname) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("name", name, true, Operator.AND));
         query.must(createSimpleQuery("surname", surname, true, Operator.AND));
@@ -349,7 +340,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return JSON objects
      */
-    public JSONObject findByLogin(String login) throws DataException {
+    JSONObject findByLogin(String login) throws DataException {
         QueryBuilder query = createSimpleQuery("login", login, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -361,7 +352,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return search result
      */
-    public JSONObject findByLdapLogin(String ldapLogin) throws DataException {
+    JSONObject findByLdapLogin(String ldapLogin) throws DataException {
         QueryBuilder query = createSimpleQuery("ldapLogin", ldapLogin, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -373,9 +364,28 @@ public class UserService extends SearchService<User> {
      *            true -active user or false - inactive user
      * @return list of JSON objects
      */
-    public List<JSONObject> findByActive(boolean active) throws DataException {
+    List<JSONObject> findByActive(boolean active) throws DataException {
         QueryBuilder query = createSimpleQuery("active", String.valueOf(active), true, Operator.AND);
         return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find active users by name or surname.
+     *
+     * @param active
+     *            true or false
+     * @param name
+     *            name or surname
+     * @return list of JSONObjects
+     */
+    List<JSONObject> findByActiveAndName(boolean active, String name) throws DataException {
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery.must(createSimpleQuery("active", String.valueOf(active), true, Operator.AND));
+        BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
+        nestedBoolQuery.should(createSimpleWildcardQuery("name", name));
+        nestedBoolQuery.should(createSimpleWildcardQuery("surname", name));
+        boolQuery.must(nestedBoolQuery);
+        return searcher.findDocuments(boolQuery.toString());
     }
 
     /**
@@ -385,7 +395,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of JSON objects
      */
-    public List<JSONObject> findByLocation(String location) throws DataException {
+    List<JSONObject> findByLocation(String location) throws DataException {
         QueryBuilder query = createSimpleQuery("location", location, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -397,7 +407,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of JSON objects
      */
-    public List<JSONObject> findByMetadataLanguage(String metadataLanguage) throws DataException {
+    List<JSONObject> findByMetadataLanguage(String metadataLanguage) throws DataException {
         QueryBuilder query = createSimpleQuery("metadataLanguage", metadataLanguage, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -409,7 +419,7 @@ public class UserService extends SearchService<User> {
      *            of user group
      * @return list of JSON objects with users for specific user group id
      */
-    public List<JSONObject> findByUserGroupId(Integer id) throws DataException {
+    List<JSONObject> findByUserGroupId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -421,7 +431,7 @@ public class UserService extends SearchService<User> {
      *            of user group
      * @return list of JSON objects with users for specific user group title
      */
-    public List<JSONObject> findByUserGroupTitle(String title) throws DataException {
+    List<JSONObject> findByUserGroupTitle(String title) throws DataException {
         List<JSONObject> users = new ArrayList<>();
 
         List<JSONObject> userGroups = serviceManager.getUserGroupService().findByTitle(title, true);
@@ -438,7 +448,7 @@ public class UserService extends SearchService<User> {
      *            of filter
      * @return list of JSON objects with users for specific filter
      */
-    public List<JSONObject> findByFilter(String value) throws DataException {
+    List<JSONObject> findByFilter(String value) throws DataException {
         List<JSONObject> users = new ArrayList<>();
 
         List<JSONObject> filters = serviceManager.getFilterService().findByValue(value, true);
@@ -461,12 +471,82 @@ public class UserService extends SearchService<User> {
     }
 
     /**
+     * Get user by id.
+     *
+     * @param id of user
+     * @return user as UserDTO object
+     */
+    public UserDTO getById(Integer id) throws DataException {
+        return convertJSONObjectToDTO(findById(id), false);
+    }
+
+    /**
+     * Get all visible users.
+     *
+     * @return a list of all visible users as UserDTO
+     */
+    public List<UserDTO> getAllVisibleUsers() throws DataException {
+        List<JSONObject> jsonObjects = findAllDocuments();
+        return convertJSONObjectsToDTOs(jsonObjects, false);
+    }
+
+    /**
+     * Get all active users.
+     *
+     * @return a list of all active users as UserDTO
+     */
+    public List<UserDTO> getAllActiveUsers() throws DataException {
+        List<JSONObject> jsonObjects = findByActive(true);
+        return convertJSONObjectsToDTOs(jsonObjects, false);
+    }
+
+    /**
+     * Get filtered users by name.
+     *
+     * @param name
+     *            the name filter
+     * @return a list of filtered users
+     */
+    public List<UserDTO> getActiveUsersByName(String name) throws DataException {
+        List<JSONObject> jsonObjects = findByActiveAndName(true, name);
+        return convertJSONObjectsToDTOs(jsonObjects, false);
+    }
+
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userType);
+    }
+
+    @Override
+    public UserDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(getIdFromJSONObject(jsonObject));
+        userDTO.setLogin(getStringPropertyForDTO(jsonObject, "login"));
+        userDTO.setName(getStringPropertyForDTO(jsonObject, "name"));
+        userDTO.setSurname(getStringPropertyForDTO(jsonObject, "surname"));
+        userDTO.setLdapLogin(getStringPropertyForDTO(jsonObject, "ldapLogin"));
+        userDTO.setLocation(getStringPropertyForDTO(jsonObject, "location"));
+        userDTO.setFullName(getFullName(userDTO));
+        if (!related) {
+            userDTO = convertRelatedJSONObjects(jsonObject, userDTO);
+        }
+        return userDTO;
+    }
+
+    private UserDTO convertRelatedJSONObjects(JSONObject jsonObject, UserDTO userDTO) throws DataException {
+        userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, "filters", serviceManager.getFilterService()));
+        userDTO.setFiltersSize(userDTO.getFilters().size());
+        userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
+        userDTO.setProjectsSize(userDTO.getProjects().size());
+        userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
+        userDTO.setTasksSize(userDTO.getTasks().size());
+        userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+        userDTO.setUserGroupSize(userDTO.getUserGroups().size());
+        return userDTO;
     }
 
     /**
@@ -640,6 +720,17 @@ public class UserService extends SearchService<User> {
     }
 
     /**
+     * At that moment only add this method.
+     *
+     * @param user
+     *            object as UserDTo
+     * @return full name of the user as String
+     */
+    public String getFullName(UserDTO user) {
+        return user.getSurname() + ", " + user.getName();
+    }
+
+    /**
      * Get user home directory (either from the LDAP or directly from the
      * configuration). If LDAP is used, find home directory there, otherwise in
      * configuration.
@@ -760,16 +851,5 @@ public class UserService extends SearchService<User> {
                 serviceManager.getFilterService().remove(filter);
             }
         }
-    }
-
-    /**
-     * Get filtered users by name.
-     * 
-     * @param filter
-     *            the name filter
-     * @return a list of filtered users
-     */
-    public List<User> getFilteredUsersByName(String filter) {
-        return userDAO.getFilteredUsersByName(filter);
     }
 }

@@ -100,21 +100,21 @@ public class ProjectServiceIT {
         Project project = new Project();
         project.setTitle("To Remove");
         projectService.save(project);
-        Project foundProject = projectService.convertJSONObjectToObject(projectService.findById(4));
+        Project foundProject = projectService.convertJSONObjectToBean(projectService.findById(4));
         assertEquals("Additional project was not inserted in database!", "To Remove", foundProject.getTitle());
 
         projectService.remove(foundProject);
-        foundProject = projectService.convertJSONObjectToObject(projectService.findById(4));
+        foundProject = projectService.convertJSONObjectToBean(projectService.findById(4));
         assertEquals("Additional project was not removed from database!", null, foundProject);
 
         project = new Project();
         project.setTitle("To remove");
         projectService.save(project);
-        foundProject = projectService.convertJSONObjectToObject(projectService.findById(5));
+        foundProject = projectService.convertJSONObjectToBean(projectService.findById(5));
         assertEquals("Additional project was not inserted in database!", "To remove", foundProject.getTitle());
 
         projectService.remove(5);
-        foundProject = projectService.convertJSONObjectToObject(projectService.findById(5));
+        foundProject = projectService.convertJSONObjectToBean(projectService.findById(5));
         assertEquals("Additional project was not removed from database!", null, foundProject);
     }
 

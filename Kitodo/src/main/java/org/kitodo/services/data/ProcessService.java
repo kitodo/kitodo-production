@@ -89,6 +89,7 @@ import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProcessDTO;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -108,7 +109,7 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 
-public class ProcessService extends TitleSearchService<Process> {
+public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
     private ProcessDAO processDAO = new ProcessDAO();
     private ProcessType processType = new ProcessType();
@@ -129,6 +130,7 @@ public class ProcessService extends TitleSearchService<Process> {
         this.indexer = new Indexer<>(Process.class);
     }
 
+    @Override
     public Process find(Integer id) throws DAOException {
         return processDAO.find(id);
     }
@@ -143,6 +145,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      *            object
      */
+    @Override
     public void saveToDatabase(Process process) throws DAOException {
         processDAO.save(process, getProgress(process));
     }
@@ -153,6 +156,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -168,6 +172,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Process process)
             throws CustomResponseException, DAOException, DataException, IOException {
         manageBatchesDependenciesForIndex(process);
@@ -349,6 +354,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      *            object
      */
+    @Override
     public void removeFromDatabase(Process process) throws DAOException {
         processDAO.remove(process);
     }
@@ -359,6 +365,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param id
      *            of process object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         processDAO.remove(id);
     }
@@ -369,6 +376,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -377,6 +385,7 @@ public class ProcessService extends TitleSearchService<Process> {
         }
     }
 
+    @Override
     public List<Process> search(String query) throws DAOException {
         return processDAO.search(query);
     }
@@ -567,6 +576,11 @@ public class ProcessService extends TitleSearchService<Process> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), processType);
+    }
+
+    @Override
+    public ProcessDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        return null;
     }
 
     /**

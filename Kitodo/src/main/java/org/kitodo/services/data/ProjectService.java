@@ -40,10 +40,11 @@ import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class ProjectService extends TitleSearchService<Project> {
+public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
 
     private List<StepInformation> commonWorkFlow = null;
     private ProjectDAO projectDAO = new ProjectDAO();
@@ -65,6 +66,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     public void saveToDatabase(Project project) throws DAOException {
         projectDAO.save(project);
     }
@@ -75,6 +77,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -89,6 +92,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Project project)
             throws CustomResponseException, DataException, IOException {
         manageProcessesDependenciesForIndex(project);
@@ -132,6 +136,7 @@ public class ProjectService extends TitleSearchService<Project> {
         }
     }
 
+    @Override
     public Project find(Integer id) throws DAOException {
         return projectDAO.find(id);
     }
@@ -156,6 +161,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     public void removeFromDatabase(Project project) throws DAOException {
         projectDAO.remove(project);
     }
@@ -166,6 +172,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param id
      *            of project object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         projectDAO.remove(id);
     }
@@ -176,6 +183,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -184,6 +192,7 @@ public class ProjectService extends TitleSearchService<Project> {
         }
     }
 
+    @Override
     public List<Project> search(String query) throws DAOException {
         return projectDAO.search(query);
     }
@@ -197,7 +206,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
+    List<JSONObject> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("startDate", startDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -211,7 +220,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
+    List<JSONObject> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("endDate", endDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -225,7 +234,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
+    List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
             throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfPages", numberOfPages, searchCondition);
         return searcher.findDocuments(query.toString());
@@ -240,7 +249,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    public List<JSONObject> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
+    List<JSONObject> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
             throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfVolumes", numberOfVolumes, searchCondition);
         return searcher.findDocuments(query.toString());
@@ -254,7 +263,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            projects
      * @return list of JSON objects
      */
-    public List<JSONObject> findByArchived(Boolean archived) throws DataException {
+    List<JSONObject> findByArchived(Boolean archived) throws DataException {
         QueryBuilder query = createSimpleQuery("archived", archived.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -295,7 +304,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of user
      * @return list of JSON objects
      */
-    public List<JSONObject> findByUserId(Integer id) throws DataException {
+    List<JSONObject> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -307,9 +316,18 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of user
      * @return list of search result with projects for specific user login
      */
-    public List<JSONObject> findByUserLogin(String login) throws DataException {
+    List<JSONObject> findByUserLogin(String login) throws DataException {
         JSONObject user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(getIdFromJSONObject(user));
+    }
+
+    /**
+     * Get all projects from index an convert them for frontend.
+     *
+     * @return list of ProjectDTO objects
+     */
+    public List<ProjectDTO> getAll() throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
     /**
@@ -319,6 +337,30 @@ public class ProjectService extends TitleSearchService<Project> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), projectType);
+    }
+
+    @Override
+    public ProjectDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        ProjectDTO projectDTO = new ProjectDTO();
+        projectDTO.setId(getIdFromJSONObject(jsonObject));
+        projectDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        projectDTO.setStartDate(getStringPropertyForDTO(jsonObject, "startDate"));
+        projectDTO.setEndDate(getStringPropertyForDTO(jsonObject, "endDate"));
+        projectDTO.setFileFormatDmsExport(getStringPropertyForDTO(jsonObject, "fileFormatDmsExport"));
+        projectDTO.setFileFormatInternal(getStringPropertyForDTO(jsonObject, "fileFormatInternal"));
+        projectDTO.setNumberOfPages(getIntegerPropertyForDTO(jsonObject, "numberOfPages"));
+        projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(jsonObject, "numberOfVolumes"));
+        //projectDTO.setProjectIsArchived(getStringPropertyForDTO(jsonObject, "archived"));
+        if (!related) {
+            projectDTO = convertRelatedJSONObjects(jsonObject, projectDTO);
+        }
+        return projectDTO;
+    }
+
+    private ProjectDTO convertRelatedJSONObjects(JSONObject jsonObject, ProjectDTO projectDTO) throws DataException {
+        projectDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
+        projectDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
+        return projectDTO;
     }
 
     /**

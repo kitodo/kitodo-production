@@ -22,7 +22,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 /**
@@ -104,22 +103,22 @@ public class TaskServiceIT {
         task.setTitle("To Remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        Task foundTask = taskService.convertJSONObjectToObject(taskService.findById(6));
+        Task foundTask = taskService.convertJSONObjectToBean(taskService.findById(6));
         assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
 
         taskService.remove(foundTask);
-        foundTask = taskService.convertJSONObjectToObject(taskService.findById(6));
+        foundTask = taskService.convertJSONObjectToBean(taskService.findById(6));
         assertEquals("Additional task was not removed from database!", null, foundTask);
 
         task = new Task();
         task.setTitle("To remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        foundTask = taskService.convertJSONObjectToObject(taskService.findById(7));
+        foundTask = taskService.convertJSONObjectToBean(taskService.findById(7));
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
 
         taskService.remove(7);
-        foundTask = taskService.convertJSONObjectToObject(taskService.findById(7));
+        foundTask = taskService.convertJSONObjectToBean(taskService.findById(7));
         assertEquals("Additional task was not removed from database!", null, foundTask);
     }
 

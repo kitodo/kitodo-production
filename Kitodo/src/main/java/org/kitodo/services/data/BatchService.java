@@ -36,10 +36,12 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.BatchDTO;
+import org.kitodo.dto.ProcessDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class BatchService extends TitleSearchService<Batch> {
+public class BatchService extends TitleSearchService<Batch, BatchDTO> {
 
     private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
@@ -60,6 +62,7 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
+    @Override
     public void saveToDatabase(Batch batch) throws DAOException {
         batchDAO.save(batch);
     }
@@ -70,6 +73,7 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -84,6 +88,7 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, IOException {
         if (batch.getIndexAction() == IndexAction.DELETE) {
             for (Process process : batch.getProcesses()) {
@@ -96,6 +101,7 @@ public class BatchService extends TitleSearchService<Batch> {
             }
         }
     }
+
 
     public Batch find(Integer id) throws DAOException {
         return batchDAO.find(id);
@@ -259,6 +265,22 @@ public class BatchService extends TitleSearchService<Batch> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), batchType);
+    }
+
+    @Override
+    public BatchDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        BatchDTO batchDTO = new BatchDTO();
+        batchDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        batchDTO.setType(getStringPropertyForDTO(jsonObject, "type"));
+        if (!related) {
+            batchDTO = convertRelatedJSONObjects(jsonObject, batchDTO);
+        }
+        return batchDTO;
+    }
+
+    private BatchDTO convertRelatedJSONObjects(JSONObject jsonObject, BatchDTO batchDTO) throws DataException {
+        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
+        return batchDTO;
     }
 
     /**

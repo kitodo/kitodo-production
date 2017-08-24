@@ -33,10 +33,11 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.PropertyType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.PropertyDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class PropertyService extends TitleSearchService<Property> {
+public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
 
     private PropertyDAO propertyDAO = new PropertyDAO();
     private PropertyType propertyType = new PropertyType();
@@ -57,6 +58,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
+    @Override
     public void saveToDatabase(Property property) throws DAOException {
         propertyDAO.save(property);
     }
@@ -67,6 +69,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -81,6 +84,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(Property property) throws CustomResponseException, IOException {
         for (Process process : property.getProcesses()) {
             serviceManager.getProcessService().saveToIndex(process);
@@ -100,6 +104,7 @@ public class PropertyService extends TitleSearchService<Property> {
      *            as Integer
      * @return Property
      */
+    @Override
     public Property find(Integer id) throws DAOException {
         return propertyDAO.find(id);
     }
@@ -157,6 +162,7 @@ public class PropertyService extends TitleSearchService<Property> {
      *            as String
      * @return list of properties
      */
+    @Override
     public List<Property> search(String query) throws DAOException {
         return propertyDAO.search(query);
     }
@@ -167,6 +173,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
+    @Override
     public void removeFromDatabase(Property property) throws DAOException {
         propertyDAO.remove(property);
     }
@@ -177,6 +184,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param id
      *            of property object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         propertyDAO.remove(id);
     }
@@ -187,6 +195,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -233,6 +242,16 @@ public class PropertyService extends TitleSearchService<Property> {
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), propertyType);
+    }
+
+    @Override
+    public PropertyDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        PropertyDTO propertyDTO = new PropertyDTO();
+        propertyDTO.setId(getIdFromJSONObject(jsonObject));
+        propertyDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        propertyDTO.setValue(getStringPropertyForDTO(jsonObject, "value"));
+        propertyDTO.setCreationDate(getStringPropertyForDTO(jsonObject, "creationDate"));
+        return propertyDTO;
     }
 
     /**

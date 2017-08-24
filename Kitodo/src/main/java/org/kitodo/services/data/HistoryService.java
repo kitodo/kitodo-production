@@ -32,13 +32,14 @@ import org.kitodo.data.elasticsearch.index.type.HistoryType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.HistoryDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 /**
  * HistoryService.
  */
-public class HistoryService extends SearchService<History> {
+public class HistoryService extends SearchService<History, HistoryDTO> {
 
     private HistoryDAO historyDAO = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
@@ -59,6 +60,7 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
+    @Override
     public void saveToDatabase(History history) throws DAOException {
         historyDAO.save(history);
     }
@@ -69,6 +71,7 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
@@ -83,6 +86,7 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
+    @Override
     protected void manageDependenciesForIndex(History history) throws CustomResponseException, IOException {
         // TODO: is it possible that process is modified during save to history?
         if (history.getProcess() != null) {
@@ -90,6 +94,7 @@ public class HistoryService extends SearchService<History> {
         }
     }
 
+    @Override
     public History find(Integer id) throws DAOException {
         return historyDAO.find(id);
     }
@@ -105,6 +110,7 @@ public class HistoryService extends SearchService<History> {
      *            as String
      * @return list of History objects
      */
+    @Override
     public List<History> search(String query) throws DAOException {
         return historyDAO.search(query);
     }
@@ -125,6 +131,7 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
+    @Override
     public void removeFromDatabase(History history) throws DAOException {
         historyDAO.remove(history);
     }
@@ -135,6 +142,7 @@ public class HistoryService extends SearchService<History> {
      * @param id
      *            of history object
      */
+    @Override
     public void removeFromDatabase(Integer id) throws DAOException {
         historyDAO.remove(id);
     }
@@ -145,6 +153,7 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
@@ -238,5 +247,10 @@ public class HistoryService extends SearchService<History> {
     public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), historyType);
+    }
+
+    @Override
+    public HistoryDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        return new HistoryDTO();
     }
 }

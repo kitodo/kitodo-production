@@ -96,22 +96,22 @@ public class BatchServiceIT {
         batch.setTitle("To Remove");
         batch.setType(Batch.Type.SERIAL);
         batchService.save(batch);
-        Batch foundBatch = batchService.convertJSONObjectToObject(batchService.findById(5));
+        Batch foundBatch = batchService.convertJSONObjectToBean(batchService.findById(5));
         assertEquals("Additional batch was not inserted in database!", "To Remove", foundBatch.getTitle());
 
         batchService.remove(foundBatch);
-        foundBatch = batchService.convertJSONObjectToObject(batchService.findById(5));
+        foundBatch = batchService.convertJSONObjectToBean(batchService.findById(5));
         assertEquals("Additional batch was not removed from database!", null, foundBatch);
 
         batch = new Batch();
         batch.setTitle("To remove");
         batch.setType(Batch.Type.SERIAL);
         batchService.save(batch);
-        foundBatch = batchService.convertJSONObjectToObject(batchService.findById(6));
+        foundBatch = batchService.convertJSONObjectToBean(batchService.findById(6));
         assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
 
         batchService.remove(6);
-        foundBatch = batchService.convertJSONObjectToObject(batchService.findById(6));
+        foundBatch = batchService.convertJSONObjectToBean(batchService.findById(6));
         assertEquals("Additional batch was not removed from database!", null, foundBatch);
     }
 

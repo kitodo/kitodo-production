@@ -170,31 +170,21 @@ public class DocketServiceIT {
         Docket docket = new Docket();
         docket.setTitle("To Remove");
         docketService.save(docket);
-        Docket foundDocket = docketService.convertJSONObjectToObject(docketService.findById(3));
+        Docket foundDocket = docketService.convertJSONObjectToBean(docketService.findById(3));
         assertEquals("Additional docket was not inserted in database!", "To Remove", foundDocket.getTitle());
 
         docketService.remove(foundDocket);
-        foundDocket = docketService.convertJSONObjectToObject(docketService.findById(3));
+        foundDocket = docketService.convertJSONObjectToBean(docketService.findById(3));
         assertEquals("Additional docket was not removed from database!", null, foundDocket);
 
         docket = new Docket();
         docket.setTitle("To remove");
         docketService.save(docket);
-        foundDocket = docketService.convertJSONObjectToObject(docketService.findById(4));
+        foundDocket = docketService.convertJSONObjectToBean(docketService.findById(4));
         assertEquals("Additional docket was not inserted in database!", "To remove", foundDocket.getTitle());
 
         docketService.remove(4);
-        foundDocket = docketService.convertJSONObjectToObject(docketService.findById(4));
+        foundDocket = docketService.convertJSONObjectToBean(docketService.findById(4));
         assertEquals("Additional docket was not removed from database!", null, foundDocket);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void shouldConvertJSONObjectsToObjectList() throws Exception {
-        DocketService docketService = new DocketService();
-
-        List<JSONObject> searchResults = docketService.findAllDocuments();
-        List<Docket> dockets = (List<Docket>) docketService.convertJSONObjectsToObjectList(searchResults, "Docket");
-        assertEquals("Not all dockets were converted!", 2, dockets.size());
     }
 }
