@@ -468,27 +468,6 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Get user by id.
-     *
-     * @param id of user
-     * @return user as UserDTO object
-     */
-    public UserDTO getById(Integer id) throws DataException {
-        return getById(id, false);
-    }
-
-    /**
-     * Get user by id.
-     *
-     * @param id of user
-     * @param related find as related object
-     * @return user as UserDTO object
-     */
-    public UserDTO getById(Integer id, boolean related) throws DataException {
-        return convertJSONObjectToDTO(findById(id), related);
-    }
-
-    /**
      * Get all visible users.
      *
      * @return a list of all visible users as UserDTO

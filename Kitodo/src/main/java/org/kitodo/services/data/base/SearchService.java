@@ -228,8 +228,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes object from database and document from the index of Elastic
+     * Search.
      *
      * @param id
      *            of object
@@ -244,8 +244,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes object from database and document from the index of Elastic
+     * Search.
      *
      * @param baseBean
      *            object
@@ -333,6 +333,31 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
+     * Find object in ES and convert it to DTO.
+     * 
+     * @param id
+     *            object id
+     * @return DTO object
+     */
+    public S getById(Integer id) throws DataException {
+        return getById(id, false);
+    }
+
+    /**
+     * Find object related to previously found object in ES and convert it to DTO.
+     * 
+     * @param id
+     *            related object id
+     * @param related
+     *            this method should ba called only with true, if false call method
+     *            getById(Integer id).
+     * @return related DTO object
+     */
+    public S getById(Integer id, boolean related) throws DataException {
+        return convertJSONObjectToDTO(findById(id), related);
+    }
+
+    /**
      * Convert list of JSONObject object to list of DTO objects.
      *
      * @param jsonObjects
@@ -379,8 +404,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            name of related property
      * @return bean object
      */
-    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject,
-            String key, SearchService<?, O> service) throws DataException {
+    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject, String key,
+            SearchService<?, O> service) throws DataException {
         List<O> listDTO = new ArrayList<>();
         for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
             JSONObject result = service.findById(id);
@@ -435,8 +460,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * @param key
      *            JSON key for searched object
      * @param id
-     *            id value for searched object or some object related to
-     *            searched object
+     *            id value for searched object or some object related to searched
+     *            object
      * @param contains
      *            determine if results should contain given value or should not
      *            contain given value
@@ -460,8 +485,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * @param key
      *            JSON key for searched object
      * @param condition
-     *            id value for searched object or some object related to
-     *            searched object
+     *            id value for searched object or some object related to searched
+     *            object
      * @param contains
      *            determine if results should contain given value or should not
      *            contain given value
@@ -512,8 +537,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            determine if results should contain given value or should not
      *            contain given value
      * @param operator
-     *            as Operator AND or OR - useful when value contains more than
-     *            one word
+     *            as Operator AND or OR - useful when value contains more than one
+     *            word
      * @return query
      */
     protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator) {
@@ -683,7 +708,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
         jsonObject = (JSONObject) jsonObject.get("_source");
         if (jsonObject != null) {
             JSONArray jsonArray = (JSONArray) jsonObject.get(key);
-            return  jsonArray.size();
+            return jsonArray.size();
         }
         return 0;
     }

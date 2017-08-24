@@ -625,14 +625,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return query;
     }
 
-    public ProcessDTO getById(Integer id) throws DataException {
-        return convertJSONObjectToDTO(findById(id), false);
-    }
-
-    public ProcessDTO getById(Integer id, boolean related) throws DataException {
-        return convertJSONObjectToDTO(findById(id), related);
-    }
-
     public Process convertDtoToBean(ProcessDTO processDTO) throws DAOException {
         return serviceManager.getProcessService().find(processDTO.getId());
     }
