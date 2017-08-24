@@ -127,4 +127,13 @@ public class UserDAO extends BaseDAO {
     public void refresh(User user) {
         refreshObject(user);
     }
+
+    /**
+     * Get all active users sorted by surname and name.
+     *
+     * @return sorted list of all active users as User objects
+     */
+    public List<User> getAllActiveUsersSortedByNameAndSurname() {
+        return search("FROM User WHERE active = 1 AND visible IS NULL ORDER BY surname ASC, name ASC");
+    }
 }
