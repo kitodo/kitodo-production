@@ -34,6 +34,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
@@ -735,9 +736,27 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
         return (Double) sum.get("value");
     }
 
-    protected List<String> findDistinctValues(String field, String sort) throws DataException {
-        JSONObject jsonObject = searcher.aggregateDocuments(null, createTermAggregation(field));
-        return new ArrayList<>();
+    /**
+     * Find distinct values sorted by terms. Returned values are stored as Strings.
+     * 
+     * @param query
+     *            for searched values to aggregation
+     * @param field
+     *            by which aggregation is going to be performed
+     * @param sort
+     *            asc true or false
+     * @return sorted list of distinct values
+     */
+    protected List<String> findDistinctValues(String query, String field, boolean sort) throws DataException {
+        List<String> distinctValues = new ArrayList<>();
+        JSONObject jsonObject = searcher.aggregateDocuments(query, createTermAggregation(field, sort));
+        JSONObject aggregations = (JSONObject) jsonObject.get(field);
+        JSONArray buckets = (JSONArray) aggregations.get("buckets");
+        for (Object bucket : buckets) {
+            JSONObject document = (JSONObject) bucket;
+            distinctValues.add((String) document.get("key"));
+        }
+        return distinctValues;
     }
 
     private String createCountAggregation(String field) {
@@ -748,8 +767,9 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
         return XContentHelper.toString(AggregationBuilders.sum(field).field(field));
     }
 
-    private String createTermAggregation(String field) {
-        return XContentHelper.toString(AggregationBuilders.terms(field).field(field));
+    private String createTermAggregation(String field, boolean sort) {
+        return XContentHelper
+                .toString(AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort)));
     }
 
     /**
