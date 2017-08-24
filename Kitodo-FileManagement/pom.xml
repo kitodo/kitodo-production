@@ -71,6 +71,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <outputDirectory>../Kitodo/modules/</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>all-tests</id>
@@ -101,12 +115,27 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.3.1</version>
-                        <configuration>
-                            <outputDirectory>${pluginFolder}</outputDirectory>
-                        </configuration>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-files-on-build</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${moduleFolder}</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>../Kitodo/modules/</directory>
+                                            <include>*.jar</include>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
