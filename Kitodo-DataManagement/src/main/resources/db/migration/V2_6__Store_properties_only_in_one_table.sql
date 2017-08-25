@@ -35,7 +35,7 @@ INSERT INTO workpieceProperty (title)
 VALUES('dummyMigrationDeleteValue');
 DELETE FROM workpieceProperty WHERE title ='dummyMigrationDeleteValue';
 
---for userproperty
+-- for userproperty
 ALTER TABLE userProperty
 CHANGE id id INT(11) NOT NULL;
 ALTER TABLE userProperty
@@ -51,7 +51,7 @@ INSERT INTO userProperty (title)
 VALUES('dummyMigrationDeleteValue');
 DELETE FROM userProperty WHERE title ='dummyMigrationDeleteValue';
 
---for templateproperty
+-- for templateproperty
 ALTER TABLE templateProperty
 CHANGE id id INT(11) NOT NULL;
 ALTER TABLE templateProperty
