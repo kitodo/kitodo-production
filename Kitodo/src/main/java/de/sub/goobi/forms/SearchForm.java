@@ -30,6 +30,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.FilterString;
 import org.kitodo.services.ServiceManager;
 
@@ -84,10 +85,14 @@ public class SearchForm {
     /**
      * Initialise drop down list of master piece property titles.
      */
-    // TODO: Use index here!
     protected void initMasterpiecePropertyTitles() {
-        List<String> workpiecePropertiesTitlesDistinct = serviceManager.getPropertyService()
-                .findWorkpiecePropertiesTitlesDistinct();
+        List<String> workpiecePropertiesTitlesDistinct = new ArrayList<>();
+        try {
+            workpiecePropertiesTitlesDistinct = serviceManager.getPropertyService()
+                    .findWorkpiecePropertiesTitlesDistinct();
+        } catch (DataException e) {
+            logger.error(e);
+        }
         this.masterpiecePropertyTitles = workpiecePropertiesTitlesDistinct;
     }
 
@@ -116,10 +121,14 @@ public class SearchForm {
     /**
      * Initialise drop down list of process property titles.
      */
-    // TODO: Use index here!
     protected void initProcessPropertyTitles() {
-        List<String> processPropertiesTitlesDistinct = serviceManager.getPropertyService()
-                .findProcessPropertiesTitlesDistinct();
+        List<String> processPropertiesTitlesDistinct = new ArrayList<>();
+        try {
+            processPropertiesTitlesDistinct = serviceManager.getPropertyService()
+                    .findProcessPropertiesTitlesDistinct();
+        } catch (DataException e) {
+            logger.error(e);
+        }
         this.processPropertyTitles = processPropertiesTitlesDistinct;
     }
 
@@ -133,21 +142,29 @@ public class SearchForm {
     }
 
     /**
-     * Initialise drop down list of step titles.
+     * Initialise drop down list of task titles.
      */
-    // TODO: Use index here!
     protected void initStepTitles() {
-        List<String> taskTitles = serviceManager.getTaskService().getTaskTitlesDistinct();
+        List<String> taskTitles = new ArrayList<>();
+        try {
+            taskTitles = serviceManager.getTaskService().findTaskTitlesDistinct();
+        } catch (DataException e) {
+            logger.error(e);
+        }
         this.stepTitles = taskTitles;
     }
 
     /**
      * Initialise drop down list of template property titles.
      */
-    // TODO: Use index here!
     protected void initTemplatePropertyTitles() {
-        List<String> templatePropertiesTitlesDistinct = serviceManager.getPropertyService()
-                .findTemplatePropertiesTitlesDistinct();
+        List<String> templatePropertiesTitlesDistinct = new ArrayList<>();
+        try {
+            templatePropertiesTitlesDistinct = serviceManager.getPropertyService()
+                    .findTemplatePropertiesTitlesDistinct();
+        } catch (DataException e) {
+            logger.error(e);
+        }
         this.templatePropertyTitles = templatePropertiesTitlesDistinct;
     }
 
