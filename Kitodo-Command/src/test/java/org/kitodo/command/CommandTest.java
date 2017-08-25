@@ -13,7 +13,6 @@ package org.kitodo.command;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -23,18 +22,18 @@ import org.kitodo.api.command.CommandResult;
 import org.apache.commons.lang3.SystemUtils;
 
 public class CommandTest {
-    private String ScriptExtention;
+    private String scriptExtention;
     private int processId = 3;
 
     @Before
     public void setScriptExtensionByOS() {
 
         if (SystemUtils.IS_OS_WINDOWS) {
-            ScriptExtention = ".bat";
+            scriptExtention = ".bat";
         }
 
         if (SystemUtils.IS_OS_LINUX) {
-            ScriptExtention = ".sh";
+            scriptExtention = ".sh";
         }
     }
 
@@ -42,7 +41,7 @@ public class CommandTest {
     public void shouldRunCommand() {
         Command command = new Command();
 
-        String commandString = "src/test/resources/working_script" + ScriptExtention;
+        String commandString = "src/test/resources/working_script" + scriptExtention;
         CommandResult commandResult = command.runCommand(processId, commandString);
 
         ArrayList<String> expectedMessages = new ArrayList<>();
@@ -61,10 +60,11 @@ public class CommandTest {
     public void shouldNotRunNotExistingCommand() {
         Command command = new Command();
 
-        String commandString = "src/test/resources/notExistingScript" + ScriptExtention;
+        String commandString = "src/test/resources/notExistingScript" + scriptExtention;
         CommandResult commandResult = command.runCommand(processId, commandString);
 
         CommandResult expectedCommandResult = new CommandResult(processId, commandString, false, null);
+
         assertEquals("Should not run not existing Command", expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful());
     }
@@ -73,10 +73,11 @@ public class CommandTest {
     public void shouldNotRunCommandWithFalseSyntax() {
         Command command = new Command();
 
-        String commandString = "src/test/resources/not_working_script" + ScriptExtention;
+        String commandString = "src/test/resources/not_working_script" + scriptExtention;
         CommandResult commandResult = command.runCommand(processId, commandString);
 
         CommandResult expectedCommandResult = new CommandResult(processId, commandString, false, null);
+
         assertEquals("Should not run command with false syntax", expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful());
     }
@@ -85,7 +86,7 @@ public class CommandTest {
     public void shouldRunCommandWithParameter() {
         Command command = new Command();
 
-        String commandString = "src/test/resources/working_script_with_parameters" + ScriptExtention
+        String commandString = "src/test/resources/working_script_with_parameters" + scriptExtention
                 + " testParameter";
         CommandResult commandResult = command.runCommand(processId, commandString);
 
@@ -95,6 +96,7 @@ public class CommandTest {
         expectedMessages.add("testParameter");
 
         CommandResult expectedCommandResult = new CommandResult(processId, commandString, true, expectedMessages);
+
         assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(), commandResult.isSuccessful());
         assertEquals("Command of CommandResults are not identical", expectedCommandResult.getCommand(), commandResult.getCommand());
         assertEquals("Result messages of CommandResults are not identical", expectedCommandResult.getMessages(), commandResult.getMessages());
