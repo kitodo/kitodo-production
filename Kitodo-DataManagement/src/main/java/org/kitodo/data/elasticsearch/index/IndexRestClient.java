@@ -21,6 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Response;
@@ -121,8 +122,17 @@ public class IndexRestClient extends KitodoRestClient {
      * @return true or false
      */
     public boolean enableSortingByTextField(String type, String field) throws IOException, CustomResponseException {
-        String query = "{\n \"properties\": {\n\"" + field
-                + "\": { \n\"type\": \"text\",\n\"fielddata\": true\n}\n  }\n}";
+        String query = "{\n \"properties\": {\n\""
+                + field
+                + "\": {\n"
+                + "      \"type\": \"text\",\n"
+                + "      \"fielddata\": true,\n"
+                + "      \"fields\": {\n"
+                + "        \"raw\": {\n"
+                + "          \"type\":  \"text\",\n"
+                + "          \"index\": false}\n"
+                + "    }\n"
+                + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Response indexResponse = restClient.performRequest("PUT",
                 "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types",
