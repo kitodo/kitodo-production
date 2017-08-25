@@ -17,14 +17,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.kitodo.api.command.CommandInterface;
-import org.kitodo.api.command.CommandResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.command.CommandInterface;
+import org.kitodo.api.command.CommandResult;
 
 public class Command implements CommandInterface {
 
     private static final Logger logger = LogManager.getLogger(Command.class);
+    private static final String CHARSET = "UTF-8";
 
     /**
      * Method executes a script.
@@ -48,29 +49,16 @@ public class Command implements CommandInterface {
             ArrayList<String> errorMessage = inputStreamArrayToList(process.getErrorStream());
             int errCode = process.waitFor();
 
-            ArrayList<String> outputAndError = new ArrayList<>(outputMessage);
-            outputAndError.addAll(errorMessage);
+            outputMessage.addAll(errorMessage);
 
-            commandResult = new CommandResult(id, command, errCode == 0, outputAndError);
+            commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
 
         } catch (IOException | InterruptedException exception) {
-            if (exception instanceof IOException) {
-
-                ArrayList<String> errorMessages = new ArrayList<>();
-                errorMessages.add("IOException");
-                errorMessages.add(exception.getMessage());
-                commandResult = new CommandResult(id, command, false, errorMessages);
-                System.out.println("");
-            }
-
-            if (exception instanceof InterruptedException) {
-
-                ArrayList<String> errorMessages = new ArrayList<>();
-                errorMessages.add("InterruptedException");
-                commandResult = new CommandResult(id, command, false, errorMessages);
-            }
+            ArrayList<String> errorMessages = new ArrayList<>();
+            errorMessages.add(exception.getCause().toString());
+            errorMessages.add(exception.getMessage());
+            commandResult = new CommandResult(id, command, false, errorMessages);
             return commandResult;
-
         } finally {
             if (process != null) {
                 closeStream(process.getInputStream());
@@ -88,11 +76,11 @@ public class Command implements CommandInterface {
      *            The Stream to convert.
      * @return A ArrayList holding the single lines.
      */
-    public static ArrayList<String> inputStreamArrayToList(InputStream myInputStream) {
+    private static ArrayList<String> inputStreamArrayToList(InputStream myInputStream) {
         ArrayList<String> result = new ArrayList<>();
         Scanner inputLines = null;
         try {
-            inputLines = new Scanner(myInputStream, "UTF-8");
+            inputLines = new Scanner(myInputStream, CHARSET);
             while (inputLines.hasNextLine()) {
                 String myLine = inputLines.nextLine();
                 result.add(myLine);

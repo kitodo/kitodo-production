@@ -13,14 +13,15 @@ package org.kitodo.services.command;
 
 import de.sub.goobi.config.ConfigCore;
 
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandInterface;
@@ -30,27 +31,29 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class CommandService {
 
     private static final Logger logger = LogManager.getLogger(CommandService.class);
-    private ArrayList<CommandResult> finishedCommands = new ArrayList<>();
+    private ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
 
     /**
      * Method executes a script string.
      *
      * @param script
-     *            Path to the script file with optional arguments (<file path>
-     *            <parameter1> <parameter2>...).
+     *            Path to the script file with optional arguments (filepath
+     *            parameter1 parameter2 ...).
      * @throws IOException
      *             an IOException
      */
-    public CommandResult runCommand(String script) {
+    public CommandResult runCommand(String script) throws IOException {
         if (script == null) {
-            throw new IllegalStateException("script must not be null");
+            return null;
         }
         KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class,
                 ConfigCore.getParameter("moduleFolder"));
         CommandInterface commandInterface = serviceLoader.loadModule();
 
-        int id = generateId();
-        CommandResult commandResult = commandInterface.runCommand(id, script);
+        CommandResult commandResult = commandInterface.runCommand(generateId(), script);
+        if (commandResult.getMessages().get(0).contains("IOException")) {
+            throw new IOException();
+        }
         return commandResult;
     }
 
@@ -61,18 +64,13 @@ public class CommandService {
      *            The script file.
      * @param parameter
      *            The script parameters.
-     * @throws IOException
-     *             an IOException
-     * @throws InterruptedException
-     *             an InterruptedException
      */
-    public CommandResult runCommand(File scriptFile, List<String> parameter) throws IOException, InterruptedException {
+    public CommandResult runCommand(File scriptFile, List<String> parameter) throws IOException {
         if (scriptFile == null) {
-            throw new IllegalStateException("script file must not be null");
+            return null;
         }
         String script = generateScriptString(scriptFile, parameter);
-        CommandResult commandResult = runCommand(script);
-        return commandResult;
+        return runCommand(script);
     }
 
     /**
@@ -80,17 +78,12 @@ public class CommandService {
      *
      * @param scriptFile
      *            The script file.
-     * @throws IOException
-     *             an IOException
-     * @throws InterruptedException
-     *             an InterruptedException
      */
-    public CommandResult runCommand(File scriptFile) throws IOException, InterruptedException {
+    public CommandResult runCommand(File scriptFile) throws IOException {
         if (scriptFile == null) {
-            throw new IllegalStateException("script file must not be null");
+            return null;
         }
-        CommandResult commandResult = runCommand(scriptFile.getAbsolutePath());
-        return commandResult;
+        return runCommand(scriptFile.getAbsolutePath());
 
     }
 
@@ -102,14 +95,12 @@ public class CommandService {
      */
     public void runCommandAsync(String script) {
         if (script != null) {
-            generateId();
             KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class,
                     ConfigCore.getParameter("moduleFolder"));
             CommandInterface commandInterface = serviceLoader.loadModule();
 
             Flowable<CommandResult> source = Flowable.fromCallable(() -> {
-                CommandResult commandResult = commandInterface.runCommand(generateId(), script);
-                return commandResult;
+                return commandInterface.runCommand(generateId(), script);
             });
 
             Flowable<CommandResult> commandBackgroundWorker = source.subscribeOn(Schedulers.io());
@@ -120,7 +111,7 @@ public class CommandService {
     }
 
     /**
-     * Should be used to handle finished asynchron scrip executions.
+     * Should be used to handle finished asynchron script executions.
      * 
      * @param commandResult
      *            The finished command result.
@@ -136,7 +127,7 @@ public class CommandService {
                     + " was succesfull!: " + commandResult.getMessages());
         }
 
-        finishedCommands.add(commandResult);
+        finishedCommandResults.add(commandResult);
 
         // TODO add more result handling for frontend here
     }
@@ -150,11 +141,10 @@ public class CommandService {
      *            The script parameters.
      */
     public void runCommandAsync(File scriptFile, List<String> parameter) {
-        if (scriptFile == null) {
-            throw new IllegalStateException("script file must not be null");
+        if (scriptFile != null) {
+            String script = generateScriptString(scriptFile, parameter);
+            runCommandAsync(script);
         }
-        String script = generateScriptString(scriptFile, parameter);
-        runCommandAsync(script);
     }
 
     /**
@@ -164,14 +154,13 @@ public class CommandService {
      *            The script file.
      */
     public void runCommandAsync(File scriptFile) {
-        if (scriptFile == null) {
-            throw new IllegalStateException("script file must not be null");
+        if (scriptFile != null) {
+            runCommandAsync(scriptFile.getAbsolutePath());
         }
-        runCommandAsync(scriptFile.getAbsolutePath());
     }
 
     /**
-     * Generates a String in the form of (<file path> <parameter1> <parameter2>...).
+     * Generates a String in the form of (filepath parameter1 parameter2 ...).
      * 
      * @param file
      *            The file.
@@ -200,14 +189,11 @@ public class CommandService {
     }
 
     /**
-     * Returns the last finished CommandResult.
-     * 
-     * @return The ComandResult.
+     * Returns all finished CommandResults.
+     *
+     * @return The CommandResults.
      */
-    public CommandResult getLastFinishedCommand() {
-        if (finishedCommands.isEmpty())
-            throw new IllegalStateException("Finished commands must not be empty");
-
-        return finishedCommands.get(finishedCommands.size() - 1);
+    public ArrayList<CommandResult> getFinishedCommandResults() {
+        return finishedCommandResults;
     }
 }

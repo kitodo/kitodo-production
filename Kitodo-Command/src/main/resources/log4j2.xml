@@ -12,24 +12,14 @@
  *
 -->
 <Configuration monitorInterval="60">
-    <Properties>
-        <Property name="filename">/usr/local/kitodo/logs</Property>
-    </Properties>
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
         </Console>
-        <File name="LOGFILE" fileName="${filename}/kitodo.log">
-            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
-        </File>
     </Appenders>
     <Loggers>
-        <Logger name="de.sub.goobi, de.unigoettingen.sub.search.opac, org.goobi, org.kitodo" level="error">
-            <AppenderRef ref="LOGFILE" level="error" />
-        </Logger>
         <Root level="error">
             <AppenderRef ref="STDOUT"/>
-            <AppenderRef ref="LOGFILE"/>
         </Root>
     </Loggers>
 </Configuration>
