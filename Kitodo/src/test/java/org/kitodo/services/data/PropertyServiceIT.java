@@ -115,7 +115,22 @@ public class PropertyServiceIT {
 
         actual = workpieceProperty.getValue();
         expected = "first value";
-        assertEquals("Workpiece property was not found in database - value doesn'T match!", expected, actual);
+        assertEquals("Workpiece property was not found in database - value doesn't match!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindDistinctTitles() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        List<String> processPropertiesTitlesDistinct = propertyService.findProcessPropertiesTitlesDistinct();
+        int size = processPropertiesTitlesDistinct.size();
+        assertEquals("Incorrect size of distinct titles for process properties!", 2, size);
+
+        String title = processPropertiesTitlesDistinct.get(0);
+        assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
+
+        title = processPropertiesTitlesDistinct.get(1);
+        assertEquals("Incorrect sorting of distinct titles for process properties!", "Process Property", title);
     }
 
     @Test
