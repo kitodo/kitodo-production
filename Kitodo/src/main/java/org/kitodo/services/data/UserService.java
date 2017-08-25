@@ -104,8 +104,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of users
-     * and re-save project, if false only re-save project object.
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save project, if false only re-save project object.
      *
      * @param user
      *            object
@@ -124,8 +124,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove filter from the index, if
-     * false re-save filter object.
+     * Check if IndexAction flag is delete. If true remove filter from the
+     * index, if false re-save filter object.
      *
      * @param user
      *            object
@@ -143,8 +143,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of users
-     * and re-save task, if false only re-save task object.
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save task, if false only re-save task object.
      *
      * @param user
      *            object
@@ -170,8 +170,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of users
-     * and re-save group, if false only re-save group object.
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save group, if false only re-save group object.
      *
      * @param user
      *            object
@@ -264,14 +264,15 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Get amount of users with exactly the same login like given but different id.
+     * Get amount of users with exactly the same login like given but different
+     * id.
      *
      * @param id
      *            of user
      * @param login
      *            of user
-     * @return amount of users with exactly the same login like given but different
-     *         id
+     * @return amount of users with exactly the same login like given but
+     *         different id
      */
     public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DataException {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
@@ -468,6 +469,17 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
+     * Get user by id.
+     *
+     * @param id
+     *            of user
+     * @return user as UserDTO object
+     */
+    public UserDTO getById(Integer id) throws DataException {
+        return convertJSONObjectToDTO(findById(id), false);
+    }
+
+    /**
      * Get all visible users.
      *
      * @return a list of all visible users as UserDTO
@@ -533,7 +545,8 @@ public class UserService extends SearchService<User, UserDTO> {
         userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, "filters", serviceManager.getFilterService()));
         userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
         userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
-        userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+        userDTO.setUserGroups(
+                convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
         return userDTO;
     }
 
@@ -740,10 +753,12 @@ public class UserService extends SearchService<User, UserDTO> {
      *            String
      */
     private void removeFilterFromUser(User user, String userFilter) throws DataException {
-        for (Filter filter : user.getFilters()) {
+        List<Filter> filters = user.getFilters();
+        for (Filter filter : filters) {
             if (filter.getValue().equals(userFilter)) {
                 serviceManager.getFilterService().remove(filter);
             }
         }
+        refresh(user);
     }
 }
