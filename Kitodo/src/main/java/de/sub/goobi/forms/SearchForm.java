@@ -26,11 +26,11 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.enums.FilterString;
 import org.kitodo.services.ServiceManager;
 
 @Named("SearchForm")
@@ -348,35 +348,35 @@ public class SearchForm {
             search += "\"" + this.processOperand + this.processTitle + "\" ";
         }
         if (!this.idin.isEmpty()) {
-            search += "\"" + FilterString.ID + this.idin + "\" ";
+            search += "\"" + FilterString.ID.getFilterEnglish() + this.idin + "\" ";
         }
         if (!this.project.isEmpty()) {
-            search += "\"" + this.projectOperand + FilterString.PROJECT + this.project + "\" ";
+            search += "\"" + this.projectOperand + FilterString.PROJECT.getFilterEnglish() + this.project + "\" ";
         }
         if (!this.processPropertyValue.isEmpty()) {
             if (!this.processPropertyTitle.isEmpty()) {
-                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle
+                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()  + this.processPropertyTitle
                         + ":" + this.processPropertyValue + "\" ";
             } else {
-                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyValue
+                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()  + this.processPropertyValue
                         + "\" ";
             }
         }
         if (!this.masterpiecePropertyValue.isEmpty()) {
             if (!this.masterpiecePropertyTitle.isEmpty()) {
-                search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE
+                search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE.getFilterEnglish()
                         + this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
             } else {
-                search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE
+                search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE.getFilterEnglish()
                         + this.masterpiecePropertyValue + "\" ";
             }
         }
         if (!this.templatePropertyValue.isEmpty()) {
             if (!this.templatePropertyTitle.isEmpty()) {
-                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle + ":"
+                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()  + this.templatePropertyTitle + ":"
                         + this.templatePropertyValue + "\" ";
             } else {
-                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyValue
+                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()  + this.templatePropertyValue
                         + "\" ";
             }
         }
@@ -386,8 +386,8 @@ public class SearchForm {
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
                 && ConfigCore.getBooleanParameter("withUserStepDoneSearch")) {
-            search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE
-                    + this.stepdonetitle + "\" ";
+            search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
+                    + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
 
         Bean<ProzessverwaltungForm> bean = (Bean<ProzessverwaltungForm>) beanManager
