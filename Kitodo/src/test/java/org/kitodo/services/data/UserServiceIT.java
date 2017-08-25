@@ -467,32 +467,32 @@ public class UserServiceIT {
     }
 
     @Test
-    public void getAllVisibleUsers() throws Exception {
+    public void shoulFindAllVisibleUsers() throws Exception {
         UserService userService = new UserService();
 
-        List<UserDTO> allVisibleUsers = userService.getAllVisibleUsers();
+        List<UserDTO> allVisibleUsers = userService.findAllVisibleUsers();
         assertTrue(allVisibleUsers.size() == 3);
     }
 
     @Test
-    public void getAllActiveUsers() throws Exception {
+    public void shouldFindAllActiveUsers() throws Exception {
         UserService userService = new UserService();
 
-        List<UserDTO> allActiveUsers = userService.getAllActiveUsers();
+        List<UserDTO> allActiveUsers = userService.findAllActiveUsers();
         assertTrue(allActiveUsers.size() == 2);
     }
 
     @Test
-    public void shouldGetActiveUsersByName() throws Exception {
+    public void shouldFindActiveUsersByName() throws Exception {
         UserService userService = new UserService();
 
-        List<UserDTO> allActiveUsers = userService.getActiveUsersByName("Jan");
+        List<UserDTO> allActiveUsers = userService.findActiveUsersByName("Jan");
         assertTrue(allActiveUsers.size() == 1);
         int actual = allActiveUsers.get(0).getId();
         int expected = 1;
         assertEquals(actual, expected);
 
-        allActiveUsers = userService.getActiveUsersByName("owa");
+        allActiveUsers = userService.findActiveUsersByName("owa");
         assertTrue(allActiveUsers.size() == 2);
     }
 }

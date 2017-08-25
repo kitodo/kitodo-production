@@ -111,7 +111,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         List<UserDTO> users = new ArrayList<>();
         try {
             if (this.filter != null && this.filter.length() != 0) {
-                users = serviceManager.getUserService().getActiveUsersByName(this.filter);
+                users = serviceManager.getUserService().findActiveUsersByName(this.filter);
             } else {
                 users = getUsers();
             }
@@ -124,9 +124,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 
     private List<UserDTO> getUsers() throws DataException {
         if (this.hideInactiveUsers) {
-            return serviceManager.getUserService().getAllActiveUsers();
+            return serviceManager.getUserService().findAllActiveUsers();
         } else {
-            return serviceManager.getUserService().getAllVisibleUsers();
+            return serviceManager.getUserService().findAllVisibleUsers();
         }
     }
 
