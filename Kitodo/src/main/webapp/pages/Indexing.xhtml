@@ -482,6 +482,15 @@
                                                     <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100 and not indexingForm.indexingInProgress()}" />
                                                 </td>
                                             </tr>
+
+                                            <!-- Mapping Update -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.mappingUpdate}"/></td>
+                                                <td>
+                                                    <p:commandButton value="#{msgs.mappingUpdate}"
+                                                                     action="#{indexingForm.enableSorting()}"/>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                     <h:outputText value="Indexing started by '#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}' at #{indexingForm.indexingStartedTime}" rendered="#{not empty indexingForm.indexingStartedTime}"/>
