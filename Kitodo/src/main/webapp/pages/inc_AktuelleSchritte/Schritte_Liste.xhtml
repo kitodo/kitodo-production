@@ -153,11 +153,11 @@
         </f:facet>
         <h:panelGrid columns="2">
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
-            <h:link outcome="/newpages/ProzessverwaltungBearbeiten"
+            <h:link outcome="/pages/ProzessverwaltungBearbeiten"
                     rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
                     title="#{msgs.prozessBearbeiten}"
                     id="edit1">
-                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="edit process"
+                <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit process"
                                 style="margin-right:5px"/>
                 <f:param name="id" value="#{item.process.id}" />
             </h:link>
@@ -405,10 +405,10 @@
         </h:commandLink>
     
         <!-- Bearbeiten-Schaltknopf (eigener Schritt) -->
-        <h:link outcome="/newpages/AktuelleSchritteBearbeiten"
+        <h:link outcome="/pages/AktuelleSchritteBearbeiten"
                 rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
                 title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
-            <h:graphicImage value="/newpages/images/buttons/admin1b.gif" alt="view"/>
+            <h:graphicImage value="/pages/images/buttons/admin1b.gif" alt="view"/>
             <f:param name="id" value="#{item.id}"/>
         </h:link>
     
