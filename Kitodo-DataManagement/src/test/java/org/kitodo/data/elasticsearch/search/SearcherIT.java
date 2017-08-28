@@ -101,6 +101,38 @@ public class SearcherIT {
     }
 
     @Test
+    public void shouldAggregateDocumentsAccordingToQuery() throws Exception {
+        Thread.sleep(2000);
+        Searcher searcher = new Searcher("testsearch");
+
+        String query = "{\n\"match_all\" : {}\n}";
+        String aggregation = "{\"amount\" : {\"sum\" : { \"field\" : \"amount\" }}}";
+        JSONObject result = searcher.aggregateDocuments(query, aggregation);
+        JSONObject jsonObject = (JSONObject) result.get("amount");
+        Double amount = (Double) jsonObject.get("value");
+        assertEquals("Incorrect result - amount doesn't match to given number!", Double.valueOf(8.0), amount);
+
+        query = "{\n\"match\" : {\n\"type\" : \"null\"}\n}";
+        result = searcher.aggregateDocuments(query, aggregation);
+        jsonObject = (JSONObject) result.get("amount");
+        amount = (Double) jsonObject.get("value");
+        assertEquals("Incorrect result - amount doesn't match to given number!", Double.valueOf(6.0), amount);
+
+        query = "{\n\"match_all\" : {}\n}";
+        aggregation = "{\"count\" : {\"value_count\" : { \"field\" : \"amount\" }}}";
+        result = searcher.aggregateDocuments(query, aggregation);
+        jsonObject = (JSONObject) result.get("count");
+        Long count = (Long) jsonObject.get("value");
+        assertEquals("Incorrect result - count doesn't match to given number!", Long.valueOf(4), count);
+
+        query = "{\n\"match\" : {\n\"type\" : \"null\"}\n}";
+        result = searcher.aggregateDocuments(query, aggregation);
+        jsonObject = (JSONObject) result.get("count");
+        count = (Long) jsonObject.get("value");
+        assertEquals("Incorrect result - count doesn't match to given number!", Long.valueOf(3), count);
+    }
+
+    @Test
     public void shouldFindDocumentById() throws Exception {
         Searcher searcher = new Searcher("testsearch");
         JSONObject result = searcher.findDocument(1);

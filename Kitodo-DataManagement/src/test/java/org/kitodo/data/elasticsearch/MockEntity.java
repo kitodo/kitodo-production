@@ -45,19 +45,19 @@ public class MockEntity {
     public static HashMap<Integer, HttpEntity> createEntities() {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
 
-        String jsonString = "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
+        String jsonString = "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"amount\":2,\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
         HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
         documents.put(1, entity);
 
-        jsonString = "{\"title\":\"Sort\",\"type\":\"null\",\"processes\":[]}";
+        jsonString = "{\"title\":\"Sort\",\"type\":\"null\",\"amount\":4,\"processes\":[]}";
         entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
         documents.put(2, entity);
 
-        jsonString = "{\"title\":\"Batch2\",\"type\":\"null\",\"processes\":[]}";
+        jsonString = "{\"title\":\"Batch2\",\"type\":\"null\",\"amount\":0,\"processes\":[]}";
         entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
         documents.put(3, entity);
 
-        jsonString = "{\"title\":\"Order\",\"type\":\"null\",\"processes\":[]}";
+        jsonString = "{\"title\":\"Order\",\"type\":\"null\",\"amount\":2,\"processes\":[]}";
         entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
         documents.put(4, entity);
 
