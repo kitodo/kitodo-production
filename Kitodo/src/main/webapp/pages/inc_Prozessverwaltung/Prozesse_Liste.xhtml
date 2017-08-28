@@ -507,24 +507,22 @@
                     title="#{msgs.importDms}"/>
 
                 <!-- ProzessKopie-Schaltknopf -->
-                <h:commandLink action="#{ProzesskopieForm.prepare}" id="action22"
+                <h:commandLink action="#{ProzesskopieForm.prepare(item.id)}" id="action22"
                                title="#{item.containsUnreachableSteps?msgs.prozessvorlageMitUnvollstaendigenSchrittdetails:msgs.eineKopieDieserProzessvorlageAnlegen}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen'}">
                     <h:graphicImage value="/pages/images/buttons/star_blue.gif" style="margin-right:3px"
                                     alt="" rendered="#{!item.containsUnreachableSteps}"/>
                     <h:graphicImage value="/pages/images/buttons/star_red.gif" style="margin-right:3px"
                                     alt="" rendered="#{item.containsUnreachableSteps}"/>
-                    <t:updateActionListener property="#{ProzesskopieForm.prozessVorlage}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- MassenImport -->
-                <h:commandLink action="#{MassImportForm.prepare}" id="action222" title="#{msgs.MassenImport}"
+                <h:commandLink action="#{MassImportForm.prepare(item.id)}" id="action222" title="#{msgs.MassenImport}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen' and HelperForm.massImportAllowed}">
                     <h:graphicImage value="/pages/images/buttons/star_blue_multi.png" style="margin-right:3px"
                                     alt="mass import" rendered="#{!item.containsUnreachableSteps}"/>
                     <h:graphicImage value="/pages/images/buttons/star_red.gif" style="margin-right:3px"
                                     alt="mass import unavailable" rendered="#{item.containsUnreachableSteps}"/>
-                    <t:updateActionListener property="#{MassImportForm.template}" value="#{item}"/>
                 </h:commandLink>
 
             </h:panelGroup>

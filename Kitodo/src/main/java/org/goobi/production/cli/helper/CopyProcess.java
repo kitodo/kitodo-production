@@ -133,7 +133,13 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public String prepare() {
+    public String prepare(int id) {
+        try {
+            this.prozessVorlage = serviceManager.getProcessService().find(id);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            return null;
+        }
         if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
             for (Task s : this.prozessVorlage.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0

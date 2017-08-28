@@ -475,14 +475,12 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(single);
                 pkf.setProzessVorlage(process);
-                return pkf.prepare();
+                return pkf.prepare(process.getId());
             } catch (DAOException e) {
                 logger.error(e);
             }
-            return "/newpages/ProzessverwaltungAlle";
-        } else {
-            return "/pages/ProzessverwaltungAlle";
         }
+        return "/pages/ProzessverwaltungAlle";
     }
 
     /**

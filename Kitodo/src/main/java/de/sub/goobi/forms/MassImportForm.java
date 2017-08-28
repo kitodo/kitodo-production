@@ -53,6 +53,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
@@ -100,7 +101,13 @@ public class MassImportForm implements Serializable {
      *
      * @return String
      */
-    public String prepare() {
+    public String prepare(int id) {
+        try {
+            this.template = serviceManager.getProcessService().find(id);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            return null;
+        }
         if (serviceManager.getProcessService().getContainsUnreachableSteps(this.template)) {
             if (this.template.getTasks().size() == 0) {
                 Helper.setFehlerMeldung("noStepsInWorkflow");

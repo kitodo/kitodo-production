@@ -263,8 +263,15 @@ public class ProzesskopieForm implements Serializable {
      *
      * @return empty String
      */
-    public String prepare() {
+    public String prepare(int id) {
         atstsl = "";
+        try {
+            this.prozessVorlage = serviceManager.getProcessService().find(id);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            Helper.setFehlerMeldung("Process " + id + " not found.");
+            return null;
+        }
         Helper.getHibernateSession().refresh(this.prozessVorlage);
         if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
             if (this.prozessVorlage.getTasks().size() == 0) {
