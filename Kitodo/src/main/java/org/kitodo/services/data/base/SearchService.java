@@ -29,9 +29,11 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
@@ -626,6 +628,35 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
 
     protected QueryBuilder createSimpleWildcardQuery(String key, String value) {
         return queryStringQuery(key + ": *" + value + "*");
+    }
+
+    protected Long findCountAggregation(String query, String field) throws DataException {
+        JSONObject jsonObject = searcher.aggregateDocuments(query, createCountAggregation(field));
+        JSONObject count = (JSONObject) jsonObject.get(field);
+        return (Long) count.get("value");
+    }
+
+    protected Double findSumAggregation(String query, String field) throws DataException {
+        JSONObject jsonObject = searcher.aggregateDocuments(query, createSumAggregation(field));
+        JSONObject sum = (JSONObject) jsonObject.get(field);
+        return (Double) sum.get("value");
+    }
+
+    protected List<String> findDistinctValues(String field, String sort) throws DataException {
+        JSONObject jsonObject = searcher.aggregateDocuments(null, createTermAggregation(field));
+        return new ArrayList<>();
+    }
+
+    private String createCountAggregation(String field) {
+        return XContentHelper.toString(AggregationBuilders.count(field).field(field));
+    }
+
+    private String createSumAggregation(String field) {
+        return XContentHelper.toString(AggregationBuilders.sum(field).field(field));
+    }
+
+    private String createTermAggregation(String field) {
+        return XContentHelper.toString(AggregationBuilders.terms(field).field(field));
     }
 
     /**
