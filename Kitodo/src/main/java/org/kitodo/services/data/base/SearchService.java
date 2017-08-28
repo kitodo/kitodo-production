@@ -93,6 +93,14 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     public abstract T find(Integer id) throws DAOException;
 
     /**
+     * Returns list of all objects from a specific type in the database. Overwritten
+     * in child service classes.
+     *
+     * @return list of all objects
+     */
+    public abstract List<T> findAll() throws DAOException;
+
+    /**
      * Method necessary for conversion of JSON objects to exact bean objects called
      * from database.
      *
