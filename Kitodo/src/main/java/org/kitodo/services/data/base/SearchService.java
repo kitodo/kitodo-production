@@ -83,6 +83,19 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     public abstract void saveToIndex(T baseBean) throws CustomResponseException, IOException;
 
     /**
+     * Find list of all objects from ES.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @return list of all objects from ES
+     */
+    public abstract List<S> findAll(String sort, Integer offset, Integer size) throws DataException;
+
+    /**
      * Method necessary for get from database object by id. It is used in removeById
      * method.
      *
