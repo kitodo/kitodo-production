@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.File;
@@ -29,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.hibernate.Session;
 import org.joda.time.LocalDateTime;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Filter;
@@ -39,7 +37,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -107,8 +104,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save project, if false only re-save project object.
+     * Check if IndexAction flag is delete. If true remove user from list of users
+     * and re-save project, if false only re-save project object.
      *
      * @param user
      *            object
@@ -127,8 +124,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove filter from the
-     * index, if false re-save filter object.
+     * Check if IndexAction flag is delete. If true remove filter from the index, if
+     * false re-save filter object.
      *
      * @param user
      *            object
@@ -146,8 +143,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save task, if false only re-save task object.
+     * Check if IndexAction flag is delete. If true remove user from list of users
+     * and re-save task, if false only re-save task object.
      *
      * @param user
      *            object
@@ -173,8 +170,8 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of
-     * users and re-save group, if false only re-save group object.
+     * Check if IndexAction flag is delete. If true remove user from list of users
+     * and re-save group, if false only re-save group object.
      *
      * @param user
      *            object
@@ -471,16 +468,6 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Get user by id.
-     *
-     * @param id of user
-     * @return user as UserDTO object
-     */
-    public UserDTO getById(Integer id) throws DataException {
-        return convertJSONObjectToDTO(findById(id), false);
-    }
-
-    /**
      * Get all visible users.
      *
      * @return a list of all visible users as UserDTO
@@ -531,6 +518,11 @@ public class UserService extends SearchService<User, UserDTO> {
         userDTO.setLdapLogin(getStringPropertyForDTO(jsonObject, "ldapLogin"));
         userDTO.setLocation(getStringPropertyForDTO(jsonObject, "location"));
         userDTO.setFullName(getFullName(userDTO));
+        userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(jsonObject, "filters"));
+        userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(jsonObject, "projects"));
+        userDTO.setTasksSize(getSizeOfRelatedPropertyForDTO(jsonObject, "tasks"));
+        userDTO.setProcessingTasksSize(getSizeOfRelatedPropertyForDTO(jsonObject, "processingTasks"));
+        userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(jsonObject, "userGroups"));
         if (!related) {
             userDTO = convertRelatedJSONObjects(jsonObject, userDTO);
         }
@@ -539,33 +531,10 @@ public class UserService extends SearchService<User, UserDTO> {
 
     private UserDTO convertRelatedJSONObjects(JSONObject jsonObject, UserDTO userDTO) throws DataException {
         userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, "filters", serviceManager.getFilterService()));
-        userDTO.setFiltersSize(userDTO.getFilters().size());
         userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
-        userDTO.setProjectsSize(userDTO.getProjects().size());
         userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
-        userDTO.setTasksSize(userDTO.getTasks().size());
         userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
-        userDTO.setUserGroupSize(userDTO.getUserGroups().size());
         return userDTO;
-    }
-
-    /**
-     * Get the current object for this row.
-     *
-     * @return the current object representing a row.
-     */
-    public User getCurrent(User user) {
-        boolean hasOpen = HibernateUtilOld.hasOpenSession();
-        Session session = Helper.getHibernateSession();
-
-        User current = (User) session.get(User.class, user.getId());
-        if (current == null) {
-            current = (User) session.load(User.class, user.getId());
-        }
-        if (!hasOpen) {
-            session.close();
-        }
-        return current;
     }
 
     /**
@@ -622,81 +591,6 @@ public class UserService extends SearchService<User, UserDTO> {
             user.setCss("/css/default.css");
         }
         return user.getCss();
-    }
-
-    /**
-     * Get size of user group result.
-     *
-     * @param user
-     *            object
-     * @return size
-     */
-    public int getUserGroupSize(User user) {
-        if (user.getUserGroups() == null) {
-            return 0;
-        } else {
-            return user.getUserGroups().size();
-        }
-    }
-
-    /**
-     * Get size of steps result list.
-     *
-     * @param user
-     *            object
-     * @return result size of steps
-     */
-    public int getTasksSize(User user) {
-        if (user.getTasks() == null) {
-            return 0;
-        } else {
-            return user.getTasks().size();
-        }
-    }
-
-    /**
-     * Get size of processing steps result list.
-     *
-     * @param user
-     *            object
-     * @return result size of processing steps
-     */
-    public int getProcessingTasksSize(User user) {
-        if (user.getProcessingTasks() == null) {
-            return 0;
-        } else {
-            return user.getProcessingTasks().size();
-        }
-    }
-
-    /**
-     * Get size of projects result list.
-     *
-     * @param user
-     *            object
-     * @return result size of projects
-     */
-    public int getProjectsSize(User user) {
-        if (user.getProjects() == null) {
-            return 0;
-        } else {
-            return user.getProjects().size();
-        }
-    }
-
-    /**
-     * Get properties list size.
-     *
-     * @param user
-     *            object
-     * @return properties list size
-     */
-    public int getPropertiesSize(User user) {
-        if (user.getFilters() == null) {
-            return 0;
-        } else {
-            return user.getFilters().size();
-        }
     }
 
     // TODO: check if this class should be here or in some other place

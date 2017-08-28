@@ -19,7 +19,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * User groups owning different access rights, represented by integer values.
@@ -47,9 +46,6 @@ public class UserGroup extends BaseBean implements Comparable<UserGroup> {
 
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
-
-    @Transient
-    private boolean panelShown = false;
 
     public UserGroup() {
         this.tasks = new ArrayList<>();
@@ -97,14 +93,6 @@ public class UserGroup extends BaseBean implements Comparable<UserGroup> {
         this.tasks = tasks;
     }
 
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
-    }
-
     @Override
     public int compareTo(UserGroup o) {
         return this.getTitle().compareTo(o.getTitle());
@@ -138,13 +126,5 @@ public class UserGroup extends BaseBean implements Comparable<UserGroup> {
 
     public void setPermissionAsString(String permission) {
         this.setPermission(Integer.parseInt(permission));
-    }
-
-    public int getTasksSize(UserGroup userGroup) {
-        if (userGroup.getTasks() == null) {
-            return 0;
-        } else {
-            return userGroup.getTasks().size();
-        }
     }
 }

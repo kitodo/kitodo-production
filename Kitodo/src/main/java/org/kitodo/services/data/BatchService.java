@@ -37,7 +37,6 @@ import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
-import org.kitodo.dto.ProcessDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -346,6 +345,19 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     }
 
     /**
+     * The function getLabel() returns a readable label for the batch, which is
+     * either its title, if defined, or, for batches not having a title (in
+     * recent versions of Production, batches didn’t support titles) its ancient
+     * label, consisting of the prefix “Batch ” (in the desired translation)
+     * together with its id number.
+     *
+     * @return a readable label for the batch
+     */
+    public String getLabel(BatchDTO batch) {
+        return batch.getTitle() != null ? batch.getTitle() : getNumericLabel(batch);
+    }
+
+    /**
      * The function getNumericLabel() returns a readable label for the batch,
      * consisting of the prefix “Batch ” (in the desired translation) together
      * with its id number.
@@ -353,6 +365,17 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
      * @return a readable label for the batch
      */
     private String getNumericLabel(Batch batch) {
+        return Helper.getTranslation("batch", "Batch") + ' ' + batch.getId();
+    }
+
+    /**
+     * The function getNumericLabel() returns a readable label for the batch,
+     * consisting of the prefix “Batch ” (in the desired translation) together
+     * with its id number.
+     *
+     * @return a readable label for the batch
+     */
+    private String getNumericLabel(BatchDTO batch) {
         return Helper.getTranslation("batch", "Batch") + ' ' + batch.getId();
     }
 

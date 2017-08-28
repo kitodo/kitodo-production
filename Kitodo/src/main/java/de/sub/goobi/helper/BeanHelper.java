@@ -121,7 +121,7 @@ public class BeanHelper {
             taskNew.setTypeAutomaticScriptPath3(task.getTypeAutomaticScriptPath3());
             taskNew.setTypeAutomaticScriptPath4(task.getTypeAutomaticScriptPath4());
             taskNew.setTypeAutomaticScriptPath5(task.getTypeAutomaticScriptPath5());
-            taskNew.setBatchStep(task.getBatchStep());
+            taskNew.setBatchStep(task.isBatchStep());
             taskNew.setTypeScriptStep(task.getTypeScriptStep());
             taskNew.setTypeAcceptClose(task.isTypeAcceptClose());
             taskNew.setTypeAcceptModule(task.isTypeAcceptModule());

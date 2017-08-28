@@ -18,6 +18,7 @@ public class TemplateDTO extends BaseDTO {
     private String origin;
     private ProcessDTO process;
     private List<PropertyDTO> properties;
+    private Integer propertiesSize;
 
     /**
      * Get origin.
@@ -55,6 +56,25 @@ public class TemplateDTO extends BaseDTO {
      */
     public void setProperties(List<PropertyDTO> properties) {
         this.properties = properties;
+    }
+
+    /**
+     * Get size of properties.
+     * 
+     * @return size od properties as Integer
+     */
+    public Integer getPropertiesSize() {
+        return propertiesSize;
+    }
+
+    /**
+     * Set size of properties.
+     * 
+     * @param propertiesSize
+     *            as Integer
+     */
+    public void setPropertiesSize(Integer propertiesSize) {
+        this.propertiesSize = propertiesSize;
     }
 
     /**

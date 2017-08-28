@@ -174,9 +174,6 @@ public class Task extends BaseBean {
     @Transient
     private boolean panelShown = false;
 
-    @Transient
-    private boolean selected = false;
-
     /**
      * Constructor.
      */
@@ -471,14 +468,6 @@ public class Task extends BaseBean {
         this.typeModuleName = typeModuleName;
     }
 
-    public boolean isSelected() {
-        return this.selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
     public Boolean getTypeScriptStep() {
         if (this.typeScriptStep == null) {
             this.typeScriptStep = false;
@@ -622,24 +611,6 @@ public class Task extends BaseBean {
     public String getLocalizedTitle() {
         return this.title;
         // return Helper.getTranslation(task.getTitle());
-    }
-
-    /**
-     * Get user size.
-     * 
-     * @return the size of the user list
-     */
-    public int getUsersSize() {
-        return this.getUsers().size();
-    }
-
-    /**
-     * Get usergroup size.
-     * 
-     * @return The size of the userGroup list
-     */
-    public int getUserGroupsSize() {
-        return this.getUserGroups().size();
     }
 
     public String getProcessingStatusAsString() {

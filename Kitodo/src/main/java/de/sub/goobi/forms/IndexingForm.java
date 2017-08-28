@@ -13,6 +13,7 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.IndexWorker;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
@@ -38,6 +40,8 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.services.ServiceManager;
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
@@ -47,6 +51,7 @@ import org.omnifaces.util.Ajax;
 @ApplicationScoped
 public class IndexingForm {
 
+    private static IndexRestClient indexRestClient = new IndexRestClient();
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
     private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
 
@@ -777,6 +782,7 @@ public class IndexingForm {
     public void startAllIndexing() {
         IndexAllThread indexAllThread = new IndexAllThread();
         indexAllThread.start();
+        enableSortingByAllTextFields();
     }
 
     /**
@@ -849,6 +855,24 @@ public class IndexingForm {
         indexedUsergroups = 0;
         indexedWorkpieces = 0;
         indexedFilter = 0;
+    }
+
+    private void enableSortingByTextField(String type, String field) {
+        try {
+            indexRestClient.initiateClient();
+            indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
+            indexRestClient.enableSortingByTextField(type, field);
+        } catch (CustomResponseException | IOException e) {
+            logger.error(e);
+        }
+    }
+
+    private void enableSortingByAllTextFields() {
+        enableSortingByTextField("process", "title");
+        enableSortingByTextField("process","sortHelperStatus");
+        enableSortingByTextField("project", "title");
+        enableSortingByTextField("task", "title");
+        enableSortingByTextField("task","typeModuleName");
     }
 
 }

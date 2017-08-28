@@ -177,7 +177,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * Method saves object to database and document to the index of Elastic Search.
      * This method binds three other methods: save to database, save to index and
      * save dependencies to index.
-     * 
+     *
      * <p>
      * First step sets up the flag indexAction to state Index and saves to database.
      * It informs that object was updated in database but not yet in index. If this
@@ -228,8 +228,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes object from database and document from the index of Elastic
+     * Search.
      *
      * @param id
      *            of object
@@ -244,8 +244,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes object from database and document from the index of Elastic
+     * Search.
      *
      * @param baseBean
      *            object
@@ -312,6 +312,16 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
+     * Display all documents for exact type.
+     * @param sort possible sort query according to which results will be sorted
+     * @return sorted list of all documents
+     */
+    public List<JSONObject> findAllDocuments(String sort) throws DataException {
+        QueryBuilder queryBuilder = matchAllQuery();
+        return searcher.findDocuments(queryBuilder.toString(), sort);
+    }
+
+    /**
      * Find user with exact id.
      *
      * @param id
@@ -320,6 +330,31 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      */
     public JSONObject findById(Integer id) throws DataException {
         return searcher.findDocument(id);
+    }
+
+    /**
+     * Find object in ES and convert it to DTO.
+     * 
+     * @param id
+     *            object id
+     * @return DTO object
+     */
+    public S getById(Integer id) throws DataException {
+        return getById(id, false);
+    }
+
+    /**
+     * Find object related to previously found object in ES and convert it to DTO.
+     * 
+     * @param id
+     *            related object id
+     * @param related
+     *            this method should ba called only with true, if false call method
+     *            getById(Integer id).
+     * @return related DTO object
+     */
+    public S getById(Integer id, boolean related) throws DataException {
+        return convertJSONObjectToDTO(findById(id), related);
     }
 
     /**
@@ -369,8 +404,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            name of related property
      * @return bean object
      */
-    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject,
-            String key, SearchService<?, O> service) throws DataException {
+    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject, String key,
+            SearchService<?, O> service) throws DataException {
         List<O> listDTO = new ArrayList<>();
         for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
             JSONObject result = service.findById(id);
@@ -425,8 +460,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * @param key
      *            JSON key for searched object
      * @param id
-     *            id value for searched object or some object related to
-     *            searched object
+     *            id value for searched object or some object related to searched
+     *            object
      * @param contains
      *            determine if results should contain given value or should not
      *            contain given value
@@ -450,8 +485,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * @param key
      *            JSON key for searched object
      * @param condition
-     *            id value for searched object or some object related to
-     *            searched object
+     *            id value for searched object or some object related to searched
+     *            object
      * @param contains
      *            determine if results should contain given value or should not
      *            contain given value
@@ -502,8 +537,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            determine if results should contain given value or should not
      *            contain given value
      * @param operator
-     *            as Operator AND or OR - useful when value contains more than
-     *            one word
+     *            as Operator AND or OR - useful when value contains more than one
+     *            word
      * @return query
      */
     protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator) {
@@ -659,6 +694,24 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
             return ids;
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Get size of related objects returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject as Object
+     * @param key of property which need to be counted
+     * @return size of array with related objects
+     */
+    protected int getSizeOfRelatedPropertyForDTO(Object object, String key) {
+        JSONObject jsonObject = (JSONObject) object;
+        jsonObject = (JSONObject) jsonObject.get("_source");
+        if (jsonObject != null) {
+            JSONArray jsonArray = (JSONArray) jsonObject.get(key);
+            return jsonArray.size();
+        }
+        return 0;
     }
 
     /**

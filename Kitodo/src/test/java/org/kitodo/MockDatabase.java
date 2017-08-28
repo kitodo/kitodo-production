@@ -281,7 +281,7 @@ public class MockDatabase {
         serviceManager.getPropertyService().save(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
-        secondProcessProperty.setTitle("secondProcessProperty");
+        secondProcessProperty.setTitle("Korrektur notwendig");
         secondProcessProperty.setValue("second value");
         secondProcessProperty.setObligatory(false);
         secondProcessProperty.setType(PropertyType.CommandLink);
@@ -292,8 +292,21 @@ public class MockDatabase {
         secondProcessProperty.getProcesses().add(process);
         serviceManager.getPropertyService().save(secondProcessProperty);
 
+        Property thirdProcessProperty = new Property();
+        thirdProcessProperty.setTitle("Korrektur notwendig");
+        thirdProcessProperty.setValue("fix it");
+        thirdProcessProperty.setObligatory(false);
+        thirdProcessProperty.setType(PropertyType.CommandLink);
+        thirdProcessProperty.setChoice("chosen");
+        localDate = new LocalDate(2017, 7, 15);
+        thirdProcessProperty.setCreationDate(localDate.toDate());
+        thirdProcessProperty.setContainer(2);
+        thirdProcessProperty.getProcesses().add(process);
+        serviceManager.getPropertyService().save(thirdProcessProperty);
+
         process.getProperties().add(firstProcessProperty);
         process.getProperties().add(secondProcessProperty);
+        process.getProperties().add(thirdProcessProperty);
         serviceManager.getProcessService().save(process);
     }
 

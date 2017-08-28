@@ -36,7 +36,6 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,6 +51,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.ConfigurationException;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -89,7 +89,11 @@ import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.BatchDTO;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.PropertyDTO;
+import org.kitodo.dto.TaskDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -147,7 +151,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      */
     @Override
     public void saveToDatabase(Process process) throws DAOException {
-        processDAO.save(process, getProgress(process));
+        processDAO.save(process, getProgress(process, null));
     }
 
     /**
@@ -215,8 +219,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks
-     * from index, if other call saveOrRemoveTaskInIndex() method.
+     * Check IndexAction flag in for process object. If DELETE remove all tasks from
+     * index, if other call saveOrRemoveTaskInIndex() method.
      *
      * @param process
      *            object
@@ -233,8 +237,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Compare index and database, according to comparisons results save or
-     * remove tasks.
+     * Compare index and database, according to comparisons results save or remove
+     * tasks.
      *
      * @param process
      *            object
@@ -272,8 +276,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Remove template if process is removed, add template if process is marked
-     * as template.
+     * Remove template if process is removed, add template if process is marked as
+     * template.
      *
      * @param process
      *            object
@@ -292,8 +296,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Remove workpiece if process is removed, add workpiece if process is
-     * marked as workpiece.
+     * Remove workpiece if process is removed, add workpiece if process is marked as
+     * workpiece.
      *
      * @param process
      *            object
@@ -444,19 +448,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Find processes if template.
-     *
-     * @param template
-     *            as Boolean
-     * @return list of search results
-     */
-    public List<JSONObject> findByTemplate(Boolean template) throws DataException {
-        QueryBuilder query = createSimpleQuery("template", template, true);
-        System.out.println(query.toString());
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
      * Find processes by id of project.
      *
      * @param id
@@ -569,6 +560,97 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return searcher.findDocuments(query.toString());
     }
 
+    private List<JSONObject> findBySortHelperStatusProjectArchivedAndTemplate(boolean closed, boolean archived,
+            boolean template, String sort) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQuerySortHelperStatus(closed));
+        query.must(getQueryProjectArchived(archived));
+        query.must(getQueryTemplate(template));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    private List<JSONObject> findBySortHelperStatusAndProjectArchived(boolean closed, boolean archived, String sort)
+            throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQuerySortHelperStatus(closed));
+        query.must(getQueryProjectArchived(archived));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    private List<JSONObject> findBySortHelperStatusAndTemplate(boolean closed, boolean template, String sort)
+            throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQuerySortHelperStatus(closed));
+        query.must(getQueryTemplate(template));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    private List<JSONObject> findByArchivedAndTemplate(boolean archived, boolean template, String sort)
+            throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQueryProjectArchived(archived));
+        query.must(getQueryTemplate(template));
+        return searcher.findDocuments(query.toString(), sort);
+    }
+
+    private List<JSONObject> findByArchived(boolean archived, String sort) throws DataException {
+        return searcher.findDocuments(getQueryProjectArchived(archived).toString(), sort);
+    }
+
+    private List<JSONObject> findBySortHelperStatus(boolean closed, String sort) throws DataException {
+        return searcher.findDocuments(getQuerySortHelperStatus(closed).toString(), sort);
+    }
+
+    protected List<JSONObject> findByTemplate(boolean template, String sort) throws DataException {
+        return searcher.findDocuments(getQueryTemplate(template).toString(), sort);
+    }
+
+    private QueryBuilder getQueryTemplate(boolean template) {
+        return createSimpleQuery("template", template, true);
+    }
+
+    private QueryBuilder getQuerySortHelperStatus(boolean closed) {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.should(createSimpleQuery("sortHelperStatus", "100000000", closed));
+        query.should(createSimpleQuery("sortHelperStatus", "100000000000", closed));
+        return query;
+    }
+
+    private QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
+        List<JSONObject> processesAccordingToArchive = serviceManager.getProjectService().findByArchived(archived);
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        for (JSONObject singleProcess : processesAccordingToArchive) {
+            query.should(createSimpleQuery("project", getIdFromJSONObject(singleProcess), true));
+        }
+        return query;
+    }
+
+    /**
+     * Convert DTO to bean object.
+     * 
+     * @param processDTO
+     *            DTO object
+     * @return bean object
+     */
+    public Process convertDtoToBean(ProcessDTO processDTO) throws DAOException {
+        return serviceManager.getProcessService().find(processDTO.getId());
+    }
+
+    /**
+     * Convert list of DTOs to list of beans.
+     * 
+     * @param dtos
+     *            list of DTO objects
+     * @return list of beans
+     */
+    public ArrayList<Process> convertDtosToBeans(List<ProcessDTO> dtos) throws DAOException {
+        ArrayList<Process> processes = new ArrayList<>();
+        for (ProcessDTO processDTO : dtos) {
+            processes.add(convertDtoToBean(processDTO));
+        }
+        return processes;
+    }
+
     /**
      * Method adds all object found in database to Elastic Search index.
      */
@@ -580,18 +662,47 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
     @Override
     public ProcessDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
-        return null;
+        ProcessDTO processDTO = new ProcessDTO();
+        processDTO.setId(getIdFromJSONObject(jsonObject));
+        processDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(jsonObject, "properties"));
+        if (!related) {
+            processDTO = convertRelatedJSONObjects(jsonObject, processDTO);
+        }
+        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
+        processDTO.setProject(serviceManager.getProjectService().getById(project, true));
+
+        return processDTO;
+    }
+
+    private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
+        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
+        processDTO.setProject(serviceManager.getProjectService().getById(project));
+        processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
+        processDTO.setBatchID(getBatchID(processDTO));
+        processDTO.setProperties(
+                convertRelatedJSONObjectToDTO(jsonObject, "properties", serviceManager.getPropertyService()));
+        processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
+        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
+        processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
+        processDTO.setProgressClosed(getProgressClosed(null, processDTO));
+        processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO));
+        processDTO.setProgressOpen(getProgressOpen(null, processDTO));
+        processDTO.setProgressLocked(getProgressLocked(null, processDTO));
+        processDTO.setBlockedUsers(getBlockedUser(processDTO));
+        processDTO.setContainsUnreachableSteps(getContainsUnreachableSteps(processDTO));
+        return processDTO;
     }
 
     /**
      * Get title without white spaces.
-     * 
-     * @param process
-     *            object
+     *
+     * @param title
+     *            of process
      * @return title with '__' instead of ' '
      */
-    public String getNormalizedTitle(Process process) {
-        return process.getTitle().replace(" ", "__");
+    public String getNormalizedTitle(String title) {
+        return title.replace(" ", "__");
     }
 
     /**
@@ -617,10 +728,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getBatchesInitialized() returns the batches for a process
-     * and takes care that the object is initialized from Hibernate already and
-     * will not be bothered if the Hibernate session ends. TODO: check if it is
-     * necessary!!
+     * The function getBatchesInitialized() returns the batches for a process and
+     * takes care that the object is initialized from Hibernate already and will not
+     * be bothered if the Hibernate session ends. TODO: check if it is necessary!!
      *
      * @return the batches field of the process which is loaded
      */
@@ -632,10 +742,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getHistoryInitialized() returns the history events for a
-     * process and takes care that the object is initialized from Hibernate
-     * already and will not be bothered if the Hibernate session ends. TODO:
-     * check if it is necessary!!
+     * The function getHistoryInitialized() returns the history events for a process
+     * and takes care that the object is initialized from Hibernate already and will
+     * not be bothered if the Hibernate session ends. TODO: check if it is
+     * necessary!!
      *
      * @return the history field of the process which is loaded
      */
@@ -655,10 +765,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
     /**
      * The function getPropertiesInitialized() returns the descriptive fields
-     * (“properties”) for a process and takes care that the object is
-     * initialized from Hibernate already and will not be bothered if the
-     * Hibernate session ends. TODO: check if it is necessary!! <- e.g.
-     * BeanHelper uses it
+     * (“properties”) for a process and takes care that the object is initialized
+     * from Hibernate already and will not be bothered if the Hibernate session
+     * ends. TODO: check if it is necessary!! <- e.g. BeanHelper uses it
      *
      * @return the properties field of the process which is loaded
      */
@@ -676,12 +785,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *
      * @return blocked metadata (user)
      */
-    public User getBlockedUsers(Process process) {
-        User result = null;
+    public UserDTO getBlockedUser(ProcessDTO process) {
+        UserDTO result = null;
         if (MetadatenSperrung.isLocked(process.getId())) {
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
-                result = serviceManager.getUserService().find(Integer.valueOf(userID));
+                result = serviceManager.getUserService().getById(Integer.valueOf(userID));
             } catch (Exception e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
             }
@@ -752,7 +861,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
         if (tifOrdner == null) {
-            tifOrdner = URI.create(result.toString() + getNormalizedTitle(process) + "_" + DIRECTORY_SUFFIX);
+            tifOrdner = URI.create(result.toString() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
         }
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
@@ -765,7 +874,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
     /**
      * Check if Tif directory exists.
-     * 
+     *
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean checkIfTifDirectoryExists(Process process) {
@@ -778,7 +887,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
             logger.error(e);
             return false;
         }
-
     }
 
     /**
@@ -837,8 +945,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
             URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
             if (origOrdner == null) {
-                origOrdner = URI.create(result.toString() + DIRECTORY_PREFIX + "_" + getNormalizedTitle(process) + "_"
-                        + DIRECTORY_SUFFIX);
+                origOrdner = URI.create(result.toString() + DIRECTORY_PREFIX + "_"
+                        + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
             }
 
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
@@ -873,18 +981,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated
-     * with as readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated with as
+     * readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
-    public String getBatchID(Process process) {
+    public String getBatchID(ProcessDTO process) {
         if (process.getBatches() == null || process.getBatches().size() == 0) {
             return null;
         }
         StringBuilder result = new StringBuilder();
         BatchService batchService = new BatchService();
-        for (Batch batch : process.getBatches()) {
+        for (BatchDTO batch : process.getBatches()) {
             if (result.length() > 0) {
                 result.append(", ");
             }
@@ -993,11 +1101,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * Get full progress for process.
      *
      * @param process
-     *            object
+     *            bean object
+     * @param processDTO
+     *            DTO object
      * @return string
      */
-    public String getProgress(Process process) {
-        HashMap<String, Integer> tasks = calculationForProgress(process);
+    public String getProgress(Process process, ProcessDTO processDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
 
         double closed = (tasks.get("closed") * 100)
                 / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
@@ -1017,11 +1127,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * Get progress for closed tasks.
      *
      * @param process
-     *            object
+     *            Process bean object
+     * @param processDTO
+     *            ProcessDTO object
      * @return progress for closed steps
      */
-    public int getProgressClosed(Process process) {
-        HashMap<String, Integer> tasks = calculationForProgress(process);
+    public int getProgressClosed(Process process, ProcessDTO processDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
 
         return (tasks.get("closed") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
@@ -1031,11 +1143,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * Get progress for processed tasks.
      *
      * @param process
-     *            object
+     *            Process bean object
+     * @param processDTO
+     *            ProcessDTO object
      * @return progress for processed tasks
      */
-    public int getProgressInProcessing(Process process) {
-        HashMap<String, Integer> tasks = calculationForProgress(process);
+    public int getProgressInProcessing(Process process, ProcessDTO processDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
 
         return (tasks.get("inProcessing") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
@@ -1045,11 +1159,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * Get progress for open tasks.
      *
      * @param process
-     *            object
+     *            Process bean object
+     * @param processDTO
+     *            ProcessDTO object
      * @return return progress for open tasks
      */
-    public int getProgressOpen(Process process) {
-        HashMap<String, Integer> tasks = calculationForProgress(process);
+    public int getProgressOpen(Process process, ProcessDTO processDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
         return (tasks.get("open") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
     }
@@ -1058,13 +1174,23 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * Get progress for open tasks.
      *
      * @param process
-     *            object
+     *            Process bean object
+     * @param processDTO
+     *            ProcessDTO object
      * @return return progress for open tasks
      */
-    public int getProgressLocked(Process process) {
-        HashMap<String, Integer> tasks = calculationForProgress(process);
+    public int getProgressLocked(Process process, ProcessDTO processDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
         return (tasks.get("locked") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+    }
+
+    private HashMap<String, Integer> getCalculationForProgress(Process process, ProcessDTO processDTO) {
+        if (process == null) {
+            return calculationForProgress(processDTO);
+        } else {
+            return calculationForProgress(process);
+        }
     }
 
     private HashMap<String, Integer> calculationForProgress(Process process) {
@@ -1080,6 +1206,36 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
             } else if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                 open++;
             } else if (task.getProcessingStatusEnum() == TaskStatus.LOCKED) {
+                locked++;
+            } else {
+                inProcessing++;
+            }
+        }
+
+        results.put("closed", closed);
+        results.put("inProcessing", inProcessing);
+        results.put("open", open);
+        results.put("locked", locked);
+
+        if ((open + inProcessing + closed + locked) == 0) {
+            results.put("locked", 1);
+        }
+
+        return results;
+    }
+
+    private HashMap<String, Integer> calculationForProgress(ProcessDTO process) {
+        HashMap<String, Integer> results = new HashMap<>();
+        int open = 0;
+        int inProcessing = 0;
+        int closed = 0;
+        int locked = 0;
+        for (TaskDTO task : process.getTasks()) {
+            if (task.getProcessingStatus() == TaskStatus.DONE) {
+                closed++;
+            } else if (task.getProcessingStatus() == TaskStatus.OPEN) {
+                open++;
+            } else if (task.getProcessingStatus() == TaskStatus.LOCKED) {
                 locked++;
             } else {
                 inProcessing++;
@@ -1194,8 +1350,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Check whether the operation contains steps that are not assigned to a
-     * user or user group.
+     * Check whether the operation contains tasks that are not assigned to a user or
+     * user group.
+     * 
+     * @param process
+     *            bean object
+     * @return true or false
      */
     public boolean getContainsUnreachableSteps(Process process) {
         TaskService taskService = serviceManager.getTaskService();
@@ -1211,12 +1371,52 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
+     * Check whether the operation contains tasks that are not assigned to a user or
+     * user group.
+     * 
+     * @param process
+     *            DTO object
+     * @return true or false
+     */
+    public boolean getContainsUnreachableSteps(ProcessDTO process) {
+        if (process.getTasks().size() == 0) {
+            return true;
+        }
+        for (TaskDTO task : process.getTasks()) {
+            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check if there is one task in edit mode, where the user has the rights to
      * write to image folder.
+     * 
+     * @param process
+     *            bean object
+     * @return true or false
      */
     public boolean isImageFolderInUse(Process process) {
         for (Task task : process.getTasks()) {
             if (task.getProcessingStatusEnum() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if there is one task in edit mode, where the user has the rights to
+     * write to image folder.
+     * @param process
+     *            DTO object
+     * @return true or false
+     */
+    public boolean isImageFolderInUse(ProcessDTO process) {
+        for (TaskDTO task : process.getTasks()) {
+            if (task.getProcessingStatus() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
                 return true;
             }
         }
@@ -1269,12 +1469,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
     /**
      * Writes a multipage docket for a list of processes to an outpustream.
-     * 
+     *
      * @param processes
      *            The list of processes
      * @throws IOException
-     *             when xslt file could not be loaded, or write to output
-     *             failed.
+     *             when xslt file could not be loaded, or write to output failed.
      */
     public void downloadDocket(List<Process> processes) throws IOException {
         if (logger.isDebugEnabled()) {
@@ -1371,10 +1570,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      */
 
     /**
-     * The addMessageToWikiField() method is a helper method which composes the
-     * new wiki field using a StringBuilder. The message is encoded using HTML
-     * entities to prevent certain characters from playing merry havoc when the
-     * message box shall be rendered in a browser later.
+     * The addMessageToWikiField() method is a helper method which composes the new
+     * wiki field using a StringBuilder. The message is encoded using HTML entities
+     * to prevent certain characters from playing merry havoc when the message box
+     * shall be rendered in a browser later.
      *
      * @param message
      *            the message to append
@@ -1422,8 +1621,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The method addToWikiField() adds a message signed by the given user to
-     * the wiki field of the process.
+     * The method addToWikiField() adds a message signed by the given user to the
+     * wiki field of the process.
      *
      * @param user
      *            to sign the message with
@@ -1436,8 +1635,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The method createProcessDirs() starts creation of directories configured
-     * by parameter processDirs within kitodo_config.properties
+     * The method createProcessDirs() starts creation of directories configured by
+     * parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
 
@@ -1451,18 +1650,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getDigitalDocument() returns the digital act of this
-     * process.
+     * The function getDigitalDocument() returns the digital act of this process.
      *
      * @return the digital act of this process
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set configured
+     *             if the no node corresponding to the file format is available in
+     *             the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws IOException
-     *             if creating the process directory or reading the meta data
-     *             file fails
+     *             if creating the process directory or reading the meta data file
+     *             fails
      */
     public DigitalDocument getDigitalDocument(Process process) throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
@@ -1475,10 +1673,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            List of process properties
      * @return List of filtered correction / solution messages
      */
-    protected List<Property> filterForCorrectionSolutionMessages(List<Property> lpe) {
-        ArrayList<Property> filteredList = new ArrayList<>();
+    protected List<PropertyDTO> filterForCorrectionSolutionMessages(List<PropertyDTO> lpe) {
+        ArrayList<PropertyDTO> filteredList = new ArrayList<>();
         List<String> listOfTranslations = new ArrayList<>();
-        String propertyTitle = "";
+        String propertyTitle;
 
         listOfTranslations.add("Korrektur notwendig");
         listOfTranslations.add("Korrektur durchgefuehrt");
@@ -1490,7 +1688,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         }
 
         // filtering for correction and solution messages
-        for (Property property : lpe) {
+        for (PropertyDTO property : lpe) {
             propertyTitle = property.getTitle();
             if (listOfTranslations.contains(propertyTitle)) {
                 filteredList.add(property);
@@ -1500,36 +1698,25 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Filter and sort after creation date list of process properties for
-     * correction and solution messages.
+     * Filter and sort after creation date list of process properties for correction
+     * and solution messages.
      *
      * @return list of ProcessProperty objects
      */
-    public List<Property> getSortedCorrectionSolutionMessages(Process process) {
-        List<Property> filteredList;
-        List<Property> lpe = process.getProperties();
+    public List<PropertyDTO> getSortedCorrectionSolutionMessages(ProcessDTO process) {
+        List<PropertyDTO> filteredList;
+        List<PropertyDTO> properties = process.getProperties();
 
-        if (lpe.isEmpty()) {
+        if (properties.isEmpty()) {
             return new ArrayList<>();
         }
 
-        filteredList = filterForCorrectionSolutionMessages(lpe);
+        filteredList = filterForCorrectionSolutionMessages(properties);
 
-        // sorting after creation date
-        Collections.sort(filteredList, new Comparator<Property>() {
-            @Override
-            public int compare(Property o1, Property o2) {
-                Date o1Date = o1.getCreationDate();
-                Date o2Date = o2.getCreationDate();
-                if (o1Date == null) {
-                    o1Date = new Date();
-                }
-                if (o2Date == null) {
-                    o2Date = new Date();
-                }
-                return o1Date.compareTo(o2Date);
-            }
-        });
+        if (filteredList.size() > 1) {
+            Collections.sort(filteredList, (PropertyDTO firstProperty, PropertyDTO secondProperty) -> firstProperty
+                    .getCreationDate().compareTo(secondProperty.getCreationDate()));
+        }
 
         return new ArrayList<>(filteredList);
     }
@@ -1698,9 +1885,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         }
 
         /*
-         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in
-         * den Import-Ordner oder ins Benutzerhome anschliessend den
-         * Import-Thread starten
+         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den
+         * Import-Ordner oder ins Benutzerhome anschliessend den Import-Thread starten
          */
         if (project.isUseDmsImport()) {
             if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
@@ -1732,8 +1918,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Run through all metadata and children of given docstruct to trim the
-     * strings calls itself recursively.
+     * Run through all metadata and children of given docstruct to trim the strings
+     * calls itself recursively.
      */
     private void trimAllMetadata(DocStruct inStruct) {
         /* trim all metadata values */
@@ -1838,8 +2024,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
                 }
             } else {
                 /*
-                 * wenn kein Agora-Import, dann den Ordner mit
-                 * Benutzerberechtigung neu anlegen
+                 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
@@ -1938,8 +2123,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         mm.setDigitalDocument(dd);
 
         /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die
-         * Metsstruktur übernommen
+         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur
+         * übernommen
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
@@ -2116,83 +2301,115 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Gets all not archvived Processes
-     *
-     * @return The list of processes.
+     * Gets all processes sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getNotArchivedProcesses() {
-        return processDAO.getNotArchivedProcesses();
+    public List<ProcessDTO> getAll(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
     }
 
     /**
-     * Get not closed processes.
+     * Gets all not archived processes sorted according to sort query.
      *
-     * @return The list of processes.
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getNotClosedProcesses() {
-        return processDAO.getNotClosedProcesses();
+    public List<ProcessDTO> getNotArchivedProcesses(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByArchived(false, sort), false);
     }
 
     /**
-     * Get not closed and not archived processes.
+     * Get not closed processes sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
      *
-     * @return The list of processes.
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getNotClosedAndNotArchivedProcesses() {
-        return processDAO.getNotClosedAndNotArchivedProcesses();
+    public List<ProcessDTO> getNotClosedProcesses(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatus(false, sort), false);
     }
 
     /**
-     * get not archived templates.
-     *
-     * @return The list of processes.
+     * Get not closed and not archived processes sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getNotArchivedTemplates() {
-        return processDAO.getNotArchivedTemplates();
+    public List<ProcessDTO> getNotClosedAndNotArchivedProcesses(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatusAndProjectArchived(false, false, sort), false);
     }
 
     /**
-     * Get all templates.
-     *
-     * @return The list of processes.
+     * Get not archived templates sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getAllTemplates() {
-        return processDAO.getAllTemplates();
+    public List<ProcessDTO> getNotArchivedTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByArchivedAndTemplate(false, true, sort), false);
     }
 
     /**
-     * get all processes, which are not a template
-     *
-     * @return The list of processes.
+     * Get all templates sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getAllWithoutTemplates() {
-        return processDAO.getAllWithoutTemplates();
+    public List<ProcessDTO> getAllTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByTemplate(true, sort), false);
     }
 
     /**
-     * get all not archived processes which are not a template.
-     *
-     * @return The list of processes.
+     * Get all processes, which are not a template sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getAllNotArchivedWithoutTemplates() {
-        return processDAO.getAllNotArchivedWithoutTemplates();
+    public List<ProcessDTO> getAllWithoutTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByTemplate(false, sort), false);
     }
 
     /**
-     * Get all not closed and not archived templates.
-     *
-     * @return The list of processes.
+     * Get all not archived processes which are not a template sorted according to
+     * sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getAllNotClosedAndNotArchivedTemplates() {
-        return processDAO.getAllNotClosedAndNotArchivedTemplates();
+    public List<ProcessDTO> getAllNotArchivedWithoutTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByArchivedAndTemplate(false, false, sort), false);
     }
 
     /**
-     * Get all not closed templates.
-     *
-     * @return The list of processes.
+     * Get all not closed and not archived templates sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<Process> getAllNotClosedTemplates() {
-        return processDAO.getAllNotClosedTemplates();
+    public List<ProcessDTO> getAllNotClosedAndNotArchivedTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, true, sort),
+                false);
+    }
+
+    /**
+     * Get all not closed templates sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
+     */
+    public List<ProcessDTO> getAllNotClosedTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatusAndTemplate(false, true, sort), false);
     }
 }

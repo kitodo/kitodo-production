@@ -12,12 +12,8 @@
 package org.kitodo.data.database.beans;
 
 import java.net.URI;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -35,9 +31,6 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-
-import org.hibernate.Hibernate;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @XmlAccessorType(XmlAccessType.NONE)
 // This annotation is to instruct the Jersey API not to generate arbitrary XML
@@ -374,34 +367,14 @@ public class Process extends BaseBean {
     // Here will be methods which should be in ProcessService but are used by
     // jsp files
 
+    /**
+     * TODO: find way to set up this value from service.
+     * @return null
+     */
     public User getBlockedUsers() {
         User result = null;
         // too much dependencies on kitodo core
         return result;
-    }
-
-    /**
-     * Check whether the operation contains steps that are not assigned to a
-     * user or user group.
-     */
-    public boolean getContainsUnreachableSteps() {
-        if (this.getTasks().size() == 0) {
-            return true;
-        }
-        for (Task task : this.getTasks()) {
-            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int getTasksSize() {
-        return this.getTasks().size();
-    }
-
-    public int getHistorySize() {
-        return this.getHistory().size();
     }
 
     public int getPropertiesSize() {
@@ -434,203 +407,5 @@ public class Process extends BaseBean {
             result.append(batch.getLabel());
         }
         return result.toString();
-    }
-
-    /**
-     * Get full progress for process.
-     *
-     * @return string
-     */
-    public String getProgress() {
-        HashMap<String, Integer> tasks = calculationForProgress();
-
-        double inProcessing = (tasks.get("inProcessing") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-        double closed = (tasks.get("closed") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-        double open = (tasks.get("open") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-        double locked = (tasks.get("locked") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-
-        DecimalFormat decimalFormat = new DecimalFormat("#000");
-        return decimalFormat.format(closed) + decimalFormat.format(inProcessing) + decimalFormat.format(open)
-                + decimalFormat.format(locked);
-    }
-
-    /**
-     * Get progress for closed tasks.
-     *
-     * @return progress for closed steps
-     */
-    public int getProgressClosed() {
-        HashMap<String, Integer> tasks = calculationForProgress();
-
-        return (tasks.get("closed") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-    }
-
-    /**
-     * Get progress for processed tasks.
-     *
-     * @return progress for processed tasks
-     */
-    public int getProgressInProcessing() {
-        HashMap<String, Integer> tasks = calculationForProgress();
-
-        return (tasks.get("inProcessing") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-    }
-
-    /**
-     * Get progress for open tasks.
-     *
-     * @return return progress for open tasks
-     */
-    public int getProgressOpen() {
-        HashMap<String, Integer> tasks = calculationForProgress();
-        return (tasks.get("open") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-    }
-
-    /**
-     * Get progress for closed tasks.
-     *
-     * @return progress for closed steps
-     */
-    public int getProgressLocked() {
-        HashMap<String, Integer> tasks = calculationForProgress();
-
-        return (tasks.get("locked") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-    }
-
-    private HashMap<String, Integer> calculationForProgress() {
-        HashMap<String, Integer> results = new HashMap<>();
-        int locked = 0;
-        int open = 0;
-        int inProcessing = 0;
-        int closed = 0;
-        Hibernate.initialize(getTasks());
-        for (Task task : getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
-                closed++;
-            } else if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                open++;
-            } else if (task.getProcessingStatusEnum() == TaskStatus.LOCKED) {
-                locked++;
-            } else {
-                inProcessing++;
-            }
-        }
-
-        results.put("closed", closed);
-        results.put("inProcessing", inProcessing);
-        results.put("open", open);
-        results.put("locked", locked);
-
-        if ((open + inProcessing + closed + locked) == 0) {
-            results.put("locked", 1);
-        }
-
-        return results;
-    }
-
-    /**
-     * Check if there is one task in edit mode, where the user has the rights to
-     * write to image folder.
-     */
-    public boolean isImageFolderInUse() {
-        for (Task task : this.getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Get user of task in edit mode with rights to write to image folder.
-     */
-    public User getImageFolderInUseUser() {
-        for (Task task : this.getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
-                return task.getProcessingUser();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Check if Tif directory exists.
-     * 
-     * @return true if the Tif-Image-Directory exists, false if not
-     */
-    public Boolean getTifDirectoryExists() {
-        return false;
-    }
-
-    /**
-     * Filter and sort after creation date list of process properties for
-     * correction and solution messages.
-     *
-     * @return list of Prozesseigenschaft objects
-     */
-    public List<Property> getSortedCorrectionSolutionMessages() {
-        List<Property> filteredList;
-        List<Property> lpe = this.getProperties();
-
-        if (lpe.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        filteredList = filterForCorrectionSolutionMessages(lpe);
-
-        // sorting after creation date
-        Collections.sort(filteredList, new Comparator<Property>() {
-            @Override
-            public int compare(Property o1, Property o2) {
-                Date o1Date = o1.getCreationDate();
-                Date o2Date = o2.getCreationDate();
-                if (o1Date == null) {
-                    o1Date = new Date();
-                }
-                if (o2Date == null) {
-                    o2Date = new Date();
-                }
-                return o1Date.compareTo(o2Date);
-            }
-        });
-
-        return new ArrayList<>(filteredList);
-    }
-
-    /**
-     * Filter for correction / solution messages.
-     *
-     * @param propertyList
-     *            List of process properties
-     * @return List of filtered correction / solution messages
-     */
-    private List<Property> filterForCorrectionSolutionMessages(List<Property> propertyList) {
-        ArrayList<Property> filteredList = new ArrayList<>();
-        List<String> listOfTranslations = new ArrayList<>();
-        String propertyTitle = "";
-
-        listOfTranslations.add("Korrektur notwendig");
-        listOfTranslations.add("Korrektur durchgefuehrt");
-
-        if ((propertyList == null) || (propertyList.size() == 0)) {
-            return filteredList;
-        }
-
-        // filtering for correction and solution messages
-        for (Property property : propertyList) {
-            propertyTitle = property.getTitle();
-            if (listOfTranslations.contains(propertyTitle)) {
-                filteredList.add(property);
-            }
-        }
-        return filteredList;
     }
 }

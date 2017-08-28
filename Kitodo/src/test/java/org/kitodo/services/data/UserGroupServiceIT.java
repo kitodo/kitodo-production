@@ -221,13 +221,4 @@ public class UserGroupServiceIT {
         actual = userGroupService.getPermissionAsString(userGroup);
         assertEquals("Permission string doesn't match to given plain text!", "4", actual);
     }
-
-    @Test
-    public void shouldGetTasksSize() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
-        UserGroup userGroup = userGroupService.find(1);
-        int actual = userGroupService.getTasksSize(userGroup);
-        assertEquals("Tasks size is not equal to given value!", 2, actual);
-    }
 }

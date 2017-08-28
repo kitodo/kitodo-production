@@ -50,7 +50,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         Long amount = propertyService.count();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(6), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class PropertyServiceIT {
 
         String query = matchQuery("type", "process").operator(Operator.AND).toString();
         Long amount = propertyService.count(query);
-        assertEquals("Properties were not counted correctly!", Long.valueOf(2), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         Long amount = propertyService.countDatabaseRows();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(6), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
@@ -88,21 +88,21 @@ public class PropertyServiceIT {
     public void shouldFindTemplateProperty() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        Property templateProperty = propertyService.find(5);
+        Property templateProperty = propertyService.find(6);
         String actual = templateProperty.getTitle();
         String expected = "firstTemplate title";
         assertEquals("Template property was not found in database - title doesn't match!", expected, actual);
 
         actual = templateProperty.getValue();
         expected = "first value";
-        assertEquals("Template property was not found in database - value doesn'T match!", expected, actual);
+        assertEquals("Template property was not found in database - value doesn't match!", expected, actual);
     }
 
     @Test
     public void shouldFindWorkpieceProperty() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        Property workpieceProperty = propertyService.find(3);
+        Property workpieceProperty = propertyService.find(4);
         String actual = workpieceProperty.getTitle();
         String expected = "FirstWorkpiece Property";
         assertEquals("Workpiece property was not found in database - title doesn't match!", expected, actual);
@@ -117,7 +117,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         List<Property> properties = propertyService.findAll();
-        assertEquals("Not all properties were found in database!", 6, properties.size());
+        assertEquals("Not all properties were found in database!", 7, properties.size());
     }
 
     @Test
@@ -127,21 +127,21 @@ public class PropertyServiceIT {
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.save(property);
-        Property foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(7));
+        Property foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
         assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
 
         propertyService.remove(foundProperty);
-        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(7));
+        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
 
         property = new Property();
         property.setTitle("To remove");
         propertyService.save(property);
-        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
+        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(9));
         assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
 
-        propertyService.remove(8);
-        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
+        propertyService.remove(9);
+        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(9));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
     }
 
@@ -174,12 +174,12 @@ public class PropertyServiceIT {
     public void shouldFindByTitleAndValue() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        List<JSONObject> properties = propertyService.findByTitleAndValue("secondProcessProperty", "second");
+        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second");
         Integer actual = properties.size();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
 
-        properties = propertyService.findByTitleAndValue("secondProcessProperty", "third");
+        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third");
         actual = properties.size();
         expected = 0;
         assertEquals("Property was found in index!", expected, actual);
