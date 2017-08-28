@@ -88,10 +88,20 @@ public class ProjectDAO extends BaseDAO {
         return retrieveAmount(query);
     }
 
+    /**
+     * Get all projects sorted by title.
+     * 
+     * @return all projects sorted by title as Project objects
+     */
     public List<Project> getAllProjectsSortedByTitle() throws DAOException {
         return search("FROM Project ORDER BY title ASC");
     }
 
+    /**
+     * Get all not archived projects sorted by title.
+     * 
+     * @return all not archived projects sorted by title as Project objects
+     */
     public List<Project> getAllNotArchivedProjectsSortedByTitle() throws DAOException {
         return search("FROM Project WHERE projectIsArchived = 0 ORDER BY title ASC");
     }

@@ -331,10 +331,20 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
         return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
+    /**
+     * Get all projects sorted by title.
+     *
+     * @return all projects sorted by title as Project objects
+     */
     public List<Project> getAllProjectsSortedByTitle() throws DAOException {
         return projectDAO.getAllProjectsSortedByTitle();
     }
 
+    /**
+     * Get all not archived projects sorted by title.
+     *
+     * @return all not archived projects sorted by title as Project objects
+     */
     public List<Project> getAllNotArchivedProjectsSortedByTitle() throws DAOException {
         return projectDAO.getAllNotArchivedProjectsSortedByTitle();
     }

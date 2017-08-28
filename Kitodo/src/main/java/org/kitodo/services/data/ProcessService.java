@@ -459,13 +459,28 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return searcher.findDocuments(getQueryProjectId(id).toString());
     }
 
+    /**
+     * Count all SortHelperImages fields for project id. It is used for statistical
+     * purpose.
+     * 
+     * @param projectId
+     *            as Integer
+     * @return amount of SortHelperImages fields for project id as Long
+     */
     public Long findCountForSortHelperImages(Integer projectId) throws DataException {
         return findCountAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
     }
 
+    /**
+     * Sum all values in SortHelperImages fields for project id. It is used for
+     * statistical purpose.
+     * 
+     * @param projectId
+     *            as Integer
+     * @return sum of all values in SortHelperImages fields for project id as Double
+     */
     public Double findSumForSortHelperImages(Integer projectId) throws DataException {
         return findSumAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
-
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {
@@ -1421,6 +1436,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     /**
      * Check if there is one task in edit mode, where the user has the rights to
      * write to image folder.
+     * 
      * @param process
      *            DTO object
      * @return true or false
@@ -2422,10 +2438,22 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return convertJSONObjectsToDTOs(findBySortHelperStatusAndTemplate(false, true, sort), false);
     }
 
+    /**
+     * Get all process templates.
+     *
+     * @return list of all process templates as Process objects
+     */
     public List<Process> getProcessTemplates() {
         return processDAO.getProcessTemplates();
     }
 
+    /**
+     * Get process templates for users.
+     *
+     * @param projects
+     *            list of project ids fof user's projects
+     * @return list of all process templates for user as Process objects
+     */
     public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
         return processDAO.getProcessTemplatesForUser(projects);
     }
