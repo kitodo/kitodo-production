@@ -198,12 +198,17 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
     }
 
     /**
-     * Get all rulesets from index an convert them for frontend.
+     * Find all rulesets from index an convert them for frontend.
      *
      * @return list of DocketDTO objects
      */
     public List<RulesetDTO> findAll() throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(), false);
+    }
+
+    @Override
+    public List<RulesetDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
     /**

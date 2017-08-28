@@ -137,6 +137,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     @Override
+    public List<ProjectDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public Project getById(Integer id) throws DAOException {
         return projectDAO.find(id);
     }

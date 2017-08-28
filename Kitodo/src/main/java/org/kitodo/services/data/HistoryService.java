@@ -95,6 +95,11 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
     }
 
     @Override
+    public List<HistoryDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public History getById(Integer id) throws DAOException {
         return historyDAO.find(id);
     }

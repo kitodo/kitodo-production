@@ -174,6 +174,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     @Override
+    public List<TaskDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public Task getById(Integer id) throws DAOException {
         return taskDAO.find(id);
     }

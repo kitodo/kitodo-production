@@ -102,6 +102,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     }
 
     @Override
+    public List<BatchDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public Batch getById(Integer id) throws DAOException {
         return batchDAO.find(id);
     }

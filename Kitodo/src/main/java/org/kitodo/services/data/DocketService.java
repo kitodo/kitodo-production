@@ -48,6 +48,11 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
     }
 
     @Override
+    public List<DocketDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public Docket getById(Integer id) throws DAOException {
         return docketDAO.find(id);
     }
