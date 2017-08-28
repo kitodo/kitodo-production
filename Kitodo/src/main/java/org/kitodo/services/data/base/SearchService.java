@@ -47,8 +47,8 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BaseDTO;
 
 /**
- * Class for implementing methods used by all service classes which search
- * in ElasticSearch index.
+ * Class for implementing methods used by all service classes which search in
+ * ElasticSearch index.
  */
 public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
 
@@ -330,6 +330,36 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     public List<JSONObject> findAllDocuments(String sort) throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString(), sort);
+    }
+
+    /**
+     * Display all documents for exact type with exact sorting.
+     *
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @return sorted list of all documents
+     */
+    public List<JSONObject> findAllDocuments(Integer offset, Integer size) throws DataException {
+        QueryBuilder queryBuilder = matchAllQuery();
+        return searcher.findDocuments(queryBuilder.toString(), offset, size);
+    }
+
+    /**
+     * Display all documents for exact type with exact sorting.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @return sorted list of all documents
+     */
+    public List<JSONObject> findAllDocuments(String sort, Integer offset, Integer size) throws DataException {
+        QueryBuilder queryBuilder = matchAllQuery();
+        return searcher.findDocuments(queryBuilder.toString(), sort, offset, size);
     }
 
     /**
