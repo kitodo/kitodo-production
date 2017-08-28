@@ -697,13 +697,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         if (!related) {
             processDTO = convertRelatedJSONObjects(jsonObject, processDTO);
         }
-        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
-        processDTO.setProject(serviceManager.getProjectService().findById(project, true));
-
         return processDTO;
     }
 
     private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
+        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
+        processDTO.setProject(serviceManager.getProjectService().findById(project));
         processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
         processDTO.setProperties(

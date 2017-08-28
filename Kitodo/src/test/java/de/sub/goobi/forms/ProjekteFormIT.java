@@ -37,7 +37,7 @@ public class ProjekteFormIT {
         ProjekteForm projekteForm = new ProjekteForm();
         ProjectService projectService = new ProjectService();
 
-        Project initialProject = projectService.find(1);
+        Project initialProject = projectService.getById(1);
 
         projekteForm.setMyProjekt(initialProject);
         projekteForm.generateValuesForStatistics();
