@@ -173,15 +173,12 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * New.
-     *
-     * @return page
+     * Create new process.
      */
-    public String Neu() {
+    private void newProcess() {
         this.myProzess = new Process();
         this.myNewProcessTitle = "";
         this.modusBearbeiten = "prozess";
-        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -459,8 +456,6 @@ public class ProzessverwaltungForm extends BasisForm {
             FilterVorlagen();
         } else if (Objects.equals(originLink, "allProcesses")) {
             FilterAktuelleProzesse();
-        } else {
-            logger.error("ERROR: did not recognize link ID '" + originLink + "'.");
         }
         setFilter("");
     }
@@ -478,14 +473,12 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(single);
                 pkf.setProzessVorlage(process);
-                return pkf.prepare();
+                return pkf.prepare(process.getId());
             } catch (DAOException e) {
                 logger.error(e);
             }
-            return "/newpages/ProzessverwaltungAlle";
-        } else {
-            return "/pages/ProzessverwaltungAlle";
         }
+        return "/pages/ProzessverwaltungAlle";
     }
 
     /**
@@ -2465,8 +2458,11 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void loadMyProcess() {
         try {
-            if (!Objects.equals(this.processId, null)) {
+            if (this.processId != 0) {
                 setMyProzess(this.serviceManager.getProcessService().find(this.processId));
+            }
+            else {
+                newProcess();
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving process with ID '" + this.processId + "'; ", e.getMessage());

@@ -610,7 +610,7 @@ public class FileService {
     public URI getProcessBaseUriForExistingProcess(Process process) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         URI processBaseUri = process.getProcessBaseUri();
-        if (processBaseUri == null) {
+        if (processBaseUri == null && process.getId() != null) {
             process.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(process.getId().toString()));
         }
         return process.getProcessBaseUri();
