@@ -144,15 +144,15 @@ public class AktuelleSchritteForm extends BasisForm {
             List<TaskDTO> tasks;
             if (!showAutomaticTasks) {
                 if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(sortList());
+                    tasks = serviceManager.getTaskService().findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(sortList());
                 } else {
-                    tasks = serviceManager.getTaskService().getOpenNotAutomaticTasksForCurrentUser(sortList());
+                    tasks = serviceManager.getTaskService().findOpenNotAutomaticTasksForCurrentUser(sortList());
                 }
             } else {
                 if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService().getOpenTasksWithoutCorrectionForCurrentUser(sortList());
+                    tasks = serviceManager.getTaskService().findOpenTasksWithoutCorrectionForCurrentUser(sortList());
                 } else {
-                    tasks = serviceManager.getTaskService().getOpenTasksForCurrentUser(sortList());
+                    tasks = serviceManager.getTaskService().findOpenTasksForCurrentUser(sortList());
                 }
             }
             this.page = new Page(0, tasks);
@@ -556,7 +556,7 @@ public class AktuelleSchritteForm extends BasisForm {
         this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         // it returns null! - not possible to close task
-        Task t = serviceManager.getTaskService().find(this.mySchritt.getId());
+        Task t = serviceManager.getTaskService().getById(this.mySchritt.getId());
         serviceManager.getTaskService().close(t, true);
         return filterAlleStart();
     }
@@ -605,7 +605,7 @@ public class AktuelleSchritteForm extends BasisForm {
         this.mySchritt.setProcessingBegin(null);
 
         try {
-            Task temp = serviceManager.getTaskService().find(this.myProblemID);
+            Task temp = serviceManager.getTaskService().getById(this.myProblemID);
             temp.setProcessingStatusEnum(TaskStatus.OPEN);
             temp = serviceManager.getTaskService().setCorrectionStep(temp);
             temp.setProcessingEnd(null);
@@ -691,7 +691,7 @@ public class AktuelleSchritteForm extends BasisForm {
         mySchritt.setProcessingUser(ben);
 
         try {
-            Task temp = serviceManager.getTaskService().find(this.mySolutionID);
+            Task temp = serviceManager.getTaskService().getById(this.mySolutionID);
             /*
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
              * wieder schliessen
@@ -851,7 +851,7 @@ public class AktuelleSchritteForm extends BasisForm {
         for (TaskDTO taskDTO : (List<TaskDTO>) this.page.getListReload()) {
             Task task = new Task();
             try {
-                task = serviceManager.getTaskService().find(taskDTO.getId());
+                task = serviceManager.getTaskService().getById(taskDTO.getId());
             } catch (DAOException e) {
                 logger.error(e);
             }
@@ -887,7 +887,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Execute script.
      */
     public void executeScript() throws DAOException, DataException {
-        Task task = serviceManager.getTaskService().find(this.mySchritt.getId());
+        Task task = serviceManager.getTaskService().getById(this.mySchritt.getId());
         serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
 
@@ -948,7 +948,7 @@ public class AktuelleSchritteForm extends BasisForm {
         if (aktuellerBenutzer != null && aktuellerBenutzer.isWithMassDownload()) {
             for (TaskDTO taskDTO : (List<TaskDTO>)this.page.getCompleteList()) {
                 try {
-                    Task task = serviceManager.getTaskService().find(taskDTO.getId());
+                    Task task = serviceManager.getTaskService().getById(taskDTO.getId());
                     if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         // gesamtAnzahlImages +=
                         // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
@@ -1070,7 +1070,7 @@ public class AktuelleSchritteForm extends BasisForm {
             }
             Integer inParam = Integer.valueOf(param);
             if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {
-                this.mySchritt = serviceManager.getTaskService().find(inParam);
+                this.mySchritt = serviceManager.getTaskService().getById(inParam);
             }
         }
     }
@@ -1480,7 +1480,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public void loadMyStep() {
         try {
             if (!Objects.equals(this.stepId, null)) {
-                setMySchritt(this.serviceManager.getTaskService().find(this.stepId));
+                setMySchritt(this.serviceManager.getTaskService().getById(this.stepId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving task with ID '" + this.stepId + "'; ", e.getMessage());

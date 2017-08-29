@@ -223,7 +223,7 @@ public class ProjekteForm extends BasisForm {
     public String filterKein() {
         List<ProjectDTO> projects = new ArrayList<>();
         try {
-            projects = serviceManager.getProjectService().getAll();
+            projects = serviceManager.getProjectService().findAll();
         } catch (DataException e) {
             logger.error(e);
         }
@@ -786,7 +786,7 @@ public class ProjekteForm extends BasisForm {
     public void loadProject() {
         try {
             if (!Objects.equals(this.itemId, 0)) {
-                setMyProjekt(this.serviceManager.getProjectService().find(this.itemId));
+                setMyProjekt(this.serviceManager.getProjectService().getById(this.itemId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving project with ID '" + this.itemId + "'; ", e.getMessage());

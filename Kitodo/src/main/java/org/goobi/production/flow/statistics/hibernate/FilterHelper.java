@@ -57,7 +57,7 @@ public class FilterHelper {
         User aktuellerNutzer = null;
         try {
             if (loginForm != null && loginForm.getMyBenutzer() != null) {
-                aktuellerNutzer = serviceManager.getUserService().find(loginForm.getMyBenutzer().getId());
+                aktuellerNutzer = serviceManager.getUserService().getById(loginForm.getMyBenutzer().getId());
             }
         } catch (DAOException e) {
             logger.warn("DAOException", e);

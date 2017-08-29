@@ -48,11 +48,12 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
     }
 
     @Override
-    public Docket find(Integer id) throws DAOException {
+    public Docket getById(Integer id) throws DAOException {
         return docketDAO.find(id);
     }
 
-    public List<Docket> findAll() {
+    @Override
+    public List<Docket> getAll() {
         return docketDAO.findAll();
     }
 
@@ -120,7 +121,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
     }
 
     @Override
-    public List<Docket> search(String query) throws DAOException {
+    public List<Docket> getByQuery(String query) throws DAOException {
         return docketDAO.search(query);
     }
 
@@ -183,7 +184,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
      *
      * @return list of DocketDTO objects
      */
-    public List<DocketDTO> getAll() throws DataException {
+    public List<DocketDTO> findAll() throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
@@ -193,7 +194,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), docketType);
+        indexer.performMultipleRequests(getAll(), docketType);
     }
 
     @Override

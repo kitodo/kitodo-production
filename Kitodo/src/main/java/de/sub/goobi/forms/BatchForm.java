@@ -79,7 +79,7 @@ public class BatchForm extends BasisForm {
      */
     public void loadBatchData() {
         if (selectedProcesses == null || selectedProcesses.size() == 0) {
-            this.currentBatches = serviceManager.getBatchService().findAll();
+            this.currentBatches = serviceManager.getBatchService().getAll();
             this.selectedBatches = new ArrayList<>();
         } else {
             selectedBatches = new ArrayList<>();
@@ -100,7 +100,7 @@ public class BatchForm extends BasisForm {
         List<Process> processes = new ArrayList<>();
         try {
             for (int b : selectedBatches) {
-                processes.addAll(serviceManager.getBatchService().find(b).getProcesses());
+                processes.addAll(serviceManager.getBatchService().getById(b).getProcesses());
             }
             currentProcesses = new ArrayList<>(processes);
         } catch (Exception e) { // NumberFormatException, DAOException
@@ -139,7 +139,7 @@ public class BatchForm extends BasisForm {
      */
     public void filterBatches() {
         currentBatches = new ArrayList<>();
-        for (Batch batch : serviceManager.getBatchService().findAll()) {
+        for (Batch batch : serviceManager.getBatchService().getAll()) {
             if (serviceManager.getBatchService().contains(batch, batchfilter)) {
                 currentBatches.add(batch);
             }
@@ -240,7 +240,7 @@ public class BatchForm extends BasisForm {
         } else if (this.selectedBatches.size() == 1) {
             try {
                 serviceManager.getProcessService()
-                        .downloadDocket(serviceManager.getBatchService().find(selectedBatches.get(0)).getProcesses());
+                        .downloadDocket(serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -287,7 +287,7 @@ public class BatchForm extends BasisForm {
         }
         try {
             for (Integer entry : this.selectedBatches) {
-                Batch batch = serviceManager.getBatchService().find(entry);
+                Batch batch = serviceManager.getBatchService().getById(entry);
                 serviceManager.getBatchService().addAll(batch, this.selectedProcesses);
                 serviceManager.getBatchService().save(batch);
                 if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
@@ -321,7 +321,7 @@ public class BatchForm extends BasisForm {
         }
 
         for (Integer entry : this.selectedBatches) {
-            Batch batch = serviceManager.getBatchService().find(entry);
+            Batch batch = serviceManager.getBatchService().getById(entry);
             serviceManager.getBatchService().removeAll(batch, this.selectedProcesses);
             serviceManager.getBatchService().save(batch);
             if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
@@ -415,7 +415,7 @@ public class BatchForm extends BasisForm {
             if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals(0)) {
                 Batch batch;
                 try {
-                    batch = serviceManager.getBatchService().find(selectedBatches.get(0));
+                    batch = serviceManager.getBatchService().getById(selectedBatches.get(0));
                     this.batchHelper = new BatchProcessHelper(batch);
                     return "/pages/BatchProperties";
                 } catch (DAOException e) {
@@ -462,7 +462,7 @@ public class BatchForm extends BasisForm {
         }
         for (Integer batchID : selectedBatches) {
             try {
-                Batch batch = serviceManager.getBatchService().find(batchID);
+                Batch batch = serviceManager.getBatchService().getById(batchID);
                 switch (batch.getType()) {
                     case LOGISTIC:
                         for (Process prozess : batch.getProcesses()) {

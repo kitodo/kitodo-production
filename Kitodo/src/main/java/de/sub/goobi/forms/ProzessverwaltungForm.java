@@ -398,15 +398,15 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             if (!showClosedProcesses) {
                 if (!showArchivedProjects) {
-                    processes = serviceManager.getProcessService().getNotClosedAndNotArchivedProcesses(sortList());
+                    processes = serviceManager.getProcessService().findNotClosedAndNotArchivedProcesses(sortList());
                 } else {
-                    processes = serviceManager.getProcessService().getNotClosedProcesses(sortList());
+                    processes = serviceManager.getProcessService().findNotClosedProcesses(sortList());
                 }
             } else {
                 if (!this.showArchivedProjects) {
-                    processes = serviceManager.getProcessService().getNotArchivedProcesses(sortList());
+                    processes = serviceManager.getProcessService().findNotArchivedProcesses(sortList());
                 } else {
-                    processes = serviceManager.getProcessService().getAll(sortList());
+                    processes = serviceManager.getProcessService().findAll(sortList());
                 }
             }
 
@@ -429,9 +429,9 @@ public class ProzessverwaltungForm extends BasisForm {
         List<ProcessDTO> templates = new ArrayList<>();
         try {
             if (!this.showArchivedProjects) {
-                templates = serviceManager.getProcessService().getNotArchivedTemplates(sortList());
+                templates = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
             } else {
-                templates = serviceManager.getProcessService().getAllTemplates(sortList());
+                templates = serviceManager.getProcessService().findAllTemplates(sortList());
             }
         } catch (DataException e) {
             logger.error(e);
@@ -496,22 +496,22 @@ public class ProzessverwaltungForm extends BasisForm {
             if (this.modusAnzeige.equals("vorlagen")) {
                 if (!this.showClosedProcesses) {
                     if (!this.showArchivedProjects) {
-                        processes = serviceManager.getProcessService().getAllNotClosedAndNotArchivedTemplates(sortList());
+                        processes = serviceManager.getProcessService().findAllNotClosedAndNotArchivedTemplates(sortList());
                     } else {
-                        processes = serviceManager.getProcessService().getAllNotClosedTemplates(sortList());
+                        processes = serviceManager.getProcessService().findAllNotClosedTemplates(sortList());
                     }
                 } else {
                     if (!this.showArchivedProjects) {
-                        processes = serviceManager.getProcessService().getNotArchivedTemplates(sortList());
+                        processes = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
                     } else {
-                        processes = serviceManager.getProcessService().getAllTemplates(sortList());
+                        processes = serviceManager.getProcessService().findAllTemplates(sortList());
                     }
                 }
             } else {
                 if (!this.showArchivedProjects) {
-                    processes = serviceManager.getProcessService().getAllNotArchivedWithoutTemplates(sortList());
+                    processes = serviceManager.getProcessService().findAllNotArchivedWithoutTemplates(sortList());
                 } else {
-                    processes = serviceManager.getProcessService().getAllWithoutTemplates(sortList());
+                    processes = serviceManager.getProcessService().findAllWithoutTemplates(sortList());
                 }
             }
 
@@ -1079,7 +1079,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void stepStatusUp(int processId) throws DAOException, DataException {
-        List<Task> taskList = serviceManager.getProcessService().find(processId).getTasks();
+        List<Task> taskList = serviceManager.getProcessService().getById(processId).getTasks();
 
         for (Task t : taskList) {
             if (!t.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
@@ -1169,7 +1169,7 @@ public class ProzessverwaltungForm extends BasisForm {
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.DONE) {
             this.mySchritt = serviceManager.getTaskService().setProcessingStatusUp(this.mySchritt);
             this.mySchritt.setEditTypeEnum(TaskEditType.ADMIN);
-            Task task = serviceManager.getTaskService().find(this.mySchritt.getId());
+            Task task = serviceManager.getTaskService().getById(this.mySchritt.getId());
             if (this.mySchritt.getProcessingStatusEnum() == TaskStatus.DONE) {
                 serviceManager.getTaskService().close(task, true);
             } else {
@@ -1406,7 +1406,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public void setProjektAuswahl(Integer inProjektAuswahl) {
         if (inProjektAuswahl != 0) {
             try {
-                this.myProzess.setProject(serviceManager.getProjectService().find(inProjektAuswahl));
+                this.myProzess.setProject(serviceManager.getProjectService().getById(inProjektAuswahl));
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Projekt kann nicht zugewiesen werden", "");
                 logger.error(e);
@@ -1421,7 +1421,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public List<SelectItem> getProjektAuswahlListe() throws DAOException {
         List<SelectItem> myProjekte = new ArrayList<>();
-        List<Project> temp = serviceManager.getProjectService().search("from Project ORDER BY title");
+        List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
         for (Project proj : temp) {
             myProjekte.add(new SelectItem(proj.getId(), proj.getTitle(), null));
         }
@@ -2105,7 +2105,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     private void loadProcessProperties() {
         try {
-            this.myProzess = serviceManager.getProcessService().find(this.myProzess.getId());
+            this.myProzess = serviceManager.getProcessService().getById(this.myProzess.getId());
         } catch (Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
@@ -2459,9 +2459,8 @@ public class ProzessverwaltungForm extends BasisForm {
     public void loadMyProcess() {
         try {
             if (this.processId != 0) {
-                setMyProzess(this.serviceManager.getProcessService().find(this.processId));
-            }
-            else {
+                setMyProzess(this.serviceManager.getProcessService().getById(this.processId));
+            } else {
                 newProcess();
             }
         } catch (DAOException e) {
@@ -2493,7 +2492,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public void loadMyTask() {
         try {
             if (!Objects.equals(this.taskId, null)) {
-                setMySchritt(this.serviceManager.getTaskService().find(this.taskId));
+                setMySchritt(this.serviceManager.getTaskService().getById(this.taskId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving task with ID '" + this.taskId + "'; ", e.getMessage());

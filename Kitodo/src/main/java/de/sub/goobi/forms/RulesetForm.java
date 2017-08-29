@@ -120,7 +120,7 @@ public class RulesetForm extends BasisForm {
     public String noFiltering() {
         List<RulesetDTO> rulesets = new ArrayList<>();
         try {
-            rulesets = serviceManager.getRulesetService().getAll();
+            rulesets = serviceManager.getRulesetService().findAll();
         } catch (DataException e) {
             logger.error(e);
         }
@@ -149,7 +149,7 @@ public class RulesetForm extends BasisForm {
     public void loadRuleset() {
         try {
             if (!Objects.equals(this.rulesetId, 0)) {
-                setRuleset(this.serviceManager.getRulesetService().find(this.rulesetId));
+                setRuleset(this.serviceManager.getRulesetService().getById(this.rulesetId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving ruleset with ID '" + this.rulesetId + "'; ", e.getMessage());

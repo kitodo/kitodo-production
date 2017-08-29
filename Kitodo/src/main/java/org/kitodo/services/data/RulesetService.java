@@ -80,16 +80,17 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
     }
 
     @Override
-    public Ruleset find(Integer id) throws DAOException {
+    public Ruleset getById(Integer id) throws DAOException {
         return rulesetDAO.find(id);
     }
 
-    public List<Ruleset> findAll() {
+    @Override
+    public List<Ruleset> getAll() {
         return rulesetDAO.findAll();
     }
 
     @Override
-    public List<Ruleset> search(String query) throws DAOException {
+    public List<Ruleset> getByQuery(String query) throws DAOException {
         return rulesetDAO.search(query);
     }
 
@@ -201,7 +202,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
      *
      * @return list of DocketDTO objects
      */
-    public List<RulesetDTO> getAll() throws DataException {
+    public List<RulesetDTO> findAll() throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(), false);
     }
 
@@ -211,7 +212,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), rulesetType);
+        indexer.performMultipleRequests(getAll(), rulesetType);
     }
 
     @Override

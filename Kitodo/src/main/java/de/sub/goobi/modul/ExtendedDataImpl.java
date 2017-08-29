@@ -337,7 +337,7 @@ public class ExtendedDataImpl extends DataImpl {
 
         try {
             // TODO: Use generics
-            List hits = serviceManager.getProcessService().search(myquery);
+            List hits = serviceManager.getProcessService().getByQuery(myquery);
             if (hits.size() > 0) {
                 if (type.equals("") || type.equals(isProcess)) {
                     Property processProperty = (Property) hits.get(0);

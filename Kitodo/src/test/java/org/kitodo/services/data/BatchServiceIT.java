@@ -22,9 +22,12 @@ import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.exceptions.DAOException;
 
 /**
  * Tests for BatchService class.
@@ -45,6 +48,9 @@ public class BatchServiceIT {
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
     }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountAllBatches() throws Exception {
@@ -75,7 +81,7 @@ public class BatchServiceIT {
     public void shouldFindBatch() throws Exception {
         BatchService batchService = new BatchService();
 
-        Batch batch = batchService.find(1);
+        Batch batch = batchService.getById(1);
         boolean condition = batch.getTitle().equals("First batch") && batch.getType().equals(Batch.Type.LOGISTIC);
         assertTrue("Batch was not found in database!", condition);
     }
@@ -84,7 +90,7 @@ public class BatchServiceIT {
     public void shouldFindAllBatches() {
         BatchService batchService = new BatchService();
 
-        List<Batch> batches = batchService.findAll();
+        List<Batch> batches = batchService.getAll();
         assertEquals("Not all batches were found in database!", 4, batches.size());
     }
 
@@ -96,32 +102,30 @@ public class BatchServiceIT {
         batch.setTitle("To Remove");
         batch.setType(Batch.Type.SERIAL);
         batchService.save(batch);
-        Batch foundBatch = batchService.convertJSONObjectToBean(batchService.findById(5));
+        Batch foundBatch = batchService.getById(5);
         assertEquals("Additional batch was not inserted in database!", "To Remove", foundBatch.getTitle());
 
         batchService.remove(foundBatch);
-        foundBatch = batchService.convertJSONObjectToBean(batchService.findById(5));
-        assertEquals("Additional batch was not removed from database!", null, foundBatch);
+        exception.expect(DAOException.class);
+        batchService.getById(5);
 
         batch = new Batch();
         batch.setTitle("To remove");
         batch.setType(Batch.Type.SERIAL);
         batchService.save(batch);
-        foundBatch = batchService.convertJSONObjectToBean(batchService.findById(6));
+        foundBatch = batchService.getById(6);
         assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
 
         batchService.remove(6);
-        foundBatch = batchService.convertJSONObjectToBean(batchService.findById(6));
-        assertEquals("Additional batch was not removed from database!", null, foundBatch);
+        exception.expect(DAOException.class);
+        batchService.getById(6);
     }
 
     @Test
     public void shouldFindById() throws Exception {
         BatchService batchService = new BatchService();
 
-        JSONObject batch = batchService.findById(1);
-        JSONObject jsonObject = (JSONObject) batch.get("_source");
-        String actual = (String) jsonObject.get("title");
+        String actual = batchService.findById(1).getTitle();
         String expected = "First batch";
         assertEquals("Batch was not found in index!", expected, actual);
     }
@@ -225,7 +229,7 @@ public class BatchServiceIT {
     public void shouldContainCharSequence() throws Exception {
         BatchService batchService = new BatchService();
 
-        Batch batch = batchService.find(1);
+        Batch batch = batchService.getById(1);
         boolean condition = batch.getTitle().contains("bat") == batchService.contains(batch, "bat");
         assertTrue("It doesn't contain given char sequence!", condition);
     }
@@ -234,7 +238,7 @@ public class BatchServiceIT {
     public void shouldGetIdString() throws Exception {
         BatchService batchService = new BatchService();
 
-        Batch batch = batchService.find(1);
+        Batch batch = batchService.getById(1);
         boolean condition = batchService.getIdString(batch).equals("1");
         assertTrue("Id's String doesn't match the given plain text!", condition);
     }
@@ -243,11 +247,11 @@ public class BatchServiceIT {
     public void shouldGetLabel() throws Exception {
         BatchService batchService = new BatchService();
 
-        Batch firstBatch = batchService.find(1);
+        Batch firstBatch = batchService.getById(1);
         boolean firstCondition = batchService.getLabel(firstBatch).equals("First batch");
         assertTrue("It doesn't get given label!", firstCondition);
 
-        Batch secondBatch = batchService.find(4);
+        Batch secondBatch = batchService.getById(4);
         boolean secondCondition = batchService.getLabel(secondBatch).equals("Batch 4");
         assertTrue("It doesn't get given label!", secondCondition);
     }
@@ -256,7 +260,7 @@ public class BatchServiceIT {
     public void shouldGetSizeOfProcesses() throws Exception {
         BatchService batchService = new BatchService();
 
-        Batch batch = batchService.find(1);
+        Batch batch = batchService.getById(1);
         int size = batchService.size(batch);
         assertEquals("Size of processes is not equal 1!", 1, size);
     }
@@ -265,7 +269,7 @@ public class BatchServiceIT {
     public void shouldOverrideToString() throws Exception {
         BatchService batchService = new BatchService();
 
-        Batch batch = batchService.find(1);
+        Batch batch = batchService.getById(1);
         String toString = batchService.toString(batch);
         assertTrue("Override toString method is incorrect!", toString.equals("First batch (1 processes) [logistics]"));
     }

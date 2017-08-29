@@ -113,11 +113,12 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
     }
 
     @Override
-    public Template find(Integer id) throws DAOException {
+    public Template getById(Integer id) throws DAOException {
         return templateDAO.find(id);
     }
 
-    public List<Template> findAll() {
+    @Override
+    public List<Template> getAll() {
         return templateDAO.findAll();
     }
 
@@ -129,7 +130,7 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
      * @return list of Template objects
      */
     @Override
-    public List<Template> search(String query) throws DAOException {
+    public List<Template> getByQuery(String query) throws DAOException {
         return templateDAO.search(query);
     }
 
@@ -258,7 +259,7 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), templateType);
+        indexer.performMultipleRequests(getAll(), templateType);
     }
 
     @Override
@@ -267,20 +268,5 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
         templateDTO.setId(getIdFromJSONObject(jsonObject));
         templateDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(jsonObject, "properties"));
         return templateDTO;
-    }
-
-    /**
-     * Get size of properties list.
-     *
-     * @param template
-     *            object
-     * @return size of properties list
-     */
-    public int getPropertiesSize(Template template) {
-        if (template.getProperties() == null) {
-            return 0;
-        } else {
-            return template.getProperties().size();
-        }
     }
 }

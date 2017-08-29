@@ -190,7 +190,7 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     @Override
-    public User find(Integer id) throws DAOException {
+    public User getById(Integer id) throws DAOException {
         return userDAO.find(id);
     }
 
@@ -199,7 +199,8 @@ public class UserService extends SearchService<User, UserDTO> {
      *
      * @return A List of all users
      */
-    public List<User> findAll() {
+    @Override
+    public List<User> getAll() {
         return userDAO.findAll();
     }
 
@@ -241,15 +242,15 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     @Override
-    public List<User> search(String query) throws DAOException {
+    public List<User> getByQuery(String query) throws DAOException {
         return userDAO.search(query);
     }
 
-    public List<User> search(String query, String parameter) throws DAOException {
+    public List<User> getByQuery(String query, String parameter) throws DAOException {
         return userDAO.search(query, parameter);
     }
 
-    public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
+    public List<User> getByQuery(String query, String namedParameter, String parameter) throws DAOException {
         return userDAO.search(query, namedParameter, parameter);
     }
 
@@ -469,18 +470,7 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Get user by id.
-     *
-     * @param id
-     *            of user
-     * @return user as UserDTO object
-     */
-    public UserDTO getById(Integer id) throws DataException {
-        return convertJSONObjectToDTO(findById(id), false);
-    }
-
-    /**
-     * Get all visible users.
+     * Find all visible users.
      *
      * @return a list of all visible users as UserDTO
      */
@@ -490,7 +480,7 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Get all active users.
+     * Find all active users.
      *
      * @return a list of all active users as UserDTO
      */
@@ -500,7 +490,7 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     /**
-     * Get filtered users by name.
+     * Find filtered users by name.
      *
      * @param name
      *            the name filter
@@ -517,7 +507,7 @@ public class UserService extends SearchService<User, UserDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), userType);
+        indexer.performMultipleRequests(getAll(), userType);
     }
 
     @Override

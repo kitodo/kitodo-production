@@ -25,15 +25,15 @@ public class LdapGroupService {
         ldapGroupDAO.save(ldapGroup);
     }
 
-    public LdapGroup find(Integer id) throws DAOException {
+    public LdapGroup getById(Integer id) throws DAOException {
         return ldapGroupDAO.find(id);
     }
 
-    public List<LdapGroup> findAll() {
+    public List<LdapGroup> getAll() {
         return ldapGroupDAO.findAll();
     }
 
-    public List<LdapGroup> search(String query) throws DAOException {
+    public List<LdapGroup> getByQuery(String query) throws DAOException {
         return ldapGroupDAO.search(query);
     }
 

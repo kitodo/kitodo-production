@@ -22,9 +22,12 @@ import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.exceptions.DAOException;
 
 /**
  * Tests for RulesetService class.
@@ -45,6 +48,9 @@ public class RulesetServiceIT {
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
     }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountAllRulesets() throws Exception {
@@ -75,7 +81,7 @@ public class RulesetServiceIT {
     public void shouldFindRuleset() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        Ruleset ruleset = rulesetService.find(1);
+        Ruleset ruleset = rulesetService.getById(1);
         boolean condition = ruleset.getTitle().equals("SLUBDD") && ruleset.getFile().equals("ruleset_slubdd.xml");
         assertTrue("Ruleset was not found in database!", condition);
     }
@@ -84,7 +90,7 @@ public class RulesetServiceIT {
     public void shouldFindAllRulesets() {
         RulesetService rulesetService = new RulesetService();
 
-        List<Ruleset> rulesets = rulesetService.findAll();
+        List<Ruleset> rulesets = rulesetService.getAll();
         assertEquals("Not all rulesets were found in database!", 2, rulesets.size());
     }
 
@@ -92,9 +98,7 @@ public class RulesetServiceIT {
     public void shouldFindById() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        JSONObject ruleset = rulesetService.findById(1);
-        JSONObject jsonObject = (JSONObject) ruleset.get("_source");
-        String actual = (String) jsonObject.get("title");
+        String actual = rulesetService.findById(1).getTitle();
         String expected = "SLUBDD";
         assertEquals("Ruleset was not found in index!", expected, actual);
     }
@@ -170,29 +174,29 @@ public class RulesetServiceIT {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("To Remove");
         rulesetService.save(ruleset);
-        Ruleset foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(3));
+        Ruleset foundRuleset = rulesetService.getById(3);
         assertEquals("Additional ruleset was not inserted in database!", "To Remove", foundRuleset.getTitle());
 
         rulesetService.remove(ruleset);
-        foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(3));
-        assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
+        exception.expect(DAOException.class);
+        rulesetService.getById(3);
 
         ruleset = new Ruleset();
         ruleset.setTitle("To remove");
         rulesetService.save(ruleset);
-        foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(4));
+        foundRuleset = rulesetService.getById(4);
         assertEquals("Additional ruleset was not inserted in database!", "To remove", foundRuleset.getTitle());
 
         rulesetService.remove(4);
-        foundRuleset = rulesetService.convertJSONObjectToBean(rulesetService.findById(4));
-        assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
+        exception.expect(DAOException.class);
+        rulesetService.getById(4);
     }
 
     @Test
     public void shouldGetPreferences() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        Ruleset ruleset = rulesetService.find(1);
+        Ruleset ruleset = rulesetService.getById(1);
         String actual = rulesetService.getPreferences(ruleset).getVersion();
         // not sure how to really check if Pref is correct
         System.out.println("Preferences: " + actual);

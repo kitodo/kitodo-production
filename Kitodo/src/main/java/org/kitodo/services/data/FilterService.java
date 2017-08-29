@@ -80,7 +80,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      * @return Property
      */
     @Override
-    public Filter find(Integer id) throws DAOException {
+    public Filter getById(Integer id) throws DAOException {
         return filterDAO.find(id);
     }
 
@@ -89,7 +89,8 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *
      * @return list of all properties
      */
-    public List<Filter> findAll() {
+    @Override
+    public List<Filter> getAll() {
         return filterDAO.findAll();
     }
 
@@ -101,7 +102,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      * @return list of properties
      */
     @Override
-    public List<Filter> search(String query) throws DAOException {
+    public List<Filter> getByQuery(String query) throws DAOException {
         return filterDAO.search(query);
     }
 
@@ -172,7 +173,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), filterType);
+        indexer.performMultipleRequests(getAll(), filterType);
     }
 
     @Override

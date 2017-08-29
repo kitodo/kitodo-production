@@ -95,11 +95,12 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
     }
 
     @Override
-    public History find(Integer id) throws DAOException {
+    public History getById(Integer id) throws DAOException {
         return historyDAO.find(id);
     }
 
-    public List<History> findAll() {
+    @Override
+    public List<History> getAll() {
         return historyDAO.findAll();
     }
 
@@ -111,7 +112,7 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
      * @return list of History objects
      */
     @Override
-    public List<History> search(String query) throws DAOException {
+    public List<History> getByQuery(String query) throws DAOException {
         return historyDAO.search(query);
     }
 
@@ -246,11 +247,14 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), historyType);
+        indexer.performMultipleRequests(getAll(), historyType);
     }
 
     @Override
     public HistoryDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
-        return new HistoryDTO();
+        HistoryDTO historyDTO = new HistoryDTO();
+        historyDTO.setId(getIdFromJSONObject(jsonObject));
+        historyDTO.setStringValue(getStringPropertyForDTO(jsonObject,"stringValue"));
+        return historyDTO;
     }
 }

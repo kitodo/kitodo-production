@@ -33,7 +33,7 @@ public class RegelsatzConverter implements Converter {
             return null;
         } else {
             try {
-                return serviceManager.getRulesetService().find(Integer.valueOf(value));
+                return serviceManager.getRulesetService().getById(Integer.valueOf(value));
             } catch (DAOException | NumberFormatException e) {
                 logger.error(e);
                 return "0";

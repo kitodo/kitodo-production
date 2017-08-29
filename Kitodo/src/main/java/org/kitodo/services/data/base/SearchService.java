@@ -47,8 +47,8 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BaseDTO;
 
 /**
- * Class for implementing methods used by all service classes which search in
- * ElasticSearch index.
+ * Class for implementing methods used by all service classes which search
+ * in ElasticSearch index.
  */
 public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
 
@@ -90,15 +90,14 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            of object
      * @return object
      */
-    public abstract T find(Integer id) throws DAOException;
+    public abstract T getById(Integer id) throws DAOException;
 
     /**
-     * Returns list of all objects from a specific type in the database. Overwritten
-     * in child service classes.
-     *
-     * @return list of all objects
+     * Get list of all objects from database.
+     * 
+     * @return list of all objects from database
      */
-    public abstract List<T> findAll() throws DAOException;
+    public abstract List<T> getAll();
 
     /**
      * Method necessary for conversion of JSON objects to exact bean objects called
@@ -108,7 +107,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            as String
      * @return list of exact bean objects
      */
-    public abstract List<T> search(String query) throws DAOException;
+    public abstract List<T> getByQuery(String query) throws DAOException;
 
     /**
      * Count all rows in database.
@@ -246,7 +245,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      */
     public void remove(Integer id) throws DataException {
         try {
-            T baseBean = find(id);
+            T baseBean = getById(id);
             remove(baseBean);
         } catch (DAOException e) {
             throw new DataException(e);
@@ -332,25 +331,14 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     }
 
     /**
-     * Find user with exact id.
-     *
-     * @param id
-     *            of the searched user
-     * @return search result
-     */
-    public JSONObject findById(Integer id) throws DataException {
-        return searcher.findDocument(id);
-    }
-
-    /**
      * Find object in ES and convert it to DTO.
      * 
      * @param id
      *            object id
      * @return DTO object
      */
-    public S getById(Integer id) throws DataException {
-        return getById(id, false);
+    public S findById(Integer id) throws DataException {
+        return findById(id, false);
     }
 
     /**
@@ -363,8 +351,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            getById(Integer id).
      * @return related DTO object
      */
-    public S getById(Integer id, boolean related) throws DataException {
-        return convertJSONObjectToDTO(findById(id), related);
+    public S findById(Integer id, boolean related) throws DataException {
+        return convertJSONObjectToDTO(searcher.findDocument(id), related);
     }
 
     /**
@@ -401,7 +389,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
             // class...
             return null;
         } else {
-            return find(id);
+            return getById(id);
         }
     }
 
@@ -418,8 +406,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
             SearchService<?, O> service) throws DataException {
         List<O> listDTO = new ArrayList<>();
         for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
-            JSONObject result = service.findById(id);
-            listDTO.add(service.convertJSONObjectToDTO(result, true));
+            listDTO.add(service.findById(id, true));
         }
         return listDTO;
     }

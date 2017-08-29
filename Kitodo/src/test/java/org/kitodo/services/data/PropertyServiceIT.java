@@ -21,9 +21,12 @@ import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.exceptions.DAOException;
 
 /**
  * Tests for PropertyService class.
@@ -44,6 +47,9 @@ public class PropertyServiceIT {
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
     }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountAllProperties() throws Exception {
@@ -74,7 +80,7 @@ public class PropertyServiceIT {
     public void shouldFindProcessProperty() throws Exception {
         PropertyService processPropertyService = new PropertyService();
 
-        Property processProperty = processPropertyService.find(1);
+        Property processProperty = processPropertyService.getById(1);
         String actual = processProperty.getTitle();
         String expected = "Process Property";
         assertEquals("Process property was not found in database - title doesn't match!", expected, actual);
@@ -88,7 +94,7 @@ public class PropertyServiceIT {
     public void shouldFindTemplateProperty() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        Property templateProperty = propertyService.find(6);
+        Property templateProperty = propertyService.getById(6);
         String actual = templateProperty.getTitle();
         String expected = "firstTemplate title";
         assertEquals("Template property was not found in database - title doesn't match!", expected, actual);
@@ -102,7 +108,7 @@ public class PropertyServiceIT {
     public void shouldFindWorkpieceProperty() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        Property workpieceProperty = propertyService.find(4);
+        Property workpieceProperty = propertyService.getById(4);
         String actual = workpieceProperty.getTitle();
         String expected = "FirstWorkpiece Property";
         assertEquals("Workpiece property was not found in database - title doesn't match!", expected, actual);
@@ -116,7 +122,7 @@ public class PropertyServiceIT {
     public void shouldFindAllProperties() {
         PropertyService propertyService = new PropertyService();
 
-        List<Property> properties = propertyService.findAll();
+        List<Property> properties = propertyService.getAll();
         assertEquals("Not all properties were found in database!", 7, properties.size());
     }
 
@@ -127,30 +133,29 @@ public class PropertyServiceIT {
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.save(property);
-        Property foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
+        Property foundProperty = propertyService.getById(8);
         assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
 
         propertyService.remove(foundProperty);
-        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(8));
-        assertEquals("Additional property was not removed from database!", null, foundProperty);
+        exception.expect(DAOException.class);
+        propertyService.getById(8);
 
         property = new Property();
         property.setTitle("To remove");
         propertyService.save(property);
-        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(9));
+        foundProperty = propertyService.getById(9);
         assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
 
         propertyService.remove(9);
-        foundProperty = propertyService.convertJSONObjectToBean(propertyService.findById(9));
-        assertEquals("Additional property was not removed from database!", null, foundProperty);
+        exception.expect(DAOException.class);
+        propertyService.getById(9);
     }
 
     @Test
     public void shouldFindById() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        JSONObject property = propertyService.findById(1);
-        Integer actual = propertyService.getIdFromJSONObject(property);
+        Integer actual = propertyService.findById(1).getId();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
     }
@@ -189,7 +194,7 @@ public class PropertyServiceIT {
     public void shouldGetNormalizedTitle() throws Exception {
         PropertyService processPropertyService = new PropertyService();
 
-        Property processProperty = processPropertyService.find(1);
+        Property processProperty = processPropertyService.getById(1);
         String expected = "Process_Property";
         String actual = processPropertyService.getNormalizedTitle(processProperty);
         assertEquals("Normalized title doesn't match to given plain text!", expected, actual);
@@ -199,7 +204,7 @@ public class PropertyServiceIT {
     public void shouldGetNormalizedValue() throws Exception {
         PropertyService processPropertyService = new PropertyService();
 
-        Property processProperty = processPropertyService.find(1);
+        Property processProperty = processPropertyService.getById(1);
         String expected = "first_value";
         String actual = processPropertyService.getNormalizedValue(processProperty);
         assertEquals("Normalized value doesn't match to given plain text!", expected, actual);

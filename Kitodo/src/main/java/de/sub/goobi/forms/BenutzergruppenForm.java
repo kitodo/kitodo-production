@@ -95,7 +95,7 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public String filterKein() {
         try {
-            List<UserGroupDTO> userGroups = serviceManager.getUserGroupService().getAll();
+            List<UserGroupDTO> userGroups = serviceManager.getUserGroupService().findAll();
             this.page = new Page(0, userGroups);
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not read", e.getMessage());
@@ -127,7 +127,7 @@ public class BenutzergruppenForm extends BasisForm {
     public void loadUserGroup() {
         try {
             if (!Objects.equals(this.userGroupId, 0)) {
-                setMyBenutzergruppe(this.serviceManager.getUserGroupService().find(this.userGroupId));
+                setMyBenutzergruppe(this.serviceManager.getUserGroupService().getById(this.userGroupId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving project with ID '" + this.userGroupId + "'; ", e.getMessage());

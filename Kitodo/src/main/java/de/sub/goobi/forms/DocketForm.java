@@ -113,7 +113,7 @@ public class DocketForm extends BasisForm {
     public String filterKein() {
         List<DocketDTO> dockets = new ArrayList<>();
         try {
-            dockets = serviceManager.getDocketService().getAll();
+            dockets = serviceManager.getDocketService().findAll();
         } catch (DataException e) {
             logger.error(e);
         }
@@ -142,7 +142,7 @@ public class DocketForm extends BasisForm {
     public void loadDocket() {
         try {
             if (!Objects.equals(this.docketId, 0)) {
-                setMyDocket(this.serviceManager.getDocketService().find(this.docketId));
+                setMyDocket(this.serviceManager.getDocketService().getById(this.docketId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving docket with ID '" + this.docketId + "'; ", e.getMessage());

@@ -20,10 +20,13 @@ import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.dto.TemplateDTO;
 
 /**
@@ -46,6 +49,9 @@ public class TemplateServiceIT {
         Thread.sleep(1000);
     }
 
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
     @Test
     public void shouldCountAllTemplates() throws Exception {
         TemplateService templateService = new TemplateService();
@@ -66,7 +72,7 @@ public class TemplateServiceIT {
     public void shouldFindTemplate() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        Template template = templateService.find(1);
+        Template template = templateService.getById(1);
         assertTrue("Template was not found in database!", template.getOrigin().equals("test"));
     }
 
@@ -75,37 +81,36 @@ public class TemplateServiceIT {
         ProcessService processService = new ProcessService();
         TemplateService templateService = new TemplateService();
 
-        Process process = processService.find(1);
+        Process process = processService.getById(1);
 
         Template template = new Template();
         template.setOrigin("To Remove");
         template.setProcess(process);
         templateService.save(template);
-        Template foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(3));
+        Template foundTemplate = templateService.getById(3);
         assertEquals("Additional template was not inserted in database!", "To Remove", foundTemplate.getOrigin());
 
         templateService.remove(foundTemplate);
-        foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(3));
-        assertEquals("Additional template was not removed from database!", null, foundTemplate);
+        exception.expect(DAOException.class);
+        templateService.getById(3);
 
         template = new Template();
         template.setOrigin("To remove");
         template.setProcess(process);
         templateService.save(template);
-        foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(4));
+        foundTemplate = templateService.getById(4);
         assertEquals("Additional template was not inserted in database!", "To remove", foundTemplate.getOrigin());
 
         templateService.remove(4);
-        foundTemplate = templateService.convertJSONObjectToBean(templateService.findById(4));
-        assertEquals("Additional template was not removed from database!", null, foundTemplate);
+        exception.expect(DAOException.class);
+        templateService.getById(4);
     }
 
     @Test
     public void shouldFindById() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        JSONObject template = templateService.findById(1);
-        Integer actual = templateService.getIdFromJSONObject(template);
+        Integer actual = templateService.findById(1).getId();
         Integer expected = 1;
         assertEquals("Template was not found in index!", expected, actual);
     }
@@ -174,7 +179,7 @@ public class TemplateServiceIT {
     public void shouldGetPropertiesSize() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        TemplateDTO template = templateService.getById(1);
+        TemplateDTO template = templateService.findById(1);
         int actual = template.getPropertiesSize();
         assertEquals("Template's properties size is not equal to given value!", 2, actual);
     }

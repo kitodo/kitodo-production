@@ -20,10 +20,13 @@ import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.exceptions.DAOException;
 
 /**
  * Tests for WorkpieceService class.
@@ -45,6 +48,9 @@ public class WorkpieceServiceIT {
         Thread.sleep(1000);
     }
 
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
     @Test
     public void shouldCountAllWorkpieces() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
@@ -65,7 +71,7 @@ public class WorkpieceServiceIT {
     public void shouldFindWorkpiece() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        Workpiece workpiece = workpieceService.find(1);
+        Workpiece workpiece = workpieceService.getById(1);
         boolean condition = workpiece.getProperties().size() == 2;
         assertTrue("Workpiece was not found in database!", condition);
     }
@@ -75,37 +81,36 @@ public class WorkpieceServiceIT {
         ProcessService processService = new ProcessService();
         WorkpieceService workpieceService = new WorkpieceService();
 
-        Process process = processService.find(1);
+        Process process = processService.getById(1);
 
         Workpiece workpiece = new Workpiece();
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
-        Workpiece foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(3));
+        Workpiece foundWorkpiece = workpieceService.getById(3);
         assertEquals("Additional workpiece was not inserted in database!", "First process",
                 foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(workpiece);
-        foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(3));
-        assertEquals("Additional workpiece was not removed from database!", null, foundWorkpiece);
+        exception.expect(DAOException.class);
+        workpieceService.getById(3);
 
         workpiece = new Workpiece();
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
-        foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(4));
+        foundWorkpiece = workpieceService.getById(4);
         assertEquals("Additional workpiece was not inserted in database!", "First process",
                 foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(4);
-        foundWorkpiece = workpieceService.convertJSONObjectToBean(workpieceService.findById(4));
-        assertEquals("Additional workpiece was not removed from database!", null, foundWorkpiece);
+        exception.expect(DAOException.class);
+        workpieceService.getById(4);
     }
 
     @Test
     public void shouldFindById() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        JSONObject workpiece = workpieceService.findById(1);
-        Integer actual = workpieceService.getIdFromJSONObject(workpiece);
+        Integer actual = workpieceService.findById(1).getId();
         Integer expected = 1;
         assertEquals("Workpiece was not found in index!", expected, actual);
     }
@@ -159,7 +164,7 @@ public class WorkpieceServiceIT {
     public void shouldGetPropertiesSize() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        Workpiece workpiece = workpieceService.find(1);
+        Workpiece workpiece = workpieceService.getById(1);
         int actual = workpieceService.getPropertiesSize(workpiece);
         assertEquals("Workpiece's properties size is not equal to given value!", 2, actual);
     }

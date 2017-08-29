@@ -107,8 +107,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Method saves or removes dependencies with process, users and user's
-     * groups related to modified task.
+     * Method saves or removes dependencies with process, users and user's groups
+     * related to modified task.
      *
      * @param task
      *            object
@@ -174,11 +174,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     @Override
-    public Task find(Integer id) throws DAOException {
+    public Task getById(Integer id) throws DAOException {
         return taskDAO.find(id);
     }
 
-    public List<Task> findAll() {
+    @Override
+    public List<Task> getAll() {
         return taskDAO.findAll();
     }
 
@@ -229,7 +230,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     @Override
-    public List<Task> search(String query) throws DAOException {
+    public List<Task> getByQuery(String query) throws DAOException {
         return taskDAO.search(query);
     }
 
@@ -390,7 +391,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), taskType);
+        indexer.performMultipleRequests(getAll(), taskType);
     }
 
     @Override
@@ -416,11 +417,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
 
     private TaskDTO convertRelatedJSONObjects(JSONObject jsonObject, TaskDTO taskDTO) throws DataException {
         Integer process = getIntegerPropertyForDTO(jsonObject, "process");
-        JSONObject processJSON = serviceManager.getProcessService().findById(process);
-        taskDTO.setProcess(serviceManager.getProcessService().convertJSONObjectToDTO(processJSON, true));
+        taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
         Integer processingUser = getIntegerPropertyForDTO(jsonObject, "processingUser");
-        JSONObject processingUserJSON = serviceManager.getUserService().findById(processingUser);
-        taskDTO.setProcessingUser(serviceManager.getUserService().convertJSONObjectToDTO(processingUserJSON, true));
+        taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
         taskDTO.setUserGroups(
                 convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
@@ -1015,12 +1014,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open tasks for current user sorted according to sort query.
-     * @param sort possible sort query according to which results will be sorted
+     * Find open tasks for current user sorted according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
      * 
      * @return the list of sorted tasks as TaskDTO objects
      */
-    public List<TaskDTO> getOpenTasksForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenTasksForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (login == null) {
             return new ArrayList<>();
@@ -1031,11 +1032,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open tasks without correction for current user sorted according to sort query.
-     * @param sort possible sort query according to which results will be sorted
+     * Find open tasks without correction for current user sorted according to sort
+     * query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
      * @return the list of sorted tasks as TaskDTO objects
      */
-    public List<TaskDTO> getOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (login == null) {
             return new ArrayList<>();
@@ -1046,11 +1050,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open not automatic tasks for current user sorted according to sort query.
-     * @param sort possible sort query according to which results will be sorted
+     * Find open not automatic tasks for current user sorted according to sort
+     * query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
      * @return the list of sorted tasks as TaskDTO objects
      */
-    public List<TaskDTO> getOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (login == null) {
             return new ArrayList<>();
@@ -1061,11 +1068,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get open not automatic tasks without correction for current user sorted according to sort query.
-     * @param sort possible sort query according to which results will be sorted
+     * Find open not automatic tasks without correction for current user sorted
+     * according to sort query.
+     * 
+     * @param sort
+     *            possible sort query according to which results will be sorted
      * @return the list of tasks as TaskDTO objects
      */
-    public List<TaskDTO> getOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
+    public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (login == null) {
             return new ArrayList<>();

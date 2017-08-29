@@ -112,11 +112,12 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
     }
 
     @Override
-    public Workpiece find(Integer id) throws DAOException {
+    public Workpiece getById(Integer id) throws DAOException {
         return workpieceDAO.find(id);
     }
 
-    public List<Workpiece> findAll() {
+    @Override
+    public List<Workpiece> getAll() {
         return workpieceDAO.findAll();
     }
 
@@ -128,7 +129,7 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
      * @return list of Workpiece objects
      */
     @Override
-    public List<Workpiece> search(String query) throws DAOException {
+    public List<Workpiece> getByQuery(String query) throws DAOException {
         return workpieceDAO.search(query);
     }
 
@@ -245,12 +246,14 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), workpieceType);
+        indexer.performMultipleRequests(getAll(), workpieceType);
     }
 
     @Override
     public WorkpieceDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
-        return new WorkpieceDTO();
+        WorkpieceDTO workpieceDTO = new WorkpieceDTO();
+        workpieceDTO.setId(getIdFromJSONObject(jsonObject));
+        return workpieceDTO;
     }
 
     /**

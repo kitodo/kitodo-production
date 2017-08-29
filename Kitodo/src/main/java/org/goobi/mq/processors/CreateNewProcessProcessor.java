@@ -274,8 +274,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
     /**
      * Sets the bibliographic data for a new process from a library catalogue.
-     * This is equal to manually choosing a catalogue and a search field,
-     * entering the search string and clicking “apply”.
+     * This is equal to manually choosing a catalogue and a getByQuery field,
+     * entering the getByQuery string and clicking “apply”.
      *
      * <p>
      * Since the underlying evaluateOpac() method doesn’t raise exceptions, we
@@ -291,7 +291,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * @param field
      *            the number of the search field, e.g. “12” for PPN.
      * @param value
-     *            the search string
+     *            the getByQuery string
      * @throws RuntimeException
      *             is thrown if the search didn’t bring any results
      */

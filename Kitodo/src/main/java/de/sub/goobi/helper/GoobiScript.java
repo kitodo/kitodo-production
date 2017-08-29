@@ -288,7 +288,7 @@ public class GoobiScript {
 
         try {
             List<Ruleset> rulesets = serviceManager.getRulesetService()
-                    .search("from Ruleset where title='" + this.myParameters.get("ruleset") + "'");
+                    .getByQuery("from Ruleset where title='" + this.myParameters.get("ruleset") + "'");
             if (rulesets == null || rulesets.size() == 0) {
                 Helper.setFehlerMeldung("kitodoScriptfield", "Could not find ruleset: ", "ruleset");
                 return;
@@ -741,7 +741,7 @@ public class GoobiScript {
         User myUser = null;
         try {
             List<User> treffer = serviceManager.getUserService()
-                    .search("from User where login='" + this.myParameters.get("username") + "'");
+                    .getByQuery("from User where login='" + this.myParameters.get("username") + "'");
             if (treffer != null && treffer.size() > 0) {
                 myUser = treffer.get(0);
             } else {
@@ -801,7 +801,7 @@ public class GoobiScript {
         UserGroup myGroup = null;
         try {
             List<UserGroup> treffer = serviceManager.getUserGroupService()
-                    .search("from UserGroup where title='" + this.myParameters.get("group") + "'");
+                    .getByQuery("from UserGroup where title='" + this.myParameters.get("group") + "'");
             if (treffer != null && treffer.size() > 0) {
                 myGroup = treffer.get(0);
             } else {
