@@ -571,19 +571,22 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            of property
      * @param value
      *            of property
+     * @param contains
+     *            true or false
      * @return list of JSON objects with processes for specific property
      */
-    List<JSONObject> findByProperty(String title, String value) throws DataException {
+    List<JSONObject> findByProperty(String title, String value, boolean contains) throws DataException {
         Set<Integer> propertyIds = new HashSet<>();
 
         List<JSONObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, true);
+            properties = serviceManager.getPropertyService().findByTitle(title, contains);
         } else if (title == null) {
-            properties = serviceManager.getPropertyService().findByValue(value, true);
+            properties = serviceManager.getPropertyService().findByValue(value, "process", contains);
         } else {
-            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, "process", contains);
         }
+
         for (JSONObject property : properties) {
             propertyIds.add(getIdFromJSONObject(property));
         }
@@ -2418,14 +2421,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Find all not closed and not archived templates sorted according to sort query.
+     * Find all not closed and not archived templates sorted according to sort
+     * query.
      * 
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
      */
     public List<ProcessDTO> findAllNotClosedAndNotArchivedTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, true, sort), false);
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, true, sort),
+                false);
     }
 
     /**
