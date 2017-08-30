@@ -149,12 +149,12 @@ public class WorkpieceServiceIT {
     public void shouldFindByProperty() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
 
-        List<JSONObject> workpieces = workpieceService.findByProperty("FirstWorkpiece Property", "first value");
+        List<JSONObject> workpieces = workpieceService.findByProperty("FirstWorkpiece Property", "first value", true);
         Integer actual = workpieces.size();
         Integer expected = 1;
         assertEquals("Workpiece was not found in index!", expected, actual);
 
-        workpieces = workpieceService.findByProperty("FirstUserProperty", "first value");
+        workpieces = workpieceService.findByProperty("FirstUserProperty", "first value", true);
         actual = workpieces.size();
         expected = 0;
         assertEquals("Workpieces were found in index!", expected, actual);

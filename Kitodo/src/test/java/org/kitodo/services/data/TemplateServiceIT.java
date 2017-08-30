@@ -164,12 +164,12 @@ public class TemplateServiceIT {
     public void shouldFindByProperty() throws Exception {
         TemplateService templateService = new TemplateService();
 
-        List<JSONObject> templates = templateService.findByProperty("firstTemplate title", "first value");
+        List<JSONObject> templates = templateService.findByProperty("firstTemplate title", "first value", true);
         Integer actual = templates.size();
         Integer expected = 1;
         assertEquals("Template was not found in index!", expected, actual);
 
-        templates = templateService.findByProperty("FirstUserProperty", "first value");
+        templates = templateService.findByProperty("FirstUserProperty", "first value", true);
         actual = templates.size();
         expected = 0;
         assertEquals("Templates were found in index!", expected, actual);

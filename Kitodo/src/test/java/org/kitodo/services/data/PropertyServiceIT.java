@@ -176,15 +176,55 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldFindByTitleAndValue() throws Exception {
+    public void shouldFindByValueForExactType() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second");
+        List<JSONObject> properties = propertyService.findByValue("second", "process", true);
         Integer actual = properties.size();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
 
-        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third");
+        properties = propertyService.findByValue("third", "workpiece", false);
+        actual = properties.size();
+        expected = 2;
+        assertEquals("Properties were not found in index!", expected, actual);
+
+        properties = propertyService.findByValue("third", "workpiece", true);
+        actual = properties.size();
+        expected = 0;
+        assertEquals("Property was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleAndValue() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", true);
+        Integer actual = properties.size();
+        Integer expected = 1;
+        assertEquals("Property was not found in index!", expected, actual);
+
+        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third", true);
+        actual = properties.size();
+        expected = 0;
+        assertEquals("Property was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleAndValueForExactType() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", "process", true);
+        Integer actual = properties.size();
+        Integer expected = 1;
+        assertEquals("Property was not found in index!", expected, actual);
+
+        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third", "workpiece", false);
+        actual = properties.size();
+        expected = 2;
+        assertEquals("Properties were not found in index!", expected, actual);
+
+        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", "workpiece", true);
         actual = properties.size();
         expected = 0;
         assertEquals("Property was found in index!", expected, actual);
