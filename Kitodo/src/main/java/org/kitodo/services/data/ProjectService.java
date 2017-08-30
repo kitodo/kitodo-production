@@ -332,6 +332,24 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     /**
+     * Get all projects sorted by title.
+     *
+     * @return all projects sorted by title as Project objects
+     */
+    public List<Project> getAllProjectsSortedByTitle() throws DAOException {
+        return projectDAO.getAllProjectsSortedByTitle();
+    }
+
+    /**
+     * Get all not archived projects sorted by title.
+     *
+     * @return all not archived projects sorted by title as Project objects
+     */
+    public List<Project> getAllNotArchivedProjectsSortedByTitle() throws DAOException {
+        return projectDAO.getAllNotArchivedProjectsSortedByTitle();
+    }
+
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
     @SuppressWarnings("unchecked")

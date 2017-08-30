@@ -50,15 +50,10 @@ import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
 import org.goobi.production.flow.statistics.hibernate.UserProjectFilter;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -405,24 +400,17 @@ public class ProjekteForm extends BasisForm {
     /**
      * generates values for count of volumes and images for statistics.
      */
-    @SuppressWarnings("rawtypes")
     public void generateValuesForStatistics() {
-        Criteria crit = Helper.getHibernateSession().createCriteria(Process.class)
-                .add(Restrictions.eq("projekt", this.myProjekt));
-        ProjectionList pl = Projections.projectionList();
-        pl.add(Projections.sum("sortHelperImages"));
-        pl.add(Projections.count("sortHelperImages"));
-        crit.setProjection(pl);
-        List list = crit.list();
-        Long images = 0l;
-        Long volumes = 0l;
-        for (Object obj : list) {
-            Object[] row = (Object[]) obj;
-            images = (Long) row[0];
-            volumes = (Long) row[1];
+        Double sumSortHelperImages = 0.0;
+        Long countSortHelperImages = Long.valueOf(0);
+        try {
+            sumSortHelperImages = serviceManager.getProcessService().findSumForSortHelperImages(this.myProjekt.getId());
+            countSortHelperImages = serviceManager.getProcessService().findCountForSortHelperImages(this.myProjekt.getId());
+        } catch (DataException e) {
+            logger.error(e);
         }
-        this.myProjekt.setNumberOfPages(images.intValue());
-        this.myProjekt.setNumberOfVolumes(volumes.intValue());
+        this.myProjekt.setNumberOfPages(sumSortHelperImages.intValue());
+        this.myProjekt.setNumberOfVolumes(countSortHelperImages.intValue());
     }
 
     /**

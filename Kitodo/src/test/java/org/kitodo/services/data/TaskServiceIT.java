@@ -246,4 +246,42 @@ public class TaskServiceIT {
         String actual = taskService.getListOfPaths(task);
         assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
     }
+
+    @Test
+    public void shouldGetCurrentTasksOfBatch() {
+        TaskService taskService = new TaskService();
+
+        List<Task> tasks = taskService.getCurrentTasksOfBatch("Task", 1);
+        System.out.println("shouldGetByTitleAndBatches: " + tasks.size());
+    }
+
+    @Test
+    public void shouldGetAllTasksInBetween() {
+        TaskService taskService = new TaskService();
+
+        List<Task> tasks = taskService.getAllTasksInBetween(2, 3, 2);
+        int actual = tasks.size();
+        int expected = 2;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetNextTasksForProblemSolution() {
+        TaskService taskService = new TaskService();
+
+        List<Task> tasks = taskService.getNextTasksForProblemSolution(2, 2);
+        int actual = tasks.size();
+        int expected = 1;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetPreviousTaskForProblemReporting() {
+        TaskService taskService = new TaskService();
+
+        List<Task> tasks = taskService.getPreviousTaskForProblemReporting(2, 2);
+        int actual = tasks.size();
+        int expected = 1;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
 }

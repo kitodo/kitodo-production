@@ -28,6 +28,8 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.LocalDateTime;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Filter;
@@ -365,7 +367,7 @@ public class UserService extends SearchService<User, UserDTO> {
      */
     List<JSONObject> findByActive(boolean active) throws DataException {
         QueryBuilder query = createSimpleQuery("active", String.valueOf(active), true, Operator.AND);
-        return searcher.findDocuments(query.toString());
+        return searcher.findDocuments(query.toString(), sortByLogin());
     }
 
     /**
@@ -475,7 +477,7 @@ public class UserService extends SearchService<User, UserDTO> {
      * @return a list of all visible users as UserDTO
      */
     public List<UserDTO> findAllVisibleUsers() throws DataException {
-        List<JSONObject> jsonObjects = findAllDocuments();
+        List<JSONObject> jsonObjects = findAllDocuments(sortByLogin());
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
 
@@ -499,6 +501,19 @@ public class UserService extends SearchService<User, UserDTO> {
     public List<UserDTO> findActiveUsersByName(String name) throws DataException {
         List<JSONObject> jsonObjects = findByActiveAndName(true, name);
         return convertJSONObjectsToDTOs(jsonObjects, false);
+    }
+
+    private String sortByLogin() {
+        return SortBuilders.fieldSort("login").order(SortOrder.ASC).toString();
+    }
+
+    /**
+     * Get all active users sorted by surname and name.
+     *
+     * @return sorted list of all active users as User objects
+     */
+    public List<User> getAllActiveUsersSortedByNameAndSurname() {
+        return userDAO.getAllActiveUsersSortedByNameAndSurname();
     }
 
     /**

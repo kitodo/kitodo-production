@@ -456,8 +456,35 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * @return list of JSON objects with processes for specific process id
      */
     public List<JSONObject> findByProjectId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("project", id, true);
-        return searcher.findDocuments(query.toString());
+        return searcher.findDocuments(getQueryProjectId(id).toString());
+    }
+
+    /**
+     * Count all SortHelperImages fields for project id. It is used for statistical
+     * purpose.
+     * 
+     * @param projectId
+     *            as Integer
+     * @return amount of SortHelperImages fields for project id as Long
+     */
+    public Long findCountForSortHelperImages(Integer projectId) throws DataException {
+        return findCountAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
+    }
+
+    /**
+     * Sum all values in SortHelperImages fields for project id. It is used for
+     * statistical purpose.
+     * 
+     * @param projectId
+     *            as Integer
+     * @return sum of all values in SortHelperImages fields for project id as Double
+     */
+    public Double findSumForSortHelperImages(Integer projectId) throws DataException {
+        return findSumAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
+    }
+
+    private QueryBuilder getQueryProjectId(Integer id) {
+        return createSimpleQuery("project", id, true);
     }
 
     /**
@@ -670,13 +697,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         if (!related) {
             processDTO = convertRelatedJSONObjects(jsonObject, processDTO);
         }
-        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
-        processDTO.setProject(serviceManager.getProjectService().findById(project, true));
-
         return processDTO;
     }
 
     private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
+        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
+        processDTO.setProject(serviceManager.getProjectService().findById(project));
         processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
         processDTO.setProperties(
@@ -1409,6 +1435,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     /**
      * Check if there is one task in edit mode, where the user has the rights to
      * write to image folder.
+     * 
      * @param process
      *            DTO object
      * @return true or false
@@ -2408,5 +2435,25 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      */
     public List<ProcessDTO> findAllNotClosedTemplates(String sort) throws DataException {
         return convertJSONObjectsToDTOs(findBySortHelperStatusAndTemplate(false, true, sort), false);
+    }
+
+    /**
+     * Get all process templates.
+     *
+     * @return list of all process templates as Process objects
+     */
+    public List<Process> getProcessTemplates() {
+        return processDAO.getProcessTemplates();
+    }
+
+    /**
+     * Get process templates for users.
+     *
+     * @param projects
+     *            list of project ids fof user's projects
+     * @return list of all process templates for user as Process objects
+     */
+    public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
+        return processDAO.getProcessTemplatesForUser(projects);
     }
 }

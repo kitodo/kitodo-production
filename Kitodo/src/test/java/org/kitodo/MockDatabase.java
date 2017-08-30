@@ -96,6 +96,8 @@ public class MockDatabase {
             insertUserFilters();
             insertTasks();
             insertHistory();
+
+            indexRestClient.enableSortingByTextField("user", "login");
         }
     }
 
@@ -203,6 +205,7 @@ public class MockDatabase {
         firstProcess.setWikiField("wiki");
         LocalDate localDate = new LocalDate(2016, 10, 20);
         firstProcess.setCreationDate(localDate.toDate());
+        firstProcess.setSortHelperImages(20);
         List<Batch> batches = new ArrayList<>();
         Batch firstBatch = serviceManager.getBatchService().getById(1);
         Batch secondBatch = serviceManager.getBatchService().getById(3);
@@ -225,6 +228,7 @@ public class MockDatabase {
         secondProcess.setWikiField("field");
         localDate = new LocalDate(2017, 1, 20);
         secondProcess.setCreationDate(localDate.toDate());
+        secondProcess.setSortHelperImages(30);
         secondProcess.setDocket(serviceManager.getDocketService().getById(1));
         secondProcess.setProject(project);
         secondProcess.setRuleset(serviceManager.getRulesetService().getById(1));
@@ -462,7 +466,7 @@ public class MockDatabase {
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
         secondTask = serviceManager.getTaskService().setCorrectionStep(secondTask);
-        secondTask.setOrdering(2);
+        secondTask.setOrdering(1);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 9, 25);
         secondTask.setProcessingBegin(localDate.toDate());
@@ -481,7 +485,8 @@ public class MockDatabase {
 
         Task thirdTask = new Task();
         thirdTask.setTitle("Testing and Blocking");
-        thirdTask.setOrdering(3);
+        thirdTask.setOrdering(2);
+        thirdTask.setPriority(10);
         thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2017, 1, 25);
         thirdTask.setProcessingBegin(localDate.toDate());
@@ -491,7 +496,8 @@ public class MockDatabase {
 
         Task fourthTask = new Task();
         fourthTask.setTitle("Progress");
-        fourthTask.setOrdering(4);
+        fourthTask.setOrdering(3);
+        fourthTask.setPriority(10);
         fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         fourthTask.setTypeImagesWrite(true);
         localDate = new LocalDate(2017, 1, 29);

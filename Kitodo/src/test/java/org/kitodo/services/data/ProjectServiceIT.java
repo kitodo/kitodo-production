@@ -87,7 +87,7 @@ public class ProjectServiceIT {
         ProjectService projectService = new ProjectService();
 
         Project project = projectService.getById(1);
-        boolean condition = project.getTitle().equals("First project") && project.getNumberOfPages().equals(30);
+        boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in database!", condition);
     }
 

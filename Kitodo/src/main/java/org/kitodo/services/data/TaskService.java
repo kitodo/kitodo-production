@@ -1084,4 +1084,58 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
                 login.getMyBenutzer().getId(), 10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
+
+    /**
+     * Get current tasks with exact title for batch with exact id.
+     *
+     * @param title
+     *            of task as String
+     * @param batchId
+     *            id of batch as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getCurrentTasksOfBatch(String title, Integer batchId) {
+        return taskDAO.getCurrentTasksOfBatch(title, batchId);
+    }
+
+    /**
+     * Get all tasks between two given ordering of tasks for given process id.
+     *
+     * @param orderingMax
+     *            as Integer
+     * @param orderingMin
+     *            as Integer
+     * @param processId
+     *            id of process for which tasks are searched as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
+        return taskDAO.getAllTasksInBetween(orderingMax, orderingMin, processId);
+    }
+
+    /**
+     * Get next tasks for problem solution for given process id.
+     *
+     * @param ordering
+     *            of Task for which it searches next ones as Integer
+     * @param processId
+     *            id of process for which tasks are searched as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getNextTasksForProblemSolution(Integer ordering, Integer processId) {
+        return taskDAO.getNextTasksForProblemSolution(ordering, processId);
+    }
+
+    /**
+     * Get previous tasks for problem solution for given process id.
+     *
+     * @param ordering
+     *            of Task for which it searches previous ones as Integer
+     * @param processId
+     *            id of process for which tasks are searched as Integer
+     * @return list of Task objects
+     */
+    public List<Task> getPreviousTaskForProblemReporting(Integer ordering, Integer processId) {
+        return taskDAO.getPreviousTaskForProblemReporting(ordering, processId);
+    }
 }
