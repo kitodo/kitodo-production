@@ -144,6 +144,9 @@ public class FileManagement implements FileManagementInterface {
         }
 
         String substring = uri.toString().substring(0, uri.toString().lastIndexOf('/') + 1);
+        if (newName.contains("/")) {
+            newName = newName.substring(newName.lastIndexOf('/') + 1);
+        }
         URI newFileUri = URI.create(substring + newName);
         URI mappedFileURI = fileMapper.mapAccordingToMappingType(uri);
         URI mappedNewFileURI = fileMapper.mapAccordingToMappingType(newFileUri);

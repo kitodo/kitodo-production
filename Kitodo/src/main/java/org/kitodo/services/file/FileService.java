@@ -422,8 +422,7 @@ public class FileService {
      */
     public void writeMetadataFile(Fileformat gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
-        serviceManager.getFileService().write(serviceManager.getProcessService().getProcessDataDirectory(process))
-                .close();
+        createDirectory(URI.create(""), serviceManager.getProcessService().getProcessDataDirectory(process).toString());
 
         RulesetService rulesetService = new RulesetService();
         Fileformat ff;
@@ -452,8 +451,8 @@ public class FileService {
         boolean backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
-            renameFile(metadataFileUri, temporaryMetadataFileName);
-            removePrefixFromRelatedMetsAnchorFilesFor(URI.create(temporaryMetadataFileName));
+            renameFile(Paths.get(temporaryMetadataFileName).toUri(), metadataFileUri.getRawPath());
+            removePrefixFromRelatedMetsAnchorFilesFor(Paths.get(temporaryMetadataFileName).toUri());
         }
 
     }
