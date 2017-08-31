@@ -1,0 +1,648 @@
+{
+    "mappings": {
+        "batch": {
+            "properties": {
+                "processes": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "type": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        },
+        "docket": {
+            "properties": {
+                "file": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                }
+            }
+        },
+        "filter": {
+            "properties": {
+                "user": {
+                    "type": "long"
+                },
+                "value": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        },
+        "workpiece": {
+            "properties": {
+                "process": {
+                    "type": "long"
+                },
+                "properties": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "template": {
+            "properties": {
+                "process": {
+                    "type": "long"
+                },
+                "properties": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "project": {
+            "properties": {
+                "archived": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "endDate": {
+                    "type": "date"
+                },
+                "fileFormatDmsExport": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "fileFormatInternal": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "numberOfPages": {
+                    "type": "long"
+                },
+                "numberOfVolumes": {
+                    "type": "long"
+                },
+                "processes": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "projectFileGroups": {
+                    "properties": {
+                        "folder": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "mimeType": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "path": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "suffix": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "startDate": {
+                    "type": "date"
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "users": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "process": {
+            "properties": {
+                "batches": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "creationDate": {
+                    "type": "date"
+                },
+                "docket": {
+                    "type": "long"
+                },
+                "processBaseUri": {
+                    "type": "long"
+                },
+                "project": {
+                    "type": "long"
+                },
+                "properties": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "ruleset": {
+                    "type": "long"
+                },
+                "sortHelperStatus": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    },
+                    "fielddata": true
+                },
+                "tasks": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "template": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "wikiField": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        },
+        "task": {
+            "properties": {
+                "batchStep": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "homeDirectory": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "ordering": {
+                    "type": "long"
+                },
+                "priority": {
+                    "type": "long"
+                },
+                "process": {
+                    "type": "long"
+                },
+                "processingStatus": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "processingTime": {
+                    "type": "date"
+                },
+                "processingUser": {
+                    "type": "long"
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "typeAutomatic": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "typeExportRussian": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "typeImagesRead": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "typeImagesWrite": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "typeImportFileUpload": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "typeMetadata": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "typeModuleName": {
+                    "type": "text",
+                    "fielddata": true
+                },
+                "userGroups": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "userGroup": {
+            "properties": {
+                "permission": {
+                    "type": "long"
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "users": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "property": {
+            "properties": {
+                "creationDate": {
+                    "type": "date"
+                },
+                "processes": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "templates": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "type": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "value": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    }
+                },
+                "workpieces": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "user": {
+            "properties": {
+                "active": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "filters": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "location": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "login": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    },
+                    "fielddata": true
+                },
+                "metadataLanguage": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "name": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "processingTasks": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "projects": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "surname": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "userGroups": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                }
+            }
+        },
+        "ruleset": {
+            "properties": {
+                "file": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "fileContent": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "orderMetadataByRuleset": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                }
+            }
+        }
+    }
+}
