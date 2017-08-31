@@ -135,6 +135,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     @Override
+    public List<ProcessDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public Process getById(Integer id) throws DAOException {
         return processDAO.find(id);
     }

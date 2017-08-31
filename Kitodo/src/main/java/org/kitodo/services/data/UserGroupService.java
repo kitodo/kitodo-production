@@ -51,6 +51,11 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
+    public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public UserGroup getById(Integer id) throws DAOException {
         return userGroupDAO.find(id);
     }

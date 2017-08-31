@@ -72,6 +72,11 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         }
     }
 
+    @Override
+    public List<FilterDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
     /**
      * Find in database.
      *

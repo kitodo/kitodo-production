@@ -112,6 +112,11 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
     }
 
     @Override
+    public List<WorkpieceDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public Workpiece getById(Integer id) throws DAOException {
         return workpieceDAO.find(id);
     }

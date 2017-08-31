@@ -97,6 +97,11 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
         }
     }
 
+    @Override
+    public List<PropertyDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
     /**
      * Find in database.
      * 

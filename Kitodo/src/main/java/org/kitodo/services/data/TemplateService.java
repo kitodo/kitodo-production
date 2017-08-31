@@ -113,6 +113,11 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
     }
 
     @Override
+    public List<TemplateDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public Template getById(Integer id) throws DAOException {
         return templateDAO.find(id);
     }

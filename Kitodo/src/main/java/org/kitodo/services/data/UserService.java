@@ -192,6 +192,11 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     @Override
+    public List<UserDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
     public User getById(Integer id) throws DAOException {
         return userDAO.find(id);
     }
