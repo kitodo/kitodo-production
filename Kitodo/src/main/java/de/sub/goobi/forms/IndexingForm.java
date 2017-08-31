@@ -764,7 +764,6 @@ public class IndexingForm {
     public void startAllIndexing() {
         IndexAllThread indexAllThread = new IndexAllThread();
         indexAllThread.start();
-        enableSortingByAllTextFields();
     }
 
     /**
@@ -785,6 +784,13 @@ public class IndexingForm {
      */
     public boolean indexingInProgress() {
         return (!Objects.equals(this.currentIndexState, ObjectTypes.NONE) || indexingAll);
+    }
+
+    /**
+     * Enable sorting by text fields.
+     */
+    public void enableSorting() {
+        enableSortingByAllTextFields();
     }
 
     /**
