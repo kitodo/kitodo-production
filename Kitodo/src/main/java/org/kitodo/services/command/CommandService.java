@@ -52,7 +52,7 @@ public class CommandService {
 
         CommandResult commandResult = commandInterface.runCommand(generateId(), script);
         if (commandResult.getMessages().get(0).contains("IOException")) {
-            throw new IOException();
+            throw new IOException(commandResult.getMessages().get(1));
         }
         return commandResult;
     }
