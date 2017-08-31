@@ -103,7 +103,6 @@ public class ComposeFormattedRule extends DataCopyrule {
                         result[i] = Long.parseLong(elements.get(i));
                 }
             } catch (ArrayIndexOutOfBoundsException | ClassCastException | NumberFormatException e) {
-                continue;
             }
         }
         return result;

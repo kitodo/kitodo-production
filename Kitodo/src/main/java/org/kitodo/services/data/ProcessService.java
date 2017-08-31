@@ -230,8 +230,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks from
-     * index, if other call saveOrRemoveTaskInIndex() method.
+     * Check IndexAction flag in for process object. If DELETE remove all tasks
+     * from index, if other call saveOrRemoveTaskInIndex() method.
      *
      * @param process
      *            object
@@ -248,8 +248,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Compare index and database, according to comparisons results save or remove
-     * tasks.
+     * Compare index and database, according to comparisons results save or
+     * remove tasks.
      *
      * @param process
      *            object
@@ -287,8 +287,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Remove template if process is removed, add template if process is marked as
-     * template.
+     * Remove template if process is removed, add template if process is marked
+     * as template.
      *
      * @param process
      *            object
@@ -307,8 +307,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Remove workpiece if process is removed, add workpiece if process is marked as
-     * workpiece.
+     * Remove workpiece if process is removed, add workpiece if process is
+     * marked as workpiece.
      *
      * @param process
      *            object
@@ -796,9 +796,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getBatchesInitialized() returns the batches for a process and
-     * takes care that the object is initialized from Hibernate already and will not
-     * be bothered if the Hibernate session ends. TODO: check if it is necessary!!
+     * The function getBatchesInitialized() returns the batches for a process
+     * and takes care that the object is initialized from Hibernate already and
+     * will not be bothered if the Hibernate session ends. TODO: check if it is
+     * necessary!!
      *
      * @return the batches field of the process which is loaded
      */
@@ -810,10 +811,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getHistoryInitialized() returns the history events for a process
-     * and takes care that the object is initialized from Hibernate already and will
-     * not be bothered if the Hibernate session ends. TODO: check if it is
-     * necessary!!
+     * The function getHistoryInitialized() returns the history events for a
+     * process and takes care that the object is initialized from Hibernate
+     * already and will not be bothered if the Hibernate session ends. TODO:
+     * check if it is necessary!!
      *
      * @return the history field of the process which is loaded
      */
@@ -833,9 +834,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
     /**
      * The function getPropertiesInitialized() returns the descriptive fields
-     * (“properties”) for a process and takes care that the object is initialized
-     * from Hibernate already and will not be bothered if the Hibernate session
-     * ends. TODO: check if it is necessary!! <- e.g. BeanHelper uses it
+     * (“properties”) for a process and takes care that the object is
+     * initialized from Hibernate already and will not be bothered if the
+     * Hibernate session ends. TODO: check if it is necessary!! <- e.g.
+     * BeanHelper uses it
      *
      * @return the properties field of the process which is loaded
      */
@@ -1049,8 +1051,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as
-     * readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -1418,8 +1420,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Check whether the operation contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the operation contains tasks that are not assigned to a
+     * user or user group.
      * 
      * @param process
      *            bean object
@@ -1439,8 +1441,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Check whether the operation contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the operation contains tasks that are not assigned to a
+     * user or user group.
      * 
      * @param process
      *            DTO object
@@ -1542,7 +1544,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * @param processes
      *            The list of processes
      * @throws IOException
-     *             when xslt file could not be loaded, or write to output failed.
+     *             when xslt file could not be loaded, or write to output
+     *             failed.
      */
     public void downloadDocket(List<Process> processes) throws IOException {
         if (logger.isDebugEnabled()) {
@@ -1569,7 +1572,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
         ServletOutputStream outputStream = response.getOutputStream();
-        byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] bytes = IOUtils.toByteArray(fileInputStream);
+        fileInputStream.close();
         outputStream.write(bytes);
         outputStream.flush();
         facesContext.responseComplete();
@@ -1639,10 +1644,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      */
 
     /**
-     * The addMessageToWikiField() method is a helper method which composes the new
-     * wiki field using a StringBuilder. The message is encoded using HTML entities
-     * to prevent certain characters from playing merry havoc when the message box
-     * shall be rendered in a browser later.
+     * The addMessageToWikiField() method is a helper method which composes the
+     * new wiki field using a StringBuilder. The message is encoded using HTML
+     * entities to prevent certain characters from playing merry havoc when the
+     * message box shall be rendered in a browser later.
      *
      * @param message
      *            the message to append
@@ -1690,8 +1695,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The method addToWikiField() adds a message signed by the given user to the
-     * wiki field of the process.
+     * The method addToWikiField() adds a message signed by the given user to
+     * the wiki field of the process.
      *
      * @param user
      *            to sign the message with
@@ -1704,8 +1709,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The method createProcessDirs() starts creation of directories configured by
-     * parameter processDirs within kitodo_config.properties
+     * The method createProcessDirs() starts creation of directories configured
+     * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
 
@@ -1719,17 +1724,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * The function getDigitalDocument() returns the digital act of this process.
+     * The function getDigitalDocument() returns the digital act of this
+     * process.
      *
      * @return the digital act of this process
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available in
-     *             the rule set configured
+     *             if the no node corresponding to the file format is available
+     *             in the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws IOException
-     *             if creating the process directory or reading the meta data file
-     *             fails
+     *             if creating the process directory or reading the meta data
+     *             file fails
      */
     public DigitalDocument getDigitalDocument(Process process) throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
@@ -1767,8 +1773,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Filter and sort after creation date list of process properties for correction
-     * and solution messages.
+     * Filter and sort after creation date list of process properties for
+     * correction and solution messages.
      *
      * @return list of ProcessProperty objects
      */
@@ -1954,8 +1960,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         }
 
         /*
-         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den
-         * Import-Ordner oder ins Benutzerhome anschliessend den Import-Thread starten
+         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in
+         * den Import-Ordner oder ins Benutzerhome anschliessend den
+         * Import-Thread starten
          */
         if (project.isUseDmsImport()) {
             if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
@@ -1987,8 +1994,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     /**
-     * Run through all metadata and children of given docstruct to trim the strings
-     * calls itself recursively.
+     * Run through all metadata and children of given docstruct to trim the
+     * strings calls itself recursively.
      */
     private void trimAllMetadata(DocStruct inStruct) {
         /* trim all metadata values */
@@ -2093,7 +2100,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
                 }
             } else {
                 /*
-                 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
+                 * wenn kein Agora-Import, dann den Ordner mit
+                 * Benutzerberechtigung neu anlegen
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
@@ -2192,8 +2200,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         mm.setDigitalDocument(dd);
 
         /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur
-         * übernommen
+         * wenn Filegroups definiert wurden, werden diese jetzt in die
+         * Metsstruktur übernommen
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!

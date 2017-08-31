@@ -57,6 +57,7 @@ public class FileServiceIT {
             Assert.assertFalse(fileService.fileExist(newUri));
             Assert.assertTrue(fileService.fileExist(oldUri));
 
+        } finally {
             outputStream.close();
         }
 

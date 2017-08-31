@@ -262,7 +262,11 @@ public class GranularityForm {
      * @return the total number of pages of the digitization project
      */
     public Long getNumberOfPagesPerIssue() {
-        return numberOfPages != null ? numberOfPages / course.countIndividualIssues() : null;
+        if (course.countIndividualIssues() != 0) {
+            return numberOfPages != null ? numberOfPages / course.countIndividualIssues() : null;
+        } else {
+            return new Long(0);
+        }
     }
 
     /**

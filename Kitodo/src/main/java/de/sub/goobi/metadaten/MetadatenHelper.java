@@ -463,10 +463,7 @@ public class MetadatenHelper implements Comparator<Object> {
                             inStruct.addMetadata(md); // add this new metadata
                             // element
                         }
-                    } catch (DocStructHasNoTypeException e) {
-                        continue;
-                    } catch (MetadataTypeNotAllowedException e) {
-                        continue;
+                    } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
                     }
                 }
             }
@@ -528,12 +525,12 @@ public class MetadatenHelper implements Comparator<Object> {
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
         InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
-                    StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
         BufferedReader bufRead = new BufferedReader(input);
         char[] buffer = new char[200];
         while ((bufRead.read(buffer)) >= 0) {
             String temp = new String(buffer).toLowerCase();
-            for (Entry<String, String> entry :types.entrySet()) {
+            for (Entry<String, String> entry : types.entrySet()) {
                 if (temp.contains(entry.getValue())) {
                     return entry.getKey();
                 }

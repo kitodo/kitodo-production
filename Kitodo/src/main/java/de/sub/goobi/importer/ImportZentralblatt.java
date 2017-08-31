@@ -386,7 +386,6 @@ public class ImportZentralblatt {
                             + md.getValue() + "' & '" + myRight + "')");
                 }
             }
-            return;
         }
     }
 
@@ -614,7 +613,6 @@ public class ImportZentralblatt {
                 md.setValue(myTok.trim());
                 inStruct.addMetadata(md);
             }
-            return;
         }
     }
 

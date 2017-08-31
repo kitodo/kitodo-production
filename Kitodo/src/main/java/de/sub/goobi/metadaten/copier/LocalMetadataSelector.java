@@ -216,7 +216,6 @@ public class LocalMetadataSelector extends MetadataSelector {
                         + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type") + ": "
                         + e.getMessage());
             }
-            return;
         }
     }
 }

@@ -243,7 +243,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
-            return;
         }
     }
 
@@ -660,7 +659,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
             }
         }
-        return;
     }
 
     /**

@@ -114,11 +114,7 @@ public class CopierData {
      * @return the required ruleset.
      */
     public Prefs getPreferences() {
-        if (process instanceof Process) {
-            return serviceManager.getRulesetService().getPreferences((process).getRuleset());
-        } else {
-            return serviceManager.getRulesetService().getPreferences((process).getRuleset());
-        }
+        return serviceManager.getRulesetService().getPreferences((process).getRuleset());
     }
 
     /**

@@ -27,11 +27,12 @@ public class Docket implements DocketInterface {
         ExportDocket exportDocket = new ExportDocket();
 
         File file = new File("docket.pdf");
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-        exportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
-        fileOutputStream.flush();
-        fileOutputStream.close();
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            exportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
 
         return file;
     }
@@ -41,11 +42,12 @@ public class Docket implements DocketInterface {
         ExportDocket exportDocket = new ExportDocket();
 
         File file = new File("docket_multipage.pdf");
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-        exportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
-        fileOutputStream.flush();
-        fileOutputStream.close();
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            exportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
 
         return file;
     }
