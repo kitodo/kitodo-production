@@ -16,5 +16,7 @@ package org.kitodo.data.database.helper.enums;
  * necessary operation must be performed on ElasticSearch index.
  */
 public enum IndexAction {
-    INDEX, DELETE, DONE
+    INDEX,
+    DELETE,
+    DONE
 }

@@ -29,7 +29,8 @@ public class XmlArtikelZaehlen {
     private static final Logger logger = LogManager.getLogger(XmlArtikelZaehlen.class);
 
     public enum CountType {
-        METADATA, DOCSTRUCT
+        METADATA,
+        DOCSTRUCT
     }
 
     /**

@@ -15,5 +15,7 @@ package org.kitodo.enums;
  * Enum for types of mapping.
  */
 public enum MappingType {
-    CONFIG, DATA, ROOT
+    CONFIG,
+    DATA,
+    ROOT
 }

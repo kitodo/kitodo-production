@@ -54,7 +54,9 @@ public class Batch extends BaseBean {
      * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     public enum Type {
-        LOGISTIC, NEWSPAPER, SERIAL
+        LOGISTIC,
+        NEWSPAPER,
+        SERIAL
     }
 
     /**

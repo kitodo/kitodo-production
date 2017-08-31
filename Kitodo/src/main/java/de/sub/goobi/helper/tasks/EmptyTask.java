@@ -48,7 +48,9 @@ public class EmptyTask extends Thread implements INameableTask {
      * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     public enum Behaviour {
-        DELETE_IMMEDIATELY, KEEP_FOR_A_WHILE, PREPARE_FOR_RESTART
+        DELETE_IMMEDIATELY,
+        KEEP_FOR_A_WHILE,
+        PREPARE_FOR_RESTART
     }
 
     /**

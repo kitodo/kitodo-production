@@ -12,7 +12,9 @@
 package org.goobi.production.properties;
 
 public enum AccessCondition {
-    READ, WRITE, WRITEREQUIRED;
+    READ,
+    WRITE,
+    WRITEREQUIRED;
 
     /**
      * Get access condition by name.
