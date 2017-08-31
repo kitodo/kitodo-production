@@ -15,6 +15,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -165,7 +166,12 @@ public class BenutzergruppenForm extends BasisForm {
      *
      * @return list of user groups
      */
-    public List<UserGroup> getUsergroups() {
-        return serviceManager.getUserGroupService().findAll();
+    public List<UserGroupDTO> getUsergroups() {
+        try {
+            return serviceManager.getUserGroupService().findAll();
+        } catch (DataException e) {
+            logger.error("Unable to load user groups: " + e.getMessage());
+            return new LinkedList<>();
+        }
     }
 }
