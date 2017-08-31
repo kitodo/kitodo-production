@@ -93,6 +93,24 @@
                                 <p:panel widgetVar="indexingTable" id="indexingTable">
                                     <table>
                                         <thead>
+                                        <tr>
+                                            <th><h:outputText value="#{msgs.mapping}"/></th>
+                                            <th><h:outputText value="#{msgs.createMapping}"/></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Create Mapping -->
+                                            <tr>
+                                                <td><h:outputText value="#{msgs.mapping}"/></td>
+                                                <td>
+                                                    <p:commandButton value="#{msgs.createMapping}"
+                                                                     action="#{indexingForm.createMapping()}"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table>
+                                        <thead>
                                             <tr>
                                                 <th><h:outputText value="#{msgs.objectType}"/></th>
                                                 <th><h:outputText value="#{msgs.startIndexing}"/></th>
@@ -480,15 +498,6 @@
                                                     <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.indexingInProgress()}"/>
                                                     <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
                                                     <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100 and not indexingForm.indexingInProgress()}" />
-                                                </td>
-                                            </tr>
-
-                                            <!-- Mapping Update -->
-                                            <tr>
-                                                <td><h:outputText value="#{msgs.mappingUpdate}"/></td>
-                                                <td>
-                                                    <p:commandButton value="#{msgs.mappingUpdate}"
-                                                                     action="#{indexingForm.enableSorting()}"/>
                                                 </td>
                                             </tr>
                                         </tbody>
