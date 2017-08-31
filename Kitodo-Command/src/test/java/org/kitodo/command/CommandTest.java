@@ -32,31 +32,32 @@ public class CommandTest {
     private static String scriptExtension;
     private int processId = 3;
     private static boolean windows = false;
-    private static File workingScript = new File(System.getProperty("user.dir")+ "/src/test/resources/working_script.sh");
-    private static File workingScriptWithParameters = new File(System.getProperty("user.dir")+ "/src/test/resources/working_script_with_parameters.sh");
-    private static File notWorkingScript = new File(System.getProperty("user.dir")+ "/src/test/resources/not_working_script.sh");
+    private static File workingScript = new File(
+            System.getProperty("user.dir") + "/src/test/resources/working_script.sh");
+    private static File workingScriptWithParameters = new File(
+            System.getProperty("user.dir") + "/src/test/resources/working_script_with_parameters.sh");
+    private static File notWorkingScript = new File(
+            System.getProperty("user.dir") + "/src/test/resources/not_working_script.sh");
 
     @BeforeClass
     public static void setUp() throws IOException {
 
         if (SystemUtils.IS_OS_WINDOWS) {
             scriptExtension = ".bat";
-			windows = true;
-        }
-        else {
+            windows = true;
+        } else {
             scriptExtension = ".sh";
 
             setFileExecuteable(workingScript);
             setFileExecuteable(workingScriptWithParameters);
             setFileExecuteable(notWorkingScript);
         }
-        
+
     }
 
     @AfterClass
-    public static void tearDown()throws IOException{
-        if(!windows)
-        {
+    public static void tearDown() throws IOException {
+        if (!windows) {
             setFileNotExecuteable(workingScript);
             setFileNotExecuteable(workingScriptWithParameters);
             setFileNotExecuteable(notWorkingScript);
@@ -71,8 +72,8 @@ public class CommandTest {
         CommandResult commandResult = command.runCommand(processId, commandString);
 
         ArrayList<String> expectedMessages = new ArrayList<>();
-        if (windows){
-			expectedMessages.add("");
+        if (windows) {
+            expectedMessages.add("");
             expectedMessages.add(Paths.get("").toAbsolutePath().normalize() + ">echo Hello World ");
         }
 
@@ -80,9 +81,12 @@ public class CommandTest {
 
         CommandResult expectedCommandResult = new CommandResult(processId, commandString, true, expectedMessages);
 
-        assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(), commandResult.isSuccessful());
-        assertEquals("Command of CommandResults are not identical", expectedCommandResult.getCommand(), commandResult.getCommand());
-        assertEquals("Result messages of CommandResults are not identical", expectedCommandResult.getMessages(), commandResult.getMessages());
+        assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(),
+                commandResult.isSuccessful());
+        assertEquals("Command of CommandResults are not identical", expectedCommandResult.getCommand(),
+                commandResult.getCommand());
+        assertEquals("Result messages of CommandResults are not identical", expectedCommandResult.getMessages(),
+                commandResult.getMessages());
     }
 
     @Test
@@ -115,27 +119,29 @@ public class CommandTest {
     public void shouldRunCommandWithParameter() {
         Command command = new Command();
 
-        String commandString = "src/test/resources/working_script_with_parameters" + scriptExtension
-                + " testParameter";
+        String commandString = "src/test/resources/working_script_with_parameters" + scriptExtension + " testParameter";
         CommandResult commandResult = command.runCommand(processId, commandString);
 
         ArrayList<String> expectedMessages = new ArrayList<>();
-		
-		if (windows){
-			expectedMessages.add("");
-        	expectedMessages.add(Paths.get(".").toAbsolutePath().normalize().toString() + ">echo testParameter ");
+
+        if (windows) {
+            expectedMessages.add("");
+            expectedMessages.add(Paths.get(".").toAbsolutePath().normalize().toString() + ">echo testParameter ");
         }
-        
+
         expectedMessages.add("testParameter");
 
         CommandResult expectedCommandResult = new CommandResult(processId, commandString, true, expectedMessages);
 
-        assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(), commandResult.isSuccessful());
-        assertEquals("Command of CommandResults are not identical", expectedCommandResult.getCommand(), commandResult.getCommand());
-        assertEquals("Result messages of CommandResults are not identical", expectedCommandResult.getMessages(), commandResult.getMessages());
+        assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(),
+                commandResult.isSuccessful());
+        assertEquals("Command of CommandResults are not identical", expectedCommandResult.getCommand(),
+                commandResult.getCommand());
+        assertEquals("Result messages of CommandResults are not identical", expectedCommandResult.getMessages(),
+                commandResult.getMessages());
     }
-	
-	private static void setFileExecuteable(File file) throws IOException {
+
+    private static void setFileExecuteable(File file) throws IOException {
         Set<PosixFilePermission> perms = new HashSet<>();
 
         perms.add(PosixFilePermission.OWNER_READ);
@@ -164,7 +170,6 @@ public class CommandTest {
 
         perms.add(PosixFilePermission.GROUP_READ);
         perms.add(PosixFilePermission.GROUP_WRITE);
-
 
         Files.setPosixFilePermissions(file.toPath(), perms);
     }

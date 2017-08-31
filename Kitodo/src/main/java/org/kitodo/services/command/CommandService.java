@@ -22,15 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandInterface;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class CommandService {
 
-    private static final Logger logger = LogManager.getLogger(CommandService.class);
     private ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
 
     /**
@@ -39,6 +36,9 @@ public class CommandService {
      * @param script
      *            Path to the script file with optional arguments (filepath
      *            parameter1 parameter2 ...).
+     *
+     * @return The CommandResult.
+     *
      * @throws IOException
      *             an IOException
      */
@@ -64,6 +64,10 @@ public class CommandService {
      *            The script file.
      * @param parameter
      *            The script parameters.
+     * @return The CommandResult.
+     *
+     * @throws IOException
+     *             an IOException
      */
     public CommandResult runCommand(File scriptFile, List<String> parameter) throws IOException {
         if (scriptFile == null) {
@@ -75,9 +79,14 @@ public class CommandService {
 
     /**
      * Method executes a script file.
-     *
+     * 
      * @param scriptFile
      *            The script file.
+     * 
+     * @return The CommandResult.
+     * 
+     * @throws IOException
+     *             an IOException
      */
     public CommandResult runCommand(File scriptFile) throws IOException {
         if (scriptFile == null) {
@@ -105,8 +114,7 @@ public class CommandService {
 
             Flowable<CommandResult> commandBackgroundWorker = source.subscribeOn(Schedulers.io());
             Flowable<CommandResult> commandResultListener = commandBackgroundWorker.observeOn(Schedulers.single());
-            commandResultListener.subscribe(commandResult -> handleCommandResult(commandResult),
-                    Throwable::printStackTrace);
+            commandResultListener.subscribe(commandResult -> handleCommandResult(commandResult));
         }
     }
 
@@ -117,15 +125,6 @@ public class CommandService {
      *            The finished command result.
      */
     private void handleCommandResult(CommandResult commandResult) {
-        if (!commandResult.isSuccessful()) {
-            logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
-                    + " failed!: " + commandResult.getMessages());
-        }
-
-        if (commandResult.isSuccessful()) {
-            logger.info("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
-                    + " was succesfull!: " + commandResult.getMessages());
-        }
 
         finishedCommandResults.add(commandResult);
 

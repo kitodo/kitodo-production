@@ -52,12 +52,23 @@ public class Command implements CommandInterface {
             outputMessage.addAll(errorMessage);
 
             commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
+            if (!commandResult.isSuccessful()) {
+                logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
+                        + " failed!: " + commandResult.getMessages());
+            }
+
+            if (commandResult.isSuccessful()) {
+                logger.info("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
+                        + " was succesfull!: " + commandResult.getMessages());
+            }
 
         } catch (IOException | InterruptedException exception) {
             ArrayList<String> errorMessages = new ArrayList<>();
             errorMessages.add(exception.getCause().toString());
             errorMessages.add(exception.getMessage());
             commandResult = new CommandResult(id, command, false, errorMessages);
+            logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
+                    + " failed!: " + commandResult.getMessages());
             return commandResult;
         } finally {
             if (process != null) {
