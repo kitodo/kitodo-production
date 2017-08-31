@@ -56,10 +56,22 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
-     * Create new index. Used for tests!
+     * Create new index without mapping.
      */
     public void createIndex() throws IOException, CustomResponseException {
-        String query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
+        createIndex(null);
+    }
+
+    /**
+     * Create new index with mapping.
+     * 
+     * @param query
+     *            contains mapping
+     */
+    public void createIndex(String query) throws IOException, CustomResponseException {
+        if (query == null) {
+            query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
+        }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         restClient.performRequest("PUT", "/" + index, Collections.<String, String>emptyMap(), entity);
     }
