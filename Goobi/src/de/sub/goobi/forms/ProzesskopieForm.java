@@ -569,8 +569,12 @@ public class ProzesskopieForm {
                         if (allChildren != null) {
                             myTempStruct = allChildren.get(0);
                         } else {
-                            logger.debug("There is no child element for document type " + this.docType
-                                                 + " and meta data field " + field.getTitel());
+                            List<String> translationFields = new ArrayList<>();
+                            translationFields.add(field.getTitel());
+                            translationFields.add(this.docType);
+                            String translation = Helper.getTranslation("ErrorAdditionalFieldsNoChildForDocType", translationFields);
+                            Helper.setMeldung(translation);
+                            logger.info(translation);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
