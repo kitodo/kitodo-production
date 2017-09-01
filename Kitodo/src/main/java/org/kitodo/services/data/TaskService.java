@@ -307,6 +307,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return searcher.findDocuments(query.toString());
     }
 
+    QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
+        return createSetQuery("process", processIds, true);
+    }
+
     /**
      * Find tasks by four parameters.
      * 
