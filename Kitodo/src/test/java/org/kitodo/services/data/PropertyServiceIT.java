@@ -56,7 +56,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         Long amount = propertyService.count();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(7), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(8), amount);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class PropertyServiceIT {
 
         String query = matchQuery("type", "process").operator(Operator.AND).toString();
         Long amount = propertyService.count(query);
-        assertEquals("Properties were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(4), amount);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         Long amount = propertyService.countDatabaseRows();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(7), amount);
+        assertEquals("Properties were not counted correctly!", Long.valueOf(8), amount);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PropertyServiceIT {
     public void shouldFindTemplateProperty() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        Property templateProperty = propertyService.getById(6);
+        Property templateProperty = propertyService.getById(7);
         String actual = templateProperty.getTitle();
         String expected = "firstTemplate title";
         assertEquals("Template property was not found in database - title doesn't match!", expected, actual);
@@ -108,7 +108,7 @@ public class PropertyServiceIT {
     public void shouldFindWorkpieceProperty() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        Property workpieceProperty = propertyService.getById(4);
+        Property workpieceProperty = propertyService.getById(5);
         String actual = workpieceProperty.getTitle();
         String expected = "FirstWorkpiece Property";
         assertEquals("Workpiece property was not found in database - title doesn't match!", expected, actual);
@@ -123,7 +123,7 @@ public class PropertyServiceIT {
         PropertyService propertyService = new PropertyService();
 
         List<Property> properties = propertyService.getAll();
-        assertEquals("Not all properties were found in database!", 7, properties.size());
+        assertEquals("Not all properties were found in database!", 8, properties.size());
     }
 
     @Test
@@ -133,22 +133,22 @@ public class PropertyServiceIT {
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.save(property);
-        Property foundProperty = propertyService.getById(8);
+        Property foundProperty = propertyService.getById(9);
         assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
 
         propertyService.remove(foundProperty);
         exception.expect(DAOException.class);
-        propertyService.getById(8);
+        propertyService.getById(9);
 
         property = new Property();
         property.setTitle("To remove");
         propertyService.save(property);
-        foundProperty = propertyService.getById(9);
+        foundProperty = propertyService.getById(10);
         assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
 
-        propertyService.remove(9);
+        propertyService.remove(10);
         exception.expect(DAOException.class);
-        propertyService.getById(9);
+        propertyService.getById(10);
     }
 
     @Test
