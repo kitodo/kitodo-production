@@ -38,8 +38,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -523,14 +525,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            of process
      * @return list of JSON objects with processes for specific process id
      */
-    public List<JSONObject> findByProjectTitle(String title) throws DataException {
-        List<JSONObject> processes = new ArrayList<>();
+    List<JSONObject> findByProjectTitle(String title) throws DataException {
+        Set<Integer> projectIds = new HashSet<>();
 
         List<JSONObject> projects = serviceManager.getProjectService().findByTitle(title, true);
         for (JSONObject project : projects) {
-            processes.addAll(findByProjectId(getIdFromJSONObject(project)));
+            projectIds.add(getIdFromJSONObject(project));
         }
-        return processes;
+        return searcher.findDocuments(createSetQuery("project", projectIds, true).toString());
     }
 
     /**
@@ -540,7 +542,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            of process
      * @return list of JSON objects with processes for specific batch id
      */
-    public List<JSONObject> findByBatchId(Integer id) throws DataException {
+    List<JSONObject> findByBatchId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("batches.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -552,14 +554,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            of batch
      * @return list of JSON objects with processes for specific batch title
      */
-    public List<JSONObject> findByBatchTitle(String title) throws DataException {
-        List<JSONObject> processes = new ArrayList<>();
+    List<JSONObject> findByBatchTitle(String title) throws DataException {
+        Set<Integer> batchIds = new HashSet<>();
 
         List<JSONObject> batches = serviceManager.getBatchService().findByTitle(title, true);
         for (JSONObject batch : batches) {
-            processes.addAll(findByBatchId(getIdFromJSONObject(batch)));
+            batchIds.add(getIdFromJSONObject(batch));
         }
-        return processes;
+        return searcher.findDocuments(createSetQuery("batches.id", batchIds, true).toString());
     }
 
     /**
@@ -571,26 +573,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            of property
      * @return list of JSON objects with processes for specific property
      */
-    public List<JSONObject> findByProperty(String title, String value) throws DataException {
-        List<JSONObject> processes = new ArrayList<>();
+    List<JSONObject> findByProperty(String title, String value) throws DataException {
+        Set<Integer> propertyIds = new HashSet<>();
 
-        List<JSONObject> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
-        for (JSONObject property : properties) {
-            processes.addAll(findByPropertyId(getIdFromJSONObject(property)));
+        List<JSONObject> properties;
+        if (value == null) {
+            properties = serviceManager.getPropertyService().findByTitle(title, true);
+        } else if (title == null) {
+            properties = serviceManager.getPropertyService().findByValue(value, true);
+        } else {
+            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
         }
-        return processes;
-    }
-
-    /**
-     * Simulate relationship between property and process type.
-     *
-     * @param id
-     *            of property
-     * @return list of JSON objects with processes for specific property id
-     */
-    private List<JSONObject> findByPropertyId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("properties.id", id, true);
-        return searcher.findDocuments(query.toString());
+        for (JSONObject property : properties) {
+            propertyIds.add(getIdFromJSONObject(property));
+        }
+        return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
     }
 
     private List<JSONObject> findBySortHelperStatusProjectArchivedAndTemplate(boolean closed, boolean archived,
