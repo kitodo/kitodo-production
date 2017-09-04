@@ -343,11 +343,10 @@ public class ProjekteForm extends BasisForm {
      * @return instance of {@link StatisticsMode#PRODUCTION}
      *         {@link StatisticsManager}
      */
-
     public StatisticsManager getStatisticsManager1() {
         if (this.statisticsManager1 == null) {
             this.statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION,
-                    new UserProjectFilter(this.myProjekt.getId()),
+                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManager1;
@@ -362,7 +361,7 @@ public class ProjekteForm extends BasisForm {
     public StatisticsManager getStatisticsManager2() {
         if (this.statisticsManager2 == null) {
             this.statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT,
-                    new UserProjectFilter(this.myProjekt.getId()),
+                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManager2;
@@ -377,7 +376,7 @@ public class ProjekteForm extends BasisForm {
     public StatisticsManager getStatisticsManager3() {
         if (this.statisticsManager3 == null) {
             this.statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS,
-                    new UserProjectFilter(this.myProjekt.getId()),
+                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManager3;
@@ -391,7 +390,7 @@ public class ProjekteForm extends BasisForm {
     public StatisticsManager getStatisticsManager4() {
         if (this.statisticsManager4 == null) {
             this.statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE,
-                    new UserProjectFilter(this.myProjekt.getId()),
+                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManager4;
