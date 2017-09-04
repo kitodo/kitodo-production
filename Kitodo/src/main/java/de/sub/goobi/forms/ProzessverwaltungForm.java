@@ -71,7 +71,6 @@ import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
-import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
@@ -1595,7 +1594,7 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Statistische Auswertung.
      */
-    public void StatisticsStatusVolumes() {
+    public void setStatisticsStatusVolumes() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
@@ -1604,7 +1603,7 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Statistic UserGroups.
      */
-    public void StatisticsUsergroups() {
+    public void setStatisticsUserGroups() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
@@ -1613,27 +1612,27 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Statistic runtime Tasks.
      */
-    public void StatisticsRuntimeSteps() {
+    public void setStatisticsRuntimeSteps() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
-    public void StatisticsProduction() {
+    public void setStatisticsProduction() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
-    public void StatisticsStorage() {
+    public void setStatisticsStorage() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
-    public void StatisticsCorrection() {
+    public void setStatisticsCorrection() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
-    public void StatisticsTroughput() {
+    public void setStatisticsTroughput() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
@@ -1641,7 +1640,7 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Project's statistics.
      */
-    public void StatisticsProject() {
+    public void setStatisticsProject() {
         this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
