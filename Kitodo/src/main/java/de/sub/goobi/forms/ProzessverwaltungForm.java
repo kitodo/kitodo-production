@@ -107,6 +107,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private Process myProzess = new Process();
     private Task mySchritt = new Task();
     private StatisticsManager statisticsManager;
+    // TODO: fix assiging of it...
     private List filteredDataSource;
     private List<ProcessCounterObject> myAnzahlList;
     private HashMap<String, Integer> myAnzahlSummary;
