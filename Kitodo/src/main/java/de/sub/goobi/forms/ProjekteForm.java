@@ -77,10 +77,10 @@ public class ProjekteForm extends BasisForm {
     private List<Integer> newFileGroups = new ArrayList<>();
     private List<Integer> deletedFileGroups = new ArrayList<>();
 
-    private StatisticsManager statisticsManager1 = null;
-    private StatisticsManager statisticsManager2 = null;
-    private StatisticsManager statisticsManager3 = null;
-    private StatisticsManager statisticsManager4 = null;
+    private StatisticsManager statisticsManagerForProduction = null;
+    private StatisticsManager statisticsManagerForThroughput = null;
+    private StatisticsManager statisticsManagerForCorrections = null;
+    private StatisticsManager statisticsManagerForStorage = null;
     private final StatQuestProjectProgressData projectProgressData = new StatQuestProjectProgressData();
 
     private String projectProgressImage;
@@ -338,62 +338,62 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Get statistic manager 1.
+     * Get statistic manager for production.
      *
      * @return instance of {@link StatisticsMode#PRODUCTION}
      *         {@link StatisticsManager}
      */
-    public StatisticsManager getStatisticsManager1() {
-        if (this.statisticsManager1 == null) {
-            this.statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION,
+    public StatisticsManager getStatisticsManagerForProduction() {
+        if (this.statisticsManagerForProduction == null) {
+            this.statisticsManagerForProduction = new StatisticsManager(StatisticsMode.PRODUCTION,
                     new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
-        return this.statisticsManager1;
+        return this.statisticsManagerForProduction;
     }
 
     /**
-     * Get statistic manager 2.
+     * Get statistic manager for throughput.
      *
      * @return instance of {@link StatisticsMode#THROUGHPUT}
      *         {@link StatisticsManager}
      */
-    public StatisticsManager getStatisticsManager2() {
-        if (this.statisticsManager2 == null) {
-            this.statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT,
+    public StatisticsManager getStatisticsManagerForThroughput() {
+        if (this.statisticsManagerForThroughput == null) {
+            this.statisticsManagerForThroughput = new StatisticsManager(StatisticsMode.THROUGHPUT,
                     new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
-        return this.statisticsManager2;
+        return this.statisticsManagerForThroughput;
     }
 
     /**
-     * Get statistic manager 3.
+     * Get statistic manager for corrections.
      *
      * @return instance of {@link StatisticsMode#CORRECTIONS}
      *         {@link StatisticsManager}
      */
-    public StatisticsManager getStatisticsManager3() {
-        if (this.statisticsManager3 == null) {
-            this.statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS,
+    public StatisticsManager getStatisticsManagerForCorrections() {
+        if (this.statisticsManagerForCorrections == null) {
+            this.statisticsManagerForCorrections = new StatisticsManager(StatisticsMode.CORRECTIONS,
                     new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
-        return this.statisticsManager3;
+        return this.statisticsManagerForCorrections;
     }
 
     /**
-     * Get statistic manager 4.
+     * Get statistic manager for storage.
      *
      * @return instance of {@link StatisticsMode#STORAGE} {@link StatisticsManager}
      */
-    public StatisticsManager getStatisticsManager4() {
-        if (this.statisticsManager4 == null) {
-            this.statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE,
+    public StatisticsManager getStatisticsManagerForStorage() {
+        if (this.statisticsManagerForStorage == null) {
+            this.statisticsManagerForStorage = new StatisticsManager(StatisticsMode.STORAGE,
                     new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
                     FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
-        return this.statisticsManager4;
+        return this.statisticsManagerForStorage;
     }
 
     /**
