@@ -39,9 +39,8 @@ import org.jfree.data.general.DefaultValueDataset;
 
 /**
  * The Class StatisticsManager organizes all statistical questions by choosing
- * the right implementation depening on {@link StatisticsMode}
- * 
- * for old statistical question there will be generated jfreechart-datasets
+ * the right implementation depening on {@link StatisticsMode}. For old
+ * statistical question there will be generated jfreechart-datasets
  * 
  * @author Steffen Hankiewicz
  * @version 20.05.2009
@@ -54,7 +53,7 @@ public class StatisticsManager implements Serializable {
     private Dataset jfreeDataset;
     /* internal StatisticsMode */
     private StatisticsMode statisticMode;
-    private IDataSource myDataSource;
+    private List dataSource;
     private Date sourceDateFrom;
     private Date sourceDateTo = new Date();
     private int sourceNumberOfTimeUnits;
@@ -66,7 +65,7 @@ public class StatisticsManager implements Serializable {
     private Date calculatedStartDate = new Date();
     private Date calculatedEndDate = new Date();
     private List<StatisticsRenderingElement> renderingElements;
-    static private Locale myLocale = null;
+    private static Locale myLocale = null;
     private Boolean includeLoops = null;
 
     private StatisticsManager() {
@@ -74,17 +73,19 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * public constructor
+     * Public constructor for StatisticsManager.
      *
      * @param inMode
      *            as {@link StatisticsMode}
-     * @param inDataSource
-     *            as {@link IDataSource}
+     * @param dataSource
+     *            as {@link List}
+     * @param locale
+     *            as {@link Locale}
      */
-    public StatisticsManager(StatisticsMode inMode, IDataSource inDataSource, Locale locale) {
+    public StatisticsManager(StatisticsMode inMode, List dataSource, Locale locale) {
         this();
         statisticMode = inMode;
-        myDataSource = inDataSource;
+        this.dataSource = dataSource;
         targetResultOutput = ResultOutput.chartAndTable;
         targetTimeUnit = TimeUnit.months;
         sourceTimeUnit = TimeUnit.months;
@@ -95,11 +96,11 @@ public class StatisticsManager implements Serializable {
             switch (inMode) {
 
                 case SIMPLE_RUNTIME_STEPS:
-                    jfreeDataset = StatistikLaufzeitSchritte.getDiagramm(inDataSource.getSourceData());
+                    jfreeDataset = StatistikLaufzeitSchritte.getDiagramm(dataSource);
                     break;
 
                 default:
-                    jfreeDataset = StatistikStatus.getDiagramm(inDataSource.getSourceData());
+                    jfreeDataset = StatistikStatus.getDiagramm(dataSource);
                     break;
             }
         }
@@ -109,7 +110,7 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * retrieve the jfreechart Dataset for old statistical questions
+     * Retrieve the jfreechart Dataset for old statistical questions.
      *
      * @return {@link Dataset} for charting
      */
@@ -122,7 +123,7 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * retrieve current {@link StatisticsMode}
+     * Retrieve current {@link StatisticsMode}.
      *
      * @return {@link StatisticsMode} for current statistical question
      */
@@ -131,8 +132,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * calculate statistics and retrieve List off {@link DataRow} from
-     * {@link StatisticsMode} for presention and rendering
+     * Calculate statistics and retrieve List off {@link DataRow} from
+     * {@link StatisticsMode} for presentation and rendering.
      *
      */
     public void calculate() {
@@ -154,8 +155,8 @@ public class StatisticsManager implements Serializable {
         }
 
         /*
-         * calculate the statistical results and save it as List of DataTables
-         * (because some statistical questions allow multiple tables and charts)
+         * calculate the statistical results and save it as List of DataTables (because
+         * some statistical questions allow multiple tables and charts)
          */
         IStatisticalQuestion question = statisticMode.getStatisticalQuestion();
         try {
@@ -176,7 +177,7 @@ public class StatisticsManager implements Serializable {
                 question.setCalculationUnit(targetCalculationUnit);
             }
             renderingElements = new ArrayList<>();
-            List<DataTable> myDataTables = question.getDataTables(myDataSource);
+            List<DataTable> myDataTables = question.getDataTables(dataSource);
 
             /*
              * if DataTables exist analyze them
@@ -215,11 +216,11 @@ public class StatisticsManager implements Serializable {
 
     /**
      * Depending on selected Dates oder time range, set the dates for the
-     * statistical question here
+     * statistical question here.
      *
      * @param question
-     *            the {@link IStatisticalQuestion} where the dates should be
-     *            set, if it is an implementation of
+     *            the {@link IStatisticalQuestion} where the dates should be set, if
+     *            it is an implementation of
      *            {@link IStatisticalQuestionLimitedTimeframe}
      */
     @SuppressWarnings("incomplete-switch")
@@ -255,7 +256,7 @@ public class StatisticsManager implements Serializable {
                     case quarters:
                         cl.set(Calendar.DAY_OF_MONTH, 1);
                         setCalendarToMidnight(cl);
-                        while ((cl.get(Calendar.MONTH) + 0) % 3 > 0) {
+                        while ((cl.get(Calendar.MONTH)) % 3 > 0) {
                             cl.add(Calendar.MONTH, -1);
                         }
                         cl.add(Calendar.MILLISECOND, -1);
@@ -306,7 +307,7 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * Get all {@link TimeUnit} from enum
+     * Get all {@link TimeUnit} from enum.
      *
      * @return all timeUnits
      */
@@ -315,7 +316,7 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * Get all {@link CalculationUnit} from enum
+     * Get all {@link CalculationUnit} from enum.
      *
      * @return all calculationUnit
      */
@@ -324,7 +325,7 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * Get all {@link ResultOutput} from enum
+     * Get all {@link ResultOutput} from enum.
      *
      * @return all resultOutput
      */
@@ -333,6 +334,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Get source date from.
+     * 
      * @return the sourceDateFrom
      */
     public Date getSourceDateFrom() {
@@ -340,6 +343,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Set source date from.
+     * 
      * @param sourceDateFrom
      *            the sourceDateFrom to set
      */
@@ -348,6 +353,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Get source date to.
+     * 
      * @return the sourceDateTo
      */
     public Date getSourceDateTo() {
@@ -355,6 +362,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Set source date to.
+     * 
      * @param sourceDateTo
      *            the sourceDateTo to set
      */
@@ -363,6 +372,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Get source number if time units as String.
+     * 
      * @return the sourceNumberOfTimeUnitsAsString
      */
     public String getSourceNumberOfTimeUnitsAsString() {
@@ -374,6 +385,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Set source number if time units as String.
+     * 
      * @param inUnits
      *            the sourceNumberOfTimeUnits to set given as String to show an
      *            empty text field in gui
@@ -387,6 +400,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Get source time unit.
+     * 
      * @return the sourceTimeUnit
      */
     public TimeUnit getSourceTimeUnit() {
@@ -394,6 +409,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Set source time unit.
+     * 
      * @param sourceTimeUnit
      *            the sourceTimeUnit to set
      */
@@ -402,6 +419,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Get target time unit.
+     * 
      * @return the targetTimeUnit
      */
     public TimeUnit getTargetTimeUnit() {
@@ -409,6 +428,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Set target time unit.
+     * 
      * @param targetTimeUnit
      *            the targetTimeUnit to set
      */
@@ -417,6 +438,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Get target result output.
+     * 
      * @return the targetResultOutput
      */
     public ResultOutput getTargetResultOutput() {
@@ -424,6 +447,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Set target result output.
+     * 
      * @param targetResultOutput
      *            the targetResultOutput to set
      */
@@ -432,6 +457,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Get target calculation unit.
+     * 
      * @return the targetCalculationUnit
      */
     public CalculationUnit getTargetCalculationUnit() {
@@ -439,6 +466,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Set target calculation unit.
+     * 
      * @param targetCalculationUnit
      *            the targetCalculationUnit to set
      */
@@ -447,6 +476,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * Check if is show average.
+     * 
      * @return the showAverage
      */
     public boolean isShowAverage() {
@@ -454,7 +485,7 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * setShowAverage.
+     * Set ShowAverage.
      * 
      * @param showAverage
      *            the showAverage to set
@@ -482,7 +513,8 @@ public class StatisticsManager implements Serializable {
     /**
      * Set value of includeLoops.
      * 
-     * @param includeLoops as boolean
+     * @param includeLoops
+     *            as boolean
      */
     public void setIncludeLoops(boolean includeLoops) {
         this.includeLoops = includeLoops;
@@ -497,6 +529,11 @@ public class StatisticsManager implements Serializable {
         return renderingElements;
     }
 
+    /**
+     * Get locale.
+     * 
+     * @return Locale
+     */
     public static Locale getLocale() {
         if (myLocale != null) {
             return myLocale;
