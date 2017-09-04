@@ -15,7 +15,9 @@ import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -236,26 +238,21 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
      *            of property
      * @return list of JSON objects with templates for specific property
      */
-    public List<JSONObject> findByProperty(String title, String value) throws DataException {
-        List<JSONObject> templates = new ArrayList<>();
+    List<JSONObject> findByProperty(String title, String value) throws DataException {
+        Set<Integer> propertyIds = new HashSet<>();
 
-        List<JSONObject> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
-        for (JSONObject property : properties) {
-            templates.addAll(findByPropertyId(getIdFromJSONObject(property)));
+        List<JSONObject> properties;
+        if (value == null) {
+            properties = serviceManager.getPropertyService().findByTitle(title, true);
+        } else if (title == null) {
+            properties = serviceManager.getPropertyService().findByValue(value, true);
+        } else {
+            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
         }
-        return templates;
-    }
-
-    /**
-     * Simulate relationship between property and template type.
-     *
-     * @param id
-     *            of property
-     * @return list of JSON objects with templates for specific property id
-     */
-    private List<JSONObject> findByPropertyId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("properties.id", id, true);
-        return searcher.findDocuments(query.toString());
+        for (JSONObject property : properties) {
+            propertyIds.add(getIdFromJSONObject(property));
+        }
+        return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
     }
 
     /**

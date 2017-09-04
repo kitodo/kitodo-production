@@ -18,7 +18,9 @@ import de.sub.goobi.helper.ProjectHelper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -294,13 +296,13 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      * @return list of JSON objects with projects for specific process title
      */
     public List<JSONObject> findByProcessTitle(String title) throws DataException {
-        List<JSONObject> projects = new ArrayList<>();
+        Set<Integer> processIds = new HashSet<>();
 
         List<JSONObject> processes = serviceManager.getProcessService().findByTitle(title, true);
         for (JSONObject process : processes) {
-            projects.add(findByProcessId(getIdFromJSONObject(process)));
+            processIds.add(getIdFromJSONObject(process));
         }
-        return projects;
+        return searcher.findDocuments(createSetQuery("processes.id", processIds, true).toString());
     }
 
     /**

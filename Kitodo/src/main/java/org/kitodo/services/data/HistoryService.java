@@ -14,9 +14,10 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -237,13 +238,13 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
      * @return JSON objects with history for specific process title
      */
     public List<JSONObject> findByProcessTitle(String processTitle) throws DataException {
-        List<JSONObject> histories = new ArrayList<>();
+        Set<Integer> processIds = new HashSet<>();
 
         List<JSONObject> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
         for (JSONObject process : processes) {
-            histories.add(findByProcessId(getIdFromJSONObject(process)));
+            processIds.add(getIdFromJSONObject(process));
         }
-        return histories;
+        return searcher.findDocuments(createSetQuery("process", processIds, true).toString());
     }
 
     /**

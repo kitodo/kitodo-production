@@ -16,9 +16,10 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -254,13 +255,13 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
      * @return list of JSON objects with batches for specific process title
      */
     public List<JSONObject> findByProcessTitle(String title) throws DataException {
-        List<JSONObject> batches = new ArrayList<>();
+        Set<Integer> processIds = new HashSet<>();
 
         List<JSONObject> processes = serviceManager.getProcessService().findByTitle(title, true);
         for (JSONObject process : processes) {
-            batches.addAll(findByProcessId(getIdFromJSONObject(process)));
+            processIds.add(getIdFromJSONObject(process));
         }
-        return batches;
+        return searcher.findDocuments(createSetQuery("processes.id", processIds, true).toString());
     }
 
     /**
