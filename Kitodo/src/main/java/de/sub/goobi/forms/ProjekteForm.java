@@ -58,6 +58,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -346,8 +347,7 @@ public class ProjekteForm extends BasisForm {
     public StatisticsManager getStatisticsManagerForProduction() {
         if (this.statisticsManagerForProduction == null) {
             this.statisticsManagerForProduction = new StatisticsManager(StatisticsMode.PRODUCTION,
-                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
-                    FacesContext.getCurrentInstance().getViewRoot().getLocale());
+                    getProcessesForStatistics(), FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManagerForProduction;
     }
@@ -361,8 +361,7 @@ public class ProjekteForm extends BasisForm {
     public StatisticsManager getStatisticsManagerForThroughput() {
         if (this.statisticsManagerForThroughput == null) {
             this.statisticsManagerForThroughput = new StatisticsManager(StatisticsMode.THROUGHPUT,
-                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
-                    FacesContext.getCurrentInstance().getViewRoot().getLocale());
+                    getProcessesForStatistics(), FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManagerForThroughput;
     }
@@ -376,8 +375,7 @@ public class ProjekteForm extends BasisForm {
     public StatisticsManager getStatisticsManagerForCorrections() {
         if (this.statisticsManagerForCorrections == null) {
             this.statisticsManagerForCorrections = new StatisticsManager(StatisticsMode.CORRECTIONS,
-                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
-                    FacesContext.getCurrentInstance().getViewRoot().getLocale());
+                    getProcessesForStatistics(), FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManagerForCorrections;
     }
@@ -390,10 +388,19 @@ public class ProjekteForm extends BasisForm {
     public StatisticsManager getStatisticsManagerForStorage() {
         if (this.statisticsManagerForStorage == null) {
             this.statisticsManagerForStorage = new StatisticsManager(StatisticsMode.STORAGE,
-                    new UserProjectFilter(this.myProjekt.getId()).getSourceData(),
-                    FacesContext.getCurrentInstance().getViewRoot().getLocale());
+                    getProcessesForStatistics(), FacesContext.getCurrentInstance().getViewRoot().getLocale());
         }
         return this.statisticsManagerForStorage;
+    }
+
+    private List<ProcessDTO> getProcessesForStatistics() {
+        try {
+            return serviceManager.getProcessService().convertJSONObjectsToDTOs(
+                    serviceManager.getProcessService().findByProjectId(this.myProjekt.getId()), false);
+        } catch (DataException e) {
+            logger.error(e);
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -404,7 +411,8 @@ public class ProjekteForm extends BasisForm {
         Long countSortHelperImages = Long.valueOf(0);
         try {
             sumSortHelperImages = serviceManager.getProcessService().findSumForSortHelperImages(this.myProjekt.getId());
-            countSortHelperImages = serviceManager.getProcessService().findCountForSortHelperImages(this.myProjekt.getId());
+            countSortHelperImages = serviceManager.getProcessService()
+                    .findCountForSortHelperImages(this.myProjekt.getId());
         } catch (DataException e) {
             logger.error(e);
         }
