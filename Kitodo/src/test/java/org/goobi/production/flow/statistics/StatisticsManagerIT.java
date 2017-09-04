@@ -50,8 +50,8 @@ public class StatisticsManagerIT {
     @BeforeClass
     public static void setUp() {
         tempPath = URI.create("pages/imagesTemp/");
-        testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
-        testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
+        testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter.getSourceData(), locale);
+        testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter.getSourceData(), locale);
     }
 
     @Before
@@ -98,8 +98,8 @@ public class StatisticsManagerIT {
 
     @Test
     public void testStatisticsManager() {
-        StatisticsManager testProjects = new StatisticsManager(StatisticsMode.PROJECTS, testFilter, locale);
-        StatisticsManager testStorage = new StatisticsManager(StatisticsMode.STORAGE, testFilter, locale);
+        StatisticsManager testProjects = new StatisticsManager(StatisticsMode.PROJECTS, testFilter.getSourceData(), locale);
+        StatisticsManager testStorage = new StatisticsManager(StatisticsMode.STORAGE, testFilter.getSourceData(), locale);
         assertEquals(StatisticsMode.THROUGHPUT, testManager.getStatisticMode());
         assertEquals(StatisticsMode.PRODUCTION, testManager2.getStatisticMode());
         assertEquals(StatisticsMode.PROJECTS, testProjects.getStatisticMode());

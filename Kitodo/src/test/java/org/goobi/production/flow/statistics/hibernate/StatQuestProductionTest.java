@@ -40,7 +40,7 @@ public class StatQuestProductionTest {
     static StatQuestProduction test;
     Locale locale = new Locale("GERMAN");
     IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-    StatisticsManager testManager = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
+    StatisticsManager testManager = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter.getSourceData(), locale);
 
     @BeforeClass
     public static void setUp() {
@@ -62,7 +62,7 @@ public class StatQuestProductionTest {
     public void testGetDataTables() throws DAOException {
         IDataSource testFilter = new UserDefinedFilter("stepdone:5");
         test.setTimeUnit(TimeUnit.days);
-        List<DataTable> tables = test.getDataTables(testFilter);
+        List<DataTable> tables = test.getDataTables(testFilter.getSourceData());
         int countTableInTables = 0;
         while (countTableInTables < tables.size()) {
             DataTable table = tables.get(countTableInTables);
