@@ -24,7 +24,6 @@ import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.IlikeExpression;
-import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter.Parameters;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
@@ -513,9 +512,6 @@ public class FilterHelper {
      *            PaginatingCriteria object
      * @param isTemplate
      *            Boolean
-     * @param returnParameters
-     *            Object containing values which need to be set and returned to
-     *            UserDefinedFilter
      * @param userAssignedStepsOnly
      *            Boolean
      * @param stepOpenOnly
@@ -524,7 +520,7 @@ public class FilterHelper {
      *         expression
      */
     public static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
-            Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly, boolean clearSession) {
+            Boolean stepOpenOnly, Boolean userAssignedStepsOnly, boolean clearSession) {
 
         if (ConfigCore.getBooleanParameter("DatabaseAutomaticRefreshList", true) && clearSession) {
             session.clear();
@@ -629,7 +625,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.INWORK, false, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.INWORK, false, filterPrefix));
 
                 // new keyword stepLocked implemented
             } else if (tokLowerCase.startsWith(FilterString.STEPLOCKED)
@@ -637,7 +633,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.LOCKED, false, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.LOCKED, false, filterPrefix));
 
                 // new keyword stepOpen implemented
             } else if (tokLowerCase.startsWith(FilterString.STEPOPEN)
@@ -645,7 +641,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.OPEN, false, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.OPEN, false, filterPrefix));
 
                 // new keyword stepDone implemented
             } else if (tokLowerCase.startsWith(FilterString.STEPDONE)
@@ -653,7 +649,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.DONE, false, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.DONE, false, filterPrefix));
 
                 // new keyword stepDoneTitle implemented, replacing so far
                 // undocumented
@@ -727,7 +723,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.INWORK, true, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.INWORK, true, filterPrefix));
 
                 // new keyword stepLocked implemented
             } else if (tokLowerCase.startsWith("-" + FilterString.STEPLOCKED)
@@ -735,7 +731,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.LOCKED, true, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.LOCKED, true, filterPrefix));
 
                 // new keyword stepOpen implemented
             } else if (tokLowerCase.startsWith("-" + FilterString.STEPOPEN)
@@ -743,7 +739,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.OPEN, true, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.OPEN, true, filterPrefix));
 
                 // new keyword stepDone implemented
             } else if (tokLowerCase.startsWith("-" + FilterString.STEPDONE)
@@ -751,7 +747,7 @@ public class FilterHelper {
                 if (conjSteps == null) {
                     conjSteps = Restrictions.conjunction();
                 }
-                message.append(createStepFilters(returnParameters, conjSteps, tok, TaskStatus.DONE, true, filterPrefix));
+                message.append(createStepFilters(conjSteps, tok, TaskStatus.DONE, true, filterPrefix));
 
                 // new keyword stepDoneTitle implemented, replacing so far
                 // undocumented
@@ -941,15 +937,13 @@ public class FilterHelper {
     /**
      * Create task filters.
      *
-     * @param returnParameters
-     *            Parameters object
      * @param con
      *            Conjunction object
      * @param filterPart
      *            String
      * @return String
      */
-    private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart,
+    private static String createStepFilters(Conjunction con, String filterPart,
             TaskStatus inStatus, boolean negate, String filterPrefix) {
         // extracting the substring into parameter (filter parameters e.g. 5,
         // -5,
@@ -967,7 +961,6 @@ public class FilterHelper {
             case exact:
                 try {
                     FilterHelper.filterStepExact(con, parameters, inStatus, negate, filterPrefix);
-                    returnParameters.setStepDone(FilterHelper.getStepStart(parameters));
                 } catch (NullPointerException e) {
                     message = "stepdone is preset, don't use 'step' filters";
                 } catch (Exception e) {
