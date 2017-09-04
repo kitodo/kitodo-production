@@ -18,8 +18,10 @@ import ugh.fileformats.mets.XStream;
 
 public enum MetadataFormat {
 
-    RDF("Rdf", true, RDFFile.class), METS("Mets", true, MetsMods.class), XSTREAM("XStream", true,
-            XStream.class), METS_AND_RDF("Mets & Rdf", false, null);
+    RDF("Rdf", true, RDFFile.class),
+    METS("Mets", true, MetsMods.class),
+    XSTREAM("XStream", true, XStream.class),
+    METS_AND_RDF("Mets & Rdf", false, null);
 
     private final String name;
     private final boolean usableForInternal;

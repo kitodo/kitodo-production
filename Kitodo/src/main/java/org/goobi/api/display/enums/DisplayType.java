@@ -13,8 +13,11 @@ package org.goobi.api.display.enums;
 
 public enum DisplayType {
 
-    input("0", "input"), select("1", "select"), select1("2", "select1"), textarea("3", "textarea"), readonly("4",
-            "readonly");
+    input("0", "input"),
+    select("1", "select"),
+    select1("2", "select1"),
+    textarea("3", "textarea"),
+    readonly("4", "readonly");
 
     private String id;
     private String title;

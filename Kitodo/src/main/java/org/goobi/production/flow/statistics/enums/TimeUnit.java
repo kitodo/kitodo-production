@@ -29,9 +29,11 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public enum TimeUnit {
 
-    days("1", "days", "day", "day", true, 1.0), weeks("2", "weeks", "week", "week", true, 5.0), months("3", "months",
-            "month", "month", true, 21.3), quarters("4", "quarters", "quarter", "quarter", true,
-                    64.0), years("5", "years", "year", "year", true, 256.0);
+    days("1", "days", "day", "day", true, 1.0),
+    weeks("2", "weeks", "week", "week", true, 5.0),
+    months("3", "months", "month", "month", true, 21.3),
+    quarters("4", "quarters", "quarter", "quarter", true, 64.0),
+    years("5", "years", "year", "year", true, 256.0);
 
     private String id;
     private String title;
@@ -46,8 +48,7 @@ public enum TimeUnit {
      * @param inTitle
      *            title as String
      */
-    TimeUnit(String inId, String inTitle, String inKeyword, String inSingularTitle, Boolean visible,
-            Double dayFactor) {
+    TimeUnit(String inId, String inTitle, String inKeyword, String inSingularTitle, Boolean visible, Double dayFactor) {
         id = inId;
         title = inTitle;
         singularTitle = inSingularTitle;

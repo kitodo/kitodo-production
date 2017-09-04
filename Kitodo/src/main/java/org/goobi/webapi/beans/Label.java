@@ -30,7 +30,8 @@ import org.kitodo.production.exceptions.UnreachableCodeException;
  */
 public class Label {
     public enum KeyAttribute {
-        LABEL, LANGUAGE
+        LABEL,
+        LANGUAGE
     }
 
     @XmlAttribute(name = "label")

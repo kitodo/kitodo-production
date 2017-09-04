@@ -15,5 +15,9 @@ package org.kitodo.data.elasticsearch.search.enums;
  * Condition for search.
  */
 public enum SearchCondition {
-    EQUAL, EQUAL_OR_BIGGER, EQUAL_OR_SMALLER, BIGGER, SMALLER
+    EQUAL,
+    EQUAL_OR_BIGGER,
+    EQUAL_OR_SMALLER,
+    BIGGER,
+    SMALLER
 }

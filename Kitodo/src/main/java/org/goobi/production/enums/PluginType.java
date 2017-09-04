@@ -19,8 +19,11 @@ import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 public enum PluginType {
     // TODO: Use upper case for constants; use „CATALOGUE“ instead of „Opac“
-    Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validation(3, "validation",
-            IValidatorPlugin.class), Command(4, "command", ICommandPlugin.class), Opac(5, "opac", null);
+    Import(1, "import", IImportPlugin.class),
+    Step(2, "step", IStepPlugin.class),
+    Validation(3, "validation", IValidatorPlugin.class),
+    Command(4, "command", ICommandPlugin.class),
+    Opac(5, "opac", null);
 
     private int id;
     private String name;

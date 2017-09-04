@@ -26,15 +26,24 @@ import ugh.dl.RomanNumeral;
 public class Paginator {
 
     public enum Mode {
-        PAGES, COLUMNS, FOLIATION, RECTOVERSO_FOLIATION, RECTOVERSO, DOUBLE_PAGES
+        PAGES,
+        COLUMNS,
+        FOLIATION,
+        RECTOVERSO_FOLIATION,
+        RECTOVERSO,
+        DOUBLE_PAGES
     }
 
     public enum Type {
-        ARABIC, ROMAN, UNCOUNTED, FREETEXT
+        ARABIC,
+        ROMAN,
+        UNCOUNTED,
+        FREETEXT
     }
 
     public enum Scope {
-        FROMFIRST, SELECTED
+        FROMFIRST,
+        SELECTED
     }
 
     private int[] selectedPages;

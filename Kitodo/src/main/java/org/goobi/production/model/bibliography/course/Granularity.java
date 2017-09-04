@@ -39,7 +39,12 @@ import org.kitodo.production.exceptions.NotImplementedException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public enum Granularity {
-    ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS;
+    ISSUES,
+    DAYS,
+    WEEKS,
+    MONTHS,
+    QUARTERS,
+    YEARS;
 
     /**
      * The function format() converts a given LocalDate to a String

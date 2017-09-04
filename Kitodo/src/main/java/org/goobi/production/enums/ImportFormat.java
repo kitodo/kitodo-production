@@ -13,7 +13,10 @@ package org.goobi.production.enums;
 
 public enum ImportFormat {
 
-    PICA("1", "pica"), MARC21("2", "marc21"), MARCXML("3", "marcxml"), DC("4", "dc");
+    PICA("1", "pica"),
+    MARC21("2", "marc21"),
+    MARCXML("3", "marcxml"),
+    DC("4", "dc");
 
     private String value;
     private String title;

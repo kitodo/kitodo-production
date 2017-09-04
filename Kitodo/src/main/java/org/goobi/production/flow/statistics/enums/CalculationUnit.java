@@ -21,7 +21,9 @@ import de.sub.goobi.helper.Helper;
  */
 public enum CalculationUnit {
 
-    volumes("1", "volumes"), pages("2", "pages"), volumesAndPages("3", "volumesAndPages");
+    volumes("1", "volumes"),
+    pages("2", "pages"),
+    volumesAndPages("3", "volumesAndPages");
 
     private String id;
     private String title;

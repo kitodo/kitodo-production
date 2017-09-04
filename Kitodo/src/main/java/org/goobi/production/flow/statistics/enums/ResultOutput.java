@@ -21,7 +21,9 @@ import de.sub.goobi.helper.Helper;
  */
 public enum ResultOutput {
 
-    chart("1", "chart"), table("2", "table"), chartAndTable("3", "chartAndTable");
+    chart("1", "chart"),
+    table("2", "table"),
+    chartAndTable("3", "chartAndTable");
 
     private String id;
     private String title;

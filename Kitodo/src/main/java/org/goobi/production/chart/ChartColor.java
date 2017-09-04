@@ -15,7 +15,9 @@ import java.awt.Color;
 
 public enum ChartColor {
 
-    green(0, 130, 80), yellow(250, 220, 50), red(200, 0, 0);
+    green(0, 130, 80),
+    yellow(250, 220, 50),
+    red(200, 0, 0);
 
     private Color color;
 

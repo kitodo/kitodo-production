@@ -13,7 +13,8 @@ package org.goobi.api.display.enums;
 
 public enum BindState {
 
-    create("0", "create"), edit("1", "edit");
+    create("0", "create"),
+    edit("1", "edit");
 
     private String id;
     private String title;
