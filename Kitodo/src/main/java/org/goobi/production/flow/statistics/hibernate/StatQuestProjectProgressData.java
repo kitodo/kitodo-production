@@ -512,7 +512,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     @Override
-    public List<DataTable> getDataTables(IDataSource dataSource) {
+    public List<DataTable> getDataTables(List dataSource) {
         return null;
     }
 

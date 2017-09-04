@@ -92,10 +92,10 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
      *
      * @see
      * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables
-     * (org.goobi.production.flow.statistics.IDataSource)
+     * (List)
      */
     @Override
-    public List<DataTable> getDataTables(IDataSource dataSource) {
+    public List<DataTable> getDataTables(List dataSource) {
 
         List<DataTable> allTables = new ArrayList<>();
 
