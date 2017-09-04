@@ -147,87 +147,91 @@
 
                         <!-- DocstructType ändern -->
                         <h:panelGroup>
-                            <jd:hideableController for="changeDocStructType" title="#{msgs.docstructTypeAendern}">
-                                <h:graphicImage value="/pages/images/buttons/sort_down_20px.gif" alt="change type"
-                                                style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                <h:outputText value="#{msgs.docstructTypeAendern}"/>
-                            </jd:hideableController>
+                            <!-- TODO: replace jd:hideableController -->
+                            <!--<jd:hideableController for="changeDocStructType" title="#{msgs.docstructTypeAendern}">-->
+                                <!--<h:graphicImage value="/pages/images/buttons/sort_down_20px.gif" alt="change type"-->
+                                                <!--style="margin-left:4px;margin-right:6px;vertical-align:middle"/>-->
+                                <!--<h:outputText value="#{msgs.docstructTypeAendern}"/>-->
+                            <!--</jd:hideableController>-->
 
-                            <jd:hideableArea id="changeDocStructType" saveState="view">
-                                <h:panelGrid id="mygrid3" columns="1" style="margin-left:40px;" rowClasses="top"
-                                             columnClasses="standardTable_ColumnRight">
-                                    <!-- Auswahlliste -->
-                                    <t:selectOneMenu style="width:315px;" value="#{Metadaten.tempValue}">
-                                        <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
-                                    </t:selectOneMenu>
-                                    <!-- Action -->
-                                    <h:commandLink action="#{Metadaten.changeCurrentDocstructType}"
-                                                   title="#{msgs.uebernehmen}" target="links"
-                                                   onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-                                        <h:outputText value="#{msgs.uebernehmen}"/>
-                                    </h:commandLink>
-                                </h:panelGrid>
-                            </jd:hideableArea>
+                            <!-- TODO: replace jd:hideableArea -->
+                            <!--<jd:hideableArea id="changeDocStructType" saveState="view">-->
+                                <!--<h:panelGrid id="mygrid3" columns="1" style="margin-left:40px;" rowClasses="top"-->
+                                             <!--columnClasses="standardTable_ColumnRight">-->
+                                    <!--&lt;!&ndash; Auswahlliste &ndash;&gt;-->
+                                    <!--<t:selectOneMenu style="width:315px;" value="#{Metadaten.tempValue}">-->
+                                        <!--<f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>-->
+                                    <!--</t:selectOneMenu>-->
+                                    <!--&lt;!&ndash; Action &ndash;&gt;-->
+                                    <!--<h:commandLink action="#{Metadaten.changeCurrentDocstructType}"-->
+                                                   <!--title="#{msgs.uebernehmen}" target="links"-->
+                                                   <!--onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">-->
+                                        <!--<h:outputText value="#{msgs.uebernehmen}"/>-->
+                                    <!--</h:commandLink>-->
+                                <!--</h:panelGrid>-->
+                            <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
                         <!-- zusätzliche Strukturelemente als Kinder unter das ausgewählte Element -->
                         <h:panelGroup>
-                            <jd:hideableController for="addZusaetzlicheDocstructs"
-                                                   title="#{msgs.strukturelementeAusOpacHinzufuegen}">
-                                <h:graphicImage value="/pages/images/buttons/sort_down_20px.gif" alt="add structural elements from opac"
-                                                style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                <h:outputText value="#{msgs.strukturelementeAusOpacHinzufuegen}"/>
-                            </jd:hideableController>
+                            <!-- TODO: replace jd:hideableController -->
+                            <!--<jd:hideableController for="addZusaetzlicheDocstructs"-->
+                                                   <!--title="#{msgs.strukturelementeAusOpacHinzufuegen}">-->
+                                <!--<h:graphicImage value="/pages/images/buttons/sort_down_20px.gif" alt="add structural elements from opac"-->
+                                                <!--style="margin-left:4px;margin-right:6px;vertical-align:middle"/>-->
+                                <!--<h:outputText value="#{msgs.strukturelementeAusOpacHinzufuegen}"/>-->
+                            <!--</jd:hideableController>-->
 
-                            <jd:hideableArea id="addZusaetzlicheDocstructs" saveState="view">
-                                <h:panelGrid id="mygrid4" columns="2" style="margin-left:40px;" rowClasses="top"
-                                             columnClasses="standardTable_ColumnRight">
+                            <!-- TODO: replace jd:hideableArea -->
+                            <!--<jd:hideableArea id="addZusaetzlicheDocstructs" saveState="view">-->
+                                <!--<h:panelGrid id="mygrid4" columns="2" style="margin-left:40px;" rowClasses="top"-->
+                                             <!--columnClasses="standardTable_ColumnRight">-->
 
-                                    <h:outputText value="#{msgs.katalog}"/>
+                                    <!--<h:outputText value="#{msgs.katalog}"/>-->
 
                                     <!-- uses kitodo_opac.xml -->
 
-                                    <h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacCatalog}"
-                                                     style="display:inline; margin-left:7px">
-                                        <f:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step"
-                                                        itemLabel="#{step}" itemValue="#{step}"/>
-                                    </h:selectOneMenu>
-                                    <h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px"/>
-                                    <h:selectOneMenu id="feldauswahl" value="#{Metadaten.opacSearchField}"
-                                                     style="display:inline; margin-left:10px">
-                                        <f:selectItem itemLabel="PPN" itemValue="12"/>
-                                        <f:selectItem itemLabel="Barcode" itemValue="8535"/>
-                                        <f:selectItem itemLabel="Barcode 8200" itemValue="8200"/>
-                                        <f:selectItem itemLabel="ISBN" itemValue="7"/>
-                                        <f:selectItem itemLabel="ISSN" itemValue="8"/>
-                                    </h:selectOneMenu>
+                                    <!--<h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacCatalog}"-->
+                                                     <!--style="display:inline; margin-left:7px">-->
+                                        <!--<f:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step"-->
+                                                        <!--itemLabel="#{step}" itemValue="#{step}"/>-->
+                                    <!--</h:selectOneMenu>-->
+                                    <!--<h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px"/>-->
+                                    <!--<h:selectOneMenu id="feldauswahl" value="#{Metadaten.opacSearchField}"-->
+                                                     <!--style="display:inline; margin-left:10px">-->
+                                        <!--<f:selectItem itemLabel="PPN" itemValue="12"/>-->
+                                        <!--<f:selectItem itemLabel="Barcode" itemValue="8535"/>-->
+                                        <!--<f:selectItem itemLabel="Barcode 8200" itemValue="8200"/>-->
+                                        <!--<f:selectItem itemLabel="ISBN" itemValue="7"/>-->
+                                        <!--<f:selectItem itemLabel="ISSN" itemValue="8"/>-->
+                                    <!--</h:selectOneMenu>-->
 
 
-                                    <h:outputText value="#{msgs.suchbegriffe}"/>
-                                    <!-- Auswahlliste -->
-                                    <h:inputTextarea value="#{Metadaten.additionalOpacPpns}"/>
-                                    <!-- Action
-                                    onclick="parent.oben.document.getElementById('treeReload').value='reload'; if (!confirm('#{msgs.wirklichAusfuehren}?')) return"
-                                    -->
-                                    <h:outputText value=""/>
+                                    <!--<h:outputText value="#{msgs.suchbegriffe}"/>-->
+                                    <!--&lt;!&ndash; Auswahlliste &ndash;&gt;-->
+                                    <!--<h:inputTextarea value="#{Metadaten.additionalOpacPpns}"/>-->
+                                    <!--&lt;!&ndash; Action-->
+                                    <!--onclick="parent.oben.document.getElementById('treeReload').value='reload'; if (!confirm('#{msgs.wirklichAusfuehren}?')) return"-->
+                                    <!--&ndash;&gt;-->
+                                    <!--<h:outputText value=""/>-->
 
-                                    <h:panelGroup>
-                                        <h:commandLink target="rechts" immediate="false" style="margin-right:10px"
-                                                       action="#{Metadaten.addMetadaFromOpacPpn}"
-                                                       title="#{msgs.uebernehmen}"
-                                                       onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-                                            <h:outputText value="#{msgs.nurMetadaten}"/>
-                                        </h:commandLink>
+                                    <!--<h:panelGroup>-->
+                                        <!--<h:commandLink target="rechts" immediate="false" style="margin-right:10px"-->
+                                                       <!--action="#{Metadaten.addMetadaFromOpacPpn}"-->
+                                                       <!--title="#{msgs.uebernehmen}"-->
+                                                       <!--onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">-->
+                                            <!--<h:outputText value="#{msgs.nurMetadaten}"/>-->
+                                        <!--</h:commandLink>-->
 
-                                        <h:commandLink target="links" immediate="false"
-                                                       action="#{Metadaten.addAdditionalOpacPpns}"
-                                                       title="#{msgs.uebernehmen}"
-                                                       onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-                                            <h:outputText value="#{msgs.alsUnterelemente}"/>
-                                        </h:commandLink>
-                                    </h:panelGroup>
-                                </h:panelGrid>
-                            </jd:hideableArea>
+                                        <!--<h:commandLink target="links" immediate="false"-->
+                                                       <!--action="#{Metadaten.addAdditionalOpacPpns}"-->
+                                                       <!--title="#{msgs.uebernehmen}"-->
+                                                       <!--onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">-->
+                                            <!--<h:outputText value="#{msgs.alsUnterelemente}"/>-->
+                                        <!--</h:commandLink>-->
+                                    <!--</h:panelGroup>-->
+                                <!--</h:panelGrid>-->
+                            <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
                         <!-- OCR-Button -->
@@ -238,21 +242,22 @@
                             <h:outputText value="#{msgs.ocr}"/>
                         </h:outputLink>
 
-                        <!-- newUser-Schaltknopf
+                        <!-- newUser-Schaltknopf -->
                         <h:panelGroup rendered="#{Metadaten.showOcrButton}">
-                            <jp:popupFrame scrolling="auto" height="380px" width="430px"
-                                           topStyle="background: #1874CD;" bottomStyleClass="popup_unten"
-                                           styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"
-                                           styleClass="standardlink"
-                                           style="margin-top:2px;display:block; text-decoration:none"
-                                           actionOpen="#{Metadaten.showOcrPopup}" center="true"
-                                           title="#{msgs.ocr}" immediate="true">
-                                <h:graphicImage value="/pages/images/buttons/ocr.png" alt="ocr"
-                                                style="margin-left:4px;margin-right:7px;vertical-align:middle" />
-                                <h:outputText style="border-bottom: #a24033 dashed 1px;"
-                                              value="#{msgs.ocr}" />
-                            </jp:popupFrame>
-                        </h:panelGroup>-->
+                            <!-- TODO: replace jp:popupFrame -->
+                            <!--<jp:popupFrame scrolling="auto" height="380px" width="430px"-->
+                                           <!--topStyle="background: #1874CD;" bottomStyleClass="popup_unten"-->
+                                           <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
+                                           <!--styleClass="standardlink"-->
+                                           <!--style="margin-top:2px;display:block; text-decoration:none"-->
+                                           <!--actionOpen="#{Metadaten.showOcrPopup}" center="true"-->
+                                           <!--title="#{msgs.ocr}" immediate="true">-->
+                                <!--<h:graphicImage value="/pages/images/buttons/ocr.png" alt="ocr"-->
+                                                <!--style="margin-left:4px;margin-right:7px;vertical-align:middle" />-->
+                                <!--<h:outputText style="border-bottom: #a24033 dashed 1px;"-->
+                                              <!--value="#{msgs.ocr}" />-->
+                            <!--</jp:popupFrame>-->
+                        </h:panelGroup>
 
                         <!-- Knoten löschen -->
                         <h:commandLink rendered="#{Metadaten.isNotRootElement}" action="#{Metadaten.deleteNode}"

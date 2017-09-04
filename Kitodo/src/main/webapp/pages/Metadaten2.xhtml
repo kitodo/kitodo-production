@@ -22,31 +22,7 @@
 
         <ui:include src="/pages/inc/head.xhtml" />
 
-        <script type="text/javascript">
-            //<![CDATA[
-                function checkFrameLoad() {
-
-                    var testObject = rechts.document.getElementById("metadatenRechts");
-                    if (testObject != null) {
-                    } else {
-                        rechts.location.href = rechts.location.href;
-                    }
-                    testObject = oben.document.getElementById("formularOben");
-                    if (testObject != null) {
-                    } else {
-                        oben.location.href = oben.location.href;
-                    }
-
-                    testObject = links.document.getElementById("treeform:tabelle");
-                    if (testObject != null) {
-                    } else {
-                        links.location.href = links.location.href;
-                    }
-                }
-            //]]>
-        </script>
-
-        <p:layout style="min-width:400px;min-height:800px;">
+        <p:layout fullPage="true">
             <p:layoutUnit position="north" size="100">
                 <ui:include src="/pages/Metadaten2oben.xhtml" />
             </p:layoutUnit>
@@ -56,6 +32,7 @@
             </p:layoutUnit>
 
             <p:layoutUnit position="center">
+
                 <ui:include src="/pages/Metadaten2rechts.xhtml" />
             </p:layoutUnit>
         </p:layout>

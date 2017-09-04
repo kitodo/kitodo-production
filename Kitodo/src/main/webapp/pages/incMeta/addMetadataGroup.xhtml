@@ -44,31 +44,31 @@
             </tr>
             <t:dataList var="member" value="#{Metadaten.newMetadataGroup.members}"
                         layout="simple">
-                <ui:fragment rendered="#{member.class.simpleName != 'RenderablePersonMetadataGroup'}">
+                <ui:fragment rendered="#{member['class'].simpleName != 'RenderablePersonMetadataGroup'}">
                     <tr>
                         <td class="eingabeBoxen_row2 mdgroup">
                             <h:outputText value="#{member.label}:"/>
                         </td>
                         <td colspan="2" class="eingabeBoxen_row2 mdgroup">
                             <h:inputTextarea value="#{member.value}"
-                                             rendered="#{member.class.simpleName == 'RenderableLineEdit'}"/>
+                                             rendered="#{member['class'].simpleName == 'RenderableLineEdit'}"/>
                             <h:inputText value="#{member.value}"
-                                         rendered="#{member.class.simpleName == 'RenderableEdit' and not member.readonly}"/>
+                                         rendered="#{member['class'].simpleName == 'RenderableEdit' and not member.readonly}"/>
                             <h:selectManyListbox value="#{member.selectedItems}"
-                                                 rendered="#{member.class.simpleName == 'RenderableListBox'}">
+                                                 rendered="#{member['class'].simpleName == 'RenderableListBox'}">
                                 <f:selectItems value="#{member.items}"/>
                             </h:selectManyListbox>
                             <h:selectOneMenu value="#{member.value}"
-                                             rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
+                                             rendered="#{member['class'].simpleName == 'RenderableDropDownList'}">
                                 <f:selectItems value="#{member.items}"/>
                             </h:selectOneMenu>
                             <h:outputText id="myOutput" value="#{member.value}"
-                                          rendered="#{member.class.simpleName == 'RenderableEdit' and member.readonly}"/>
+                                          rendered="#{member['class'].simpleName == 'RenderableEdit' and member.readonly}"/>
                         </td>
                     </tr>
                 </ui:fragment>
                 <t:dataList var="innerMember" value="#{member.members}"
-                            rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
+                            rendered="#{member['class'].simpleName == 'RenderablePersonMetadataGroup'}">
                     <tr>
                         <ui:fragment rendered="#{innerMember.first}">
                             <td rowspan="#{member.rowspan}" class="eingabeBoxen_row2 mdgroup">
@@ -80,19 +80,19 @@
                         </td>
                         <td class="eingabeBoxen_row2 mdgroup">
                             <h:inputTextarea value="#{innerMember.value}"
-                                             rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}"/>
+                                             rendered="#{innerMember['class'].simpleName == 'RenderableLineEdit'}"/>
                             <h:inputText value="#{innerMember.value}"
-                                         rendered="#{innerMember.class.simpleName == 'RenderableEdit' and not innerMember.readonly}"/>
+                                         rendered="#{innerMember['class'].simpleName == 'RenderableEdit' and not innerMember.readonly}"/>
                             <h:selectManyListbox value="#{innerMember.selectedItems}"
-                                                 rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
+                                                 rendered="#{innerMember['class'].simpleName == 'RenderableListbox'}">
                                 <f:selectItems value="#{innerMember.items}"/>
                             </h:selectManyListbox>
                             <h:selectOneMenu value="#{innerMember.value}"
-                                             rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
+                                             rendered="#{innerMember['class'].simpleName == 'RenderableDropDownList'}">
                                 <f:selectItems value="#{innerMember.items}"/>
                             </h:selectOneMenu>
                             <h:outputText id="myOutput" value="#{innerMember.value}"
-                                          rendered="#{innerMember.class.simpleName == 'RenderableEdit' and innerMember.readonly}"/>
+                                          rendered="#{innerMember['class'].simpleName == 'RenderableEdit' and innerMember.readonly}"/>
                         </td>
                     </tr>
                 </t:dataList>
