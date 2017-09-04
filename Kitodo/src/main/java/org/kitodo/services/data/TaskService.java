@@ -16,18 +16,13 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ShellScript;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +33,7 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.json.simple.JSONObject;
+import org.kitodo.api.command.CommandResult;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -57,6 +53,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
 
 import ugh.dl.DigitalDocument;
@@ -657,9 +654,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      *            boolean
      * @return int
      */
-    public int executeScript(Task task, String script, boolean automatic) throws DataException {
+    public boolean executeScript(Task task, String script, boolean automatic) throws DataException {
         if (script == null || script.length() == 0) {
-            return -1;
+            return false;
         }
         script = script.replace("{", "(").replace("}", ")");
         DigitalDocument dd = null;
@@ -677,14 +674,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         VariableReplacer replacer = new VariableReplacer(dd, prefs, po, task);
 
         script = replacer.replace(script);
-        int rueckgabe = -1;
+        boolean executedSuccessful = false;
         try {
             if (logger.isInfoEnabled()) {
                 logger.info("Calling the shell: " + script);
             }
-            rueckgabe = ShellScript.legacyCallShell2(script);
+
+            CommandService commandService = serviceManager.getCommandService();
+            CommandResult commandResult = commandService.runCommand(script);
+            executedSuccessful = commandResult.isSuccessful();
             if (automatic) {
-                if (rueckgabe == 0) {
+                if (commandResult.isSuccessful()) {
                     task.setEditType(TaskEditType.AUTOMATIC.getValue());
                     task.setProcessingStatus(TaskStatus.DONE.getValue());
                     if (task.getValidationPlugin() != null && task.getValidationPlugin().length() > 0) {
@@ -710,7 +710,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         } catch (IOException e) {
             Helper.setFehlerMeldung("IOException: ", e.getMessage());
         }
-        return rueckgabe;
+        return executedSuccessful;
     }
 
     /**
@@ -725,17 +725,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         List<String> scriptpaths = getAllScriptPaths(task);
         int count = 1;
         int size = scriptpaths.size();
-        int returnParameter = 0;
+        boolean scriptFinishedSuccessful = true;
         for (String script : scriptpaths) {
             if (logger.isDebugEnabled()) {
                 logger.debug("starting script " + script);
             }
-            if (returnParameter != 0) {
+            if (!scriptFinishedSuccessful) {
                 abortTask(task);
                 break;
             }
             if (script != null && !script.equals(" ") && script.length() != 0) {
-                returnParameter = executeScript(task, script, automatic && (count == size));
+                scriptFinishedSuccessful = executeScript(task, script, automatic && (count == size));
             }
             count++;
         }

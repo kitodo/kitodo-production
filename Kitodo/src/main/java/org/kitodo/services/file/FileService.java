@@ -13,7 +13,6 @@ package org.kitodo.services.file;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ShellScript;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -25,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +39,7 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.RulesetService;
 
 import ugh.dl.Fileformat;
@@ -66,8 +67,9 @@ public class FileService {
      */
     public void createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!fileExist(parentFolderUri.resolve(directoryName))) {
-            ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
-            createDirScript.run(Collections.singletonList(parentFolderUri + directoryName));
+            CommandService commandService = serviceManager.getCommandService();
+            List<String> commandParameter = Collections.singletonList(parentFolderUri + directoryName);
+            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirMeta")),commandParameter);
         }
     }
 
@@ -102,9 +104,10 @@ public class FileService {
      */
     public void createDirectoryForUser(URI dirName, String userName) throws IOException {
         if (!serviceManager.getFileService().fileExist(dirName)) {
-            ShellScript createDirScript = new ShellScript(
-                    new File(ConfigCore.getParameter("script_createDirUserHome")));
-            createDirScript.run(Arrays.asList(userName, new File(dirName).getPath()));
+
+            CommandService commandService = serviceManager.getCommandService();
+            List<String> commandParameter = Arrays.asList(userName, new File(dirName).getPath());
+            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirUserHome")),commandParameter);
         }
     }
 
