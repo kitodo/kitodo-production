@@ -117,7 +117,7 @@ public class DocketForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        this.page = new Page(0, dockets);
+        this.page = new Page<>(0, dockets);
         return "/pages/DocketList";
     }
 

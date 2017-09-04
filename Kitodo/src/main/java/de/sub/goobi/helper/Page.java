@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.dto.BaseDTO;
 
 /**
  * This class provides pagination for displaying results from a large result set
@@ -28,11 +29,9 @@ import org.apache.logging.log4j.Logger;
  * @author Gavin King
  * @author Eric Broyles
  */
-public class Page implements Serializable { // implements Iterator
+public class Page<T extends BaseDTO> implements Serializable { // implements Iterator
     private static final long serialVersionUID = -290320409344472392L;
-    // TODO: Use generics
-    @SuppressWarnings("rawtypes")
-    private List results;
+    private List<T> results;
     private int pageSize = 0;
     private int page = 0;
     private int totalResults = 0;
@@ -45,7 +44,7 @@ public class Page implements Serializable { // implements Iterator
      * @param page
      *            the page number (zero-based)
      */
-    public Page(int page, List results) {
+    public Page(int page, List<T> results) {
         this.page = page;
         this.results = results;
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -54,9 +53,7 @@ public class Page implements Serializable { // implements Iterator
         } else {
             this.pageSize = login.getMyBenutzer().getTableSize();
         }
-
         this.totalResults = results.size();
-
     }
 
     /**
@@ -66,8 +63,8 @@ public class Page implements Serializable { // implements Iterator
      */
     public int getLastPageNumber() {
         /*
-         * We use the Math.floor() method because page numbers are zero-based
-         * (i.e. the first page is page 0).
+         * We use the Math.floor() method because page numbers are zero-based (i.e. the
+         * first page is page 0).
          */
         int rueckgabe = Double.valueOf(Math.floor(this.totalResults / this.pageSize)).intValue();
         if (this.totalResults % this.pageSize == 0) {
@@ -77,24 +74,24 @@ public class Page implements Serializable { // implements Iterator
     }
 
     /**
-     * Get list.
+     * Get paginated list of DTO objects with results.
      *
-     * @return List
+     * @return List of DTO objects
      */
-    // TODO: Use generics
-    @SuppressWarnings("rawtypes")
-    public List getList() {
+    public List<T> getList() {
         /*
-         * Since we retrieved one more than the specified pageSize when the
-         * class was constructed, we now trim it down to the pageSize if a next
-         * page exists.
+         * Since we retrieved one more than the specified pageSize when the class was
+         * constructed, we now trim it down to the pageSize if a next page exists.
          */
         return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
     }
 
-    // TODO: Use generics
-    @SuppressWarnings("rawtypes")
-    public List getCompleteList() {
+    /**
+     * Get complete list of DTO objects with results.
+     * 
+     * @return List of DTO objects
+     */
+    public List<T> getCompleteList() {
         return results;
     }
 
@@ -112,22 +109,19 @@ public class Page implements Serializable { // implements Iterator
     }
 
     /**
-     * Get list reload.
+     * Get reloaded list of DTO objects.
      *
-     * @return List
+     * @return List of DTO objects
      */
-    // TODO: Use generics
-    @SuppressWarnings("rawtypes")
-    public List getListReload() {
+    public List<T> getListReload() {
         /*
-         * Since we retrieved one more than the specified pageSize when the
-         * class was constructed, we now trim it down to the pageSize if a next
-         * page exists.
+         * Since we retrieved one more than the specified pageSize when the class was
+         * constructed, we now trim it down to the pageSize if a next page exists.
          */
         if (this.results != null && this.results.size() > 0) {
             return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
         } else {
-            return new ArrayList();
+            return new ArrayList<>();
         }
     }
 
