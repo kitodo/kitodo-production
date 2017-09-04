@@ -154,4 +154,19 @@ public class ProcessDAO extends BaseDAO {
         query.append(" ORDER BY title ASC");
         return search(query.toString());
     }
+
+    /**
+     * Get processes which are not templates and are ordered by creation date. Set
+     * of results can be constrained.
+     * 
+     * @param limit
+     *            max amount of returned results
+     * @return list of processes as Process objects
+     */
+    public List<Process> getNotTemplatesOrderedByCreationDate(Integer limit) {
+        if (limit != null && limit > 0) {
+            return search("FROM Process WHERE template = 0 ORDER BY creationDate DESC").subList(0, limit);
+        }
+        return search("FROM Process WHERE template = 0 ORDER BY creationDate DESC");
+    }
 }
