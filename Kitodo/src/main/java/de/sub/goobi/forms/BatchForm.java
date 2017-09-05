@@ -31,6 +31,9 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Batch;
@@ -38,6 +41,8 @@ import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProcessDTO;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
 
@@ -59,7 +64,7 @@ public class BatchForm extends BasisForm {
     private String batchTitle;
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    //TODO: where this method is used?
+    // TODO; for what is it needed  - right now it is used only in new tests
     public List<Process> getCurrentProcesses() {
         return this.currentProcesses;
     }
@@ -108,13 +113,38 @@ public class BatchForm extends BasisForm {
      * Filter processes.
      */
     public void filterProcesses() {
-        // TODO: usage of filter from frontend
-        /*if (this.processfilter == null) {
-            this.processfilter = "";
+        List<ProcessDTO> processDTOS = new ArrayList<>();
+        QueryBuilder query = new BoolQueryBuilder();
+
+        if (this.processfilter != null) {
+            try {
+                query = serviceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
+                        false, false);
+            } catch (DataException e) {
+                logger.error(e);
+            }
+        } else {
+            query = serviceManager.getProcessService().getQueryTemplate(false);
         }
-        this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);*/
-        int batchMaxSize = ConfigCore.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
-        this.currentProcesses = serviceManager.getProcessService().getNotTemplatesOrderedByCreationDate(batchMaxSize);
+
+        Integer batchMaxSize = ConfigCore.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
+        try {
+            if (batchMaxSize > 0) {
+                processDTOS = serviceManager.getProcessService().findByQuery(query,
+                        serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
+            } else {
+                processDTOS = serviceManager.getProcessService().findByQuery(query,
+                        serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
+            }
+        } catch (DataException e) {
+            logger.error(e);
+        }
+        try {
+            this.currentProcesses = serviceManager.getProcessService().convertDtosToBeans(processDTOS);
+        } catch (DAOException e) {
+            this.currentProcesses = new ArrayList<>();
+            logger.error(e);
+        }
     }
 
     /**
@@ -202,8 +232,8 @@ public class BatchForm extends BasisForm {
     }
 
     /**
-     * This method initializes the batch list without any filter whenever the
-     * bean is constructed.
+     * This method initializes the batch list without any filter whenever the bean
+     * is constructed.
      */
     @PostConstruct
     public void initializeBatchList() {
@@ -222,8 +252,8 @@ public class BatchForm extends BasisForm {
             Helper.setFehlerMeldung("noBatchSelected");
         } else if (this.selectedBatches.size() == 1) {
             try {
-                serviceManager.getProcessService()
-                        .downloadDocket(serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
+                serviceManager.getProcessService().downloadDocket(
+                        serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -430,13 +460,13 @@ public class BatchForm extends BasisForm {
     }
 
     /**
-     * Creates a batch export task to export the selected batch. The type of
-     * export task depends on the batch type. If asynchronous tasks have been
-     * created, the user will be redirected to the task manager page where it
-     * can observe the task progressing.
+     * Creates a batch export task to export the selected batch. The type of export
+     * task depends on the batch type. If asynchronous tasks have been created, the
+     * user will be redirected to the task manager page where it can observe the
+     * task progressing.
      *
-     * @return the next page to show as named in a &lt;from-outcome&gt; element
-     *         in faces_config.xml
+     * @return the next page to show as named in a &lt;from-outcome&gt; element in
+     *         faces_config.xml
      */
     public String exportBatch() {
         if (this.selectedBatches.size() == 0) {
@@ -498,8 +528,8 @@ public class BatchForm extends BasisForm {
     }
 
     /**
-     * Sets the type of all currently selected batches to the named one,
-     * overriding a previously set type, if any.
+     * Sets the type of all currently selected batches to the named one, overriding
+     * a previously set type, if any.
      *
      * @param type
      *            type to set
