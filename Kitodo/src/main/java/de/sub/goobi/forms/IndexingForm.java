@@ -30,6 +30,7 @@ import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 import org.omnifaces.cdi.Push;
@@ -78,7 +79,7 @@ public class IndexingForm {
                 logger.error("Thread interrupted: " + e.getMessage());
             }
 
-            currentIndexState = ObjectTypes.NONE;
+            currentIndexState = ObjectType.NONE;
             indexingAll = false;
 
             pollingChannel.send(INDEXING_FINISHED_MESSAGE);
@@ -100,15 +101,11 @@ public class IndexingForm {
 
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    private enum ObjectTypes {
-        BATCH, DOCKET, PROCESS, PROJECT, PROPERTY, RULESET, TASK, TEMPLATE, USER, USERGROUP, WORKPIECE, FILTER, NONE
-    }
-
-    private ObjectTypes currentIndexState = ObjectTypes.NONE;
+    private ObjectType currentIndexState = ObjectType.NONE;
 
     private boolean indexingAll = false;
 
-    private Map<ObjectTypes, LocalDateTime> lastIndexed = new EnumMap<>(ObjectTypes.class);
+    private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
 
     private LocalDateTime indexingStartedTime;
 
@@ -292,7 +289,7 @@ public class IndexingForm {
      * @return int number of currently indexed batches
      */
     public int getIndexedBatches() {
-        if (currentIndexState == ObjectTypes.BATCH) {
+        if (currentIndexState == ObjectType.BATCH) {
             indexedBatches = batchWorker.getIndexedObjects();
         }
         return indexedBatches;
@@ -304,7 +301,7 @@ public class IndexingForm {
      * @return int number of currently indexed dockets
      */
     public int getIndexedDockets() {
-        if (currentIndexState == ObjectTypes.DOCKET) {
+        if (currentIndexState == ObjectType.DOCKET) {
             indexedDockets = docketWorker.getIndexedObjects();
         }
         return indexedDockets;
@@ -316,7 +313,7 @@ public class IndexingForm {
      * @return int number of currently indexed processes
      */
     public int getIndexedProcesses() {
-        if (currentIndexState == ObjectTypes.PROCESS) {
+        if (currentIndexState == ObjectType.PROCESS) {
             indexedProcesses = processWorker.getIndexedObjects();
         }
         return indexedProcesses;
@@ -328,7 +325,7 @@ public class IndexingForm {
      * @return int number of currently indexed projects
      */
     public int getIndexedProjects() {
-        if (currentIndexState == ObjectTypes.PROJECT) {
+        if (currentIndexState == ObjectType.PROJECT) {
             indexedProjects = projectWorker.getIndexedObjects();
         }
         return indexedProjects;
@@ -340,7 +337,7 @@ public class IndexingForm {
      * @return int number of currently indexed properties
      */
     public int getIndexedProperties() {
-        if (currentIndexState == ObjectTypes.PROPERTY) {
+        if (currentIndexState == ObjectType.PROPERTY) {
             indexedProperties = propertyWorker.getIndexedObjects();
         }
         return indexedProperties;
@@ -352,7 +349,7 @@ public class IndexingForm {
      * @return int number of currently indexed rulesets
      */
     public int getIndexedRulesets() {
-        if (currentIndexState == ObjectTypes.RULESET) {
+        if (currentIndexState == ObjectType.RULESET) {
             indexedRulesetes = rulesetWorker.getIndexedObjects();
         }
         return indexedRulesetes;
@@ -364,7 +361,7 @@ public class IndexingForm {
      * @return int number of currently indexed templates
      */
     public int getIndexedTemplates() {
-        if (currentIndexState == ObjectTypes.TEMPLATE) {
+        if (currentIndexState == ObjectType.TEMPLATE) {
             indexedTemplates = templateWorker.getIndexedObjects();
         }
         return indexedTemplates;
@@ -376,7 +373,7 @@ public class IndexingForm {
      * @return int number of currently indexed tasks
      */
     public int getIndexedTasks() {
-        if (currentIndexState == ObjectTypes.TASK) {
+        if (currentIndexState == ObjectType.TASK) {
             indexedTasks = taskWorker.getIndexedObjects();
         }
         return indexedTasks;
@@ -388,7 +385,7 @@ public class IndexingForm {
      * @return int number of currently indexed users
      */
     public int getIndexedUsers() {
-        if (currentIndexState == ObjectTypes.USER) {
+        if (currentIndexState == ObjectType.USER) {
             indexedUsers = userWorker.getIndexedObjects();
         }
         return indexedUsers;
@@ -400,7 +397,7 @@ public class IndexingForm {
      * @return int number of currently indexed user groups
      */
     public int getIndexedUserGroups() {
-        if (currentIndexState == ObjectTypes.USERGROUP) {
+        if (currentIndexState == ObjectType.USERGROUP) {
             indexedUsergroups = usergroupWorker.getIndexedObjects();
         }
         return indexedUsergroups;
@@ -412,7 +409,7 @@ public class IndexingForm {
      * @return int number of currently indexed workpieces
      */
     public int getIndexedWorkpieces() {
-        if (currentIndexState == ObjectTypes.WORKPIECE) {
+        if (currentIndexState == ObjectType.WORKPIECE) {
             indexedWorkpieces = workpieceWorker.getIndexedObjects();
         }
         return indexedWorkpieces;
@@ -424,7 +421,7 @@ public class IndexingForm {
      * @return int number of currently indexed filters
      */
     public int getIndexedFilter() {
-        if (currentIndexState == ObjectTypes.FILTER) {
+        if (currentIndexState == ObjectType.FILTER) {
             indexedFilter = filterWorker.getIndexedObjects();
         }
         return indexedFilter;
@@ -448,7 +445,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last batch indexing process
      */
     public LocalDateTime getBatchesLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.BATCH);
+        return lastIndexed.get(ObjectType.BATCH);
     }
 
     /**
@@ -457,7 +454,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last docket indexing process
      */
     public LocalDateTime getDocketsLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.DOCKET);
+        return lastIndexed.get(ObjectType.DOCKET);
     }
 
     /**
@@ -466,7 +463,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last process indexing process
      */
     public LocalDateTime getProcessesLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.PROCESS);
+        return lastIndexed.get(ObjectType.PROCESS);
     }
 
     /**
@@ -475,7 +472,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last project indexing process
      */
     public LocalDateTime getProjectsLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.PROJECT);
+        return lastIndexed.get(ObjectType.PROJECT);
     }
 
     /**
@@ -484,7 +481,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last properties indexing process
      */
     public LocalDateTime getPropertiesLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.PROPERTY);
+        return lastIndexed.get(ObjectType.PROPERTY);
     }
 
     /**
@@ -493,7 +490,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last ruleset indexing process
      */
     public LocalDateTime getRulsetsLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.RULESET);
+        return lastIndexed.get(ObjectType.RULESET);
     }
 
     /**
@@ -502,7 +499,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last template indexing process
      */
     public LocalDateTime getTemplatesLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.TEMPLATE);
+        return lastIndexed.get(ObjectType.TEMPLATE);
     }
 
     /**
@@ -511,7 +508,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last task indexing process
      */
     public LocalDateTime getTasksLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.TASK);
+        return lastIndexed.get(ObjectType.TASK);
     }
 
     /**
@@ -520,7 +517,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last user indexing process
      */
     public LocalDateTime getUsersLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.USER);
+        return lastIndexed.get(ObjectType.USER);
     }
 
     /**
@@ -529,7 +526,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last user group indexing process
      */
     public LocalDateTime getUserGroupsLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.USERGROUP);
+        return lastIndexed.get(ObjectType.USERGROUP);
     }
 
     /**
@@ -538,7 +535,7 @@ public class IndexingForm {
      * @return LocalDateTime the timestamp of the last workpiece indexing process
      */
     public LocalDateTime getWorkpiecesLastIndexedDate() {
-        return lastIndexed.get(ObjectTypes.WORKPIECE);
+        return lastIndexed.get(ObjectType.WORKPIECE);
     }
 
     /**
@@ -547,7 +544,7 @@ public class IndexingForm {
      * @return the batch indexing progress
      */
     public int getBatchIndexingProgress() {
-        return getProgress(getBatchCount(), ObjectTypes.BATCH, getIndexedBatches());
+        return getProgress(getBatchCount(), ObjectType.BATCH, getIndexedBatches());
     }
 
     /**
@@ -556,7 +553,7 @@ public class IndexingForm {
      * @return the docket indexing progress
      */
     public int getDocketsIndexingProgress() {
-        return getProgress(getDocketCount(), ObjectTypes.DOCKET, getIndexedDockets());
+        return getProgress(getDocketCount(), ObjectType.DOCKET, getIndexedDockets());
     }
 
     /**
@@ -565,7 +562,7 @@ public class IndexingForm {
      * @return the process indexing progress
      */
     public int getProcessIndexingProgress() {
-        return getProgress(getProcessCount(), ObjectTypes.PROCESS, getIndexedProcesses());
+        return getProgress(getProcessCount(), ObjectType.PROCESS, getIndexedProcesses());
     }
 
     /**
@@ -574,7 +571,7 @@ public class IndexingForm {
      * @return the project indexing progress
      */
     public int getProjectsIndexingProgress() {
-        return getProgress(getProjectCount(), ObjectTypes.PROJECT, getIndexedProjects());
+        return getProgress(getProjectCount(), ObjectType.PROJECT, getIndexedProjects());
     }
 
     /**
@@ -583,7 +580,7 @@ public class IndexingForm {
      * @return the properties indexing progress
      */
     public int getPropertiesIndexingProgress() {
-        return getProgress(getPropertyCount(), ObjectTypes.PROPERTY, getIndexedProperties());
+        return getProgress(getPropertyCount(), ObjectType.PROPERTY, getIndexedProperties());
     }
 
     /**
@@ -592,7 +589,7 @@ public class IndexingForm {
      * @return the ruleset indexing progress
      */
     public int getRulesetsIndexingProgress() {
-        return getProgress(getRulesetCount(), ObjectTypes.RULESET, getIndexedRulesets());
+        return getProgress(getRulesetCount(), ObjectType.RULESET, getIndexedRulesets());
     }
 
     /**
@@ -601,7 +598,7 @@ public class IndexingForm {
      * @return the template indexing progress
      */
     public int getTemplatesIndexingProgress() {
-        return getProgress(getTemplateCount(), ObjectTypes.TEMPLATE, getIndexedTemplates());
+        return getProgress(getTemplateCount(), ObjectType.TEMPLATE, getIndexedTemplates());
     }
 
     /**
@@ -610,7 +607,7 @@ public class IndexingForm {
      * @return the task indexing progress
      */
     public int getTasksIndexingProgress() {
-        return getProgress(getTaskCount(), ObjectTypes.TASK, getIndexedTasks());
+        return getProgress(getTaskCount(), ObjectType.TASK, getIndexedTasks());
     }
 
     /**
@@ -619,7 +616,7 @@ public class IndexingForm {
      * @return the user indexing progress
      */
     public int getUserIndexingProgress() {
-        return getProgress(getUserCount(), ObjectTypes.USER, getIndexedUsers());
+        return getProgress(getUserCount(), ObjectType.USER, getIndexedUsers());
     }
 
     /**
@@ -628,7 +625,7 @@ public class IndexingForm {
      * @return the usergroup indexing progress
      */
     public int getUserGroupIndexingProgress() {
-        return getProgress(getUserGroupCount(), ObjectTypes.USERGROUP, getIndexedUserGroups());
+        return getProgress(getUserGroupCount(), ObjectType.USERGROUP, getIndexedUserGroups());
     }
 
     /**
@@ -637,7 +634,7 @@ public class IndexingForm {
      * @return the workpiece indexing progress
      */
     public int getWorkpieceIndexingProgress() {
-        return getProgress(getWorkpieceCount(), ObjectTypes.WORKPIECE, getIndexedWorkpieces());
+        return getProgress(getWorkpieceCount(), ObjectType.WORKPIECE, getIndexedWorkpieces());
     }
 
     /**
@@ -646,14 +643,14 @@ public class IndexingForm {
      * @return the filter indexing progress
      */
     public int getFilterIndexingProgress() {
-        return getProgress(getFilterCount(), ObjectTypes.FILTER, getIndexedFilter());
+        return getProgress(getFilterCount(), ObjectType.FILTER, getIndexedFilter());
     }
 
-    private void startIndexing(ObjectTypes type, IndexWorker worker) {
+    private void startIndexing(ObjectType type, IndexWorker worker) {
         int attempts = 0;
         while (attempts < 10) {
             try {
-                if (Objects.equals(currentIndexState, ObjectTypes.NONE)) {
+                if (Objects.equals(currentIndexState, ObjectType.NONE)) {
                     indexingStartedTime = LocalDateTime.now();
                     currentIndexState = type;
                     pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
@@ -678,84 +675,84 @@ public class IndexingForm {
      * Starts the process of indexing batches to the ElasticSearch index.
      */
     public void startBatchIndexing() {
-        startIndexing(ObjectTypes.BATCH, batchWorker);
+        startIndexing(ObjectType.BATCH, batchWorker);
     }
 
     /**
      * Starts the process of indexing dockets to the ElasticSearch index.
      */
     public void startDocketIndexing() {
-        startIndexing(ObjectTypes.DOCKET, docketWorker);
+        startIndexing(ObjectType.DOCKET, docketWorker);
     }
 
     /**
      * Starts the process of indexing processes to the ElasticSearch index.
      */
     public void startProcessIndexing() {
-        startIndexing(ObjectTypes.PROCESS, processWorker);
+        startIndexing(ObjectType.PROCESS, processWorker);
     }
 
     /**
      * Starts the process of indexing projects to the ElasticSearch index.
      */
     public void startProjectIndexing() {
-        startIndexing(ObjectTypes.PROJECT, projectWorker);
+        startIndexing(ObjectType.PROJECT, projectWorker);
     }
 
     /**
      * Starts the process of indexing properties to the ElasticSearch index.
      */
     public void startPropertyIndexing() {
-        startIndexing(ObjectTypes.PROPERTY, propertyWorker);
+        startIndexing(ObjectType.PROPERTY, propertyWorker);
     }
 
     /**
      * Starts the process of indexing rulesets to the ElasticSearch index.
      */
     public void startRulesetIndexing() {
-        startIndexing(ObjectTypes.RULESET, rulesetWorker);
+        startIndexing(ObjectType.RULESET, rulesetWorker);
     }
 
     /**
      * Starts the process of indexing tasks to the ElasticSearch index.
      */
     public void startTaskIndexing() {
-        startIndexing(ObjectTypes.TASK, taskWorker);
+        startIndexing(ObjectType.TASK, taskWorker);
     }
 
     /**
      * Starts the process of indexing templates to the ElasticSearch index.
      */
     public void startTemplateIndexing() {
-        startIndexing(ObjectTypes.TEMPLATE, templateWorker);
+        startIndexing(ObjectType.TEMPLATE, templateWorker);
     }
 
     /**
      * Starts the process of indexing users to the ElasticSearch index.
      */
     public void startUserIndexing() {
-        startIndexing(ObjectTypes.USER, userWorker);
+        startIndexing(ObjectType.USER, userWorker);
     }
 
     /**
      * Starts the process of indexing user groups to the ElasticSearch index.
      */
     public void startUserGroupIndexing() {
-        startIndexing(ObjectTypes.USERGROUP, usergroupWorker);
+        startIndexing(ObjectType.USERGROUP, usergroupWorker);
     }
 
     /**
      * Starts the process of indexing workpieces to the ElasticSearch index.
      */
     public void startWorkpieceIndexing() {
-        startIndexing(ObjectTypes.WORKPIECE, workpieceWorker);
+        startIndexing(ObjectType.WORKPIECE, workpieceWorker);
     }
 
     /**
      * Starts the process of indexing filters to the ElasticSearch index.
      */
     public void startFilterIndexing() {
-        startIndexing(ObjectTypes.FILTER, filterWorker);
+        startIndexing(ObjectType.FILTER, filterWorker);
     }
 
     /**
@@ -783,7 +780,7 @@ public class IndexingForm {
      *         progress or not
      */
     public boolean indexingInProgress() {
-        return (!Objects.equals(this.currentIndexState, ObjectTypes.NONE) || indexingAll);
+        return (!Objects.equals(this.currentIndexState, ObjectType.NONE) || indexingAll);
     }
 
     /**
@@ -818,12 +815,12 @@ public class IndexingForm {
      *
      * @return the progress of the current indexing process in percent
      */
-    private int getProgress(long numberOfObjects, ObjectTypes currentType, long nrOfindexedObjects) {
+    private int getProgress(long numberOfObjects, ObjectType currentType, long nrOfindexedObjects) {
         int progress = numberOfObjects > 0 ? (int) ((nrOfindexedObjects / (float) numberOfObjects) * 100) : 0;
         if (Objects.equals(currentIndexState, currentType)) {
             if (numberOfObjects == 0 || progress == 100) {
                 lastIndexed.put(currentIndexState, LocalDateTime.now());
-                currentIndexState = ObjectTypes.NONE;
+                currentIndexState = ObjectType.NONE;
                 indexerThread.interrupt();
                 pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
             }
