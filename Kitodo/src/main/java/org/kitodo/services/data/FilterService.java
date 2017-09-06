@@ -231,12 +231,11 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *            as ObjectType - "PROCESS" or "TASK"
      * @param template
      *            as Boolean
-     * @param onlyUserAssignedTasks
-     *            as Boolean
      * @param onlyOpenTasks
      *            as Boolean
-     * @return String used to pass on error messages about errors in the filter
-     *         expression
+     * @param onlyUserAssignedTasks
+     *            as Boolean
+     * @return query as {@link BoolQueryBuilder}
      */
     public BoolQueryBuilder queryBuilder(String filter, ObjectType objectType, Boolean template, Boolean onlyOpenTasks,
             Boolean onlyUserAssignedTasks) throws DataException {
@@ -314,10 +313,10 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
             } else if (evaluateFilterString(tokenizedFilter, FilterString.WORKPIECE, "-")) {
                 query.must(filterWorkpiece(tokenizedFilter, true, objectType));
             } else if (tokenizedFilter.startsWith("-")) {
-                query.must(serviceManager.getProcessService().getQueryTitle(tokenizedFilter.substring(1), false));
+                query.must(createDefaultQuery(tokenizedFilter.substring(1), true, objectType));
             } else {
                 /* standard-search parameter */
-                query.must(serviceManager.getProcessService().getQueryTitle(tokenizedFilter, true));
+                query.must(createDefaultQuery(tokenizedFilter, false, objectType));
             }
         }
         return query;
@@ -378,7 +377,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         } else if (filter.contains(filterGerman)) {
             return prepareStrings(filter, filterGerman).get(0);
         }
-        return null;
+        return "";
     }
 
     /**
@@ -520,7 +519,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      * Limit query to projects assigned to user. Restriction to specific projects if
      * not with admin rights.
      *
-     * @return query
+     * @return query as {@link BoolQueryBuilder}
      */
     private BoolQueryBuilder limitToUserAccessRights() {
         BoolQueryBuilder query = new BoolQueryBuilder();
@@ -549,7 +548,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *            filter only by open tasks - true/false
      * @param onlyUserAssignedTask
      *            filter only open tasks - true/false
-     * @return query
+     * @return query as {@link BoolQueryBuilder}
      */
     private BoolQueryBuilder limitToUserAssignedTasks(Boolean onlyOpenTask, Boolean onlyUserAssignedTask) {
         /* identify current user */
@@ -612,7 +611,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *
      * @param filterPart
      *            String
-     * @return empty string
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder createHistoricFilter(String filterPart) {
         /* filtering by a certain minimal status */
@@ -676,7 +675,15 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *
      * @param filter
      *            String
-     * @return String
+     * @param filterString
+     *            as {@link FilterString}
+     * @param taskStatus
+     *            {@link TaskStatus} of searched step
+     * @param negate
+     *            true or false, if true create simple queries with contains false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder createTaskFilters(String filter, FilterString filterString, TaskStatus taskStatus,
             boolean negate, ObjectType objectType) {
@@ -822,7 +829,10 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      * @param taskStatus
      *            {@link TaskStatus} of searched step
      * @param negate
-     *            boolean
+     *            true or false, if true create simple queries with contains false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterTaskRange(String parameters, TaskStatus taskStatus, boolean negate,
             ObjectType objectType) throws DataException {
@@ -851,6 +861,11 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *            {@link TaskStatus} of searched step
      * @param parameters
      *            part of filter string to use
+     * @param negate
+     *            true or false, if true create simple queries with contains false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterTaskTitle(String parameters, TaskStatus taskStatus, boolean negate,
             ObjectType objectType) throws DataException {
@@ -867,6 +882,11 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *            part of filter string to use
      * @param taskStatus
      *            {@link TaskStatus} of searched step
+     * @param negate
+     *            true or false, if true create simple queries with contains false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterTaskMin(String parameters, TaskStatus taskStatus, boolean negate, ObjectType objectType)
             throws DataException {
@@ -877,12 +897,17 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
     }
 
     /**
-     * Filter processes for done steps max.
+     * Filter processes for done tasks max.
      *
      * @param parameters
      *            part of filter string to use
      * @param taskStatus
-     *            {@link TaskStatus} of searched step
+     *            {@link TaskStatus} of searched task
+     * @param negate
+     *            true or false, if true create simple queries with contains false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterTaskMax(String parameters, TaskStatus taskStatus, boolean negate, ObjectType objectType)
             throws DataException {
@@ -893,12 +918,17 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
     }
 
     /**
-     * Filter processes for done steps exact.
+     * Filter processes for done tasks exact.
      *
      * @param parameters
      *            part of filter string to use
      * @param taskStatus
-     *            {@link TaskStatus} of searched step
+     *            {@link TaskStatus} of searched task
+     * @param negate
+     *            true or false, if true create simple queries with contains false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterTaskExact(String parameters, TaskStatus taskStatus, boolean negate,
             ObjectType objectType) throws DataException {
@@ -909,10 +939,13 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
     }
 
     /**
-     * Filter processes for done steps by user.
+     * Filter processes for done tasks by user.
      *
      * @param filter
      *            part of filter string to use - for user it looks it is login
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterTaskDoneUser(String filter, ObjectType objectType) {
         /*
@@ -941,7 +974,9 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *
      * @param filter
      *            as String
-     * @return query
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterAutomaticTasks(String filter, ObjectType objectType) throws DataException {
         BoolQueryBuilder typeAutomatic = new BoolQueryBuilder();
@@ -957,10 +992,13 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
     }
 
     /**
-     * Filter processes by Ids.
+     * Filter processes by ids.
      *
      * @param filter
      *            part of filter string to use
+     * @param filterString
+     *            as FilterString
+     * @return set of ids as Integers
      */
     private Set<Integer> filterValuesAsIntegers(String filter, FilterString filterString) {
         Set<Integer> ids = new HashSet<>();
@@ -979,6 +1017,9 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *
      * @param filter
      *            part of filter string to use
+     * @param filterString
+     *            as FilterString
+     * @return set of values as Strings
      */
     private Set<String> filterValuesAsStrings(String filter, FilterString filterString) {
         Set<String> ids = new HashSet<>();
@@ -996,7 +1037,9 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *            as String
      * @param negate
      *            true or false
-     * @return list of PropertyDTO objects
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterProcessProperty(String filter, boolean negate, ObjectType objectType)
             throws DataException {
@@ -1020,6 +1063,11 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *
      * @param filter
      *            part of filter string to use
+     * @param negate
+     *            true or false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterProject(String filter, boolean negate, ObjectType objectType) throws DataException {
         /* filter according to linked project */
@@ -1036,6 +1084,11 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      *
      * @param filter
      *            part of filter string to use
+     * @param negate
+     *            true or false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterScanTemplate(String filter, boolean negate, ObjectType objectType) throws DataException {
         /* Filtering by signature */
@@ -1053,11 +1106,21 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, templateQuery);
     }
 
+    private QueryBuilder createDefaultQuery(String filter, boolean negate, ObjectType objectType) throws DataException {
+        QueryBuilder titleQuery = serviceManager.getProcessService().getQueryTitle(filter, !negate);
+        return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
+    }
+
     /**
      * Filter processes by workpiece.
      *
      * @param filter
      *            part of filter string to use
+     * @param negate
+     *            true or false
+     * @param objectType
+     *            as {@link ObjectType}
+     * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterWorkpiece(String filter, boolean negate, ObjectType objectType) throws DataException {
         /* filter according signature */

@@ -179,7 +179,6 @@ public class FilterServiceIT {
 
         query = filterService.queryBuilder("\"stepopen:Testing\"", ObjectType.PROCESS, true, false, false);
         processDTOS = processService.findByQuery(query, true);
-        System.out.println(query.toString());
         assertEquals("Incorrect amount of processes for title containing 'Testing'!", 1, processDTOS.size());
     }
 
@@ -396,12 +395,10 @@ public class FilterServiceIT {
 
         QueryBuilder query = filterService.queryBuilder("\"stepdone:1\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
-        System.out.println(query.toString());
         assertEquals("Incorrect amount of closed tasks with ordering 1!", 0, taskDTOS.size());
 
         query = filterService.queryBuilder("\"stepdone:1\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        System.out.println(query.toString());
         assertEquals("Incorrect amount of closed tasks with ordering 1!", 1, taskDTOS.size());
 
         query = filterService.queryBuilder("\"stepdone:Closed\"", ObjectType.TASK, false, false, false);
@@ -482,18 +479,52 @@ public class FilterServiceIT {
 
         QueryBuilder query = filterService.queryBuilder("\"id:2\" \"steplocked:2\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of closed tasks with ordering 1 assigned to process with id 5!", 1, taskDTOS.size());
+        assertEquals("Incorrect amount of closed tasks with ordering 1 assigned to process with id 2!", 1, taskDTOS.size());
 
         query = filterService.queryBuilder("\"id:2\" \"steplocked:2\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of closed tasks with ordering 1 assigned to process with id 5!", 0, taskDTOS.size());
+        assertEquals("Incorrect amount of locked tasks with ordering 2 assigned to process with id 2!", 0, taskDTOS.size());
 
         query = filterService.queryBuilder("\"id:2\" \"-stepdone:3\"", ObjectType.TASK, false, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of closed tasks with ordering 1 assigned to process with id 5!", 2, taskDTOS.size());
+        assertEquals("Incorrect amount of not closed tasks with ordering 4 assigned to process with id 2!", 2, taskDTOS.size());
 
         query = filterService.queryBuilder("\"id:2\" \"-stepdone:4\"", ObjectType.TASK, false, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of closed tasks with ordering 1 assigned to process with id 5!", 3, taskDTOS.size());
+        assertEquals("Incorrect amount of not closed tasks with ordering 4 assigned to process with id 2!", 3, taskDTOS.size());
+    }
+
+    @Test
+    public void shouldBuildQueryForDefaultConditions() throws Exception {
+        FilterService filterService = new FilterService();
+        ProcessService processService = new ProcessService();
+        TaskService taskService = new TaskService();
+
+        QueryBuilder query = filterService.queryBuilder("\"Second\"", ObjectType.TASK, false, false, false);
+        List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
+        assertEquals("Incorrect amount of closed tasks with default condition!", 3, taskDTOS.size());
+
+        query = filterService.queryBuilder("\"Second\"", ObjectType.PROCESS, false, false, false);
+        List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
+        assertEquals("Incorrect amount of process with default condition!", 2, processDTOS.size());
+
+    }
+
+    @Test
+    public void shouldBuildQueryForEmptyConditions() throws Exception {
+        FilterService filterService = new FilterService();
+        ProcessService processService = new ProcessService();
+        TaskService taskService = new TaskService();
+
+        // empty condition is not allowed and returns no results
+        QueryBuilder query = filterService.queryBuilder("\"steplocked:\"", ObjectType.TASK, false, false, false);
+        List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
+        assertEquals("Incorrect amount of closed tasks with no ordering!", 0, taskDTOS.size());
+
+        // empty condition is not allowed and returns no results
+        query = filterService.queryBuilder("\"id:\"", ObjectType.PROCESS, false, false, false);
+        List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
+        assertEquals("Incorrect amount of process with no id!", 0, processDTOS.size());
+
     }
 }
