@@ -634,11 +634,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return searcher.findDocuments(getQuerySortHelperStatus(closed).toString(), sort);
     }
 
-    protected List<JSONObject> findByTemplate(boolean template, String sort) throws DataException {
+    List<JSONObject> findByTemplate(boolean template, String sort) throws DataException {
         return searcher.findDocuments(getQueryTemplate(template).toString(), sort);
     }
 
-    private QueryBuilder getQueryTemplate(boolean template) {
+    List<ProcessDTO> findNotTemplateByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSetQuery("project", projectIds, true));
+        query.must(getQueryTemplate(false));
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
+    }
+
+    QueryBuilder getQueryTemplate(boolean template) {
         return createSimpleQuery("template", template, true);
     }
 
