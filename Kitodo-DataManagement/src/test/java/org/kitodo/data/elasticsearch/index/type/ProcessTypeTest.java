@@ -108,7 +108,7 @@ public class ProcessTypeTest {
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
                 + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project\":1,\"sortHelperStatus\":null,"
                 + "\"creationDate\":\"2017-01-01\",\"processBaseUri\":null,\"template\":false,\"sortHelperImages\":20,"
-                + "\"batches\":[{\"id\":1}],\"tasks\":[],\"properties\":[]}");
+                + "\"batches\":[{\"id\":1}],\"workpieces\":[],\"tasks\":[],\"properties\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(1);
@@ -117,7 +117,7 @@ public class ProcessTypeTest {
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
                 + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project\":1,\"template\":false,\"sortHelperStatus\""
                 + ":null,\"processBaseUri\":null,\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"sortHelperImages\":30,\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
+                + "\",\"sortHelperImages\":30,\"workpieces\":[],\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
@@ -126,7 +126,7 @@ public class ProcessTypeTest {
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
                 + "\"docket\":null,\"ruleset\":null,\"project\":null,\"template\":false," + "\"creationDate\":\""
                 + dateFormat.format(process.getCreationDate()) + "\",\"tasks\":[],\"properties\":[],\"batches\":[],"
-                + "\"sortHelperImages\":0,\"sortHelperStatus\":null,\"processBaseUri\":null}");
+                + "\"workpieces\":[],\"sortHelperImages\":0,\"sortHelperStatus\":null,\"processBaseUri\":null}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
