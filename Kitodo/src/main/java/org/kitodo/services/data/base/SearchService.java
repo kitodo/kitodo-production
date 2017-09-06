@@ -490,20 +490,20 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * 
      * @param key
      *            JSON key for searched object
-     * @param ids
-     *            set of id values for searched objects or some objects related to
+     * @param values
+     *            set of values for searched objects or some objects related to
      *            searched object
      * @param contains
      *            determine if results should contain given value or should not
      *            contain given value
      * @return query
      */
-    protected QueryBuilder createSetQuery(String key, Set<Integer> ids, boolean contains) {
-        if (contains && ids.size() > 0) {
-            return termsQuery(key, ids);
-        } else if (!contains && ids != null) {
+    protected QueryBuilder createSetQuery(String key, Set<? extends Object> values, boolean contains) {
+        if (contains && values.size() > 0) {
+            return termsQuery(key, values);
+        } else if (!contains && values != null) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-            return boolQuery.mustNot(termsQuery(key, ids));
+            return boolQuery.mustNot(termsQuery(key, values));
         } else {
             return matchQuery(key, 0);
         }
