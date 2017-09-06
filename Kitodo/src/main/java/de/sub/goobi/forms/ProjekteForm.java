@@ -20,16 +20,23 @@ import de.sub.goobi.helper.Page;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
@@ -37,6 +44,19 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.validation.ValidationException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -62,11 +82,25 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 @Named("ProjekteForm")
 @SessionScoped
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
+
+    private static final HashMap<String, String> configurationFiles;
+    static {
+        configurationFiles = new HashMap<>();
+        configurationFiles.put("PROJECT", "kitodo_projects.xml");
+        configurationFiles.put("DISPLAY_RULES", "kitodo_metadataDisplayRules.xml");
+        configurationFiles.put("DIGITAL_COLLECTIONS", "kitodo_digitalCollections.xml");
+    }
+
+    private String currentConfigurationFile = "";
 
     private Project myProjekt = new Project();
     private ProjectFileGroup myFilegroup;
@@ -90,6 +124,11 @@ public class ProjekteForm extends BasisForm {
     private boolean showStatistics;
 
     private int itemId;
+
+    private String xmlConfigurationString = "";
+
+    private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    private static DocumentBuilder documentBuilder = null;
 
     public ProjekteForm() {
         super();
@@ -239,6 +278,12 @@ public class ProjekteForm extends BasisForm {
     @PostConstruct
     public void initializeProjectList() {
         filterKein();
+        loadXMLConfiguration("PROJECT");
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            logger.error("ERROR: unable to instantiate document builder: " + e.getMessage());
+        }
     }
 
     /**
@@ -799,5 +844,113 @@ public class ProjekteForm extends BasisForm {
 
     public int getItemId() {
         return this.itemId;
+    }
+
+    /**
+     * Return list of projects
+     *
+     * @return list of projects
+     */
+    public List<ProjectDTO> getProjects() {
+        try {
+            return serviceManager.getProjectService().findAll();
+        } catch (DataException e) {
+            logger.error("Unable to load projects: " + e.getMessage());
+            return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Get the XML configuration string.
+     *
+     * @return the XML configuration string
+     */
+    public String getXMLConfiguration() {
+        return this.xmlConfigurationString;
+    }
+
+    /**
+     * Set the XML configuration string.
+     *
+     * @param configuration the XML configuration string
+     */
+    public void setXMLConfiguration(String configuration) {
+        this.xmlConfigurationString = configuration;
+    }
+
+    /**
+     * Load the content of the XML configuration file denoted by 'configurationFile' as a String.
+     */
+    public void loadXMLConfiguration(String configurationName) {
+        try {
+            currentConfigurationFile = configurationFiles.get(configurationName);
+            XMLConfiguration currentConfiguration = new XMLConfiguration(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
+            StringWriter stringWriter = new StringWriter();
+            currentConfiguration.save(stringWriter);
+            this.xmlConfigurationString = stringWriter.toString();
+        } catch (ConfigurationException e) {
+            String errorMessage = "ERROR: Unable to load configuration file for '" + configurationName + "'.";
+            logger.error(errorMessage + " " + e.getMessage());
+            this.xmlConfigurationString = errorMessage;
+        }
+    }
+
+    /**
+     * Save the String 'xmlConfigurationString' to the XML file denoted by 'configurationFile'.
+     */
+    public void saveXMLConfiguration(){
+        try {
+            Document document = documentBuilder.parse(new InputSource(new StringReader(this.xmlConfigurationString)));
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource domSource = new DOMSource(document);
+            File xmlConfigurationFile = new File(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
+            StreamResult streamResult = new StreamResult(new PrintWriter(new FileOutputStream(xmlConfigurationFile, false)));
+            logger.info("Saving configuration to file " + currentConfigurationFile);
+            transformer.transform(domSource, streamResult);
+        } catch (SAXException e) {
+            logger.error("ERROR: error parsing given XML string: " + e.getMessage());
+        } catch (IOException e) {
+            logger.error("ERROR: could not save XML configuration: " + e.getMessage());
+        } catch (TransformerConfigurationException e) {
+            logger.error("ERROR: transformer configuration exception: " + e.getMessage());
+        } catch (TransformerException e) {
+            logger.error("ERROR: transformation failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Check and return whether the given String 'xmlCode' contains well formed XML code or not.
+     *
+     * @param facesContext the current FacesContext
+     * @param uiComponent the component containing the String that is being validated
+     * @param xmlCode XML code that will be validated
+     * @return whether 'xmlCode' is well formed or not
+     */
+    public boolean validateXML (FacesContext facesContext, UIComponent uiComponent, String xmlCode) {
+        if (!Objects.equals(documentBuilder, null)) {
+            InputSource inputSource = new InputSource(new StringReader(xmlCode));
+            try {
+                documentBuilder.parse(inputSource);
+                return true;
+            } catch (SAXException | IOException e) {
+                // parse method throwing an exception implies given xml code is not well formed!
+                facesContext.addMessage(uiComponent.getClientId(), new FacesMessage("ERROR! Given XML NOT well formed: " + e.getMessage()));
+                throw new ValidationException("ERROR! Given XML NOT well formed: " + e.getMessage());
+            }
+        }
+        else {
+            logger.error("ERROR: document builder is null!");
+            return false;
+        }
+    }
+
+    /**
+     * Get name of configuration file currently loaded into frontend editor.
+     *
+     * @return configuration file name
+     */
+    public String getCurrentConfigurationFile() {
+        return currentConfigurationFile;
     }
 }
