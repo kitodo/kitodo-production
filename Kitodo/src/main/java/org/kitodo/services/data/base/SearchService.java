@@ -393,11 +393,25 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            related object id
      * @param related
      *            this method should ba called only with true, if false call method
-     *            getById(Integer id).
+     *            findById(Integer id).
      * @return related DTO object
      */
     public S findById(Integer id, boolean related) throws DataException {
         return convertJSONObjectToDTO(searcher.findDocument(id), related);
+    }
+
+    /**
+     * Find list of DTO objects by query.
+     * 
+     * @param query
+     *            as QueryBuilder object
+     * @param related
+     *            determines if converted object is related to some other object (if
+     *            so, objects related to it are not included in conversion)
+     * @return list of found DTO objects
+     */
+    public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
     /**
