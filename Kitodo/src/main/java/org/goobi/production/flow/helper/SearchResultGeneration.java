@@ -13,25 +13,32 @@ package org.goobi.production.flow.helper;
 
 import de.sub.goobi.helper.Helper;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
-import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProcessDTO;
+import org.kitodo.enums.ObjectType;
+import org.kitodo.services.ServiceManager;
 
 public class SearchResultGeneration {
 
     private String filter = "";
     private boolean showClosedProcesses = false;
     private boolean showArchivedProjects = false;
+    private static ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(SearchResultGeneration.class);
 
     /**
      * Constructor.
@@ -56,23 +63,41 @@ public class SearchResultGeneration {
      */
     @SuppressWarnings("deprecation")
     public HSSFWorkbook getResult() {
-        IEvaluableFilter myFilteredDataSource = new UserDefinedFilter(this.filter);
-        Criteria crit = myFilteredDataSource.getCriteria();
-        crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
+        List<ProcessDTO> processDTOS = new ArrayList<>();
+        BoolQueryBuilder query = new BoolQueryBuilder();
+
+        try {
+            query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false, false,
+                    false);
+        } catch (DataException e) {
+            logger.error(e);
+        }
+        query.must(serviceManager.getProcessService().getQueryTemplate(false));
+
         if (!this.showClosedProcesses) {
-            crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
+            query.mustNot(serviceManager.getProcessService().getQuerySortHelperStatus(true));
         }
         if (!this.showArchivedProjects) {
-            crit.createCriteria("projekt", "project");
-            crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
-        } else {
-            crit.createCriteria("projekt", "project");
+            try {
+                query.mustNot(serviceManager.getProcessService().getQueryProjectArchived(true));
+            } catch (DataException e) {
+                logger.error(e);
+            }
         }
-        Order order = Order.asc("titel");
-        crit.addOrder(order);
-        @SuppressWarnings("unchecked")
-        List<Process> pl = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 
+        try {
+            processDTOS = serviceManager.getProcessService().findByQuery(query,
+                    serviceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+        } catch (DataException e) {
+            logger.error(e);
+        }
+
+        List<Process> processes = new ArrayList<>();
+        try {
+            processes = serviceManager.getProcessService().convertDtosToBeans(processDTOS);
+        } catch (DAOException e) {
+            logger.error(e);
+        }
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Search results");
 
@@ -121,7 +146,7 @@ public class SearchResultGeneration {
         headercell8.setCellValue(Helper.getTranslation("b-number"));
 
         int rowcounter = 2;
-        for (Process p : pl) {
+        for (Process p : processes) {
             HSSFRow row = sheet.createRow(rowcounter);
             HSSFCell cell0 = row.createCell(0);
             cell0.setCellValue(p.getTitle());
@@ -153,10 +178,8 @@ public class SearchResultGeneration {
                     }
                 }
             }
-
             rowcounter++;
         }
-
         return wb;
     }
 }
