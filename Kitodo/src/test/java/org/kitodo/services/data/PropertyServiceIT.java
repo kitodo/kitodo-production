@@ -164,12 +164,12 @@ public class PropertyServiceIT {
     public void shouldFindByValue() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        List<JSONObject> properties = propertyService.findByValue("second", true);
+        List<JSONObject> properties = propertyService.findByValue("second", null, true);
         Integer actual = properties.size();
         Integer expected = 3;
         assertEquals("Properties were not found in index!", expected, actual);
 
-        properties = propertyService.findByValue("second value", true);
+        properties = propertyService.findByValue("second value", null, true);
         actual = properties.size();
         expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
@@ -199,12 +199,12 @@ public class PropertyServiceIT {
     public void shouldFindByTitleAndValue() throws Exception {
         PropertyService propertyService = new PropertyService();
 
-        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", true);
+        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", null, true);
         Integer actual = properties.size();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
 
-        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third", true);
+        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third", null, true);
         actual = properties.size();
         expected = 0;
         assertEquals("Property was found in index!", expected, actual);

@@ -232,7 +232,7 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
 
         List<JSONObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, contains);
+            properties = serviceManager.getPropertyService().findByTitle(title, "workpiece", contains);
         } else if (title == null) {
             properties = serviceManager.getPropertyService().findByValue(value, "workpiece", contains);
         } else {

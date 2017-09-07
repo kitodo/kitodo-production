@@ -580,7 +580,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
 
         List<JSONObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, contains);
+            properties = serviceManager.getPropertyService().findByTitle(title, "process", contains);
         } else if (title == null) {
             properties = serviceManager.getPropertyService().findByValue(value, "process", contains);
         } else {

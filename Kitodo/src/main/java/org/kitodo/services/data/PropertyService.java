@@ -210,20 +210,27 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
     }
 
     /**
-     * Find properties with exact value.
+     * Find properties with exact title for possible certain property type.
      *
-     * @param value
+     * @param title
      *            of the searched property
+     * @param type
+     *            "process", "workpiece" or "template" as String
      * @param contains
      *            of the searched property
      * @return list of JSON objects with properties
      */
-    public List<JSONObject> findByValue(String value, boolean contains) throws DataException {
-        return findByValue(value, null, contains);
+    public List<JSONObject> findByTitle(String title, String type, boolean contains) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("title", title, contains, Operator.AND));
+        if (type != null) {
+            query.must(createSimpleQuery("type", type, true));
+        }
+        return searcher.findDocuments(query.toString());
     }
 
     /**
-     * Find properties with exact value.
+     * Find properties with exact value for possible certain property type.
      *
      * @param value
      *            of the searched property
@@ -233,29 +240,13 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
      *            of the searched property
      * @return list of JSON objects with properties
      */
-    public List<JSONObject> findByValue(String value, String type, boolean contains) throws DataException {
+    List<JSONObject> findByValue(String value, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("value", value, contains, Operator.AND));
         if (type != null) {
             query.must(createSimpleQuery("type", type, true));
         }
         return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find properties with exact title and type. This one is used for searching in
-     * all possible values.
-     *
-     * @param title
-     *            of the searched property
-     * @param value
-     *            of the searched property
-     * @param contains
-     *            true or false
-     * @return list of JSON objects with batches of exact type
-     */
-    public List<JSONObject> findByTitleAndValue(String title, String value, boolean contains) throws DataException {
-        return findByTitleAndValue(title, value, null, contains);
     }
 
     /**
@@ -272,7 +263,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
      *            true or false
      * @return list of JSON objects with batches of exact type
      */
-    public List<JSONObject> findByTitleAndValue(String title, String value, String type, boolean contains)
+    List<JSONObject> findByTitleAndValue(String title, String value, String type, boolean contains)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, contains, Operator.AND));

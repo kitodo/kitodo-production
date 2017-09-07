@@ -245,7 +245,7 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
 
         List<JSONObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, contains);
+            properties = serviceManager.getPropertyService().findByTitle(title, "template", contains);
         } else if (title == null) {
             properties = serviceManager.getPropertyService().findByValue(value, "template", contains);
         } else {
