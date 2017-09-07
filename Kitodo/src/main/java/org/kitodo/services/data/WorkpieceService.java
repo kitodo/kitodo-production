@@ -223,19 +223,22 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
      *            of property
      * @param value
      *            of property
+     * @param contains
+     *            true or false
      * @return list of JSON objects with workpieces for specific property
      */
-    List<JSONObject> findByProperty(String title, String value) throws DataException {
+    List<JSONObject> findByProperty(String title, String value, boolean contains) throws DataException {
         Set<Integer> propertyIds = new HashSet<>();
 
         List<JSONObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, true);
+            properties = serviceManager.getPropertyService().findByTitle(title, "workpiece", contains);
         } else if (title == null) {
-            properties = serviceManager.getPropertyService().findByValue(value, true);
+            properties = serviceManager.getPropertyService().findByValue(value, "workpiece", contains);
         } else {
-            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, "workpiece", contains);
         }
+
         for (JSONObject property : properties) {
             propertyIds.add(getIdFromJSONObject(property));
         }

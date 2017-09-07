@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -211,33 +210,67 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
     }
 
     /**
-     * Find properties with exact value.
+     * Find properties with exact title for possible certain property type.
      *
-     * @param value
+     * @param title
      *            of the searched property
+     * @param type
+     *            "process", "workpiece" or "template" as String
      * @param contains
      *            of the searched property
      * @return list of JSON objects with properties
      */
-    public List<JSONObject> findByValue(String value, boolean contains) throws DataException {
-        QueryBuilder query = createSimpleQuery("value", value, contains, Operator.AND);
+    public List<JSONObject> findByTitle(String title, String type, boolean contains) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("title", title, contains, Operator.AND));
+        if (type != null) {
+            query.must(createSimpleQuery("type", type, true));
+        }
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find properties with exact value for possible certain property type.
+     *
+     * @param value
+     *            of the searched property
+     * @param type
+     *            "process", "workpiece" or "template" as String
+     * @param contains
+     *            of the searched property
+     * @return list of JSON objects with properties
+     */
+    List<JSONObject> findByValue(String value, String type, boolean contains) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("value", value, contains, Operator.AND));
+        if (type != null) {
+            query.must(createSimpleQuery("type", type, true));
+        }
         return searcher.findDocuments(query.toString());
     }
 
     /**
      * Find properties with exact title and type. Necessary to assure that user
-     * pickup type from the list which contains enums.
+     * pickup type from the list which contains enums. //TODO:add enum in future
      *
      * @param title
      *            of the searched property
      * @param value
      *            of the searched property
+     * @param type
+     *            "process", "workpiece" or "template" as String
+     * @param contains
+     *            true or false
      * @return list of JSON objects with batches of exact type
      */
-    public List<JSONObject> findByTitleAndValue(String title, String value) throws DataException {
+    List<JSONObject> findByTitleAndValue(String title, String value, String type, boolean contains)
+            throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("title", title, true, Operator.AND));
-        query.must(createSimpleQuery("value", value, true, Operator.AND));
+        query.must(createSimpleQuery("title", title, contains, Operator.AND));
+        query.must(createSimpleQuery("value", value, contains, Operator.AND));
+        if (type != null) {
+            query.must(createSimpleQuery("type", type, true));
+        }
         return searcher.findDocuments(query.toString());
     }
 
