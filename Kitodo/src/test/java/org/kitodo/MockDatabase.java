@@ -272,9 +272,9 @@ public class MockDatabase {
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {
-        Property firstProcessProperty = new Property();
+        Process firstProcess = serviceManager.getProcessService().getById(1);
 
-        Process process = serviceManager.getProcessService().getById(1);
+        Property firstProcessProperty = new Property();
         firstProcessProperty.setTitle("Process Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
@@ -283,7 +283,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.setContainer(1);
-        firstProcessProperty.getProcesses().add(process);
+        firstProcessProperty.getProcesses().add(firstProcess);
         serviceManager.getPropertyService().save(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
@@ -295,7 +295,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
         secondProcessProperty.setContainer(2);
-        secondProcessProperty.getProcesses().add(process);
+        secondProcessProperty.getProcesses().add(firstProcess);
         serviceManager.getPropertyService().save(secondProcessProperty);
 
         Property thirdProcessProperty = new Property();
@@ -307,13 +307,30 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
         thirdProcessProperty.setContainer(2);
-        thirdProcessProperty.getProcesses().add(process);
+        thirdProcessProperty.getProcesses().add(firstProcess);
         serviceManager.getPropertyService().save(thirdProcessProperty);
 
-        process.getProperties().add(firstProcessProperty);
-        process.getProperties().add(secondProcessProperty);
-        process.getProperties().add(thirdProcessProperty);
-        serviceManager.getProcessService().save(process);
+        Process secondProcess = serviceManager.getProcessService().getById(2);
+        Property fourthProcessProperty = new Property();
+        fourthProcessProperty.setTitle("Korrektur notwendig");
+        fourthProcessProperty.setValue("improved ids");
+        fourthProcessProperty.setObligatory(false);
+        fourthProcessProperty.setType(PropertyType.CommandLink);
+        fourthProcessProperty.setChoice("chosen");
+        localDate = new LocalDate(2017, 7, 15);
+        fourthProcessProperty.setCreationDate(localDate.toDate());
+        fourthProcessProperty.setContainer(2);
+        fourthProcessProperty.getProcesses().add(secondProcess);
+        serviceManager.getPropertyService().save(fourthProcessProperty);
+
+        firstProcess.getProperties().add(firstProcessProperty);
+        firstProcess.getProperties().add(secondProcessProperty);
+        firstProcess.getProperties().add(thirdProcessProperty);
+        serviceManager.getProcessService().save(firstProcess);
+
+        secondProcess.getProperties().add(fourthProcessProperty);
+        serviceManager.getProcessService().save(secondProcess);
+
     }
 
     private static void insertProjects() throws DAOException, DataException {

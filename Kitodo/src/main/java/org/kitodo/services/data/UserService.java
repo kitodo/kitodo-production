@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -455,25 +457,14 @@ public class UserService extends SearchService<User, UserDTO> {
      * @return list of JSON objects with users for specific filter
      */
     List<JSONObject> findByFilter(String value) throws DataException {
-        List<JSONObject> users = new ArrayList<>();
+        Set<Integer> filterIds = new HashSet<>();
 
         List<JSONObject> filters = serviceManager.getFilterService().findByValue(value, true);
-        for (JSONObject filter : filters) {
-            users.addAll(findByFilterId(getIdFromJSONObject(filter)));
-        }
-        return users;
-    }
 
-    /**
-     * Simulate relationship between filter and user type.
-     *
-     * @param id
-     *            of filter
-     * @return list of JSON objects with users for specific filter id
-     */
-    private List<JSONObject> findByFilterId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("filters.id", id, true);
-        return searcher.findDocuments(query.toString());
+        for (JSONObject filter : filters) {
+            filterIds.add(getIdFromJSONObject(filter));
+        }
+        return searcher.findDocuments(createSetQuery("filters.id", filterIds, true).toString());
     }
 
     /**
