@@ -107,8 +107,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private Process myProzess = new Process();
     private Task mySchritt = new Task();
     private StatisticsManager statisticsManager;
-    // TODO: fix assiging of it...
-    private List filteredDataSource;
     private List<ProcessCounterObject> myAnzahlList;
     private HashMap<String, Integer> myAnzahlSummary;
     private Property myProzessEigenschaft;
@@ -132,6 +130,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private Map<Integer, PropertyListObject> containers = new TreeMap<>();
     private Integer container;
     private String addToWikiField = "";
+    private List<ProcessDTO> processDTOS = new ArrayList<>();
     private boolean showStatistics = false;
     private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
@@ -154,10 +153,12 @@ public class ProzessverwaltungForm extends BasisForm {
          * Vorgangsdatum generell anzeigen?
          */
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login.getMyBenutzer() != null) {
-            this.anzeigeAnpassen.put("processDate", login.getMyBenutzer().isConfigProductionDateShow());
-        } else {
-            this.anzeigeAnpassen.put("processDate", false);
+        if (login != null) {
+            if (login.getMyBenutzer() != null) {
+                this.anzeigeAnpassen.put("processDate", login.getMyBenutzer().isConfigProductionDateShow());
+            } else {
+                this.anzeigeAnpassen.put("processDate", false);
+            }
         }
         DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
 
@@ -393,25 +394,22 @@ public class ProzessverwaltungForm extends BasisForm {
         this.statisticsManager = null;
         this.myAnzahlList = null;
 
-        List<ProcessDTO> processes;
-
         try {
             if (!showClosedProcesses) {
                 if (!showArchivedProjects) {
-                    processes = serviceManager.getProcessService().findNotClosedAndNotArchivedProcesses(sortList());
+                    this.processDTOS = serviceManager.getProcessService().findNotClosedAndNotArchivedProcesses(sortList());
                 } else {
-                    processes = serviceManager.getProcessService().findNotClosedProcesses(sortList());
+                    this.processDTOS = serviceManager.getProcessService().findNotClosedProcesses(sortList());
                 }
             } else {
                 if (!this.showArchivedProjects) {
-                    processes = serviceManager.getProcessService().findNotArchivedProcesses(sortList());
+                    this.processDTOS = serviceManager.getProcessService().findNotArchivedProcesses(sortList());
                 } else {
-                    processes = serviceManager.getProcessService().findAll(sortList());
+                    this.processDTOS = serviceManager.getProcessService().findAll(sortList());
                 }
             }
 
-            this.page = new Page<>(0, processes);
-
+            this.page = new Page<>(0, this.processDTOS);
         } catch (DataException e) {
             Helper.setFehlerMeldung("ProzessverwaltungForm.FilterAktuelleProzesse", e);
             return null;
@@ -426,18 +424,17 @@ public class ProzessverwaltungForm extends BasisForm {
     public String FilterVorlagen() {
         this.statisticsManager = null;
         this.myAnzahlList = null;
-        List<ProcessDTO> templates = new ArrayList<>();
         try {
             if (!this.showArchivedProjects) {
-                templates = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
+                this.processDTOS = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
             } else {
-                templates = serviceManager.getProcessService().findAllTemplates(sortList());
+                this.processDTOS = serviceManager.getProcessService().findAllTemplates(sortList());
             }
         } catch (DataException e) {
             logger.error(e);
         }
 
-        this.page = new Page<>(0, templates);
+        this.page = new Page<>(0, this.processDTOS);
         this.modusAnzeige = "vorlagen";
         return "/pages/ProzessverwaltungAlle";
     }
@@ -1596,7 +1593,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Statistische Auswertung.
      */
     public void setStatisticsStatusVolumes() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
     }
@@ -1605,7 +1602,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Statistic UserGroups.
      */
     public void setStatisticsUserGroups() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
     }
@@ -1614,27 +1611,27 @@ public class ProzessverwaltungForm extends BasisForm {
      * Statistic runtime Tasks.
      */
     public void setStatisticsRuntimeSteps() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void setStatisticsProduction() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void setStatisticsStorage() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void setStatisticsCorrection() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void setStatisticsTroughput() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
@@ -1642,7 +1639,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Project's statistics.
      */
     public void setStatisticsProject() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.filteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.processDTOS,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
     }
