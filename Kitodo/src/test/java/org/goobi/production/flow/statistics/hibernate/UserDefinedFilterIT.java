@@ -100,13 +100,6 @@ public class UserDefinedFilterIT {
         assertNotNull(obs);
     }
 
-    @Test
-    public void testStepDone() {
-        int stepdone = filter.stepDone();
-        assertNotNull(stepdone);
-        assertEquals(5, stepdone);
-    }
-
     @Test(expected = UnsupportedOperationException.class)
     public void testSetSQL() {
         filter.setSQL("someString");

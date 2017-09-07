@@ -101,7 +101,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
         // following was moved to Filter Helper
         // limitToUserAssignedSteps(crit);
 
-        String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, null, stepOpenOnly,
+        String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, stepOpenOnly,
                 userAssignedStepsOnly, clearSession);
 
         if (message.length() > 0) {

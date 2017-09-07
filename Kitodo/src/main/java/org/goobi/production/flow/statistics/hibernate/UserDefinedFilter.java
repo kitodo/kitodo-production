@@ -52,18 +52,18 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     private String myFilterExpression = null;
     private List<Integer> myIds = null;
     private Dispatcher myObservable;
-    private Parameters myParameter = new Parameters();
+    private Integer exactStepDone = null;
 
     /**
      * Constructor using an Array of Integers representing the ids of the
-     * Objects that need to be selected
+     * Objects that need to be selected.
      */
     public UserDefinedFilter(List<Integer> selectIDs) {
         myIds = new ArrayList<>(selectIDs);
     }
 
     /**
-     * Constructor using the user generated search string
+     * Constructor using the user generated search string.
      *
      */
     public UserDefinedFilter(String filter) {
@@ -143,7 +143,6 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public UserDefinedFilter clone() {
-
         UserDefinedFilter udf = new UserDefinedFilter(myFilterExpression);
         udf.setObservable(myObservable);
         return udf;
@@ -169,7 +168,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
          * combine all parameters together this part was exported to
          * FilterHelper so that other Filters could access it
          */
-        String message = FilterHelper.criteriaBuilder(session, inFilter, crit, null, myParameter, false, null, true);
+        String message = FilterHelper.criteriaBuilder(session, inFilter, crit, null, false, null, true);
         if (message.length() > 0) {
             myObservable.setMessage(message);
         }
@@ -275,7 +274,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public Integer stepDone() {
-        return myParameter.getExactStepDone();
+        return exactStepDone;
     }
 
     /*
@@ -289,19 +288,6 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     public void setSQL(String sqlString) {
         throw new UnsupportedOperationException(
                 "The class " + this.getClass().getName() + " does not implement setSQL() ");
-    }
-
-    protected static class Parameters {
-        private Integer exactStepDone = null;
-
-        protected void setStepDone(Integer exactStepDone) {
-            this.exactStepDone = exactStepDone;
-        }
-
-        private Integer getExactStepDone() {
-            return exactStepDone;
-        }
-
     }
 
     @Override
