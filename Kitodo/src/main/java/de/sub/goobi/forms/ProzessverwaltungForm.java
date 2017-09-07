@@ -410,7 +410,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
 
-            this.page = new Page(0, processes);
+            this.page = new Page<>(0, processes);
 
         } catch (DataException e) {
             Helper.setFehlerMeldung("ProzessverwaltungForm.FilterAktuelleProzesse", e);
@@ -437,7 +437,7 @@ public class ProzessverwaltungForm extends BasisForm {
             logger.error(e);
         }
 
-        this.page = new Page(0, templates);
+        this.page = new Page<>(0, templates);
         this.modusAnzeige = "vorlagen";
         return "/pages/ProzessverwaltungAlle";
     }
@@ -515,7 +515,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
 
-            this.page = new Page(0, processes);
+            this.page = new Page<>(0, processes);
         } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;

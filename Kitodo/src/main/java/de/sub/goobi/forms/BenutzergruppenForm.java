@@ -96,7 +96,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String filterKein() {
         try {
             List<UserGroupDTO> userGroups = serviceManager.getUserGroupService().findAll();
-            this.page = new Page(0, userGroups);
+            this.page = new Page<>(0, userGroups);
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not read", e.getMessage());
             logger.error(e);

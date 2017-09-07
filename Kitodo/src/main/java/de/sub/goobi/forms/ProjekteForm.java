@@ -222,7 +222,7 @@ public class ProjekteForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        this.page = new Page(0, projects);
+        this.page = new Page<>(0, projects);
         return "/pages/ProjekteAlle";
     }
 

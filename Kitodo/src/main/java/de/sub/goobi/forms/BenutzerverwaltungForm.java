@@ -86,7 +86,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        this.page = new Page(0, users);
+        this.page = new Page<>(0, users);
         return "/pages/BenutzerAlle";
     }
 
@@ -118,7 +118,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        this.page = new Page(0, users);
+        this.page = new Page<>(0, users);
         return "/pages/BenutzerAlle";
     }
 

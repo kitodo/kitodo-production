@@ -151,7 +151,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     tasks = serviceManager.getTaskService().findOpenTasksForCurrentUser(sortList());
                 }
             }
-            this.page = new Page(0, tasks);
+            this.page = new Page<>(0, tasks);
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error on reading ElasticSearch: ", e.getMessage());
             return null;
