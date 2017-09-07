@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -57,5 +59,16 @@ public abstract class TitleSearchService<T extends BaseBean, S extends BaseDTO> 
      */
     public QueryBuilder getQueryTitle(String title, boolean contains) throws DataException {
         return createSimpleQuery("title", title, contains, Operator.AND);
+    }
+
+    /**
+     * Sort results by title.
+     * 
+     * @param sortOrder
+     *            ASC or DESC as SortOrder
+     * @return sort as String
+     */
+    public String sortByTitle(SortOrder sortOrder) {
+        return SortBuilders.fieldSort("title").order(sortOrder).toString();
     }
 }

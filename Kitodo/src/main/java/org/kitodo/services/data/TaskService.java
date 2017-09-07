@@ -264,7 +264,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         processingStatus.add(2);
 
         if (!open && !inProcessing) {
-            boolQuery.must(createSetQuery("processingStatus", processingStatus, true));
+            boolQuery.must(getQueryForProcessingStatus(processingStatus));
         } else if (open && !inProcessing) {
             boolQuery.must(createSimpleQuery("processingStatus", 1, true));
         } else if (!open && inProcessing) {
@@ -295,6 +295,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return count(boolQuery.toString());
     }
 
+    public QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
+        return createSetQuery("processingStatus", processingStatus, true);
+    }
+
     /**
      * Find tasks by id of process.
      *
@@ -307,7 +311,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return searcher.findDocuments(query.toString());
     }
 
-    QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
+    public QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
         return createSetQuery("process", processIds, true);
     }
 

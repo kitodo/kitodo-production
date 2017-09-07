@@ -95,6 +95,7 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
@@ -651,20 +652,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return createSimpleQuery("template", template, true);
     }
 
-    private QueryBuilder getQuerySortHelperStatus(boolean closed) {
+    public QueryBuilder getQuerySortHelperStatus(boolean closed) {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("sortHelperStatus", "100000000", closed));
         query.should(createSimpleQuery("sortHelperStatus", "100000000000", closed));
         return query;
     }
 
-    private QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
-        List<JSONObject> processesAccordingToArchive = serviceManager.getProjectService().findByArchived(archived);
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        for (JSONObject singleProcess : processesAccordingToArchive) {
-            query.should(createSimpleQuery("project", getIdFromJSONObject(singleProcess), true));
-        }
-        return query;
+    public QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
+        List<ProjectDTO> projects = serviceManager.getProjectService().findByArchived(archived, true);
+        return createSetQuery("project", serviceManager.getFilterService().collectIds(projects), true);
     }
 
     public String sortByCreationDate(SortOrder sortOrder) {

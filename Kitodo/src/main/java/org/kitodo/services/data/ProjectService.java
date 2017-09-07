@@ -269,11 +269,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      * @param archived
      *            if true - find archived projects, if false - find not archived
      *            projects
-     * @return list of JSON objects
+     * @return list of ProjectDTO objects
      */
-    List<JSONObject> findByArchived(Boolean archived) throws DataException {
+    List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
         QueryBuilder query = createSimpleQuery("archived", archived.toString(), true);
-        return searcher.findDocuments(query.toString());
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
     /**
