@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
 import org.goobi.production.flow.statistics.StepInformation;
@@ -35,6 +34,8 @@ import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.dto.BaseDTO;
+import org.kitodo.dto.ProcessDTO;
 
 /**
  * Imlpementation of {@link IStatisticalQuestion}. This is used for the
@@ -65,9 +66,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     private boolean isDirty = true;
 
     /**
-     * loops included means that all step open all stepdone are considered loops
-     * not included means that only min(date) or max(date) - depending on option
-     * in.
+     * Loops included means that all step open all stepdone are considered loops not
+     * included means that only min(date) or max(date) - depending on option in.
      *
      * @see HistoryTypeEnum
      *
@@ -188,18 +188,30 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
         return dataRow;
     }
 
-    public void setDataSource(IDataSource inSource) {
+    /**
+     * Set data source.
+     * 
+     * @param source
+     *            list of DTO objects
+     */
+    public void setDataSource(List<? extends BaseDTO> source) {
         // gathering IDs from the filter passed by dataSource
-        try {
-            this.myIDlist = ((IEvaluableFilter) inSource).getIDList();
-        } catch (UnsupportedOperationException e) {
-            logger.warn(e);
-        }
+        this.myIDlist = getIds(source);
         this.isDirty = true;
     }
 
+    @SuppressWarnings("unchecked")
+    private List<Integer> getIds(List<? extends BaseDTO> dataSource) {
+        List<Integer> ids = new ArrayList<>();
+        for (ProcessDTO process : (List<ProcessDTO>) dataSource) {
+            ids.add(process.getId());
+        }
+        return ids;
+    }
+
     /**
-     *
+     * Get reference curve.
+     * 
      * @return if reference curve is used of average production
      */
     public Boolean getReferenceCurve() {
@@ -237,9 +249,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables
-     * (org.goobi.production.flow.statistics.IDataSource)
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables
+     * (List)
      */
     private DataTable getDataTable() {
         if (this.myDataTable != null && !this.isDirty) {
@@ -327,13 +338,13 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
     /**
      * Method generates a DataTable based on the input SQL. Methods success is
-     * depending on a very specific data structure ... so don't use it if you
-     * don't exactly understand it
+     * depending on a very specific data structure ... so don't use it if you don't
+     * exactly understand it
      *
      *
      * @param natSQL
-     *            , headerFromSQL -> to be used, if headers need to be read in
-     *            first in order to get a certain sorting
+     *            headerFromSQL -> to be used, if headers need to be read in first
+     *            in order to get a certain sorting
      * @return DataTable
      */
     private DataTable buildDataTableFromSQL(String natSQL) {
@@ -527,8 +538,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
      * (org.goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override

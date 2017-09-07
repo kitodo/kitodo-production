@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -32,6 +31,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.dto.BaseDTO;
+import org.kitodo.dto.ProcessDTO;
 
 /**
  * This class is an implementation of
@@ -60,9 +61,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     private static final Logger logger = LogManager.getLogger(StatQuestProduction.class);
 
     /**
-     * IDataSource needs here to be an implementation of
-     * hibernate.IEvaluableFilter, which is a hibernate based extension of
-     * IDataSource
+     * List objects here need to extend BaseDTO.
      *
      * <p>
      * (non-Javadoc)
@@ -72,7 +71,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
      *      List)
      */
     @Override
-    public List<DataTable> getDataTables(List dataSource) {
+    public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
 
         // contains an intger representing "reihenfolge" in schritte, as defined
         // for this request
@@ -82,19 +81,11 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         String stepname = null;
         List<DataTable> allTables = new ArrayList<>();
 
-        IEvaluableFilter originalFilter;
-
-        if (dataSource instanceof IEvaluableFilter) {
-            originalFilter = (IEvaluableFilter) dataSource;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-        }
-
         // gathering some information from the filter passed by dataSource
         // exactStepDone is very important ...
 
-        try {
+        //TODO; find way to replace it
+        /*try {
             exactStepDone = originalFilter.stepDone();
         } catch (UnsupportedOperationException e1) {
             logger.error(e1);
@@ -103,15 +94,10 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
             stepname = originalFilter.stepDoneName();
         } catch (UnsupportedOperationException e1) {
             logger.error(e1);
-        }
+        }*/
 
         // we have to build a query from scratch by reading the ID's
-        List<Integer> idList = null;
-        try {
-            idList = originalFilter.getIDList();
-        } catch (UnsupportedOperationException e) {
-            logger.error(e);
-        }
+        List<Integer> idList = getIds(dataSource);
         if (idList == null || idList.size() == 0) {
             return null;
         }
@@ -177,7 +163,6 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
                 // building up row depending on requested output having
                 // different fields
                 switch (this.cu) {
-
                     case volumesAndPages: {
                         dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
                                 (new Converter(objArr[0]).getDouble()));
@@ -198,7 +183,6 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
                         dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
                     }
                         break;
-
                 }
 
                 // fall back, if conversion triggers an exception
@@ -225,7 +209,15 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         allTables.add(dtblChart);
         allTables.add(dtbl);
         return allTables;
+    }
 
+    @SuppressWarnings("unchecked")
+    private List<Integer> getIds(List<? extends BaseDTO> dataSource) {
+        List<Integer> ids = new ArrayList<>();
+        for (ProcessDTO process : (List<ProcessDTO>) dataSource) {
+            ids.add(process.getId());
+        }
+        return ids;
     }
 
     /*

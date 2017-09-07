@@ -20,7 +20,6 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -28,6 +27,7 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.kitodo.dto.BaseDTO;
 
 /**
  * Implementation of {@link IStatisticalQuestion}. Statistical Request with
@@ -45,32 +45,22 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
      * List)
      */
     @Override
-    public List<DataTable> getDataTables(List dataSource) {
-
-        IEvaluableFilter originalFilter;
-
-        if (dataSource instanceof IEvaluableFilter) {
-            originalFilter = (IEvaluableFilter) dataSource;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-        }
-
+    public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
         ProjectionList proj = Projections.projectionList();
         proj.add(Projections.count("id"));
         proj.add(Projections.groupProperty("project.title"));
 
         Criteria crit;
 
-        if (originalFilter instanceof UserDefinedFilter) {
+        //TODO: fix it
+         /*if (originalFilter instanceof UserDefinedFilter) {
             crit = new UserDefinedFilter(originalFilter.getIDList()).getCriteria();
             crit.createCriteria("project", "project");
         } else {
             crit = originalFilter.clone().getCriteria();
         }
-
         // use a clone on the filter and apply the projection on the clone
-        crit.setProjection(proj);
+        crit.setProjection(proj);*/
 
         String title = StatisticsMode.getByClassName(this.getClass()).getTitle();
 
@@ -78,7 +68,8 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
         dtbl.setShowableInPieChart(true);
         DataRow dRow = new DataRow(Helper.getTranslation("count"));
 
-        for (Object obj : crit.list()) {
+        //TODO: replace empty list with result list
+        for (Object obj : new ArrayList<>()) {
             Object[] objArr = (Object[]) obj;
             dRow.addValue(new Converter(objArr[1]).getString(),
                     new Converter(new Converter(objArr[0]).getInteger()).getDouble());

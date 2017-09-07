@@ -94,7 +94,6 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
 
         subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(myTimeUnit, "history.date") + " "
                 + "AS 'intervall', history.date AS 'timeLimiter', history.stringValue AS 'stepName' " + "FROM "
-
                 + "(SELECT DISTINCT h.numericValue, h.stringValue, " + timeLimiter + " as date, h.process_id, h.type "
                 + "FROM history h " + "WHERE " + innerWhereClause + groupInnerSelect + ") AS history " + ") AS table_1";
 

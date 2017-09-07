@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -31,6 +29,8 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
+import org.kitodo.dto.BaseDTO;
+import org.kitodo.dto.ProcessDTO;
 
 /**
  * Implementation of {@link IStatisticalQuestion}. Statistical Request with
@@ -43,13 +43,11 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     private Date timeFilterFrom;
     private TimeUnit timeGrouping;
     private Date timeFilterTo;
-    private static final Logger logger = LogManager.getLogger(StatQuestStorage.class);
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
      * org.goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override
@@ -60,38 +58,25 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
      * List)
      */
     @Override
-    public List<DataTable> getDataTables(List dataSource) {
+    public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
         List<DataTable> allTables = new ArrayList<>();
-        IEvaluableFilter originalFilter;
-
-        if (dataSource instanceof IEvaluableFilter) {
-            originalFilter = (IEvaluableFilter) dataSource;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-        }
 
         // gathering IDs from the filter passed by dataSource
-        List<Integer> IDlist = null;
-        try {
-            IDlist = originalFilter.getIDList();
-        } catch (UnsupportedOperationException e) {
-            logger.error(e);
-        }
-        if (IDlist == null || IDlist.size() == 0) {
+        List<Integer> idList = getIds(dataSource);
+
+        if (idList == null || idList.size() == 0) {
             return null;
         }
 
+        // TODO: filter results according to date without sql query
         // adding time restrictions
-        String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL();
+        String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, idList).getSQL();
 
         Session session = Helper.getHibernateSession();
-
         SQLQuery query = session.createSQLQuery(natSQL);
 
         // needs to be there otherwise an exception is thrown
@@ -114,14 +99,10 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
             // TODO: Don't use arrays
             Object[] objArr = (Object[]) obj;
             try {
-
                 // getting localized time group unit
                 // setting row name with date/time extraction based on the group
-
                 dataRow.setName(new Converter(objArr[1]).getString() + "");
-
                 dataRow.addValue(Helper.getTranslation("storageDifference"), (new Converter(objArr[0]).getGB()));
-
             } catch (Exception e) {
                 dataRow.addValue(e.getMessage(), 0.0);
             }
@@ -131,11 +112,19 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
         }
 
         // a list of DataTables is expected as return Object, even if there is
-        // only one
-        // Data Table as it is here in this implementation
+        // only one Data Table as it is here in this implementation
         dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
         allTables.add(dtbl);
         return allTables;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Integer> getIds(List<? extends BaseDTO> dataSource) {
+        List<Integer> ids = new ArrayList<>();
+        for (ProcessDTO process : (List<ProcessDTO>) dataSource) {
+            ids.add(process.getId());
+        }
+        return ids;
     }
 
     /*

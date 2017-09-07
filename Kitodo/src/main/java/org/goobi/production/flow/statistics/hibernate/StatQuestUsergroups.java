@@ -18,16 +18,23 @@ import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.BaseDTO;
+import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.TaskDTO;
+import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Implementation of {@link IStatisticalQuestion}. Statistical Request with
@@ -37,6 +44,9 @@ import org.kitodo.data.database.beans.UserGroup;
  */
 public class StatQuestUsergroups implements IStatisticalQuestion {
 
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(StatQuestUsergroups.class);
+
     /*
      * (non-Javadoc)
      * 
@@ -45,33 +55,31 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
      * List)
      */
     @Override
-    public List<DataTable> getDataTables(List dataSource) {
+    public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
+        BoolQueryBuilder taskQuery = new BoolQueryBuilder();
 
-        IEvaluableFilter originalFilter;
+        Set<Integer> processingStatus = new HashSet<>();
+        processingStatus.add(1);
+        processingStatus.add(2);
 
-        if (dataSource instanceof IEvaluableFilter) {
-            originalFilter = (IEvaluableFilter) dataSource;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+        taskQuery.should(serviceManager.getTaskService().getQueryForProcessingStatus(processingStatus));
+        taskQuery.should(serviceManager.getTaskService().getQueryProcessIds(getIds(dataSource)));
+
+        List<TaskDTO> taskDTOS = new ArrayList<>();
+        try {
+            taskDTOS = serviceManager.getTaskService().findByQuery(taskQuery, false);
+        } catch (DataException e) {
+            logger.error(e);
         }
 
-        Criteria crit = Helper.getHibernateSession().createCriteria(Task.class);
-        crit.add(Restrictions.or(Restrictions.eq("processingStatus", 1), Restrictions.like("processingStatus", 2)));
-
-        if (originalFilter instanceof UserDefinedFilter) {
-            crit.createCriteria("process", "proz");
-            crit.add(Restrictions.in("proz.id", originalFilter.getIDList()));
-        }
         String title = StatisticsMode.getByClassName(this.getClass()).getTitle();
 
         DataTable dtbl = new DataTable(title);
         dtbl.setShowableInPieChart(true);
         DataRow dRow = new DataRow(Helper.getTranslation("count"));
 
-        for (Object obj : crit.list()) {
-            Task step = (Task) obj;
-            for (UserGroup group : step.getUserGroups()) {
+        for (TaskDTO taskDTO : taskDTOS) {
+            for (UserGroupDTO group : taskDTO.getUserGroups()) {
                 dRow.addValue(group.getTitle(), dRow.getValue(group.getTitle()) + 1);
             }
         }
@@ -82,6 +90,15 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
         dtbl.setUnitLabel(Helper.getTranslation("benutzergruppe"));
         allTables.add(dtbl);
         return allTables;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Integer> getIds(List<? extends BaseDTO> dataSource) {
+        Set<Integer> ids = new HashSet<>();
+        for (ProcessDTO process : (List<ProcessDTO>) dataSource) {
+            ids.add(process.getId());
+        }
+        return ids;
     }
 
     /*

@@ -20,11 +20,11 @@ import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataTable;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.Ignore;
@@ -34,7 +34,7 @@ public class StatQuestStorageTest {
 
     StatQuestStorage test = new StatQuestStorage();
     Locale locale = new Locale("GERMAN");
-    IDataSource testFilter = new UserDefinedFilter("stepdone:5");
+    private List testFilter = new ArrayList();
 
     @Test
     public void testSetTimeUnit() {
@@ -44,9 +44,8 @@ public class StatQuestStorageTest {
     @Ignore("Crashing")
     @Test
     public void testGetDataTables() {
-        IDataSource testFilter = new UserDefinedFilter("stepdone:5");
         test.setTimeUnit(TimeUnit.days);
-        List<DataTable> table = test.getDataTables(testFilter.getSourceData());
+        List<DataTable> table = test.getDataTables(testFilter);
         assertNotNull(table);
     }
 

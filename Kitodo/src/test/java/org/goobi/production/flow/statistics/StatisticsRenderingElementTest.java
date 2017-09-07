@@ -19,10 +19,11 @@ import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigCore;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
-import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,8 +31,8 @@ import org.junit.Test;
 public class StatisticsRenderingElementTest {
 
     private Locale locale = new Locale("GERMAN");
-    private IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-    private StatisticsManager testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter.getSourceData(), locale);
+    private List testFilter = new ArrayList();
+    private StatisticsManager testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
     private DataTable inDataTable = new DataTable("testTable");
     private IStatisticalQuestion inQuestion = testManager.getStatisticMode().getStatisticalQuestion();
     private StatisticsRenderingElement testElement = new StatisticsRenderingElement(inDataTable, inQuestion);
