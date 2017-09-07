@@ -56,6 +56,8 @@ import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -645,7 +647,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
-    QueryBuilder getQueryTemplate(boolean template) {
+    public QueryBuilder getQueryTemplate(boolean template) {
         return createSimpleQuery("template", template, true);
     }
 
@@ -663,6 +665,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
             query.should(createSimpleQuery("project", getIdFromJSONObject(singleProcess), true));
         }
         return query;
+    }
+
+    public String sortByCreationDate(SortOrder sortOrder) {
+        return SortBuilders.fieldSort("creationDate").order(sortOrder).toString();
     }
 
     /**
