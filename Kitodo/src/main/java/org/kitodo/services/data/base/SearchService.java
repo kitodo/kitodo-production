@@ -402,7 +402,7 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
 
     /**
      * Find list of DTO objects by query.
-     * 
+     *
      * @param query
      *            as QueryBuilder object
      * @param related
@@ -412,6 +412,45 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      */
     public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
+    }
+
+    /**
+     * Find list of DTO objects by query.
+     *
+     * @param query
+     *            as QueryBuilder object
+     * @param sort
+     *            as String
+     * @param related
+     *            determines if converted object is related to some other object (if
+     *            so, objects related to it are not included in conversion)
+     * @return list of found DTO objects
+     */
+    public List<S> findByQuery(QueryBuilder query, String sort, boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort), related);
+    }
+
+    /**
+     * Find list of sorted DTO objects by query with defined offset and size of
+     * results.
+     *
+     * @param query
+     *            as QueryBuilder object
+     * @param sort
+     *            as String
+     * @param offset
+     *            as Integer
+     * @param size
+     *            as Integer
+     * @param related
+     *            determines if converted object is related to some other object (if
+     *            so, objects related to it are not included in conversion)
+     * @return list of found DTO objects
+     */
+    public List<S> findByQuery(QueryBuilder query, String sort, Integer offset, Integer size, boolean related)
+            throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size),
+                related);
     }
 
     /**
