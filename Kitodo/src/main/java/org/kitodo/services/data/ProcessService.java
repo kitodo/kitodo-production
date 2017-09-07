@@ -462,10 +462,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *
      * @param id
      *            of project
-     * @return list of JSON objects with processes for specific process id
+     * @return list of ProcessDTO objects with processes for specific process id
      */
-    public List<JSONObject> findByProjectId(Integer id) throws DataException {
-        return searcher.findDocuments(getQueryProjectId(id).toString());
+    public List<ProcessDTO> findByProjectId(Integer id, boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getQueryProjectId(id).toString()), related);
     }
 
     /**

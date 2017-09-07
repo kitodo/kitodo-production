@@ -13,6 +13,7 @@ package de.sub.goobi.forms;
 
 import static org.junit.Assert.assertEquals;
 
+import org.goobi.production.flow.statistics.StatisticsManager;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,5 +46,20 @@ public class ProjekteFormIT {
 
         assertEquals("Number of pages was not counted correctly!", Integer.valueOf(50), project.getNumberOfPages());
         assertEquals("Number of volumes was not counted correctly!", Integer.valueOf(3), project.getNumberOfVolumes());
+    }
+
+    @Test
+    public void shouldGetStatisticsManager() throws Exception {
+        ProjekteForm projekteForm = new ProjekteForm();
+        ProjectService projectService = new ProjectService();
+
+        Project initialProject = projectService.getById(1);
+
+        projekteForm.setMyProjekt(initialProject);
+        //TODO: think how to test this manager
+        //StatisticsManager statisticsManager = projekteForm.getStatisticsManager1();
+
+        //assertEquals("Statistics Manager was not counted correctly!", Integer.valueOf(50), statisticsManager.getNumberOfPages());
+        //assertEquals("Statistics Manager was not counted correctly!", Integer.valueOf(3), statisticsManager.getNumberOfVolumes());
     }
 }
