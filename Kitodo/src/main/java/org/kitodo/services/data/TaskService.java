@@ -190,12 +190,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Gets the task titles distinct.
+     * Find the distinct task titles.
      * 
-     * @return Al list of titles
+     * @return a list of titles
      */
-    public List<String> getTaskTitlesDistinct() {
-        return taskDAO.getTaskTitlesDistict();
+    public List<String> findTaskTitlesDistinct() throws DataException {
+        return findDistinctValues(null, "title.keyword", true);
     }
 
     /**
