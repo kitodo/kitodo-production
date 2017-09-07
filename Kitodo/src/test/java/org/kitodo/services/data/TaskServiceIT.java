@@ -284,4 +284,19 @@ public class TaskServiceIT {
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
     }
+
+    @Test
+    public void shouldFindDistinctTitles() throws Exception {
+        TaskService taskService = new TaskService();
+
+        List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();
+        int size = taskTitlesDistinct.size();
+        assertEquals("Incorrect size of distinct titles for tasks!", 5, size);
+
+        String title = taskTitlesDistinct.get(0);
+        assertEquals("Incorrect sorting of distinct titles for tasks!", "Blocking", title);
+
+        title = taskTitlesDistinct.get(1);
+        assertEquals("Incorrect sorting of distinct titles for tasks!", "Closed", title);
+    }
 }

@@ -568,14 +568,27 @@ public class MockDatabase {
         fifthTask.setOrdering(1);
         fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         fifthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 7, 27);
+        localDate = new LocalDate(2017, 6, 27);
         fifthTask.setProcessingBegin(localDate.toDate());
         fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
         fifthTask.setProcessingUser(serviceManager.getUserService().getById(2));
         fifthTask.setProcess(fifthProcess);
         fifthTask.setUsers(serviceManager.getUserService().getAll());
 
+        Task sixthTask = new Task();
+        sixthTask.setTitle("Progress");
+        sixthTask.setOrdering(2);
+        sixthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        sixthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 7, 27);
+        sixthTask.setProcessingBegin(localDate.toDate());
+        sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        sixthTask.setProcessingUser(serviceManager.getUserService().getById(2));
+        sixthTask.setProcess(fifthProcess);
+        sixthTask.setUsers(serviceManager.getUserService().getAll());
+
         fifthProcess.getTasks().add(fifthTask);
+        fifthProcess.getTasks().add(sixthTask);
         serviceManager.getProcessService().save(fifthProcess);
     }
 
