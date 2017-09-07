@@ -66,7 +66,7 @@ public class StatisticsManager implements Serializable {
     private Date calculatedEndDate = new Date();
     private List<StatisticsRenderingElement> renderingElements;
     private static Locale myLocale = null;
-    private Boolean includeLoops = null;
+    private Boolean includeLoops = false;
 
     private StatisticsManager() {
         super();
