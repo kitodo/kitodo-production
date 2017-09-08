@@ -121,7 +121,7 @@
                             <h:panelGroup rendered="#{Metadaten.bildNummer != Metadaten.bildLetztes}">
 
                                 <!-- wenn es mindestens das vorvorletzte Bild ist -->
-                                <h:panelGroup rendered="#{Metadaten.bildNummer < (Metadaten.bildLetztes - 1)}">
+                                <h:panelGroup rendered="#{Metadaten.bildNummer lt (Metadaten.bildLetztes - 1)}">
                                     <!-- Trennzeichen -->
                                     <h:outputText value=" | "/>
                                     <!-- naechste Seite -->
@@ -131,7 +131,7 @@
                                         <f:param name="Anzahl" value="1"/>
                                     </h:commandLink>
                                     <!-- wenn es mindestens das vorvorvorletzte Bild ist -->
-                                    <h:panelGroup rendered="#{Metadaten.bildNummer < (Metadaten.bildLetztes - 2)}">
+                                    <h:panelGroup rendered="#{Metadaten.bildNummer lt (Metadaten.bildLetztes - 2)}">
                                         <!-- Trennzeichen -->
                                         <h:outputText value=" | "/>
                                         <!-- Uebernaechste Seite -->
@@ -144,7 +144,7 @@
                                     </h:panelGroup>
                                     <!-- wenn noch mehr als drei Seiten folgen, dann ein grosses Trennzeichen -->
                                     <h:outputText value=" | ... "
-                                                  rendered="#{Metadaten.bildNummer < (Metadaten.bildLetztes - 3)}"/>
+                                                  rendered="#{Metadaten.bildNummer lt (Metadaten.bildLetztes - 3)}"/>
                                 </h:panelGroup>
                                 <!-- Trennzeichen -->
                                 <h:outputText value=" | "/>
