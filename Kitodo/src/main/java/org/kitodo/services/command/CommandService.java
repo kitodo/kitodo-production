@@ -119,19 +119,6 @@ public class CommandService {
     }
 
     /**
-     * Should be used to handle finished asynchron script executions.
-     * 
-     * @param commandResult
-     *            The finished command result.
-     */
-    private void handleCommandResult(CommandResult commandResult) {
-
-        finishedCommandResults.add(commandResult);
-
-        // TODO add more result handling for frontend here
-    }
-
-    /**
      * Method executes a script file with parameters asynchron.
      *
      * @param scriptFile
@@ -156,6 +143,19 @@ public class CommandService {
         if (scriptFile != null) {
             runCommandAsync(scriptFile.getAbsolutePath());
         }
+    }
+
+    /**
+     * Should be used to handle finished asynchron script executions.
+     *
+     * @param commandResult
+     *            The finished command result.
+     */
+    private void handleCommandResult(CommandResult commandResult) {
+
+        finishedCommandResults.add(commandResult);
+
+        // TODO add more result handling for frontend here
     }
 
     /**

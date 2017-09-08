@@ -21,6 +21,8 @@ public class Record {
     private String id = "";
 
     /**
+     * Set data.
+     *
      * @param data
      *            the data to set
      */
@@ -29,6 +31,8 @@ public class Record {
     }
 
     /**
+     * Get data.
+     *
      * @return the data
      */
     public String getData() {
@@ -36,6 +40,8 @@ public class Record {
     }
 
     /**
+     * Set id.
+     *
      * @param id
      *            the id to set
      */
@@ -44,6 +50,8 @@ public class Record {
     }
 
     /**
+     * Get id.
+     *
      * @return the id
      */
     public String getId() {

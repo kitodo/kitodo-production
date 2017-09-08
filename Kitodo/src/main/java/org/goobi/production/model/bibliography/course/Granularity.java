@@ -50,7 +50,7 @@ public enum Granularity {
      * The function format() converts a given LocalDate to a String
      * representation of the date in the given granularity. For the 1st January
      * 2000 it will return:
-     *
+     * <p/>
      * • for DAYS: 2000-01-01 • for WEEKS: 1999-W52 • for MONTHS: 2000-01 • for
      * QUARTERS: 2000/Q1 • for YEARS: 2000
      *

@@ -54,7 +54,7 @@ public class UghUtils {
      * taken from the web application’s deployment directory
      * (…/WEB-INF/classes), if not, it is taken from the CONFIG_DIR specified in
      * the CONFIG_FILE.
-     *
+     * <p/>
      * TODO: Community needs to decide: Is this behaviour really what we want?
      * Shouldn’t it <em>always</em> be the configured directory?
      *

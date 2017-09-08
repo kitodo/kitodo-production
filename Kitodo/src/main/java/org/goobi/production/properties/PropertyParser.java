@@ -225,13 +225,13 @@ public class PropertyParser {
                 properties.add(pp);
 
             }
-        } // add existing 'eigenschaften' to properties from config, so we have
-          // all properties from config and some
-          // of them with already existing 'eigenschaften'
+        }
+        // add existing 'eigenschaften' to properties from config, so we have
+        // all properties from config and some
+        // of them with already existing 'eigenschaften'
         List<ProcessProperty> listClone = new ArrayList<>(properties);
         List<Property> propertyList = process.getProperties();
         for (Property processProperty : propertyList) {
-
             // TODO added temporarily a fix for NPE. Properties without title
             // shouldn't exist at all
             if (processProperty.getTitle() != null) {

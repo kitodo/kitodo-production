@@ -17,12 +17,10 @@ import java.util.List;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
 /**
- * 
  * This Class provide methods to prepare SQL Queries needed for production
  * statistics. It depends on time frame and time unit.
  *
  * @author Robert Sehr
- *
  */
 class ImprovedSQLProduction extends SQLGenerator {
 

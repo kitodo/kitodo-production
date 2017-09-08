@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 public class SelectOne<T extends Selectable> {
 
     /**
-     * The available elements
+     * The available elements.
      */
     private LinkedHashMap<String, T> entries;
 

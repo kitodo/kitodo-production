@@ -40,7 +40,7 @@ public class SecurityCheckFilter implements Filter {
     }
 
     /**
-     * Creates a new instance of SecurityCheckFilter
+     * Creates a new instance of SecurityCheckFilter.
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

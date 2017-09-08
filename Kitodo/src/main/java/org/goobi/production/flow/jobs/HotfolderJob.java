@@ -235,7 +235,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 form.evaluateOpac();
 
                 try {
-                    Process p = form.NeuenProzessAnlegen2();
+                    Process p = form.neuenProzessAnlegen();
                     if (p.getId() != null) {
 
                         // copy image files to new directory

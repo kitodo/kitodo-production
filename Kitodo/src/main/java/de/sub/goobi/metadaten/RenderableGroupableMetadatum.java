@@ -20,7 +20,7 @@ import ugh.dl.Metadata;
  * be—a member of a RenderableMetadataGroup. A RenderableGroupableMetadatum can
  * be a RenderablePersonMetadataGroup—which is a special case of a
  * RenderableMetadataGroup—but must not be a RenderableMetadataGroup.
- * 
+ * <p/>
  * Java interfaces are always public and this interface holds the public methods
  * that are accessed by JSF during rendering. Other methods with a more
  * restricted visibility cannot be defined here. They will be defined in the

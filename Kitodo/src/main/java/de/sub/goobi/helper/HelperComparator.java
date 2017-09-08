@@ -21,20 +21,20 @@ import ugh.dl.MetadataType;
 public class HelperComparator implements Comparator<Object>, Serializable {
 
     private static final long serialVersionUID = -1124724462982810327L;
-    private String Sortierart;
+    private String sortType;
 
     @Override
     public int compare(Object firstObject, Object secondObject) {
         // TODO: Use a Enum or Integer conts
         int rueckgabe = 0;
-        if (this.Sortierart.equals("MetadatenTypen")) {
-            rueckgabe = compareMetadatenTypen(firstObject, secondObject);
+        if (this.sortType.equals("MetadatenTypen")) {
+            rueckgabe = compareMetadataTypes(firstObject, secondObject);
         }
-        if (this.Sortierart.equals("Metadata")) {
+        if (this.sortType.equals("Metadata")) {
             rueckgabe = compareMetadata(firstObject, secondObject);
         }
-        if (this.Sortierart.equals("DocStructTypen")) {
-            rueckgabe = compareDocStructTypen(firstObject, secondObject);
+        if (this.sortType.equals("DocStructTypen")) {
+            rueckgabe = compareDocStructTypes(firstObject, secondObject);
         }
         return rueckgabe;
     }
@@ -44,11 +44,11 @@ public class HelperComparator implements Comparator<Object>, Serializable {
         return this == obj;
     }
 
-    public void setSortierart(String sortierart) {
-        this.Sortierart = sortierart;
+    public void setSortType(String sortType) {
+        this.sortType = sortType;
     }
 
-    private int compareMetadatenTypen(Object firstObject, Object secondObject) {
+    private int compareMetadataTypes(Object firstObject, Object secondObject) {
         MetadataType firstMetadata = (MetadataType) firstObject;
         MetadataType secondMetadata = (MetadataType) secondObject;
         String firstName = firstMetadata
@@ -80,7 +80,7 @@ public class HelperComparator implements Comparator<Object>, Serializable {
         return firstName.compareToIgnoreCase(secondName);
     }
 
-    private int compareDocStructTypen(Object firstObject, Object secondObject) {
+    private int compareDocStructTypes(Object firstObject, Object secondObject) {
         DocStructType firstDocStructType = (DocStructType) firstObject;
         DocStructType secondDocStructType = (DocStructType) secondObject;
         String firstName = firstDocStructType

@@ -40,6 +40,8 @@ public class StepInformation {
     }
 
     /**
+     * Get title.
+     *
      * @return the title
      */
     public String getTitle() {
@@ -57,7 +59,7 @@ public class StepInformation {
     }
 
     /**
-     * getAverageStepOrder
+     * Get average task order.
      * 
      * @return the averageStepOrder
      */
@@ -66,7 +68,7 @@ public class StepInformation {
     }
 
     /**
-     * setAverageStepOrder.
+     * Set average task order.
      * 
      * @param averageStepOrder
      *            the averageStepOrder to set

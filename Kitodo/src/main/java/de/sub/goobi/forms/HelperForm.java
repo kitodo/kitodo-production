@@ -40,6 +40,8 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 
 /**
+ * Helper form.
+ *
  * @author Wulf Riebensahm
  */
 @Named("HelperForm")
@@ -48,9 +50,9 @@ public class HelperForm implements Serializable {
     private static final long serialVersionUID = -5872893771807845586L;
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(HelperForm.class);
-    public static final String MAIN_JSF_PATH = "/pages";
-    public static final String IMAGE_PATH = "/pages/images";
-    public static final String CSS_PATH = "/css";
+    static final String MAIN_JSF_PATH = "/pages";
+    private static final String IMAGE_PATH = "/pages/images";
+    private static final String CSS_PATH = "/css";
 
     public String getBuildVersion() {
         return GoobiVersion.getBuildversion();

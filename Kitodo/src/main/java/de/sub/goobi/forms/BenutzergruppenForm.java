@@ -40,6 +40,11 @@ public class BenutzergruppenForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
 
+    /**
+     * Create new user group.
+     *
+     * @return page address
+     */
     public String Neu() {
         this.myBenutzergruppe = new UserGroup();
         this.userGroupId = 0;

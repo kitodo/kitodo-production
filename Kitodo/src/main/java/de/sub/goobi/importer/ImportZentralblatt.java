@@ -51,7 +51,7 @@ import ugh.fileformats.mets.XStream;
  */
 public class ImportZentralblatt {
     private static final Logger logger = LogManager.getLogger(ImportZentralblatt.class);
-    String separator;
+    private String separator;
     private final Helper help;
     private Prefs myPrefs;
     private final ServiceManager serviceManager = new ServiceManager();
@@ -267,9 +267,9 @@ public class ImportZentralblatt {
         if (myList != null && myList.size() != 0) {
             for (DocStruct dsIntern : myList) {
                 // logger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
-                Metadata myMD1 = dsIntern.getAllMetadataByType(mdt).get(0);
+                Metadata metadata = dsIntern.getAllMetadataByType(mdt).get(0);
                 // logger.debug("und der Wert ist: " + myMD1.getValue());
-                if (myMD1.getValue().equals(myRight)) {
+                if (metadata.getValue().equals(myRight)) {
                     dsPeriodicalIssue = dsIntern;
                 }
             }

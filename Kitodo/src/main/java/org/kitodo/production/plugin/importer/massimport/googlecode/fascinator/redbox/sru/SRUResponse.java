@@ -36,14 +36,11 @@ import org.dom4j.Node;
  * 
  */
 public class SRUResponse {
-    /** Logging **/
     private static Logger logger = LogManager.getLogger(SRUResponse.class);
 
-    /** Record counts **/
     private int totalRecords = 0;
     private int recordsReturned = 0;
 
-    /** Results **/
     private List<Node> resultsList;
 
     /**

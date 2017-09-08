@@ -19,7 +19,7 @@
 package org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru;
 
 /**
- * Basic Exception for issues that occur inside this package
+ * Basic Exception for issues that occur inside this package.
  * 
  * @author Greg Pendlebury
  */

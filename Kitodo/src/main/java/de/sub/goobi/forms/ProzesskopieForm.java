@@ -249,8 +249,8 @@ public class ProzesskopieForm implements Serializable {
     private boolean useTemplates;
     private Integer auswahl;
     private HashMap<String, Boolean> standardFields;
-    private String tifHeader_imagedescription = "";
-    private String tifHeader_documentname = "";
+    private String tifHeaderImageDescription = "";
+    private String tifHeaderDocumentName = "";
 
     /**
      * Prepare.
@@ -506,8 +506,8 @@ public class ProzesskopieForm implements Serializable {
         this.standardFields.put("regelsatz", true);
         this.standardFields.put("images", true);
         this.additionalFields = new ArrayList<>();
-        this.tifHeader_documentname = "";
-        this.tifHeader_imagedescription = "";
+        this.tifHeaderDocumentName = "";
+        this.tifHeaderImageDescription = "";
     }
 
     /**
@@ -1132,9 +1132,8 @@ public class ProzesskopieForm implements Serializable {
                 DocStruct ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
                 this.myRdf = ff;
-            }
-            /* Zeitschrift */
-            else if (ConfigOpac.getDoctypeByName(this.docType).isPeriodical()) {
+            } else if (ConfigOpac.getDoctypeByName(this.docType).isPeriodical()) {
+                /* Zeitschrift */
                 DocStructType dsty = myPrefs.getDocStrctTypeByName("Periodical");
                 DocStruct ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
@@ -1143,9 +1142,8 @@ public class ProzesskopieForm implements Serializable {
                 DocStruct dsvolume = dd.createDocStruct(dstyvolume);
                 ds.addChild(dsvolume);
                 this.myRdf = ff;
-            }
-            /* MultivolumeBand */
-            else if (ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
+            } else if (ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
+                /* MultivolumeBand */
                 DocStructType dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
                 DocStruct ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
@@ -1223,8 +1221,8 @@ public class ProzesskopieForm implements Serializable {
         /* Doctype */
         BeanHelper.addProperty(werk, "DocType", this.docType);
         /* Tiffheader */
-        BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-        BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+        BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+        BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         BeanHelper.addProperty(prozessKopie, "Template", prozessVorlage.getTitle());
         BeanHelper.addProperty(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
     }
@@ -1260,24 +1258,20 @@ public class ProzesskopieForm implements Serializable {
                         if (oldLogicalDocstruct.getAllChildren() == null
                                 && newLogicalDocstruct.getAllChildren() == null) {
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                        }
-                        // old has a child, new has no child
-                        else if (oldLogicalDocstruct.getAllChildren() != null
+                        } else if (oldLogicalDocstruct.getAllChildren() != null
                                 && newLogicalDocstruct.getAllChildren() == null) {
+                            // old has a child, new has no child
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
-                        }
-                        // new has a child, bot old not
-                        else if (oldLogicalDocstruct.getAllChildren() == null
+                        } else if (oldLogicalDocstruct.getAllChildren() == null
                                 && newLogicalDocstruct.getAllChildren() != null) {
+                            // new has a child, but old not
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.copy(true, false),
                                     newLogicalDocstruct.getAllChildren().get(0));
-                        }
-
-                        // both have children
-                        else if (oldLogicalDocstruct.getAllChildren() != null
+                        } else if (oldLogicalDocstruct.getAllChildren() != null
                                 && newLogicalDocstruct.getAllChildren() != null) {
+                            // both have children
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
                                     newLogicalDocstruct.getAllChildren().get(0));
@@ -1528,20 +1522,20 @@ public class ProzesskopieForm implements Serializable {
         return this.useTemplates;
     }
 
-    public String getTifHeader_documentname() {
-        return this.tifHeader_documentname;
+    public String getTifHeaderDocumentName() {
+        return this.tifHeaderDocumentName;
     }
 
-    public void setTifHeader_documentname(String tifHeader_documentname) {
-        this.tifHeader_documentname = tifHeader_documentname;
+    public void setTifHeaderDocumentName(String tifHeaderDocumentName) {
+        this.tifHeaderDocumentName = tifHeaderDocumentName;
     }
 
-    public String getTifHeader_imagedescription() {
-        return this.tifHeader_imagedescription;
+    public String getTifHeaderImageDescription() {
+        return this.tifHeaderImageDescription;
     }
 
-    public void setTifHeader_imagedescription(String tifHeader_imagedescription) {
-        this.tifHeader_imagedescription = tifHeader_imagedescription;
+    public void setTifHeaderImageDescription(String tifHeaderImageDescription) {
+        this.tifHeaderImageDescription = tifHeaderImageDescription;
     }
 
     public Process getProzessKopie() {
@@ -1749,7 +1743,7 @@ public class ProzesskopieForm implements Serializable {
      * Calculate tiff header.
      */
     public void calculateTiffHeader() {
-        String tif_definition = "";
+        String tifDefinition = "";
         ConfigProjects cp = null;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
@@ -1757,23 +1751,23 @@ public class ProzesskopieForm implements Serializable {
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
         }
-        tif_definition = cp.getParamString("tifheader." + this.docType, "intranda");
+        tifDefinition = cp.getParamString("tifheader." + this.docType, "intranda");
 
         /*
          * evtuelle Ersetzungen
          */
-        tif_definition = tif_definition.replaceAll("\\[\\[", "<");
-        tif_definition = tif_definition.replaceAll("\\]\\]", ">");
+        tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
+        tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
 
         /*
          * Documentname ist im allgemeinen = Prozesstitel
          */
-        this.tifHeader_documentname = this.prozessKopie.getTitle();
-        this.tifHeader_imagedescription = "";
+        this.tifHeaderDocumentName = this.prozessKopie.getTitle();
+        this.tifHeaderImageDescription = "";
         /*
          * Imagedescription
          */
-        StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
+        StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
         /* jetzt den Tiffheader parsen */
         String title = "";
         while (tokenizer.hasMoreTokens()) {
@@ -1783,11 +1777,11 @@ public class ProzesskopieForm implements Serializable {
              * übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
-                this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
+                this.tifHeaderImageDescription += myString.substring(1, myString.length() - 1);
             } else if (myString.equals("$Doctype")) {
                 /* wenn der Doctype angegeben werden soll */
                 try {
-                    this.tifHeader_imagedescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
+                    this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
                 } catch (Throwable t) {
                     logger.error("Error while reading von opac-config", t);
                     Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -1812,7 +1806,7 @@ public class ProzesskopieForm implements Serializable {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeader_imagedescription += calculateProcessTitleCheck(additionalField.getTitle(),
+                        this.tifHeaderImageDescription += calculateProcessTitleCheck(additionalField.getTitle(),
                                 additionalField.getValue());
                     }
 
@@ -1820,14 +1814,14 @@ public class ProzesskopieForm implements Serializable {
             }
             // reduce to 255 character
         }
-        int length = this.tifHeader_imagedescription.length();
+        int length = this.tifHeaderImageDescription.length();
         if (length > 255) {
             try {
                 int toCut = length - 255;
                 String newTitle = title.substring(0, title.length() - toCut);
-                this.tifHeader_imagedescription = this.tifHeader_imagedescription.replace(title, newTitle);
+                this.tifHeaderImageDescription = this.tifHeaderImageDescription.replace(title, newTitle);
             } catch (IndexOutOfBoundsException e) {
-                // TODO: handle exception
+                logger.error(e);
             }
         }
     }
