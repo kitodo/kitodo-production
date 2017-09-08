@@ -2470,4 +2470,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
         return processDAO.getProcessTemplatesForUser(projects);
     }
+
+    /**
+     * Get processes which are not templates and are ordered by creation date. Set
+     * of results can be constrained.
+     *
+     * @param limit
+     *            max amount of returned results
+     * @return list of processes as Process objects
+     */
+    public List<Process> getNotTemplatesOrderedByCreationDate(Integer limit) {
+        return processDAO.getNotTemplatesOrderedByCreationDate(limit);
+    }
 }

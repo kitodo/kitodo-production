@@ -17,6 +17,9 @@ import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
@@ -692,7 +695,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getNotArchivedProcesses() throws Exception {
+    public void shouldFindNotArchivedProcesses() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> notArchivedProcesses = processService.findNotArchivedProcesses(null);
@@ -702,7 +705,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getNotClosedProcesses() throws Exception {
+    public void shouldFindNotClosedProcesses() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> notClosedProcesses = processService.findNotClosedProcesses(null);
@@ -711,7 +714,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getNotClosedAndNotArchivedProcesses() throws Exception {
+    public void shouldFindNotClosedAndNotArchivedProcesses() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> notClosedAndNotArchivedProcesses = processService.findNotClosedAndNotArchivedProcesses(null);
@@ -720,7 +723,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getNotArchivedTemplates() throws Exception {
+    public void shouldFindNotArchivedTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> notArchivedTemplates = processService.findNotArchivedTemplates(null);
@@ -729,7 +732,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getAllTemplates() throws Exception {
+    public void shouldFindAllTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> allTemplates = processService.findAllTemplates(null);
@@ -737,7 +740,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getAllWithoutTemplates() throws Exception {
+    public void shouldFindAllWithoutTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> allWithoutTemplates = processService.findAllWithoutTemplates(null);
@@ -745,7 +748,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getAllNotArchivedWithoutTemplates() throws Exception{
+    public void shouldFindAllNotArchivedWithoutTemplates() throws Exception{
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> notArchivedProcessesWithoutTemplates = processService.findAllNotArchivedWithoutTemplates(null);
@@ -754,7 +757,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getAllNotClosedAndNotArchivedTemplates() throws Exception {
+    public void shouldFindAllNotClosedAndNotArchivedTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> notClosedAndNotArchivedTemplates = processService.findAllNotClosedAndNotArchivedTemplates(null);
@@ -763,11 +766,35 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void getAllNotClosedTemplates() throws Exception {
+    public void shouldFindAllNotClosedTemplates() throws Exception {
         ProcessService processService = new ProcessService();
 
         List<ProcessDTO> notClosedTemplates = processService.findAllNotClosedTemplates(null);
         assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 2", notClosedTemplates.size() == 2);
     }
 
+    @Test
+    public void shouldGetNotTemplatesOrderedByCreationDate() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<Process> notTemplates = processService.getNotTemplatesOrderedByCreationDate(null);
+        assertEquals("Incorrect amount of processes were found!", 3, notTemplates.size());
+
+        String creationDate = formatDate(notTemplates.get(0).getCreationDate());
+        assertEquals("Incorrect sort by date for found processes!", formatDate(new Date()), creationDate);
+
+        creationDate = formatDate(notTemplates.get(1).getCreationDate());
+        assertEquals("Incorrect sort by date for found processes!", "2017-02-10", creationDate);
+
+        creationDate = formatDate(notTemplates.get(2).getCreationDate());
+        assertEquals("Incorrect sort by date for found processes!", "2017-01-20", creationDate);
+
+        notTemplates = processService.getNotTemplatesOrderedByCreationDate(1);
+        assertEquals("Incorrect amount of processes were found!", 1, notTemplates.size());
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(date);
+    }
 }

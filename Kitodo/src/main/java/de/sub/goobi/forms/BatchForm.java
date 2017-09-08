@@ -32,13 +32,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
-import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
-import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -61,11 +55,11 @@ public class BatchForm extends BasisForm {
     private List<Integer> selectedBatches;
     private String batchfilter;
     private String processfilter;
-    private IEvaluableFilter myFilteredDataSource;
     private String modusBearbeiten = "";
     private String batchTitle;
     private transient ServiceManager serviceManager = new ServiceManager();
 
+    //TODO: where this method is used?
     public List<Process> getCurrentProcesses() {
         return this.currentProcesses;
     }
@@ -113,25 +107,14 @@ public class BatchForm extends BasisForm {
     /**
      * Filter processes.
      */
-    @SuppressWarnings("unchecked")
     public void filterProcesses() {
-
-        if (this.processfilter == null) {
+        // TODO: usage of filter from frontend
+        /*if (this.processfilter == null) {
             this.processfilter = "";
         }
-        this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);
-        Criteria crit = this.myFilteredDataSource.getCriteria();
-        crit.addOrder(Order.desc("creationDate"));
-        crit.add(Restrictions.eq("template", Boolean.FALSE));
+        this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);*/
         int batchMaxSize = ConfigCore.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
-        if (batchMaxSize > 0) {
-            crit.setMaxResults(batchMaxSize);
-        }
-        try {
-            this.currentProcesses = crit.list();
-        } catch (HibernateException e) {
-            this.currentProcesses = new ArrayList<>();
-        }
+        this.currentProcesses = serviceManager.getProcessService().getNotTemplatesOrderedByCreationDate(batchMaxSize);
     }
 
     /**
