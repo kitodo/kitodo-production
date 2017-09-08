@@ -295,6 +295,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return count(boolQuery.toString());
     }
 
+    /**
+     * Get query for processing statuses.
+     *
+     * @param processingStatus
+     *            set of processing statuses as Integer
+     * @return query as QueryBuilder
+     */
     public QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
         return createSetQuery("processingStatus", processingStatus, true);
     }
@@ -311,6 +318,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return searcher.findDocuments(query.toString());
     }
 
+    /**
+     * Get query for process ids.
+     *
+     * @param processIds
+     *            set of process ids as Integer
+     * @return query as QueryBuilder
+     */
     public QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
         return createSetQuery("process", processIds, true);
     }

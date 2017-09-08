@@ -648,10 +648,24 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
+    /**
+     * Get query for template.
+     * 
+     * @param template
+     *            true or false
+     * @return query as QueryBuilder
+     */
     public QueryBuilder getQueryTemplate(boolean template) {
         return createSimpleQuery("template", template, true);
     }
 
+    /**
+     * Get query for sort helper status.
+     *
+     * @param closed
+     *            true or false
+     * @return query as QueryBuilder
+     */
     public QueryBuilder getQuerySortHelperStatus(boolean closed) {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("sortHelperStatus", "100000000", closed));
@@ -659,11 +673,25 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return query;
     }
 
+    /**
+     * Get query for archived projects.
+     *
+     * @param archived
+     *            true or false
+     * @return query as QueryBuilder
+     */
     public QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
         List<ProjectDTO> projects = serviceManager.getProjectService().findByArchived(archived, true);
         return createSetQuery("project", serviceManager.getFilterService().collectIds(projects), true);
     }
 
+    /**
+     * Sort results by creation date.
+     * 
+     * @param sortOrder
+     *            ASC or DESC as SortOrder
+     * @return sort
+     */
     public String sortByCreationDate(SortOrder sortOrder) {
         return SortBuilders.fieldSort("creationDate").order(sortOrder).toString();
     }

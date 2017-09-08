@@ -242,8 +242,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of JSON objects
      */
-    List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
-            throws DataException {
+    List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfPages", numberOfPages, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -269,6 +268,9 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      * @param archived
      *            if true - find archived projects, if false - find not archived
      *            projects
+     * @param related
+     *            if true - found project is related to some other DTO object, if
+     *            false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
@@ -376,7 +378,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
         projectDTO.setFileFormatInternal(getStringPropertyForDTO(jsonObject, "fileFormatInternal"));
         projectDTO.setNumberOfPages(getIntegerPropertyForDTO(jsonObject, "numberOfPages"));
         projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(jsonObject, "numberOfVolumes"));
-        //projectDTO.setProjectIsArchived(getStringPropertyForDTO(jsonObject, "archived"));
+        // projectDTO.setProjectIsArchived(getStringPropertyForDTO(jsonObject,
+        // "archived"));
         if (!related) {
             projectDTO = convertRelatedJSONObjects(jsonObject, projectDTO);
         }
@@ -384,7 +387,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     private ProjectDTO convertRelatedJSONObjects(JSONObject jsonObject, ProjectDTO projectDTO) throws DataException {
-        projectDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
+        projectDTO.setProcesses(
+                convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
         projectDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
         return projectDTO;
     }
