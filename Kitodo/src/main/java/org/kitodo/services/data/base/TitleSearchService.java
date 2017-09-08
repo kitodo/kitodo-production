@@ -37,12 +37,25 @@ public abstract class TitleSearchService<T extends BaseBean, S extends BaseDTO> 
      * @param title
      *            of the searched process
      * @param contains
-     *            if true result should contain given plain text, if false it
-     *            should not contain
+     *            if true result should contain given plain text, if false it should
+     *            not contain
      * @return list of search result
      */
     public List<JSONObject> findByTitle(String title, boolean contains) throws DataException {
-        QueryBuilder query = createSimpleQuery("title", title, contains, Operator.AND);
-        return searcher.findDocuments(query.toString());
+        return searcher.findDocuments(getQueryTitle(title, contains).toString());
+    }
+
+    /**
+     * Get query to find object matching to given title.
+     *
+     * @param title
+     *            of the searched process
+     * @param contains
+     *            if true result should contain given plain text, if false it should
+     *            not contain
+     * @return query
+     */
+    public QueryBuilder getQueryTitle(String title, boolean contains) throws DataException {
+        return createSimpleQuery("title", title, contains, Operator.AND);
     }
 }

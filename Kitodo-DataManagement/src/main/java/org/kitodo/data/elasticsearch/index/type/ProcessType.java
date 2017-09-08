@@ -43,6 +43,7 @@ public class ProcessType extends BaseType<Process> {
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : null;
         processObject.put("docket", docket);
         processObject.put("batches", addObjectRelation(process.getBatches()));
+        processObject.put("workpieces", addObjectRelation(process.getWorkpieces()));
         processObject.put("tasks", addObjectRelation(process.getTasks()));
         processObject.put("properties", addObjectRelation(process.getProperties()));
 

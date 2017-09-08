@@ -393,11 +393,25 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      *            related object id
      * @param related
      *            this method should ba called only with true, if false call method
-     *            getById(Integer id).
+     *            findById(Integer id).
      * @return related DTO object
      */
     public S findById(Integer id, boolean related) throws DataException {
         return convertJSONObjectToDTO(searcher.findDocument(id), related);
+    }
+
+    /**
+     * Find list of DTO objects by query.
+     * 
+     * @param query
+     *            as QueryBuilder object
+     * @param related
+     *            determines if converted object is related to some other object (if
+     *            so, objects related to it are not included in conversion)
+     * @return list of found DTO objects
+     */
+    public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
     /**
@@ -476,20 +490,20 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * 
      * @param key
      *            JSON key for searched object
-     * @param ids
-     *            set of id values for searched objects or some objects related to
+     * @param values
+     *            set of values for searched objects or some objects related to
      *            searched object
      * @param contains
      *            determine if results should contain given value or should not
      *            contain given value
      * @return query
      */
-    protected QueryBuilder createSetQuery(String key, Set<Integer> ids, boolean contains) {
-        if (contains && ids.size() > 0) {
-            return termsQuery(key, ids);
-        } else if (!contains && ids != null) {
+    protected QueryBuilder createSetQuery(String key, Set<? extends Object> values, boolean contains) {
+        if (contains && values.size() > 0) {
+            return termsQuery(key, values);
+        } else if (!contains && values != null) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-            return boolQuery.mustNot(termsQuery(key, ids));
+            return boolQuery.mustNot(termsQuery(key, values));
         } else {
             return matchQuery(key, 0);
         }
