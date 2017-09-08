@@ -35,10 +35,10 @@ public interface IStatisticalQuestion {
      * the data request.
      * 
      * @param dataSource
-     *            implementation of IDataSource interface
+     *            List
      * @return List &lt;DataTable&gt;
      */
-    List<DataTable> getDataTables(IDataSource dataSource);
+    List<DataTable> getDataTables(List dataSource);
 
     /**
      * This method is used to set a grouping unit for time based data.

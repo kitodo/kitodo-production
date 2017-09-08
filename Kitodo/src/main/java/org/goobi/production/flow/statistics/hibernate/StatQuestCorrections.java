@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -71,10 +70,10 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
      * 
      * @see
      * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
-     * org.goobi.production.flow.statistics.IDataSource)
+     * List)
      */
     @Override
-    public List<DataTable> getDataTables(IDataSource dataSource) {
+    public List<DataTable> getDataTables(List dataSource) {
 
         List<DataTable> allTables = new ArrayList<>();
 

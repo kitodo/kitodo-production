@@ -108,7 +108,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private Process myProzess = new Process();
     private Task mySchritt = new Task();
     private StatisticsManager statisticsManager;
-    private IEvaluableFilter myFilteredDataSource;
+    private List filteredDataSource;
     private List<ProcessCounterObject> myAnzahlList;
     private HashMap<String, Integer> myAnzahlSummary;
     private Property myProzessEigenschaft;
@@ -1596,7 +1596,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Statistische Auswertung.
      */
     public void StatisticsStatusVolumes() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
     }
@@ -1605,7 +1605,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Statistic UserGroups.
      */
     public void StatisticsUsergroups() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
     }
@@ -1614,27 +1614,27 @@ public class ProzessverwaltungForm extends BasisForm {
      * Statistic runtime Tasks.
      */
     public void StatisticsRuntimeSteps() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void StatisticsProduction() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void StatisticsStorage() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void StatisticsCorrection() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
     public void StatisticsTroughput() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
@@ -1642,7 +1642,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Project's statistics.
      */
     public void StatisticsProject() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.myFilteredDataSource,
+        this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.filteredDataSource,
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
         this.statisticsManager.calculate();
     }

@@ -45,7 +45,7 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
      * org.goobi.production.flow.statistics.IDataSource)
      */
     @Override
-    public List<DataTable> getDataTables(IDataSource dataSource) {
+    public List<DataTable> getDataTables(List dataSource) {
 
         IEvaluableFilter originalFilter;
 

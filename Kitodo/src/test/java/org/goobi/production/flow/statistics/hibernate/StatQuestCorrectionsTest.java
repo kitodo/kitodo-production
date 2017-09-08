@@ -53,7 +53,7 @@ public class StatQuestCorrectionsTest {
     public final void testGetDataTables() {
         IDataSource testFilter = new UserDefinedFilter("stepdone:5");
         test.setTimeUnit(TimeUnit.days);
-        List<DataTable> tables = test.getDataTables(testFilter);
+        List<DataTable> tables = test.getDataTables(testFilter.getSourceData());
         java.util.Iterator<DataTable> tablesIterator = tables.iterator();
         int counter = 0;
         DataTable table = null;

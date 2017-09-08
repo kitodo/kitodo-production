@@ -20,7 +20,6 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -43,10 +42,10 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
      * 
      * @see
      * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
-     * org.goobi.production.flow.statistics.IDataSource)
+     * List)
      */
     @Override
-    public List<DataTable> getDataTables(IDataSource dataSource) {
+    public List<DataTable> getDataTables(List dataSource) {
 
         IEvaluableFilter originalFilter;
 

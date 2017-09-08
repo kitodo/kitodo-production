@@ -44,9 +44,8 @@ public class StatQuestThroughputIT {
     @Ignore("Crashing")
     @Test
     public void testGetDataTables() {
-        IDataSource testFilter = new UserDefinedFilter("stepdone:5");
         test.setTimeUnit(TimeUnit.days);
-        List<DataTable> table = test.getDataTables(testFilter);
+        List<DataTable> table = test.getDataTables(testFilter.getSourceData());
         assertNotNull(table);
     }
 

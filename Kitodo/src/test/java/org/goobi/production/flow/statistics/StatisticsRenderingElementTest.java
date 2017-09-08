@@ -31,7 +31,7 @@ public class StatisticsRenderingElementTest {
 
     private Locale locale = new Locale("GERMAN");
     private IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-    private StatisticsManager testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
+    private StatisticsManager testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter.getSourceData(), locale);
     private DataTable inDataTable = new DataTable("testTable");
     private IStatisticalQuestion inQuestion = testManager.getStatisticMode().getStatisticalQuestion();
     private StatisticsRenderingElement testElement = new StatisticsRenderingElement(inDataTable, inQuestion);
