@@ -736,7 +736,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
         processDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
+        processDTO.setOutputName(getStringPropertyForDTO(jsonObject, "outputName"));
+        processDTO.setWikiField(getStringPropertyForDTO(jsonObject, "wikiField"));
+        processDTO.setCreationDate(getStringPropertyForDTO(jsonObject, "creationDate"));
         processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(jsonObject, "properties"));
+        processDTO.setSortHelperArticles(getIntegerPropertyForDTO(jsonObject, "sortHelperArticles"));
+        processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(jsonObject, "sortHelperDocstructs"));
+        processDTO.setSortHelperImages(getIntegerPropertyForDTO(jsonObject, "sortHelperImages"));
+        processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(jsonObject, "sortHelperMetadata"));
         if (!related) {
             processDTO = convertRelatedJSONObjects(jsonObject, processDTO);
         }
