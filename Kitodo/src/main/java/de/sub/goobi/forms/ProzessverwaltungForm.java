@@ -63,6 +63,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -90,6 +91,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -161,7 +163,6 @@ public class ProzessverwaltungForm extends BasisForm {
             }
         }
         DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
-
     }
 
     /**
@@ -389,24 +390,18 @@ public class ProzessverwaltungForm extends BasisForm {
 
     /**
      * Filter current processes.
+     *
+     * @return page
      */
     public String FilterAktuelleProzesse() {
         this.statisticsManager = null;
         this.myAnzahlList = null;
 
         try {
-            if (!showClosedProcesses) {
-                if (!showArchivedProjects) {
-                    this.processDTOS = serviceManager.getProcessService().findNotClosedAndNotArchivedProcesses(sortList());
-                } else {
-                    this.processDTOS = serviceManager.getProcessService().findNotClosedProcesses(sortList());
-                }
+            if (this.filter.equals("")) {
+                filterProcessesWithoutFilter();
             } else {
-                if (!this.showArchivedProjects) {
-                    this.processDTOS = serviceManager.getProcessService().findNotArchivedProcesses(sortList());
-                } else {
-                    this.processDTOS = serviceManager.getProcessService().findAll(sortList());
-                }
+                filterProcessesWithFilter();
             }
 
             this.page = new Page<>(0, this.processDTOS);
@@ -419,16 +414,18 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Filter processes.
+     * Filter templates.
+     *
+     * @return page
      */
     public String FilterVorlagen() {
         this.statisticsManager = null;
         this.myAnzahlList = null;
         try {
-            if (!this.showArchivedProjects) {
-                this.processDTOS = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
+            if (this.filter.equals("")) {
+                filterTemplatesWithoutFilter();
             } else {
-                this.processDTOS = serviceManager.getProcessService().findAllTemplates(sortList());
+                filterTemplatesWithFilter();
             }
         } catch (DataException e) {
             logger.error(e);
@@ -469,8 +466,11 @@ public class ProzessverwaltungForm extends BasisForm {
             ProzesskopieForm pkf = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(single);
-                pkf.setProzessVorlage(process);
-                return pkf.prepare(process.getId());
+                if (pkf != null) {
+                    pkf.setProzessVorlage(process);
+                    return pkf.prepare(process.getId());
+                }
+                return "";
             } catch (DAOException e) {
                 logger.error(e);
             }
@@ -488,31 +488,20 @@ public class ProzessverwaltungForm extends BasisForm {
          * Filter für die Auflistung anwenden
          */
         try {
-            List<ProcessDTO> processes;
-            /* nur die Vorlagen oder alles */
-            if (this.modusAnzeige.equals("vorlagen")) {
-                if (!this.showClosedProcesses) {
-                    if (!this.showArchivedProjects) {
-                        processes = serviceManager.getProcessService().findAllNotClosedAndNotArchivedTemplates(sortList());
-                    } else {
-                        processes = serviceManager.getProcessService().findAllNotClosedTemplates(sortList());
-                    }
+            if (this.filter.equals("")) {
+                if (this.modusAnzeige.equals("vorlagen")) {
+                    filterTemplatesWithoutFilter();
                 } else {
-                    if (!this.showArchivedProjects) {
-                        processes = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
-                    } else {
-                        processes = serviceManager.getProcessService().findAllTemplates(sortList());
-                    }
+                    filterProcessesWithoutFilter();
                 }
             } else {
-                if (!this.showArchivedProjects) {
-                    processes = serviceManager.getProcessService().findAllNotArchivedWithoutTemplates(sortList());
+                if (this.modusAnzeige.equals("vorlagen")) {
+                    filterTemplatesWithFilter();
                 } else {
-                    processes = serviceManager.getProcessService().findAllWithoutTemplates(sortList());
+                    filterProcessesWithFilter();
                 }
             }
-
-            this.page = new Page<>(0, processes);
+            this.page = new Page<>(0, processDTOS);
         } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;
@@ -524,6 +513,60 @@ public class ProzessverwaltungForm extends BasisForm {
         }
 
         return "/pages/ProzessverwaltungAlle";
+    }
+
+    private void filterProcessesWithFilter() throws DataException {
+        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false, false, false);
+        if (!this.showClosedProcesses) {
+            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+        }
+        if (!this.showArchivedProjects) {
+            query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+        }
+        processDTOS = serviceManager.getProcessService().findByQuery(query, sortList(), false);
+    }
+
+    private void filterProcessesWithoutFilter() throws DataException {
+        if (!this.showClosedProcesses) {
+            if (!this.showArchivedProjects) {
+                processDTOS = serviceManager.getProcessService().findNotClosedAndNotArchivedProcesses(sortList());
+            } else {
+                processDTOS = serviceManager.getProcessService().findNotClosedProcesses(sortList());
+            }
+        } else {
+            if (!this.showArchivedProjects) {
+                processDTOS = serviceManager.getProcessService().findAllNotArchivedWithoutTemplates(sortList());
+            } else {
+                processDTOS = serviceManager.getProcessService().findAllWithoutTemplates(sortList());
+            }
+        }
+    }
+
+    private void filterTemplatesWithFilter() throws DataException {
+        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, true, false, false);
+        if (!this.showClosedProcesses) {
+            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+        }
+        if (!this.showArchivedProjects) {
+            query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+        }
+        processDTOS = serviceManager.getProcessService().findByQuery(query, sortList(), false);
+    }
+
+    private void filterTemplatesWithoutFilter() throws DataException {
+        if (!this.showClosedProcesses) {
+            if (!this.showArchivedProjects) {
+                processDTOS = serviceManager.getProcessService().findAllNotClosedAndNotArchivedTemplates(sortList());
+            } else {
+                processDTOS = serviceManager.getProcessService().findAllNotClosedTemplates(sortList());
+            }
+        } else {
+            if (!this.showArchivedProjects) {
+                processDTOS = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
+            } else {
+                processDTOS = serviceManager.getProcessService().findAllTemplates(sortList());
+            }
+        }
     }
 
     private String sortList() {
@@ -2415,6 +2458,15 @@ public class ProzessverwaltungForm extends BasisForm {
             }
         }
         return answer;
+    }
+
+    /**
+     * Get list od DTO processes.
+     *
+     * @return list of ProcessDTO objects
+     */
+    public List<ProcessDTO> getProcessDTOS() {
+        return processDTOS;
     }
 
     /**
