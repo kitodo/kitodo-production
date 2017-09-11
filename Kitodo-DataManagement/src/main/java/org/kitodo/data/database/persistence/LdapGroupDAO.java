@@ -17,11 +17,11 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 
 @SuppressWarnings("serial")
-public class LdapGroupDAO extends BaseDAO {
+public class LdapGroupDAO extends BaseDAO<LdapGroup> {
 
     public LdapGroup save(LdapGroup ldapGroup) throws DAOException {
         storeObject(ldapGroup);
-        return (LdapGroup) retrieveObject(LdapGroup.class, ldapGroup.getId());
+        return retrieveObject(LdapGroup.class, ldapGroup.getId());
     }
 
     /**
@@ -34,7 +34,7 @@ public class LdapGroupDAO extends BaseDAO {
      *             hibernate
      */
     public LdapGroup find(Integer id) throws DAOException {
-        LdapGroup result = (LdapGroup) retrieveObject(LdapGroup.class, id);
+        LdapGroup result = retrieveObject(LdapGroup.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -59,7 +59,6 @@ public class LdapGroupDAO extends BaseDAO {
         removeObject(LdapGroup.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<LdapGroup> search(String query) throws DAOException {
         return retrieveObjects(query);
     }
@@ -67,9 +66,8 @@ public class LdapGroupDAO extends BaseDAO {
     /**
      * Gets all LDAP Groups.
      * 
-     * @return a list of ldapgroups
+     * @return a list of ldap groups
      */
-    @SuppressWarnings("unchecked")
     public List<LdapGroup> findAll() {
         return retrieveAllObjects(LdapGroup.class);
     }

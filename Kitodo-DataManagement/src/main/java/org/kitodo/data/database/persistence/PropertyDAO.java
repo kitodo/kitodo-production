@@ -21,7 +21,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.Helper;
 
-public class PropertyDAO extends BaseDAO {
+public class PropertyDAO extends BaseDAO<Property> {
 
     private static final long serialVersionUID = 834210846673022251L;
 
@@ -36,7 +36,7 @@ public class PropertyDAO extends BaseDAO {
      *             procedure failure.
      */
     public Property find(Integer id) throws DAOException {
-        Property result = (Property) retrieveObject(Property.class, id);
+        Property result = retrieveObject(Property.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -48,7 +48,6 @@ public class PropertyDAO extends BaseDAO {
      *
      * @return all persisted templates' properties
      */
-    @SuppressWarnings("unchecked")
     public List<Property> findAll() {
         return retrieveAllObjects(Property.class);
     }
@@ -60,14 +59,13 @@ public class PropertyDAO extends BaseDAO {
      *            as String
      * @return list of properties
      */
-    @SuppressWarnings("unchecked")
     public List<Property> search(String query) throws DAOException {
         return retrieveObjects(query);
     }
 
     public Property save(Property property) throws DAOException {
         storeObject(property);
-        return (Property) retrieveObject(Property.class, property.getId());
+        return retrieveObject(Property.class, property.getId());
     }
 
     /**
@@ -93,7 +91,7 @@ public class PropertyDAO extends BaseDAO {
      *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
-        removeObject(id);
+        removeObject(Property.class, id);
     }
 
     /**

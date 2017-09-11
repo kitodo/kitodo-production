@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class WorkpieceDAO extends BaseDAO {
+public class WorkpieceDAO extends BaseDAO<Workpiece> {
     private static final long serialVersionUID = 123266825187246791L;
 
     /**
@@ -30,7 +30,7 @@ public class WorkpieceDAO extends BaseDAO {
      *             procedure failure.
      */
     public Workpiece find(Integer id) throws DAOException {
-        Workpiece result = (Workpiece) retrieveObject(Workpiece.class, id);
+        Workpiece result = retrieveObject(Workpiece.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -42,14 +42,13 @@ public class WorkpieceDAO extends BaseDAO {
      *
      * @return all persisted dockets
      */
-    @SuppressWarnings("unchecked")
     public List<Workpiece> findAll() {
         return retrieveAllObjects(Workpiece.class);
     }
 
     public Workpiece save(Workpiece workpiece) throws DAOException {
         storeObject(workpiece);
-        return (Workpiece) retrieveObject(Workpiece.class, workpiece.getId());
+        return retrieveObject(Workpiece.class, workpiece.getId());
     }
 
     /**
@@ -77,12 +76,9 @@ public class WorkpieceDAO extends BaseDAO {
      *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
-        @SuppressWarnings("unused")
-        Workpiece workpiece = (Workpiece) retrieveObject(Workpiece.class, id);
         removeObject(Workpiece.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Workpiece> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

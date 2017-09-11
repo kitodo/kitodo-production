@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class DocketDAO extends BaseDAO {
+public class DocketDAO extends BaseDAO<Docket> {
 
     private static final long serialVersionUID = 1913256950316879121L;
 
@@ -31,7 +31,7 @@ public class DocketDAO extends BaseDAO {
      *             procedure failure.
      */
     public Docket find(Integer id) throws DAOException {
-        Docket result = (Docket) retrieveObject(Docket.class, id);
+        Docket result = retrieveObject(Docket.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -43,14 +43,13 @@ public class DocketDAO extends BaseDAO {
      *
      * @return all persisted dockets
      */
-    @SuppressWarnings("unchecked")
     public List<Docket> findAll() {
         return retrieveAllObjects(Docket.class);
     }
 
     public Docket save(Docket docket) throws DAOException {
         storeObject(docket);
-        return (Docket) retrieveObject(Docket.class, docket.getId());
+        return retrieveObject(Docket.class, docket.getId());
     }
 
     /**
@@ -72,7 +71,6 @@ public class DocketDAO extends BaseDAO {
         removeObject(Docket.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Docket> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

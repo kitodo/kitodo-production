@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class TemplateDAO extends BaseDAO {
+public class TemplateDAO extends BaseDAO<Template> {
     private static final long serialVersionUID = 1736135433162833277L;
 
     /**
@@ -30,7 +30,7 @@ public class TemplateDAO extends BaseDAO {
      *             procedure failure.
      */
     public Template find(Integer id) throws DAOException {
-        Template result = (Template) retrieveObject(Template.class, id);
+        Template result = retrieveObject(Template.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -42,14 +42,13 @@ public class TemplateDAO extends BaseDAO {
      *
      * @return all persisted dockets
      */
-    @SuppressWarnings("unchecked")
     public List<Template> findAll() {
         return retrieveAllObjects(Template.class);
     }
 
     public Template save(Template template) throws DAOException {
         storeObject(template);
-        return (Template) retrieveObject(Template.class, template.getId());
+        return retrieveObject(Template.class, template.getId());
     }
 
     /**
@@ -77,12 +76,9 @@ public class TemplateDAO extends BaseDAO {
      *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
-        @SuppressWarnings("unused")
-        Template template = (Template) retrieveObject(Template.class, id);
         removeObject(Template.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Template> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

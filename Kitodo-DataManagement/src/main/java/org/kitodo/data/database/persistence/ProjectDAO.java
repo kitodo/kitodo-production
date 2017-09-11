@@ -16,12 +16,12 @@ import java.util.List;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class ProjectDAO extends BaseDAO {
+public class ProjectDAO extends BaseDAO<Project> {
     private static final long serialVersionUID = -9050627256118458325L;
 
     public Project save(Project project) throws DAOException {
         storeObject(project);
-        return (Project) retrieveObject(Project.class, project.getId());
+        return retrieveObject(Project.class, project.getId());
     }
 
     /**
@@ -34,7 +34,7 @@ public class ProjectDAO extends BaseDAO {
      *             hibernate
      */
     public Project find(Integer id) throws DAOException {
-        Project result = (Project) retrieveObject(Project.class, id);
+        Project result = retrieveObject(Project.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -46,7 +46,6 @@ public class ProjectDAO extends BaseDAO {
      *
      * @return all persisted projects
      */
-    @SuppressWarnings("unchecked")
     public List<Project> findAll() {
         return retrieveAllObjects(Project.class);
     }
@@ -79,7 +78,6 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<Project> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

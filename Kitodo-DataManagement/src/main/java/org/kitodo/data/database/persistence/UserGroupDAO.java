@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class UserGroupDAO extends BaseDAO {
+public class UserGroupDAO extends BaseDAO<UserGroup> {
 
     private static final long serialVersionUID = 4987176626562271217L;
 
@@ -31,7 +31,7 @@ public class UserGroupDAO extends BaseDAO {
      *             procedure failure.
      */
     public UserGroup find(Integer id) throws DAOException {
-        UserGroup result = (UserGroup) retrieveObject(UserGroup.class, id);
+        UserGroup result = retrieveObject(UserGroup.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -43,14 +43,13 @@ public class UserGroupDAO extends BaseDAO {
      *
      * @return all persisted dockets
      */
-    @SuppressWarnings("unchecked")
     public List<UserGroup> findAll() {
         return retrieveAllObjects(UserGroup.class);
     }
 
     public UserGroup save(UserGroup userGroup) throws DAOException {
         storeObject(userGroup);
-        return (UserGroup) retrieveObject(UserGroup.class, userGroup.getId());
+        return retrieveObject(UserGroup.class, userGroup.getId());
     }
 
     /**
@@ -72,7 +71,6 @@ public class UserGroupDAO extends BaseDAO {
         removeObject(UserGroup.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<UserGroup> search(String query) throws DAOException {
         return retrieveObjects(query);
     }
