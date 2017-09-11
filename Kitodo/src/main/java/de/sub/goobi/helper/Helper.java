@@ -383,25 +383,21 @@ public class Helper implements Serializable, Observer {
     /**
      * Get translation.
      *
-     * @param dbTitel
+     * @param title
      *            String
-     * @return String
+     * @return translated String
      */
-    public static String getTranslation(String dbTitel) {
+    public static String getTranslation(String title) {
         // running instance of ResourceBundle doesn't respond on user language
-        // changes, workaround by instanciating it every time
+        // changes, workaround by instantiating it every time
 
-        Locale desiredLanguage = null;
-        try {
-            desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        } catch (NullPointerException skip) {
-            logger.error(skip);
+        if (FacesContext.getCurrentInstance() != null) {
+            Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+            if (desiredLanguage != null) {
+                return getString(desiredLanguage, title);
+            }
         }
-        if (desiredLanguage != null) {
-            return getString(new Locale(desiredLanguage.getLanguage()), dbTitel);
-        } else {
-            return getString(Locale.ENGLISH, dbTitel);
-        }
+        return getString(Locale.ENGLISH, title);
     }
 
     public static String getTranslation(String inParameter, String inDefaultIfNull) {
@@ -410,27 +406,17 @@ public class Helper implements Serializable, Observer {
     }
 
     /**
-     * Get TRanslation.
+     * Get translation.
      *
-     * @param dbTitel
+     * @param title
      *            String
      * @param parameterList
      *            list of Strings
-     * @return String
+     * @return translated String
      */
-    public static String getTranslation(String dbTitel, List<String> parameterList) {
-        String value = "";
-        Locale desiredLanguage = null;
-        try {
-            desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        } catch (NullPointerException skip) {
-            logger.error(skip);
-        }
-        if (desiredLanguage != null) {
-            value = getString(new Locale(desiredLanguage.getLanguage()), dbTitel);
-        } else {
-            value = getString(Locale.ENGLISH, dbTitel);
-        }
+    public static String getTranslation(String title, List<String> parameterList) {
+        String value = getTranslation(title);
+
         if (value != null && parameterList != null && parameterList.size() > 0) {
             int parameterCount = 0;
             for (String parameter : parameterList) {
@@ -438,7 +424,6 @@ public class Helper implements Serializable, Observer {
                 parameterCount++;
             }
         }
-
         return value;
     }
 
