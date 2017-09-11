@@ -339,7 +339,7 @@ public class MetadatenHelper implements Comparator<Object> {
          * die Metadatentypen sortieren
          */
         HelperComparator c = new HelperComparator();
-        c.setSortierart("DocStructTypen");
+        c.setSortType("DocStructTypen");
         // TODO: Uses generics, if possible
         Collections.sort(newTypes, c);
 
@@ -659,7 +659,7 @@ public class MetadatenHelper implements Comparator<Object> {
          * die Metadatentypen sortieren
          */
         HelperComparator c = new HelperComparator();
-        c.setSortierart("MetadatenTypen");
+        c.setSortType("MetadatenTypen");
         Collections.sort(types, c);
 
         for (MetadataType mdt : types) {

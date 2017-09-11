@@ -30,12 +30,12 @@ import ugh.dl.MetadataType;
 public class RenderableLineEdit extends RenderableMetadatum
         implements RenderableGroupableMetadatum, SingleValueRenderableMetadatum {
     /**
-     * Line separator used in web front-end I/O
+     * Line separator used in web front-end I/O.
      */
     private static final String HTML_TEXTAREA_LINE_SEPARATOR = "\r\n";
 
     /**
-     * Line separator used in filesystem I/O
+     * Line separator used in filesystem I/O.
      */
     private static final String METADATA_LINE_SEPARATOR = "\n";
 

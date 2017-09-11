@@ -82,6 +82,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     /**
+     * Check if data is complete.
      *
      * @return true if all Data for the generation is set
      */
@@ -486,6 +487,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     /**
+     * Get selectable time units.
      *
      * @return list of Timeunits to select
      */
@@ -506,6 +508,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     }
 
     /**
+     * Get selected tables.
      *
      * @return DataTable generated from the selected step names and the selected
      *         reference curve

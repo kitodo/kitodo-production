@@ -1421,7 +1421,7 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Return the id of the current step
+     * Return the id of the current task.
      *
      * @return int stepId
      */
@@ -1430,9 +1430,9 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Set the id of the current step
+     * Set the id of the current task.
      *
-     * @param stepId
+     * @param stepId as int
      */
     public void setStepId(int stepId) {
         this.stepId = stepId;

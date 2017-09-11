@@ -61,7 +61,7 @@ public class Separator implements Selectable {
     private final String separator;
 
     /**
-     * Creates a new separator
+     * Creates a new separator.
      * 
      * @param separator
      *            separator String

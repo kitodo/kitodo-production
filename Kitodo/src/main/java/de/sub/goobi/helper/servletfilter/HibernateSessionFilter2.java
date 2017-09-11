@@ -36,8 +36,6 @@ public class HibernateSessionFilter2 implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-    /* =============================================================== */
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -46,8 +44,7 @@ public class HibernateSessionFilter2 implements Filter {
         Session session = null;
 
         /*
-         * -------------------------------- die Hibernate-Session connecten
-         * --------------------------------
+         * die Hibernate-Session connecten
          */
         // das Managed Bean aus der Session holen
         hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
@@ -57,6 +54,7 @@ public class HibernateSessionFilter2 implements Filter {
             session = hsl.getSession();
         }
         if (session != null && !session.isConnected()) {
+            //TODO: check why is it empty
         }
 
         try {
@@ -66,8 +64,7 @@ public class HibernateSessionFilter2 implements Filter {
         } finally {
 
             /*
-             * -------------------------------- die Hibernate-Session von der
-             * Datenbank trennen --------------------------------
+             * die Hibernate-Session von der Datenbank trennen
              */
             // das Managed Bean aus der Session holen
             hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
@@ -76,8 +73,7 @@ public class HibernateSessionFilter2 implements Filter {
             if (hsl != null) {
                 session = hsl.getSession();
                 // gibt es eine Hibernate-Session und ist diese mit der DB
-                // verbunden,
-                // dann wird diese jetzt getrennt
+                // verbunden, dann wird diese jetzt getrennt
                 if (session != null && session.isConnected()) {
                     session.disconnect();
                 }
@@ -85,9 +81,8 @@ public class HibernateSessionFilter2 implements Filter {
         }
     }
 
-    /* =============================================================== */
-
     /**
+     * Destroy.
     */
     @Override
     public void destroy() {

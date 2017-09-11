@@ -32,7 +32,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 /**
  * This class implements the IProvideProjectTaskList and approaches the problem
  * by using a projection on the hibernate criteria, which accelerates data
- * retrieval
+ * retrieval.
  *
  * @author Wulf Riebensahm
  *
@@ -85,7 +85,6 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
                 Object[] row = (Object[]) it.next();
                 rowCount++;
                 StringBuilder message = new StringBuilder();
-                int i;
 
                 String shorttitle;
                 if (((String) row[FieldList.stepName.getFieldLocation()]).length() > 60) {
@@ -122,7 +121,7 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
                 }
 
                 // TODO remove following lines all the way to system.out
-                for (i = 0; i < row.length; i++) {
+                for (int i = 0; i < row.length; i++) {
                     message.append("|");
                     message.append(row[i]);
                 }

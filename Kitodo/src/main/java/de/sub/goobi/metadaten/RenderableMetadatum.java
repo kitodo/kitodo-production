@@ -275,7 +275,7 @@ public abstract class RenderableMetadatum {
      * items can vary depending on the project, wheter the metadata element is
      * about to be created or is under edit, the metadata type and the type of
      * the input element.
-     * 
+     * <p/>
      * Since the items hold their selected state and ConfigDispayRules does
      * return the same item instances again if called several times, we need to
      * create a deep copy of the retrieved list here, so that several select

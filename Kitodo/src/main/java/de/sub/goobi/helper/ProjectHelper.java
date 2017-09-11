@@ -198,10 +198,10 @@ public class ProjectHelper {
          * uses the field "stepOrder".
          */
         @Override
-        public int compare(StepInformation arg0, StepInformation arg1) {
-            Double d1 = arg0.getAverageStepOrder();
-            Double d2 = arg1.getAverageStepOrder();
-            return d1.compareTo(d2);
+        public int compare(StepInformation firstStepInformation, StepInformation secondStepInformation) {
+            Double firstAverageStepOrder = firstStepInformation.getAverageStepOrder();
+            Double secondAverageStepOrder = secondStepInformation.getAverageStepOrder();
+            return firstAverageStepOrder.compareTo(secondAverageStepOrder);
         }
     }
 }

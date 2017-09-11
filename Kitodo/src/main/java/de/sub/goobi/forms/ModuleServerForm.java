@@ -333,6 +333,7 @@ public class ModuleServerForm implements Serializable {
              */
             int i = 0;
             if (modules.size() == i) {
+                //TODO: fix it
             } else {
                 i++;
                 ArrayList<GoobiModuleParameter> gmps = modules.get(i - 1).getGmps();

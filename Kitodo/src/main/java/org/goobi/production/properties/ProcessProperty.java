@@ -387,11 +387,9 @@ public class ProcessProperty implements IProperty, Serializable {
         private static final long serialVersionUID = 8047374873015931547L;
 
         @Override
-        public int compare(ProcessProperty o1, ProcessProperty o2) {
-
-            return Integer.compare(o1.getContainer(), o2.getContainer());
+        public int compare(ProcessProperty firstProcessProperty, ProcessProperty secondProcessProperty) {
+            return Integer.compare(firstProcessProperty.getContainer(), secondProcessProperty.getContainer());
         }
-
     }
 
     /**

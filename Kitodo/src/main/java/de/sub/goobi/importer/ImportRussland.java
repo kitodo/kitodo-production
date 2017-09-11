@@ -73,8 +73,6 @@ public class ImportRussland {
         this.prozess = inProzess;
         String prozessID = String.valueOf(inProzess.getId().intValue());
         String line = reader.readLine();
-        line = reader.readLine();
-        line = reader.readLine();
         // logger.info(line + " : " + myProzesseID);
         if (line == null) {
             throw new WrongImportFileException("Importfehler: ungültige Importdatei oder falsche Kodierung");

@@ -34,7 +34,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
     /**
      * Holds the options to show in the select list, including their selection
-     * state
+     * state.
      */
     private final Collection<Item> items;
 

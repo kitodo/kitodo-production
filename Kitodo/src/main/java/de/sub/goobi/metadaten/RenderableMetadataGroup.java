@@ -62,7 +62,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 
     /**
      * Holds the type of metadata group currently under edit in the form backed
-     * by this RenderableMetadataGroup instance
+     * by this RenderableMetadataGroup instance.
      */
     private MetadataGroupType type;
 
@@ -262,7 +262,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * Invokes the metadata editor to show the subpage to add a new metadata
      * group, initialised with the values from this instance in order to create
      * a copy of this instance.
-     * 
+     * <p/>
      * This method is provided for the reason that action methods on repeatable
      * elements must be implemented as parameterless methods on the backing
      * beans of the respective list items in JSF. This method just forwards the
@@ -277,7 +277,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * Invokes the metadata editor to delete the metadata group under edit in
      * this instance from the logical document structure node currently under
      * edit.
-     * 
+     * <p/>
      * This method is provided for the reason that action methods on repeatable
      * elements must be implemented as parameterless methods on the backing
      * beans of the respective list items in JSF. This method just forwards the

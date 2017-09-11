@@ -18,11 +18,9 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
- * Class provides SQL for storage statistics
- * 
+ * Class provides SQL for storage statistics.
  * 
  * @author Wulf Riebensahm
- *
  */
 public class SQLStorage extends SQLGenerator {
 

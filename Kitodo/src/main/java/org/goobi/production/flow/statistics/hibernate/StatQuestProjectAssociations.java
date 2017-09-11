@@ -53,7 +53,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
         Criteria crit;
 
         //TODO: fix it
-         /*if (originalFilter instanceof UserDefinedFilter) {
+        /*if (originalFilter instanceof UserDefinedFilter) {
             crit = new UserDefinedFilter(originalFilter.getIDList()).getCriteria();
             crit.createCriteria("project", "project");
         } else {

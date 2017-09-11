@@ -146,6 +146,11 @@ public class ProjekteForm extends BasisForm {
         return "/pages/ProjekteAlle";
     }
 
+    /**
+     * Create new project.
+     *
+     * @return page address
+     */
     public String newProject() {
         this.myProjekt = new Project();
         this.itemId = 0;

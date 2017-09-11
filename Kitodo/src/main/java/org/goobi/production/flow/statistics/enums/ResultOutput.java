@@ -29,7 +29,7 @@ public enum ResultOutput {
     private String title;
 
     /**
-     * private constructor for setting id and title
+     * Private constructor for setting id and title.
      * 
      * @param inTitle
      *            title as String
@@ -42,7 +42,7 @@ public enum ResultOutput {
     }
 
     /**
-     * return unique ID for result output
+     * Return unique ID for result output.
      * 
      * @return unique ID as String
      */
@@ -51,7 +51,7 @@ public enum ResultOutput {
     }
 
     /**
-     * return localized title for result output
+     * Return localized title for result output.
      * 
      * @return localized title
      */
@@ -60,7 +60,7 @@ public enum ResultOutput {
     }
 
     /**
-     * get presentation output by unique ID
+     * Get presentation output by unique ID.
      * 
      * @param inId
      *            the unique ID

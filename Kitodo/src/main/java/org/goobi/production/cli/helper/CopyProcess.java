@@ -580,7 +580,7 @@ public class CopyProcess extends ProzesskopieForm {
      * Anlegen des Prozesses und save der Metadaten.
      */
 
-    public Process NeuenProzessAnlegen2() throws ReadException, IOException, PreferencesException, WriteException {
+    public Process neuenProzessAnlegen() throws ReadException, IOException, PreferencesException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -1015,22 +1015,22 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public String getTifHeader_documentname() {
+    public String getTifHeaderDocumentName() {
         return this.tifHeaderDocumentName;
     }
 
     @Override
-    public void setTifHeader_documentname(String tifHeaderDocumentName) {
+    public void setTifHeaderDocumentName(String tifHeaderDocumentName) {
         this.tifHeaderDocumentName = tifHeaderDocumentName;
     }
 
     @Override
-    public String getTifHeader_imagedescription() {
+    public String getTifHeaderImageDescription() {
         return this.tifHeaderImageDescription;
     }
 
     @Override
-    public void setTifHeader_imagedescription(String tifHeaderImageDescription) {
+    public void setTifHeaderImageDescription(String tifHeaderImageDescription) {
         this.tifHeaderImageDescription = tifHeaderImageDescription;
     }
 

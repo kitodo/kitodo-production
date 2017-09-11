@@ -38,7 +38,7 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      * This is an extended SQL generator for an SQL extracting data from the
      * historyEvent log. depending on the parameters the query returns up to
      * four fields
-     *
+     * <p/>
      * (non-Javadoc)
      * 
      * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()

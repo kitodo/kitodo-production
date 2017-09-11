@@ -25,23 +25,30 @@ public enum Type {
         this.name = name;
     }
 
-    public static Type getTypeByName(String inName) {
-        if (inName.equalsIgnoreCase("LIST")) {
+    /**
+     * Get type by name.
+     * 
+     * @param name
+     *            of the type by String
+     * @return Type
+     */
+    public static Type getTypeByName(String name) {
+        if (name.equalsIgnoreCase("LIST")) {
             return LIST;
         }
-        if (inName.equalsIgnoreCase("LISTMULTISELECT")) {
+        if (name.equalsIgnoreCase("LISTMULTISELECT")) {
             return LISTMULTISELECT;
         }
-        if (inName.equalsIgnoreCase("BOOLEAN")) {
+        if (name.equalsIgnoreCase("BOOLEAN")) {
             return BOOLEAN;
         }
-        if (inName.equalsIgnoreCase("DATE")) {
+        if (name.equalsIgnoreCase("DATE")) {
             return DATE;
         }
-        if (inName.equalsIgnoreCase("NUMBER")) {
+        if (name.equalsIgnoreCase("NUMBER")) {
             return NUMBER;
         }
-        if (inName.equalsIgnoreCase("LINK")) {
+        if (name.equalsIgnoreCase("LINK")) {
             return LINK;
         }
         return TEXT;

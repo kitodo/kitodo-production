@@ -42,6 +42,7 @@ public class SessionCounterFilter implements Filter {
     }
 
     /**
+     * Do filter.
     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -100,6 +101,7 @@ public class SessionCounterFilter implements Filter {
     }
 
     /**
+     * Destroy.
     */
     @Override
     public void destroy() {

@@ -20,9 +20,13 @@ import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -848,6 +852,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return processService.getBatchesInitialized(task.getProcess()).size() > 0;
     }
 
+    /**
+     * Close task.
+     *
+     * @param task as Task object
+     * @param requestFromGUI true or false
+     */
     public void close(Task task, boolean requestFromGUI) throws DataException {
         Integer processId = task.getProcess().getId();
         if (logger.isDebugEnabled()) {
@@ -978,38 +988,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @param process
      *            the process
      */
-    public void updateProcessStatus(Process process) throws DataException {
-        int offen = 0;
-        int inBearbeitung = 0;
-        int abgeschlossen = 0;
-        List<Task> stepsForProcess = process.getTasks();
-        for (Task task : stepsForProcess) {
-            if (task.getProcessingStatus() == 3) {
-                abgeschlossen++;
-            } else if (task.getProcessingStatus() == 0) {
-                offen++;
-            } else {
-                inBearbeitung++;
-            }
-        }
-        double offen2 = 0;
-        double inBearbeitung2 = 0;
-        double abgeschlossen2 = 0;
-
-        if ((offen + inBearbeitung + abgeschlossen) == 0) {
-            offen = 1;
-        }
-
-        offen2 = (offen * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-        inBearbeitung2 = (inBearbeitung * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-        abgeschlossen2 = 100 - offen2 - inBearbeitung2;
-        // (abgeschlossen * 100) / (offen + inBearbeitung + abgeschlossen);
-        java.text.DecimalFormat df = new java.text.DecimalFormat("#000");
-        String value = df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
-
+    private void updateProcessStatus(Process process) throws DataException {
+        String value = serviceManager.getProcessService().getProgress(process, null);
         process.setSortHelperStatus(value);
         serviceManager.getProcessService().save(process);
-
     }
 
     /**
@@ -1023,6 +1005,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     public void executeDmsExport(Task step, boolean automatic) throws DataException, ConfigurationException {
         ConfigCore.getBooleanParameter("automaticExportWithImages", true);
         if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
+            //TODO: check why this if is empty
         }
         Process po = step.getProcess();
         try {

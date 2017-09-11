@@ -2432,7 +2432,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Return the id of the current process
+     * Return the id of the current process.
      *
      * @return int processId
      */
@@ -2441,9 +2441,9 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Set the id of the current process
+     * Set the id of the current process.
      *
-     * @param processId
+     * @param processId as int
      */
     public void setProcessId(int processId) {
         this.processId = processId;
@@ -2466,7 +2466,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Return the id of the current task
+     * Return the id of the current task.
      *
      * @return int taskId
      */
@@ -2475,9 +2475,9 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Set the id of the current task
+     * Set the id of the current task.
      *
-     * @param taskId
+     * @param taskId as int
      */
     public void setTaskId(int taskId) {
         this.taskId = taskId;
