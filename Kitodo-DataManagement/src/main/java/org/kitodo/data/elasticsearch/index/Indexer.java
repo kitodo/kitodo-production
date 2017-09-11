@@ -20,7 +20,7 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
@@ -28,7 +28,7 @@ import org.kitodo.data.elasticsearch.index.type.BaseType;
 /**
  * Implementation of Elastic Search Indexer for index package.
  */
-public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
+public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index {
 
     private HTTPMethods method;
     private static final Logger logger = LogManager.getLogger(Indexer.class);
@@ -56,22 +56,22 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
     /**
      * Perform request depending on given parameters of HTTPMethods.
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            bean object which will be added or deleted from index
      * @param baseType
      *            type on which will be called method createDocument()
      * @return response from the server
      */
     @SuppressWarnings("unchecked")
-    public String performSingleRequest(T baseBean, S baseType) throws IOException, CustomResponseException {
+    public String performSingleRequest(T baseIndexedBean, S baseType) throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
         if (method == HTTPMethods.PUT) {
-            HttpEntity document = baseType.createDocument(baseBean);
-            response = String.valueOf(restClient.addDocument(document, baseBean.getId()));
+            HttpEntity document = baseType.createDocument(baseIndexedBean);
+            response = String.valueOf(restClient.addDocument(document, baseIndexedBean.getId()));
         } else if (method == HTTPMethods.DELETE) {
-            response = String.valueOf(restClient.deleteDocument(baseBean.getId()));
+            response = String.valueOf(restClient.deleteDocument(baseIndexedBean.getId()));
         } else {
             response = "Incorrect HTTP method!";
         }
@@ -110,13 +110,13 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
      *             add description
      */
     @SuppressWarnings("unchecked")
-    public String performMultipleRequests(List<T> baseBeans, S baseType)
+    public String performMultipleRequests(List<T> baseIndexedBeans, S baseType)
             throws IOException, InterruptedException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
         if (method == HTTPMethods.PUT) {
-            HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseBeans);
+            HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseIndexedBeans);
             response = restClient.addType(documents);
         } else {
             response = "Incorrect HTTP method!";

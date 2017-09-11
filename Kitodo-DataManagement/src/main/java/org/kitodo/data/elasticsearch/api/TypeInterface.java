@@ -26,7 +26,7 @@ import org.apache.http.HttpEntity;
  */
 public interface TypeInterface<T> {
 
-    HttpEntity createDocument(T baseBean);
+    HttpEntity createDocument(T baseIndexedBean);
 
-    HashMap<Integer, HttpEntity> createDocuments(List<T> baseBeans);
+    HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans);
 }
