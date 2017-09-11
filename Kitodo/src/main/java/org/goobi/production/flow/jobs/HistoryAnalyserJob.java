@@ -12,9 +12,7 @@
 package org.goobi.production.flow.jobs;
 
 import de.sub.goobi.helper.Helper;
-import de.unigoettingen.sub.commons.util.file.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
@@ -87,15 +85,15 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
             updated = true;
         }
         /* imagesWork */
-        Integer numberWork = FileUtils.getNumberOfFiles(
-                new File(serviceManager.getProcessService().getImagesTifDirectory(true, inProcess)), ".tif");
+        Integer numberWork = serviceManager.getFileService().getNumberOfImageFiles(
+                serviceManager.getProcessService().getImagesTifDirectory(true, inProcess));
         if (updateHistoryEvent(inProcess, HistoryTypeEnum.imagesWorkDiff, numberWork.longValue())) {
             updated = true;
         }
 
         /* imagesMaster */
-        Integer numberMaster = FileUtils.getNumberOfFiles(
-                new File(serviceManager.getProcessService().getImagesOrigDirectory(true, inProcess)), ".tif");
+        Integer numberMaster = serviceManager.getFileService().getNumberOfImageFiles(
+                serviceManager.getProcessService().getImagesOrigDirectory(true, inProcess));
         if (updateHistoryEvent(inProcess, HistoryTypeEnum.imagesMasterDiff, numberMaster.longValue())) {
             updated = true;
         }
@@ -125,7 +123,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
     @SuppressWarnings("incomplete-switch")
     private static Boolean updateHistoryForSteps(Process inProcess) {
         Boolean isDirty = false;
-        History he = null;
+        History he;
 
         /*
          * These are the patterns, which must be set, if a pattern differs from
@@ -137,7 +135,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
          * null null 2 | set set null 3 | set set set </pre>
          */
         for (Task step : inProcess.getTasks()) {
-
             switch (step.getProcessingStatusEnum()) {
                 case DONE:
                     // fix missing start date
@@ -359,16 +356,12 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return size in bytes, or 0 if error.
      */
     private static long getCurrentStorageSize(Process inProcess) throws IOException {
-        URI dir = serviceManager.getProcessService().getProcessDataDirectory(inProcess);
-        File directory = new File(dir);
-        if (!serviceManager.getFileService().isDirectory(dir)) {
-            throw new IOException("History Manager error while calculating size of " + inProcess.getTitle());
-        }
-        return org.apache.commons.io.FileUtils.sizeOfDirectory(directory);
+        URI directory = serviceManager.getProcessService().getProcessDataDirectory(inProcess);
+        return serviceManager.getFileService().getSizeOfDirectory(directory);
     }
 
     /**
-     * updateHistoryForAllProcesses.
+     * Update history for all processes.
      */
     public void updateHistoryForAllProcesses() {
         logger.info("start history updating for all processes");
@@ -380,22 +373,19 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
             int i = 0;
             while (it.hasNext()) {
                 i++;
-                Process proc = it.next();
+                Process process = it.next();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("updating history entries for " + proc.getTitle());
+                    logger.debug("updating history entries for " + process.getTitle());
                 }
                 try {
-
                     // commit transaction every 50 items
                     if (!it.hasNext() || i % 50 == 0) {
                         session.flush();
                         session.beginTransaction().commit();
                         session.clear();
                     }
-
                 } catch (HibernateException e) {
                     logger.error("HibernateException occurred while scheduled storage calculation", e);
-
                 } catch (Exception e) {
                     Helper.setFehlerMeldung("An error occurred while scheduled storage calculation", e);
                     logger.error("ServletException occurred while scheduled storage calculation", e);
@@ -490,8 +480,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return Boolean
      */
     public static Boolean updateHistoryForProcess(Process inProc) {
-        Boolean updated = false;
+        Boolean updated;
         try {
+            //TODO: updateHistoryForSteps overwrites result of updateHistory
             updated = updateHistory(inProc);
             updated = updateHistoryForSteps(inProc);
         } catch (Exception ex) {
@@ -499,7 +490,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
             updated = false;
         }
         return updated;
-
     }
 
 }
