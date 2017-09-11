@@ -26,7 +26,7 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 
 @Entity
 @Table(name = "property")
-public class Property extends BaseBean implements Comparable<Property> {
+public class Property extends BaseIndexedBean implements Comparable<Property> {
     private static final long serialVersionUID = -2356566712752716107L;
 
     @Column(name = "title")

@@ -11,26 +11,17 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "projectFileGroup")
-public class ProjectFileGroup implements Serializable {
+public class ProjectFileGroup extends BaseBean {
     private static final long serialVersionUID = -5506252462891480484L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "name")
     private String name;
@@ -53,14 +44,6 @@ public class ProjectFileGroup implements Serializable {
     @ManyToOne
     @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
     private Project project;
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return this.name;

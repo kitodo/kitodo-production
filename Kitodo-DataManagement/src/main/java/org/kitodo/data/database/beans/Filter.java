@@ -25,7 +25,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "filter")
-public class Filter extends BaseBean {
+public class Filter extends BaseIndexedBean {
 
     private static final long serialVersionUID = -5187937660333984868L;
 

@@ -35,7 +35,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "batch")
-public class Batch extends BaseBean {
+public class Batch extends BaseIndexedBean {
     private static final long serialVersionUID = -5187947220333984868L;
 
     /**
