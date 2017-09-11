@@ -264,7 +264,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         processingStatus.add(2);
 
         if (!open && !inProcessing) {
-            boolQuery.must(createSetQuery("processingStatus", processingStatus, true));
+            boolQuery.must(getQueryForProcessingStatus(processingStatus));
         } else if (open && !inProcessing) {
             boolQuery.must(createSimpleQuery("processingStatus", 1, true));
         } else if (!open && inProcessing) {
@@ -296,6 +296,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
+     * Get query for processing statuses.
+     *
+     * @param processingStatus
+     *            set of processing statuses as Integer
+     * @return query as QueryBuilder
+     */
+    public QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
+        return createSetQuery("processingStatus", processingStatus, true);
+    }
+
+    /**
      * Find tasks by id of process.
      *
      * @param id
@@ -305,6 +316,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     public List<JSONObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("process", id, true);
         return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Get query for process ids.
+     *
+     * @param processIds
+     *            set of process ids as Integer
+     * @return query as QueryBuilder
+     */
+    public QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
+        return createSetQuery("process", processIds, true);
     }
 
     /**

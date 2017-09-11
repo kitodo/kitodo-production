@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -35,6 +34,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.dto.BaseDTO;
+import org.kitodo.dto.ProcessDTO;
 
 /**
  * Implementation of {@link IStatisticalQuestion}. Statistical Request with
@@ -51,9 +52,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
     private Boolean flagIncludeLoops = false;
 
     /**
-     * loops included means that all step open all stepdone are considered loops
-     * not included means that only min(date) or max(date) - depending on option
-     * in.
+     * loops included means that all step open all stepdone are considered loops not
+     * included means that only min(date) or max(date) - depending on option in.
      *
      * @see HistoryTypeEnum
      *
@@ -78,8 +78,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
      * (org.goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override
@@ -95,33 +94,19 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
      * (List)
      */
     @Override
-    public List<DataTable> getDataTables(List dataSource) {
+    public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
 
         List<DataTable> allTables = new ArrayList<>();
 
-        IEvaluableFilter originalFilter;
-
-        if (dataSource instanceof IEvaluableFilter) {
-            originalFilter = (IEvaluableFilter) dataSource;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-        }
-
         // gathering IDs from the filter passed by dataSource
-        try {
-            this.myIDlist = originalFilter.getIDList();
-        } catch (UnsupportedOperationException e) {
-            logger.error(e);
-        }
+        this.myIDlist = getIds(dataSource);
 
         if (myIDlist == null || myIDlist.size() == 0) {
             return null;
         }
 
         // a list of DataTables is expected as return Object, even if there is
-        // only one
-        // Data Table as it is here in this implementation
+        // only one Data Table as it is here in this implementation
         DataTable tableStepOpenAndDone = getAllSteps(HistoryTypeEnum.taskOpen);
         tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
         tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " ("
@@ -218,10 +203,18 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
             Collections.sort(allTempRows, new DataTableComparator());
 
             allTables.add(tableStepOpenAndDone);
-
         }
 
         return allTables;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Integer> getIds(List<? extends BaseDTO> dataSource) {
+        List<Integer> ids = new ArrayList<>();
+        for (ProcessDTO process : (List<ProcessDTO>) dataSource) {
+            ids.add(process.getId());
+        }
+        return ids;
     }
 
     private static class DataTableComparator implements Comparator<DataRow> {
@@ -325,12 +318,12 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
     /**
      * Method generates a DataTable based on the input SQL. Methods success is
-     * depending on a very specific data structure ... so don't use it if you
-     * don't exactly understand it
+     * depending on a very specific data structure ... so don't use it if you don't
+     * exactly understand it
      *
      * @param natSQL
-     *            , headerFromSQL -> to be used, if headers need to be read in
-     *            first in order to get a certain sorting
+     *            headerFromSQL -> to be used, if headers need to be read in first
+     *            in order to get a certain sorting
      * @return DataTable
      */
 

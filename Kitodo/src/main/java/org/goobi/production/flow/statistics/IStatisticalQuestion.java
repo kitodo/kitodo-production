@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
+import org.kitodo.dto.BaseDTO;
 
 /**
  * This interface defines the required methods for any implementations of
@@ -38,7 +39,7 @@ public interface IStatisticalQuestion {
      *            List
      * @return List &lt;DataTable&gt;
      */
-    List<DataTable> getDataTables(List dataSource);
+    List<DataTable> getDataTables(List<? extends BaseDTO> dataSource);
 
     /**
      * This method is used to set a grouping unit for time based data.

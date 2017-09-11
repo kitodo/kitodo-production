@@ -20,10 +20,10 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.BeforeClass;
@@ -51,9 +51,9 @@ public class StatQuestCorrectionsTest {
     @Ignore("Crashing")
     @Test
     public final void testGetDataTables() {
-        IDataSource testFilter = new UserDefinedFilter("stepdone:5");
+        List testFilter = new ArrayList();
         test.setTimeUnit(TimeUnit.days);
-        List<DataTable> tables = test.getDataTables(testFilter.getSourceData());
+        List<DataTable> tables = test.getDataTables(testFilter);
         java.util.Iterator<DataTable> tablesIterator = tables.iterator();
         int counter = 0;
         DataTable table = null;

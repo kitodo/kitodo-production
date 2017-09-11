@@ -32,6 +32,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.dto.BaseDTO;
+import org.kitodo.dto.ProcessDTO;
 
 /**
  * Implementation of {@link IStatisticalQuestion}. Statistical Request with
@@ -73,32 +75,19 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
      * List)
      */
     @Override
-    public List<DataTable> getDataTables(List dataSource) {
+    public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
 
         List<DataTable> allTables = new ArrayList<>();
 
-        IEvaluableFilter originalFilter;
-
-        if (dataSource instanceof IEvaluableFilter) {
-            originalFilter = (IEvaluableFilter) dataSource;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-        }
-
         // gathering IDs from the filter passed by dataSource
-        List<Integer> IDlist = null;
-        try {
-            IDlist = originalFilter.getIDList();
-        } catch (UnsupportedOperationException e) {
-            logger.error(e);
-        }
-        if (IDlist == null || IDlist.size() == 0) {
+        List<Integer> idList = getIds(dataSource);
+        if (idList == null || idList.size() == 0) {
             return null;
         }
 
+        //TODO: replace it with some other solution
         // adding time restrictions
-        String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, getTimeUnit(), IDlist)
+        String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, getTimeUnit(), idList)
                 .getSQL(HistoryTypeEnum.taskError, null, false, false);
 
         Session session = Helper.getHibernateSession();
@@ -126,13 +115,9 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
             try {
 
                 // getting localized time group unit
-
                 // setting row name with date/time extraction based on the group
-
                 dataRow.setName(new Converter(objArr[1]).getString() + "");
-
                 dataRow.addValue(Helper.getTranslation("Corrections/Errors"), (new Converter(objArr[0]).getDouble()));
-
             } catch (Exception e) {
                 dataRow.addValue(e.getMessage(), 0.0);
             }
@@ -142,11 +127,19 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
         }
 
         // a list of DataTables is expected as return Object, even if there is
-        // only one
-        // Data Table as it is here in this implementation
+        // only one Data Table as it is here in this implementation
         dtbl.setUnitLabel(Helper.getTranslation(getTimeUnit().getSingularTitle()));
         allTables.add(dtbl);
         return allTables;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Integer> getIds(List<? extends BaseDTO> dataSource) {
+        List<Integer> ids = new ArrayList<>();
+        for (ProcessDTO process : (List<ProcessDTO>) dataSource) {
+            ids.add(process.getId());
+        }
+        return ids;
     }
 
     /*
@@ -171,7 +164,6 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
     public void setTimeFrame(Date timeFrom, Date timeTo) {
         this.timeFilterFrom = timeFrom;
         this.timeFilterTo = timeTo;
-
     }
 
     /*

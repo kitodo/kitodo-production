@@ -56,6 +56,8 @@ import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -93,6 +95,7 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
@@ -460,10 +463,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *
      * @param id
      *            of project
-     * @return list of JSON objects with processes for specific process id
+     * @return list of ProcessDTO objects with processes for specific process id
      */
-    public List<JSONObject> findByProjectId(Integer id) throws DataException {
-        return searcher.findDocuments(getQueryProjectId(id).toString());
+    public List<ProcessDTO> findByProjectId(Integer id, boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(searcher.findDocuments(getQueryProjectId(id).toString()), related);
     }
 
     /**
@@ -645,24 +648,52 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
-    QueryBuilder getQueryTemplate(boolean template) {
+    /**
+     * Get query for template.
+     * 
+     * @param template
+     *            true or false
+     * @return query as QueryBuilder
+     */
+    public QueryBuilder getQueryTemplate(boolean template) {
         return createSimpleQuery("template", template, true);
     }
 
-    private QueryBuilder getQuerySortHelperStatus(boolean closed) {
+    /**
+     * Get query for sort helper status.
+     *
+     * @param closed
+     *            true or false
+     * @return query as QueryBuilder
+     */
+    public QueryBuilder getQuerySortHelperStatus(boolean closed) {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("sortHelperStatus", "100000000", closed));
         query.should(createSimpleQuery("sortHelperStatus", "100000000000", closed));
         return query;
     }
 
-    private QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
-        List<JSONObject> processesAccordingToArchive = serviceManager.getProjectService().findByArchived(archived);
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        for (JSONObject singleProcess : processesAccordingToArchive) {
-            query.should(createSimpleQuery("project", getIdFromJSONObject(singleProcess), true));
-        }
-        return query;
+    /**
+     * Get query for archived projects.
+     *
+     * @param archived
+     *            true or false
+     * @return query as QueryBuilder
+     */
+    public QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
+        List<ProjectDTO> projects = serviceManager.getProjectService().findByArchived(archived, true);
+        return createSetQuery("project", serviceManager.getFilterService().collectIds(projects), true);
+    }
+
+    /**
+     * Sort results by creation date.
+     * 
+     * @param sortOrder
+     *            ASC or DESC as SortOrder
+     * @return sort
+     */
+    public String sortByCreationDate(SortOrder sortOrder) {
+        return SortBuilders.fieldSort("creationDate").order(sortOrder).toString();
     }
 
     /**
@@ -2469,17 +2500,5 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      */
     public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
         return processDAO.getProcessTemplatesForUser(projects);
-    }
-
-    /**
-     * Get processes which are not templates and are ordered by creation date. Set
-     * of results can be constrained.
-     *
-     * @param limit
-     *            max amount of returned results
-     * @return list of processes as Process objects
-     */
-    public List<Process> getNotTemplatesOrderedByCreationDate(Integer limit) {
-        return processDAO.getNotTemplatesOrderedByCreationDate(limit);
     }
 }

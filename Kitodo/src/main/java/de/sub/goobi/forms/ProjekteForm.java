@@ -49,7 +49,6 @@ import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
-import org.goobi.production.flow.statistics.hibernate.UserProjectFilter;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
@@ -395,8 +394,7 @@ public class ProjekteForm extends BasisForm {
 
     private List<ProcessDTO> getProcessesForStatistics() {
         try {
-            return serviceManager.getProcessService().convertJSONObjectsToDTOs(
-                    serviceManager.getProcessService().findByProjectId(this.myProjekt.getId()), false);
+            return serviceManager.getProcessService().findByProjectId(this.myProjekt.getId(), false);
         } catch (DataException e) {
             logger.error(e);
             return new ArrayList<>();
@@ -595,7 +593,7 @@ public class ProjekteForm extends BasisForm {
                 this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
                 this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(),
                         this.getMyProjekt().getEndDate());
-                this.projectProgressData.setDataSource(new UserProjectFilter(this.myProjekt.getId()));
+                this.projectProgressData.setDataSource(getProcessesForStatistics());
 
                 if (this.projectProgressImage == null) {
                     this.projectProgressImage = "";

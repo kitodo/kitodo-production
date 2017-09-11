@@ -19,12 +19,12 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
-import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -39,8 +39,8 @@ public class StatQuestProductionTest {
 
     static StatQuestProduction test;
     Locale locale = new Locale("GERMAN");
-    IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-    StatisticsManager testManager = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter.getSourceData(), locale);
+    private List testFilter = new ArrayList();
+    StatisticsManager testManager = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
 
     @BeforeClass
     public static void setUp() {
@@ -60,9 +60,8 @@ public class StatQuestProductionTest {
     @Ignore("Crashing")
     @Test
     public void testGetDataTables() throws DAOException {
-        IDataSource testFilter = new UserDefinedFilter("stepdone:5");
         test.setTimeUnit(TimeUnit.days);
-        List<DataTable> tables = test.getDataTables(testFilter.getSourceData());
+        List<DataTable> tables = test.getDataTables(testFilter);
         int countTableInTables = 0;
         while (countTableInTables < tables.size()) {
             DataTable table = tables.get(countTableInTables);

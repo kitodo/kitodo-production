@@ -352,7 +352,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         return taskQuery;
     }
 
-    private Set<Integer> collectIds(List<? extends BaseDTO> dtos) {
+    Set<Integer> collectIds(List<? extends BaseDTO> dtos) {
         Set<Integer> ids = new HashSet<>();
         for (BaseDTO processDTO : dtos) {
             ids.add(processDTO.getId());
