@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.logging.log4j.LogManager;
@@ -148,15 +147,5 @@ public class IndexRestClient extends KitodoRestClient {
         } else {
             throw new CustomResponseException("ElasticSearch failed to add all documents for unknown reason!");
         }
-    }
-
-    private int processStatusCode(StatusLine statusLine) throws CustomResponseException {
-        int statusCode = statusLine.getStatusCode();
-        if (statusCode >= 400 && statusCode < 452) {
-            throw new CustomResponseException("Client error: " + statusLine.toString());
-        } else if (statusCode >= 500 && statusCode < 512) {
-            throw new CustomResponseException("Server error: " + statusLine.toString());
-        }
-        return statusCode;
     }
 }
