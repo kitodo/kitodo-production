@@ -44,7 +44,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import javax.validation.ValidationException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -85,6 +84,7 @@ import org.kitodo.services.ServiceManager;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 @Named("ProjekteForm")
 @SessionScoped
@@ -933,10 +933,20 @@ public class ProjekteForm extends BasisForm {
             try {
                 documentBuilder.parse(inputSource);
                 return true;
-            } catch (SAXException | IOException e) {
-                // parse method throwing an exception implies given xml code is not well formed!
-                facesContext.addMessage(uiComponent.getClientId(), new FacesMessage("ERROR! Given XML NOT well formed: " + e.getMessage()));
-                throw new ValidationException("ERROR! Given XML NOT well formed: " + e.getMessage());
+            } catch (SAXParseException e) {
+                // parse method throwing an SAXParseException means given xml code is not well formed!
+                String errorString = "Error while parsing XML: line = " + e.getLineNumber() + ", column = " + e.getColumnNumber() + ": " + e.getMessage();
+                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "XML parsing error", errorString);
+                FacesContext currentFacesContext = FacesContext.getCurrentInstance();
+                currentFacesContext.addMessage(uiComponent.getClientId(), errorMessage);
+                logger.error(errorString);
+                return false;
+            } catch (SAXException e) {
+                logger.error("SAXException: " + e.getMessage());
+                return false;
+            } catch (IOException e) {
+                logger.error("IOException: " + e.getMessage());
+                return false;
             }
         }
         else {

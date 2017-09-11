@@ -35,8 +35,8 @@
                        lineNumbers="true" lineWrapping="true" mode="xml" keyMap="default"
                        value="#{ProjekteForm.XMLConfiguration}"/>
     </h:panelGroup>
+    <p:message id="validationErrors" for="projectEditor" showDetail="true" />
     <pe:remoteCommand name="saveConfiguration" actionListener="#{ProjekteForm.saveXMLConfiguration()}" />
     <p:commandButton widgetVar="saveButton" value="#{msgs.saveConfiguration}" onclick="saveConfiguration()"
-                     style="margin-top: 5px;"/>
-    <p:messages id="messages"/>
+                     style="margin-top: 5px;" update="projectform"/>
 </ui:composition>
