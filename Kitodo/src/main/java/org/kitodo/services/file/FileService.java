@@ -208,6 +208,18 @@ public class FileService {
     }
 
     /**
+     * Get size of directory.
+     *
+     * @param directory
+     *            URI to get size
+     * @return size of directory as Long
+     */
+    public Long getSizeOfDirectory(URI directory) throws IOException {
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getSizeOfDirectory(directory);
+    }
+
+    /**
      * Copy directory.
      *
      * @param sourceDirectory
@@ -456,7 +468,6 @@ public class FileService {
             renameFile(Paths.get(temporaryMetadataFileName).toUri(), metadataFileUri.getRawPath());
             removePrefixFromRelatedMetsAnchorFilesFor(Paths.get(temporaryMetadataFileName).toUri());
         }
-
     }
 
     private void removePrefixFromRelatedMetsAnchorFilesFor(URI temporaryMetadataFilename) throws IOException {

@@ -109,6 +109,15 @@ public interface FileManagementInterface {
     Integer getNumberOfFiles(FilenameFilter filter, URI directory);
 
     /**
+     * Get size of directory.
+     *
+     * @param directory
+     *            URI to get size
+     * @return size of directory as Long
+     */
+    Long getSizeOfDirectory(URI directory) throws IOException;
+
+    /**
      * Returns the name of a file with extension at a given URI.
      *
      * @param uri
