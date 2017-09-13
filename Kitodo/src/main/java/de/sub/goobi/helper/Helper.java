@@ -21,7 +21,6 @@ import java.io.FilenameFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -39,25 +38,21 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
 
-import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.el.EvaluationException;
-import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
-import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
 
-// TODO: split this class! here should be only parts of Helper which are needed
-// for Beans and Persistence
-public class Helper implements Serializable, Observer {
+/**
+ * Extends Helper from Kitodo Data Management module.
+ */
+public class Helper extends org.kitodo.data.database.helper.Helper implements Observer {
 
     /**
      * Always treat de-serialization as a full-blown constructor, by validating
@@ -75,28 +70,23 @@ public class Helper implements Serializable, Observer {
 
     }
 
+    public static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
     private static final long serialVersionUID = -7449236652821237059L;
-
-    private String myMetadatenVerzeichnis;
-    private String myConfigVerzeichnis;
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> localMessages = null;
-
-    public static Map<String, String> activeMQReporting = null;
     private static String compoundMessage;
 
     /**
-     * Ermitteln eines bestimmten Parameters des Requests.
+     * Determine a specific parameter of the request.
      *
-     * @return Parameter als String
+     * @return parameter als String
      */
     @SuppressWarnings("rawtypes")
-    public static String getRequestParameter(String Parameter) {
-        /* einen bestimmten übergebenen Parameter ermitteln */
+    public static String getRequestParameter(String parameter) {
         FacesContext context = FacesContext.getCurrentInstance();
         Map requestParams = context.getExternalContext().getRequestParameterMap();
-        return (String) requestParams.get(Parameter);
+        return (String) requestParams.get(parameter);
     }
 
     /**
@@ -112,28 +102,28 @@ public class Helper implements Serializable, Observer {
         return sw.toString();
     }
 
-    public static void setFehlerMeldung(String meldung) {
-        setMeldung(null, meldung, "", false);
+    public static void setFehlerMeldung(String message) {
+        setMeldung(null, message, "", false);
     }
 
-    public static void setFehlerMeldung(String meldung, String beschreibung) {
-        setMeldung(null, meldung, beschreibung != null ? beschreibung : "", false);
+    public static void setFehlerMeldung(String message, String description) {
+        setMeldung(null, message, description != null ? description : "", false);
     }
 
-    public static void setFehlerMeldung(String control, String meldung, String beschreibung) {
-        setMeldung(control, meldung, beschreibung != null ? beschreibung : "", false);
+    public static void setFehlerMeldung(String control, String message, String description) {
+        setMeldung(control, message, description != null ? description : "", false);
     }
 
     public static void setFehlerMeldung(Exception e) {
         setFehlerMeldung("Error (" + e.getClass().getName() + "): ", getExceptionMessage(e));
     }
 
-    public static void setFehlerMeldung(String meldung, Exception e) {
-        setFehlerMeldung(meldung, '(' + e.getClass().getSimpleName() + ": " + getExceptionMessage(e) + ')');
+    public static void setFehlerMeldung(String message, Exception e) {
+        setFehlerMeldung(message, '(' + e.getClass().getSimpleName() + ": " + getExceptionMessage(e) + ')');
     }
 
-    public static void setFehlerMeldung(String control, String meldung, Exception e) {
-        setFehlerMeldung(control, meldung + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
+    public static void setFehlerMeldung(String control, String message, Exception e) {
+        setFehlerMeldung(control, message + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
     }
 
     private static String getExceptionMessage(Throwable e) {
@@ -146,33 +136,33 @@ public class Helper implements Serializable, Observer {
         return message;
     }
 
-    public static void setMeldung(String meldung) {
-        setMeldung(null, meldung, "", true);
+    public static void setMeldung(String message) {
+        setMeldung(null, message, "", true);
     }
 
-    public static void setMeldung(String meldung, String beschreibung) {
-        setMeldung(null, meldung, beschreibung, true);
+    public static void setMeldung(String message, String description) {
+        setMeldung(null, message, description, true);
     }
 
-    public static void setMeldung(String control, String meldung, String beschreibung) {
-        setMeldung(control, meldung, beschreibung, true);
+    public static void setMeldung(String control, String message, String description) {
+        setMeldung(control, message, description, true);
     }
 
     /**
      * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control
      * übergeben.
      */
-    private static void setMeldung(String control, String meldung, String beschreibung, boolean nurInfo) {
+    private static void setMeldung(String control, String message, String description, boolean onlyInfo) {
         FacesContext context = FacesContext.getCurrentInstance();
 
         // Never forget: Strings are immutable
-        meldung = meldung.replaceAll("<", "&lt;");
-        meldung = meldung.replaceAll(">", "&gt;");
-        beschreibung = beschreibung.replaceAll("<", "&lt;");
-        beschreibung = beschreibung.replaceAll(">", "&gt;");
+        message = message.replaceAll("<", "&lt;");
+        message = message.replaceAll(">", "&gt;");
+        description = description.replaceAll("<", "&lt;");
+        description = description.replaceAll(">", "&gt;");
 
-        String msg = "";
-        String beschr = "";
+        String msg;
+        String descript;
         Locale language = Locale.ENGLISH;
         SpracheForm sf = (SpracheForm) Helper.getManagedBeanValue("#{SpracheForm}");
         if (sf != null) {
@@ -180,27 +170,27 @@ public class Helper implements Serializable, Observer {
         }
 
         try {
-            msg = getString(language, meldung);
+            msg = getString(language, message);
         } catch (RuntimeException e) {
-            msg = meldung;
+            msg = message;
         }
         try {
-            beschr = getString(language, beschreibung);
+            descript = getString(language, description);
         } catch (RuntimeException e) {
-            beschr = beschreibung;
+            descript = description;
         }
 
-        compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + beschr;
+        compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + descript;
         if (activeMQReporting != null) {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
-                    nurInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
+                    onlyInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
         }
         if (context != null) {
             context.addMessage(control,
-                    new FacesMessage(nurInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, beschr));
+                    new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
-            logger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
+            logger.log(onlyInfo ? Level.INFO : Level.ERROR, compoundMessage);
         }
     }
 
@@ -248,7 +238,6 @@ public class Helper implements Serializable, Observer {
             }
         }
         try {
-
             return commonMessages.get(language).getString(key);
         } catch (RuntimeException irrelevant) {
             return key;
@@ -272,34 +261,6 @@ public class Helper implements Serializable, Observer {
     }
 
     /**
-     * Get managed bean value.
-     *
-     * @param expr
-     *            String
-     * @return Object
-     */
-    public static Object getManagedBeanValue(String expr) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (context == null) {
-            return null;
-        } else {
-            Object value = null;
-            Application application = context.getApplication();
-            if (application != null) {
-                ValueBinding vb = application.createValueBinding(expr);
-                if (vb != null) {
-                    try {
-                        value = vb.getValue(context);
-                    } catch (EvaluationException e) {
-                        logger.error(e);
-                    }
-                }
-            }
-            return value;
-        }
-    }
-
-    /**
      * The procedure removeManagedBean() removes a managed bean from the faces
      * context by name. If nothing such is available, nothing happens.
      *
@@ -316,27 +277,6 @@ public class Helper implements Serializable, Observer {
         } catch (Exception nothingToDo) {
             logger.error(nothingToDo);
         }
-    }
-
-    /**
-     * Get Hibernate Session.
-     *
-     * @return Hibernate Session
-     */
-    public static Session getHibernateSession() {
-        Session sess;
-        try {
-            sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
-            if (sess == null) {
-                sess = HibernateUtilOld.getSession();
-            }
-        } catch (Exception e) {
-            sess = HibernateUtilOld.getSession();
-        }
-        if (!sess.isOpen()) {
-            sess = HibernateUtilOld.getSession();
-        }
-        return sess;
     }
 
     private static void loadMsgs() {
@@ -375,8 +315,8 @@ public class Helper implements Serializable, Observer {
                 }
             }
         } else {
-            Locale defaullLocale = new Locale("EN");
-            commonMessages.put(defaullLocale, ResourceBundle.getBundle("messages.messages", defaullLocale));
+            Locale defaultLocale = new Locale("EN");
+            commonMessages.put(defaultLocale, ResourceBundle.getBundle("messages.messages", defaultLocale));
         }
     }
 
@@ -460,9 +400,9 @@ public class Helper implements Serializable, Observer {
     public static String getBaseUrl() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest req = (HttpServletRequest) context.getExternalContext().getRequest();
-        String fullpath = req.getRequestURL().toString();
-        String servletpath = context.getExternalContext().getRequestServletPath();
-        return fullpath.substring(0, fullpath.indexOf(servletpath));
+        String fullPath = req.getRequestURL().toString();
+        String servletPath = context.getExternalContext().getRequestServletPath();
+        return fullPath.substring(0, fullPath.indexOf(servletPath));
     }
 
     public static User getCurrentUser() {
