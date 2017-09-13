@@ -67,6 +67,7 @@ class Query {
                             throw new IllegalArgumentException(BRACKET);
                         case '-':
                             operator = NOT;
+                            break;
                         default:
                             field.appendCodePoint(codePoint);
                     }

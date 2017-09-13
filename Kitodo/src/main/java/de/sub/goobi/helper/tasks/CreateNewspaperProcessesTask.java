@@ -32,7 +32,6 @@ import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
@@ -41,7 +40,6 @@ import ugh.dl.DocStruct;
 import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
@@ -240,7 +238,6 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     : e.getClass().getSimpleName() + (currentTitle != null ? " while creating " + currentTitle
                             : " in CreateNewspaperProcessesTask");
             setException(new RuntimeException(message + ": " + e.getMessage(), e));
-            return;
         }
     }
 

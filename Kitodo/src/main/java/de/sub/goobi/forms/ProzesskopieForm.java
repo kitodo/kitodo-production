@@ -711,7 +711,8 @@ public class ProzesskopieForm implements Serializable {
             if (this.prozessKopie.getTitle() != null) {
                 long amount = 0;
                 try {
-                    amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
+                    amount = serviceManager.getProcessService()
+                            .getNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
                 } catch (DataException e) {
                     Helper.setFehlerMeldung("Error on reading process information", e.getMessage());
                     valide = false;
@@ -1238,9 +1239,7 @@ public class ProzesskopieForm implements Serializable {
      *            String
      */
     public void setDocType(String docType) {
-        if (this.docType.equals(docType)) {
-            return;
-        } else {
+        if (!this.docType.equals(docType)) {
             this.docType = docType;
             if (myRdf != null) {
 
@@ -1695,7 +1694,8 @@ public class ProzesskopieForm implements Serializable {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        newTitle.append(calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                        newTitle.append(
+                                calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }

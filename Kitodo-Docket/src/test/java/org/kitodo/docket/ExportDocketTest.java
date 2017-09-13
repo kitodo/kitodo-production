@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ExportDocketTest {
-    DocketDataGenerator docketDataGenerator;
+    private DocketDataGenerator docketDataGenerator;
 
     @Before
     public void initialize() {
@@ -36,12 +36,14 @@ public class ExportDocketTest {
     public void testStartExport() throws IOException {
         ExportDocket exportDocket = new ExportDocket();
         File file = new File("docket.pdf");
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
         File xslFile = new File("src/test/resources/docket.xsl");
 
-        exportDocket.startExport(docketDataGenerator.createDocketData("processId", "signature", "doctype"),
-                fileOutputStream, xslFile);
-        fileOutputStream.close();
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            exportDocket.startExport(docketDataGenerator.createDocketData("processId", "signature", "doctype"),
+                    fileOutputStream, xslFile);
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        }
     }
 
 }

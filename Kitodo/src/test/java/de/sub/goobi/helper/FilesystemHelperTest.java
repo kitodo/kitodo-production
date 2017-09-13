@@ -17,6 +17,7 @@ import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 
@@ -87,7 +88,9 @@ public class FilesystemHelperTest {
     private URI createFile(String fileName) throws IOException {
         FileService fileService = new FileService();
         URI resource = fileService.createResource(fileName);
-        fileService.write(resource).write(4);
+        OutputStream outputStream = fileService.write(resource);
+        outputStream.write(4);
+        outputStream.close();
         return resource;
     }
 }

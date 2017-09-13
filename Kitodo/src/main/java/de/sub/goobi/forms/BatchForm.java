@@ -105,7 +105,6 @@ public class BatchForm extends BasisForm {
         } catch (Exception e) { // NumberFormatException, DAOException
             logger.error(e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen");
-            return;
         }
     }
 

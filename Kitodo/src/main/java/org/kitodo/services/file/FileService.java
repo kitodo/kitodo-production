@@ -36,7 +36,6 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
-import org.kitodo.dto.ProcessDTO;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
@@ -166,9 +165,9 @@ public class FileService {
     }
 
     /**
-     * This function implements file renaming. Renaming of files is full of mischief
-     * under Windows which unaccountably holds locks on files. Sometimes running the
-     * JVM’s garbage collector puts things right.
+     * This function implements file renaming. Renaming of files is full of
+     * mischief under Windows which unaccountably holds locks on files.
+     * Sometimes running the JVM’s garbage collector puts things right.
      *
      * @param fileUri
      *            File to rename
@@ -640,7 +639,7 @@ public class FileService {
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
-                    resourceName);
+                resourceName);
     }
 
     /**
@@ -716,7 +715,7 @@ public class FileService {
      */
     public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.createSymLink(homeUri, targetUri, onlyRead, user.getLogin());
+        return fileManagementModule.createSymLink(targetUri, homeUri, onlyRead, user.getLogin());
     }
 
     /**
