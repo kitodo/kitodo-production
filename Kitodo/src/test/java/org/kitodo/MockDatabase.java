@@ -19,13 +19,19 @@ import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.InternalSettingsPreparer;
@@ -34,6 +40,9 @@ import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.hibernate.Session;
 import org.joda.time.LocalDate;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
@@ -57,6 +66,7 @@ public class MockDatabase {
     private static String testIndexName;
     private static String port;
     private static final String HTTP_TRANSPORT_PORT = "9305";
+    private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     @SuppressWarnings("unchecked")
@@ -77,7 +87,7 @@ public class MockDatabase {
             node = new ExtendedNode(settings, asList(Netty4Plugin.class));
             node.start();
 
-            indexRestClient.createIndex();
+            indexRestClient.createIndex(readMapping());
 
             insertBatches();
             insertDockets();
@@ -96,8 +106,6 @@ public class MockDatabase {
             insertUserFilters();
             insertTasks();
             insertHistory();
-
-            indexRestClient.enableSortingByTextField("user", "login");
         }
     }
 
@@ -112,6 +120,21 @@ public class MockDatabase {
         restClient.initiateClient();
         restClient.setIndex(testIndexName);
         return restClient;
+    }
+
+    private static String readMapping() {
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = new JSONObject();
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+
+        try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
+            String mapping = IOUtils.toString(inputStream, "UTF-8");
+            Object object = parser.parse(mapping);
+            jsonObject = (JSONObject) object;
+        } catch (IOException | ParseException e ) {
+            logger.error(e);
+        }
+        return jsonObject.toJSONString();
     }
 
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {

@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.IndexWorker;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.Map;
@@ -24,8 +25,12 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -784,10 +789,20 @@ public class IndexingForm {
     }
 
     /**
-     * Enable sorting by text fields.
+     * Create mapping which enables sorting and other aggregation functionalities.
      */
-    public void enableSorting() {
-        enableSortingByAllTextFields();
+    public void createMapping() {
+        try {
+            indexRestClient.initiateClient();
+            indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
+            if (readMapping().equals("")) {
+                indexRestClient.createIndex();
+            } else {
+                indexRestClient.createIndex(readMapping());
+            }
+        } catch (CustomResponseException | IOException | ParseException e) {
+            logger.error(e);
+        }
     }
 
     /**
@@ -843,22 +858,17 @@ public class IndexingForm {
         indexedFilter = 0;
     }
 
-    private void enableSortingByTextField(String type, String field) {
-        try {
-            indexRestClient.initiateClient();
-            indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
-            indexRestClient.enableSortingByTextField(type, field);
-        } catch (CustomResponseException | IOException e) {
+    private static String readMapping() throws ParseException {
+        JSONParser parser = new JSONParser();
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
+            String mapping = IOUtils.toString(inputStream, "UTF-8");
+            Object object = parser.parse(mapping);
+            JSONObject jsonObject = (JSONObject) object;
+            return jsonObject.toJSONString();
+        } catch (IOException e) {
             logger.error(e);
+            return "";
         }
     }
-
-    private void enableSortingByAllTextFields() {
-        enableSortingByTextField("process", "title");
-        enableSortingByTextField("process","sortHelperStatus");
-        enableSortingByTextField("project", "title");
-        enableSortingByTextField("task", "title");
-        enableSortingByTextField("task","typeModuleName");
-    }
-
 }

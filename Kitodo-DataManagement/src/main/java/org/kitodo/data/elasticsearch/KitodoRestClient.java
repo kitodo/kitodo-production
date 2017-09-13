@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.StatusLine;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
@@ -56,12 +57,29 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
-     * Create new index. Used for tests!
+     * Create new index without mapping.
      */
     public void createIndex() throws IOException, CustomResponseException {
-        String query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
+        createIndex(null);
+    }
+
+    /**
+     * Create new index with mapping.
+     * 
+     * @param query
+     *            contains mapping
+     * @return true or false - can be used for displaying information to user if
+     *         success
+     */
+    public boolean createIndex(String query) throws IOException, CustomResponseException {
+        if (query == null) {
+            query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
+        }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        restClient.performRequest("PUT", "/" + index, Collections.<String, String>emptyMap(), entity);
+        Response indexResponse = restClient.performRequest("PUT", "/" + index, Collections.<String, String>emptyMap(),
+                entity);
+        int statusCode = processStatusCode(indexResponse.getStatusLine());
+        return statusCode == 200 || statusCode == 201;
     }
 
     /**
@@ -131,5 +149,15 @@ public abstract class KitodoRestClient implements RestClientInterface {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    protected int processStatusCode(StatusLine statusLine) throws CustomResponseException {
+        int statusCode = statusLine.getStatusCode();
+        if (statusCode >= 400 && statusCode <= 499) {
+            throw new CustomResponseException("Client error: " + statusLine.toString());
+        } else if (statusCode >= 500 && statusCode <= 599) {
+            throw new CustomResponseException("Server error: " + statusLine.toString());
+        }
+        return statusCode;
     }
 }
