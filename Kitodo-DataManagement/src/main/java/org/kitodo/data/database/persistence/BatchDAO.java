@@ -64,7 +64,7 @@ public class BatchDAO extends BaseDAO<Batch> {
      * @return constrained list of results
      */
     public List<Batch> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Batch", first, max);
+        return retrieveObjects("FROM Batch ORDER BY id ASC", first, max);
     }
 
     /**

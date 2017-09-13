@@ -57,7 +57,7 @@ public class DocketDAO extends BaseDAO<Docket> {
      * @return constrained list of results
      */
     public List<Docket> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Docket", first, max);
+        return retrieveObjects("FROM Docket ORDER BY id", first, max);
     }
 
     public Docket save(Docket docket) throws DAOException {

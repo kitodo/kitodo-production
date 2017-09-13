@@ -60,7 +60,7 @@ public class FilterDAO extends BaseDAO<Filter> {
      * @return constrained list of results
      */
     public List<Filter> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Filter", first, max);
+        return retrieveObjects("FROM Filter ORDER BY id ASC", first, max);
     }
 
     /**

@@ -62,7 +62,7 @@ public class PropertyDAO extends BaseDAO<Property> {
      * @return constrained list of results
      */
     public List<Property> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Property", first, max);
+        return retrieveObjects("FROM Property ORDER BY id ASC", first, max);
     }
 
     /**

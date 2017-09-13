@@ -56,7 +56,7 @@ public class TemplateDAO extends BaseDAO<Template> {
      * @return constrained list of results
      */
     public List<Template> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Template", first, max);
+        return retrieveObjects("FROM Template ORDER BY id ASC", first, max);
     }
 
     public Template save(Template template) throws DAOException {

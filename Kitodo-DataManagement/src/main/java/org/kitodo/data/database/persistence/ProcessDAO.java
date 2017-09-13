@@ -59,7 +59,7 @@ public class ProcessDAO extends BaseDAO<Process> {
      * @return constrained list of results
      */
     public List<Process> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Process", first, max);
+        return retrieveObjects("FROM Process ORDER BY id ASC", first, max);
     }
 
     /**

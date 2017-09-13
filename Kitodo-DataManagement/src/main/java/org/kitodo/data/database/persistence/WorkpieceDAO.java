@@ -56,7 +56,7 @@ public class WorkpieceDAO extends BaseDAO<Workpiece> {
      * @return constrained list of results
      */
     public List<Workpiece> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Workpiece", first, max);
+        return retrieveObjects("FROM Workpiece ORDER BY id ASC", first, max);
     }
 
     public Workpiece save(Workpiece workpiece) throws DAOException {

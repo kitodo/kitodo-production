@@ -60,7 +60,7 @@ public class HistoryDAO extends BaseDAO<History> {
      * @return constrained list of results
      */
     public List<History> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM History", first, max);
+        return retrieveObjects("FROM History ORDER BY id ASC", first, max);
     }
 
     public History save(History history) throws DAOException {

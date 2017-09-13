@@ -61,7 +61,7 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
      * @return constrained list of results
      */
     public List<Ruleset> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Ruleset", first, max);
+        return retrieveObjects("FROM Ruleset ORDER BY id ASC", first, max);
     }
 
     /**

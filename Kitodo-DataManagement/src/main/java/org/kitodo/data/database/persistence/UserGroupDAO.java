@@ -57,7 +57,7 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
      * @return constrained list of results
      */
     public List<UserGroup> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM UserGroup", first, max);
+        return retrieveObjects("FROM UserGroup ORDER BY id ASC", first, max);
     }
 
     public UserGroup save(UserGroup userGroup) throws DAOException {

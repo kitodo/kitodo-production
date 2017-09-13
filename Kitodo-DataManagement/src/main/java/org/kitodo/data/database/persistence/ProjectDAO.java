@@ -60,7 +60,7 @@ public class ProjectDAO extends BaseDAO<Project> {
      * @return constrained list of results
      */
     public List<Project> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Project", first, max);
+        return retrieveObjects("FROM Project ORDER BY id ASC", first, max);
     }
 
     /**

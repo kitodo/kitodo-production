@@ -57,7 +57,7 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return constrained list of results
      */
     public List<Task> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Task", first, max);
+        return retrieveObjects("FROM Task ORDER BY id ASC", first, max);
     }
 
     public Task save(Task task) throws DAOException {

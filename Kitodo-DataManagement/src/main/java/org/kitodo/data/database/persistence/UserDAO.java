@@ -57,7 +57,7 @@ public class UserDAO extends BaseDAO<User> {
      * @return constrained list of results
      */
     public List<User> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM User WHERE deleted = 0", first, max);
+        return retrieveObjects("FROM User WHERE deleted = 0 ORDER BY id ASC", first, max);
     }
 
     public User save(User user) throws DAOException {
