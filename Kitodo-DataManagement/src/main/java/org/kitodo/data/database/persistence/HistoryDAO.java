@@ -83,7 +83,7 @@ public class HistoryDAO extends BaseDAO<History> {
         removeObject(History.class, id);
     }
 
-    public List<History> search(String query) throws DAOException {
+    public List<History> search(String query) {
         return retrieveObjects(query);
     }
 

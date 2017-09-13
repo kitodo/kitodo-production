@@ -25,7 +25,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
@@ -356,9 +355,6 @@ public class ExtendedDataImpl extends DataImpl {
                 throw new GoobiException(1500,
                         "Property " + gpp.getName() + " with id " + gpp.getId() + " does not exist");
             }
-        } catch (DAOException e) {
-            throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
         } catch (DataException e) {
             throw new GoobiException(1400, "******** wrapped DataException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));

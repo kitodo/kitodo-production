@@ -121,7 +121,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            as String
      * @return list of exact bean objects
      */
-    public abstract List<T> getByQuery(String query) throws DAOException;
+    public abstract List<T> getByQuery(String query);
 
     /**
      * Count all rows in database.

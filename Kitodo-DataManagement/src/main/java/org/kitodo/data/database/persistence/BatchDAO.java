@@ -74,7 +74,7 @@ public class BatchDAO extends BaseDAO<Batch> {
      *            as String
      * @return list of Batch objects
      */
-    public List<Batch> search(String query) throws DAOException {
+    public List<Batch> search(String query) {
         return retrieveObjects(query);
     }
 

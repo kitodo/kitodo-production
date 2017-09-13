@@ -177,7 +177,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
      * @return list of properties
      */
     @Override
-    public List<Property> getByQuery(String query) throws DAOException {
+    public List<Property> getByQuery(String query) {
         return propertyDAO.search(query);
     }
 

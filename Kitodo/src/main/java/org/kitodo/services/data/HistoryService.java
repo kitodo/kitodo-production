@@ -118,7 +118,7 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
      * @return list of History objects
      */
     @Override
-    public List<History> getByQuery(String query) throws DAOException {
+    public List<History> getByQuery(String query) {
         return historyDAO.search(query);
     }
 

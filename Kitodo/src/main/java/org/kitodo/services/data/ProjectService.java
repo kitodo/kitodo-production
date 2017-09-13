@@ -201,7 +201,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     @Override
-    public List<Project> getByQuery(String query) throws DAOException {
+    public List<Project> getByQuery(String query) {
         return projectDAO.search(query);
     }
 
@@ -345,7 +345,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *
      * @return all projects sorted by title as Project objects
      */
-    public List<Project> getAllProjectsSortedByTitle() throws DAOException {
+    public List<Project> getAllProjectsSortedByTitle() {
         return projectDAO.getAllProjectsSortedByTitle();
     }
 
@@ -354,7 +354,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      *
      * @return all not archived projects sorted by title as Project objects
      */
-    public List<Project> getAllNotArchivedProjectsSortedByTitle() throws DAOException {
+    public List<Project> getAllNotArchivedProjectsSortedByTitle() {
         return projectDAO.getAllNotArchivedProjectsSortedByTitle();
     }
 

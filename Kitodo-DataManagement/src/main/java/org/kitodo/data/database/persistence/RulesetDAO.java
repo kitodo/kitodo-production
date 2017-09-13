@@ -69,7 +69,7 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
         removeObject(Ruleset.class, id);
     }
 
-    public List<Ruleset> search(String query) throws DAOException {
+    public List<Ruleset> search(String query) {
         return retrieveObjects(query);
     }
 

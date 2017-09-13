@@ -57,7 +57,7 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      *            not contain
      * @return query
      */
-    public QueryBuilder getQueryTitle(String title, boolean contains) throws DataException {
+    public QueryBuilder getQueryTitle(String title, boolean contains) {
         return createSimpleQuery("title", title, contains, Operator.AND);
     }
 

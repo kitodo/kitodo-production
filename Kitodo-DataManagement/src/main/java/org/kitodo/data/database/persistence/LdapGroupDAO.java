@@ -59,7 +59,7 @@ public class LdapGroupDAO extends BaseDAO<LdapGroup> {
         removeObject(LdapGroup.class, id);
     }
 
-    public List<LdapGroup> search(String query) throws DAOException {
+    public List<LdapGroup> search(String query) {
         return retrieveObjects(query);
     }
 

@@ -797,7 +797,7 @@ public class MockDatabase {
     /**
      * Clean index after tests.
      */
-    public static void cleanIndex() throws IOException, CustomResponseException {
+    public static void cleanIndex() throws IOException {
         IndexRestClient restClient = new IndexRestClient();
         restClient.initiateClient();
         restClient.deleteIndex();

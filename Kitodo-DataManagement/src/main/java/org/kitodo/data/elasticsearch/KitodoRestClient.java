@@ -85,7 +85,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
     /**
      * Delete the whole index. Used for cleaning after tests!
      */
-    public void deleteIndex() throws IOException, CustomResponseException {
+    public void deleteIndex() throws IOException {
         restClient.performRequest("DELETE", "/" + index);
     }
 

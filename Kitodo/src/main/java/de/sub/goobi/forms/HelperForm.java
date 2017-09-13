@@ -135,15 +135,10 @@ public class HelperForm implements Serializable {
 
     public List<SelectItem> getDockets() {
         List<SelectItem> answer = new ArrayList<>();
-        try {
-            List<Docket> temp = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
-            for (Docket d : temp) {
-                answer.add(new SelectItem(d, d.getTitle(), null));
-            }
-        } catch (DAOException e) {
-            logger.error(e);
+        List<Docket> temp = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
+        for (Docket d : temp) {
+            answer.add(new SelectItem(d, d.getTitle(), null));
         }
-
         return answer;
     }
 

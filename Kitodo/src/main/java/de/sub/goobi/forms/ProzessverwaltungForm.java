@@ -1416,7 +1416,7 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return list of SelectItem objects
      */
-    public List<SelectItem> getProjektAuswahlListe() throws DAOException {
+    public List<SelectItem> getProjektAuswahlListe() {
         List<SelectItem> myProjekte = new ArrayList<>();
         List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
         for (Project proj : temp) {

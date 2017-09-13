@@ -236,7 +236,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     @Override
-    public List<Task> getByQuery(String query) throws DAOException {
+    public List<Task> getByQuery(String query) {
         return taskDAO.search(query);
     }
 

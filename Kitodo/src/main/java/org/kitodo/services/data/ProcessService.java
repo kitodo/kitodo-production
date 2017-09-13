@@ -401,7 +401,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     @Override
-    public List<Process> getByQuery(String query) throws DAOException {
+    public List<Process> getByQuery(String query) {
         return processDAO.search(query);
     }
 
