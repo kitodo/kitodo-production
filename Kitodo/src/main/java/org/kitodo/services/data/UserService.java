@@ -392,7 +392,7 @@ public class UserService extends SearchService<User, UserDTO> {
         nestedBoolQuery.should(createSimpleWildcardQuery("name", name));
         nestedBoolQuery.should(createSimpleWildcardQuery("surname", name));
         boolQuery.must(nestedBoolQuery);
-        return searcher.findDocuments(boolQuery.toString());
+        return searcher.findDocuments(boolQuery.toString(), sortByLogin());
     }
 
     /**
