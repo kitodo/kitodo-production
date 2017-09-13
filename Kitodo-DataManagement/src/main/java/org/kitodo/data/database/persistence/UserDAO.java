@@ -44,7 +44,7 @@ public class UserDAO extends BaseDAO<User> {
      * @return all persisted users
      */
     public List<User> findAll() {
-        return retrieveAllObjects(User.class);
+        return retrieveObjects("FROM User WHERE deleted = 0");
     }
 
     /**
@@ -57,7 +57,7 @@ public class UserDAO extends BaseDAO<User> {
      * @return constrained list of results
      */
     public List<User> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM User", first, max);
+        return retrieveObjects("FROM User WHERE deleted = 0", first, max);
     }
 
     public User save(User user) throws DAOException {
