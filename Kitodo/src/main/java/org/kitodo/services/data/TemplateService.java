@@ -129,6 +129,11 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
         return templateDAO.findAll();
     }
 
+    @Override
+    public List<Template> getAll(int offset, int size) throws DAOException {
+        return templateDAO.getAll(offset, size);
+    }
+
     /**
      * Search Template objects by given query.
      *

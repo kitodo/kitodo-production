@@ -213,6 +213,11 @@ public class UserService extends SearchService<User, UserDTO> {
         return userDAO.findAll();
     }
 
+    @Override
+    public List<User> getAll(int offset, int size) throws DAOException {
+        return userDAO.getAll(offset, size);
+    }
+
     /**
      * Method removes user object from database.
      *

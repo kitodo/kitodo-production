@@ -110,6 +110,11 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
         return historyDAO.findAll();
     }
 
+    @Override
+    public List<History> getAll(int offset, int size) throws DAOException {
+        return historyDAO.getAll(offset, size);
+    }
+
     /**
      * Search History objects by given query.
      *

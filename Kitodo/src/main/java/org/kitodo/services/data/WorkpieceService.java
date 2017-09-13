@@ -128,6 +128,11 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
         return workpieceDAO.findAll();
     }
 
+    @Override
+    public List<Workpiece> getAll(int offset, int size) throws DAOException {
+        return workpieceDAO.getAll(offset, size);
+    }
+
     /**
      * Search Workpiece objects by given query.
      *

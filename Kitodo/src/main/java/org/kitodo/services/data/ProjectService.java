@@ -154,6 +154,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     @Override
+    public List<Project> getAll(int offset, int size) throws DAOException {
+        return projectDAO.getAll(offset, size);
+    }
+
+    @Override
     public Long countDatabaseRows() throws DAOException {
         return projectDAO.count("FROM Project");
     }

@@ -62,6 +62,11 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
         return docketDAO.findAll();
     }
 
+    @Override
+    public List<Docket> getAll(int offset, int size) throws DAOException {
+        return docketDAO.getAll(offset, size);
+    }
+
     /**
      * Method saves docket object to database.
      *

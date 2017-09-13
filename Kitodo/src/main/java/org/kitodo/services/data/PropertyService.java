@@ -125,6 +125,11 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
     }
 
     @Override
+    public List<Property> getAll(int offset, int size) throws DAOException {
+        return propertyDAO.getAll(offset, size);
+    }
+
+    @Override
     public Long countDatabaseRows() throws DAOException {
         return propertyDAO.count("FROM Property");
     }

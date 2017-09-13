@@ -66,6 +66,11 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
+    public List<UserGroup> getAll(int offset, int size) throws DAOException {
+        return userGroupDAO.getAll(offset, size);
+    }
+
+    @Override
     public Long countDatabaseRows() throws DAOException {
         return userGroupDAO.count("FROM UserGroup");
     }
