@@ -97,6 +97,14 @@ public class HistoryServiceIT {
     }
 
     @Test
+    public void shouldGetAllHistoriesInGivenRange() throws Exception {
+        HistoryService historyService = new HistoryService();
+
+        List<History> histories = historyService.getAll(1,10);
+        assertEquals("Not all histories were found in database!", 0, histories.size());
+    }
+
+    @Test
     public void shouldRemoveHistory() throws Exception {
         HistoryService historyService = new HistoryService();
 

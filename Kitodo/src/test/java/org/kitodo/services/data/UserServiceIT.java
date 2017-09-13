@@ -102,8 +102,15 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         List<User> users = userService.getAll();
-        boolean result = users.size() == 3 || users.size() == 4 || users.size() == 5 || users.size() == 6;
-        assertTrue("Not all users were found in database!", result);
+        assertEquals("Not all users were found in database!", 3, users.size());
+    }
+
+    @Test
+    public void shouldGetAllUsersInGivenRange() throws Exception {
+        UserService userService = new UserService();
+
+        List<User> users = userService.getAll(2,10);
+        assertEquals("Not all users were found in database!", 1, users.size());
     }
 
     @Test

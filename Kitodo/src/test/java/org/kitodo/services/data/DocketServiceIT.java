@@ -95,6 +95,14 @@ public class DocketServiceIT {
     }
 
     @Test
+    public void shouldGetAllDocketsInGivenRange() throws Exception {
+        DocketService docketService = new DocketService();
+
+        List<Docket> dockets = docketService.getAll(1,10);
+        assertEquals("Not all dockets were found in database!", 1, dockets.size());
+    }
+
+    @Test
     public void shouldFindById() throws Exception {
         DocketService docketService = new DocketService();
 

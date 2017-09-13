@@ -77,6 +77,14 @@ public class TemplateServiceIT {
     }
 
     @Test
+    public void shouldGetAllTemplatesInGivenRange() throws Exception {
+        TemplateService templateService = new TemplateService();
+
+        List<Template> templates = templateService.getAll(0,10);
+        assertEquals("Not all templates were found in database!", 2, templates.size());
+    }
+
+    @Test
     public void shouldRemoveTemplate() throws Exception {
         ProcessService processService = new ProcessService();
         TemplateService templateService = new TemplateService();

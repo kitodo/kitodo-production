@@ -77,6 +77,14 @@ public class UserGroupServiceIT {
     }
 
     @Test
+    public void shouldGetAllUserGroupsInGivenRange() throws Exception {
+        UserGroupService userGroupService = new UserGroupService();
+
+        List<UserGroup> userGroups = userGroupService.getAll(1,10);
+        assertEquals("Not all user's groups were found in database!", 2, userGroups.size());
+    }
+
+    @Test
     public void shouldRemoveUserGroup() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 

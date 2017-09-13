@@ -103,6 +103,14 @@ public class TaskServiceIT {
     }
 
     @Test
+    public void shouldGetAllTasksInGivenRange() throws Exception {
+        TaskService taskService = new TaskService();
+
+        List<Task> tasks = taskService.getAll(1,3);
+        assertEquals("Not all tasks were found in database!", 3, tasks.size());
+    }
+
+    @Test
     public void shouldFindByProcessingStatusAndUser() throws Exception {
         TaskService taskService = new TaskService();
 

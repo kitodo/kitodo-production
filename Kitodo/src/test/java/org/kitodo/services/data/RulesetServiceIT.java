@@ -95,6 +95,14 @@ public class RulesetServiceIT {
     }
 
     @Test
+    public void shouldGetAllRulesetsInGivenRange() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        List<Ruleset> rulesets = rulesetService.getAll(1,10);
+        assertEquals("Not all rulesets were found in database!", 1, rulesets.size());
+    }
+
+    @Test
     public void shouldFindById() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
