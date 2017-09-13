@@ -46,6 +46,19 @@ public class TemplateDAO extends BaseDAO<Template> {
         return retrieveAllObjects(Template.class);
     }
 
+    /**
+     * Retrieves all templates in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Template> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Template", first, max);
+    }
+
     public Template save(Template template) throws DAOException {
         storeObject(template);
         return retrieveObject(Template.class, template.getId());

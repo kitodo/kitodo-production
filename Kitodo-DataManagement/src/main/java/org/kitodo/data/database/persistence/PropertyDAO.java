@@ -53,6 +53,19 @@ public class PropertyDAO extends BaseDAO<Property> {
     }
 
     /**
+     * Retrieves all properties in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Property> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Property", first, max);
+    }
+
+    /**
      * Find properties by query.
      * 
      * @param query

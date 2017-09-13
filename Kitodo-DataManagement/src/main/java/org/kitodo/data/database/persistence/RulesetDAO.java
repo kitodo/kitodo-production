@@ -52,6 +52,19 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
     }
 
     /**
+     * Retrieves all rulesets in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Ruleset> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Ruleset", first, max);
+    }
+
+    /**
      * Remove ruleset object.
      *
      * @param ruleset

@@ -55,6 +55,19 @@ public class BatchDAO extends BaseDAO<Batch> {
     }
 
     /**
+     * Retrieves all batches in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Batch> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Batch", first, max);
+    }
+
+    /**
      * The method save() saves a batch to the database.
      *
      * @param batch

@@ -47,6 +47,19 @@ public class TaskDAO extends BaseDAO<Task> {
         return retrieveAllObjects(Task.class);
     }
 
+    /**
+     * Retrieves all tasks in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Task> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Task", first, max);
+    }
+
     public Task save(Task task) throws DAOException {
         storeObject(task);
         return retrieveObject(Task.class, task.getId());

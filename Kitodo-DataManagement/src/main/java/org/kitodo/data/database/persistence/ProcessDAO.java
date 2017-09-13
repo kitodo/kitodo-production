@@ -50,6 +50,19 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
+     * Retrieves all processes in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Process> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Process", first, max);
+    }
+
+    /**
      * @param process
      *            object
      * @param progress

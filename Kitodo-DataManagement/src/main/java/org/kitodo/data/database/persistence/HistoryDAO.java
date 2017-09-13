@@ -50,6 +50,19 @@ public class HistoryDAO extends BaseDAO<History> {
         return retrieveAllObjects(History.class);
     }
 
+    /**
+     * Retrieves all histories in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<History> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM History", first, max);
+    }
+
     public History save(History history) throws DAOException {
         storeObject(history);
         return retrieveObject(History.class, history.getId());

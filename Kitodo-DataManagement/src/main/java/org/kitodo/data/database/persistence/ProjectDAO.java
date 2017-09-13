@@ -51,6 +51,19 @@ public class ProjectDAO extends BaseDAO<Project> {
     }
 
     /**
+     * Retrieves all projects in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Project> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Project", first, max);
+    }
+
+    /**
      * Remove project object.
      *
      * @param project

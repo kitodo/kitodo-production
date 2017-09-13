@@ -51,6 +51,19 @@ public class FilterDAO extends BaseDAO<Filter> {
     }
 
     /**
+     * Retrieves all filters in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Filter> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM Filter", first, max);
+    }
+
+    /**
      * Find properties by query.
      *
      * @param query

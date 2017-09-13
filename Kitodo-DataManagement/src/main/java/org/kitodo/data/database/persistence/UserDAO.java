@@ -47,6 +47,19 @@ public class UserDAO extends BaseDAO<User> {
         return retrieveAllObjects(User.class);
     }
 
+    /**
+     * Retrieves all users in given range.
+     *
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<User> getAll(int first, int max) throws DAOException {
+        return retrieveObjects("FROM User", first, max);
+    }
+
     public User save(User user) throws DAOException {
         storeObject(user);
         return retrieveObject(User.class, user.getId());
