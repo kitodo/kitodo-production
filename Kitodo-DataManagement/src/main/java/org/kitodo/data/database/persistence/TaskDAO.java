@@ -50,14 +50,14 @@ public class TaskDAO extends BaseDAO<Task> {
     /**
      * Retrieves all tasks in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<Task> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Task ORDER BY id ASC", first, max);
+    public List<Task> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Task ORDER BY id ASC", offset, size);
     }
 
     public Task save(Task task) throws DAOException {

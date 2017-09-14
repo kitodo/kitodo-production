@@ -49,14 +49,14 @@ public class TemplateDAO extends BaseDAO<Template> {
     /**
      * Retrieves all templates in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<Template> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Template ORDER BY id ASC", first, max);
+    public List<Template> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Template ORDER BY id ASC", offset, size);
     }
 
     public Template save(Template template) throws DAOException {

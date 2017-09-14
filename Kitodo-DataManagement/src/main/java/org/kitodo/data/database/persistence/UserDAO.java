@@ -50,14 +50,14 @@ public class UserDAO extends BaseDAO<User> {
     /**
      * Retrieves all users in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<User> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM User WHERE deleted = 0 ORDER BY id ASC", first, max);
+    public List<User> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM User WHERE deleted = 0 ORDER BY id ASC", offset, size);
     }
 
     public User save(User user) throws DAOException {

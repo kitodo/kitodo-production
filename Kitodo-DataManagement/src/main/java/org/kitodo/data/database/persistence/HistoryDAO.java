@@ -53,14 +53,14 @@ public class HistoryDAO extends BaseDAO<History> {
     /**
      * Retrieves all histories in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<History> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM History ORDER BY id ASC", first, max);
+    public List<History> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM History ORDER BY id ASC", offset, size);
     }
 
     public History save(History history) throws DAOException {

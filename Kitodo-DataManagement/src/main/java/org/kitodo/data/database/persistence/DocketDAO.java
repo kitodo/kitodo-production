@@ -50,14 +50,14 @@ public class DocketDAO extends BaseDAO<Docket> {
     /**
      * Retrieves all dockets in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<Docket> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Docket ORDER BY id", first, max);
+    public List<Docket> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Docket ORDER BY id", offset, size);
     }
 
     public Docket save(Docket docket) throws DAOException {

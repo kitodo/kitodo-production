@@ -54,14 +54,14 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
     /**
      * Retrieves all rulesets in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<Ruleset> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Ruleset ORDER BY id ASC", first, max);
+    public List<Ruleset> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Ruleset ORDER BY id ASC", offset, size);
     }
 
     /**

@@ -53,14 +53,14 @@ public class ProjectDAO extends BaseDAO<Project> {
     /**
      * Retrieves all projects in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<Project> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Project ORDER BY id ASC", first, max);
+    public List<Project> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Project ORDER BY id ASC", offset, size);
     }
 
     /**

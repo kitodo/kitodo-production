@@ -55,14 +55,14 @@ public class PropertyDAO extends BaseDAO<Property> {
     /**
      * Retrieves all properties in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<Property> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Property ORDER BY id ASC", first, max);
+    public List<Property> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Property ORDER BY id ASC", offset, size);
     }
 
     /**

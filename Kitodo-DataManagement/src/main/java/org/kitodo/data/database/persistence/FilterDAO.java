@@ -53,14 +53,14 @@ public class FilterDAO extends BaseDAO<Filter> {
     /**
      * Retrieves all filters in given range.
      *
-     * @param first
+     * @param offset
      *            result
-     * @param max
+     * @param size
      *            amount of results
      * @return constrained list of results
      */
-    public List<Filter> getAll(int first, int max) throws DAOException {
-        return retrieveObjects("FROM Filter ORDER BY id ASC", first, max);
+    public List<Filter> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Filter ORDER BY id ASC", offset, size);
     }
 
     /**
