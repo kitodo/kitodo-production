@@ -43,7 +43,6 @@ import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -80,7 +79,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
-
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -872,19 +870,22 @@ public class ProjekteForm extends BasisForm {
     /**
      * Set the XML configuration string.
      *
-     * @param configuration the XML configuration string
+     * @param configuration
+     *            the XML configuration string
      */
     public void setXMLConfiguration(String configuration) {
         this.xmlConfigurationString = configuration;
     }
 
     /**
-     * Load the content of the XML configuration file denoted by 'configurationFile' as a String.
+     * Load the content of the XML configuration file denoted by 'configurationFile'
+     * as a String.
      */
     public void loadXMLConfiguration(String configurationName) {
         try {
             currentConfigurationFile = configurationFiles.get(configurationName);
-            XMLConfiguration currentConfiguration = new XMLConfiguration(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
+            XMLConfiguration currentConfiguration = new XMLConfiguration(
+                    ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
             StringWriter stringWriter = new StringWriter();
             currentConfiguration.save(stringWriter);
             this.xmlConfigurationString = stringWriter.toString();
@@ -896,16 +897,18 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Save the String 'xmlConfigurationString' to the XML file denoted by 'configurationFile'.
+     * Save the String 'xmlConfigurationString' to the XML file denoted by
+     * 'configurationFile'.
      */
-    public void saveXMLConfiguration(){
+    public void saveXMLConfiguration() {
         try {
             Document document = documentBuilder.parse(new InputSource(new StringReader(this.xmlConfigurationString)));
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
             File xmlConfigurationFile = new File(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
-            StreamResult streamResult = new StreamResult(new PrintWriter(new FileOutputStream(xmlConfigurationFile, false)));
+            StreamResult streamResult = new StreamResult(
+                    new PrintWriter(new FileOutputStream(xmlConfigurationFile, false)));
             logger.info("Saving configuration to file " + currentConfigurationFile);
             transformer.transform(domSource, streamResult);
         } catch (SAXException e) {
@@ -920,23 +923,30 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Check and return whether the given String 'xmlCode' contains well formed XML code or not.
+     * Check and return whether the given String 'xmlCode' contains well formed XML
+     * code or not.
      *
-     * @param facesContext the current FacesContext
-     * @param uiComponent the component containing the String that is being validated
-     * @param xmlCode XML code that will be validated
+     * @param facesContext
+     *            the current FacesContext
+     * @param uiComponent
+     *            the component containing the String that is being validated
+     * @param xmlCode
+     *            XML code that will be validated
      * @return whether 'xmlCode' is well formed or not
      */
-    public boolean validateXML (FacesContext facesContext, UIComponent uiComponent, String xmlCode) {
+    public boolean validateXML(FacesContext facesContext, UIComponent uiComponent, String xmlCode) {
         if (!Objects.equals(documentBuilder, null)) {
             InputSource inputSource = new InputSource(new StringReader(xmlCode));
             try {
                 documentBuilder.parse(inputSource);
                 return true;
             } catch (SAXParseException e) {
-                // parse method throwing an SAXParseException means given xml code is not well formed!
-                String errorString = "Error while parsing XML: line = " + e.getLineNumber() + ", column = " + e.getColumnNumber() + ": " + e.getMessage();
-                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "XML parsing error", errorString);
+                // parse method throwing an SAXParseException means given xml code is not well
+                // formed!
+                String errorString = "Error while parsing XML: line = " + e.getLineNumber() + ", column = "
+                        + e.getColumnNumber() + ": " + e.getMessage();
+                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "XML parsing error",
+                        errorString);
                 FacesContext currentFacesContext = FacesContext.getCurrentInstance();
                 currentFacesContext.addMessage(uiComponent.getClientId(), errorMessage);
                 logger.error(errorString);
@@ -948,8 +958,7 @@ public class ProjekteForm extends BasisForm {
                 logger.error("IOException: " + e.getMessage());
                 return false;
             }
-        }
-        else {
+        } else {
             logger.error("ERROR: document builder is null!");
             return false;
         }
