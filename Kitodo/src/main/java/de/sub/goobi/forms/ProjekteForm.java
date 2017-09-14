@@ -878,21 +878,26 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Load the content of the XML configuration file denoted by 'configurationFile'
-     * as a String.
+     * Load the content of the XML configuration file denoted by given String
+     * 'configurationName'. This must be one of the keys in the static HashMap
+     * 'configurationFiles'.
+     *
+     * @param configurationName
+     *            name of the configuration to be loaded
      */
     public void loadXMLConfiguration(String configurationName) {
-        try {
+        try (StringWriter stringWriter = new StringWriter()) {
             currentConfigurationFile = configurationFiles.get(configurationName);
             XMLConfiguration currentConfiguration = new XMLConfiguration(
                     ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
-            StringWriter stringWriter = new StringWriter();
             currentConfiguration.save(stringWriter);
             this.xmlConfigurationString = stringWriter.toString();
         } catch (ConfigurationException e) {
             String errorMessage = "ERROR: Unable to load configuration file for '" + configurationName + "'.";
             logger.error(errorMessage + " " + e.getMessage());
             this.xmlConfigurationString = errorMessage;
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
     }
 
@@ -907,10 +912,11 @@ public class ProjekteForm extends BasisForm {
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
             File xmlConfigurationFile = new File(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
-            StreamResult streamResult = new StreamResult(
-                    new PrintWriter(new FileOutputStream(xmlConfigurationFile, false)));
+            FileOutputStream outputStream = new FileOutputStream(xmlConfigurationFile, false);
+            StreamResult streamResult = new StreamResult(new PrintWriter(outputStream));
             logger.info("Saving configuration to file " + currentConfigurationFile);
             transformer.transform(domSource, streamResult);
+            outputStream.close();
         } catch (SAXException e) {
             logger.error("ERROR: error parsing given XML string: " + e.getMessage());
         } catch (IOException e) {
