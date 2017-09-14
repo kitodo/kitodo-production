@@ -289,6 +289,22 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         session.refresh(object);
     }
 
+    @SuppressWarnings("unchecked")
+    protected T loadObjects(Class cls, Integer id) throws DAOException {
+        try {
+            Session session = HibernateHelper.getHibernateSession();
+            if (session == null) {
+                session = HibernateUtil.getSessionFactory().openSession();
+                T object = (T) session.load(cls, id);
+                session.close();
+                return object;
+            }
+            return (T) session.load(cls, id);
+        } catch (HibernateException he) {
+            throw new DAOException(he);
+        }
+    }
+
     /**
      * Update of the object.
      *
