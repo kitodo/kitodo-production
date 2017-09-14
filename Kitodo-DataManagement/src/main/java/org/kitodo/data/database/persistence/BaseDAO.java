@@ -25,8 +25,6 @@ import org.kitodo.data.database.helper.HibernateHelper;
 
 /**
  * Base class for DAOs.
- *
- * @author Beatrycze Kmiec &lt;beatrycze.kmiec@slub-dresden.de&gt;
  */
 public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
@@ -45,12 +43,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try {
             Session session = HibernateHelper.getHibernateSession();
             transaction = session.beginTransaction();
-            synchronized (object) {
-                session.evict(object);
-                session.delete(object);
-                session.flush();
-                transaction.commit();
-            }
+            Object merged = session.merge(object);
+            session.delete(merged);
+            session.flush();
+            transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
