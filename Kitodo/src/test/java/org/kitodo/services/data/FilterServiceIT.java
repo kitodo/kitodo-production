@@ -291,7 +291,7 @@ public class FilterServiceIT {
 
         query = filterService.queryBuilder("\"id:1 5\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of tasks for process with id equal 1 or 5!", 2, taskDTOS.size());
+        assertEquals("Incorrect amount of tasks for process with id equal 1 or 5!", 3, taskDTOS.size());
     }
 
     @Test
@@ -305,7 +305,7 @@ public class FilterServiceIT {
 
         query = filterService.queryBuilder("\"project:Archived\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of tasks for project with title containing 'Archived'!", 1, taskDTOS.size());
+        assertEquals("Incorrect amount of tasks for project with title containing 'Archived'!", 2, taskDTOS.size());
 
         query = filterService.queryBuilder("\"project:First Archived\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
@@ -411,7 +411,7 @@ public class FilterServiceIT {
 
         query = filterService.queryBuilder("\"-stepdone:Closed\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of closed tasks with title different than 'Closed'!", 1, taskDTOS.size());
+        assertEquals("Incorrect amount of not closed tasks with title different than 'Closed'!", 2, taskDTOS.size());
     }
 
     @Test
@@ -433,7 +433,7 @@ public class FilterServiceIT {
 
         query = filterService.queryBuilder("\"-stepopen:Blocking\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of open tasks with title different than 'Blocking'!", 1, taskDTOS.size());
+        assertEquals("Incorrect amount of not open tasks with title different than 'Blocking'!", 2, taskDTOS.size());
     }
 
     @Test

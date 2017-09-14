@@ -56,7 +56,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         Long amount = taskService.count();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(5), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(6), amount);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         Long amount = taskService.countDatabaseRows();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(5), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(6), amount);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         List<Task> tasks = taskService.getAll();
-        assertEquals("Not all tasks were found in database!", 5, tasks.size());
+        assertEquals("Not all tasks were found in database!", 6, tasks.size());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class TaskServiceIT {
         assertEquals("Some tasks were found in database!", 0, tasks.size());
 
         tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null);
-        assertEquals("Not all tasks were found in database!", 1, tasks.size());
+        assertEquals("Not all tasks were found in database!", 2, tasks.size());
 
     }
 
@@ -122,23 +122,23 @@ public class TaskServiceIT {
         task.setTitle("To Remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        Task foundTask = taskService.getById(6);
+        Task foundTask = taskService.getById(7);
         assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
 
         taskService.remove(foundTask);
         exception.expect(DAOException.class);
-        taskService.getById(6);
+        taskService.getById(7);
 
         task = new Task();
         task.setTitle("To remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        foundTask = taskService.getById(7);
+        foundTask = taskService.getById(8);
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
 
         taskService.remove(7);
         exception.expect(DAOException.class);
-        taskService.getById(7);
+        taskService.getById(8);
     }
 
     @Test
@@ -283,5 +283,20 @@ public class TaskServiceIT {
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindDistinctTitles() throws Exception {
+        TaskService taskService = new TaskService();
+
+        List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();
+        int size = taskTitlesDistinct.size();
+        assertEquals("Incorrect size of distinct titles for tasks!", 5, size);
+
+        String title = taskTitlesDistinct.get(0);
+        assertEquals("Incorrect sorting of distinct titles for tasks!", "Blocking", title);
+
+        title = taskTitlesDistinct.get(1);
+        assertEquals("Incorrect sorting of distinct titles for tasks!", "Closed", title);
     }
 }

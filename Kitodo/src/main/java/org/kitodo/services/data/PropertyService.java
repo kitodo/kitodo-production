@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -134,30 +135,38 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
     }
 
     /**
-     * Gets all titles from workpieceproperties.
+     * Find all distinct titles from workpiece properties.
      *
      * @return a list of titles.
      */
-    public List<String> findWorkpiecePropertiesTitlesDistinct() {
-        return propertyDAO.findWorkpiecePropertiesTitlesDistinct();
+    public List<String> findWorkpiecePropertiesTitlesDistinct() throws DataException {
+        return findDistinctTitles("workpiece");
     }
 
     /**
-     * Gets all titles from templateproperties.
+     * Find all distinct titles from template properties.
      *
      * @return a list of titles.
      */
-    public List<String> findTemplatePropertiesTitlesDistinct() {
-        return propertyDAO.findTemplatePropertiesTitlesDistinct();
+    public List<String> findTemplatePropertiesTitlesDistinct() throws DataException {
+        return findDistinctTitles("template");
     }
 
     /**
-     * Gets all titles from processProperties.
+     * Find all distinct titles from process properties.
      *
      * @return a list of titles.
      */
-    public List<String> findProcessPropertiesTitlesDistinct() {
-        return propertyDAO.findProcessPropertiesTitlesDistinct();
+    public List<String> findProcessPropertiesTitlesDistinct() throws DataException {
+        return findDistinctTitles("process");
+    }
+
+    private List<String> findDistinctTitles(String type) throws DataException {
+        return findDistinctValues(getQueryForType(type).toString(), "title.keyword", true);
+    }
+
+    private QueryBuilder getQueryForType(String type) {
+        return createSimpleQuery("type", type, true, Operator.AND);
     }
 
     /**
