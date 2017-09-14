@@ -144,7 +144,10 @@ public class BenutzerverwaltungForm extends BasisForm {
             return null;
         }
 
-        String id = this.myClass.getId().toString();
+        String id = null;
+        if (this.myClass.getId() != null) {
+            id = this.myClass.getId().toString();
+        }
 
         try {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {

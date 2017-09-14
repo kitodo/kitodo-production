@@ -285,7 +285,9 @@ public class UserService extends SearchService<User, UserDTO> {
      */
     public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DataException {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery.mustNot(createSimpleQuery("_id", id, true));
+        if (id != null) {
+            boolQuery.must(createSimpleQuery("_id", id, false));
+        }
         boolQuery.must(createSimpleQuery("login", login, true));
         return count(boolQuery.toString());
     }
