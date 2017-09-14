@@ -78,6 +78,12 @@ public class UserServiceIT {
         boolQuerySecond.must(matchQuery("login", "kowal"));
         amount = userService.count(boolQuerySecond.toString());
         assertEquals("User was not found!", Long.valueOf(1), amount);
+
+        amount = userService.getAmountOfUsersWithExactlyTheSameLogin(null, "kowal");
+        assertEquals("User was not found!", Long.valueOf(1), amount);
+
+        amount = userService.getAmountOfUsersWithExactlyTheSameLogin("2", "kowal");
+        assertEquals("User was not found!", Long.valueOf(1), amount);
     }
 
     @Test
