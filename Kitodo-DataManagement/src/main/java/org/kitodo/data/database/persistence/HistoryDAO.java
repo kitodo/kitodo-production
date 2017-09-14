@@ -20,7 +20,7 @@ import org.kitodo.data.database.exceptions.DAOException;
  * HistorySAO for any kind of history event of a {@link Process}.
  */
 
-public class HistoryDAO extends BaseDAO {
+public class HistoryDAO extends BaseDAO<History> {
     private static final long serialVersionUID = 991946176515032238L;
 
     /**
@@ -34,7 +34,7 @@ public class HistoryDAO extends BaseDAO {
      *             procedure failure.
      */
     public History find(Integer id) throws DAOException {
-        History result = (History) retrieveObject(History.class, id);
+        History result = retrieveObject(History.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -46,14 +46,13 @@ public class HistoryDAO extends BaseDAO {
      *
      * @return all persisted histories
      */
-    @SuppressWarnings("unchecked")
     public List<History> findAll() {
         return retrieveAllObjects(History.class);
     }
 
     public History save(History history) throws DAOException {
         storeObject(history);
-        return (History) retrieveObject(History.class, history.getId());
+        return retrieveObject(History.class, history.getId());
     }
 
     /**
@@ -81,12 +80,9 @@ public class HistoryDAO extends BaseDAO {
      *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
-        @SuppressWarnings("unused")
-        History task = (History) retrieveObject(History.class, id);
         removeObject(History.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<History> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

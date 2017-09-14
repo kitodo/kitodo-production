@@ -32,7 +32,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @Entity
 @Table(name = "task")
-public class Task extends BaseBean {
+public class Task extends BaseIndexedBean {
     private static final long serialVersionUID = 6831844584239811846L;
 
     @Column(name = "title")

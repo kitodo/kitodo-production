@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ruleset")
-public class Ruleset extends BaseBean {
+public class Ruleset extends BaseIndexedBean {
     private static final long serialVersionUID = -6663371963274685060L;
 
     @Column(name = "title")

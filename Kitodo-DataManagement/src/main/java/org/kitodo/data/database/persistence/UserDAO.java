@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class UserDAO extends BaseDAO {
+public class UserDAO extends BaseDAO<User> {
 
     private static final long serialVersionUID = 834210840673022251L;
 
@@ -31,7 +31,7 @@ public class UserDAO extends BaseDAO {
      *             procedure failure.
      */
     public User find(Integer id) throws DAOException {
-        User result = (User) retrieveObject(User.class, id);
+        User result = retrieveObject(User.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -43,14 +43,13 @@ public class UserDAO extends BaseDAO {
      *
      * @return all persisted users
      */
-    @SuppressWarnings("unchecked")
     public List<User> findAll() {
         return retrieveAllObjects(User.class);
     }
 
     public User save(User user) throws DAOException {
         storeObject(user);
-        return (User) retrieveObject(User.class, user.getId());
+        return retrieveObject(User.class, user.getId());
     }
 
     /**
@@ -86,12 +85,10 @@ public class UserDAO extends BaseDAO {
         save(user);
     }
 
-    @SuppressWarnings("unchecked")
     public List<User> search(String query) {
         return retrieveObjects(query);
     }
 
-    @SuppressWarnings("unchecked")
     public List<User> search(String query, String parameter) throws DAOException {
         return retrieveObjects(query, parameter);
     }
@@ -109,7 +106,6 @@ public class UserDAO extends BaseDAO {
      * @throws DAOException
      *             if a HibernateException is thrown
      */
-    @SuppressWarnings("unchecked")
     public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
         return retrieveObjects(query, namedParameter, parameter);
     }

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "docket")
-public class Docket extends BaseBean {
+public class Docket extends BaseIndexedBean {
 
     private static final long serialVersionUID = -5187947220333984868L;
 

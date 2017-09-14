@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.data.base.SearchService;
 
@@ -42,7 +42,7 @@ public class IndexWorker implements Runnable {
         this.indexedObjects = 0;
         try {
             for (Object object : searchService.getAll()) {
-                this.searchService.saveToIndex((BaseBean) object);
+                this.searchService.saveToIndex((BaseIndexedBean) object);
                 this.indexedObjects++;
             }
         } catch (CustomResponseException | IOException e) {

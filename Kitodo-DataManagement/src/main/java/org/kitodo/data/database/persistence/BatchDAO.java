@@ -24,7 +24,7 @@ import org.kitodo.data.database.helper.Helper;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class BatchDAO extends BaseDAO {
+public class BatchDAO extends BaseDAO<Batch> {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -38,7 +38,7 @@ public class BatchDAO extends BaseDAO {
      *             if a HibernateException is thrown
      */
     public Batch find(Integer id) throws DAOException {
-        Batch result = (Batch) retrieveObject(Batch.class, id);
+        Batch result = retrieveObject(Batch.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -50,7 +50,6 @@ public class BatchDAO extends BaseDAO {
      *
      * @return all persisted batches
      */
-    @SuppressWarnings("unchecked")
     public List<Batch> findAll() {
         return retrieveAllObjects(Batch.class);
     }
@@ -75,7 +74,6 @@ public class BatchDAO extends BaseDAO {
      *            as String
      * @return list of Batch objects
      */
-    @SuppressWarnings("unchecked")
     public List<Batch> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

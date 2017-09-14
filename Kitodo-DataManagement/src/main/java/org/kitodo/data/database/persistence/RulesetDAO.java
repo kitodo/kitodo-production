@@ -16,13 +16,13 @@ import java.util.List;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class RulesetDAO extends BaseDAO {
+public class RulesetDAO extends BaseDAO<Ruleset> {
 
     private static final long serialVersionUID = 1913256950316879121L;
 
     public Ruleset save(Ruleset ruleset) throws DAOException {
         storeObject(ruleset);
-        return (Ruleset) retrieveObject(Ruleset.class, ruleset.getId());
+        return retrieveObject(Ruleset.class, ruleset.getId());
     }
 
     /**
@@ -35,7 +35,7 @@ public class RulesetDAO extends BaseDAO {
      *             hibernate
      */
     public Ruleset find(Integer id) throws DAOException {
-        Ruleset result = (Ruleset) retrieveObject(Ruleset.class, id);
+        Ruleset result = retrieveObject(Ruleset.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -47,7 +47,6 @@ public class RulesetDAO extends BaseDAO {
      *
      * @return all persisted rulesets
      */
-    @SuppressWarnings("unchecked")
     public List<Ruleset> findAll() {
         return retrieveAllObjects(Ruleset.class);
     }
@@ -70,7 +69,6 @@ public class RulesetDAO extends BaseDAO {
         removeObject(Ruleset.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Ruleset> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

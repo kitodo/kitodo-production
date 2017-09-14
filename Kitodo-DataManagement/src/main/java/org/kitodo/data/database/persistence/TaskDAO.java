@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class TaskDAO extends BaseDAO {
+public class TaskDAO extends BaseDAO<Task> {
 
     private static final long serialVersionUID = -2368830124391080142L;
 
@@ -31,7 +31,7 @@ public class TaskDAO extends BaseDAO {
      *             procedure failure.
      */
     public Task find(Integer id) throws DAOException {
-        Task result = (Task) retrieveObject(Task.class, id);
+        Task result = retrieveObject(Task.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -43,14 +43,13 @@ public class TaskDAO extends BaseDAO {
      *
      * @return all persisted users
      */
-    @SuppressWarnings("unchecked")
     public List<Task> findAll() {
         return retrieveAllObjects(Task.class);
     }
 
     public Task save(Task task) throws DAOException {
         storeObject(task);
-        return (Task) retrieveObject(Task.class, task.getId());
+        return retrieveObject(Task.class, task.getId());
     }
 
     /**
@@ -78,12 +77,9 @@ public class TaskDAO extends BaseDAO {
      *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
-        @SuppressWarnings("unused")
-        Task task = (Task) retrieveObject(Task.class, id);
         removeObject(Task.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Task> search(String query) {
         return retrieveObjects(query);
     }
@@ -103,12 +99,11 @@ public class TaskDAO extends BaseDAO {
     }
 
     public void update(Task task) {
-        Object o = task;
-        updateObject(o);
+        updateObject(task);
     }
 
     public Task load(int id) throws DAOException {
-        return (Task) loadObjects(Task.class, id);
+        return loadObjects(Task.class, id);
     }
 
     /**

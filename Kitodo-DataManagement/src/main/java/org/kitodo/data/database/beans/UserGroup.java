@@ -32,7 +32,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "userGroup")
-public class UserGroup extends BaseBean implements Comparable<UserGroup> {
+public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> {
     private static final long serialVersionUID = -5924845694417474352L;
 
     @Column(name = "title")

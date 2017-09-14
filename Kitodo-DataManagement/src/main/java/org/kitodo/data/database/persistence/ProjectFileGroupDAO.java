@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class ProjectFileGroupDAO extends BaseDAO {
+public class ProjectFileGroupDAO extends BaseDAO<ProjectFileGroup> {
     private static final long serialVersionUID = -5506252462891480484L;
 
     /**
@@ -30,7 +30,7 @@ public class ProjectFileGroupDAO extends BaseDAO {
      *             procedure failure.
      */
     public ProjectFileGroup find(Integer id) throws DAOException {
-        ProjectFileGroup result = (ProjectFileGroup) retrieveObject(ProjectFileGroup.class, id);
+        ProjectFileGroup result = retrieveObject(ProjectFileGroup.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -43,14 +43,13 @@ public class ProjectFileGroupDAO extends BaseDAO {
      *
      * @return all persisted projects
      */
-    @SuppressWarnings("unchecked")
     public List<ProjectFileGroup> findAll() {
         return retrieveAllObjects(ProjectFileGroup.class);
     }
 
     public ProjectFileGroup save(ProjectFileGroup projectFileGroup) throws DAOException {
         storeObject(projectFileGroup);
-        return (ProjectFileGroup) retrieveObject(ProjectFileGroup.class, projectFileGroup.getId());
+        return retrieveObject(ProjectFileGroup.class, projectFileGroup.getId());
     }
 
     /**
@@ -78,12 +77,9 @@ public class ProjectFileGroupDAO extends BaseDAO {
      *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
-        @SuppressWarnings("unused")
-        ProjectFileGroup workpiece = (ProjectFileGroup) retrieveObject(ProjectFileGroup.class, id);
         removeObject(ProjectFileGroup.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<ProjectFileGroup> search(String query) throws DAOException {
         return retrieveObjects(query);
     }

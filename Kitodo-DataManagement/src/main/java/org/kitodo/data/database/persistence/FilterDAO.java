@@ -19,7 +19,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 /**
  * DAO class for Filter bean.
  */
-public class FilterDAO extends BaseDAO {
+public class FilterDAO extends BaseDAO<Filter> {
 
     private static final long serialVersionUID = 234210246673032251L;
 
@@ -34,7 +34,7 @@ public class FilterDAO extends BaseDAO {
      *             procedure failure.
      */
     public Filter find(Integer id) throws DAOException {
-        Filter result = (Filter) retrieveObject(Filter.class, id);
+        Filter result = retrieveObject(Filter.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -46,7 +46,6 @@ public class FilterDAO extends BaseDAO {
      *
      * @return all persisted templates' properties
      */
-    @SuppressWarnings("unchecked")
     public List<Filter> findAll() {
         return retrieveAllObjects(Filter.class);
     }
@@ -58,7 +57,6 @@ public class FilterDAO extends BaseDAO {
      *            as String
      * @return list of properties
      */
-    @SuppressWarnings("unchecked")
     public List<Filter> search(String query) throws DAOException {
         return retrieveObjects(query);
     }
@@ -72,7 +70,7 @@ public class FilterDAO extends BaseDAO {
      */
     public Filter save(Filter filter) throws DAOException {
         storeObject(filter);
-        return (Filter) retrieveObject(Filter.class, filter.getId());
+        return retrieveObject(Filter.class, filter.getId());
     }
 
     /**
@@ -98,7 +96,7 @@ public class FilterDAO extends BaseDAO {
      *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
-        removeObject(id);
+        removeObject(Filter.class, id);
     }
 
     /**

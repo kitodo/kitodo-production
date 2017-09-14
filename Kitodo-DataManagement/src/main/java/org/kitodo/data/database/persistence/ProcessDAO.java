@@ -17,7 +17,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class ProcessDAO extends BaseDAO {
+public class ProcessDAO extends BaseDAO<Process> {
 
     private static final long serialVersionUID = 3538712266212954394L;
 
@@ -73,9 +73,7 @@ public class ProcessDAO extends BaseDAO {
      *             procedure failure.
      */
     public void saveList(List<Process> list) throws DAOException {
-        List<Object> l = new ArrayList<>();
-        l.addAll(list);
-        storeList(l);
+        storeList(list);
     }
 
     /**
@@ -97,7 +95,6 @@ public class ProcessDAO extends BaseDAO {
         removeObject(Process.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Process> search(String query) {
         return retrieveObjects(query);
     }
@@ -123,8 +120,7 @@ public class ProcessDAO extends BaseDAO {
      *            object
      */
     public void update(Process process) {
-        Object object = process;
-        updateObject(object);
+        updateObject(process);
     }
 
     /**

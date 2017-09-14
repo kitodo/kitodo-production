@@ -37,7 +37,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -51,7 +51,7 @@ import org.kitodo.dto.BaseDTO;
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
+public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);
     protected Searcher searcher;
@@ -70,18 +70,18 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     /**
      * Method saves object to database.
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            object
      */
-    public abstract void saveToDatabase(T baseBean) throws DAOException;
+    public abstract void saveToDatabase(T baseIndexedBean) throws DAOException;
 
     /**
      * Method saves document to the index of Elastic Search.
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            object
      */
-    public abstract void saveToIndex(T baseBean) throws CustomResponseException, IOException;
+    public abstract void saveToIndex(T baseIndexedBean) throws CustomResponseException, IOException;
 
     /**
      * Find list of all objects from ES.
@@ -152,10 +152,10 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     /**
      * Method removes object from database.
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            object
      */
-    public abstract void removeFromDatabase(T baseBean) throws DAOException;
+    public abstract void removeFromDatabase(T baseIndexedBean) throws DAOException;
 
     /**
      * Method removes object from database.
@@ -168,10 +168,10 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
     /**
      * Method removes document from the index of Elastic Search.
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            object
      */
-    public abstract void removeFromIndex(T baseBean) throws CustomResponseException, IOException;
+    public abstract void removeFromIndex(T baseIndexedBean) throws CustomResponseException, IOException;
 
     /**
      * Method removes document from the index of Elastic Search.
@@ -188,10 +188,10 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * Method saves relations which can be potentially modified together with
      * object.
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            object
      */
-    protected void manageDependenciesForIndex(T baseBean)
+    protected void manageDependenciesForIndex(T baseIndexedBean)
             throws CustomResponseException, DAOException, DataException, IOException {
 
     }
@@ -213,17 +213,17 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * future it will be reindexed by administrator.
      * </p>
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            object
      */
-    public void save(T baseBean) throws DataException {
+    public void save(T baseIndexedBean) throws DataException {
         try {
-            baseBean.setIndexAction(IndexAction.INDEX);
-            saveToDatabase(baseBean);
-            saveToIndex(baseBean);
-            manageDependenciesForIndex(baseBean);
-            baseBean.setIndexAction(IndexAction.DONE);
-            saveToDatabase(baseBean);
+            baseIndexedBean.setIndexAction(IndexAction.INDEX);
+            saveToDatabase(baseIndexedBean);
+            saveToIndex(baseIndexedBean);
+            manageDependenciesForIndex(baseIndexedBean);
+            baseIndexedBean.setIndexAction(IndexAction.DONE);
+            saveToDatabase(baseIndexedBean);
         } catch (DAOException e) {
             logger.debug(e);
             throw new DataException(e);
@@ -232,10 +232,10 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
             int maxTries = 5;
             while (true) {
                 try {
-                    saveToIndex(baseBean);
-                    manageDependenciesForIndex(baseBean);
-                    baseBean.setIndexAction(IndexAction.DONE);
-                    saveToDatabase(baseBean);
+                    saveToIndex(baseIndexedBean);
+                    manageDependenciesForIndex(baseIndexedBean);
+                    baseIndexedBean.setIndexAction(IndexAction.DONE);
+                    saveToDatabase(baseIndexedBean);
                     break;
                 } catch (CustomResponseException | IOException ee) {
                     logger.debug(ee);
@@ -259,8 +259,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      */
     public void remove(Integer id) throws DataException {
         try {
-            T baseBean = getById(id);
-            remove(baseBean);
+            T baseIndexedBean = getById(id);
+            remove(baseIndexedBean);
         } catch (DAOException e) {
             throw new DataException(e);
         }
@@ -270,16 +270,16 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
      * Method removes object from database and document from the index of Elastic
      * Search.
      *
-     * @param baseBean
+     * @param baseIndexedBean
      *            object
      */
-    public void remove(T baseBean) throws DataException {
+    public void remove(T baseIndexedBean) throws DataException {
         try {
-            baseBean.setIndexAction(IndexAction.DELETE);
-            saveToDatabase(baseBean);
-            removeFromIndex(baseBean);
-            manageDependenciesForIndex(baseBean);
-            removeFromDatabase(baseBean);
+            baseIndexedBean.setIndexAction(IndexAction.DELETE);
+            saveToDatabase(baseIndexedBean);
+            removeFromIndex(baseIndexedBean);
+            manageDependenciesForIndex(baseIndexedBean);
+            removeFromDatabase(baseIndexedBean);
         } catch (DAOException e) {
             logger.debug(e);
             throw new DataException(e);
@@ -288,8 +288,8 @@ public abstract class SearchService<T extends BaseBean, S extends BaseDTO> {
             int maxTries = 5;
             while (true) {
                 try {
-                    removeFromIndex(baseBean);
-                    removeFromDatabase(baseBean);
+                    removeFromIndex(baseIndexedBean);
+                    removeFromDatabase(baseIndexedBean);
                     break;
                 } catch (CustomResponseException | IOException ee) {
                     logger.debug(ee);

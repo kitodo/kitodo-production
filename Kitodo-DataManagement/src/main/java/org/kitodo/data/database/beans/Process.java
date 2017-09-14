@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 // the Coding Guidelines (e.g. *english* names).
 @Entity
 @Table(name = "process")
-public class Process extends BaseBean {
+public class Process extends BaseIndexedBean {
 
     private static final long serialVersionUID = -6503348094655786275L;
 
