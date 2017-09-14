@@ -238,7 +238,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         try {
             Session session = HibernateHelper.getHibernateSession();
             transaction = session.beginTransaction();
-            session.saveOrUpdate(object);
+            if (object.getId() != null) {
+                session.merge(object);
+            } else {
+                session.save(object);
+            }
             session.flush();
             transaction.commit();
         } catch (HibernateException he) {
