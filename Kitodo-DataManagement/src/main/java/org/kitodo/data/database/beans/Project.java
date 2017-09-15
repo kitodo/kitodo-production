@@ -18,9 +18,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -143,10 +140,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @Column(name = "projectIsArchived")
     private Boolean projectIsArchived = false;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "project_x_user", joinColumns = {
-            @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) })
+    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<User> users;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
