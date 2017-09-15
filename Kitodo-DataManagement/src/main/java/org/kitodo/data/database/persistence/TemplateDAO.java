@@ -79,7 +79,7 @@ public class TemplateDAO extends BaseDAO<Template> {
         removeObject(Template.class, id);
     }
 
-    public List<Template> search(String query) throws DAOException {
+    public List<Template> search(String query) {
         return retrieveObjects(query);
     }
 

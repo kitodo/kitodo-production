@@ -33,7 +33,7 @@ public class LdapGroupService {
         return ldapGroupDAO.findAll();
     }
 
-    public List<LdapGroup> getByQuery(String query) throws DAOException {
+    public List<LdapGroup> getByQuery(String query) {
         return ldapGroupDAO.search(query);
     }
 

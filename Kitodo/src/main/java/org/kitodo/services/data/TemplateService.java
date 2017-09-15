@@ -137,7 +137,7 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
      * @return list of Template objects
      */
     @Override
-    public List<Template> getByQuery(String query) throws DAOException {
+    public List<Template> getByQuery(String query) {
         return templateDAO.search(query);
     }
 

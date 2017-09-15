@@ -349,7 +349,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     /**
      * Ldap-Konfiguration - get LDAP group choice list.
      */
-    public List<SelectItem> getLdapGruppeAuswahlListe() throws DAOException {
+    public List<SelectItem> getLdapGruppeAuswahlListe() {
         List<SelectItem> myLdapGruppen = new ArrayList<>();
         List<LdapGroup> temp = serviceManager.getLdapGroupService().getByQuery("from LdapGroup ORDER BY title");
         for (LdapGroup gru : temp) {

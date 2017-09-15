@@ -57,7 +57,7 @@ public class FilterDAO extends BaseDAO<Filter> {
      *            as String
      * @return list of properties
      */
-    public List<Filter> search(String query) throws DAOException {
+    public List<Filter> search(String query) {
         return retrieveObjects(query);
     }
 

@@ -124,7 +124,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
      *            as String
      * @return list of Batch objects
      */
-    public List<Batch> getByQuery(String query) throws DAOException {
+    public List<Batch> getByQuery(String query) {
         return batchDAO.search(query);
     }
 

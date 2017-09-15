@@ -134,7 +134,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      * @return list of properties
      */
     @Override
-    public List<Filter> getByQuery(String query) throws DAOException {
+    public List<Filter> getByQuery(String query) {
         return filterDAO.search(query);
     }
 
@@ -322,7 +322,7 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         return query;
     }
 
-    private BoolQueryBuilder buildProcessQuery(Boolean template) throws DataException {
+    private BoolQueryBuilder buildProcessQuery(Boolean template) {
         BoolQueryBuilder processQuery = limitToUserAccessRights();
 
         // this is needed for the template filter (true) and the undefined
@@ -330,7 +330,6 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         if (template != null) {
             processQuery.must(serviceManager.getProcessService().getQueryTemplate(template));
         }
-
         return processQuery;
     }
 

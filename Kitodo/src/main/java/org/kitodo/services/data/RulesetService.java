@@ -90,7 +90,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
     }
 
     @Override
-    public List<Ruleset> getByQuery(String query) throws DAOException {
+    public List<Ruleset> getByQuery(String query) {
         return rulesetDAO.search(query);
     }
 

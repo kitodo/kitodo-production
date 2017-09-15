@@ -126,7 +126,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
     }
 
     @Override
-    public List<Docket> getByQuery(String query) throws DAOException {
+    public List<Docket> getByQuery(String query) {
         return docketDAO.search(query);
     }
 

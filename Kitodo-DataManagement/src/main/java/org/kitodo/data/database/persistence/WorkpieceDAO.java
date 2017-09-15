@@ -79,7 +79,7 @@ public class WorkpieceDAO extends BaseDAO<Workpiece> {
         removeObject(Workpiece.class, id);
     }
 
-    public List<Workpiece> search(String query) throws DAOException {
+    public List<Workpiece> search(String query) {
         return retrieveObjects(query);
     }
 

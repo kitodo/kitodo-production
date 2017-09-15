@@ -71,7 +71,7 @@ public class DocketDAO extends BaseDAO<Docket> {
         removeObject(Docket.class, id);
     }
 
-    public List<Docket> search(String query) throws DAOException {
+    public List<Docket> search(String query) {
         return retrieveObjects(query);
     }
 

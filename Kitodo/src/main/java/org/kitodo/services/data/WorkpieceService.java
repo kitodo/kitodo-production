@@ -136,7 +136,7 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
      * @return list of Workpiece objects
      */
     @Override
-    public List<Workpiece> getByQuery(String query) throws DAOException {
+    public List<Workpiece> getByQuery(String query) {
         return workpieceDAO.search(query);
     }
 

@@ -33,7 +33,6 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -738,19 +737,13 @@ public class GoobiScript {
             return;
         }
         /* prüfen, ob ein solcher Benutzer existiert */
-        User myUser = null;
-        try {
-            List<User> treffer = serviceManager.getUserService()
+        User user;
+        List<User> treffer = serviceManager.getUserService()
                     .getByQuery("from User where login='" + this.myParameters.get("username") + "'");
-            if (treffer != null && treffer.size() > 0) {
-                myUser = treffer.get(0);
-            } else {
-                Helper.setFehlerMeldung("kitodoScriptfield", "Unknown user: ", this.myParameters.get("username"));
-                return;
-            }
-        } catch (DAOException e) {
-            Helper.setFehlerMeldung("kitodoScriptfield", "Error in kitodoScript.adduser", e);
-            logger.error("kitodoScriptfield" + "Error in kitodoScript.adduser: ", e);
+        if (treffer != null && treffer.size() > 0) {
+            user = treffer.get(0);
+        } else {
+            Helper.setFehlerMeldung("kitodoScriptfield", "Unknown user: ", this.myParameters.get("username"));
             return;
         }
 
@@ -765,8 +758,8 @@ public class GoobiScript {
                         users = new ArrayList<>();
                         task.setUsers(users);
                     }
-                    if (!users.contains(myUser)) {
-                        users.add(myUser);
+                    if (!users.contains(user)) {
+                        users.add(user);
                         try {
                             serviceManager.getTaskService().save(task);
                         } catch (DataException e) {
@@ -798,18 +791,13 @@ public class GoobiScript {
             return;
         }
         /* prüfen, ob ein solcher Benutzer existiert */
-        UserGroup myGroup = null;
-        try {
-            List<UserGroup> treffer = serviceManager.getUserGroupService()
+        UserGroup userGroup;
+        List<UserGroup> treffer = serviceManager.getUserGroupService()
                     .getByQuery("from UserGroup where title='" + this.myParameters.get("group") + "'");
-            if (treffer != null && treffer.size() > 0) {
-                myGroup = treffer.get(0);
-            } else {
-                Helper.setFehlerMeldung("kitodoScriptfield", "Unknown group: ", this.myParameters.get("group"));
-                return;
-            }
-        } catch (DAOException e) {
-            Helper.setFehlerMeldung("kitodoScriptfield", "Error in kitodoScript.addusergroup", e);
+        if (treffer != null && treffer.size() > 0) {
+            userGroup = treffer.get(0);
+        } else {
+            Helper.setFehlerMeldung("kitodoScriptfield", "Unknown group: ", this.myParameters.get("group"));
             return;
         }
 
@@ -824,8 +812,8 @@ public class GoobiScript {
                         userGroups = new ArrayList<>();
                         task.setUserGroups(userGroups);
                     }
-                    if (!userGroups.contains(myGroup)) {
-                        userGroups.add(myGroup);
+                    if (!userGroups.contains(userGroup)) {
+                        userGroups.add(userGroup);
                         try {
                             serviceManager.getTaskService().save(task);
                         } catch (DataException e) {

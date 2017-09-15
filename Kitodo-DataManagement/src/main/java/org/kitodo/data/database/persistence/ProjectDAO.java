@@ -78,7 +78,7 @@ public class ProjectDAO extends BaseDAO<Project> {
         }
     }
 
-    public List<Project> search(String query) throws DAOException {
+    public List<Project> search(String query) {
         return retrieveObjects(query);
     }
 
@@ -91,7 +91,7 @@ public class ProjectDAO extends BaseDAO<Project> {
      * 
      * @return all projects sorted by title as Project objects
      */
-    public List<Project> getAllProjectsSortedByTitle() throws DAOException {
+    public List<Project> getAllProjectsSortedByTitle() {
         return search("FROM Project ORDER BY title ASC");
     }
 
@@ -100,7 +100,7 @@ public class ProjectDAO extends BaseDAO<Project> {
      * 
      * @return all not archived projects sorted by title as Project objects
      */
-    public List<Project> getAllNotArchivedProjectsSortedByTitle() throws DAOException {
+    public List<Project> getAllNotArchivedProjectsSortedByTitle() {
         return search("FROM Project WHERE projectIsArchived = 0 ORDER BY title ASC");
     }
 }

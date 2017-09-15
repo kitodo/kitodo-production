@@ -71,7 +71,7 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
         removeObject(UserGroup.class, id);
     }
 
-    public List<UserGroup> search(String query) throws DAOException {
+    public List<UserGroup> search(String query) {
         return retrieveObjects(query);
     }
 

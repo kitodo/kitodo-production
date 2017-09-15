@@ -191,7 +191,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
-    public List<UserGroup> getByQuery(String query) throws DAOException {
+    public List<UserGroup> getByQuery(String query) {
         return userGroupDAO.search(query);
     }
 

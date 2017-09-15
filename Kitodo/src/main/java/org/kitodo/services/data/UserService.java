@@ -251,7 +251,7 @@ public class UserService extends SearchService<User, UserDTO> {
     }
 
     @Override
-    public List<User> getByQuery(String query) throws DAOException {
+    public List<User> getByQuery(String query) {
         return userDAO.search(query);
     }
 

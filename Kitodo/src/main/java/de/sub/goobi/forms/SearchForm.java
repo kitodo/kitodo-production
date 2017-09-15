@@ -28,7 +28,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.FilterString;
@@ -103,18 +102,13 @@ public class SearchForm {
         int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 
         List<Project> projects;
-
-        try {
-            if (restriction > 2) {
-                projects = serviceManager.getProjectService().getAllNotArchivedProjectsSortedByTitle();
-            } else {
-                projects = serviceManager.getProjectService().getAllProjectsSortedByTitle();
-            }
-            for (Project p : projects) {
-                this.projects.add(p.getTitle());
-            }
-        } catch (DAOException e) {
-            logger.warn("Catch DAOException. List of projects could be empty!");
+        if (restriction > 2) {
+            projects = serviceManager.getProjectService().getAllNotArchivedProjectsSortedByTitle();
+        } else {
+            projects = serviceManager.getProjectService().getAllProjectsSortedByTitle();
+        }
+        for (Project project : projects) {
+            this.projects.add(project.getTitle());
         }
     }
 

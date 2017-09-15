@@ -80,7 +80,7 @@ public class ProjectFileGroupDAO extends BaseDAO<ProjectFileGroup> {
         removeObject(ProjectFileGroup.class, id);
     }
 
-    public List<ProjectFileGroup> search(String query) throws DAOException {
+    public List<ProjectFileGroup> search(String query) {
         return retrieveObjects(query);
     }
 

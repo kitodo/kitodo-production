@@ -59,7 +59,7 @@ public class PropertyDAO extends BaseDAO<Property> {
      *            as String
      * @return list of properties
      */
-    public List<Property> search(String query) throws DAOException {
+    public List<Property> search(String query) {
         return retrieveObjects(query);
     }
 
