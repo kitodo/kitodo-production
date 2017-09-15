@@ -83,6 +83,17 @@ public abstract class KitodoRestClient implements RestClientInterface {
     }
 
     /**
+     * Check if index already exists. Needed for frontend.
+     * 
+     * @return false if doesn't exists, true if exists
+     */
+    public boolean indexExists() throws IOException, CustomResponseException {
+        Response indexResponse = restClient.performRequest("GET", "/" + index, Collections.<String, String>emptyMap());
+        int statusCode = processStatusCode(indexResponse.getStatusLine());
+        return statusCode == 200 || statusCode == 201;
+    }
+
+    /**
      * Delete the whole index. Used for cleaning after tests!
      */
     public void deleteIndex() throws IOException {
