@@ -191,6 +191,22 @@ public class FileManagementTest {
     }
 
     @Test
+    public void shouldGetSizeOfDirectory() throws Exception {
+        int testContent = 156575;
+
+        URI directory = fileManagement.create(URI.create(""), "directorySize", false);
+        URI resource = fileManagement.create(directory, "size.txt", true);
+        Assert.assertTrue(fileManagement.fileExist(resource));
+
+        try (OutputStream outputStream = fileManagement.write(URI.create("directorySize/size.txt"))){
+            outputStream.write(testContent);
+        }
+
+        long directorySize = fileManagement.getSizeOfDirectory(URI.create("directorySize"));
+        Assert.assertEquals("Incorrect size of directory", 1, directorySize);
+    }
+
+    @Test
     public void shouldGetFileNameWithExtension() throws Exception {
         URI resource = fileManagement.create(URI.create("fileTest"), "fileName.xml", true);
         Assert.assertTrue(fileManagement.fileExist(resource));

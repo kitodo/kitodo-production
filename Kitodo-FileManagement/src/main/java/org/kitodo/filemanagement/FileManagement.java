@@ -279,6 +279,18 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
+    public Long getSizeOfDirectory(URI directory) throws IOException {
+        if (!directory.isAbsolute()) {
+            directory = fileMapper.mapAccordingToMappingType(directory);
+        }
+        if (isDirectory(directory)) {
+            return FileUtils.sizeOfDirectory(new File(directory));
+        } else {
+            throw new IOException("Given URI doesn't point to the directory!");
+        }
+    }
+
+    @Override
     public String getFileNameWithExtension(URI uri) {
         return FilenameUtils.getName(uri.getPath());
     }
