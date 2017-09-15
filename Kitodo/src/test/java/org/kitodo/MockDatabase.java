@@ -49,7 +49,6 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -492,6 +491,7 @@ public class MockDatabase {
         firstTask.setProcess(firstProcess);
         firstTask.setUsers(serviceManager.getUserService().getAll());
         firstTask.getUserGroups().add(userGroup);
+        serviceManager.getTaskService().save(firstTask);
         firstProcess.getTasks().add(firstTask);
         serviceManager.getProcessService().save(firstProcess);
         firstUser.getProcessingTasks().add(firstTask);
@@ -520,6 +520,7 @@ public class MockDatabase {
         secondTask.setTypeAutomaticScriptPath2("../type/automatic/script/path2");
         secondTask.setScriptName3("thirdScriptName");
         secondTask.setTypeAutomaticScriptPath3("../type/automatic/script/path3");
+        serviceManager.getTaskService().save(secondTask);
 
         Task thirdTask = new Task();
         thirdTask.setTitle("Testing and Blocking");
@@ -531,6 +532,7 @@ public class MockDatabase {
         thirdTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         thirdTask.setProcess(secondProcess);
         thirdTask.getUsers().add(secondUser);
+        serviceManager.getTaskService().save(thirdTask);
 
         Task fourthTask = new Task();
         fourthTask.setTitle("Progress");
@@ -544,6 +546,7 @@ public class MockDatabase {
         fourthTask.setProcessingUser(serviceManager.getUserService().getById(2));
         fourthTask.setProcess(secondProcess);
         fourthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(fourthTask);
 
         secondProcess.getTasks().add(secondTask);
         secondProcess.getTasks().add(thirdTask);
@@ -574,6 +577,7 @@ public class MockDatabase {
         fifthTask.setProcessingUser(serviceManager.getUserService().getById(2));
         fifthTask.setProcess(fifthProcess);
         fifthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(fifthTask);
 
         Task sixthTask = new Task();
         sixthTask.setTitle("Progress");
@@ -586,6 +590,7 @@ public class MockDatabase {
         sixthTask.setProcessingUser(serviceManager.getUserService().getById(2));
         sixthTask.setProcess(fifthProcess);
         sixthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(sixthTask);
 
         fifthProcess.getTasks().add(fifthTask);
         fifthProcess.getTasks().add(sixthTask);
