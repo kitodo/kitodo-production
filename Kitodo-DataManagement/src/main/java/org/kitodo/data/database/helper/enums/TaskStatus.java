@@ -96,14 +96,16 @@ public enum TaskStatus {
      * Retrieve StepStatus by integer value, necessary for database handlings,
      * where only integer is saved but not type safe.
      *
-     * @param inValue
+     * @param value
      *            as integer value
      * @return {@link TaskStatus} for given integer
      */
-    public static TaskStatus getStatusFromValue(Integer inValue) {
-        for (TaskStatus taskStatus : values()) {
-            if (taskStatus.getValue() == inValue.intValue()) {
-                return taskStatus;
+    public static TaskStatus getStatusFromValue(Integer value) {
+        if (value != null) {
+            for (TaskStatus taskStatus : values()) {
+                if (taskStatus.getValue() == value.intValue()) {
+                    return taskStatus;
+                }
             }
         }
         return LOCKED;
