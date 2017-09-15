@@ -767,10 +767,17 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzerLoeschen() {
-        this.mySchritt.getUsers().remove(this.myBenutzer);
-        Speichern();
-        return null;
+    public String deleteUser() {
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            this.mySchritt.getUsers().remove(user);
+            Speichern();
+            return null;
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -778,10 +785,17 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzergruppeLoeschen() {
-        this.mySchritt.getUserGroups().remove(this.myBenutzergruppe);
-        Speichern();
-        return null;
+    public String deleteUserGroup() {
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            this.mySchritt.getUserGroups().remove(userGroup);
+            Speichern();
+            return null;
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -789,10 +803,22 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzergruppeHinzufuegen() {
-        this.mySchritt.getUserGroups().add(this.myBenutzergruppe);
-        Speichern();
-        return null;
+    public String addUserGroup() {
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            for (UserGroup taskUserGroup : this.mySchritt.getUserGroups()) {
+                if (taskUserGroup.equals(userGroup)) {
+                    return null;
+                }
+            }
+            this.mySchritt.getUserGroups().add(userGroup);
+            Speichern();
+            return null;
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -800,9 +826,21 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzerHinzufuegen() {
-        this.mySchritt.getUsers().add(this.myBenutzer);
-        Speichern();
+    public String addUser() {
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            for (User taskUser : this.mySchritt.getUsers()) {
+                if (taskUser.equals(user)) {
+                    return null;
+                }
+            }
+            this.mySchritt.getUsers().add(user);
+            Speichern();
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
         return null;
     }
 

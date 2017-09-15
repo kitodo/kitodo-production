@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -127,6 +128,20 @@ public class BenutzerverwaltungForm extends BasisForm {
             return serviceManager.getUserService().findAllActiveUsers();
         } else {
             return serviceManager.getUserService().findAllVisibleUsers();
+        }
+    }
+
+    /**
+     * Return list of users.
+     *
+     * @return list of user groups
+     */
+    public List<UserDTO> getActiveUsers() {
+        try {
+            return serviceManager.getUserService().findAllActiveUsers();
+        } catch (DataException e) {
+            logger.error("Unable to load users: " + e.getMessage());
+            return new LinkedList<>();
         }
     }
 
