@@ -30,8 +30,6 @@ public class Docket implements DocketInterface {
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             exportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
         }
 
         return file;
@@ -45,8 +43,6 @@ public class Docket implements DocketInterface {
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             exportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
         }
 
         return file;
