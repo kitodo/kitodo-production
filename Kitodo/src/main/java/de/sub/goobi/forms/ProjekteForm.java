@@ -20,6 +20,7 @@ import de.sub.goobi.helper.Page;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -906,25 +907,28 @@ public class ProjekteForm extends BasisForm {
      * 'configurationFile'.
      */
     public void saveXMLConfiguration() {
+        logger.info("Saving configuration to file " + currentConfigurationFile);
         try {
             Document document = documentBuilder.parse(new InputSource(new StringReader(this.xmlConfigurationString)));
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
             File xmlConfigurationFile = new File(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
-            FileOutputStream outputStream = new FileOutputStream(xmlConfigurationFile, false);
-            StreamResult streamResult = new StreamResult(new PrintWriter(outputStream));
-            logger.info("Saving configuration to file " + currentConfigurationFile);
-            transformer.transform(domSource, streamResult);
-            outputStream.close();
-        } catch (SAXException e) {
-            logger.error("ERROR: error parsing given XML string: " + e.getMessage());
-        } catch (IOException e) {
-            logger.error("ERROR: could not save XML configuration: " + e.getMessage());
+            try (FileOutputStream outputStream = new FileOutputStream(xmlConfigurationFile, false);
+                    PrintWriter printWriter = new PrintWriter(outputStream)) {
+                StreamResult streamResult = new StreamResult(printWriter);
+                transformer.transform(domSource, streamResult);
+            } catch (TransformerException e) {
+                logger.error("ERROR: transformation failed: " + e.getMessage());
+            }
         } catch (TransformerConfigurationException e) {
             logger.error("ERROR: transformer configuration exception: " + e.getMessage());
-        } catch (TransformerException e) {
-            logger.error("ERROR: transformation failed: " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            logger.error("ERROR: file not found: " + e.getMessage());
+        } catch (IOException e) {
+            logger.error("ERROR: could not save XML configuration: " + e.getMessage());
+        } catch (SAXException e) {
+            logger.error("ERROR: error parsing given XML string: " + e.getMessage());
         }
     }
 
