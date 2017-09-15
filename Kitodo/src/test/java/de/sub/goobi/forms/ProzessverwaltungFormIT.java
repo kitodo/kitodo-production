@@ -13,10 +13,13 @@ package de.sub.goobi.forms;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.dto.ProcessDTO;
 
 public class ProzessverwaltungFormIT {
 
@@ -28,6 +31,32 @@ public class ProzessverwaltungFormIT {
     @Before
     public void multipleInit() throws InterruptedException {
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void shouldFilterAlleStart() throws Exception {
+        ProzessverwaltungForm prozessverwaltungForm = new ProzessverwaltungForm();
+
+        prozessverwaltungForm.setShowArchivedProjects(false);
+        prozessverwaltungForm.setShowClosedProcesses(false);
+        prozessverwaltungForm.setModusAnzeige("aktuell");
+        prozessverwaltungForm.setFilter("id:2 3");
+
+        prozessverwaltungForm.filterAlleStart();
+        List<ProcessDTO> processDTOS = prozessverwaltungForm.getProcessDTOS();
+        assertEquals("Amount of found processes is incorrect!", 2, processDTOS.size());
+
+        prozessverwaltungForm.setFilter("");
+
+        prozessverwaltungForm.filterAlleStart();
+        processDTOS = prozessverwaltungForm.getProcessDTOS();
+        assertEquals("Amount of found processes is incorrect!", 3, processDTOS.size());
+
+        prozessverwaltungForm.setModusAnzeige("vorlagen");
+
+        prozessverwaltungForm.filterAlleStart();
+        processDTOS = prozessverwaltungForm.getProcessDTOS();
+        assertEquals("Amount of found processes is incorrect!", 1, processDTOS.size());
     }
 
     @Test
