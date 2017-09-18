@@ -126,6 +126,11 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         return filterDAO.findAll();
     }
 
+    @Override
+    public List<Filter> getAll(int offset, int size) throws DAOException {
+        return filterDAO.getAll(offset, size);
+    }
+
     /**
      * Search by query in database.
      *

@@ -100,6 +100,14 @@ public class ProjectServiceIT {
     }
 
     @Test
+    public void shouldGetAllProjectsInGivenRange() throws Exception {
+        ProjectService projectService = new ProjectService();
+
+        List<Project> projects = projectService.getAll(2,10);
+        assertEquals("Not all projects were found in database!", 1, projects.size());
+    }
+
+    @Test
     public void shouldRemoveProject() throws Exception {
         ProjectService projectService = new ProjectService();
 

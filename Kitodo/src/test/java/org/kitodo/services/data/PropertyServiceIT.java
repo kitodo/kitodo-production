@@ -142,6 +142,14 @@ public class PropertyServiceIT {
     }
 
     @Test
+    public void shouldGetAllPropertiesInGivenRange() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        List<Property> properties = propertyService.getAll(2,6);
+        assertEquals("Not all properties were found in database!", 6, properties.size());
+    }
+
+    @Test
     public void shouldRemoveProperty() throws Exception {
         PropertyService propertyService = new PropertyService();
 

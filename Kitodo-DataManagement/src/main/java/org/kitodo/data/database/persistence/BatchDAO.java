@@ -55,6 +55,19 @@ public class BatchDAO extends BaseDAO<Batch> {
     }
 
     /**
+     * Retrieves all batches in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Batch> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Batch ORDER BY id ASC", offset, size);
+    }
+
+    /**
      * The method save() saves a batch to the database.
      *
      * @param batch

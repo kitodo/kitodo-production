@@ -46,6 +46,19 @@ public class WorkpieceDAO extends BaseDAO<Workpiece> {
         return retrieveAllObjects(Workpiece.class);
     }
 
+    /**
+     * Retrieves all workpieces in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Workpiece> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Workpiece ORDER BY id ASC", offset, size);
+    }
+
     public Workpiece save(Workpiece workpiece) throws DAOException {
         storeObject(workpiece);
         return retrieveObject(Workpiece.class, workpiece.getId());

@@ -154,6 +154,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
         return processDAO.findAll();
     }
 
+    @Override
+    public List<Process> getAll(int offset, int size) throws DAOException {
+        return processDAO.getAll(offset, size);
+    }
+
     /**
      * Method saves process object to database.
      *

@@ -117,6 +117,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
         return batchDAO.findAll();
     }
 
+    @Override
+    public List<Batch> getAll(int offset, int size) throws DAOException {
+        return batchDAO.getAll(offset, size);
+    }
+
     /**
      * Search Batch objects by given query.
      *

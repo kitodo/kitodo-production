@@ -47,6 +47,19 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
         return retrieveAllObjects(UserGroup.class);
     }
 
+    /**
+     * Retrieves all user's groups in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<UserGroup> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM UserGroup ORDER BY id ASC", offset, size);
+    }
+
     public UserGroup save(UserGroup userGroup) throws DAOException {
         storeObject(userGroup);
         return retrieveObject(UserGroup.class, userGroup.getId());

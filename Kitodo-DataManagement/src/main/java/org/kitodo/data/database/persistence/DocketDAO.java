@@ -47,6 +47,19 @@ public class DocketDAO extends BaseDAO<Docket> {
         return retrieveAllObjects(Docket.class);
     }
 
+    /**
+     * Retrieves all dockets in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Docket> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Docket ORDER BY id", offset, size);
+    }
+
     public Docket save(Docket docket) throws DAOException {
         storeObject(docket);
         return retrieveObject(Docket.class, docket.getId());

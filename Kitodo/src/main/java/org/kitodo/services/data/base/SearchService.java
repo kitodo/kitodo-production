@@ -114,6 +114,17 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public abstract List<T> getAll();
 
     /**
+     * Get list of all objects from database in given range.
+     * 
+     * @param offset
+     *            result - important, numeration starts since 0
+     * @param size
+     *            amount of results
+     * @return list of all objects from database in given range
+     */
+    public abstract List<T> getAll(int offset, int size) throws DAOException;
+
+    /**
      * Method necessary for conversion of JSON objects to exact bean objects called
      * from database.
      *
@@ -450,8 +461,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     public List<S> findByQuery(QueryBuilder query, String sort, Integer offset, Integer size, boolean related)
             throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size),
-                related);
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), related);
     }
 
     /**

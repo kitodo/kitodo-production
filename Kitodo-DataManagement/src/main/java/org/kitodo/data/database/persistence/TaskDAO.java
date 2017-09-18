@@ -47,6 +47,19 @@ public class TaskDAO extends BaseDAO<Task> {
         return retrieveAllObjects(Task.class);
     }
 
+    /**
+     * Retrieves all tasks in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Task> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Task ORDER BY id ASC", offset, size);
+    }
+
     public Task save(Task task) throws DAOException {
         storeObject(task);
         return retrieveObject(Task.class, task.getId());

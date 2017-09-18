@@ -95,6 +95,14 @@ public class BatchServiceIT {
     }
 
     @Test
+    public void shouldGetAllBatchesInGivenRange() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<Batch> batches = batchService.getAll(2,10);
+        assertEquals("Not all batches were found in database!", 2, batches.size());
+    }
+
+    @Test
     public void shouldRemoveBatch() throws Exception {
         BatchService batchService = new BatchService();
 

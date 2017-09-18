@@ -189,6 +189,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return taskDAO.findAll();
     }
 
+    @Override
+    public List<Task> getAll(int offset, int size) throws DAOException {
+        return taskDAO.getAll(offset, size);
+    }
+
     /**
      * Find the distinct task titles.
      * 

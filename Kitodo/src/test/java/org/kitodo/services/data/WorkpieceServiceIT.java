@@ -77,6 +77,14 @@ public class WorkpieceServiceIT {
     }
 
     @Test
+    public void shouldGetAllWorkpiecesInGivenRange() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
+
+        List<Workpiece> workpieces = workpieceService.getAll(2,10);
+        assertEquals("Not all workpieces were found in database!", 0, workpieces.size());
+    }
+
+    @Test
     public void shouldRemoveWorkpiece() throws Exception {
         ProcessService processService = new ProcessService();
         WorkpieceService workpieceService = new WorkpieceService();

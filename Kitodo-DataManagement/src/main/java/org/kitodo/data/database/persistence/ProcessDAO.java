@@ -50,6 +50,19 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
+     * Retrieves all processes in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of results
+     */
+    public List<Process> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Process ORDER BY id ASC", offset, size);
+    }
+
+    /**
      * @param process
      *            object
      * @param progress

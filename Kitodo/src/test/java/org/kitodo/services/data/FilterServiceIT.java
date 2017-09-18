@@ -92,6 +92,14 @@ public class FilterServiceIT {
     }
 
     @Test
+    public void shouldGetAllFiltersInGivenRange() throws Exception {
+        FilterService filterService = new FilterService();
+
+        List<Filter> filters = filterService.getAll(1,10);
+        assertEquals("Not all filters were found in database!", 1, filters.size());
+    }
+
+    @Test
     public void shouldBuildQueryAndFindByProcessServiceByProcessId() throws Exception {
         FilterService filterService = new FilterService();
         ProcessService processService = new ProcessService();

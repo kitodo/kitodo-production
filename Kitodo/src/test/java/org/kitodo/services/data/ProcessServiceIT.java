@@ -115,6 +115,14 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldGetAllProcessesInGivenRange() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<Process> processes = processService.getAll(3,10);
+        assertEquals("Not all processes were found in database!", 2, processes.size());
+    }
+
+    @Test
     public void shouldRemoveProcess() throws Exception {
         ProcessService processService = new ProcessService();
 
