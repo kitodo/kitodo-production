@@ -37,7 +37,7 @@ public class DocketServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertProcessesFull();
+        MockDatabase.insertDockets();
     }
 
     @AfterClass

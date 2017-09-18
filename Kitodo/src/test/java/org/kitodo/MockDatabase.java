@@ -200,7 +200,7 @@ public class MockDatabase {
         serviceManager.getBatchService().save(fourthBatch);
     }
 
-    private static void insertDockets() throws DataException {
+    public static void insertDockets() throws DataException {
         Docket firstDocket = new Docket();
         firstDocket.setTitle("default");
         firstDocket.setFile("docket.xsl");
@@ -476,7 +476,7 @@ public class MockDatabase {
         serviceManager.getProjectService().save(project);
     }
 
-    private static void insertRulesets() throws DataException {
+    public static void insertRulesets() throws DataException {
         Ruleset firstRuleset = new Ruleset();
         firstRuleset.setTitle("SLUBDD");
         firstRuleset.setFile("ruleset_slubdd.xml");
