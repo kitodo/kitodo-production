@@ -226,7 +226,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(firstProcess);
     }
 
-    private static void insertLdapGroups() throws DAOException {
+    public static void insertLdapGroups() throws DAOException {
         LdapGroup firstLdapGroup = new LdapGroup();
         firstLdapGroup.setTitle("LG");
         firstLdapGroup.setHomeDirectory("..//test_directory/");
