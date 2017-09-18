@@ -372,16 +372,15 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void deleteMetadataDirectory() {
-        for (Task step : this.myProzess.getTasks()) {
-            this.mySchritt = step;
+        for (Task task : this.myProzess.getTasks()) {
+            this.mySchritt = task;
             deleteSymlinksFromUserHomes();
         }
         try {
-            fileService.delete(
-                    new File(serviceManager.getProcessService().getProcessDataDirectory(this.myProzess)).toURI());
-            File ocr = new File(fileService.getOcrDirectory(this.myProzess));
-            if (ocr.exists()) {
-                fileService.delete(ocr.toURI());
+            fileService.delete(serviceManager.getProcessService().getProcessDataDirectory(this.myProzess));
+            URI ocrDirectory = fileService.getOcrDirectory(this.myProzess);
+            if (fileService.fileExist(ocrDirectory)) {
+                fileService.delete(ocrDirectory);
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
