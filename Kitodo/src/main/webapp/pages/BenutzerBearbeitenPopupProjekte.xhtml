@@ -39,7 +39,7 @@
                                 <h:outputText value="#{project.title}"/>
                             </p:column>
                             <p:column headerText="#{msgs.auswahl}">
-                                <h:commandLink action="#{BenutzerverwaltungForm.zuProjektHinzufuegen}">
+                                <h:commandLink action="#{BenutzerverwaltungForm.addToProject}">
                                     <h:graphicImage alt="add user to project" value="/pages/images/buttons/addUser.gif"/>
                                     <f:param name="ID" value="#{project.id}" />
                                 </h:commandLink>

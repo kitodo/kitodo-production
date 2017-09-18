@@ -281,24 +281,15 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String ausProjektLoeschen() {
+    public String deleteFromProject() {
         int projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
-
-        List<Project> neu = new ArrayList<>();
-        for (Project project : this.myClass.getProjects()) {
-            if (project.getId() != projectId) {
-                neu.add(project);
-            } else {
-                project.getUsers().remove(this.myClass);
-                try {
-                    serviceManager.getProjectService().save(project);
-                } catch (DataException e) {
-                    Helper.setFehlerMeldung("Error on removing project", e.getMessage());
-                    return null;
-                }
-            }
+        try {
+            Project project = serviceManager.getProjectService().getById(projectId);
+            this.myClass.getProjects().remove(project);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
         }
-        this.myClass.setProjects(neu);
         return null;
     }
 
@@ -307,7 +298,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String or null
      */
-    public String zuProjektHinzufuegen() {
+    public String addToProject() {
         Integer projectId = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
             Project project = serviceManager.getProjectService().getById(projectId);
