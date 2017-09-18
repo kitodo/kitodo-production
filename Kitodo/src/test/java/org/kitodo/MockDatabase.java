@@ -21,11 +21,14 @@ import de.sub.goobi.helper.Helper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +40,7 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -61,55 +65,70 @@ public class MockDatabase {
     private static Node node;
     private static IndexRestClient indexRestClient;
     private static String testIndexName;
-    private static String port;
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     @SuppressWarnings("unchecked")
-    public static void insertProcessesFull() throws Exception {
-        final String nodeName = "corenode";
+    public static void startNode() throws Exception {
+        String nodeName = randomString(6);
+        final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        port = ConfigMain.getParameter("elasticsearch.port", "9205");
         indexRestClient = initializeIndexRestClient();
 
         Map settingsMap = prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
         Settings settings = Settings.builder().put(settingsMap).build();
 
-        try {
-            serviceManager.getBatchService().getById(1);
-        } catch (DAOException e) {
-            removeOldDataDirectories("target/" + nodeName);
+        removeOldDataDirectories("target/" + nodeName);
 
-            node = new ExtendedNode(settings, asList(Netty4Plugin.class));
-            node.start();
-
-            indexRestClient.createIndex(readMapping());
-
-            insertBatches();
-            insertDockets();
-            insertRulesets();
-            insertLdapGroups();
-            insertUsers();
-            insertUserGroups();
-            insertProjects();
-            insertProjectFileGroups();
-            insertProcesses();
-            insertProcessProperties();
-            insertWorkpieces();
-            insertWorkpieceProperties();
-            insertTemplates();
-            insertTemplateProperties();
-            insertUserFilters();
-            insertTasks();
-            insertHistory();
+        if (node != null) {
+            stopNode();
         }
+        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+        node.start();
+        indexRestClient.createIndex(readMapping());
+    }
+
+    public static void stopNode() throws Exception {
+        indexRestClient.deleteIndex();
+        node.close();
+        node = null;
+    }
+
+    public static void insertProcessesFull() throws DAOException, DataException {
+        insertBatches();
+        insertDockets();
+        insertRulesets();
+        insertLdapGroups();
+        insertUsers();
+        insertUserGroups();
+        insertProjects();
+        insertProjectFileGroups();
+        insertProcesses();
+        insertProcessProperties();
+        insertWorkpieces();
+        insertWorkpieceProperties();
+        insertTemplates();
+        insertTemplateProperties();
+        insertUserFilters();
+        insertTasks();
+        insertHistory();
     }
 
     private static class ExtendedNode extends Node {
         public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
         }
+    }
+
+    private static String randomString(int lenght){
+        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(lenght);
+        for( int i = 0; i < lenght; i++ )
+            sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+        return sb.toString();
     }
 
     private static IndexRestClient initializeIndexRestClient() {
@@ -128,7 +147,7 @@ public class MockDatabase {
             String mapping = IOUtils.toString(inputStream, "UTF-8");
             Object object = parser.parse(mapping);
             jsonObject = (JSONObject) object;
-        } catch (IOException | ParseException e ) {
+        } catch (IOException | ParseException e) {
             logger.error(e);
         }
         return jsonObject.toJSONString();
@@ -776,27 +795,40 @@ public class MockDatabase {
         serviceManager.getWorkpieceService().save(workpiece);
     }
 
-    // TODO: getById out why this method doesn't clean database after every test's
-    // class
+    /**
+     * Clean database after class. Truncate all tables, reset id sequences and clear
+     * session.
+     */
     public static void cleanDatabase() {
         Session session = Helper.getHibernateSession();
-        session.createQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-        session.createQuery("DELETE FROM History WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM User WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Process WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Project WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Workpiece WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Batch WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM LdapGroup WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM User WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Docket WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM ProjectFileGroup WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Ruleset WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Task WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Template WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM UserGroup WHERE id !=null").executeUpdate();
-        session.createQuery("DELETE FROM Property WHERE id !=null").executeUpdate();
-        // session.createQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+        Transaction transaction = session.beginTransaction();
+        session.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+
+        Set<String> tables = new HashSet<>();
+        String query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES  where TABLE_SCHEMA='PUBLIC'";
+        List tableResult = session.createNativeQuery(query).getResultList();
+        for (Object table : tableResult) {
+            tables.add((String) table);
+        }
+
+        for (String table : tables) {
+            session.createNativeQuery("TRUNCATE TABLE " + table).executeUpdate();
+        }
+
+        Set<String> sequences = new HashSet<>();
+        query = "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA='PUBLIC'";
+        List sequencesResult = session.createNativeQuery(query).getResultList();
+        for (Object test : sequencesResult) {
+            sequences.add((String) test);
+        }
+
+        for (String sequence : sequences) {
+            session.createNativeQuery("ALTER SEQUENCE " + sequence + " RESTART WITH 1").executeUpdate();
+        }
+
+        session.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+        transaction.commit();
+        session.clear();
     }
 
     /**
