@@ -115,6 +115,12 @@ public class MockDatabase {
         insertHistory();
     }
 
+    public static void insertUserGroupsFull() throws DAOException, DataException {
+        insertLdapGroups();
+        insertUsers();
+        insertUserGroups();
+    }
+
     private static class ExtendedNode extends Node {
         public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);

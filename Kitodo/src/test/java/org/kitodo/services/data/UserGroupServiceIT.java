@@ -36,7 +36,7 @@ public class UserGroupServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertProcessesFull();
+        MockDatabase.insertUserGroupsFull();
     }
 
     @AfterClass
