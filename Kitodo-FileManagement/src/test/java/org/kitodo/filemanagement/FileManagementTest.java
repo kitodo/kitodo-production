@@ -33,6 +33,7 @@ public class FileManagementTest {
     @BeforeClass
     public static void setUp() throws IOException {
         fileManagement.create(URI.create(""), "fileTest", false);
+        fileManagement.create(URI.create(""), "directorySize", false);
         URI directory = fileManagement.create(URI.create(""), "2", false);
         fileManagement.create(directory, "meta.xml", true);
     }
@@ -40,6 +41,7 @@ public class FileManagementTest {
     @AfterClass
     public static void tearDown() throws IOException {
         fileManagement.delete(URI.create("fileTest"));
+        fileManagement.delete(URI.create("directorySize"));
         fileManagement.delete(URI.create("2"));
     }
 
@@ -61,11 +63,8 @@ public class FileManagementTest {
         int testContent = 8;
 
         URI testRead = fileManagement.create(URI.create("fileTest"), "testRead.txt", true);
-        OutputStream outputStream = fileManagement.write(testRead);
-        try {
+        try (OutputStream outputStream = fileManagement.write(testRead)) {
             outputStream.write(testContent);
-        } finally {
-            outputStream.close();
         }
 
         InputStream inputStream = fileManagement.read(testRead);
@@ -194,8 +193,7 @@ public class FileManagementTest {
     public void shouldGetSizeOfDirectory() throws Exception {
         int testContent = 156575;
 
-        URI directory = fileManagement.create(URI.create(""), "directorySize", false);
-        URI resource = fileManagement.create(directory, "size.txt", true);
+        URI resource = fileManagement.create(URI.create("directorySize"), "size.txt", true);
         Assert.assertTrue(fileManagement.fileExist(resource));
 
         try (OutputStream outputStream = fileManagement.write(URI.create("directorySize/size.txt"))){
