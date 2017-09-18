@@ -26,12 +26,14 @@ public class LdapGroupServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+        MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
-    public static void cleanDatabase() {
-        // MockDatabase.cleanDatabase();
+    public static void cleanDatabase() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
     }
 
     @Test

@@ -17,9 +17,6 @@ import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
@@ -51,13 +48,15 @@ public class ProcessServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+        MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         fileService.createDirectory(URI.create(""), "1");
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
-        // MockDatabase.cleanDatabase();
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
         fileService.delete(URI.create("1"));
     }
 

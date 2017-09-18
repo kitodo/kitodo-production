@@ -11,6 +11,7 @@
 
 package test;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +22,14 @@ public class DBConnectionTestIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+        MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+    }
+
+    @AfterClass
+    public static void cleanDatabase() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -29,8 +37,7 @@ public class DBConnectionTestIT {
         ServiceManager serviceManager = new ServiceManager();
 
         long counted = serviceManager.getProcessService().count();
-        Assert.assertNotNull("No Process found", counted);
-        Assert.assertEquals(5, counted);
+        Assert.assertEquals("No Process found", 5, counted);
 
         String title = serviceManager.getProcessService().getById(4).getTitle();
         Assert.assertEquals("DBConnectionTest", title);
