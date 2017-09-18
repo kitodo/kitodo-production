@@ -168,7 +168,7 @@ public class ProjekteForm extends BasisForm {
         this.commitFileGroups();
         try {
             serviceManager.getProjectService().save(this.myProjekt);
-            return "/pages/ProjekteAlle";
+            return filterKein();
         } catch (DataException e) {
             Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
             logger.error(e);
@@ -213,7 +213,7 @@ public class ProjekteForm extends BasisForm {
                 return null;
             }
         }
-        return "/pages/ProjekteAlle";
+        return filterKein();
     }
 
     /**

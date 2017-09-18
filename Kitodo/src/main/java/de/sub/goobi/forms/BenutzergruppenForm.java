@@ -60,7 +60,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
-            return "/pages/BenutzergruppenAlle?faces-redirect=true";
+            return filterKein();
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             return null;
@@ -91,7 +91,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
             return null;
         }
-        return "/pages/BenutzergruppenAlle?faces-redirect=true";
+        return filterKein();
     }
 
     /**
