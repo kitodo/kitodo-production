@@ -47,7 +47,7 @@ public class UserGroupServiceIT {
 
     @Before
     public void multipleInit() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     @Rule
