@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,17 +42,19 @@ public class IndexWorker implements Runnable {
     @SuppressWarnings("unchecked")
     public void run() {
         this.indexedObjects = 0;
+        int offset = 10000;
         int amountToIndex;
         try {
             amountToIndex = searchService.countDatabaseRows().intValue();
-            if (amountToIndex < 10000) {
+            if (amountToIndex < offset) {
                 for (Object object : searchService.getAll()) {
                     this.searchService.saveToIndex((BaseIndexedBean) object);
                     this.indexedObjects++;
                 }
             } else {
                 while (this.indexedObjects < amountToIndex) {
-                    for (Object object : searchService.getAll(this.indexedObjects, amountToIndex)) {
+                    List<Object> objectsToIndex = searchService.getAll(this.indexedObjects, this.indexedObjects + offset);
+                    for (Object object : objectsToIndex) {
                         this.searchService.saveToIndex((BaseIndexedBean) object);
                         this.indexedObjects++;
                     }
