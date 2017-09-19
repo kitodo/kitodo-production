@@ -24,6 +24,18 @@
         <h:body>
             <script type="text/javascript">
                 //<![CDATA[
+                    function createMapping() {
+                        toggleButtons(false);
+                        document.getElementById('indexing_form:create-mapping-loading').style.display='inline';
+                        return true;
+                    }
+
+                    function deleteIndex() {
+                        toggleButtons(false);
+                        document.getElementById('indexing_form:delete-index-loading').style.display='inline';
+                        return true;
+                    }
+
                     function toggleProgressPolling(message) {
                         if (message.includes("indexing_started")) {
                             PF('progressPoll').start();
@@ -32,10 +44,40 @@
                             PF('progressPoll').stop();
                             $('.refreshTable').click();
                         }
+                        else if (message.includes("mapping")) {
+                            $('.refreshTable').click();
+                            if (message.endsWith("started")) {
+                                PF('progressPoll').start();
+                            }
+                            else if (message.endsWith("finished")) {
+                                document.getElementById('indexing_form:create-mapping-loading').style.display='none';
+                                PF('progressPoll').stop();
+                            }
+                            else if (message.endsWith("failed")) {
+                                document.getElementById('indexing_form:create-mapping-loading').style.display='none';
+                                PF('progressPoll').stop();
+                            }
+                        }
+                        else if (message.includes("deletion")) {
+                            $('.refreshTable').click();
+                            if (message.endsWith("started")) {
+                                PF('progressPoll').start();
+                            }
+                            if (message.endsWith("finished")) {
+                                document.getElementById('indexing_form:delete-index-loading').style.display='none';
+                                PF('progressPoll').stop();
+                            }
+                            else if (message.endsWith("failed")) {
+                                document.getElementById('indexing_form:delete-index-loading').style.display='none';
+                                PF('progressPoll').stop();
+                            }
+                        }
                     }
 
-                    function toggleIndexingButtons(state) {
+                    function toggleButtons(state) {
                         if(state) {
+                            PF('createMapping').enable();
+                            PF('deleteIndex').enable();
                             PF('startIndexingBatches').enable();
                             PF('startIndexingDockets').enable();
                             PF('startIndexingProcesses').enable();
@@ -51,6 +93,8 @@
                             PF('startIndexingAll').enable();
                         }
                         else {
+                            PF('createMapping').disable();
+                            PF('deleteIndex').disable();
                             PF('startIndexingBatches').disable();
                             PF('startIndexingDockets').disable();
                             PF('startIndexingProcesses').disable();
@@ -94,19 +138,44 @@
                                     <table>
                                         <thead>
                                         <tr>
-                                            <th><h:outputText value="#{msgs.mapping}"/></th>
-                                            <th><h:outputText value="#{msgs.createMapping}"/></th>
+                                            <th colspan="3"><h:outputText value="#{msgs.mapping}"/></th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- Create Mapping -->
-                                            <tr>
-                                                <td><h:outputText value="#{msgs.mapping}"/></td>
-                                                <td>
-                                                    <p:commandButton value="#{msgs.createMapping}"
-                                                                     action="#{indexingForm.createMapping()}"/>
-                                                </td>
-                                            </tr>
+                                        <!-- Create Mapping -->
+                                        <tr>
+                                            <td colspan="2">
+                                                <p:commandButton widgetVar="createMapping"
+                                                                 value="#{msgs.createMapping}"
+                                                                 style="width: 100%;"
+                                                                 action="#{indexingForm.createMapping()}"
+                                                                 disabled="#{indexingForm.indexExists() or indexingForm.indexingInProgress()}"
+                                                                 update="indexingTable"
+                                                                 onclick="createMapping();"/>
+                                            </td>
+                                            <td>
+                                                <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
+                                                <p:graphicImage id="create-mapping-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == -1}"/>
+                                                <p:graphicImage id="create-mapping-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 1}"/>
+                                            </td>
+                                        </tr>
+                                        <!-- Delete Index -->
+                                        <tr>
+                                            <td colspan="2">
+                                                <p:commandButton widgetVar="deleteIndex"
+                                                                 value="#{msgs.deleteIndex}"
+                                                                 style="width: 100%;"
+                                                                 action="#{indexingForm.deleteIndex()}"
+                                                                 disabled="#{!indexingForm.indexExists() or indexingForm.indexingInProgress()}"
+                                                                 update="indexingTable"
+                                                                 onclick="return confirm('Do you REALLY want to delete the whole index?');deleteIndex();"/>
+                                            </td>
+                                            <td>
+                                                <p:graphicImage id="delete-index-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
+                                                <p:graphicImage id="delete-index-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == -2}"/>
+                                                <p:graphicImage id="delete-index-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 2}"/>
+                                            </td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                     <table>
@@ -125,10 +194,10 @@
                                                 <td><h:outputText value="#{msgs.users}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingUsers"
-                                                                     onclick="PF('usersProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('usersProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startUserIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.userCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.userCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="usersProgress"
@@ -154,10 +223,10 @@
                                                 <td><h:outputText value="#{msgs.benutzergruppen}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingUserGroups"
-                                                                     onclick="PF('userGroupsProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('userGroupsProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startUserGroupIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.userGroupCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.userGroupCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="userGroupsProgress"
@@ -183,10 +252,10 @@
                                                 <td><h:outputText value="#{msgs.projekte}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingProjects"
-                                                                     onclick="PF('projectsProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('projectsProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startProjectIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.projectCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.projectCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="projectsProgress"
@@ -212,10 +281,10 @@
                                                 <td><h:outputText value="#{msgs.regelsaetze}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingRulesets"
-                                                                     onclick="PF('rulesetsProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('rulesetsProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startRulesetIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.rulesetCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.rulesetCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="rulesetsProgress"
@@ -241,10 +310,10 @@
                                                 <td><h:outputText value="#{msgs.dockets}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingDockets"
-                                                                     onclick="PF('docketsProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('docketsProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startDocketIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.docketCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.docketCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="docketsProgress"
@@ -270,10 +339,10 @@
                                                 <td><h:outputText value="#{msgs.schritte}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingTasks"
-                                                                     onclick="PF('tasksProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('tasksProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startTaskIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.taskCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.taskCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="tasksProgress"
@@ -299,10 +368,10 @@
                                                 <td><h:outputText value="#{msgs.prozessvorlagen}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingTemplates"
-                                                                     onclick="PF('templatesProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('templatesProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startTemplateIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.templateCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.templateCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="templatesProgress"
@@ -328,10 +397,10 @@
                                                 <td><h:outputText value="#{msgs.prozesse}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingProcesses"
-                                                                     onclick="PF('processesProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('processesProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startProcessIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.processCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.processCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="processesProgress"
@@ -357,10 +426,10 @@
                                                 <td><h:outputText value="#{msgs.batches}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingBatches"
-                                                                     onclick="PF('batchesProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('batchesProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startBatchIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.batchCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.batchCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="batchesProgress"
@@ -386,10 +455,10 @@
                                                 <td><h:outputText value="#{msgs.eigenschaften}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingProperties"
-                                                                     onclick="PF('propertiesProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('propertiesProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startPropertyIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.propertyCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.propertyCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="propertiesProgress"
@@ -415,10 +484,10 @@
                                                 <td><h:outputText value="#{msgs.werkstuecke}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingWorkpieces"
-                                                                     onclick="PF('workpiecesProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('workpiecesProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startWorkpieceIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.workpieceCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.workpieceCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="workpiecesProgress"
@@ -444,10 +513,10 @@
                                                 <td><h:outputText value="#{msgs.filter}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingFilter"
-                                                                     onclick="PF('filterProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('filterProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startFilterIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress() or indexingForm.filterCount lt 1}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.filterCount lt 1)}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="filterProgress"
@@ -477,10 +546,10 @@
                                                 <td><h:outputText value="#{msgs.wholeIndex}"/></td>
                                                 <td>
                                                     <p:commandButton widgetVar="startIndexingAll"
-                                                                     onclick="PF('allProgress').start();toggleIndexingButtons(false);"
+                                                                     onclick="PF('allProgress').start();toggleButtons(false);"
                                                                      value="#{msgs.startIndexing}"
                                                                      action="#{indexingForm.startAllIndexing()}"
-                                                                     disabled="#{indexingForm.indexingInProgress()}"/>
+                                                                     disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress())}"/>
                                                 </td>
                                                 <td>
                                                     <p:progressBar widgetVar="allProgress"

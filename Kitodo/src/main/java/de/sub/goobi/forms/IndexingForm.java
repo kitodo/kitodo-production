@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,16 +39,20 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
-import org.omnifaces.util.Ajax;
 
 @Named
 @ApplicationScoped
 public class IndexingForm {
 
     private static IndexRestClient indexRestClient = new IndexRestClient();
+    private static final String MAPPING_STARTED_MESSAGE = "mapping_started";
+    private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
+    private static final String MAPPING_FAILED_MESSAGE = "mapping_failed";
+    private static final String DELETION_STARTED_MESSAGE = "deletion_started";
+    private static final String DELETION_FINISHED_MESSAGE = "deletion_finished";
+    private static final String DELETION_FAILED_MESSAGE = "deletion_failed";
     private static final String INDEXING_STARTED_MESSAGE = "indexing_started";
     private static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
-    private static final String INDEXING_TABLE_ID = "indexing_form:indexingTable";
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
 
     public LocalDateTime getIndexingStartedTime() {
@@ -88,13 +91,6 @@ public class IndexingForm {
             indexingAll = false;
 
             pollingChannel.send(INDEXING_FINISHED_MESSAGE);
-
-            for (String id : FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds()) {
-                if (Objects.equals(id, INDEXING_TABLE_ID)) {
-                    Ajax.update(INDEXING_TABLE_ID);
-                    break;
-                }
-            }
         }
     }
 
@@ -109,6 +105,10 @@ public class IndexingForm {
     private ObjectType currentIndexState = ObjectType.NONE;
 
     private boolean indexingAll = false;
+
+    // -2 = deletion failed; -1 = mapping failed
+    // 1 = mapping successful; 2 = deletion successfull
+    private int indexState = 0;
 
     private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
 
@@ -158,6 +158,8 @@ public class IndexingForm {
         this.usergroupWorker = new IndexWorker(serviceManager.getUserGroupService());
         this.workpieceWorker = new IndexWorker(serviceManager.getWorkpieceService());
         this.filterWorker = new IndexWorker(serviceManager.getFilterService());
+        indexRestClient.initiateClient();
+        indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
     }
 
     private long getCount(SearchService searchService) {
@@ -652,6 +654,7 @@ public class IndexingForm {
     }
 
     private void startIndexing(ObjectType type, IndexWorker worker) {
+        indexState = 0;
         int attempts = 0;
         while (attempts < 10) {
             try {
@@ -792,16 +795,46 @@ public class IndexingForm {
      * Create mapping which enables sorting and other aggregation functionalities.
      */
     public void createMapping() {
+        pollingChannel.send(MAPPING_STARTED_MESSAGE);
         try {
-            indexRestClient.initiateClient();
-            indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
             if (readMapping().equals("")) {
-                indexRestClient.createIndex();
+                if (indexRestClient.createIndex()) {
+                    indexState = 1;
+                    pollingChannel.send(MAPPING_FINISHED_MESSAGE);
+                } else {
+                    indexState = -1;
+                    pollingChannel.send(MAPPING_FAILED_MESSAGE);
+                }
             } else {
-                indexRestClient.createIndex(readMapping());
+                if (indexRestClient.createIndex(readMapping())) {
+                    indexState = 1;
+                    pollingChannel.send(MAPPING_FINISHED_MESSAGE);
+                } else {
+                    indexState = -1;
+                    pollingChannel.send(MAPPING_FAILED_MESSAGE);
+                }
             }
         } catch (CustomResponseException | IOException | ParseException e) {
+            indexState = -1;
+            pollingChannel.send(MAPPING_FAILED_MESSAGE);
             logger.error(e);
+        }
+    }
+
+    /**
+     * Delete whole Elastic Search index.
+     */
+    public void deleteIndex() {
+        pollingChannel.send(DELETION_STARTED_MESSAGE);
+        try {
+            indexRestClient.deleteIndex();
+            resetGlobalProgress();
+            indexState = 2;
+            pollingChannel.send(DELETION_FINISHED_MESSAGE);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            indexState = -2;
+            pollingChannel.send(DELETION_FAILED_MESSAGE);
         }
     }
 
@@ -871,4 +904,29 @@ public class IndexingForm {
             return "";
         }
     }
+
+    /**
+     * Tests and returns whether the Elastic Search index has been created or not.
+     *
+     * @return whether the Elastic Search index exists or not
+     */
+    public boolean indexExists() {
+        try {
+            return indexRestClient.indexExists();
+        } catch (IOException | CustomResponseException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Return the state of the ES index. -2 = failed deleting the index -1 = failed
+     * creating ES mapping 1 = successfully created ES mapping 2 = successfully
+     * deleted index
+     *
+     * @return state of ES index
+     */
+    public int getIndexState() {
+        return indexState;
+    }
+
 }
