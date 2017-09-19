@@ -267,13 +267,12 @@
             <artifactId>oscache</artifactId>
             <version>2.3</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/opensymphony/quartz-all -->
-        <!-- from Jiha Repository -->
         <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>quartz-all</artifactId>
-            <version>1.6.5</version>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>1.8.6</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
