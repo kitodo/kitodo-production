@@ -211,17 +211,17 @@ public class GoobiScript {
         serviceManager.getFileService().deleteProcessContent(process);
     }
 
-    private void runScript(List<Process> inProzesse, String stepname, String scriptname) throws DataException {
-        for (Process p : inProzesse) {
-            for (Task step : p.getTasks()) {
-                if (step.getTitle().equalsIgnoreCase(stepname)) {
-                    if (scriptname != null) {
-                        if (serviceManager.getTaskService().getAllScripts(step).containsKey(scriptname)) {
-                            String path = serviceManager.getTaskService().getAllScripts(step).get(scriptname);
-                            serviceManager.getTaskService().executeScript(step, path, false);
+    private void runScript(List<Process> processes, String taskName, String scriptName) throws DataException {
+        for (Process process : processes) {
+            for (Task task : process.getTasks()) {
+                if (task.getTitle().equalsIgnoreCase(taskName)) {
+                    if (scriptName != null) {
+                        if (task.getScriptName().equals(scriptName)) {
+                            String path = task.getTypeAutomaticScriptPath();
+                            serviceManager.getTaskService().executeScript(task, path, false);
                         }
                     } else {
-                        serviceManager.getTaskService().executeAllScripts(step, false);
+                        serviceManager.getTaskService().executeScript(task, false);
                     }
                 }
             }

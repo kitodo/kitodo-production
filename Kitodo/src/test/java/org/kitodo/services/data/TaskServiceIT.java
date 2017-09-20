@@ -220,44 +220,6 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldGetAllScriptPaths() throws Exception {
-        TaskService taskService = new TaskService();
-
-        Task task = taskService.getById(2);
-        String expected = "../type/automatic/script/path";
-        String actual = taskService.getAllScriptPaths(task).get(0);
-        assertEquals("Task's automatic script path doesn't match given plain text!", expected, actual);
-
-        task = taskService.getById(2);
-        int condition = taskService.getAllScriptPaths(task).size();
-        assertEquals("Size of tasks's all script paths is incorrect!", 1, condition);
-    }
-
-    @Test
-    public void shouldGetAllScripts() throws Exception {
-        TaskService taskService = new TaskService();
-
-        Task task = taskService.getById(2);
-        String expected = "../type/automatic/script/path";
-        String actual = taskService.getAllScripts(task).get("scriptName");
-        assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
-
-        task = taskService.getById(2);
-        int condition = taskService.getAllScripts(task).size();
-        assertEquals("Size of tasks's all scripts is incorrect!", 1, condition);
-    }
-
-    @Test
-    public void shouldGetListOfPaths() throws Exception {
-        TaskService taskService = new TaskService();
-
-        Task task = taskService.getById(2);
-        String expected = "scriptName";
-        String actual = taskService.getListOfPaths(task);
-        assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
-    }
-
-    @Test
     public void shouldGetCurrentTasksOfBatch() {
         TaskService taskService = new TaskService();
 

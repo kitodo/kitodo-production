@@ -59,13 +59,10 @@ public class TaskScriptThread extends EmptyTask {
         if (logger.isDebugEnabled()) {
             logger.debug("task is automatic: " + automatic);
         }
-        List<String> scriptPaths = taskService.getAllScriptPaths(this.task);
-        if (logger.isDebugEnabled()) {
-            logger.debug("found " + scriptPaths.size() + " scripts");
-        }
-        if (scriptPaths.size() > 0) {
+        String scriptPath = taskService.getScriptPath(this.task);
+        if (!scriptPath.equals("")) {
             try {
-                this.taskService.executeAllScripts(this.task, automatic);
+                this.taskService.executeScript(this.task, automatic);
             } catch (DataException e) {
                 logger.error("Data Error occurred", e);
             }

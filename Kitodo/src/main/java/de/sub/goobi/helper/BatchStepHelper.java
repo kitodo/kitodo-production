@@ -17,7 +17,6 @@ import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -834,10 +833,10 @@ public class BatchStepHelper {
      * Execute script.
      */
     public void executeScript() throws DataException {
-        for (Task step : this.steps) {
-            if (serviceManager.getTaskService().getAllScripts(step).containsKey(this.script)) {
-                String scriptPath = serviceManager.getTaskService().getAllScripts(step).get(this.script);
-                serviceManager.getTaskService().executeScript(step, scriptPath, false);
+        for (Task task : this.steps) {
+            if (task.getScriptName().equals(this.script)) {
+                String scriptPath = task.getTypeAutomaticScriptPath();
+                serviceManager.getTaskService().executeScript(task, scriptPath, false);
             }
         }
     }
@@ -979,10 +978,8 @@ public class BatchStepHelper {
      *
      * @return list of names
      */
-    public List<String> getScriptnames() {
-        List<String> answer = new ArrayList<>();
-        answer.addAll(serviceManager.getTaskService().getAllScripts(getCurrentStep()).keySet());
-        return answer;
+    public String getScriptName() {
+        return getCurrentStep().getScriptName();
     }
 
     public List<Integer> getContainerList() {

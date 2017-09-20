@@ -621,28 +621,27 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Get all script paths.
+     * Get script path.
      *
      * @param task
      *            object
-     * @return array list
+     * @return script path as String
      */
-    public ArrayList<String> getAllScriptPaths(Task task) {
-        ArrayList<String> answer = new ArrayList<>();
+    public String getScriptPath(Task task) {
         if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
-            answer.add(task.getTypeAutomaticScriptPath());
+            return task.getTypeAutomaticScriptPath();
         }
-        return answer;
+        return "";
     }
 
     /**
-     * Get all scripts and their paths.
+     * Get script and its path.
      *
      * @param task
      *            object
-     * @return hash map
+     * @return hash map - key script name and value script path
      */
-    public HashMap<String, String> getAllScripts(Task task) {
+    public HashMap<String, String> getScript(Task task) {
         HashMap<String, String> answer = new HashMap<>();
         if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
             answer.put(task.getScriptName(), task.getTypeAutomaticScriptPath());
@@ -651,10 +650,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     /**
-     * Execute script for StepObject.
+     * Execute script for task.
      *
      * @param task
-     *            StepObject
+     *            object
      * @param script
      *            String
      * @param automatic
@@ -728,69 +727,24 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @param automatic
      *            boolean
      */
-    public void executeAllScripts(Task task, boolean automatic) throws DataException {
-        List<String> scriptpaths = getAllScriptPaths(task);
-        int count = 1;
-        int size = scriptpaths.size();
+    public void executeScript(Task task, boolean automatic) throws DataException {
+        String script = task.getTypeAutomaticScriptPath();
         boolean scriptFinishedSuccessful = true;
-        for (String script : scriptpaths) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("starting script " + script);
-            }
-            if (!scriptFinishedSuccessful) {
-                abortTask(task);
-                break;
-            }
-            if (script != null && !script.equals(" ") && script.length() != 0) {
-                scriptFinishedSuccessful = executeScript(task, script, automatic && (count == size));
-            }
-            count++;
+        if (logger.isDebugEnabled()) {
+            logger.debug("starting script " + script);
+        }
+        if (script != null && !script.equals(" ") && script.length() != 0) {
+            scriptFinishedSuccessful = executeScript(task, script, automatic);
+        }
+        if (!scriptFinishedSuccessful) {
+            abortTask(task);
         }
     }
 
     private void abortTask(Task task) throws DataException {
-
         task.setProcessingStatus(TaskStatus.OPEN.getValue());
         task.setEditType(TaskEditType.AUTOMATIC.getValue());
-
         save(task);
-    }
-
-    /**
-     * Set all scripts and their paths.
-     *
-     * @param paths
-     *            hash map of strings
-     * @param task
-     *            object
-     * @return task object
-     */
-    public Task setAllScripts(HashMap<String, String> paths, Task task) {
-        Set<String> keys = paths.keySet();
-        ArrayList<String> keyList = new ArrayList<>();
-        keyList.addAll(keys);
-        int size = keyList.size();
-        if (size > 0) {
-            task.setScriptName(keyList.get(0));
-            task.setTypeAutomaticScriptPath(paths.get(keyList.get(0)));
-        }
-        return task;
-    }
-
-    /**
-     * Get list of paths.
-     * 
-     * @param task
-     *            object
-     * @return string containing paths.
-     */
-    public String getListOfPaths(Task task) {
-        String answer = "";
-        if (task.getScriptName() != null) {
-            answer += task.getScriptName();
-        }
-        return answer;
-
     }
 
     /**
@@ -810,6 +764,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @param task as Task object
      * @param requestFromGUI true or false
      */
+    //TODO: check why requestFromGUI is never used
     public void close(Task task, boolean requestFromGUI) throws DataException {
         Integer processId = task.getProcess().getId();
         if (logger.isDebugEnabled()) {
