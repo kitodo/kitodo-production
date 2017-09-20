@@ -180,7 +180,7 @@ public class KitodoServiceLoader<T> {
      * @param jarPath
      *            jarFile that will be checked for frontend files
      * @param destinationPath
-     *            jarFile that will be checked for frontend files
+     *            destination path, where the frontend files will be extracted to
      *
      */
     private void extractFrontEndFiles(String jarPath, String destinationPath) throws IOException {
