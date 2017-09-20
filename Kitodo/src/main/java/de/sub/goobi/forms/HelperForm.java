@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -54,29 +53,34 @@ public class HelperForm implements Serializable {
     private static final String IMAGE_PATH = "/pages/images";
     private static final String CSS_PATH = "/css";
 
-    public String getBuildVersion() {
-        return GoobiVersion.getBuildversion();
-    }
-
     public String getVersion() {
         return GoobiVersion.getBuildversion();
     }
 
+    /**
+     * Get application logo.
+     *
+     * @return link to logo
+     */
     public String getApplicationLogo() {
         String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
         logo += ConfigCore.getParameter("ApplicationLogo", "kitodo-header-logo.svg");
-
         return logo;
     }
 
+    /**
+     * Get application header background.
+     *
+     * @return css style for header
+     */
     public String getApplicationHeaderBackground() {
-        String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-        logo += ConfigCore.getParameter("ApplicationHeaderBackground", "goobi_meta_verlauf.jpg");
+        String headerImage = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
+        headerImage += ConfigCore.getParameter("ApplicationHeaderBackground", "goobi_meta_verlauf.jpg");
         /* wenn ein Background angegeben wurde, dann diesen jetzt strecken */
-        if (logo.length() > 0) {
-            logo = "background: url(" + logo + ") repeat-x;";
+        if (headerImage.length() > 0) {
+            headerImage = "background: url(" + headerImage + ") repeat-x;";
         }
-        return logo;
+        return headerImage;
     }
 
     // TODO: Change the defaults
@@ -97,23 +101,23 @@ public class HelperForm implements Serializable {
     }
 
     public String getApplicationWebsiteMsg() {
-        String rueck = ConfigCore.getParameter("ApplicationWebsiteMsg", getApplicationWebsiteUrl());
-        return Helper.getTranslation(rueck);
+        String result = ConfigCore.getParameter("ApplicationWebsiteMsg", getApplicationWebsiteUrl());
+        return Helper.getTranslation(result);
     }
 
     public String getApplicationHomepageMsg() {
-        String rueck = ConfigCore.getParameter("ApplicationHomepageMsg", getApplicationWebsiteUrl());
-        return Helper.getTranslation(rueck);
+        String result = ConfigCore.getParameter("ApplicationHomepageMsg", getApplicationWebsiteUrl());
+        return Helper.getTranslation(result);
     }
 
     public String getApplicationTechnicalBackgroundMsg() {
-        String rueck = ConfigCore.getParameter("ApplicationTechnicalBackgroundMsg", getApplicationWebsiteUrl());
-        return Helper.getTranslation(rueck);
+        String result = ConfigCore.getParameter("ApplicationTechnicalBackgroundMsg", getApplicationWebsiteUrl());
+        return Helper.getTranslation(result);
     }
 
     public String getApplicationImpressumMsg() {
-        String rueck = ConfigCore.getParameter("ApplicationImpressumMsg", getApplicationWebsiteUrl());
-        return Helper.getTranslation(rueck);
+        String result = ConfigCore.getParameter("ApplicationImpressumMsg", getApplicationWebsiteUrl());
+        return Helper.getTranslation(result);
     }
 
     public String getApplicationIndividualHeader() {
@@ -124,6 +128,11 @@ public class HelperForm implements Serializable {
         return ConfigCore.getBooleanParameter("anonymize");
     }
 
+    /**
+     * Get rulesets.
+     * 
+     * @return list of rulesets as SelectItems
+     */
     public List<SelectItem> getRegelsaetze() throws DAOException {
         List<SelectItem> myPrefs = new ArrayList<>();
         List<Ruleset> temp = serviceManager.getRulesetService().getByQuery("from Ruleset ORDER BY title");
@@ -133,6 +142,11 @@ public class HelperForm implements Serializable {
         return myPrefs;
     }
 
+    /**
+     * Get dockets.
+     *
+     * @return list of dockets as SelectItems
+     */
     public List<SelectItem> getDockets() {
         List<SelectItem> answer = new ArrayList<>();
         List<Docket> temp = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
@@ -142,6 +156,11 @@ public class HelperForm implements Serializable {
         return answer;
     }
 
+    /**
+     * Get file formats.
+     *
+     * @return list of file formats as Strings
+     */
     public List<String> getFileFormats() {
         ArrayList<String> ffs = new ArrayList<>();
         for (MetadataFormat ffh : MetadataFormat.values()) {
@@ -152,6 +171,11 @@ public class HelperForm implements Serializable {
         return ffs;
     }
 
+    /**
+     * Get only internal file formats.
+     *
+     * @return list of internal file formats as Strings
+     */
     public List<String> getFileFormatsInternalOnly() {
         ArrayList<String> ffs = new ArrayList<>();
         for (MetadataFormat ffh : MetadataFormat.values()) {
@@ -164,11 +188,21 @@ public class HelperForm implements Serializable {
         return ffs;
     }
 
+    /**
+     * Get servlet path.
+     * 
+     * @return servlet path as String
+     */
     public String getServletPathAsUrl() {
         FacesContext context = FacesContext.getCurrentInstance();
         return context.getExternalContext().getRequestContextPath() + "/";
     }
 
+    /**
+     * Get servlet path with host.
+     * 
+     * @return servlet path with host as String
+     */
     public String getServletPathWithHostAsUrl() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -179,6 +213,11 @@ public class HelperForm implements Serializable {
         return scheme + "://" + serverName + ":" + serverPort + contextPath;
     }
 
+    /**
+     * Check if message exists.
+     * 
+     * @return true or false
+     */
     public boolean getMessagesExist() {
         return FacesContext.getCurrentInstance().getMessages().hasNext();
     }
@@ -199,8 +238,8 @@ public class HelperForm implements Serializable {
     }
 
     /**
-     * Method returns a valid css file, which is the suggestion unless
-     * suggestion is not available if not available default.css is returned.
+     * Method returns a valid css file, which is the suggestion unless suggestion is
+     * not available if not available default.css is returned.
      * 
      * @param cssFileName
      *            suggested css file
@@ -218,22 +257,25 @@ public class HelperForm implements Serializable {
         return CSS_PATH + "/default.css";
     }
 
-    public TimeZone getTimeZone() {
-        return TimeZone.getDefault();
-    }
-
     public String getLogoUrl() {
         return getServletPathWithHostAsUrl() + "/pages/images/template/kitodo-homepage-logo.svg";
     }
 
+    /**
+     * Check if mass import is allowed.
+     * 
+     * @return true or false
+     */
     public boolean getMassImportAllowed() {
-        boolean value = false;
-        if (ConfigCore.getBooleanParameter("massImportAllowed", false)) {
-            return !PluginLoader.getPluginList(PluginType.Import).isEmpty();
-        }
-        return value;
+        return ConfigCore.getBooleanParameter("massImportAllowed", false)
+                && !PluginLoader.getPluginList(PluginType.Import).isEmpty();
     }
 
+    /**
+     * Check if web browser is IE.
+     * 
+     * @return true or false
+     */
     public boolean getIsIE() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -241,6 +283,11 @@ public class HelperForm implements Serializable {
         return request.getHeader("User-Agent").contains("MSIE");
     }
 
+    /**
+     * Get user agent.
+     * 
+     * @return user agent as String
+     */
     public String getUserAgent() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();

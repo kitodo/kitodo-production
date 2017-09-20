@@ -27,6 +27,18 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
  */
 public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
 
+    /**
+     * Constructor.
+     * 
+     * @param timeFrom
+     *            start time
+     * @param timeTo
+     *            end time
+     * @param timeUnit
+     *            as TimeUnit
+     * @param ids
+     *            List of ids as Integers
+     */
     public SQLStepRequestsImprovedDiscrimination(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
         // "history.processid - overrides the default value of
         // prozesse.prozesseID
@@ -36,8 +48,8 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
 
     /**
      * This is an extended SQL generator for an SQL extracting data from the
-     * historyEvent log. depending on the parameters the query returns up to
-     * four fields
+     * historyEvent log. depending on the parameters the query returns up to four
+     * fields
      * <p/>
      * (non-Javadoc)
      * 
@@ -48,13 +60,12 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      * @param stepOrder
      *            - operates as additional filter
      * @param stepOrderGrouping
-     *            - adding 'stepOrder' and 'stepName' fields in select and in
-     *            group by clause
+     *            - adding 'stepOrder' and 'stepName' fields in select and in group
+     *            by clause
      * @param includeLoops
      *            - adding additional stepOpen from Correction and other loops
      *
-     * @return SQLExpression for MySQL DBMS - default fields stepCount and
-     *         intervall
+     * @return SQLExpression for MySQL DBMS - default fields stepCount and intervall
      */
     public String getSQL(HistoryTypeEnum typeSelection, Integer stepOrder, Boolean stepOrderGrouping,
             Boolean includeLoops) {
@@ -169,8 +180,8 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      *
      * @param eventSelection
      *            as HistoryTypeEnum
-     * @return SQL String to retrieve the highest numericValue (stepOrder) for
-     *         the event defined in eventSelection
+     * @return SQL String to retrieve the highest numericValue (stepOrder) for the
+     *         event defined in eventSelection
      */
     public String getSQLMaxStepOrder(HistoryTypeEnum eventSelection) {
 
@@ -198,8 +209,8 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      *
      * @param eventSelection
      *            as HistoryTypeEnum
-     * @return SQL String to retrieve the lowest numericValue (stepOrder) for
-     *         the event defined in eventSelection
+     * @return SQL String to retrieve the lowest numericValue (stepOrder) for the
+     *         event defined in eventSelection
      */
     public String getSQLMinStepOrder(HistoryTypeEnum eventSelection) {
 

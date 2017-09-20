@@ -19,7 +19,7 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
  * Class provides SQL for Step Requests statistics on the history table it
- * offers a little more functionallity compared to the other SQL Source classes.
+ * offers a little more functionality compared to the other SQL Source classes.
  * There are a little more parameters which can be set
  *
  * @author Wulf Riebensahm
@@ -27,6 +27,18 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
  */
 public class SQLStepRequestByName extends SQLGenerator {
 
+    /**
+     * Constructor.
+     * 
+     * @param timeFrom
+     *            start time
+     * @param timeTo
+     *            end time
+     * @param timeUnit
+     *            as TimeUnit
+     * @param ids
+     *            List of ids as Integers
+     */
     public SQLStepRequestByName(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
         // "history.processid - overrides the default value of
         // prozesse.prozesseID
@@ -36,8 +48,8 @@ public class SQLStepRequestByName extends SQLGenerator {
 
     /**
      * This is an extended SQL generator for an SQL extracting data from the
-     * historyEvent log. Depending on the parameters the query returns up to
-     * four fields (non-Javadoc)
+     * historyEvent log. Depending on the parameters the query returns up to four
+     * fields (non-Javadoc)
      * 
      * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
      *
@@ -50,8 +62,7 @@ public class SQLStepRequestByName extends SQLGenerator {
      * @param includeLoops
      *            - adding additional stepOpen from Correction and other loops
      *
-     * @return SQLExpression for MySQL DBMS - default fields stepCount and
-     *         intervall
+     * @return SQLExpression for MySQL DBMS - default fields stepCount and interval
      */
     public String getSQL(HistoryTypeEnum typeSelection, String stepName, Boolean stepOrderGrouping,
             Boolean includeLoops) {

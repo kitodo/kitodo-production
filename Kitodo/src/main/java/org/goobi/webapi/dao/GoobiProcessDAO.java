@@ -35,6 +35,13 @@ public class GoobiProcessDAO {
 
     private static final Logger logger = LogManager.getLogger(GoobiProcessDAO.class);
 
+    /**
+     * Get process by PPN.
+     * 
+     * @param ppn
+     *            as IdentifierPPN
+     * @return GoobiProcess
+     */
     public static GoobiProcess getProcessByPPN(IdentifierPPN ppn) {
         Session session;
         GoobiProcess result = null;
@@ -63,6 +70,11 @@ public class GoobiProcessDAO {
         return result;
     }
 
+    /**
+     * Get all processes.
+     * 
+     * @return List of GoobiProcess objects
+     */
     public static List<GoobiProcess> getAllProcesses() {
         Session session = Helper.getHibernateSession();
         List<GoobiProcess> result = new ArrayList<>();
@@ -91,6 +103,13 @@ public class GoobiProcessDAO {
         return result;
     }
 
+    /**
+     * Get all process tasks.
+     * 
+     * @param ppn
+     *            as IdentifierPPN
+     * @return List of GoobiProcessStep objects
+     */
     public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN ppn) {
         List<GoobiProcessStep> result = new ArrayList<>();
         Session session = Helper.getHibernateSession();

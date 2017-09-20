@@ -17,16 +17,18 @@ import ugh.dl.RomanNumeral;
 
 public class RomanNumberSequence extends ArrayList<String> {
 
-    public RomanNumberSequence(int start, int end) {
-
-        generateElements(start, end, 1);
-
-    }
-
+    /**
+     * Constructor.
+     * 
+     * @param start
+     *            as int
+     * @param end
+     *            as int
+     * @param increment
+     *            as int
+     */
     public RomanNumberSequence(int start, int end, int increment) {
-
         generateElements(start, end, increment);
-
     }
 
     private void generateElements(int start, int end, int increment) {

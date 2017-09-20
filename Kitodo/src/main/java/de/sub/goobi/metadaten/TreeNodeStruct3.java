@@ -31,11 +31,15 @@ public class TreeNodeStruct3 extends TreeNode {
     private boolean einfuegenErlaubt;
 
     /**
-     * Konstruktoren.
+     * Constructor.
+     * 
+     * @param expanded
+     *            true or false
+     * @param label
+     *            as String
+     * @param id
+     *            as String
      */
-    public TreeNodeStruct3() {
-    }
-
     public TreeNodeStruct3(boolean expanded, String label, String id) {
         this.expanded = expanded;
         this.label = label;
@@ -44,6 +48,14 @@ public class TreeNodeStruct3 extends TreeNode {
         this.children = new ArrayList<>();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param label
+     *            as String
+     * @param struct
+     *            as DocStruct
+     */
     public TreeNodeStruct3(String label, DocStruct struct) {
         this.label = label;
         this.struct = struct;
