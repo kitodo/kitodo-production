@@ -230,7 +230,7 @@ public class TaskServiceIT {
 
         task = taskService.getById(2);
         int condition = taskService.getAllScriptPaths(task).size();
-        assertEquals("Size of tasks's all script paths is incorrect!", 3, condition);
+        assertEquals("Size of tasks's all script paths is incorrect!", 1, condition);
     }
 
     @Test
@@ -244,7 +244,7 @@ public class TaskServiceIT {
 
         task = taskService.getById(2);
         int condition = taskService.getAllScripts(task).size();
-        assertEquals("Size of tasks's all scripts is incorrect!", 3, condition);
+        assertEquals("Size of tasks's all scripts is incorrect!", 1, condition);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         Task task = taskService.getById(2);
-        String expected = "scriptName; secondScriptName; thirdScriptName";
+        String expected = "scriptName";
         String actual = taskService.getListOfPaths(task);
         assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
     }

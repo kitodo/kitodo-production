@@ -632,18 +632,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
             answer.add(task.getTypeAutomaticScriptPath());
         }
-        if (task.getTypeAutomaticScriptPath2() != null && !task.getTypeAutomaticScriptPath2().equals("")) {
-            answer.add(task.getTypeAutomaticScriptPath2());
-        }
-        if (task.getTypeAutomaticScriptPath3() != null && !task.getTypeAutomaticScriptPath3().equals("")) {
-            answer.add(task.getTypeAutomaticScriptPath3());
-        }
-        if (task.getTypeAutomaticScriptPath4() != null && !task.getTypeAutomaticScriptPath4().equals("")) {
-            answer.add(task.getTypeAutomaticScriptPath4());
-        }
-        if (task.getTypeAutomaticScriptPath5() != null && !task.getTypeAutomaticScriptPath5().equals("")) {
-            answer.add(task.getTypeAutomaticScriptPath5());
-        }
         return answer;
     }
 
@@ -657,19 +645,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     public HashMap<String, String> getAllScripts(Task task) {
         HashMap<String, String> answer = new HashMap<>();
         if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
-            answer.put(task.getScriptName1(), task.getTypeAutomaticScriptPath());
-        }
-        if (task.getTypeAutomaticScriptPath2() != null && !task.getTypeAutomaticScriptPath2().equals("")) {
-            answer.put(task.getScriptName2(), task.getTypeAutomaticScriptPath2());
-        }
-        if (task.getTypeAutomaticScriptPath3() != null && !task.getTypeAutomaticScriptPath3().equals("")) {
-            answer.put(task.getScriptName3(), task.getTypeAutomaticScriptPath3());
-        }
-        if (task.getTypeAutomaticScriptPath4() != null && !task.getTypeAutomaticScriptPath4().equals("")) {
-            answer.put(task.getScriptName4(), task.getTypeAutomaticScriptPath4());
-        }
-        if (task.getTypeAutomaticScriptPath5() != null && !task.getTypeAutomaticScriptPath5().equals("")) {
-            answer.put(task.getScriptName5(), task.getTypeAutomaticScriptPath5());
+            answer.put(task.getScriptName(), task.getTypeAutomaticScriptPath());
         }
         return answer;
     }
@@ -795,31 +771,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         keyList.addAll(keys);
         int size = keyList.size();
         if (size > 0) {
-            task.setScriptName1(keyList.get(0));
+            task.setScriptName(keyList.get(0));
             task.setTypeAutomaticScriptPath(paths.get(keyList.get(0)));
-        }
-        if (size > 1) {
-            task.setScriptName2(keyList.get(1));
-            task.setTypeAutomaticScriptPath2(paths.get(keyList.get(1)));
-        }
-        if (size > 2) {
-            task.setScriptName3(keyList.get(2));
-            task.setTypeAutomaticScriptPath3(paths.get(keyList.get(2)));
-        }
-        if (size > 3) {
-            task.setScriptName4(keyList.get(3));
-            task.setTypeAutomaticScriptPath4(paths.get(keyList.get(3)));
-        }
-        if (size > 4) {
-            task.setScriptName5(keyList.get(4));
-            task.setTypeAutomaticScriptPath5(paths.get(keyList.get(4)));
         }
         return task;
     }
 
     /**
-     * Get list of paths. TODO: inappropriate name of method - change during next
-     * phase of refactoring
+     * Get list of paths.
      * 
      * @param task
      *            object
@@ -827,20 +786,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      */
     public String getListOfPaths(Task task) {
         String answer = "";
-        if (task.getScriptName1() != null) {
-            answer += task.getScriptName1();
-        }
-        if (task.getScriptName2() != null) {
-            answer = answer + "; " + task.getScriptName2();
-        }
-        if (task.getScriptName3() != null) {
-            answer = answer + "; " + task.getScriptName3();
-        }
-        if (task.getScriptName4() != null) {
-            answer = answer + "; " + task.getScriptName4();
-        }
-        if (task.getScriptName5() != null) {
-            answer = answer + "; " + task.getScriptName5();
+        if (task.getScriptName() != null) {
+            answer += task.getScriptName();
         }
         return answer;
 

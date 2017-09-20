@@ -487,7 +487,7 @@ public class GoobiScript {
                 for (Task task : proz.getTasks()) {
                     if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
                         task.setTypeAutomaticScriptPath(this.myParameters.get("script"));
-                        task.setScriptName1(this.myParameters.get("label"));
+                        task.setScriptName(this.myParameters.get("label"));
                         task.setTypeScriptStep(true);
                         try {
                             serviceManager.getProcessService().save(proz);
