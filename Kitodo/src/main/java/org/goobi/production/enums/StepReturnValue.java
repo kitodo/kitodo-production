@@ -16,7 +16,7 @@ public enum StepReturnValue {
     Finished(0, "Step finished"),
     InvalidData(1, "Invalid data"),
     NoData(2, "No data found"),
-    DataAllreadyExists(3, "Data already exists"),
+    DataAlreadyExists(3, "Data already exists"),
     WriteError(4, "Data could not be written");
 
     private int id;
