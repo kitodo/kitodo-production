@@ -62,7 +62,7 @@ public class KitodoServiceLoader<T> {
      * @return A module with type T.
      */
     @SuppressWarnings("unchecked")
-    public T loadModule() throws IOException {
+    public T loadModule() {
 
         loadModulesIntoClasspath();
         loadFrontendFilesIntoCore();
@@ -77,7 +77,7 @@ public class KitodoServiceLoader<T> {
      * of the core module. Before copying, existing frontend files of the same module will be deleted from the
      * core module. Afterwards the created temporary folder will be deleted as well.
      */
-    private void loadFrontendFilesIntoCore() throws IOException {
+    private void loadFrontendFilesIntoCore() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
         try {
@@ -99,7 +99,7 @@ public class KitodoServiceLoader<T> {
             }
         }
         catch (Exception e) {
-            throw e;
+            logger.error("Classpath could not be accessed", e.getMessage());
         }
     }
 

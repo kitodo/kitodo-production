@@ -1542,7 +1542,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         facesContext.responseComplete();
     }
 
-    private DocketInterface initialiseDocketModule() throws IOException {
+    private DocketInterface initialiseDocketModule() {
         KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class,
                 ConfigCore.getParameter("moduleFolder"));
         return loader.loadModule();
