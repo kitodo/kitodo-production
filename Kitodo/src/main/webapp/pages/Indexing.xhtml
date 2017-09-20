@@ -39,26 +39,21 @@
                     function toggleProgressPolling(message) {
                         if (message.includes("indexing_started")) {
                             PF('progressPoll').start();
-                        }
-                        else if (message.includes("indexing_finished")) {
+                        } else if (message.includes("indexing_finished")) {
                             PF('progressPoll').stop();
                             $('.refreshTable').click();
-                        }
-                        else if (message.includes("mapping")) {
+                        } else if (message.includes("mapping")) {
                             $('.refreshTable').click();
                             if (message.endsWith("started")) {
                                 PF('progressPoll').start();
-                            }
-                            else if (message.endsWith("finished")) {
+                            } else if (message.endsWith("finished")) {
+                                document.getElementById('indexing_form:create-mapping-loading').style.display='none';
+                                PF('progressPoll').stop();
+                            } else if (message.endsWith("failed")) {
                                 document.getElementById('indexing_form:create-mapping-loading').style.display='none';
                                 PF('progressPoll').stop();
                             }
-                            else if (message.endsWith("failed")) {
-                                document.getElementById('indexing_form:create-mapping-loading').style.display='none';
-                                PF('progressPoll').stop();
-                            }
-                        }
-                        else if (message.includes("deletion")) {
+                        } else if (message.includes("deletion")) {
                             $('.refreshTable').click();
                             if (message.endsWith("started")) {
                                 PF('progressPoll').start();
@@ -66,8 +61,7 @@
                             if (message.endsWith("finished")) {
                                 document.getElementById('indexing_form:delete-index-loading').style.display='none';
                                 PF('progressPoll').stop();
-                            }
-                            else if (message.endsWith("failed")) {
+                            } else if (message.endsWith("failed")) {
                                 document.getElementById('indexing_form:delete-index-loading').style.display='none';
                                 PF('progressPoll').stop();
                             }
@@ -91,8 +85,7 @@
                             PF('startIndexingWorkpieces').enable();
                             PF('startIndexingFilter').enable();
                             PF('startIndexingAll').enable();
-                        }
-                        else {
+                        } else {
                             PF('createMapping').disable();
                             PF('deleteIndex').disable();
                             PF('startIndexingBatches').disable();
@@ -155,8 +148,8 @@
                                             </td>
                                             <td>
                                                 <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
-                                                <p:graphicImage id="create-mapping-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == -1}"/>
-                                                <p:graphicImage id="create-mapping-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 1}"/>
+                                                <p:graphicImage id="create-mapping-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'MAPPING_ERROR'}"/>
+                                                <p:graphicImage id="create-mapping-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'MAPPING_SUCCESS'}"/>
                                             </td>
                                         </tr>
                                         <!-- Delete Index -->
@@ -172,8 +165,8 @@
                                             </td>
                                             <td>
                                                 <p:graphicImage id="delete-index-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
-                                                <p:graphicImage id="delete-index-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == -2}"/>
-                                                <p:graphicImage id="delete-index-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 2}"/>
+                                                <p:graphicImage id="delete-index-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETE_ERROR'}"/>
+                                                <p:graphicImage id="delete-index-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETE_SUCCESS'}"/>
                                             </td>
                                         </tr>
                                         </tbody>

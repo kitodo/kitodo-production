@@ -106,9 +106,15 @@ public class IndexingForm {
 
     private boolean indexingAll = false;
 
-    // -2 = deletion failed; -1 = mapping failed
-    // 1 = mapping successful; 2 = deletion successfull
-    private int indexState = 0;
+    private enum indexStates {
+        NO_STATE,
+        DELETE_ERROR,
+        DELETE_SUCCESS,
+        MAPPING_ERROR,
+        MAPPING_SUCCESS,
+    }
+
+    private indexStates currentState = indexStates.NO_STATE;
 
     private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
 
@@ -654,7 +660,7 @@ public class IndexingForm {
     }
 
     private void startIndexing(ObjectType type, IndexWorker worker) {
-        indexState = 0;
+        currentState = indexStates.NO_STATE;
         int attempts = 0;
         while (attempts < 10) {
             try {
@@ -799,23 +805,23 @@ public class IndexingForm {
         try {
             if (readMapping().equals("")) {
                 if (indexRestClient.createIndex()) {
-                    indexState = 1;
+                    currentState = indexStates.MAPPING_SUCCESS;
                     pollingChannel.send(MAPPING_FINISHED_MESSAGE);
                 } else {
-                    indexState = -1;
+                    currentState = indexStates.MAPPING_ERROR;
                     pollingChannel.send(MAPPING_FAILED_MESSAGE);
                 }
             } else {
                 if (indexRestClient.createIndex(readMapping())) {
-                    indexState = 1;
+                    currentState = indexStates.MAPPING_SUCCESS;
                     pollingChannel.send(MAPPING_FINISHED_MESSAGE);
                 } else {
-                    indexState = -1;
+                    currentState = indexStates.MAPPING_ERROR;
                     pollingChannel.send(MAPPING_FAILED_MESSAGE);
                 }
             }
         } catch (CustomResponseException | IOException | ParseException e) {
-            indexState = -1;
+            currentState = indexStates.MAPPING_ERROR;
             pollingChannel.send(MAPPING_FAILED_MESSAGE);
             logger.error(e);
         }
@@ -829,11 +835,11 @@ public class IndexingForm {
         try {
             indexRestClient.deleteIndex();
             resetGlobalProgress();
-            indexState = 2;
+            currentState = indexStates.DELETE_SUCCESS;
             pollingChannel.send(DELETION_FINISHED_MESSAGE);
         } catch (IOException e) {
             logger.error(e.getMessage());
-            indexState = -2;
+            currentState = indexStates.DELETE_ERROR;
             pollingChannel.send(DELETION_FAILED_MESSAGE);
         }
     }
@@ -925,8 +931,8 @@ public class IndexingForm {
      *
      * @return state of ES index
      */
-    public int getIndexState() {
-        return indexState;
+    public indexStates getIndexState() {
+        return currentState;
     }
 
 }
