@@ -233,6 +233,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             saveToDatabase(baseIndexedBean);
             saveToIndex(baseIndexedBean);
             manageDependenciesForIndex(baseIndexedBean);
+            //TODO: search for some more elegant way
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                logger.error(e);
+            }
             baseIndexedBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(baseIndexedBean);
         } catch (DAOException e) {
@@ -290,6 +296,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             saveToDatabase(baseIndexedBean);
             removeFromIndex(baseIndexedBean);
             manageDependenciesForIndex(baseIndexedBean);
+            //TODO: search for some more elegant way
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                logger.error(e);
+            }
             removeFromDatabase(baseIndexedBean);
         } catch (DAOException e) {
             logger.debug(e);

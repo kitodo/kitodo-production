@@ -62,7 +62,7 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return "/pages/DocketList?faces-redirect=true";
+                return filterKein();
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
@@ -96,7 +96,7 @@ public class DocketForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return "/pages/DocketList?faces-redirect=true";
+        return filterKein();
     }
 
     private boolean hasAssignedProcesses(Docket d) throws DataException {

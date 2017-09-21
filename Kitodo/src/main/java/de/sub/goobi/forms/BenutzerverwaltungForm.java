@@ -167,7 +167,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
                 this.serviceManager.getUserService().save(this.myClass);
-                return "/pages/BenutzerAlle";
+                return filterKein();
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
                 return null;
@@ -233,7 +233,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             logger.error(e);
             return null;
         }
-        return "/pages/BenutzerAlle";
+        return filterKein();
     }
 
     /**

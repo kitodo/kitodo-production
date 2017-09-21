@@ -61,7 +61,7 @@ public class RulesetForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(this.ruleset);
-                return "/pages/RegelsaetzeAlle?faces-redirect=true";
+                return noFiltering();
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
                 return null;
@@ -104,7 +104,7 @@ public class RulesetForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return "/pages/RegelsaetzeAlle?faces-redirect=true";
+        return noFiltering();
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
