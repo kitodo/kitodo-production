@@ -479,7 +479,7 @@ public class MockDatabase {
     private static void insertRulesets() throws DataException {
         Ruleset firstRuleset = new Ruleset();
         firstRuleset.setTitle("SLUBDD");
-        firstRuleset.setFile("ruleset_slubdd.xml");
+        firstRuleset.setFile("ruleset_test.xml");
         firstRuleset.setOrderMetadataByRuleset(false);
         serviceManager.getRulesetService().save(firstRuleset);
 
