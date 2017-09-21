@@ -472,6 +472,55 @@ footer {
     color: #1b2b36;
     }
 
+/* Primefaces theme */
+
+.ui-widget {
+    font-size: 100%;
+}
+
+.ui-datatable table {
+    border-top: 3px solid #999;
+}
+
+th.ui-state-default {
+    background: #d8d8d8;
+    color: #192B36;
+    font-weight: bold;
+}
+
+.ui-widget-content {
+    background: #fff;
+    border: 0 none !important;
+    color: #192B36;
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td, .ui-datatable tfoot th {
+    border-bottom: 1px solid #D8D8D8 !important;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    padding: 8px 10px;
+    text-align: left;
+}
+
+.ui-datatable tr th:nth-child(2) {
+    width: 70%;
+}
+
+.ui-row-toggler {
+    width: 16px;
+    height:16px;
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.ui-row-toggler:before {
+    content: "\f13a";
+}
 
 
 /*----------------------------------------------------------------------
@@ -620,4 +669,3 @@ Print Styles
         border: 1px solid #000;
         }
 }
-
