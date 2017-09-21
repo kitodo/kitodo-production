@@ -39,18 +39,22 @@ public class UserTypeTest {
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setId(1);
+        firstUserGroup.setTitle("Administrator");
         userGroups.add(firstUserGroup);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setId(2);
+        secondUserGroup.setTitle("Basic");
         userGroups.add(secondUserGroup);
 
         Filter firstFilter = new Filter();
         firstFilter.setId(1);
+        firstFilter.setValue("\"id:1\"");
         filters.add(firstFilter);
 
         Filter secondFilter = new Filter();
         secondFilter.setId(2);
+        secondFilter.setValue("\"id:2\"");
         filters.add(secondFilter);
 
         User firstUser = new User();
@@ -100,10 +104,11 @@ public class UserTypeTest {
         user = prepareData().get(1);
         document = userType.createDocument(user);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":1},{\"id\":2}],"
-                + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"filters\":[{\"id\":1},{\"id\":2}],\"tasks\":[],"
-                + "\"processingTasks\":[],\"projects\":[]}");
+        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":1,\"title\":\"Administrator\"}"
+                + ",{\"id\":2,\"title\":\"Basic\"}],\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,"
+                + "\"active\":\"true\", \"location\":\"Berlin\",\"login\":\"anowak\",\"filters\":[{\"id\":1,"
+                + "\"value\":\"\\\"id:1\\\"\"},{\"id\":2,\"value\":\"\\\"id:2\\\"\"}],\"tasks\":[],\"processingTasks\":[],"
+                + "\"projects\":[]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(2);
@@ -111,8 +116,8 @@ public class UserTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"login\":\"pmueller\",\"ldapLogin\":null,\"userGroups\":[],"
                 + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":null,\"filters\":[{\"id\":1},{\"id\":2}],\"projects\":[],\"tasks\":[],"
-                + "\"processingTasks\":[]}");
+                + "\"location\":null,\"filters\":[{\"id\":1,\"value\":\"\\\"id:1\\\"\"},{\"id\":2,"
+                + "\"value\":\"\\\"id:2\\\"\"}],\"projects\":[],\"tasks\":[],\"processingTasks\":[]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

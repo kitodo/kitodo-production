@@ -34,9 +34,9 @@ public class UserType extends BaseType<User> {
         userObject.put("active", String.valueOf(user.isActive()));
         userObject.put("location", user.getLocation());
         userObject.put("metadataLanguage", user.getMetadataLanguage());
-        userObject.put("userGroups", addObjectRelation(user.getUserGroups()));
-        userObject.put("filters", addObjectRelation(user.getFilters()));
-        userObject.put("projects", addObjectRelation(user.getProjects()));
+        userObject.put("userGroups", addObjectRelation(user.getUserGroups(), true));
+        userObject.put("filters", addObjectRelation(user.getFilters(), true));
+        userObject.put("projects", addObjectRelation(user.getProjects(), true));
         userObject.put("processingTasks", addObjectRelation(user.getProcessingTasks()));
         userObject.put("tasks", addObjectRelation(user.getTasks()));
 
