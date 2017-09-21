@@ -281,10 +281,12 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     @Override
     public BatchDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         BatchDTO batchDTO = new BatchDTO();
-        batchDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
-        batchDTO.setType(getStringPropertyForDTO(jsonObject, "type"));
+        batchDTO.setId(getIdFromJSONObject(jsonObject));
+        JSONObject batchJSONObject = getSource(jsonObject);
+        batchDTO.setTitle(getStringPropertyForDTO(batchJSONObject, "title"));
+        batchDTO.setType(getStringPropertyForDTO(batchJSONObject, "type"));
         if (!related) {
-            batchDTO = convertRelatedJSONObjects(jsonObject, batchDTO);
+            batchDTO = convertRelatedJSONObjects(batchJSONObject, batchDTO);
         }
         return batchDTO;
     }

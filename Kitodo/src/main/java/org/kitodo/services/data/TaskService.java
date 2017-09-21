@@ -431,19 +431,20 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     public TaskDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(getIdFromJSONObject(jsonObject));
-        taskDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
-        taskDTO.setPriority(getIntegerPropertyForDTO(jsonObject, "priority"));
-        taskDTO.setOrdering(getIntegerPropertyForDTO(jsonObject, "ordering"));
-        Integer taskStatus = getIntegerPropertyForDTO(jsonObject, "processingStatus");
+        JSONObject taskJSONObject = getSource(jsonObject);
+        taskDTO.setTitle(getStringPropertyForDTO(taskJSONObject, "title"));
+        taskDTO.setPriority(getIntegerPropertyForDTO(taskJSONObject, "priority"));
+        taskDTO.setOrdering(getIntegerPropertyForDTO(taskJSONObject, "ordering"));
+        Integer taskStatus = getIntegerPropertyForDTO(taskJSONObject, "processingStatus");
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
-        taskDTO.setProcessingTime(getStringPropertyForDTO(jsonObject, "processingTime"));
-        taskDTO.setProcessingBegin(getStringPropertyForDTO(jsonObject, "processingBegin"));
-        taskDTO.setProcessingEnd(getStringPropertyForDTO(jsonObject, "processingEnd"));
+        taskDTO.setProcessingTime(getStringPropertyForDTO(taskJSONObject, "processingTime"));
+        taskDTO.setProcessingBegin(getStringPropertyForDTO(taskJSONObject, "processingBegin"));
+        taskDTO.setProcessingEnd(getStringPropertyForDTO(taskJSONObject, "processingEnd"));
         taskDTO.setTypeImagesWrite(true);
-        taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(jsonObject, "users"));
-        taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(jsonObject, "userGroups"));
+        taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "users"));
+        taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "userGroups"));
         if (!related) {
-            taskDTO = convertRelatedJSONObjects(jsonObject, taskDTO);
+            taskDTO = convertRelatedJSONObjects(taskJSONObject, taskDTO);
         }
         return taskDTO;
     }

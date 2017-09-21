@@ -806,18 +806,20 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return dateFormat.format(date);
     }
 
+    protected JSONObject getSource(JSONObject object) {
+        return (JSONObject) object.get("_source");
+    }
+
     /**
      * Converts properties' values returned from ElasticSearch index.
      *
      * @param object
-     *            JSONObject as Object
+     *            JSONObject
      * @return display properties as String
      */
-    protected String getStringPropertyForDTO(Object object, String key) {
-        JSONObject jsonObject = (JSONObject) object;
-        jsonObject = (JSONObject) jsonObject.get("_source");
-        if (jsonObject != null) {
-            return (String) jsonObject.get(key);
+    protected String getStringPropertyForDTO(JSONObject object, String key) {
+        if (object != null) {
+            return (String) object.get(key);
         }
         return "";
     }
@@ -826,14 +828,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * Converts properties' values returned from ElasticSearch index.
      *
      * @param object
-     *            JSONObject as Object
+     *            JSONObject
      * @return display properties as Integer
      */
-    protected Integer getIntegerPropertyForDTO(Object object, String key) {
-        JSONObject jsonObject = (JSONObject) object;
-        jsonObject = (JSONObject) jsonObject.get("_source");
-        if (jsonObject != null) {
-            Long returned = (Long) jsonObject.get(key);
+    protected Integer getIntegerPropertyForDTO(JSONObject object, String key) {
+        if (object != null) {
+            Long returned = (Long) object.get(key);
             if (returned != null) {
                 return returned.intValue();
             }
@@ -845,14 +845,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * Converts properties' values returned from ElasticSearch index.
      *
      * @param object
-     *            JSONObject as Object
+     *            JSONObject
      * @return display properties as list of Integers
      */
-    protected List<Integer> getRelatedPropertyForDTO(Object object, String key) {
-        JSONObject jsonObject = (JSONObject) object;
-        jsonObject = (JSONObject) jsonObject.get("_source");
-        if (jsonObject != null) {
-            JSONArray jsonArray = (JSONArray) jsonObject.get(key);
+    protected List<Integer> getRelatedPropertyForDTO(JSONObject object, String key) {
+        if (object != null) {
+            JSONArray jsonArray = (JSONArray) object.get(key);
             List<Integer> ids = new ArrayList<>();
             for (Object singleObject : jsonArray) {
                 ids.add(convertIdForDTO(singleObject));
@@ -866,16 +864,14 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * Get size of related objects returned from ElasticSearch index.
      *
      * @param object
-     *            JSONObject as Object
+     *            JSONObject
      * @param key
      *            of property which need to be counted
      * @return size of array with related objects
      */
-    protected int getSizeOfRelatedPropertyForDTO(Object object, String key) {
-        JSONObject jsonObject = (JSONObject) object;
-        jsonObject = (JSONObject) jsonObject.get("_source");
-        if (jsonObject != null) {
-            JSONArray jsonArray = (JSONArray) jsonObject.get(key);
+    protected int getSizeOfRelatedPropertyForDTO(JSONObject object, String key) {
+        if (object != null) {
+            JSONArray jsonArray = (JSONArray) object.get(key);
             return jsonArray.size();
         }
         return 0;

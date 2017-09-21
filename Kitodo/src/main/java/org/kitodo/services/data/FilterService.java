@@ -217,7 +217,8 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
     public FilterDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         FilterDTO filterDTO = new FilterDTO();
         filterDTO.setId(getIdFromJSONObject(jsonObject));
-        filterDTO.setValue(getStringPropertyForDTO(jsonObject, "value"));
+        JSONObject filterJSONObject = getSource(jsonObject);
+        filterDTO.setValue(getStringPropertyForDTO(filterJSONObject, "value"));
         return filterDTO;
     }
 
