@@ -393,6 +393,13 @@ public class UserServiceIT {
         UserDTO user = userService.findById(1);
         int actual = user.getUserGroupSize();
         assertEquals("User groups' size is incorrect!", 1, actual);
+
+        user = userService.findById(1, true);
+        actual = user.getUserGroupSize();
+        assertEquals("User groups' size is incorrect!", 1, actual);
+
+        String title = user.getUserGroups().get(0).getTitle();
+        assertEquals("User group's title is incorrect!", "Admin", title);
     }
 
     @Test
@@ -428,6 +435,13 @@ public class UserServiceIT {
         user = userService.findById(2);
         actual = user.getProjectsSize();
         assertEquals("Projects' size is incorrect!", 1, actual);
+
+        user = userService.findById(2, true);
+        actual = user.getProjectsSize();
+        assertEquals("Projects' size is incorrect!", 1, actual);
+
+        String title = user.getProjects().get(0).getTitle();
+        assertEquals("Project's title is incorrect!", "First project", title);
     }
 
     @Test
@@ -485,6 +499,9 @@ public class UserServiceIT {
 
         List<UserDTO> allVisibleUsers = userService.findAllVisibleUsers();
         assertEquals("Size of users is incorrect!", 3, allVisibleUsers.size());
+
+        allVisibleUsers = userService.findAllVisibleUsersWithRelations();
+        assertEquals("Size of users is incorrect!", 3, allVisibleUsers.size());
     }
 
     @Test
@@ -492,6 +509,9 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         List<UserDTO> allActiveUsers = userService.findAllActiveUsers();
+        assertEquals("Size of users is incorrect!", 2, allActiveUsers.size());
+
+        allActiveUsers = userService.findAllActiveUsersWithRelations();
         assertEquals("Size of users is incorrect!", 2, allActiveUsers.size());
     }
 
