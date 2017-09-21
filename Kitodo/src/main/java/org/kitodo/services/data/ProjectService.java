@@ -215,8 +215,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            if true - find archived projects, if false - find not archived
      *            projects
      * @param related
-     *            if true - found project is related to some other DTO object, if
-     *            false - not and it collects all related objects
+     *            if true - found project is related to some other DTO object,
+     *            if false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
@@ -360,5 +360,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @XmlElement(name = "field")
     public List<Field> getFieldConfig(Project project) throws IOException {
         return Field.getFieldConfigForProject(project);
+    }
+
+    /**
+     * Checks if a project can be actually used.
+     *
+     * @param project
+     *            The project to check
+     * @return true, if project is complete and can be used, false, if project
+     *         is incomplete
+     */
+    public boolean isProjectComplete(Project project) {
+        return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
+                && project.getFileFormatInternal() != null;
     }
 }
