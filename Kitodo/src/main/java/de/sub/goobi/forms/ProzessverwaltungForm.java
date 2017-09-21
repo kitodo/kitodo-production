@@ -217,100 +217,9 @@ public class ProzessverwaltungForm extends BasisForm {
          * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
          */
         if (this.myProzess != null && this.myProzess.getTitle() != null) {
-            if (!this.myProzess.getTitle().equals(this.myNewProcessTitle)) {
-                String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-                if (!this.myNewProcessTitle.matches(validateRegEx)) {
-                    this.modusBearbeiten = "prozess";
-                    Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
+            if (!this.myProzess.getTitle().equals(this.myNewProcessTitle) && this.myNewProcessTitle != null) {
+                if (!renameAfterProcessTitleChanged()) {
                     return null;
-                } else {
-                    /* Prozesseigenschaften */
-                    for (Property processProperty : this.myProzess.getProperties()) {
-                        if (processProperty != null && processProperty.getValue() != null) {
-                            if (processProperty.getValue().contains(this.myProzess.getTitle())) {
-                                processProperty.setValue(processProperty.getValue()
-                                        .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
-                            }
-                        }
-                    }
-                    /* Scanvorlageneigenschaften */
-                    for (Template vl : this.myProzess.getTemplates()) {
-                        for (Property templateProperty : vl.getProperties()) {
-                            if (templateProperty.getValue().contains(this.myProzess.getTitle())) {
-                                templateProperty.setValue(templateProperty.getValue()
-                                        .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
-                            }
-                        }
-                    }
-                    /* Werkstückeigenschaften */
-                    for (Workpiece w : this.myProzess.getWorkpieces()) {
-                        for (Property workpieceProperty : w.getProperties()) {
-                            if (workpieceProperty.getValue().contains(this.myProzess.getTitle())) {
-                                workpieceProperty.setValue(workpieceProperty.getValue()
-                                        .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
-                            }
-                        }
-                    }
-
-                    try {
-                        {
-                            // renaming image directories
-                            URI imageDirectory = fileService.getImagesDirectory(myProzess);
-                            if (fileService.isDirectory(imageDirectory)) {
-                                ArrayList<URI> subdirs = fileService.getSubUris(imageDirectory);
-                                for (URI imagedir : subdirs) {
-                                    if (fileService.isDirectory(imagedir)) {
-                                        fileService.renameFile(imagedir, fileService.getFileName(imagedir)
-                                                .replace(myProzess.getTitle(), myNewProcessTitle));
-                                    }
-                                }
-                            }
-                        }
-                        {
-                            // renaming ocr directories
-                            URI ocrDirectory = fileService.getOcrDirectory(myProzess);
-                            URI dir = ocrDirectory;
-                            if (fileService.isDirectory(dir)) {
-                                ArrayList<URI> subdirs = fileService.getSubUris(dir);
-                                for (URI imagedir : subdirs) {
-                                    if (fileService.isDirectory(imagedir)) {
-                                        fileService.renameFile(imagedir,
-                                                imagedir.toString().replace(myProzess.getTitle(), myNewProcessTitle));
-                                    }
-                                }
-                            }
-                        }
-                        {
-                            // renaming defined direcories
-                            String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
-                            for (String processDir : processDirs) {
-
-                                URI processDirAbsolut = serviceManager.getProcessService()
-                                        .getProcessDataDirectory(myProzess)
-                                        .resolve(processDir.replace("(processtitle)", myProzess.getTitle()));
-
-                                File dir = new File(processDirAbsolut);
-                                if (dir.isDirectory()) {
-                                    dir.renameTo(new File(
-                                            dir.getAbsolutePath().replace(myProzess.getTitle(), myNewProcessTitle)));
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        logger.warn("could not rename folder", e);
-                    }
-
-                    /* Vorgangstitel */
-                    this.myProzess.setTitle(this.myNewProcessTitle);
-
-                    if (!this.myProzess.isTemplate()) {
-                        /* Tiffwriter-Datei löschen */
-                        GoobiScript gs = new GoobiScript();
-                        ArrayList<Process> pro = new ArrayList<>();
-                        pro.add(this.myProzess);
-                        gs.deleteTiffHeaderFile(pro);
-                        gs.updateImagePath(pro);
-                    }
                 }
             }
 
@@ -369,6 +278,102 @@ public class ProzessverwaltungForm extends BasisForm {
 
         Helper.setMeldung("Content deleted");
         return null;
+    }
+
+    private boolean renameAfterProcessTitleChanged() {
+        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        if (!this.myNewProcessTitle.matches(validateRegEx)) {
+            this.modusBearbeiten = "prozess";
+            Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
+            return false;
+        } else {
+            // process properties
+            for (Property processProperty : this.myProzess.getProperties()) {
+                if (processProperty != null && processProperty.getValue() != null) {
+                    if (processProperty.getValue().contains(this.myProzess.getTitle())) {
+                        processProperty.setValue(processProperty.getValue()
+                                .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                    }
+                }
+            }
+            // template properties
+            for (Template template : this.myProzess.getTemplates()) {
+                for (Property templateProperty : template.getProperties()) {
+                    if (templateProperty.getValue().contains(this.myProzess.getTitle())) {
+                        templateProperty.setValue(templateProperty.getValue()
+                                .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                    }
+                }
+            }
+            // workpiece properties
+            for (Workpiece workpiece : this.myProzess.getWorkpieces()) {
+                for (Property workpieceProperty : workpiece.getProperties()) {
+                    if (workpieceProperty.getValue().contains(this.myProzess.getTitle())) {
+                        workpieceProperty.setValue(workpieceProperty.getValue()
+                                .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                    }
+                }
+            }
+
+            try {
+                {
+                    // renaming image directories
+                    URI imageDirectory = fileService.getImagesDirectory(myProzess);
+                    if (fileService.isDirectory(imageDirectory)) {
+                        ArrayList<URI> subDirs = fileService.getSubUris(imageDirectory);
+                        for (URI imageDir : subDirs) {
+                            if (fileService.isDirectory(imageDir)) {
+                                fileService.renameFile(imageDir, fileService.getFileName(imageDir)
+                                        .replace(myProzess.getTitle(), myNewProcessTitle));
+                            }
+                        }
+                    }
+                }
+                {
+                    // renaming ocr directories
+                    URI ocrDirectory = fileService.getOcrDirectory(myProzess);
+                    if (fileService.isDirectory(ocrDirectory)) {
+                        ArrayList<URI> subDirs = fileService.getSubUris(ocrDirectory);
+                        for (URI imageDir : subDirs) {
+                            if (fileService.isDirectory(imageDir)) {
+                                fileService.renameFile(imageDir,
+                                        imageDir.toString().replace(myProzess.getTitle(), myNewProcessTitle));
+                            }
+                        }
+                    }
+                }
+                {
+                    // renaming defined directories
+                    String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
+                    for (String processDir : processDirs) {
+                        //TODO: check it out
+                        URI processDirAbsolute = serviceManager.getProcessService()
+                                .getProcessDataDirectory(myProzess)
+                                .resolve(processDir.replace("(processtitle)", myProzess.getTitle()));
+
+                        File dir = new File(processDirAbsolute);
+                        if (dir.isDirectory()) {
+                            dir.renameTo(new File(
+                                    dir.getAbsolutePath().replace(myProzess.getTitle(), myNewProcessTitle)));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.warn("could not rename folder", e);
+            }
+
+            this.myProzess.setTitle(this.myNewProcessTitle);
+
+            if (!this.myProzess.isTemplate()) {
+                /* Tiffwriter-Datei löschen */
+                GoobiScript gs = new GoobiScript();
+                ArrayList<Process> pro = new ArrayList<>();
+                pro.add(this.myProzess);
+                gs.deleteTiffHeaderFile(pro);
+                gs.updateImagePath(pro);
+            }
+        }
+        return true;
     }
 
     private void deleteMetadataDirectory() {
@@ -762,10 +767,17 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzerLoeschen() {
-        this.mySchritt.getUsers().remove(this.myBenutzer);
-        Speichern();
-        return null;
+    public String deleteUser() {
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            this.mySchritt.getUsers().remove(user);
+            Speichern();
+            return null;
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -773,10 +785,17 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzergruppeLoeschen() {
-        this.mySchritt.getUserGroups().remove(this.myBenutzergruppe);
-        Speichern();
-        return null;
+    public String deleteUserGroup() {
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            this.mySchritt.getUserGroups().remove(userGroup);
+            Speichern();
+            return null;
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -784,10 +803,22 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzergruppeHinzufuegen() {
-        this.mySchritt.getUserGroups().add(this.myBenutzergruppe);
-        Speichern();
-        return null;
+    public String addUserGroup() {
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            for (UserGroup taskUserGroup : this.mySchritt.getUserGroups()) {
+                if (taskUserGroup.equals(userGroup)) {
+                    return null;
+                }
+            }
+            this.mySchritt.getUserGroups().add(userGroup);
+            Speichern();
+            return null;
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -795,9 +826,21 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String BenutzerHinzufuegen() {
-        this.mySchritt.getUsers().add(this.myBenutzer);
-        Speichern();
+    public String addUser() {
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            for (User taskUser : this.mySchritt.getUsers()) {
+                if (taskUser.equals(user)) {
+                    return null;
+                }
+            }
+            this.mySchritt.getUsers().add(user);
+            Speichern();
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
+        }
         return null;
     }
 

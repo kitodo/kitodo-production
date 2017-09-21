@@ -44,11 +44,10 @@
                 <h:outputText value="#{msgs.loeschen}"/>
             </f:facet>
             <!-- Löschen-Schaltknopf -->
-            <h:commandLink action="#{ProzessverwaltungForm.BenutzerLoeschen()}"
+            <h:commandLink action="#{ProzessverwaltungForm.deleteUser()}"
                            title="#{msgs.berechtigungLoeschen}">
                 <h:graphicImage value="/pages/images/buttons/waste1a_20px.gif" alt="delete"/>
-                <t:updateActionListener
-                        property="#{ProzessverwaltungForm.myBenutzer}" value="#{item}"/>
+                <f:param name="ID" value="#{item.id}"/>
             </h:commandLink>
         </h:column>
     </t:dataTable>
@@ -63,7 +62,9 @@
                   height="380px" width="430px"
                   dynamic="true" modal="true"
                   onHide="#{NavigationForm.Reload()}">
-            <ui:include src="schritt_box_BenutzerPopup.xhtml" />
+            <f:subview id="addTaskToUserSubView">
+                <ui:include src="schritt_box_BenutzerPopup.xhtml"/>
+            </f:subview>
         </p:dialog>
     </h:panelGroup>
 </ui:composition>
