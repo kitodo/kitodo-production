@@ -43,13 +43,6 @@
 
                     <h:outputText style="#{HelperForm.applicationTitleStyle}"
                                   value="#{HelperForm.applicationTitle}"/>
-                    <!-- TODO: include the following paragraph after switching to facelets -->
-                    <script type="text/javascript">
-                            jsf.ajax.addOnEvent(function(data) {
-                                var status = data.status;
-                                console.debug("status: " + status);
-                            });
-                    </script>
 
                     <noscript>
                         <h:outputText style="color: red;font-weight: bold;"

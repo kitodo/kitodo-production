@@ -59,13 +59,13 @@ public abstract class KitodoRestClient implements RestClientInterface {
     /**
      * Create new index without mapping.
      */
-    public void createIndex() throws IOException, CustomResponseException {
-        createIndex(null);
+    public boolean createIndex() throws IOException, CustomResponseException {
+        return createIndex(null);
     }
 
     /**
      * Create new index with mapping.
-     * 
+     *
      * @param query
      *            contains mapping
      * @return true or false - can be used for displaying information to user if
@@ -84,7 +84,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
 
     /**
      * Check if index already exists. Needed for frontend.
-     * 
+     *
      * @return false if doesn't exists, true if exists
      */
     public boolean indexExists() throws IOException, CustomResponseException {
@@ -126,7 +126,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
 
     /**
      * Getter for index.
-     * 
+     *
      * @return index name
      */
     public String getIndex() {
@@ -135,7 +135,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
 
     /**
      * Setter for index.
-     * 
+     *
      * @param index
      *            - equal to the name of database, default kitodo
      */
@@ -145,7 +145,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
 
     /**
      * Getter for type.
-     * 
+     *
      * @return type name
      */
     public String getType() {
