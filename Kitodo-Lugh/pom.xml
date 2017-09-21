@@ -7,10 +7,23 @@
   </parent>
   <artifactId>kitodo-lugh</artifactId>
   <name>Kitodo - Lugh</name>
-  <version>3.0-SNAPSHOT</version>
   <url>https://github.com/kitodo/kitodo-production</url>
   <organization>
   	<name>kitodo.org</name>
   	<url>http://kitodo.org</url>
   </organization>
+  <dependencies>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<scope>test</scope>
+  		<version>4.12</version>
+  	</dependency>
+	<dependency>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>apache-jena-libs</artifactId>
+      <type>pom</type>
+      <version>3.4.0</version>
+    </dependency>
+  </dependencies>
 </project>
