@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +29,14 @@ public class BatchFormIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+        MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+    }
+
+    @AfterClass
+    public static void cleanDatabase() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
     }
 
     @Before

@@ -13,6 +13,8 @@ package org.kitodo.data.elasticsearch.search;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -130,23 +132,29 @@ public class SearchRestClient extends KitodoRestClient {
     String getDocument(String query, String sort, Integer offset, Integer size) throws DataException {
         String output = "";
         String wrappedQuery;
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("pretty", "true");
         if (sort != null && offset != null && size != null) {
-            String wrappedPagination = "\"from\":" + offset + ",\"size\":" + size;
-            String wrappedSort = ",\n \"sort\": [" + sort + "]\n";
-            wrappedQuery = "{\n" + wrappedPagination + wrappedSort + ",\n \"query\": " + query + "\n}";
+            String wrappedSort = "\n \"sort\": [" + sort + "]\n";
+            wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
+            parameters.put("from", offset.toString());
+            parameters.put("size", size.toString());
         } else if (sort != null && offset == null && size == null) {
             String wrappedSort = "\n \"sort\": [" + sort + "]\n";
             wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
+            parameters.put("size", "10000");
         } else if (sort == null && offset != null && size != null) {
-            String wrappedPagination = "\"from\":" + offset + ",\"size\":" + size;
-            wrappedQuery = "{\n" + wrappedPagination + ",\n \"query\": " + query + "\n}";
+            wrappedQuery = "{\n \"query\": " + query + "\n}";
+            parameters.put("from", offset.toString());
+            parameters.put("size", size.toString());
         } else {
             wrappedQuery = "{\n \"query\": " + query + "\n}";
+            parameters.put("size", "10000");
         }
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
-            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search",
-                    Collections.singletonMap("pretty", "true"), entity);
+            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search?",
+                    parameters, entity);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {

@@ -24,14 +24,14 @@ import javax.faces.el.ValueBinding;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
+import org.kitodo.data.database.persistence.HibernateUtil;
 
 /**
  * Class contains methods needed for beans and persistence.
  */
-public class Helper implements Serializable {
+public class HibernateHelper implements Serializable {
 
-    private static final Logger logger = LogManager.getLogger(Helper.class);
+    private static final Logger logger = LogManager.getLogger(HibernateHelper.class);
     private static final long serialVersionUID = -7449236652821237059L;
 
     /**
@@ -60,13 +60,13 @@ public class Helper implements Serializable {
         try {
             session = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
             if (session == null) {
-                session = HibernateUtilOld.getSession();
+                session = HibernateUtil.getSession();
             }
         } catch (Exception e) {
-            session = HibernateUtilOld.getSession();
+            session = HibernateUtil.getSession();
         }
         if (!session.isOpen()) {
-            session = HibernateUtilOld.getSession();
+            session = HibernateUtil.getSession();
         }
         return session;
     }

@@ -209,7 +209,12 @@ public class Batch extends BaseIndexedBean {
      *            that belong to the batch
      */
     public void setProcesses(List<Process> processes) {
-        this.processes = processes;
+        if (this.processes == null) {
+            this.processes = processes;
+        } else {
+            this.processes.clear();
+            this.processes.addAll(processes);
+        }
     }
 
     /**

@@ -35,12 +35,14 @@ public class UserGroupServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
+        MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
-    public static void cleanDatabaseAndIndex() {
-        // MockDatabase.cleanDatabase();
+    public static void cleanDatabase() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
     }
 
     @Before

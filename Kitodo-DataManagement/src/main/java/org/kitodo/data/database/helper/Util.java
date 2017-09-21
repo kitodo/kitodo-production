@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
  */
 
 // TODO: check in how many places this util is used... right now found:
-// HibernateUtil, Helper
+// HibernateUtil, HibernateHelper
 public final class Util {
 
     private Util() {

@@ -19,7 +19,6 @@ import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +49,7 @@ public class StatisticsManagerIT {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         testFilter = serviceManager.getProcessService().findAll(null);
         tempPath = URI.create("pages/imagesTemp/");
@@ -79,7 +79,10 @@ public class StatisticsManagerIT {
     }
 
     @AfterClass
-    public static void tearDown() throws IOException {
+    public static void tearDown() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
+
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg"));

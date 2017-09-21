@@ -52,7 +52,7 @@ import org.kitodo.services.ServiceManager;
 @SessionScoped
 public class BenutzerverwaltungForm extends BasisForm {
     private static final long serialVersionUID = -3635859455444639614L;
-    private User myClass = new User();
+    private User userObject = new User();
     private boolean hideInactiveUsers = true;
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
@@ -64,12 +64,12 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return page
      */
     public String newUser() {
-        this.myClass = new User();
-        this.myClass.setName("");
-        this.myClass.setSurname("");
-        this.myClass.setLogin("");
-        this.myClass.setLdapLogin("");
-        this.myClass.setPasswordDecrypted("Passwort");
+        this.userObject = new User();
+        this.userObject.setName("");
+        this.userObject.setSurname("");
+        this.userObject.setLogin("");
+        this.userObject.setLdapLogin("");
+        this.userObject.setPasswordDecrypted("Passwort");
         this.userId = 0;
         return "/pages/BenutzerBearbeiten?faces-redirect=true";
     }
@@ -152,21 +152,21 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public String save() {
         Session session = Helper.getHibernateSession();
-        session.evict(this.myClass);
-        String login = this.myClass.getLogin();
+        session.evict(this.userObject);
+        String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {
             return null;
         }
 
         String id = null;
-        if (this.myClass.getId() != null) {
-            id = this.myClass.getId().toString();
+        if (this.userObject.getId() != null) {
+            id = this.userObject.getId().toString();
         }
 
         try {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
-                this.serviceManager.getUserService().save(this.myClass);
+                this.serviceManager.getUserService().save(this.userObject);
                 return filterKein();
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
@@ -227,7 +227,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public String delete() {
         try {
-            serviceManager.getUserService().remove(myClass);
+            serviceManager.getUserService().remove(userObject);
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
@@ -245,12 +245,12 @@ public class BenutzerverwaltungForm extends BasisForm {
         int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
 
         List<UserGroup> neu = new ArrayList<>();
-        for (UserGroup userGroup : this.myClass.getUserGroups()) {
+        for (UserGroup userGroup : this.userObject.getUserGroups()) {
             if (userGroup.getId() != gruppenID) {
                 neu.add(userGroup);
             }
         }
-        this.myClass.setUserGroups(neu);
+        this.userObject.setUserGroups(neu);
         return null;
     }
 
@@ -263,12 +263,12 @@ public class BenutzerverwaltungForm extends BasisForm {
         Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
             UserGroup usergroup = serviceManager.getUserGroupService().getById(gruppenID);
-            for (UserGroup b : this.myClass.getUserGroups()) {
+            for (UserGroup b : this.userObject.getUserGroups()) {
                 if (b.equals(usergroup)) {
                     return null;
                 }
             }
-            this.myClass.getUserGroups().add(usergroup);
+            this.userObject.getUserGroups().add(usergroup);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
             return null;
@@ -281,15 +281,15 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String ausProjektLoeschen() {
-        int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
-        List<Project> neu = new ArrayList<>();
-        for (Project project : this.myClass.getProjects()) {
-            if (project.getId() != projektID) {
-                neu.add(project);
-            }
+    public String deleteFromProject() {
+        int projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
+        try {
+            Project project = serviceManager.getProjectService().getById(projectId);
+            this.userObject.getProjects().remove(project);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            return null;
         }
-        this.myClass.setProjects(neu);
         return null;
     }
 
@@ -298,16 +298,16 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String or null
      */
-    public String zuProjektHinzufuegen() {
-        Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
+    public String addToProject() {
+        Integer projectId = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            Project project = serviceManager.getProjectService().getById(projektID);
-            for (Project p : this.myClass.getProjects()) {
+            Project project = serviceManager.getProjectService().getById(projectId);
+            for (Project p : this.userObject.getProjects()) {
                 if (p.equals(project)) {
                     return null;
                 }
             }
-            this.myClass.getProjects().add(project);
+            this.userObject.getProjects().add(project);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
             return null;
@@ -319,23 +319,21 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Getter und Setter
      */
 
-    public User getMyClass() {
-        return this.myClass;
+    public User getUserObject() {
+        return this.userObject;
     }
 
     /**
      * Set class.
      *
-     * @param inMyClass
+     * @param userObject
      *            user object
      */
-    public void setMyClass(User inMyClass) {
-        Helper.getHibernateSession().flush();
-        Helper.getHibernateSession().clear();
+    public void setUserObject(User userObject) {
         try {
-            this.myClass = serviceManager.getUserService().getById(inMyClass.getId());
+            this.userObject = serviceManager.getUserService().getById(userObject.getId());
         } catch (DAOException e) {
-            this.myClass = inMyClass;
+            this.userObject = userObject;
         }
     }
 
@@ -343,8 +341,8 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Ldap-Konfiguration - choose LDAP group.
      */
     public Integer getLdapGruppeAuswahl() {
-        if (this.myClass.getLdapGroup() != null) {
-            return this.myClass.getLdapGroup().getId();
+        if (this.userObject.getLdapGroup() != null) {
+            return this.userObject.getLdapGroup().getId();
         } else {
             return 0;
         }
@@ -356,7 +354,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public void setLdapGruppeAuswahl(Integer inAuswahl) {
         if (inAuswahl != 0) {
             try {
-                this.myClass.setLdapGroup(serviceManager.getLdapGroupService().getById(inAuswahl));
+                this.userObject.setLdapGroup(serviceManager.getLdapGroupService().getById(inAuswahl));
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Error on writing to database", "");
                 logger.error(e);
@@ -382,7 +380,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String ldapKonfigurationSchreiben() {
         Ldap myLdap = new Ldap();
         try {
-            myLdap.createNewUser(this.myClass, this.myClass.getPasswordDecrypted());
+            myLdap.createNewUser(this.userObject, this.userObject.getPasswordDecrypted());
         } catch (Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Could not generate ldap entry: " + e.getMessage());
@@ -408,10 +406,10 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Method being used as viewAction for user edit form. If 'userId' is '0',
      * the form for creating a new user will be displayed.
      */
-    public void loadMyClass() {
+    public void loadUserObject() {
         try {
             if (!Objects.equals(this.userId, 0)) {
-                setMyClass(this.serviceManager.getUserService().getById(this.userId));
+                setUserObject(this.serviceManager.getUserService().getById(this.userId));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving user with ID '" + this.userId + "'; ", e.getMessage());

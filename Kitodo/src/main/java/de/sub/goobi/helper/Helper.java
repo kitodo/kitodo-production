@@ -47,12 +47,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.helper.HibernateHelper;
 import org.kitodo.data.database.helper.Util;
 
 /**
  * Extends Helper from Kitodo Data Management module.
  */
-public class Helper extends org.kitodo.data.database.helper.Helper implements Observer {
+public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Always treat de-serialization as a full-blown constructor, by validating
@@ -384,7 +385,7 @@ public class Helper extends org.kitodo.data.database.helper.Helper implements Ob
     @Override
     public void update(Observable o, Object arg) {
         if (!(arg instanceof String)) {
-            Helper.setFehlerMeldung("Usernotification failed by object: '" + arg.toString()
+            Helper.setFehlerMeldung("User notification failed by object: '" + arg.toString()
                     + "' which isn't an expected String Object. This error is caused by an implementation of "
                     + "the Observer Interface in Helper");
         } else {
