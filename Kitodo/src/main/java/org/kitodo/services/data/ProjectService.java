@@ -13,8 +13,10 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.ProjectHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -371,7 +373,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *         is incomplete
      */
     public boolean isProjectComplete(Project project) {
+        boolean projectsXmlExists = (new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_projects.xml")).exists();
+        boolean digitalCollectionsXmlExists = (new File(
+                ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml")).exists();
+
         return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
-                && project.getFileFormatInternal() != null;
+                && project.getFileFormatInternal() != null && digitalCollectionsXmlExists && projectsXmlExists;
     }
 }

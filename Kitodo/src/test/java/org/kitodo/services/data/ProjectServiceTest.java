@@ -1,5 +1,7 @@
 package org.kitodo.services.data;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +14,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class ProjectServiceTest {
 
     @Test
-    public void testProjectForCompletness() throws DAOException {
+    public void testProjectForCompletness() throws DAOException, IOException {
         ProjectService projectService = new ProjectService();
 
         // A project without dmsExportFormat, internal format or templates
@@ -28,11 +30,20 @@ public class ProjectServiceTest {
         project.setFileFormatInternal("METS");
         Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
 
-        // Add templates -> complete
+        // Add templates, still not complete
         Process process = new Process();
         List<Process> templates = Arrays.asList(process);
         project.template = templates;
+        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
+
+        // Add xmls to complete project
+        File projectsXml = new File("src/test/resources/kitodo_projects.xml");
+        projectsXml.createNewFile();
+        File digitalCollectionsXml = new File("src/test/resources/kitodo_digitalCollections.xml");
+        digitalCollectionsXml.createNewFile();
         Assert.assertTrue("Project should be complete", projectService.isProjectComplete(project));
+        projectsXml.delete();
+        digitalCollectionsXml.delete();
 
     }
 
