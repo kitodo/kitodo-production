@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.kitodo</groupId>
+    <artifactId>kitodo-production</artifactId>
+    <version>3.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>kitodo-lugh</artifactId>
+  <name>Kitodo - Lugh</name>
+  <version>3.0-SNAPSHOT</version>
+  <url>https://github.com/kitodo/kitodo-production</url>
+  <organization>
+  	<name>kitodo.org</name>
+  	<url>http://kitodo.org</url>
+  </organization>
+</project>

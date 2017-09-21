@@ -102,6 +102,7 @@
         <module>Kitodo-SchemaConverter</module>
         <module>Kitodo-Validation</module>
         <module>Kitodo</module>
+        <module>Kitodo-Lugh</module>
     </modules>
 
     <profiles>
