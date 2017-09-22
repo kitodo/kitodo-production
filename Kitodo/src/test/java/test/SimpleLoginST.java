@@ -10,7 +10,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +21,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -35,6 +39,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.kitodo.MockDatabase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -43,13 +50,17 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
 
 public class SimpleLoginST {
-
+    private static String pw = "kitodo@selenium";
     private static final Logger logger = LogManager.getLogger(SimpleLoginST.class);
     private static WebDriver driver;
 
@@ -73,12 +84,13 @@ public class SimpleLoginST {
         MockDatabase.insertProcessesFull();
         MockDatabase.startDatabaseServer();
         provideGeckoDriver("0.19.0", userDir + "/target/downloads/", userDir + "/target/extracts/");
+
+
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
     }
-
-    //
+//
     @AfterClass
     public static void tearDown() throws Exception {
         driver.close();
@@ -146,6 +158,8 @@ public class SimpleLoginST {
         String appUrl = "http://localhost:8080/kitodo";
 
         driver.get(appUrl);
+
+        WebElement username = driver.findElement(By.id("login"));
         Thread.sleep(2000);
         driver.manage().window().setSize(new Dimension(1280, 1024));
 
@@ -161,22 +175,24 @@ public class SimpleLoginST {
         password.sendKeys(userPassword);
         WebElement LoginButton = driver.findElement(By.linkText("Einloggen"));
 
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
+        //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
         Thread.sleep(200);
         LoginButton.click();
         Thread.sleep(500);
 
 
-//        WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
-//        VorgaengeButton.click();
-//        Thread.sleep(2000);
-//
-//        WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
-//        RulesetsButton.click();
-//        Thread.sleep(500);
+        WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
+        VorgaengeButton.click();
+        Thread.sleep(2000);
 
-//        WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
-//        Assert.assertNotNull(LogoutButton);
+        WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
+        RulesetsButton.click();
+        Thread.sleep(2000);
+
+        WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
+        Assert.assertNotNull(LogoutButton);
+
+        Thread.sleep(2000);
 
     }
 
