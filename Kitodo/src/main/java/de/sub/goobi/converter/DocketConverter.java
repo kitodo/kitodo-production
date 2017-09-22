@@ -32,7 +32,7 @@ public class DocketConverter implements Converter {
             return null;
         } else {
             try {
-                return new DocketDAO().find(Integer.valueOf(value));
+                return new DocketDAO().getById(Integer.valueOf(value));
             } catch (DAOException | NumberFormatException e) {
                 logger.error(e);
                 return "0";
