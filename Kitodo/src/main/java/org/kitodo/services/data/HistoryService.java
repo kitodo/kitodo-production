@@ -40,9 +40,8 @@ import org.kitodo.services.data.base.SearchService;
 /**
  * HistoryService.
  */
-public class HistoryService extends SearchService<History, HistoryDTO> {
+public class HistoryService extends SearchService<History, HistoryDTO, HistoryDAO> {
 
-    private HistoryDAO historyDAO = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(HistoryService.class);
@@ -51,19 +50,8 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public HistoryService() {
-        super(new Searcher(History.class));
+        super(new HistoryDAO(), new Searcher(History.class));
         this.indexer = new Indexer<>(History.class);
-    }
-
-    /**
-     * Method saves history object to database.
-     *
-     * @param history
-     *            object
-     */
-    @Override
-    public void saveToDatabase(History history) throws DAOException {
-        historyDAO.save(history);
     }
 
     /**
@@ -101,62 +89,8 @@ public class HistoryService extends SearchService<History, HistoryDTO> {
     }
 
     @Override
-    public History getById(Integer id) throws DAOException {
-        return historyDAO.find(id);
-    }
-
-    @Override
-    public List<History> getAll() {
-        return historyDAO.findAll();
-    }
-
-    @Override
-    public List<History> getAll(int offset, int size) throws DAOException {
-        return historyDAO.getAll(offset, size);
-    }
-
-    /**
-     * Search History objects by given query.
-     *
-     * @param query
-     *            as String
-     * @return list of History objects
-     */
-    @Override
-    public List<History> getByQuery(String query) {
-        return historyDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return historyDAO.count("FROM History");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return historyDAO.count(query);
-    }
-
-    /**
-     * Method removes history object from database.
-     *
-     * @param history
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(History history) throws DAOException {
-        historyDAO.remove(history);
-    }
-
-    /**
-     * Method removes history object from database.
-     *
-     * @param id
-     *            of history object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        historyDAO.remove(id);
+        return countDatabaseRows("FROM History");
     }
 
     /**

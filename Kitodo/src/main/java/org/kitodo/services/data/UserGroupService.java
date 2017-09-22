@@ -35,9 +35,8 @@ import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO> {
+public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO, UserGroupDAO> {
 
-    private UserGroupDAO userGroupDAO = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserGroupService.class);
@@ -46,7 +45,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * Constructor with Searcher and Indexer assigning.
      */
     public UserGroupService() {
-        super(new Searcher(UserGroup.class));
+        super(new UserGroupDAO(), new Searcher(UserGroup.class));
         this.indexer = new Indexer<>(UserGroup.class);
     }
 
@@ -56,39 +55,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     @Override
-    public UserGroup getById(Integer id) throws DAOException {
-        return userGroupDAO.find(id);
-    }
-
-    @Override
-    public List<UserGroup> getAll() {
-        return userGroupDAO.findAll();
-    }
-
-    @Override
-    public List<UserGroup> getAll(int offset, int size) throws DAOException {
-        return userGroupDAO.getAll(offset, size);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return userGroupDAO.count("FROM UserGroup");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return userGroupDAO.count(query);
-    }
-
-    /**
-     * Method saves workpiece object to database.
-     *
-     * @param userGroup
-     *            object
-     */
-    @Override
-    public void saveToDatabase(UserGroup userGroup) throws DAOException {
-        userGroupDAO.save(userGroup);
+        return countDatabaseRows("FROM UserGroup");
     }
 
     /**
@@ -159,28 +127,6 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Method removes user group object from database.
-     *
-     * @param userGroup
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(UserGroup userGroup) throws DAOException {
-        userGroupDAO.remove(userGroup);
-    }
-
-    /**
-     * Method removes user group object from database.
-     *
-     * @param id
-     *            of template object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        userGroupDAO.remove(id);
-    }
-
-    /**
      * Method removes user group object from index of Elastic Search.
      *
      * @param userGroup
@@ -195,11 +141,6 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         }
     }
 
-    @Override
-    public List<UserGroup> getByQuery(String query) {
-        return userGroupDAO.search(query);
-    }
-
     /**
      * Refresh user's group object after update.
      *
@@ -207,7 +148,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            object
      */
     public void refresh(UserGroup userGroup) {
-        userGroupDAO.refresh(userGroup);
+        dao.refresh(userGroup);
     }
 
     /**

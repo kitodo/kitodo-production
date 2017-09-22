@@ -37,9 +37,8 @@ import org.kitodo.dto.PropertyDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
+public class PropertyService extends TitleSearchService<Property, PropertyDTO, PropertyDAO> {
 
-    private PropertyDAO propertyDAO = new PropertyDAO();
     private PropertyType propertyType = new PropertyType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(PropertyService.class);
@@ -48,19 +47,8 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public PropertyService() {
-        super(new Searcher(Property.class));
+        super(new PropertyDAO(), new Searcher(Property.class));
         this.indexer = new Indexer<>(Property.class);
-    }
-
-    /**
-     * Method saves property object to database.
-     *
-     * @param property
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Property property) throws DAOException {
-        propertyDAO.save(property);
     }
 
     /**
@@ -102,41 +90,9 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
-    /**
-     * Find in database.
-     * 
-     * @param id
-     *            as Integer
-     * @return Property
-     */
-    @Override
-    public Property getById(Integer id) throws DAOException {
-        return propertyDAO.find(id);
-    }
-
-    /**
-     * Find all properties in database.
-     * 
-     * @return list of all properties
-     */
-    @Override
-    public List<Property> getAll() {
-        return propertyDAO.findAll();
-    }
-
-    @Override
-    public List<Property> getAll(int offset, int size) throws DAOException {
-        return propertyDAO.getAll(offset, size);
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return propertyDAO.count("FROM Property");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return propertyDAO.count(query);
+        return countDatabaseRows("FROM Property");
     }
 
     /**
@@ -172,40 +128,6 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO> {
 
     private QueryBuilder getQueryForType(String type) {
         return createSimpleQuery("type", type, true, Operator.AND);
-    }
-
-    /**
-     * Search by query in database.
-     * 
-     * @param query
-     *            as String
-     * @return list of properties
-     */
-    @Override
-    public List<Property> getByQuery(String query) {
-        return propertyDAO.search(query);
-    }
-
-    /**
-     * Method removes property object from database.
-     *
-     * @param property
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Property property) throws DAOException {
-        propertyDAO.remove(property);
-    }
-
-    /**
-     * Method removes property object from database.
-     *
-     * @param id
-     *            of property object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        propertyDAO.remove(id);
     }
 
     /**

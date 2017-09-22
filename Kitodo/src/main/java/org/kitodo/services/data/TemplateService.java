@@ -38,9 +38,8 @@ import org.kitodo.dto.TemplateDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class TemplateService extends SearchService<Template, TemplateDTO> {
+public class TemplateService extends SearchService<Template, TemplateDTO, TemplateDAO> {
 
-    private TemplateDAO templateDAO = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
@@ -49,19 +48,8 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public TemplateService() {
-        super(new Searcher(Template.class));
+        super(new TemplateDAO(), new Searcher(Template.class));
         this.indexer = new Indexer<>(Template.class);
-    }
-
-    /**
-     * Method saves template object to database.
-     *
-     * @param template
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Template template) throws DAOException {
-        templateDAO.save(template);
     }
 
     /**
@@ -120,62 +108,8 @@ public class TemplateService extends SearchService<Template, TemplateDTO> {
     }
 
     @Override
-    public Template getById(Integer id) throws DAOException {
-        return templateDAO.find(id);
-    }
-
-    @Override
-    public List<Template> getAll() {
-        return templateDAO.findAll();
-    }
-
-    @Override
-    public List<Template> getAll(int offset, int size) throws DAOException {
-        return templateDAO.getAll(offset, size);
-    }
-
-    /**
-     * Search Template objects by given query.
-     *
-     * @param query
-     *            as String
-     * @return list of Template objects
-     */
-    @Override
-    public List<Template> getByQuery(String query) {
-        return templateDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return templateDAO.count("FROM Template");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return templateDAO.count(query);
-    }
-
-    /**
-     * Method removes template object from database.
-     *
-     * @param template
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Template template) throws DAOException {
-        templateDAO.remove(template);
-    }
-
-    /**
-     * Method removes template object from database.
-     *
-     * @param id
-     *            of template object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        templateDAO.remove(id);
+        return countDatabaseRows("FROM Template");
     }
 
     /**

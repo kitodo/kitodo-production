@@ -58,9 +58,8 @@ import org.kitodo.services.data.base.SearchService;
 /**
  * Service for Filter bean.
  */
-public class FilterService extends SearchService<Filter, FilterDTO> {
+public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
-    private FilterDAO filterDAO = new FilterDAO();
     private FilterType filterType = new FilterType();
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private final ServiceManager serviceManager = new ServiceManager();
@@ -69,19 +68,8 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public FilterService() {
-        super(new Searcher(Filter.class));
+        super(new FilterDAO(), new Searcher(Filter.class));
         this.indexer = new Indexer<>(Filter.class);
-    }
-
-    /**
-     * Method saves filter object to database.
-     *
-     * @param filter
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Filter filter) throws DAOException {
-        filterDAO.save(filter);
     }
 
     /**
@@ -104,75 +92,9 @@ public class FilterService extends SearchService<Filter, FilterDTO> {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
-    /**
-     * Find in database.
-     *
-     * @param id
-     *            as Integer
-     * @return Property
-     */
-    @Override
-    public Filter getById(Integer id) throws DAOException {
-        return filterDAO.find(id);
-    }
-
-    /**
-     * Find all properties in database.
-     *
-     * @return list of all properties
-     */
-    @Override
-    public List<Filter> getAll() {
-        return filterDAO.findAll();
-    }
-
-    @Override
-    public List<Filter> getAll(int offset, int size) throws DAOException {
-        return filterDAO.getAll(offset, size);
-    }
-
-    /**
-     * Search by query in database.
-     *
-     * @param query
-     *            as String
-     * @return list of properties
-     */
-    @Override
-    public List<Filter> getByQuery(String query) {
-        return filterDAO.search(query);
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return filterDAO.count("FROM Filter");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return filterDAO.count(query);
-    }
-
-    /**
-     * Method removes filter object from database.
-     *
-     * @param filter
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Filter filter) throws DAOException {
-        filterDAO.remove(filter);
-    }
-
-    /**
-     * Method removes property object from database.
-     *
-     * @param id
-     *            of property object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        filterDAO.remove(id);
+        return countDatabaseRows("FROM Filter");
     }
 
     /**

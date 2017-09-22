@@ -16,28 +16,36 @@ import java.util.List;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectFileGroupDAO;
+import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class ProjectFileGroupService {
+public class ProjectFileGroupService extends SearchDatabaseService<ProjectFileGroup, ProjectFileGroupDAO> {
 
-    private ProjectFileGroupDAO projectFileGroupDAO = new ProjectFileGroupDAO();
+    public ProjectFileGroupService() {
+        super(new ProjectFileGroupDAO());
+    }
 
     public void save(ProjectFileGroup projectFileGroup) throws DAOException {
-        projectFileGroupDAO.save(projectFileGroup);
+        dao.save(projectFileGroup);
     }
 
     public ProjectFileGroup find(Integer id) throws DAOException {
-        return projectFileGroupDAO.find(id);
+        return dao.getById(id);
     }
 
     public List<ProjectFileGroup> findAll() {
-        return projectFileGroupDAO.findAll();
+        return dao.getAll();
     }
 
     public void remove(ProjectFileGroup projectFileGroup) throws DAOException {
-        projectFileGroupDAO.remove(projectFileGroup);
+        dao.remove(projectFileGroup);
     }
 
     public void remove(Integer id) throws DAOException {
-        projectFileGroupDAO.remove(id);
+        dao.remove(id);
+    }
+
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("FROM Process");
     }
 }

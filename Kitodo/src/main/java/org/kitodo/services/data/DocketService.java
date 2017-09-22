@@ -33,9 +33,8 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.DocketDTO;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class DocketService extends TitleSearchService<Docket, DocketDTO> {
+public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketDAO> {
 
-    private DocketDAO docketDAO = new DocketDAO();
     private DocketType docketType = new DocketType();
     private static final Logger logger = LogManager.getLogger(DocketService.class);
 
@@ -43,39 +42,13 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public DocketService() {
-        super(new Searcher(Docket.class));
+        super(new DocketDAO(), new Searcher(Docket.class));
         this.indexer = new Indexer<>(Docket.class);
     }
 
     @Override
     public List<DocketDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    @Override
-    public Docket getById(Integer id) throws DAOException {
-        return docketDAO.find(id);
-    }
-
-    @Override
-    public List<Docket> getAll() {
-        return docketDAO.findAll();
-    }
-
-    @Override
-    public List<Docket> getAll(int offset, int size) throws DAOException {
-        return docketDAO.getAll(offset, size);
-    }
-
-    /**
-     * Method saves docket object to database.
-     *
-     * @param docket
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Docket docket) throws DAOException {
-        docketDAO.save(docket);
     }
 
     /**
@@ -94,28 +67,6 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
     }
 
     /**
-     * Method removes docket object from database.
-     *
-     * @param docket
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Docket docket) throws DAOException {
-        docketDAO.remove(docket);
-    }
-
-    /**
-     * Method removes docket object from database.
-     *
-     * @param id
-     *            of docket object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        docketDAO.remove(id);
-    }
-
-    /**
      * Method removes docket object from index of Elastic Search.
      *
      * @param docket
@@ -131,18 +82,8 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO> {
     }
 
     @Override
-    public List<Docket> getByQuery(String query) {
-        return docketDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return docketDAO.count("FROM Docket");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return docketDAO.count(query);
+        return countDatabaseRows("FROM Docket");
     }
 
     /**
