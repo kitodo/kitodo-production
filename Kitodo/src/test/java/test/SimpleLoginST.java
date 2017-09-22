@@ -116,7 +116,7 @@ public class SimpleLoginST {
                                     description.getDisplayName(), description.getMethodName());
 
                     String emailMessage =
-                            String.format("Selenium Test failed on build #%s: https://travis-ci.com/%s/builds/%s",
+                            String.format("Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
                                     ciProperties.get(TRAVIS_BUILD_NUMBER),
                                     ciProperties.get(TRAVIS_REPO_SLUG),
                                     ciProperties.get(TRAVIS_BUILD_ID));
