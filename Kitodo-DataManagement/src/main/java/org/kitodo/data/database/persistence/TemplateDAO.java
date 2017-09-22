@@ -19,17 +19,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class TemplateDAO extends BaseDAO<Template> {
     private static final long serialVersionUID = 1736135433162833277L;
 
-    /**
-     * Find template object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public Template find(Integer id) throws DAOException {
+    @Override
+    public Template getById(Integer id) throws DAOException {
         Template result = retrieveObject(Template.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -37,66 +28,24 @@ public class TemplateDAO extends BaseDAO<Template> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all templates from the database.
-     *
-     * @return all persisted dockets
-     */
-    public List<Template> findAll() {
+    @Override
+    public List<Template> getAll() {
         return retrieveAllObjects(Template.class);
     }
 
-    /**
-     * Retrieves all templates in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Template> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Template ORDER BY id ASC", offset, size);
     }
 
+    @Override
     public Template save(Template template) throws DAOException {
         storeObject(template);
         return retrieveObject(Template.class, template.getId());
     }
 
-    /**
-     * The function remove() removes a template from database.
-     *
-     * @param template
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(Template template) throws DAOException {
-        if (template.getId() != null) {
-            removeObject(template);
-        }
-    }
-
-    /**
-     * The function remove() removes a template from database.
-     *
-     * @param id
-     *            of the task to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Template.class, id);
-    }
-
-    public List<Template> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 }

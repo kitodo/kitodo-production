@@ -27,17 +27,8 @@ import org.kitodo.data.database.helper.HibernateHelper;
 public class BatchDAO extends BaseDAO<Batch> {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The function find() retrieves a Batch identified by the given ID from the
-     * database.
-     *
-     * @param id
-     *            of batch to load
-     * @return persisted batch
-     * @throws DAOException
-     *             if a HibernateException is thrown
-     */
-    public Batch find(Integer id) throws DAOException {
+    @Override
+    public Batch getById(Integer id) throws DAOException {
         Batch result = retrieveObject(Batch.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -45,79 +36,25 @@ public class BatchDAO extends BaseDAO<Batch> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all batches from the database.
-     *
-     * @return all persisted batches
-     */
-    public List<Batch> findAll() {
+    @Override
+    public List<Batch> getAll() {
         return retrieveAllObjects(Batch.class);
     }
 
-    /**
-     * Retrieves all batches in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Batch> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Batch ORDER BY id ASC", offset, size);
     }
 
-    /**
-     * The method save() saves a batch to the database.
-     *
-     * @param batch
-     *            object to persist
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
-     */
-    public void save(Batch batch) throws DAOException {
+    @Override
+    public Batch save(Batch batch) throws DAOException {
         storeObject(batch);
+        return retrieveObject(Batch.class, batch.getId());
     }
 
-    /**
-     * Search Batch objects in database by given query.
-     * 
-     * @param query
-     *            as String
-     * @return list of Batch objects
-     */
-    public List<Batch> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    /**
-     * The method remove() removes batch specified by the given ID from the
-     * database.
-     *
-     * @param id
-     *            of batches to delete
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
-     */
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Batch.class, id);
-    }
-
-    public void remove(Batch batch) throws DAOException {
-        removeObject(batch);
-    }
-
-    /**
-     * Count all rows in database.
-     * 
-     * @param query
-     *            for counting objects
-     * @return amount of rows in database according to given query
-     */
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 
     /**

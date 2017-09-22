@@ -20,17 +20,8 @@ public class PropertyDAO extends BaseDAO<Property> {
 
     private static final long serialVersionUID = 834210846673022251L;
 
-    /**
-     * Find property object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public Property find(Integer id) throws DAOException {
+    @Override
+    public Property getById(Integer id) throws DAOException {
         Property result = retrieveObject(Property.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -38,78 +29,24 @@ public class PropertyDAO extends BaseDAO<Property> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all properties from the database.
-     *
-     * @return all persisted templates' properties
-     */
-    public List<Property> findAll() {
+    @Override
+    public List<Property> getAll() {
         return retrieveAllObjects(Property.class);
     }
 
-    /**
-     * Retrieves all properties in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Property> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Property ORDER BY id ASC", offset, size);
     }
 
-    /**
-     * Find properties by query.
-     * 
-     * @param query
-     *            as String
-     * @return list of properties
-     */
-    public List<Property> search(String query) {
-        return retrieveObjects(query);
-    }
-
+    @Override
     public Property save(Property property) throws DAOException {
         storeObject(property);
         return retrieveObject(Property.class, property.getId());
     }
 
-    /**
-     * The function remove() removes a property
-     *
-     * @param property
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(Property property) throws DAOException {
-        removeObject(property);
-    }
-
-    /**
-     * The function remove() removes a property
-     *
-     * @param id
-     *            of property to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Property.class, id);
-    }
-
-    /**
-     * Count property objects in table.
-     * 
-     * @param query
-     *            as String
-     * @return amount of objects as Long
-     */
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 }

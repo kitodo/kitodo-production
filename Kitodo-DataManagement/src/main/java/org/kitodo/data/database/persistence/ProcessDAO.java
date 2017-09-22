@@ -21,45 +21,29 @@ public class ProcessDAO extends BaseDAO<Process> {
 
     private static final long serialVersionUID = 3538712266212954394L;
 
-    /**
-     * Find process object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public Process find(Integer id) throws DAOException {
-        Process result = (Process) retrieveObject(Process.class, id);
+    @Override
+    public Process getById(Integer id) throws DAOException {
+        Process result = retrieveObject(Process.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all processes from the database.
-     *
-     * @return all persisted processes
-     */
-    @SuppressWarnings("unchecked")
-    public List<Process> findAll() {
+    @Override
+    public List<Process> getAll() {
         return retrieveAllObjects(Process.class);
     }
 
-    /**
-     * Retrieves all processes in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Process> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Process ORDER BY id ASC", offset, size);
+    }
+
+    @Override
+    public Process save(Process process) throws DAOException {
+        storeObject(process);
+        return retrieveObject(Process.class, process.getId());
     }
 
     /**
@@ -74,8 +58,7 @@ public class ProcessDAO extends BaseDAO<Process> {
      */
     public Process save(Process process, String progress) throws DAOException {
         process.setSortHelperStatus(progress);
-        storeObject(process);
-        return (Process) retrieveObject(Process.class, process.getId());
+        return save(process);
     }
 
     /**
@@ -89,31 +72,9 @@ public class ProcessDAO extends BaseDAO<Process> {
         storeList(list);
     }
 
-    /**
-     * The function remove() removes a process from database.
-     *
-     * @param process
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(Process process) throws DAOException {
-        if (process.getId() != null) {
-            removeObject(process);
-        }
-    }
-
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Process.class, id);
-    }
-
-    public List<Process> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 
     /**
@@ -142,7 +103,7 @@ public class ProcessDAO extends BaseDAO<Process> {
      * @return list of all process templates as Process objects
      */
     public List<Process> getProcessTemplates() {
-        return search("FROM Process WHERE template = 0 AND inChoiceListShown = 1 ORDER BY title ASC");
+        return getByQuery("FROM Process WHERE template = 0 AND inChoiceListShown = 1 ORDER BY title ASC");
     }
 
     /**
@@ -161,21 +122,6 @@ public class ProcessDAO extends BaseDAO<Process> {
         }
         query.setLength(query.length() - 2);
         query.append(" ORDER BY title ASC");
-        return search(query.toString());
-    }
-
-    /**
-     * Get processes which are not templates and are ordered by creation date. Set
-     * of results can be constrained.
-     * 
-     * @param limit
-     *            max amount of returned results
-     * @return list of processes as Process objects
-     */
-    public List<Process> getNotTemplatesOrderedByCreationDate(Integer limit) {
-        if (limit != null && limit > 0) {
-            return search("FROM Process WHERE template = 0 ORDER BY creationDate DESC").subList(0, limit);
-        }
-        return search("FROM Process WHERE template = 0 ORDER BY creationDate DESC");
+        return getByQuery(query.toString());
     }
 }

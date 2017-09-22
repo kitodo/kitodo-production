@@ -19,21 +19,14 @@ import org.kitodo.data.database.exceptions.DAOException;
 @SuppressWarnings("serial")
 public class LdapGroupDAO extends BaseDAO<LdapGroup> {
 
+    @Override
     public LdapGroup save(LdapGroup ldapGroup) throws DAOException {
         storeObject(ldapGroup);
         return retrieveObject(LdapGroup.class, ldapGroup.getId());
     }
 
-    /**
-     * Find LDAP group object by id.
-     *
-     * @param id
-     *            of LDAP group
-     * @return LDAP group
-     * @throws DAOException
-     *             hibernate
-     */
-    public LdapGroup find(Integer id) throws DAOException {
+    @Override
+    public LdapGroup getById(Integer id) throws DAOException {
         LdapGroup result = retrieveObject(LdapGroup.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -41,34 +34,18 @@ public class LdapGroupDAO extends BaseDAO<LdapGroup> {
         return result;
     }
 
-    /**
-     * Remove LDAP group.
-     *
-     * @param ldapGroup
-     *            object
-     * @throws DAOException
-     *             hibernate
-     */
-    public void remove(LdapGroup ldapGroup) throws DAOException {
-        if (ldapGroup.getId() != null) {
-            removeObject(ldapGroup);
-        }
-    }
-
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(LdapGroup.class, id);
     }
 
-    public List<LdapGroup> search(String query) {
-        return retrieveObjects(query);
+    @Override
+    public List<LdapGroup> getAll() {
+        return retrieveAllObjects(LdapGroup.class);
     }
 
-    /**
-     * Gets all LDAP Groups.
-     * 
-     * @return a list of ldap groups
-     */
-    public List<LdapGroup> findAll() {
-        return retrieveAllObjects(LdapGroup.class);
+    @Override
+    public List<LdapGroup> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM LdapGroup ORDER BY id ASC", offset, size);
     }
 }

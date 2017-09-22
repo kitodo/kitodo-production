@@ -19,17 +19,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class WorkpieceDAO extends BaseDAO<Workpiece> {
     private static final long serialVersionUID = 123266825187246791L;
 
-    /**
-     * Find workpiece object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public Workpiece find(Integer id) throws DAOException {
+    @Override
+    public Workpiece getById(Integer id) throws DAOException {
         Workpiece result = retrieveObject(Workpiece.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -37,66 +28,24 @@ public class WorkpieceDAO extends BaseDAO<Workpiece> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all workpieces from the database.
-     *
-     * @return all persisted dockets
-     */
-    public List<Workpiece> findAll() {
+    @Override
+    public List<Workpiece> getAll() {
         return retrieveAllObjects(Workpiece.class);
     }
 
-    /**
-     * Retrieves all workpieces in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Workpiece> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Workpiece ORDER BY id ASC", offset, size);
     }
 
+    @Override
     public Workpiece save(Workpiece workpiece) throws DAOException {
         storeObject(workpiece);
         return retrieveObject(Workpiece.class, workpiece.getId());
     }
 
-    /**
-     * The function remove() removes a workpiece from database.
-     *
-     * @param workpiece
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(Workpiece workpiece) throws DAOException {
-        if (workpiece.getId() != null) {
-            removeObject(workpiece);
-        }
-    }
-
-    /**
-     * The function remove() removes a workpiece from database.
-     *
-     * @param id
-     *            of the task to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Workpiece.class, id);
-    }
-
-    public List<Workpiece> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 }

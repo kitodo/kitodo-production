@@ -23,17 +23,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class HistoryDAO extends BaseDAO<History> {
     private static final long serialVersionUID = 991946176515032238L;
 
-    /**
-     * Find history object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public History find(Integer id) throws DAOException {
+    @Override
+    public History getById(Integer id) throws DAOException {
         History result = retrieveObject(History.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -41,75 +32,24 @@ public class HistoryDAO extends BaseDAO<History> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all histories from the database.
-     *
-     * @return all persisted histories
-     */
-    public List<History> findAll() {
+    @Override
+    public List<History> getAll() {
         return retrieveAllObjects(History.class);
     }
 
-    /**
-     * Retrieves all histories in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<History> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM History ORDER BY id ASC", offset, size);
     }
 
+    @Override
     public History save(History history) throws DAOException {
         storeObject(history);
         return retrieveObject(History.class, history.getId());
     }
 
-    /**
-     * The function remove() removes a history from database.
-     *
-     * @param history
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(History history) throws DAOException {
-        if (history.getId() != null) {
-            removeObject(history);
-        }
-    }
-
-    /**
-     * The function remove() removes a task from database.
-     *
-     * @param id
-     *            of the task to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(History.class, id);
-    }
-
-    public List<History> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    /**
-     * Counts the amount of results from the query.
-     * 
-     * @param query
-     *            The given query.
-     * @return the amount of results.
-     * @throws DAOException
-     *             if database throws an error.
-     */
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 }

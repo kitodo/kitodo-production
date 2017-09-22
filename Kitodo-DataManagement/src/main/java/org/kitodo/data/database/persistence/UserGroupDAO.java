@@ -20,17 +20,8 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
 
     private static final long serialVersionUID = 4987176626562271217L;
 
-    /**
-     * Find user group object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public UserGroup find(Integer id) throws DAOException {
+    @Override
+    public UserGroup getById(Integer id) throws DAOException {
         UserGroup result = retrieveObject(UserGroup.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -38,58 +29,25 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all users' groups from the database.
-     *
-     * @return all persisted dockets
-     */
-    public List<UserGroup> findAll() {
+    @Override
+    public List<UserGroup> getAll() {
         return retrieveAllObjects(UserGroup.class);
     }
 
-    /**
-     * Retrieves all user's groups in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<UserGroup> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM UserGroup ORDER BY id ASC", offset, size);
     }
 
+    @Override
     public UserGroup save(UserGroup userGroup) throws DAOException {
         storeObject(userGroup);
         return retrieveObject(UserGroup.class, userGroup.getId());
     }
 
-    /**
-     * The function remove() removes a user group from database.
-     *
-     * @param userGroup
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(UserGroup userGroup) throws DAOException {
-        if (userGroup.getId() != null) {
-            removeObject(userGroup);
-        }
-    }
-
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(UserGroup.class, id);
-    }
-
-    public List<UserGroup> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 
     /**

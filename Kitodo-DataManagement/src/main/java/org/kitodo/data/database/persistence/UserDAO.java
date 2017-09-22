@@ -20,17 +20,8 @@ public class UserDAO extends BaseDAO<User> {
 
     private static final long serialVersionUID = 834210840673022251L;
 
-    /**
-     * Find user object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public User find(Integer id) throws DAOException {
+    @Override
+    public User getById(Integer id) throws DAOException {
         User result = retrieveObject(User.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -38,24 +29,12 @@ public class UserDAO extends BaseDAO<User> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all users from the database.
-     *
-     * @return all persisted users
-     */
-    public List<User> findAll() {
-        return retrieveObjects("FROM User WHERE deleted = 0");
+    @Override
+    public List<User> getAll() {
+        return getByQuery("FROM User WHERE deleted = 0");
     }
 
-    /**
-     * Retrieves all users in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<User> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM User WHERE deleted = 0 ORDER BY id ASC", offset, size);
     }
@@ -65,41 +44,17 @@ public class UserDAO extends BaseDAO<User> {
         return retrieveObject(User.class, user.getId());
     }
 
-    /**
-     * The function remove() removes a user from the environment. Since the user
-     * ID may still be referenced somewhere, the user account is invalidated
-     * instead.
-     *
-     * @param user
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
+    @Override
     public void remove(User user) throws DAOException {
         user.selfDestruct();
         save(user);
     }
 
-    /**
-     * The function remove() removes a user from the environment. Since the user
-     * ID may still be referenced somewhere, the user account is invalidated
-     * instead.
-     *
-     * @param id
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
+    @Override
     public void remove(Integer id) throws DAOException {
-        User user = find(id);
+        User user = getById(id);
         user.selfDestruct();
         save(user);
-    }
-
-    public List<User> search(String query) {
-        return retrieveObjects(query);
     }
 
     public List<User> search(String query, String parameter) throws DAOException {
@@ -123,10 +78,6 @@ public class UserDAO extends BaseDAO<User> {
         return retrieveObjects(query, namedParameter, parameter);
     }
 
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
-    }
-
     /**
      * Refresh user object after some changes.
      *
@@ -143,6 +94,6 @@ public class UserDAO extends BaseDAO<User> {
      * @return sorted list of all active users as User objects
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
-        return search("FROM User WHERE active = 1 AND deleted = 0 ORDER BY surname ASC, name ASC");
+        return getByQuery("FROM User WHERE active = 1 AND deleted = 0 ORDER BY surname ASC, name ASC");
     }
 }
