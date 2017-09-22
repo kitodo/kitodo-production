@@ -47,6 +47,7 @@ import org.junit.runner.Description;
 import org.kitodo.MockDatabase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -73,27 +74,6 @@ public class SimpleLoginST {
     private static final String TRAVIS_REPO_SLUG = "TRAVIS_REPO_SLUG";
     private static final String TRAVIS_BUILD_ID = "TRAVIS_BUILD_ID";
 
-    public static File captureScreenShot(WebDriver driver){
-
-        // Take screenshot and store as a file format
-        File src= ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-        File screenshotFile = new File(System.getProperty("user.dir")+"/Kitodo/target/Selenium/"+"screen.png");
-        try {
-            // now copy the screenshot to desired location using copyFile method
-            FileUtils.copyFile(src, screenshotFile);
-            System.out.println(System.getProperty("user.dir")+"/Selenium/");
-        }
-
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
-
-        return screenshotFile;
-    }
-
-
-
     @BeforeClass
     public static void setUp() throws Exception {
         String userDir = System.getProperty("user.dir");
@@ -101,9 +81,6 @@ public class SimpleLoginST {
         MockDatabase.insertProcessesFull();
         MockDatabase.startDatabaseServer();
         provideGeckoDriver("0.18.0", userDir + "/target/downloads/", userDir + "/target/extracts/");
-
-
-
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
@@ -121,65 +98,51 @@ public class SimpleLoginST {
             Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
         }
     }
-//
-//
-//
-//    @Rule
-//    public TestRule seleniumExceptionWatcher = new TestWatcher() {
-//
-//        @Override
-//        protected void failed(Throwable ex, Description description) {
-//            if (driver instanceof TakesScreenshot //make sure driver can take a screenshot
-//                    && "true".equals(System.getenv().get("TRAVIS")) //make sure we are on travis-ci
-//                    && (ex instanceof WebDriverException || ex instanceof SeleniumException)) { //is this a Selenium or WebDriver exception?
-//
-//                try {
-//                    File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-//                    Map<String, String> ciProperties = getTravisProperties();
-//
-//                    MimeMessage message = mailSender.createMimeMessage();
-//                    MimeMessageHelper helper = new MimeMessageHelper(message, true);
-//                    helper.setTo("Tim.Boerner@slub-dresden.com");
-//                    helper.setFrom("Travis CI Screenshot <server@work.com>");
-//                    helper.setSubject(
-//                            String.format("%s - #%s: Test Failure: %s:%s",
-//                                    ciProperties.get(TRAVIS_BRANCH), ciProperties.get(TRAVIS_BUILD_NUMBER),
-//                                    description.getDisplayName(), description.getMethodName())
-//                    );
-//
-//                    helper.setText(
-//                            String.format("Test failed on build #%s: https://travis-ci.com/%s/builds/%s",
-//                                    ciProperties.get(TRAVIS_BUILD_NUMBER),
-//                                    ciProperties.get(TRAVIS_REPO_SLUG),
-//                                    ciProperties.get(TRAVIS_BUILD_ID)
-//                            )
-//                    );
-//                    helper.addAttachment(screenshot.getName(), screenshot);
-//
-//                    mailSender.send(message);
-//                } catch (Exception mailException) {
-//                    log.error("Unable to send screenshot", mailException);
-//                }
-//
-//            }
-//            super.failed(ex, description);
-//        }
-//
-//        // Travis places build information as Environment Variables
-//        private Map<String, String> getTravisProperties() {
-//            Map<String, String> properties = new HashMap<>();
-//            properties.put(TRAVIS_BRANCH, System.getenv().get(TRAVIS_BRANCH));
-//            properties.put(TRAVIS_BUILD_ID, System.getenv().get(TRAVIS_BUILD_ID));
-//            properties.put(TRAVIS_BUILD_NUMBER, System.getenv().get(TRAVIS_BUILD_NUMBER));
-//            properties.put(TRAVIS_REPO_SLUG, System.getenv().get(TRAVIS_REPO_SLUG));
-//            return properties;
-//        }
-//    };
+
+    @Rule
+    public TestRule seleniumExceptionWatcher = new TestWatcher() {
+
+        @Override
+        protected void failed(Throwable ex, Description description) {
+            if ("true".equals(System.getenv().get("TRAVIS")) //make sure we are on travis-ci
+                    && (ex instanceof WebDriverException || ex instanceof NoSuchElementException)) { //is this a Selenium or WebDriver exception?
+                try {
+                    File screenshot = captureScreenShot(driver);
+                    Map<String, String> ciProperties = getTravisProperties();
+
+                    String emailSubject =
+                            String.format("%s - #%s: Test Failure: %s:%s",
+                                    ciProperties.get(TRAVIS_BRANCH), ciProperties.get(TRAVIS_BUILD_NUMBER),
+                                    description.getDisplayName(), description.getMethodName());
+
+                    String emailMessage =
+                            String.format("Selenium Test failed on build #%s: https://travis-ci.com/%s/builds/%s",
+                                    ciProperties.get(TRAVIS_BUILD_NUMBER),
+                                    ciProperties.get(TRAVIS_REPO_SLUG),
+                                    ciProperties.get(TRAVIS_BUILD_ID));
+
+                    sendEmail(emailSubject, emailMessage, screenshot);
+                } catch (Exception mailException) {
+                    logger.error("Unable to send screenshot", mailException);
+                }
+
+            }
+            super.failed(ex, description);
+        }
+
+        // Travis places build information as Environment Variables
+        private Map<String, String> getTravisProperties() {
+            Map<String, String> properties = new HashMap<>();
+            properties.put(TRAVIS_BRANCH, System.getenv().get(TRAVIS_BRANCH));
+            properties.put(TRAVIS_BUILD_ID, System.getenv().get(TRAVIS_BUILD_ID));
+            properties.put(TRAVIS_BUILD_NUMBER, System.getenv().get(TRAVIS_BUILD_NUMBER));
+            properties.put(TRAVIS_REPO_SLUG, System.getenv().get(TRAVIS_REPO_SLUG));
+            return properties;
+        }
+    };
 //
     @Test
     public void seleniumTest() throws Exception {
-
-        File screenShootFile;
 
         String appUrl = "http://localhost:8080/kitodo";
 
@@ -200,12 +163,11 @@ public class SimpleLoginST {
         Thread.sleep(2000);
         WebElement LoginButton = driver.findElement(By.linkText("Einloggen"));
 
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
+        //((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
         Thread.sleep(2000);
         LoginButton.click();
-        Thread.sleep(10000);
-        screenShootFile = captureScreenShot(driver);
-        sendEmail(screenShootFile);
+        Thread.sleep(2000);
+
 //        String message = driver.findElement(By.id("loginform:messlogin")).getText();
 //        Assert.assertEquals("Fehler bei Authentifizierung",message);
         //Assert.assertNotNull(failText);
@@ -226,7 +188,7 @@ public class SimpleLoginST {
 
     }
 
-    public void sendEmail(File attachedFile) throws EmailException, AddressException {
+    public void sendEmail(String subject, String message, File attachedFile) throws EmailException, AddressException {
 
         InternetAddress address = new InternetAddress("Tim.Boerner@slub-dresden.de");
         ArrayList<InternetAddress> addressList = new ArrayList<>();
@@ -239,20 +201,34 @@ public class SimpleLoginST {
         attachment.setDescription("SeleniumScreenShot");
         attachment.setName("SeleniumScreenShot");
 
-
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName("smtp.gmail.com");
         email.setSmtpPort(465);
         email.setAuthenticator(new DefaultAuthenticator("kitodo.dev@gmail.com",pw));
         email.setSSLOnConnect(true);
-        email.setFrom("kitodo.dev@gmail.com");
-        email.setSubject("Test Mail");
-        email.setMsg("This is a test mail");
+        email.setFrom("Travis CI Screenshot <kitodo.dev@gmail.com>");
+        email.setSubject(subject);
+        email.setMsg(message);
         email.setTo(addressList);
         email.attach(attachment);
 
-
         email.send();
+    }
+
+    public static File captureScreenShot(WebDriver driver){
+
+        File src= ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        File screenshotFile = new File(System.getProperty("user.dir")+"/target/Selenium/"+"screen.png");
+        try {
+            FileUtils.copyFile(src, screenshotFile);
+        }
+
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        return screenshotFile;
     }
 
 
