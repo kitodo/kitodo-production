@@ -37,7 +37,7 @@ public class RulesetServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertProcessesFull();
+        MockDatabase.insertRulesets();
     }
 
     @AfterClass
@@ -48,7 +48,7 @@ public class RulesetServiceIT {
 
     @Before
     public void multipleInit() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     @Rule

@@ -36,7 +36,7 @@ public class UserGroupServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertProcessesFull();
+        MockDatabase.insertUserGroupsFull();
     }
 
     @AfterClass
@@ -47,7 +47,7 @@ public class UserGroupServiceIT {
 
     @Before
     public void multipleInit() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     @Rule

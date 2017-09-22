@@ -115,6 +115,12 @@ public class MockDatabase {
         insertHistory();
     }
 
+    public static void insertUserGroupsFull() throws DAOException, DataException {
+        insertLdapGroups();
+        insertUsers();
+        insertUserGroups();
+    }
+
     private static class ExtendedNode extends Node {
         public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
@@ -200,7 +206,7 @@ public class MockDatabase {
         serviceManager.getBatchService().save(fourthBatch);
     }
 
-    private static void insertDockets() throws DataException {
+    public static void insertDockets() throws DataException {
         Docket firstDocket = new Docket();
         firstDocket.setTitle("default");
         firstDocket.setFile("docket.xsl");
@@ -226,7 +232,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(firstProcess);
     }
 
-    private static void insertLdapGroups() throws DAOException {
+    public static void insertLdapGroups() throws DAOException {
         LdapGroup firstLdapGroup = new LdapGroup();
         firstLdapGroup.setTitle("LG");
         firstLdapGroup.setHomeDirectory("..//test_directory/");
@@ -476,7 +482,7 @@ public class MockDatabase {
         serviceManager.getProjectService().save(project);
     }
 
-    private static void insertRulesets() throws DataException {
+    public static void insertRulesets() throws DataException {
         Ruleset firstRuleset = new Ruleset();
         firstRuleset.setTitle("SLUBDD");
         firstRuleset.setFile("ruleset_slubdd.xml");

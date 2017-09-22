@@ -39,7 +39,7 @@ public class ProjekteFormIT {
 
     @Before
     public void multipleInit() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     @Ignore("this test executes some updates after class")
