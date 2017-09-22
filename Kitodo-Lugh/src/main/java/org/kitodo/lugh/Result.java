@@ -12,8 +12,7 @@
 package org.kitodo.lugh;
 
 import java.nio.BufferOverflowException;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The results returned by a call to a getter on a node.
@@ -52,7 +51,6 @@ public interface Result extends Set<ObjectType> {
      * @return all identifiable nodes
      */
     public Set<IdentifiableNode> identifiableNodes();
-
 
     /**
      * True if there is exactly one node in the result. If this is true,

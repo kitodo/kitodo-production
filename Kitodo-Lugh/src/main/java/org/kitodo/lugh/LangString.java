@@ -12,11 +12,9 @@
 package org.kitodo.lugh;
 
 import java.util.Locale;
-import java.util.regex.*;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
-import org.kitodo.lugh.mem.MemNodeReference;
+import org.apache.jena.rdf.model.*;
+import org.kitodo.lugh.mem.MemoryStorage;
 
 /**
  * An RDF lang string, that is a linked data literal with a language tag
@@ -28,13 +26,16 @@ public interface LangString extends Literal {
     /**
      * Identifies the human language of the subject as a RFC 4646 code.
      */
-    public static final NodeReference XML_LANG = new MemNodeReference("http://www.w3.org/XML/1998/namespace#lang");
+    public static final NodeReference XML_LANG = MemoryStorage.INSTANCE
+            .newNodeReference("http://www.w3.org/XML/1998/namespace#lang");
 
     /**
      * Compares two objects for equality.
      */
     @Override
     public boolean equals(Object obj);
+
+    public Locale getLocale();
 
     /**
      * Returns a hash code for the object.

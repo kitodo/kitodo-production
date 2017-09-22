@@ -13,8 +13,7 @@ package org.kitodo.lugh;
 
 import java.util.regex.Pattern;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.*;
 
 /**
  * A node, a reference to a node, or any kind of literal.

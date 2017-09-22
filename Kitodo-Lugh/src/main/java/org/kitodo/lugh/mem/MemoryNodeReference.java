@@ -11,8 +11,7 @@
 
 package org.kitodo.lugh.mem;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.*;
 import org.kitodo.lugh.NodeReference;
 
 /**
@@ -20,7 +19,7 @@ import org.kitodo.lugh.NodeReference;
  *
  * @author Matthias Ronge
  */
-public class MemNodeReference implements NodeReference {
+public class MemoryNodeReference implements NodeReference {
 
     private final String identifier;
 
@@ -30,8 +29,12 @@ public class MemNodeReference implements NodeReference {
      * @param url
      *            referenced URL
      */
-    public MemNodeReference(String url) {
-        identifier = url;
+    MemoryNodeReference(String identifier) {
+        if (identifier == null) {
+            throw new NullPointerException("Identifier must not be null.");
+        }
+        assert URI_SCHEME.matcher(identifier).find() : "Identifier isn't a valid URI: " + identifier;
+        this.identifier = identifier;
     }
 
     /**
@@ -50,12 +53,12 @@ public class MemNodeReference implements NodeReference {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        NodeReference other = (NodeReference) obj;
+        MemoryNodeReference other = (MemoryNodeReference) obj;
         if (identifier == null) {
-            if (other.getIdentifier() != null) {
+            if (other.identifier != null) {
                 return false;
             }
-        } else if (!identifier.equals(other.getIdentifier())) {
+        } else if (!identifier.equals(other.identifier)) {
             return false;
         }
         return true;

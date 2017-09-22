@@ -12,10 +12,9 @@
 package org.kitodo.lugh;
 
 import java.util.*;
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.*;
 
 /**
  * A linked data literal.
@@ -33,7 +32,7 @@ public interface Literal extends AccessibleObject {
      * yet be accessed at creation time of this class.
      */
     public static final Set<String> ALLOWED_RELATIONS = new HashSet<>(
-            Arrays.asList(new String[] { "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            Arrays.asList(new String[] {"http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
                     "http://www.w3.org/XML/1998/namespace#lang", "http://www.w3.org/1999/02/22-rdf-syntax-ns#value" }));
 
     /**
@@ -46,7 +45,7 @@ public interface Literal extends AccessibleObject {
      * yet be accessed at creation time of this class.
      */
     public static final List<String> LITERAL_TYPES = Arrays
-            .asList(new String[] { "http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral",
+            .asList(new String[] {"http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral",
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML",
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" });
 
@@ -57,8 +56,6 @@ public interface Literal extends AccessibleObject {
     public static final Pattern SCHEME_TEST = Pattern.compile("[+\\-\\.0-9A-Za-z]+:[^ ]+");
 
     public static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
-
-
 
     /**
      * Compares this Literal against another object for equality.

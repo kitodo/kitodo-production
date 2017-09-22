@@ -12,13 +12,10 @@
 package org.kitodo.lugh;
 
 import java.nio.BufferOverflowException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
+import java.util.Map.Entry;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.*;
 
 /**
  * An anonymous linked data Node. The most nodes are anonymous. In Java, they
@@ -51,6 +48,13 @@ public interface Node extends AccessibleObject, NodeType {
     public Node add(ObjectType element);
 
     /**
+     * Provides the entrySet of this Node for iteration.
+     *
+     * @return the edges
+     */
+    public Set<Entry<String, Collection<ObjectType>>> entrySet();
+
+    /**
      * Compares two nodes for equality.
      *
      * @see java.lang.Object#equals(java.lang.Object)
@@ -69,15 +73,6 @@ public interface Node extends AccessibleObject, NodeType {
     public Result find(Node graphPath);
 
     /**
-     * Gets a literal referenced by relation.
-     *
-     * @param relation
-     *            relation to look up
-     * @return the value of the literal.
-     */
-    public Result get(NodeReference relation);
-
-    /**
      * Returns all nodes referenced by the given relations which have all the
      * data from the conditions nodes. {@code reference} may be empty meaning
      * <em>any relation</em>. {@code condition} may be empty meaning <em>any
@@ -91,6 +86,15 @@ public interface Node extends AccessibleObject, NodeType {
      *         conditions
      */
     public Result get(Collection<String> relations, Collection<ObjectType> conditions);
+
+    /**
+     * Gets a literal referenced by relation.
+     *
+     * @param relation
+     *            relation to look up
+     * @return the value of the literal.
+     */
+    public Result get(NodeReference relation);
 
     /**
      * Gets all elements referenced by a relation.
@@ -209,13 +213,25 @@ public interface Node extends AccessibleObject, NodeType {
     public Node put(String relation, String object);
 
     /**
+     * Removes all relations of the given kind and replaces them by relations to
+     * the set of objects provided.
+     *
+     * @param relation
+     *            relation to replace
+     * @param objects
+     *            new objects for this relation
+     * @return the objects previously related
+     */
+    public Collection<ObjectType> replace(String relation, Set<ObjectType> objects);
+
+    /**
      * Replaces all objects that are named nodes, but don’t have content, by
      * node references. A clean-up method for internal use.
      *
      * @param recursive
      *            if true, also invokes the function on all child nodes
      */
- //   void replaceAllNamedNodesWithNoDataByNodeReferences(boolean recursive);
+    // void replaceAllNamedNodesWithNoDataByNodeReferences(boolean recursive);
 
     /**
      * Creates a Jena model from this node.

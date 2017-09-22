@@ -23,5 +23,5 @@ package org.kitodo.lugh;
  *
  * @author Matthias Ronge
  */
-interface NodeType extends ObjectType {
+public interface NodeType extends ObjectType {
 }
