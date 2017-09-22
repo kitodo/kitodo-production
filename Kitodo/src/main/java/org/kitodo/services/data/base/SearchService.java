@@ -40,6 +40,7 @@ import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
+import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -51,7 +52,7 @@ import org.kitodo.dto.BaseDTO;
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO> {
+public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>> extends SearchDatabaseService<T,V> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);
     protected Searcher searcher;
@@ -63,17 +64,10 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @param searcher
      *            for executing queries
      */
-    public SearchService(Searcher searcher) {
+    public SearchService(V dao, Searcher searcher) {
+        super(dao);
         this.searcher = searcher;
     }
-
-    /**
-     * Method saves object to database.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
-    public abstract void saveToDatabase(T baseIndexedBean) throws DAOException;
 
     /**
      * Method saves document to the index of Elastic Search.
@@ -97,60 +91,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public abstract List<S> findAll(String sort, Integer offset, Integer size) throws DataException;
 
     /**
-     * Method necessary for get from database object by id. It is used in removeById
-     * method.
-     *
-     * @param id
-     *            of object
-     * @return object
-     */
-    public abstract T getById(Integer id) throws DAOException;
-
-    /**
-     * Get list of all objects from database.
-     * 
-     * @return list of all objects from database
-     */
-    public abstract List<T> getAll();
-
-    /**
-     * Get list of all objects from database in given range.
-     * 
-     * @param offset
-     *            result - important, numeration starts since 0
-     * @param size
-     *            amount of results
-     * @return list of all objects from database in given range
-     */
-    public abstract List<T> getAll(int offset, int size) throws DAOException;
-
-    /**
-     * Method necessary for conversion of JSON objects to exact bean objects called
-     * from database.
-     *
-     * @param query
-     *            as String
-     * @return list of exact bean objects
-     */
-    public abstract List<T> getByQuery(String query);
-
-    /**
-     * Count all rows in database.
-     *
-     * @return amount of all rows
-     */
-    public abstract Long countDatabaseRows() throws DAOException;
-
-    /**
-     * Count rows in database according to given query.
-     *
-     * @param query
-     *            for database search
-     * @return amount of rows in database according to given query
-     */
-    public abstract Long countDatabaseRows(String query) throws DAOException;
-
-    /**
      * Method converts JSON object object to DTO. Necessary for displaying in the
      * frontend.
      *
@@ -161,12 +101,32 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public abstract S convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException;
 
     /**
+     * Method removes document from the index of Elastic Search.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    public abstract void removeFromIndex(T baseIndexedBean) throws CustomResponseException, IOException;
+
+    /**
+     * Method saves object to database.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    public T saveToDatabase(T baseIndexedBean) throws DAOException {
+        return dao.save(baseIndexedBean);
+    }
+
+    /**
      * Method removes object from database.
      *
      * @param baseIndexedBean
      *            object
      */
-    public abstract void removeFromDatabase(T baseIndexedBean) throws DAOException;
+    public void removeFromDatabase(T baseIndexedBean) throws DAOException {
+        dao.remove(baseIndexedBean);
+    }
 
     /**
      * Method removes object from database.
@@ -174,15 +134,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @param id
      *            of object
      */
-    public abstract void removeFromDatabase(Integer id) throws DAOException;
-
-    /**
-     * Method removes document from the index of Elastic Search.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
-    public abstract void removeFromIndex(T baseIndexedBean) throws CustomResponseException, IOException;
+    public void removeFromDatabase(Integer id) throws DAOException {
+        dao.remove(id);
+    }
 
     /**
      * Method removes document from the index of Elastic Search.
@@ -204,7 +158,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     protected void manageDependenciesForIndex(T baseIndexedBean)
             throws CustomResponseException, DAOException, DataException, IOException {
-
     }
 
     /**
@@ -524,7 +477,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return bean object
      */
     protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject, String key,
-            SearchService<?, O> service) throws DataException {
+            SearchService<?, O, ?> service) throws DataException {
         List<O> listDTO = new ArrayList<>();
         for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
             listDTO.add(service.findById(id, true));
