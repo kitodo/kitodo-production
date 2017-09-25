@@ -531,19 +531,20 @@ public class UserService extends SearchService<User, UserDTO> {
     public UserDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(getIdFromJSONObject(jsonObject));
-        userDTO.setLogin(getStringPropertyForDTO(jsonObject, "login"));
-        userDTO.setName(getStringPropertyForDTO(jsonObject, "name"));
-        userDTO.setSurname(getStringPropertyForDTO(jsonObject, "surname"));
-        userDTO.setLdapLogin(getStringPropertyForDTO(jsonObject, "ldapLogin"));
-        userDTO.setLocation(getStringPropertyForDTO(jsonObject, "location"));
+        JSONObject userJSONObject = getSource(jsonObject);
+        userDTO.setLogin(getStringPropertyForDTO(userJSONObject, "login"));
+        userDTO.setName(getStringPropertyForDTO(userJSONObject, "name"));
+        userDTO.setSurname(getStringPropertyForDTO(userJSONObject, "surname"));
+        userDTO.setLdapLogin(getStringPropertyForDTO(userJSONObject, "ldapLogin"));
+        userDTO.setLocation(getStringPropertyForDTO(userJSONObject, "location"));
         userDTO.setFullName(getFullName(userDTO));
-        userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(jsonObject, "filters"));
-        userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(jsonObject, "projects"));
-        userDTO.setTasksSize(getSizeOfRelatedPropertyForDTO(jsonObject, "tasks"));
-        userDTO.setProcessingTasksSize(getSizeOfRelatedPropertyForDTO(jsonObject, "processingTasks"));
-        userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(jsonObject, "userGroups"));
+        userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "filters"));
+        userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "projects"));
+        userDTO.setTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "tasks"));
+        userDTO.setProcessingTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "processingTasks"));
+        userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "userGroups"));
         if (!related) {
-            userDTO = convertRelatedJSONObjects(jsonObject, userDTO);
+            userDTO = convertRelatedJSONObjects(userJSONObject, userDTO);
         }
         return userDTO;
     }

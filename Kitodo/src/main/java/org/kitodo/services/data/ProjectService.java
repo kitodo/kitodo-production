@@ -376,17 +376,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     public ProjectDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(getIdFromJSONObject(jsonObject));
-        projectDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
-        projectDTO.setStartDate(getStringPropertyForDTO(jsonObject, "startDate"));
-        projectDTO.setEndDate(getStringPropertyForDTO(jsonObject, "endDate"));
-        projectDTO.setFileFormatDmsExport(getStringPropertyForDTO(jsonObject, "fileFormatDmsExport"));
-        projectDTO.setFileFormatInternal(getStringPropertyForDTO(jsonObject, "fileFormatInternal"));
-        projectDTO.setNumberOfPages(getIntegerPropertyForDTO(jsonObject, "numberOfPages"));
-        projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(jsonObject, "numberOfVolumes"));
+        JSONObject projectJSONObject = getSource(jsonObject);
+        projectDTO.setTitle(getStringPropertyForDTO(projectJSONObject, "title"));
+        projectDTO.setStartDate(getStringPropertyForDTO(projectJSONObject, "startDate"));
+        projectDTO.setEndDate(getStringPropertyForDTO(projectJSONObject, "endDate"));
+        projectDTO.setFileFormatDmsExport(getStringPropertyForDTO(projectJSONObject, "fileFormatDmsExport"));
+        projectDTO.setFileFormatInternal(getStringPropertyForDTO(projectJSONObject, "fileFormatInternal"));
+        projectDTO.setNumberOfPages(getIntegerPropertyForDTO(projectJSONObject, "numberOfPages"));
+        projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(projectJSONObject, "numberOfVolumes"));
         // projectDTO.setProjectIsArchived(getStringPropertyForDTO(jsonObject,
         // "archived"));
         if (!related) {
-            projectDTO = convertRelatedJSONObjects(jsonObject, projectDTO);
+            projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }
         return projectDTO;
     }

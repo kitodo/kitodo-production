@@ -740,17 +740,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     public ProcessDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
-        processDTO.setTitle(getStringPropertyForDTO(jsonObject, "title"));
-        processDTO.setOutputName(getStringPropertyForDTO(jsonObject, "outputName"));
-        processDTO.setWikiField(getStringPropertyForDTO(jsonObject, "wikiField"));
-        processDTO.setCreationDate(getStringPropertyForDTO(jsonObject, "creationDate"));
-        processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(jsonObject, "properties"));
-        processDTO.setSortHelperArticles(getIntegerPropertyForDTO(jsonObject, "sortHelperArticles"));
-        processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(jsonObject, "sortHelperDocstructs"));
-        processDTO.setSortHelperImages(getIntegerPropertyForDTO(jsonObject, "sortHelperImages"));
-        processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(jsonObject, "sortHelperMetadata"));
+        JSONObject processJSONObject = getSource(jsonObject);
+        processDTO.setTitle(getStringPropertyForDTO(processJSONObject, "title"));
+        processDTO.setOutputName(getStringPropertyForDTO(processJSONObject, "outputName"));
+        processDTO.setWikiField(getStringPropertyForDTO(processJSONObject, "wikiField"));
+        processDTO.setCreationDate(getStringPropertyForDTO(processJSONObject, "creationDate"));
+        processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(processJSONObject, "properties"));
+        processDTO.setSortHelperArticles(getIntegerPropertyForDTO(processJSONObject, "sortHelperArticles"));
+        processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(processJSONObject, "sortHelperDocstructs"));
+        processDTO.setSortHelperImages(getIntegerPropertyForDTO(processJSONObject, "sortHelperImages"));
+        processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(processJSONObject, "sortHelperMetadata"));
         if (!related) {
-            processDTO = convertRelatedJSONObjects(jsonObject, processDTO);
+            processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         }
         return processDTO;
     }
