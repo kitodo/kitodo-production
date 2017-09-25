@@ -42,6 +42,7 @@ import org.junit.runner.Description;
 import org.kitodo.MockDatabase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -70,29 +71,31 @@ public class SimpleLoginST {
     private static final String MAIL_PASSWORD = "MAIL_PASSWORD";
     private static final String MAIL_RECIPIENT = "MAIL_RECIPIENT";
 
+    private static final String GECKO_DRIVER_VERSION = "0.19.0";
+
     @BeforeClass
     public static void setUp() throws Exception {
-        String userDir = System.getProperty("user.dir");
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.startDatabaseServer();
-        provideGeckoDriver("0.19.0", userDir + "/target/downloads/", userDir + "/target/extracts/");
 
+        String userDir = System.getProperty("user.dir");
+        provideGeckoDriver(GECKO_DRIVER_VERSION, userDir + "/target/downloads/", userDir + "/target/extracts/");
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
     }
-//
+
     @AfterClass
     public static void tearDown() throws Exception {
         driver.close();
         MockDatabase.stopDatabaseServer();
         MockDatabase.stopNode();
 
-        if (SystemUtils.IS_OS_WINDOWS){
-            try{
+        if (SystemUtils.IS_OS_WINDOWS) {
+            try {
                 Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 logger.error(ex.getMessage());
             }
         }
@@ -104,21 +107,19 @@ public class SimpleLoginST {
         @Override
         protected void failed(Throwable ex, Description description) {
             if ("true".equals(System.getenv().get("TRAVIS")) // make sure we are on travis-ci
-                    && (ex instanceof WebDriverException || ex instanceof NoSuchElementException)) {
+                    && (ex instanceof WebDriverException)) {
                 try {
                     File screenshot = captureScreenShot(driver);
                     Map<String, String> travisProperties = getTravisProperties();
 
-                    String emailSubject =
-                            String.format("%s - #%s: Test Failure: %s: %s",
-                                    travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
-                                    description.getClassName(), description.getMethodName());
+                    String emailSubject = String.format("%s - #%s: Test Failure: %s: %s",
+                            travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
+                            description.getClassName(), description.getMethodName());
 
-                    String emailMessage =
-                            String.format("Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
-                                    travisProperties.get(TRAVIS_BUILD_NUMBER),
-                                    travisProperties.get(TRAVIS_REPO_SLUG),
-                                    travisProperties.get(TRAVIS_BUILD_ID));
+                    String emailMessage = String.format(
+                            "Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
+                            travisProperties.get(TRAVIS_BUILD_NUMBER), travisProperties.get(TRAVIS_REPO_SLUG),
+                            travisProperties.get(TRAVIS_BUILD_ID));
 
                     String user = travisProperties.get(MAIL_USER);
                     String password = travisProperties.get(MAIL_PASSWORD);
@@ -145,17 +146,14 @@ public class SimpleLoginST {
         }
     };
 
-    //
     @Test
     public void seleniumTest() throws Exception {
 
         String appUrl = "http://localhost:8080/kitodo";
 
         driver.get(appUrl);
-
-        WebElement username = driver.findElement(By.id("login"));
         Thread.sleep(2000);
-        driver.manage().window().setSize(new Dimension(1280,1024));
+        driver.manage().window().setSize(new Dimension(1280, 1024));
 
         Thread.sleep(2000);
 
@@ -169,19 +167,14 @@ public class SimpleLoginST {
         password.sendKeys(userPassword);
         WebElement LoginButton = driver.findElement(By.linkText("Einloggen"));
 
-        //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
-//        Thread.sleep(200);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
+        Thread.sleep(200);
         LoginButton.click();
         Thread.sleep(500);
-
 
         WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
         VorgaengeButton.click();
         Thread.sleep(2000);
-
-
-        File screenshot = captureScreenShot(driver);
-        sendEmail(System.getenv().get(MAIL_USER),System.getenv().get(MAIL_PASSWORD),"test", "test message", screenshot);
 
         WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
         RulesetsButton.click();
@@ -189,8 +182,6 @@ public class SimpleLoginST {
 
         WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
         Assert.assertNotNull(LogoutButton);
-
-//        Thread.sleep(2000);
 
     }
 
@@ -212,7 +203,7 @@ public class SimpleLoginST {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName("smtp.gmail.com");
         email.setSmtpPort(465);
-        email.setAuthenticator(new DefaultAuthenticator(user,password));
+        email.setAuthenticator(new DefaultAuthenticator(user, password));
         email.setSSLOnConnect(true);
         email.setFrom("Travis CI Screenshot <kitodo.dev@gmail.com>");
         email.setSubject(subject);
