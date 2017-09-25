@@ -98,8 +98,9 @@ public class SimpleLoginST {
         MockDatabase.stopNode();
 
         if (SystemUtils.IS_OS_WINDOWS){
-            try {
-            try{Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");} catch (Exception ex){
+            try{
+                Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
+            } catch (Exception ex){
                 logger.error(ex.getMessage());
             }
         }
@@ -185,6 +186,9 @@ public class SimpleLoginST {
         WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
         VorgaengeButton.click();
         Thread.sleep(2000);
+
+        File screenshot = captureScreenShot(driver);
+        sendEmail("test", "test message", screenshot);
 
         WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
         RulesetsButton.click();
