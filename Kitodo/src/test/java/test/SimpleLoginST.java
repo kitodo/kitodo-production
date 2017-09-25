@@ -38,6 +38,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -63,6 +64,7 @@ public class SimpleLoginST {
     private static final String TRAVIS_BUILD_ID = "TRAVIS_BUILD_ID";
     private static final String MAIL_USER = "MAIL_USER";
     private static final String MAIL_PASSWORD = "MAIL_PASSWORD";
+    private static final String MAIL_RECIPIENT = "MAIL_RECIPIENT";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -74,19 +76,19 @@ public class SimpleLoginST {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-
     }
-//
+
+    //
     @AfterClass
     public static void tearDown() throws Exception {
         driver.close();
         MockDatabase.stopDatabaseServer();
         MockDatabase.stopNode();
 
-        if (SystemUtils.IS_OS_WINDOWS){
-            try{
+        if (SystemUtils.IS_OS_WINDOWS) {
+            try {
                 Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 logger.error(ex.getMessage());
             }
         }
@@ -97,27 +99,26 @@ public class SimpleLoginST {
 
         @Override
         protected void failed(Throwable ex, Description description) {
-            if ("true".equals(System.getenv().get("TRAVIS")) //make sure we are on travis-ci
+            if ("true".equals(System.getenv().get("TRAVIS")) // make sure we are on travis-ci
                     && (ex instanceof WebDriverException || ex instanceof NoSuchElementException)) {
                 try {
                     File screenshot = captureScreenShot(driver);
                     Map<String, String> travisProperties = getTravisProperties();
 
-                    String emailSubject =
-                            String.format("%s - #%s: Test Failure: %s: %s",
-                                    travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
-                                    description.getClassName(), description.getMethodName());
+                    String emailSubject = String.format("%s - #%s: Test Failure: %s: %s",
+                            travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
+                            description.getClassName(), description.getMethodName());
 
-                    String emailMessage =
-                            String.format("Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
-                                    travisProperties.get(TRAVIS_BUILD_NUMBER),
-                                    travisProperties.get(TRAVIS_REPO_SLUG),
-                                    travisProperties.get(TRAVIS_BUILD_ID));
+                    String emailMessage = String.format(
+                            "Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
+                            travisProperties.get(TRAVIS_BUILD_NUMBER), travisProperties.get(TRAVIS_REPO_SLUG),
+                            travisProperties.get(TRAVIS_BUILD_ID));
 
                     String user = travisProperties.get(MAIL_USER);
                     String password = travisProperties.get(MAIL_PASSWORD);
+                    String recipient = travisProperties.get(MAIL_RECIPIENT);
 
-                    sendEmail(user, password, emailSubject, emailMessage, screenshot);
+                    sendEmail(user, password, emailSubject, emailMessage, screenshot, recipient);
                 } catch (Exception mailException) {
                     logger.error("Unable to send screenshot", mailException);
                 }
@@ -133,19 +134,20 @@ public class SimpleLoginST {
             properties.put(TRAVIS_REPO_SLUG, System.getenv().get(TRAVIS_REPO_SLUG));
             properties.put(MAIL_USER, System.getenv().get(MAIL_USER));
             properties.put(MAIL_PASSWORD, System.getenv().get(MAIL_PASSWORD));
+            properties.put(MAIL_RECIPIENT, System.getenv().get(MAIL_RECIPIENT));
             return properties;
         }
     };
-//
+
+    //
     @Test
     public void seleniumTest() throws Exception {
 
         String appUrl = "http://localhost:8080/kitodo";
 
-        // launch the firefox browser and open the application url
         driver.get(appUrl);
         Thread.sleep(2000);
-        driver.manage().window().setSize(new Dimension(1280,1024));
+        driver.manage().window().setSize(new Dimension(1280, 1024));
 
         Thread.sleep(2000);
 
@@ -153,43 +155,36 @@ public class SimpleLoginST {
 
         username.clear();
         username.sendKeys(userName);
-//        Thread.sleep(2000);
 
         WebElement password = driver.findElement(By.id("passwort"));
         password.clear();
         password.sendKeys(userPassword);
-//        Thread.sleep(2000);
         WebElement LoginButton = driver.findElement(By.linkText("Einloggen"));
 
-        //((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
-//        Thread.sleep(2000);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
+        Thread.sleep(200);
         LoginButton.click();
-//        Thread.sleep(2000);
-
-        WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
-        VorgaengeButton.click();
-        Thread.sleep(2000);
-
-
-        File screenshot = captureScreenShot(driver);
-        sendEmail(System.getenv().get(MAIL_USER),System.getenv().get(MAIL_PASSWORD),"test", "test message", screenshot);
-
-        WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
-        RulesetsButton.click();
         Thread.sleep(500);
 
-        WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
-        Assert.assertNotNull(LogoutButton);
 
+//        WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
+//        VorgaengeButton.click();
 //        Thread.sleep(2000);
+//
+//        WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
+//        RulesetsButton.click();
+//        Thread.sleep(500);
+
+//        WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
+//        Assert.assertNotNull(LogoutButton);
 
     }
 
-    public void sendEmail(String user, String password, String subject, String message, File attachedFile) throws EmailException, AddressException {
+    public void sendEmail(String user, String password, String subject, String message, File attachedFile,
+            String recipient) throws EmailException, AddressException {
 
-        InternetAddress address = new InternetAddress("Tim.Boerner@slub-dresden.de");
-        //String pw = "kitodo@selenium";
-        //"kitodo.dev@gmail.com"
+        InternetAddress address = new InternetAddress(recipient);
+
         ArrayList<InternetAddress> addressList = new ArrayList<>();
         addressList.add(address);
 
@@ -203,7 +198,7 @@ public class SimpleLoginST {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName("smtp.gmail.com");
         email.setSmtpPort(465);
-        email.setAuthenticator(new DefaultAuthenticator(user,password));
+        email.setAuthenticator(new DefaultAuthenticator(user, password));
         email.setSSLOnConnect(true);
         email.setFrom("Travis CI Screenshot <kitodo.dev@gmail.com>");
         email.setSubject(subject);
@@ -214,22 +209,17 @@ public class SimpleLoginST {
         email.send();
     }
 
-    public static File captureScreenShot(WebDriver driver){
+    public static File captureScreenShot(WebDriver driver) {
 
-        File src= ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-        File screenshotFile = new File(System.getProperty("user.dir")+"/target/Selenium/"+"screen.png");
+        File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        File screenshotFile = new File(System.getProperty("user.dir") + "/target/Selenium/" + "screen.png");
         try {
             FileUtils.copyFile(src, screenshotFile);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
-
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
-
         return screenshotFile;
     }
-
 
     private static void setExecutePermission(File file) throws IOException {
         Set<PosixFilePermission> perms = new HashSet<>();
@@ -281,7 +271,7 @@ public class SimpleLoginST {
                 }
             }
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
@@ -304,19 +294,19 @@ public class SimpleLoginST {
                     : new TarInputStream(new BufferedInputStream(fileInputStream, BUFFER_SIZE));
             unTar(tarArchiveInputStream, outputDir);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         } finally {
             if (tarArchiveInputStream != null) {
                 try {
                     tarArchiveInputStream.close();
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
+                    logger.error(e.getMessage());
                 }
             } else if (fileInputStream != null) {
                 try {
                     fileInputStream.close();
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
+                    logger.error(e.getMessage());
                 }
             }
         }

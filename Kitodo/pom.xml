@@ -273,23 +273,7 @@
             <version>1.8.6</version>
         </dependency>
 
-        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java-->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <version>3.5.3</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
         <dependency>
@@ -589,11 +573,28 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>3.5.3</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.193</version>
-            <!--<scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -644,14 +645,6 @@
                 <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
                 <directory>../config-local</directory>
             </resource>
-            <!--TODO Check if this resource is really necessary!-->
-            <!--<resource>-->
-            <!--<directory>src/main/java</directory>-->
-            <!--<includes>-->
-            <!--<include>**/*.xml</include>-->
-            <!--<include>**/*.properties</include>-->
-            <!--</includes>-->
-            <!--</resource>-->
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
@@ -718,6 +711,13 @@
             <properties>
                 <build.resources.path>src/test/resources/selenium/resources</build.resources.path>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>1.4.193</version>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -820,7 +820,6 @@
                                 <phase>integration-test</phase>
                                 <goals>
                                     <goal>integration-test</goal>
-                                    <goal>verify</goal>
                                 </goals>
                             </execution>
                         </executions>
