@@ -34,6 +34,7 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.xmlrpc.webserver.ServletWebServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -85,7 +86,6 @@ public class SimpleLoginST {
         MockDatabase.startDatabaseServer();
         provideGeckoDriver("0.19.0", userDir + "/target/downloads/", userDir + "/target/extracts/");
 
-
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
@@ -97,10 +97,9 @@ public class SimpleLoginST {
         MockDatabase.stopDatabaseServer();
         MockDatabase.stopNode();
 
-        if (SystemUtils.IS_OS_WINDOWS) {
+        if (SystemUtils.IS_OS_WINDOWS){
             try {
-                Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
-            } catch (Exception ex) {
+            try{Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");} catch (Exception ex){
                 logger.error(ex.getMessage());
             }
         }
@@ -117,14 +116,16 @@ public class SimpleLoginST {
                     File screenshot = captureScreenShot(driver);
                     Map<String, String> travisProperties = getTravisProperties();
 
-                    String emailSubject = String.format("%s - #%s: Test Failure: %s: %s",
-                            travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
-                            description.getClassName(), description.getMethodName());
+                    String emailSubject =
+                            String.format("%s - #%s: Test Failure: %s:%s",
+                                    travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
+                                    description.getClassName(), description.getMethodName());
 
-                    String emailMessage = String.format(
-                            "Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
-                            travisProperties.get(TRAVIS_BUILD_NUMBER), travisProperties.get(TRAVIS_REPO_SLUG),
-                            travisProperties.get(TRAVIS_BUILD_ID));
+                    String emailMessage =
+                            String.format("Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
+                                    travisProperties.get(TRAVIS_BUILD_NUMBER),
+                                    travisProperties.get(TRAVIS_REPO_SLUG),
+                                    travisProperties.get(TRAVIS_BUILD_ID));
 
                     String user = travisProperties.get(MAIL_USER);
                     String password = travisProperties.get(MAIL_PASSWORD);
@@ -176,7 +177,7 @@ public class SimpleLoginST {
         WebElement LoginButton = driver.findElement(By.linkText("Einloggen"));
 
         //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
-        Thread.sleep(200);
+//        Thread.sleep(200);
         LoginButton.click();
         Thread.sleep(500);
 
@@ -192,7 +193,7 @@ public class SimpleLoginST {
         WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
         Assert.assertNotNull(LogoutButton);
 
-        Thread.sleep(2000);
+//        Thread.sleep(2000);
 
     }
 
