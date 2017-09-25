@@ -90,26 +90,26 @@ public class StatisticsRenderingElement implements Serializable {
     /**
      * generate chart at defined folder of datatable.
      */
-    private void createChart(Boolean inShowAverage) {
+    private void createChart(Boolean showAverage) {
         imageUrl = System.currentTimeMillis() + ".png";
 
         IRenderer renderer = null;
         if (dataTable.isShowableInPieChart()) {
             renderer = new PieChartRenderer();
         } else {
-            ChartRenderer crenderer = new ChartRenderer();
-            crenderer.setShowMeanValues(inShowAverage);
-            renderer = crenderer;
+            ChartRenderer chartRenderer = new ChartRenderer();
+            chartRenderer.setShowMeanValues(showAverage);
+            renderer = chartRenderer;
         }
         if (myQuestion.isRendererInverted(renderer)) {
             renderer.setDataTable(dataTable.getDataTableInverted());
         } else {
             renderer.setDataTable(dataTable);
         }
-        File outputfile = new File(localImagePath + imageUrl);
+        File outputFile = new File(localImagePath.getPath() + "/" + imageUrl);
         BufferedImage image = (BufferedImage) renderer.getRendering();
         try {
-            ImageIO.write(image, "png", outputfile);
+            ImageIO.write(image, "png", outputFile);
         } catch (IOException e) {
             logger.error(e);
         }
