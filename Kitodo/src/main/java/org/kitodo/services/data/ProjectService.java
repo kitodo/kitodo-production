@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.ProjectHelper;
 
@@ -52,7 +50,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class ProjectService extends TitleSearchService<Project, ProjectDTO, ProjectDAO> {
 
     private List<StepInformation> commonWorkFlow = null;
-    private ProjectType projectType = new ProjectType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ProjectService.class);
 
@@ -60,23 +57,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * Constructor with Searcher and Indexer assigning.
      */
     public ProjectService() {
-        super(new ProjectDAO(), new Searcher(Project.class));
-        this.indexer = new Indexer<>(Project.class);
-    }
-
-    /**
-     * Method saves project document to the index of Elastic Search.
-     *
-     * @param project
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Project project) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (project != null) {
-            indexer.performSingleRequest(project, projectType);
-        }
+        super(new ProjectDAO(), new ProjectType(), new Indexer<>(Project.class), new Searcher(Project.class));
     }
 
     /**
@@ -130,28 +111,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public List<ProjectDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM Project");
-    }
-
-    /**
-     * Method removes project object from index of Elastic Search.
-     *
-     * @param project
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Project project) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (project != null) {
-            indexer.performSingleRequest(project, projectType);
-        }
     }
 
     /**
@@ -305,15 +266,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      */
     public List<Project> getAllNotArchivedProjectsSortedByTitle() {
         return dao.getAllNotArchivedProjectsSortedByTitle();
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), projectType);
     }
 
     @Override

@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +38,6 @@ import org.kitodo.services.data.base.SearchService;
 
 public class TemplateService extends SearchService<Template, TemplateDTO, TemplateDAO> {
 
-    private TemplateType templateType = new TemplateType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
 
@@ -48,23 +45,7 @@ public class TemplateService extends SearchService<Template, TemplateDTO, Templa
      * Constructor with Searcher and Indexer assigning.
      */
     public TemplateService() {
-        super(new TemplateDAO(), new Searcher(Template.class));
-        this.indexer = new Indexer<>(Template.class);
-    }
-
-    /**
-     * Method saves template document to the index of Elastic Search.
-     *
-     * @param template
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Template template) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (template != null) {
-            indexer.performSingleRequest(template, templateType);
-        }
+        super(new TemplateDAO(), new TemplateType(), new Indexer<>(Template.class), new Searcher(Template.class));
     }
 
     /**
@@ -103,28 +84,8 @@ public class TemplateService extends SearchService<Template, TemplateDTO, Templa
     }
 
     @Override
-    public List<TemplateDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM Template");
-    }
-
-    /**
-     * Method removes template object from index of Elastic Search.
-     *
-     * @param template
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Template template) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (template != null) {
-            indexer.performSingleRequest(template, templateType);
-        }
     }
 
     /**
@@ -195,15 +156,6 @@ public class TemplateService extends SearchService<Template, TemplateDTO, Templa
             propertyIds.add(getIdFromJSONObject(property));
         }
         return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), templateType);
     }
 
     @Override

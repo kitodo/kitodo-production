@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
@@ -68,7 +66,6 @@ import ugh.exceptions.WriteException;
 
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
-    private TaskType taskType = new TaskType();
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
@@ -76,23 +73,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public TaskService() {
-        super(new TaskDAO(), new Searcher(Task.class));
-        this.indexer = new Indexer<>(Task.class);
-    }
-
-    /**
-     * Method saves task document to the index of Elastic Search.
-     *
-     * @param task
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Task task) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (task != null) {
-            indexer.performSingleRequest(task, taskType);
-        }
+        super(new TaskDAO(), new TaskType(), new Indexer<>(Task.class), new Searcher(Task.class));
     }
 
     /**
@@ -162,11 +143,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    @Override
-    public List<TaskDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
     /**
      * Find the distinct task titles.
      * 
@@ -174,21 +150,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<String> findTaskTitlesDistinct() throws DataException {
         return findDistinctValues(null, "title.keyword", true);
-    }
-
-    /**
-     * Method removes task object from index of Elastic Search.
-     *
-     * @param task
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Task task) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (task != null) {
-            indexer.performSingleRequest(task, taskType);
-        }
     }
 
     @Override
@@ -357,15 +318,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(createSimpleQuery("priority", priority, true));
         query.must(createSimpleQuery("typeAutomatic", String.valueOf(typeAutomatic), true));
         return searcher.findDocuments(query.toString(), sort);
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), taskType);
     }
 
     @Override

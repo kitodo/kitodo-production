@@ -120,7 +120,6 @@ import ugh.fileformats.mets.XStream;
 
 public class ProcessService extends TitleSearchService<Process, ProcessDTO, ProcessDAO> {
 
-    private ProcessType processType = new ProcessType();
     private final MetadatenSperrung msp = new MetadatenSperrung();
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
@@ -134,28 +133,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * Constructor with Searcher and Indexer assigning.
      */
     public ProcessService() {
-        super(new ProcessDAO(), new Searcher(Process.class));
-        this.indexer = new Indexer<>(Process.class);
+        super(new ProcessDAO(), new ProcessType(), new Indexer<>(Process.class), new Searcher(Process.class));
     }
 
     @Override
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    /**
-     * Method saves process document to the index of Elastic Search.
-     *
-     * @param process
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Process process) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (process != null) {
-            indexer.performSingleRequest(process, processType);
-        }
     }
 
     /**
@@ -339,21 +322,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void saveList(List<Process> list) throws DAOException {
         dao.saveList(list);
-    }
-
-    /**
-     * Method removes process object from index of Elastic Search.
-     *
-     * @param process
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Process process) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (process != null) {
-            indexer.performSingleRequest(process, processType);
-        }
     }
 
     @Override
@@ -666,15 +634,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             processes.add(convertDtoToBean(processDTO));
         }
         return processes;
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), processType);
     }
 
     @Override

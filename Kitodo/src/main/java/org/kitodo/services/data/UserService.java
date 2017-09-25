@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.ldap.Ldap;
 
@@ -58,7 +56,6 @@ import org.kitodo.services.data.base.SearchService;
 
 public class UserService extends SearchService<User, UserDTO, UserDAO> {
 
-    private UserType userType = new UserType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserService.class);
 
@@ -66,23 +63,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public UserService() {
-        super(new UserDAO(), new Searcher(User.class));
-        this.indexer = new Indexer<>(User.class);
-    }
-
-    /**
-     * Method saves user document to the index of Elastic Search.
-     *
-     * @param user
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(User user) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (user != null) {
-            indexer.performSingleRequest(user, userType);
-        }
+        super(new UserDAO(), new UserType(), new Indexer<>(User.class), new Searcher(User.class));
     }
 
     /**
@@ -184,27 +165,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
             }
         }
     }
-
-    @Override
-    public List<UserDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    /**
-     * Method removes user object from index of Elastic Search.
-     *
-     * @param user
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(User user) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (user != null) {
-            indexer.performSingleRequest(user, userType);
-        }
-    }
-
 
     public List<User> getByQuery(String query, String parameter) throws DAOException {
         return dao.search(query, parameter);
@@ -477,15 +437,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
         return dao.getAllActiveUsersSortedByNameAndSurname();
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), userType);
     }
 
     @Override

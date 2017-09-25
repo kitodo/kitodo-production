@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO, UserGroupDAO> {
 
-    private UserGroupType userGroupType = new UserGroupType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserGroupService.class);
 
@@ -48,44 +45,41 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * Constructor with Searcher and Indexer assigning.
      */
     public UserGroupService() {
-        super(new UserGroupDAO(), new Searcher(UserGroup.class));
+        super(new UserGroupDAO(), new UserGroupType(), new Indexer<>(UserGroup.class), new Searcher(UserGroup.class));
         this.indexer = new Indexer<>(UserGroup.class);
-    }
-
-    @Override
-    public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), true);
     }
 
     /**
      * Get all user groups from index and covert results to format accepted by
-     * frontend.
+     * frontend. Right now there is no usage which demands all relations.
      *
      * @return list of UserGroupDTO objects
      */
+    @Override
     public List<UserGroupDTO> findAll() throws DataException {
-        List<JSONObject> jsonObjects = findAllDocuments();
-        return convertJSONObjectsToDTOs(jsonObjects, true);
+        return findAll(true);
+    }
+
+    /**
+     * Get all user groups from index and covert results to format accepted by
+     * frontend. Right now there is no usage which demands all relations.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @return list of UserGroupDTO objects
+     */
+    @Override
+    public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return findAll(sort, offset, size, true);
     }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM UserGroup");
-    }
-
-    /**
-     * Method saves workpiece document to the index of Elastic Search.
-     *
-     * @param userGroup
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(UserGroup userGroup) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (userGroup != null) {
-            indexer.performSingleRequest(userGroup, userGroupType);
-        }
     }
 
     /**
@@ -141,21 +135,6 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Method removes user group object from index of Elastic Search.
-     *
-     * @param userGroup
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(UserGroup userGroup) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (userGroup != null) {
-            indexer.performSingleRequest(userGroup, userGroupType);
-        }
-    }
-
-    /**
      * Refresh user's group object after update.
      *
      * @param userGroup
@@ -199,15 +178,6 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     List<JSONObject> findByUserLogin(String login) throws DataException {
         JSONObject user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(getIdFromJSONObject(user));
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), userGroupType);
     }
 
     @Override
