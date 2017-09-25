@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.config.ConfigCore;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class IndexWorker implements Runnable {
     @SuppressWarnings("unchecked")
     public void run() {
         this.indexedObjects = 0;
-        int offset = 10000;
+        int offset = ConfigCore.getIntParameter("elasticsearch.batch", 1000);
         int amountToIndex;
         try {
             amountToIndex = searchService.countDatabaseRows().intValue();
