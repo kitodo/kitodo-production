@@ -539,12 +539,8 @@ public class MockDatabase {
         secondTask.getUsers().add(blockedUser);
         secondTask.getUsers().add(secondUser);
         secondTask.getUserGroups().add(userGroup);
-        secondTask.setScriptName1("scriptName");
+        secondTask.setScriptName("scriptName");
         secondTask.setTypeAutomaticScriptPath("../type/automatic/script/path");
-        secondTask.setScriptName2("secondScriptName");
-        secondTask.setTypeAutomaticScriptPath2("../type/automatic/script/path2");
-        secondTask.setScriptName3("thirdScriptName");
-        secondTask.setTypeAutomaticScriptPath3("../type/automatic/script/path3");
         serviceManager.getTaskService().save(secondTask);
 
         Task thirdTask = new Task();

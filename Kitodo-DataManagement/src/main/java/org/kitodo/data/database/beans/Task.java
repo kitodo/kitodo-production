@@ -95,35 +95,11 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeScriptStep")
     private Boolean typeScriptStep = false;
 
-    @Column(name = "scriptName1")
-    private String scriptName1;
+    @Column(name = "scriptName")
+    private String scriptName;
 
     @Column(name = "typeAutomaticScriptPath")
     private String typeAutomaticScriptPath;
-
-    @Column(name = "scriptName2")
-    private String scriptName2;
-
-    @Column(name = "typeAutomaticScriptPath2")
-    private String typeAutomaticScriptPath2;
-
-    @Column(name = "scriptName3")
-    private String scriptName3;
-
-    @Column(name = "typeAutomaticScriptPath3")
-    private String typeAutomaticScriptPath3;
-
-    @Column(name = "scriptName4")
-    private String scriptName4;
-
-    @Column(name = "typeAutomaticScriptPath4")
-    private String typeAutomaticScriptPath4;
-
-    @Column(name = "scriptName5")
-    private String scriptName5;
-
-    @Column(name = "typeAutomaticScriptPath5")
-    private String typeAutomaticScriptPath5;
 
     @Column(name = "typeModuleName")
     private String typeModuleName;
@@ -479,12 +455,12 @@ public class Task extends BaseIndexedBean {
         this.typeScriptStep = typeScriptStep;
     }
 
-    public String getScriptName1() {
-        return this.scriptName1;
+    public String getScriptName() {
+        return this.scriptName;
     }
 
-    public void setScriptName1(String scriptName1) {
-        this.scriptName1 = scriptName1;
+    public void setScriptName(String scriptName) {
+        this.scriptName = scriptName;
     }
 
     public String getTypeAutomaticScriptPath() {
@@ -493,70 +469,6 @@ public class Task extends BaseIndexedBean {
 
     public void setTypeAutomaticScriptPath(String typeAutomaticScriptPath) {
         this.typeAutomaticScriptPath = typeAutomaticScriptPath;
-    }
-
-    public String getScriptName2() {
-        return this.scriptName2;
-    }
-
-    public void setScriptName2(String scriptName2) {
-        this.scriptName2 = scriptName2;
-    }
-
-    public String getTypeAutomaticScriptPath2() {
-        return this.typeAutomaticScriptPath2;
-    }
-
-    public void setTypeAutomaticScriptPath2(String typeAutomaticScriptPath2) {
-        this.typeAutomaticScriptPath2 = typeAutomaticScriptPath2;
-    }
-
-    public String getScriptName3() {
-        return this.scriptName3;
-    }
-
-    public void setScriptName3(String scriptName3) {
-        this.scriptName3 = scriptName3;
-    }
-
-    public String getTypeAutomaticScriptPath3() {
-        return this.typeAutomaticScriptPath3;
-    }
-
-    public void setTypeAutomaticScriptPath3(String typeAutomaticScriptPath3) {
-        this.typeAutomaticScriptPath3 = typeAutomaticScriptPath3;
-    }
-
-    public String getScriptName4() {
-        return this.scriptName4;
-    }
-
-    public void setScriptName4(String scriptName4) {
-        this.scriptName4 = scriptName4;
-    }
-
-    public String getTypeAutomaticScriptPath4() {
-        return this.typeAutomaticScriptPath4;
-    }
-
-    public void setTypeAutomaticScriptPath4(String typeAutomaticScriptPath4) {
-        this.typeAutomaticScriptPath4 = typeAutomaticScriptPath4;
-    }
-
-    public String getScriptName5() {
-        return this.scriptName5;
-    }
-
-    public void setScriptName5(String scriptName5) {
-        this.scriptName5 = scriptName5;
-    }
-
-    public String getTypeAutomaticScriptPath5() {
-        return this.typeAutomaticScriptPath5;
-    }
-
-    public void setTypeAutomaticScriptPath5(String typeAutomaticScriptPath5) {
-        this.typeAutomaticScriptPath5 = typeAutomaticScriptPath5;
     }
 
     public Boolean getBatchStep() {
@@ -647,20 +559,8 @@ public class Task extends BaseIndexedBean {
      */
     public String getListOfPaths() {
         String answer = "";
-        if (!StringUtils.isBlank(this.scriptName1)) {
-            answer += this.scriptName1;
-        }
-        if (!StringUtils.isBlank(this.scriptName2)) {
-            answer = answer + "; " + this.scriptName2;
-        }
-        if (!StringUtils.isBlank(this.scriptName3)) {
-            answer = answer + "; " + this.scriptName3;
-        }
-        if (!StringUtils.isBlank(this.scriptName4)) {
-            answer = answer + "; " + this.scriptName4;
-        }
-        if (!StringUtils.isBlank(this.scriptName5)) {
-            answer = answer + "; " + this.scriptName5;
+        if (!StringUtils.isBlank(this.scriptName)) {
+            answer += this.scriptName;
         }
         return answer;
 

@@ -31,15 +31,15 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
     /**
      * Constructor.
      *
-     * @param s
+     * @param task
      *            task
      */
-    public BatchDisplayItem(Task s) {
-        this.stepTitle = s.getTitle();
-        this.stepOrder = s.getOrdering();
-        this.stepStatus = s.getProcessingStatusEnum();
-        this.scripts.putAll(serviceManager.getTaskService().getAllScripts(s));
-        this.exportDMS = s.isTypeExportDMS();
+    public BatchDisplayItem(Task task) {
+        this.stepTitle = task.getTitle();
+        this.stepOrder = task.getOrdering();
+        this.stepStatus = task.getProcessingStatusEnum();
+        this.scripts.putAll(serviceManager.getTaskService().getScript(task));
+        this.exportDMS = task.isTypeExportDMS();
     }
 
     public String getStepTitle() {

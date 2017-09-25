@@ -105,22 +105,10 @@ public class BeanHelper {
         List<Task> myTasks = new ArrayList<>();
         for (Task task : processTemplate.getTasks()) {
 
-            /*
-             * Details des Schritts
-             */
             Task taskNew = new Task();
             taskNew.setTypeAutomatic(task.isTypeAutomatic());
-            taskNew.setScriptName1(task.getScriptName1());
-            taskNew.setScriptName2(task.getScriptName2());
-            taskNew.setScriptName3(task.getScriptName3());
-            taskNew.setScriptName4(task.getScriptName4());
-            taskNew.setScriptName5(task.getScriptName5());
-
+            taskNew.setScriptName(task.getScriptName());
             taskNew.setTypeAutomaticScriptPath(task.getTypeAutomaticScriptPath());
-            taskNew.setTypeAutomaticScriptPath2(task.getTypeAutomaticScriptPath2());
-            taskNew.setTypeAutomaticScriptPath3(task.getTypeAutomaticScriptPath3());
-            taskNew.setTypeAutomaticScriptPath4(task.getTypeAutomaticScriptPath4());
-            taskNew.setTypeAutomaticScriptPath5(task.getTypeAutomaticScriptPath5());
             taskNew.setBatchStep(task.isBatchStep());
             taskNew.setTypeScriptStep(task.getTypeScriptStep());
             taskNew.setTypeAcceptClose(task.isTypeAcceptClose());
@@ -147,16 +135,16 @@ public class BeanHelper {
             /*
              * Benutzer übernehmen
              */
-            List<User> myUsers = new ArrayList<>();
-            myUsers.addAll(task.getUsers());
-            taskNew.setUsers(myUsers);
+            List<User> users = new ArrayList<>();
+            users.addAll(task.getUsers());
+            taskNew.setUsers(users);
 
             /*
              * Benutzergruppen übernehmen
              */
-            List<UserGroup> myUserGroups = new ArrayList<>();
-            myUserGroups.addAll(task.getUserGroups());
-            taskNew.setUserGroups(myUserGroups);
+            List<UserGroup> userGroups = new ArrayList<>();
+            userGroups.addAll(task.getUserGroups());
+            taskNew.setUserGroups(userGroups);
 
             /* Schritt speichern */
             myTasks.add(taskNew);
