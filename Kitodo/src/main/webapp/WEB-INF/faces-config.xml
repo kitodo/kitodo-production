@@ -22,6 +22,10 @@
             <supported-locale>de</supported-locale>
             <supported-locale>en</supported-locale>
         </locale-config>
+        <resource-bundle>
+            <base-name>messages.messages</base-name>
+            <var>msgs</var>
+        </resource-bundle>
     </application>
 
     <!-- RuleSet Converter for Select-Boxes -->
