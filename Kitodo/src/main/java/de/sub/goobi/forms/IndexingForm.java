@@ -117,9 +117,18 @@ public class IndexingForm {
         MAPPING_SUCCESS,
     }
 
+    private enum indexingStates {
+        NO_STATE,
+        INDEXING_STARTED,
+        INDEXING_SUCCESSFUL,
+        INDEXING_FAILED,
+    }
+
     private indexStates currentState = indexStates.NO_STATE;
 
     private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
+
+    private Map<ObjectType, indexingStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
 
     private LocalDateTime indexingStartedTime;
 
@@ -182,6 +191,10 @@ public class IndexingForm {
             indexedFilter = toIntExact(serviceManager.getFilterService().count());
         } catch (DataException e) {
             logger.error(e.getMessage());
+        }
+
+        for (ObjectType objectType : ObjectType.values()) {
+            objectIndexingStates.put(objectType, indexingStates.NO_STATE);
         }
 
         indexRestClient.initiateClient();
@@ -687,6 +700,7 @@ public class IndexingForm {
                 if (Objects.equals(currentIndexState, ObjectType.NONE)) {
                     indexingStartedTime = LocalDateTime.now();
                     currentIndexState = type;
+                    objectIndexingStates.put(type, indexingStates.INDEXING_STARTED);
                     pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
                     indexerThread = new Thread((worker));
                     indexerThread.setDaemon(true);
@@ -895,6 +909,11 @@ public class IndexingForm {
             if (numberOfObjects == 0 || progress == 100) {
                 lastIndexed.put(currentIndexState, LocalDateTime.now());
                 currentIndexState = ObjectType.NONE;
+                if (numberOfObjects == 0) {
+                    objectIndexingStates.put(currentType, indexingStates.NO_STATE);
+                } else {
+                    objectIndexingStates.put(currentType, indexingStates.INDEXING_SUCCESSFUL);
+                }
                 indexerThread.interrupt();
                 pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
             }
@@ -953,6 +972,63 @@ public class IndexingForm {
      */
     public indexStates getIndexState() {
         return currentState;
+    }
+
+    /**
+     *
+     * @param objectType
+     *
+     * @return indexing state of the given object type
+     */
+    public indexingStates getObjectIndexState(ObjectType objectType) {
+        return objectIndexingStates.get(objectType);
+    }
+
+    /**
+     * Return static variable representing the 'indexing failed' state.
+     *
+     * @return 'indexing failed' state variable
+     */
+    public indexingStates getIndexingFailedState() {
+        return indexingStates.INDEXING_FAILED;
+    }
+
+    /**
+     * Return static variable representing the 'indexing successful' state.
+     *
+     * @return 'indexing successful' state variable
+     */
+    public indexingStates getIndexingSuccessfulState() {
+        return indexingStates.INDEXING_SUCCESSFUL;
+    }
+
+    /**
+     * Return static variable representing the 'indexing started' state.
+     *
+     * @return 'indexing started' state variable
+     */
+    public indexingStates getIndexingStartedState() {
+        return indexingStates.INDEXING_STARTED;
+    }
+
+    /**
+     * Return static variable representing the global state. - return 'indexing
+     * failed' state if any object type is in 'indexing failed' state - return 'no
+     * state' if any object type is in 'no state' state - return 'indexing
+     * successful' state if all object types are in 'indexing successful' state
+     *
+     * @return static variable for global indexing state
+     */
+    public indexingStates getAllObjectsIndexingState() {
+        for (ObjectType objectType : ObjectType.values()) {
+            if (Objects.equals(objectIndexingStates.get(objectType), indexingStates.INDEXING_FAILED)) {
+                return indexingStates.INDEXING_FAILED;
+            }
+            if (Objects.equals(objectIndexingStates.get(objectType), indexingStates.NO_STATE)) {
+                return indexingStates.NO_STATE;
+            }
+        }
+        return indexingStates.INDEXING_SUCCESSFUL;
     }
 
 }
