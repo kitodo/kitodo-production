@@ -41,9 +41,8 @@ import org.kitodo.dto.BatchDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class BatchService extends TitleSearchService<Batch, BatchDTO> {
+public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
 
-    private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BatchService.class);
@@ -52,19 +51,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public BatchService() {
-        super(new Searcher(Batch.class));
+        super(new BatchDAO(), new Searcher(Batch.class));
         this.indexer = new Indexer<>(Batch.class);
-    }
-
-    /**
-     * Method saves batch object to database.
-     *
-     * @param batch
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Batch batch) throws DAOException {
-        batchDAO.save(batch);
     }
 
     /**
@@ -108,59 +96,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     }
 
     @Override
-    public Batch getById(Integer id) throws DAOException {
-        return batchDAO.find(id);
-    }
-
-    @Override
-    public List<Batch> getAll() {
-        return batchDAO.findAll();
-    }
-
-    @Override
-    public List<Batch> getAll(int offset, int size) throws DAOException {
-        return batchDAO.getAll(offset, size);
-    }
-
-    /**
-     * Search Batch objects by given query.
-     *
-     * @param query
-     *            as String
-     * @return list of Batch objects
-     */
-    public List<Batch> getByQuery(String query) {
-        return batchDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return batchDAO.count("FROM Batch");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return batchDAO.count(query);
-    }
-
-    /**
-     * Method removes batch object from database.
-     *
-     * @param batch
-     *            object
-     */
-    public void removeFromDatabase(Batch batch) throws DAOException {
-        batchDAO.remove(batch);
-    }
-
-    /**
-     * Method removes batch object from database.
-     *
-     * @param id
-     *            of batch object
-     */
-    public void removeFromDatabase(Integer id) throws DAOException {
-        batchDAO.remove(id);
+        return countDatabaseRows("FROM Batch");
     }
 
     /**
@@ -178,7 +115,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO> {
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {
-        batchDAO.removeAll(ids);
+        dao.removeAll(ids);
     }
 
     /**

@@ -965,7 +965,7 @@ public class BatchStepHelper {
             if (!error) {
                 this.myDav.uploadFromHome(s.getProcess());
                 TaskDAO taskDAO = new TaskDAO();
-                Task task = taskDAO.find(s.getId());
+                Task task = taskDAO.getById(s.getId());
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 serviceManager.getTaskService().close(s, true);
             }

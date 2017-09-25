@@ -52,9 +52,8 @@ import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class UserService extends SearchService<User, UserDTO> {
+public class UserService extends SearchService<User, UserDTO, UserDAO> {
 
-    private UserDAO userDAO = new UserDAO();
     private UserType userType = new UserType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserService.class);
@@ -63,19 +62,8 @@ public class UserService extends SearchService<User, UserDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public UserService() {
-        super(new Searcher(User.class));
+        super(new UserDAO(), new Searcher(User.class));
         this.indexer = new Indexer<>(User.class);
-    }
-
-    /**
-     * Method saves user object to database.
-     *
-     * @param user
-     *            object
-     */
-    @Override
-    public void saveToDatabase(User user) throws DAOException {
-        userDAO.save(user);
     }
 
     /**
@@ -198,48 +186,6 @@ public class UserService extends SearchService<User, UserDTO> {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
-    @Override
-    public User getById(Integer id) throws DAOException {
-        return userDAO.find(id);
-    }
-
-    /**
-     * Get al. users.
-     *
-     * @return A List of all users
-     */
-    @Override
-    public List<User> getAll() {
-        return userDAO.findAll();
-    }
-
-    @Override
-    public List<User> getAll(int offset, int size) throws DAOException {
-        return userDAO.getAll(offset, size);
-    }
-
-    /**
-     * Method removes user object from database.
-     *
-     * @param user
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(User user) throws DAOException {
-        userDAO.remove(user);
-    }
-
-    /**
-     * Method removes user object from database.
-     *
-     * @param id
-     *            of template object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        userDAO.remove(id);
-    }
-
     /**
      * Method removes user object from index of Elastic Search.
      *
@@ -255,27 +201,18 @@ public class UserService extends SearchService<User, UserDTO> {
         }
     }
 
-    @Override
-    public List<User> getByQuery(String query) {
-        return userDAO.search(query);
-    }
 
     public List<User> getByQuery(String query, String parameter) throws DAOException {
-        return userDAO.search(query, parameter);
+        return dao.search(query, parameter);
     }
 
     public List<User> getByQuery(String query, String namedParameter, String parameter) throws DAOException {
-        return userDAO.search(query, namedParameter, parameter);
+        return dao.search(query, namedParameter, parameter);
     }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return userDAO.count("FROM User WHERE deleted = 0");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return userDAO.count(query);
+        return countDatabaseRows("FROM User WHERE deleted = 0");
     }
 
     /**
@@ -304,7 +241,7 @@ public class UserService extends SearchService<User, UserDTO> {
      *            object
      */
     public void refresh(User user) {
-        userDAO.refresh(user);
+        dao.refresh(user);
     }
 
     /**
@@ -515,7 +452,7 @@ public class UserService extends SearchService<User, UserDTO> {
      * @return sorted list of all active users as User objects
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
-        return userDAO.getAllActiveUsersSortedByNameAndSurname();
+        return dao.getAllActiveUsersSortedByNameAndSurname();
     }
 
     /**

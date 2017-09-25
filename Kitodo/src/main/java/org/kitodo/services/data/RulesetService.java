@@ -38,30 +38,17 @@ import org.kitodo.services.data.base.TitleSearchService;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
-public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
+public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
-
-    private RulesetDAO rulesetDAO = new RulesetDAO();
     private RulesetType rulesetType = new RulesetType();
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
     public RulesetService() {
-        super(new Searcher(Ruleset.class));
+        super(new RulesetDAO(), new Searcher(Ruleset.class));
         this.indexer = new Indexer<>(Ruleset.class);
-    }
-
-    /**
-     * Method saves ruleset object to database.
-     *
-     * @param ruleset
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Ruleset ruleset) throws DAOException {
-        rulesetDAO.save(ruleset);
     }
 
     /**
@@ -80,55 +67,8 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO> {
     }
 
     @Override
-    public Ruleset getById(Integer id) throws DAOException {
-        return rulesetDAO.find(id);
-    }
-
-    @Override
-    public List<Ruleset> getAll() {
-        return rulesetDAO.findAll();
-    }
-
-    @Override
-    public List<Ruleset> getAll(int offset, int size) throws DAOException {
-        return rulesetDAO.getAll(offset, size);
-    }
-
-    @Override
-    public List<Ruleset> getByQuery(String query) {
-        return rulesetDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return rulesetDAO.count("FROM Ruleset");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return rulesetDAO.count(query);
-    }
-
-    /**
-     * Method removes ruleset object from database.
-     *
-     * @param ruleset
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Ruleset ruleset) throws DAOException {
-        rulesetDAO.remove(ruleset);
-    }
-
-    /**
-     * Method removes ruleset object from database.
-     *
-     * @param id
-     *            of ruleset object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        rulesetDAO.remove(id);
+        return countDatabaseRows("FROM Ruleset");
     }
 
     /**

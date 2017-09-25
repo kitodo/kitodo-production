@@ -66,9 +66,8 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 
-public class TaskService extends TitleSearchService<Task, TaskDTO> {
+public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
-    private TaskDAO taskDAO = new TaskDAO();
     private TaskType taskType = new TaskType();
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
@@ -77,19 +76,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public TaskService() {
-        super(new Searcher(Task.class));
+        super(new TaskDAO(), new Searcher(Task.class));
         this.indexer = new Indexer<>(Task.class);
-    }
-
-    /**
-     * Method saves task object to database.
-     *
-     * @param task
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Task task) throws DAOException {
-        taskDAO.save(task);
     }
 
     /**
@@ -179,21 +167,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
-    @Override
-    public Task getById(Integer id) throws DAOException {
-        return taskDAO.find(id);
-    }
-
-    @Override
-    public List<Task> getAll() {
-        return taskDAO.findAll();
-    }
-
-    @Override
-    public List<Task> getAll(int offset, int size) throws DAOException {
-        return taskDAO.getAll(offset, size);
-    }
-
     /**
      * Find the distinct task titles.
      * 
@@ -201,28 +174,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      */
     public List<String> findTaskTitlesDistinct() throws DataException {
         return findDistinctValues(null, "title.keyword", true);
-    }
-
-    /**
-     * Method removes task object from database.
-     *
-     * @param task
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Task task) throws DAOException {
-        taskDAO.remove(task);
-    }
-
-    /**
-     * Method removes task object from database.
-     *
-     * @param id
-     *            of task object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        taskDAO.remove(id);
     }
 
     /**
@@ -241,18 +192,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
     }
 
     @Override
-    public List<Task> getByQuery(String query) {
-        return taskDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return taskDAO.count("FROM Task");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return taskDAO.count(query);
+        return countDatabaseRows("FROM Task");
     }
 
     /**
@@ -1111,7 +1052,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @return list of Task objects
      */
     public List<Task> getCurrentTasksOfBatch(String title, Integer batchId) {
-        return taskDAO.getCurrentTasksOfBatch(title, batchId);
+        return dao.getCurrentTasksOfBatch(title, batchId);
     }
 
     /**
@@ -1126,7 +1067,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @return list of Task objects
      */
     public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
-        return taskDAO.getAllTasksInBetween(orderingMax, orderingMin, processId);
+        return dao.getAllTasksInBetween(orderingMax, orderingMin, processId);
     }
 
     /**
@@ -1139,7 +1080,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @return list of Task objects
      */
     public List<Task> getNextTasksForProblemSolution(Integer ordering, Integer processId) {
-        return taskDAO.getNextTasksForProblemSolution(ordering, processId);
+        return dao.getNextTasksForProblemSolution(ordering, processId);
     }
 
     /**
@@ -1152,6 +1093,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO> {
      * @return list of Task objects
      */
     public List<Task> getPreviousTaskForProblemReporting(Integer ordering, Integer processId) {
-        return taskDAO.getPreviousTaskForProblemReporting(ordering, processId);
+        return dao.getPreviousTaskForProblemReporting(ordering, processId);
     }
 }

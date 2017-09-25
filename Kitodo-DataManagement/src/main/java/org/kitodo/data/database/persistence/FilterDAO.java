@@ -23,17 +23,8 @@ public class FilterDAO extends BaseDAO<Filter> {
 
     private static final long serialVersionUID = 234210246673032251L;
 
-    /**
-     * Find filter object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public Filter find(Integer id) throws DAOException {
+    @Override
+    public Filter getById(Integer id) throws DAOException {
         Filter result = retrieveObject(Filter.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -41,85 +32,24 @@ public class FilterDAO extends BaseDAO<Filter> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all properties from the database.
-     *
-     * @return all persisted templates' properties
-     */
-    public List<Filter> findAll() {
+    @Override
+    public List<Filter> getAll() {
         return retrieveAllObjects(Filter.class);
     }
 
-    /**
-     * Retrieves all filters in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Filter> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Filter ORDER BY id ASC", offset, size);
     }
 
-    /**
-     * Find properties by query.
-     *
-     * @param query
-     *            as String
-     * @return list of properties
-     */
-    public List<Filter> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    /**
-     * Save filter object to database.
-     * 
-     * @param filter
-     *            object to be saved
-     * @return saved object
-     */
+    @Override
     public Filter save(Filter filter) throws DAOException {
         storeObject(filter);
         return retrieveObject(Filter.class, filter.getId());
     }
 
-    /**
-     * The function remove() removes a filter
-     *
-     * @param filter
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(Filter filter) throws DAOException {
-        removeObject(filter);
-    }
-
-    /**
-     * The function remove() removes a filter
-     *
-     * @param id
-     *            of filter to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Filter.class, id);
-    }
-
-    /**
-     * Count filter objects in table.
-     *
-     * @param query
-     *            as String
-     * @return amount of objects as Long
-     */
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 }

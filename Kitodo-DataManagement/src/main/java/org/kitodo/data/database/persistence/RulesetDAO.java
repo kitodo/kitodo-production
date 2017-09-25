@@ -20,21 +20,14 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
 
     private static final long serialVersionUID = 1913256950316879121L;
 
+    @Override
     public Ruleset save(Ruleset ruleset) throws DAOException {
         storeObject(ruleset);
         return retrieveObject(Ruleset.class, ruleset.getId());
     }
 
-    /**
-     * Find ruleset object by id.
-     *
-     * @param id
-     *            of ruleset
-     * @return ruleset object
-     * @throws DAOException
-     *             hibernate
-     */
-    public Ruleset find(Integer id) throws DAOException {
+    @Override
+    public Ruleset getById(Integer id) throws DAOException {
         Ruleset result = retrieveObject(Ruleset.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -42,51 +35,18 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all docket from the database.
-     *
-     * @return all persisted rulesets
-     */
-    public List<Ruleset> findAll() {
+    @Override
+    public List<Ruleset> getAll() {
         return retrieveAllObjects(Ruleset.class);
     }
 
-    /**
-     * Retrieves all rulesets in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Ruleset> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Ruleset ORDER BY id ASC", offset, size);
     }
 
-    /**
-     * Remove ruleset object.
-     *
-     * @param ruleset
-     *            object
-     * @throws DAOException
-     *             hibernate
-     */
-    public void remove(Ruleset ruleset) throws DAOException {
-        if (ruleset.getId() != null) {
-            removeObject(ruleset);
-        }
-    }
-
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Ruleset.class, id);
-    }
-
-    public List<Ruleset> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 }

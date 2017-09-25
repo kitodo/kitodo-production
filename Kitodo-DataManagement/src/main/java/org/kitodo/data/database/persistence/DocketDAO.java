@@ -20,17 +20,8 @@ public class DocketDAO extends BaseDAO<Docket> {
 
     private static final long serialVersionUID = 1913256950316879121L;
 
-    /**
-     * Find docket object by id.
-     *
-     * @param id
-     *            of searched object
-     * @return result
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying find()
-     *             procedure failure.
-     */
-    public Docket find(Integer id) throws DAOException {
+    @Override
+    public Docket getById(Integer id) throws DAOException {
         Docket result = retrieveObject(Docket.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
@@ -38,57 +29,24 @@ public class DocketDAO extends BaseDAO<Docket> {
         return result;
     }
 
-    /**
-     * The function findAll() retrieves all docket from the database.
-     *
-     * @return all persisted dockets
-     */
-    public List<Docket> findAll() {
+    @Override
+    public List<Docket> getAll() {
         return retrieveAllObjects(Docket.class);
     }
 
-    /**
-     * Retrieves all dockets in given range.
-     *
-     * @param offset
-     *            result
-     * @param size
-     *            amount of results
-     * @return constrained list of results
-     */
+    @Override
     public List<Docket> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Docket ORDER BY id", offset, size);
     }
 
+    @Override
     public Docket save(Docket docket) throws DAOException {
         storeObject(docket);
         return retrieveObject(Docket.class, docket.getId());
     }
 
-    /**
-     * The function remove() removes a docket from database.
-     *
-     * @param docket
-     *            to be removed
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure upon database failure.
-     */
-    public void remove(Docket docket) throws DAOException {
-        if (docket.getId() != null) {
-            removeObject(docket);
-        }
-    }
-
+    @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Docket.class, id);
-    }
-
-    public List<Docket> search(String query) {
-        return retrieveObjects(query);
-    }
-
-    public Long count(String query) throws DAOException {
-        return retrieveAmount(query);
     }
 }

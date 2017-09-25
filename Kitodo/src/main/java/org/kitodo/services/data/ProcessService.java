@@ -118,9 +118,8 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 
-public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
+public class ProcessService extends TitleSearchService<Process, ProcessDTO, ProcessDAO> {
 
-    private ProcessDAO processDAO = new ProcessDAO();
     private ProcessType processType = new ProcessType();
     private final MetadatenSperrung msp = new MetadatenSperrung();
     private final ServiceManager serviceManager = new ServiceManager();
@@ -135,39 +134,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public ProcessService() {
-        super(new Searcher(Process.class));
+        super(new ProcessDAO(), new Searcher(Process.class));
         this.indexer = new Indexer<>(Process.class);
     }
 
     @Override
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    @Override
-    public Process getById(Integer id) throws DAOException {
-        return processDAO.find(id);
-    }
-
-    @Override
-    public List<Process> getAll() {
-        return processDAO.findAll();
-    }
-
-    @Override
-    public List<Process> getAll(int offset, int size) throws DAOException {
-        return processDAO.getAll(offset, size);
-    }
-
-    /**
-     * Method saves process object to database.
-     *
-     * @param process
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Process process) throws DAOException {
-        processDAO.save(process, getProgress(process, null));
     }
 
     /**
@@ -365,29 +338,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      *            of processes
      */
     public void saveList(List<Process> list) throws DAOException {
-        processDAO.saveList(list);
-    }
-
-    /**
-     * Method removes process object from database.
-     *
-     * @param process
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Process process) throws DAOException {
-        processDAO.remove(process);
-    }
-
-    /**
-     * Method removes process object from database.
-     *
-     * @param id
-     *            of process object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        processDAO.remove(id);
+        dao.saveList(list);
     }
 
     /**
@@ -406,22 +357,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
     }
 
     @Override
-    public List<Process> getByQuery(String query) {
-        return processDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return processDAO.count("FROM Process");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return processDAO.count(query);
+        return countDatabaseRows("FROM Process");
     }
 
     public void refresh(Process process) {
-        processDAO.refresh(process);
+        dao.refresh(process);
     }
 
     /**
@@ -2509,7 +2450,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * @return list of all process templates as Process objects
      */
     public List<Process> getProcessTemplates() {
-        return processDAO.getProcessTemplates();
+        return dao.getProcessTemplates();
     }
 
     /**
@@ -2520,6 +2461,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO> {
      * @return list of all process templates for user as Process objects
      */
     public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
-        return processDAO.getProcessTemplatesForUser(projects);
+        return dao.getProcessTemplatesForUser(projects);
     }
 }

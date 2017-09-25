@@ -38,9 +38,8 @@ import org.kitodo.dto.WorkpieceDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
+public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO, WorkpieceDAO> {
 
-    private WorkpieceDAO workpieceDAO = new WorkpieceDAO();
     private WorkpieceType workpieceType = new WorkpieceType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(WorkpieceService.class);
@@ -49,19 +48,8 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public WorkpieceService() {
-        super(new Searcher(Workpiece.class));
+        super(new WorkpieceDAO(), new Searcher(Workpiece.class));
         this.indexer = new Indexer<>(Workpiece.class);
-    }
-
-    /**
-     * Method saves workpiece object to database.
-     *
-     * @param workpiece
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Workpiece workpiece) throws DAOException {
-        workpieceDAO.save(workpiece);
     }
 
     /**
@@ -119,62 +107,8 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO> {
     }
 
     @Override
-    public Workpiece getById(Integer id) throws DAOException {
-        return workpieceDAO.find(id);
-    }
-
-    @Override
-    public List<Workpiece> getAll() {
-        return workpieceDAO.findAll();
-    }
-
-    @Override
-    public List<Workpiece> getAll(int offset, int size) throws DAOException {
-        return workpieceDAO.getAll(offset, size);
-    }
-
-    /**
-     * Search Workpiece objects by given query.
-     *
-     * @param query
-     *            as String
-     * @return list of Workpiece objects
-     */
-    @Override
-    public List<Workpiece> getByQuery(String query) {
-        return workpieceDAO.search(query);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return workpieceDAO.count("FROM Workpiece");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return workpieceDAO.count(query);
-    }
-
-    /**
-     * Method removes workpiece object from database.
-     *
-     * @param workpiece
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Workpiece workpiece) throws DAOException {
-        workpieceDAO.remove(workpiece);
-    }
-
-    /**
-     * Method removes workpiece object from database.
-     *
-     * @param id
-     *            of workpiece object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        workpieceDAO.remove(id);
+        return countDatabaseRows("FROM Workpiece");
     }
 
     /**

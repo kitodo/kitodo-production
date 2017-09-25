@@ -46,10 +46,9 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
+public class ProjectService extends TitleSearchService<Project, ProjectDTO, ProjectDAO> {
 
     private List<StepInformation> commonWorkFlow = null;
-    private ProjectDAO projectDAO = new ProjectDAO();
     private ProjectType projectType = new ProjectType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ProjectService.class);
@@ -58,19 +57,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public ProjectService() {
-        super(new Searcher(Project.class));
+        super(new ProjectDAO(), new Searcher(Project.class));
         this.indexer = new Indexer<>(Project.class);
-    }
-
-    /**
-     * Method saves project object to database.
-     *
-     * @param project
-     *            object
-     */
-    @Override
-    public void saveToDatabase(Project project) throws DAOException {
-        projectDAO.save(project);
     }
 
     /**
@@ -144,50 +132,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
     }
 
     @Override
-    public Project getById(Integer id) throws DAOException {
-        return projectDAO.find(id);
-    }
-
-    @Override
-    public List<Project> getAll() {
-        return projectDAO.findAll();
-    }
-
-    @Override
-    public List<Project> getAll(int offset, int size) throws DAOException {
-        return projectDAO.getAll(offset, size);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
-        return projectDAO.count("FROM Project");
-    }
-
-    @Override
-    public Long countDatabaseRows(String query) throws DAOException {
-        return projectDAO.count(query);
-    }
-
-    /**
-     * Method removes project object from database.
-     *
-     * @param project
-     *            object
-     */
-    @Override
-    public void removeFromDatabase(Project project) throws DAOException {
-        projectDAO.remove(project);
-    }
-
-    /**
-     * Method removes project object from database.
-     *
-     * @param id
-     *            of project object
-     */
-    @Override
-    public void removeFromDatabase(Integer id) throws DAOException {
-        projectDAO.remove(id);
+        return countDatabaseRows("FROM Project");
     }
 
     /**
@@ -203,11 +149,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
         if (project != null) {
             indexer.performSingleRequest(project, projectType);
         }
-    }
-
-    @Override
-    public List<Project> getByQuery(String query) {
-        return projectDAO.search(query);
     }
 
     /**
@@ -351,7 +292,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      * @return all projects sorted by title as Project objects
      */
     public List<Project> getAllProjectsSortedByTitle() {
-        return projectDAO.getAllProjectsSortedByTitle();
+        return dao.getAllProjectsSortedByTitle();
     }
 
     /**
@@ -360,7 +301,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO> {
      * @return all not archived projects sorted by title as Project objects
      */
     public List<Project> getAllNotArchivedProjectsSortedByTitle() {
-        return projectDAO.getAllNotArchivedProjectsSortedByTitle();
+        return dao.getAllNotArchivedProjectsSortedByTitle();
     }
 
     /**

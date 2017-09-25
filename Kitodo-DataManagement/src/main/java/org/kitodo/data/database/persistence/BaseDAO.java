@@ -31,27 +31,111 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     private static final long serialVersionUID = 4676125965631365912L;
 
     /**
-     * Removes the object from the database.
+     * Retrieves a BaseBean identified by the given id from the database.
      *
-     * @param object
-     *            the class to remove
+     * @param id
+     *            of bean to load
+     * @return persisted bean
      * @throws DAOException
-     *             add description
+     *             if a HibernateException is thrown
      */
-    protected void removeObject(T object) throws DAOException {
-        Transaction transaction = null;
+    public abstract T getById(Integer id) throws DAOException;
+
+    /**
+     * Retrieves all BaseBean objects from the database.
+     *
+     * @return all persisted beans
+     */
+    public abstract List<T> getAll();
+
+    /**
+     * Retrieves all BaseBean objects in given range.
+     *
+     * @param offset
+     *            result
+     * @param size
+     *            amount of results
+     * @return constrained list of persisted beans
+     */
+    public abstract List<T> getAll(int offset, int size) throws DAOException;
+
+    /**
+     * Saves a BaseBean object to the database.
+     *
+     * @param baseBean
+     *            object to persist
+     * @return stored object
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    public abstract T save(T baseBean) throws DAOException;
+
+    /**
+     * Removes BaseBean object specified by the given id from the database.
+     *
+     * @param id
+     *            of bean to delete
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    public abstract void remove(Integer id) throws DAOException;
+
+    /**
+     * Removes given BaseBean object from the database.
+     *
+     * @param baseBean
+     *            bean to delete
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    public void remove(T baseBean) throws DAOException {
+        if (baseBean.getId() != null) {
+            Transaction transaction = null;
+            try {
+                Session session = HibernateHelper.getHibernateSession();
+                transaction = session.beginTransaction();
+                Object merged = session.merge(baseBean);
+                session.delete(merged);
+                session.flush();
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                throw new DAOException(e);
+            }
+        }
+    }
+
+    /**
+     * Retrieves BaseBean objects from database by given query.
+     *
+     * @param query
+     *            as String
+     * @return list of beans objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> getByQuery(String query) {
+        Session session = HibernateHelper.getHibernateSession();
+        return (List<T>) session.createQuery(query).list();
+    }
+
+    /**
+     * Count all rows in database.
+     *
+     * @param query
+     *            for counting objects
+     * @return amount of rows in database according to given query
+     */
+    public Long count(String query) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
-            transaction = session.beginTransaction();
-            Object merged = session.merge(object);
-            session.delete(merged);
-            session.flush();
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new DAOException(e);
+            return (Long) session.createQuery("select count(*) " + query).uniqueResult();
+        } catch (HibernateException he) {
+            throw new DAOException(he);
         }
     }
 
@@ -64,7 +148,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @param id
      *            the id of the class type
      * @throws DAOException
-     *             add description
+     *             if a HibernateException is thrown
      */
     @SuppressWarnings("unchecked")
     protected static void removeObject(Class cls, Integer id) throws DAOException {
@@ -110,19 +194,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         } catch (HibernateException he) {
             throw new DAOException(he);
         }
-    }
-
-    /**
-     * Retrieve objects by given query.
-     *
-     * @param query
-     *            string
-     * @return list of results
-     */
-    @SuppressWarnings("unchecked")
-    protected List<T> retrieveObjects(String query) {
-        Session session = HibernateHelper.getHibernateSession();
-        return (List<T>) session.createQuery(query).list();
     }
 
     /**
@@ -205,22 +276,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         Session session = HibernateHelper.getHibernateSession();
         Query query = session.createQuery("FROM " + cls.getSimpleName());
         return (List<T>) query.list();
-    }
-
-    /**
-     * Own design one of previous authors for determining the number of objects.
-     *
-     * @param query
-     *            string
-     * @return amount of results
-     */
-    protected Long retrieveAmount(String query) throws DAOException {
-        try {
-            Session session = HibernateHelper.getHibernateSession();
-            return (Long) session.createQuery("select count(*) " + query).uniqueResult();
-        } catch (HibernateException he) {
-            throw new DAOException(he);
-        }
     }
 
     /**
