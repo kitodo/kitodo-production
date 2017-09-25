@@ -11,6 +11,8 @@
 
 package de.sub.goobi.forms;
 
+import static java.lang.Math.toIntExact;
+
 import de.sub.goobi.helper.IndexWorker;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
@@ -164,6 +167,23 @@ public class IndexingForm {
         this.usergroupWorker = new IndexWorker(serviceManager.getUserGroupService());
         this.workpieceWorker = new IndexWorker(serviceManager.getWorkpieceService());
         this.filterWorker = new IndexWorker(serviceManager.getFilterService());
+        try {
+            indexedBatches = toIntExact(serviceManager.getBatchService().count());
+            indexedDockets = toIntExact(serviceManager.getDocketService().count());
+            indexedProcesses = toIntExact(serviceManager.getProcessService().count());
+            indexedProjects = toIntExact(serviceManager.getProjectService().count());
+            indexedProperties = toIntExact(serviceManager.getPropertyService().count());
+            indexedRulesetes = toIntExact(serviceManager.getRulesetService().count());
+            indexedTasks = toIntExact(serviceManager.getTaskService().count());
+            indexedTemplates = toIntExact(serviceManager.getTemplateService().count());
+            indexedUsers = toIntExact(serviceManager.getUserService().count());
+            indexedUsergroups = toIntExact(serviceManager.getUserGroupService().count());
+            indexedWorkpieces = toIntExact(serviceManager.getWorkpieceService().count());
+            indexedFilter = toIntExact(serviceManager.getFilterService().count());
+        } catch (DataException e) {
+            logger.error(e.getMessage());
+        }
+
         indexRestClient.initiateClient();
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
     }
