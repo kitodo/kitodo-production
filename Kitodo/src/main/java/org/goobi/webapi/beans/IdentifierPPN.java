@@ -18,6 +18,12 @@ public class IdentifierPPN {
 
     private String ppn;
 
+    /**
+     * Constructor.
+     * 
+     * @param ppn
+     *            as String
+     */
     public IdentifierPPN(String ppn) {
         if (!isValid(ppn)) {
             throw new IllegalArgumentException("Given string is not a valid PPN identifier.");
@@ -25,6 +31,13 @@ public class IdentifierPPN {
         this.ppn = ppn;
     }
 
+    /**
+     * Check if identifier is valid.
+     * 
+     * @param identifier
+     *            to check
+     * @return true or false
+     */
     public static boolean isValid(String identifier) {
         Boolean result;
         int flags = Pattern.CASE_INSENSITIVE;

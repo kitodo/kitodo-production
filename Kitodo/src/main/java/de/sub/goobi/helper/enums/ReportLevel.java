@@ -13,8 +13,6 @@ package de.sub.goobi.helper.enums;
 
 /**
  * These are the possible states for output to “activeMQ.results.topic”.
- * 
- * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
 public enum ReportLevel {
     FATAL,

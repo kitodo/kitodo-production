@@ -33,6 +33,11 @@ public class LdapGruppenForm extends BasisForm {
     private int itemId;
     private transient ServiceManager serviceManager = new ServiceManager();
 
+    /**
+     * Create new LDAP group.
+     * 
+     * @return page
+     */
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
         this.itemId = 0;

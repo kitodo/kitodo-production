@@ -112,11 +112,17 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
         return !error;
     }
 
-    public void setReferenceCurve(Boolean flagIn) {
-        if (flagIn == null) {
+    /**
+     * Set reference curve.
+     * 
+     * @param flag
+     *            as Boolean
+     */
+    public void setReferenceCurve(Boolean flag) {
+        if (flag == null) {
             this.flagReferenceCurve = false;
         } else {
-            this.flagReferenceCurve = flagIn;
+            this.flagReferenceCurve = flag;
         }
         this.isDirty = true;
     }
@@ -219,6 +225,11 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
         return this.flagReferenceCurve;
     }
 
+    /**
+     * Get reference row.
+     * 
+     * @return DataRow
+     */
     public DataRow getRefRow() {
         if (this.flagReferenceCurve) {
             return referenceCurve(getDataRow(this.terminatingStep));
@@ -227,6 +238,13 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
         }
     }
 
+    /**
+     * Get data row.
+     * 
+     * @param stepName
+     *            as String
+     * @return DataRow
+     */
     public DataRow getDataRow(String stepName) {
         Boolean flagNoContent = true;
         for (int i = 0; i < getDataTable().getDataRows().size(); i++) {
@@ -466,6 +484,12 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
         return selectableList;
     }
 
+    /**
+     * Set selected steps.
+     * 
+     * @param inSteps
+     *            as List of Strings
+     */
     public void setSelectedSteps(List<String> inSteps) {
         this.isDirty = true;
         if (inSteps.contains(Helper.getTranslation("selectAll"))) {

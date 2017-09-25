@@ -20,15 +20,6 @@ public class GoobiProcessStep {
     private Integer state;
     private String title;
 
-    public GoobiProcessStep() {
-    }
-
-    public GoobiProcessStep(Integer sequence, Integer state, String title) {
-        this.sequence = sequence;
-        this.state = state;
-        this.title = title;
-    }
-
     public Integer getSequence() {
         return sequence;
     }
