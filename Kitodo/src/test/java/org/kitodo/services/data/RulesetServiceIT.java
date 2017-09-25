@@ -29,6 +29,8 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 
+import ugh.dl.DocStructType;
+
 /**
  * Tests for RulesetService class.
  */
@@ -84,7 +86,7 @@ public class RulesetServiceIT {
         RulesetService rulesetService = new RulesetService();
 
         Ruleset ruleset = rulesetService.getById(1);
-        boolean condition = ruleset.getTitle().equals("SLUBDD") && ruleset.getFile().equals("ruleset_slubdd.xml");
+        boolean condition = ruleset.getTitle().equals("SLUBDD") && ruleset.getFile().equals("ruleset_test.xml");
         assertTrue("Ruleset was not found in database!", condition);
     }
 
@@ -127,10 +129,10 @@ public class RulesetServiceIT {
     public void shouldFindByFile() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        JSONObject ruleset = rulesetService.findByFile("ruleset_slubdd.xml");
+        JSONObject ruleset = rulesetService.findByFile("ruleset_test.xml");
         JSONObject jsonObject = (JSONObject) ruleset.get("_source");
         String actual = (String) jsonObject.get("file");
-        String expected = "ruleset_slubdd.xml";
+        String expected = "ruleset_test.xml";
         assertEquals("Ruleset was not found in index!", expected, actual);
     }
 
@@ -207,9 +209,15 @@ public class RulesetServiceIT {
         RulesetService rulesetService = new RulesetService();
 
         Ruleset ruleset = rulesetService.getById(1);
-        String actual = rulesetService.getPreferences(ruleset).getVersion();
-        // not sure how to really check if Pref is correct
-        System.out.println("Preferences: " + actual);
-        assertEquals("Preference is incorrect!", "1.1-20091117", actual);
+        List<DocStructType> docStructTypes = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
+
+        int actual = docStructTypes.size();
+        assertEquals("Size of docstruct types in ruleset file is incorrect!", 2, actual);
+
+        String firstName = docStructTypes.get(0).getName();
+        assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Acknowledgment", firstName);
+
+        String secondName = docStructTypes.get(1).getName();
+        assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Article", secondName);
     }
 }
