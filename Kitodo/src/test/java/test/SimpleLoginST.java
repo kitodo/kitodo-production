@@ -162,7 +162,7 @@ public class SimpleLoginST {
 
         WebElement username = driver.findElement(By.id("login"));
         Thread.sleep(2000);
-        driver.manage().window().setSize(new Dimension(1280, 1024));
+        driver.manage().window().setSize(new Dimension(1280,1024));
 
         Thread.sleep(2000);
 
