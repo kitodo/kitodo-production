@@ -535,6 +535,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
+    private QueryBuilder getQueryTemplateAndProjectId(Integer projectId) {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("project", projectId, true));
+        query.must(getQueryTemplate(false));
+        return query;
+    }
+
     /**
      * Get query for template.
      *
@@ -1682,6 +1689,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     public Long getNumberOfProcessesWithTitle(String title) throws DataException {
         return count(createSimpleQuery("title", title, true, Operator.AND).toString());
+    }
+
+    public Long getNumberOfNotTemplateProcessesForProjectId(Integer projectId) throws DataException {
+        String query = getQueryTemplateAndProjectId(projectId).toString();
+        return count(query);
+    }
+
+    public Double getAmountOfImagesForNotTemplatesAndProjectId(Integer projectId) throws DataException {
+        String query = getQueryTemplateAndProjectId(projectId).toString();
+        return findSumAggregation(query, "sortHelperImages");
     }
 
     /**

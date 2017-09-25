@@ -240,7 +240,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @return a list with information for each step on workflow
      */
-    public List<StepInformation> getWorkFlow(Project project) {
+    public List<StepInformation> getWorkFlow(Project project)throws DataException {
         if (this.commonWorkFlow == null) {
             if (project.getId() != null) {
                 this.commonWorkFlow = ProjectHelper.getProjectWorkFlowOverview(project);
