@@ -125,4 +125,94 @@ public class TaskDAO extends BaseDAO<Task> {
         return getByQuery("FROM Task WHERE process_id = " + processId + " AND ordering < " + ordering
                 + " ORDER BY ordering DESC");
     }
+
+    /**
+     * Get tasks for non template processes for given project id and ordered by
+     * ordering.
+     *
+     * @param projectId
+     *            as Integer
+     * @return list of tasks
+     */
+    public List<Task> getTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
+        return getByQuery(
+                "SELECT t FROM Task AS t INNER JOIN t.process AS p WITH p.template = 0 INNER JOIN p.project AS pr "
+                        + "WITH pr.id = " + projectId + " GROUP BY t.title ORDER BY t.ordering");
+    }
+
+    /**
+     * Get size of tasks for non template processes for given project id and ordered
+     * by ordering.
+     * 
+     * @param projectId
+     *            as Integer
+     * @return list of tasks
+     */
+    public List<Long> getSizeOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
+        return getCount("t.id",
+                "FROM Task AS t INNER JOIN t.process AS p WITH p.template = 0 INNER JOIN p.project AS pr "
+                        + "WITH pr.id = " + projectId + " GROUP BY t.title ORDER BY t.ordering");
+    }
+
+    /**
+     * Get average ordering of tasks for non template processes for given project id
+     * and ordered by ordering.
+     *
+     * @param projectId
+     *            as Integer
+     * @return list of tasks
+     */
+    public List<Double> getAverageOrderingOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
+        return getAverage("t.ordering",
+                "FROM Task AS t INNER JOIN t.process AS p WITH p.template = 0 INNER JOIN p.project AS pr "
+                        + "WITH pr.id = " + projectId + " GROUP BY t.title ORDER BY t.ordering");
+    }
+
+    /**
+     * Get tasks for exact processing status for non template processes for given
+     * project id and ordered by ordering.
+     *
+     * @param projectId
+     *            as Integer
+     * @return list of tasks
+     */
+    public List<Task> getTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+            Integer processingStatus, Integer projectId) {
+        return getByQuery(
+                "SELECT t FROM Task AS t INNER JOIN t.process AS p WITH p.template = 0 INNER JOIN p.project AS pr "
+                        + "WITH pr.id = " + projectId + " WHERE t.processingStatus = " + processingStatus
+                        + " GROUP BY t.title ORDER BY t.ordering");
+    }
+
+    /**
+     * Get size of tasks for exact processing status for non template processes for
+     * given project id and ordered by ordering.
+     *
+     * @param projectId
+     *            as Integer
+     * @return list of tasks sizes
+     */
+    public List<Long> getSizeOfTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+            Integer processingStatus, Integer projectId) {
+        return getCount("t.id",
+                "FROM Task AS t INNER JOIN t.process AS p WITH p.template = 0 INNER JOIN p.project AS pr "
+                        + "WITH pr.id = " + projectId + " WHERE t.processingStatus = " + processingStatus
+                        + " GROUP BY t.title ORDER BY t.ordering");
+    }
+
+    /**
+     * Get average ordering of tasks for exact processing status for non template
+     * processes for given project id and ordered by ordering.
+     *
+     * @param projectId
+     *            as Integer
+     * @return list of average tasks' ordering
+     */
+    public List<Long> getAmountOfImagesForTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+            Integer processingStatus, Integer projectId) {
+        return getSum("p.sortHelperImages",
+                "FROM Task AS t INNER JOIN t.process AS p WITH p.template = 0 INNER JOIN p.project AS pr "
+                        + "WITH pr.id = " + projectId + " WHERE t.processingStatus = " + processingStatus
+                        + " GROUP BY t.title ORDER BY t.ordering");
+    }
 }
