@@ -10,7 +10,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,10 +20,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -34,7 +31,6 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.xmlrpc.webserver.ServletWebServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -46,7 +42,6 @@ import org.junit.runner.Description;
 import org.kitodo.MockDatabase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -54,14 +49,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
 
 public class SimpleLoginST {
-    private static String pw = "kitodo@selenium";
+
     private static final Logger logger = LogManager.getLogger(SimpleLoginST.class);
     private static WebDriver driver;
 
@@ -118,7 +110,7 @@ public class SimpleLoginST {
                     Map<String, String> travisProperties = getTravisProperties();
 
                     String emailSubject =
-                            String.format("%s - #%s: Test Failure: %s:%s",
+                            String.format("%s - #%s: Test Failure: %s: %s",
                                     travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
                                     description.getClassName(), description.getMethodName());
 
@@ -187,12 +179,13 @@ public class SimpleLoginST {
         VorgaengeButton.click();
         Thread.sleep(2000);
 
+
         File screenshot = captureScreenShot(driver);
-        sendEmail("test", "test message", screenshot);
+        sendEmail(System.getenv().get(MAIL_USER),System.getenv().get(MAIL_PASSWORD),"test", "test message", screenshot);
 
         WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
         RulesetsButton.click();
-        Thread.sleep(2000);
+        Thread.sleep(500);
 
         WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
         Assert.assertNotNull(LogoutButton);
@@ -219,7 +212,7 @@ public class SimpleLoginST {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName("smtp.gmail.com");
         email.setSmtpPort(465);
-        email.setAuthenticator(new DefaultAuthenticator(user, password));
+        email.setAuthenticator(new DefaultAuthenticator(user,password));
         email.setSSLOnConnect(true);
         email.setFrom("Travis CI Screenshot <kitodo.dev@gmail.com>");
         email.setSubject(subject);
