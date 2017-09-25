@@ -56,28 +56,30 @@
                         <a href="#"><i class="fa fa-th fa-lg"/></a>
                         <ul>
                             <li><h3>Dashboard <i>(Admin)</i></h3></li>
-                            <li class="nav-pic-text"><h:link value="Projekte" outcome="projects.xhtml"><i class="fa fa-folder-open fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-hourglass-3 fa-lg"/>Vorgänge</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-bell fa-lg"/>Aufgaben</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-files-o fa-lg"/>Batches</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-file-text-o fa-lg"/>Vorlagen</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-list-ol fa-lg"/>Laufzettel</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-clipboard fa-lg"/>Regelsätze</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-list-alt fa-lg"/>LDAP-Gruppen</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-commenting fa-lg"/>Hinweise</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-user fa-lg"/>Benutzer</a></li>
-                            <li class="nav-pic-text"><a href=""><i class="fa fa-users fa-lg"/>Benutzergruppen</a></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.projekte}" outcome="projects"><i class="fa fa-folder-open fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.prozesse}" outcome="ProzessverwaltungAlle?linkId=allProcesses"><i class="fa fa-hourglass-3 fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.schritte}" outcome="AktuelleSchritteAlle"><i class="fa fa-bell fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.batches}" outcome="BatchesAll"><i class="fa fa-files-o fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.prozessvorlagen}" outcome="ProzessverwaltungAlle?linkId=templates"><i class="fa fa-file-text-o fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.dockets}" outcome="DocketList"><i class="fa fa-list-ol fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.regelsaetze}" outcome="RegelsaetzeAlle"><i class="fa fa-clipboard fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.ldapgruppen}" outcome="LdapGruppenAlle"><i class="fa fa-list-alt fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.bedienungshinweise}" outcome="statischBedienung"><i class="fa fa-commenting fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.benutzer}" outcome="BenutzerAlle"><i class="fa fa-user fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.benutzergruppen}" outcome="BenutzergruppenAlle"><i class="fa fa-users fa-lg"/></h:link></li>
                         </ul>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-user-circle-o fa-lg"/></a>
-                        <ul id="nav-user">
-                            <li><h3>Max Mustermann <i>(Admin)</i></h3></li>
-                            <li><a href="">Sprache: Deutsch</a></li>
-                            <li><a href="">Benutzerdaten &amp; Einstellungen</a></li>
-                            <li><a href="">Passwort ändern</a></li>
-                            <li><a href="">Abmelden</a></li>
-                        </ul>
+                        <h:form id="logout-form">
+                            <ul id="nav-user">
+                                <li><h3><h:outputText value="#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}"/><h:outputText rendered="#{LoginForm.maximaleBerechtigung == 1}"> <i>(Admin)</i></h:outputText></h3></li>
+                                <li><a href="">Sprache: Deutsch</a></li>
+                                <li><h:link value="#{msgs.userData}" outcome="BenutzerKonfiguration"/></li>
+                                <li><h:link value="#{msgs.passwortAendern}" outcome="PasswortAendern"/></li>
+                                <li><h:commandLink value="#{msgs.signout}" action="#{LoginForm.Ausloggen}"/></li>
+                            </ul>
+                        </h:form>
                     </li>
                 </ul>
             </nav>
