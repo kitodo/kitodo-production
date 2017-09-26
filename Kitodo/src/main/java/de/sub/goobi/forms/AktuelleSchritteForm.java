@@ -171,7 +171,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * It is possible that sorting by related object can be hard to achieve. Right
      * now it is replaced with sorting by id.
-     * 
+     *
      * @return sort clause for query
      */
     private String sortList() {
@@ -445,7 +445,7 @@ public class AktuelleSchritteForm extends BasisForm {
             logger.error("Task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
-        return "/pages/AktuelleSchritteAlle";
+        return filterAlleStart();
     }
 
     /**
