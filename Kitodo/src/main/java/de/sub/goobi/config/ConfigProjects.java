@@ -22,6 +22,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.production.constants.FileNames;
 
 public class ConfigProjects {
     XMLConfiguration config;
@@ -29,7 +30,7 @@ public class ConfigProjects {
     private static final Logger logger = LogManager.getLogger(ConfigProjects.class);
 
     public ConfigProjects(String projectTitle) throws IOException {
-        this(projectTitle, ConfigCore.getKitodoConfigDirectory() + "kitodo_projects.xml");
+        this(projectTitle, ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE);
     }
 
     /**

@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.goobi.production.constants.FileNames;
 import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
@@ -134,7 +135,7 @@ public class MassImportForm implements Serializable {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollections = new ArrayList<>();
         ArrayList<String> defaultCollections = new ArrayList<>();
-        String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
+        String filename = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;

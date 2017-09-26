@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
 import org.json.simple.JSONObject;
@@ -373,9 +374,9 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *         is incomplete
      */
     public boolean isProjectComplete(Project project) {
-        boolean projectsXmlExists = (new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_projects.xml")).exists();
+        boolean projectsXmlExists = (new File(ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE)).exists();
         boolean digitalCollectionsXmlExists = (new File(
-                ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml")).exists();
+                ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE)).exists();
 
         return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
                 && project.getFileFormatInternal() != null && digitalCollectionsXmlExists && projectsXmlExists;
