@@ -9,9 +9,8 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
---
-
--- Convert the char set to uft8mb4 on all existing tables and their columns
+-- Convert the char set to uft8mb4 on all existing tables and their columns.
+-- This does not change the global setting for database.
 
 ALTER TABLE batch CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE batch_x_process CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
