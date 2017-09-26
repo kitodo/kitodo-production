@@ -84,7 +84,7 @@ public class MockDatabase {
 
     @SuppressWarnings("unchecked")
     public static void startNode() throws Exception {
-         String nodeName = randomString(6);
+        String nodeName = randomString(6);
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
 
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
