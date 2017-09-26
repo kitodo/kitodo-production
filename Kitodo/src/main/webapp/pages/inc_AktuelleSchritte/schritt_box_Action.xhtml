@@ -156,68 +156,16 @@
                                 <h:commandLink id="action3"
                                                rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
-                                               title="#{AktuelleSchritteForm.mySchritt.scriptName1}">
+                                               title="#{AktuelleSchritteForm.mySchritt.scriptName}">
                                     <t:updateActionListener
                                             property="#{AktuelleSchritteForm.scriptPath}"
                                             value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath}"/>
                                     <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText
-                                            value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName1}"/>
+                                            value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName}"/>
                                 </h:commandLink>
 
-                                <h:commandLink id="action4"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
-                                               action="#{AktuelleSchritteForm.executeScript}"
-                                               title="#{AktuelleSchritteForm.mySchritt.scriptName2}">
-                                    <t:updateActionListener
-                                            property="#{AktuelleSchritteForm.scriptPath}"
-                                            value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2}"/>
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
-                                                    style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText
-                                            value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName2}"/>
-                                </h:commandLink>
-
-                                <h:commandLink id="action5"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
-                                               action="#{AktuelleSchritteForm.executeScript}"
-                                               title="#{AktuelleSchritteForm.mySchritt.scriptName3}">
-                                    <t:updateActionListener
-                                            property="#{AktuelleSchritteForm.scriptPath}"
-                                            value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3}"/>
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
-                                                    style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText
-                                            value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName3}"/>
-                                </h:commandLink>
-
-                                <h:commandLink id="action6"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
-                                               action="#{AktuelleSchritteForm.executeScript}"
-                                               title="#{AktuelleSchritteForm.mySchritt.scriptName4}">
-                                    <t:updateActionListener
-                                            property="#{AktuelleSchritteForm.scriptPath}"
-                                            value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4}"/>
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
-                                                    style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText
-                                            value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName4}"/>
-                                </h:commandLink>
-
-                                <h:commandLink id="action7"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
-                                               action="#{AktuelleSchritteForm.executeScript}"
-                                               title="#{AktuelleSchritteForm.mySchritt.scriptName5}">
-                                    <t:updateActionListener
-                                            property="#{AktuelleSchritteForm.scriptPath}"
-                                            value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5}"/>
-
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
-                                                    style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText
-                                            value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName5}"/>
-                                </h:commandLink>
                                 <!-- tiffHeaderDownload-Schaltknopf -->
                                 <h:commandLink id="action8"
                                                rendered="#{0==1 and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
