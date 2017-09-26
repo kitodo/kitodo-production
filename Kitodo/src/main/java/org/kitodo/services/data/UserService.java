@@ -347,13 +347,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      * @return list of JSON objects with users for specific user group title
      */
     List<JSONObject> findByUserGroupTitle(String title) throws DataException {
-        List<JSONObject> users = new ArrayList<>();
-
-        List<JSONObject> userGroups = serviceManager.getUserGroupService().findByTitle(title, true);
-        for (JSONObject userGroup : userGroups) {
-            users.addAll(findByUserGroupId(getIdFromJSONObject(userGroup)));
-        }
-        return users;
+        QueryBuilder query = createSimpleQuery("userGroups.title", title, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
     }
 
     /**
