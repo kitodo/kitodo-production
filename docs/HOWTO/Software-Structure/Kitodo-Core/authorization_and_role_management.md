@@ -9,7 +9,7 @@ implemented so far.
 |Admin|Administration|1|
 |Manager|Entire workflow|2|
 |...|...|3|
-|User|Search processes, display corresponding tasks|4|
+|User|Search processes, display corresponding tasks, edit processes with meta data editor|4|
 
 The role hierarchy is linear. This means that each role has at least
 the authorizations, such as the subordinate role.
