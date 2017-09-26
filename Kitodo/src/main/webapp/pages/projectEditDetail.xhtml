@@ -15,18 +15,34 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
-    <h:panelGrid columns="1" cellpadding="10">
-        <p:outputLabel for="title" value="Titel:" />
-        <p:inputText id="title" placeholder="Titel"/>
-        <p:outputLabel for="pages" value="Anzahl der Seiten:" />
-        <p:inputText id="pages" placeholder="10"/>
-        <p:outputLabel for="band" value="Anzahl der Bände:" />
-        <p:inputText id="band" placeholder="1"/>
-        <p:outputLabel for="startdate" value="Startdatum:" />
-        <p:calendar id="startdate" value="#{calendarView.date3}" showOn="button" />
-        <p:outputLabel for="enddate" value="Enddatum:" />
-        <p:calendar id="enddate" value="#{calendarView.date3}" showOn="button" />
-        <h:outputText value="Projekt ist inaktiv" />
-        <p:selectBooleanCheckbox value="aktiv" />
-    </h:panelGrid>
+    <p:panelGrid columns="2" cellpadding="10" layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="title" value="Titel:" />
+                <p:inputText id="title" placeholder="Titel" class="input"/>
+            </div>
+            <div>
+                <p:outputLabel for="pages" value="Anzahl der Seiten:" />
+                <p:inputText id="pages" placeholder="10" class="input"/>
+            </div>
+            <div>
+                <p:outputLabel for="band" value="Anzahl der Bände:" />
+                <p:inputText id="band" placeholder="1" class="input"/>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="startdate" value="Startdatum:" />
+                <p:calendar id="startdate" value="" showOn="button" inputStyleClass="input-with-button"/>
+            </div>
+            <div>
+                <p:outputLabel for="enddate" value="Enddatum:" />
+                <p:calendar id="enddate" value="" showOn="button" inputStyleClass="input-with-button"/>
+            </div>
+            <div>
+                <h:outputText value="Projekt ist inaktiv" />
+                <p:selectBooleanCheckbox value="aktiv" />
+            </div>
+        </p:row>
+    </p:panelGrid>
 </ui:composition>
