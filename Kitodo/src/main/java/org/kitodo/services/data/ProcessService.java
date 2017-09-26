@@ -378,7 +378,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of ProcessDTO objects with processes for specific process id
      */
     public List<ProcessDTO> findByProjectId(Integer id, boolean related) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getQueryProjectId(id).toString()), related);
+        List<JSONObject> processes = searcher.findDocuments(getQueryProjectId(id).toString());
+        return convertJSONObjectsToDTOs(processes, related);
     }
 
     /**
@@ -406,7 +407,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {
-        return createSimpleQuery("project", id, true);
+        return createSimpleQuery("project.id", id, true);
+    }
+
+    public QueryBuilder getQueryProjectTitle(String title) {
+        return createSimpleQuery("project.title", title, true, Operator.AND);
     }
 
     /**
@@ -417,7 +422,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific docket
      */
     public List<JSONObject> findByDocket(Docket docket) throws DataException {
-        QueryBuilder query = createSimpleQuery("docket_id", docket.getId(), true);
+        QueryBuilder query = createSimpleQuery("docket", docket.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -441,13 +446,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific process id
      */
     List<JSONObject> findByProjectTitle(String title) throws DataException {
-        Set<Integer> projectIds = new HashSet<>();
-
-        List<JSONObject> projects = serviceManager.getProjectService().findByTitle(title, true);
-        for (JSONObject project : projects) {
-            projectIds.add(getIdFromJSONObject(project));
-        }
-        return searcher.findDocuments(createSetQuery("project", projectIds, true).toString());
+        return searcher.findDocuments(getQueryProjectTitle(title).toString());
     }
 
     /**
@@ -470,13 +469,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific batch title
      */
     List<JSONObject> findByBatchTitle(String title) throws DataException {
-        Set<Integer> batchIds = new HashSet<>();
-
-        List<JSONObject> batches = serviceManager.getBatchService().findByTitle(title, true);
-        for (JSONObject batch : batches) {
-            batchIds.add(getIdFromJSONObject(batch));
-        }
-        return searcher.findDocuments(createSetQuery("batches.id", batchIds, true).toString());
+        QueryBuilder query = createSimpleQuery("batches.title", title, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
     }
 
     /**
@@ -594,7 +588,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
         List<ProjectDTO> projects = serviceManager.getProjectService().findByArchived(archived, true);
-        return createSetQuery("project", serviceManager.getFilterService().collectIds(projects), true);
+        return createSetQuery("project.id", serviceManager.getFilterService().collectIds(projects), true);
     }
 
     /**
@@ -659,7 +653,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
+        Integer project = getIntegerPropertyForDTO(jsonObject, "project.id");
         processDTO.setProject(serviceManager.getProjectService().findById(project));
         processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));

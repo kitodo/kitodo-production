@@ -218,6 +218,36 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindByProjectId() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<ProcessDTO> processes = processService.findByProjectId(1, true);
+        Integer actual = processes.size();
+        Integer expected = 3;
+        assertEquals("Process was not found in index!", expected, actual);
+
+        processes = processService.findByProjectId(2, true);
+        actual = processes.size();
+        expected = 0;
+        assertEquals("Some processes were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProjectTitle() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<JSONObject> processes = processService.findByProjectTitle("First project");
+        Integer actual = processes.size();
+        Integer expected = 3;
+        assertEquals("Process was not found in index!", expected, actual);
+
+        processes = processService.findByProjectTitle("Some project");
+        actual = processes.size();
+        expected = 0;
+        assertEquals("Process was found in index!", expected, actual);
+    }
+
+    @Test
     public void shouldFindByProperty() throws Exception {
         ProcessService processService = new ProcessService();
 
