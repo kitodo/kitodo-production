@@ -84,18 +84,26 @@ public class ProjectTypeTest {
 
         Process firstProcess = new Process();
         firstProcess.setId(1);
+        firstProcess.setTitle("First");
         processes.add(firstProcess);
 
         Process secondProcess = new Process();
         secondProcess.setId(2);
+        secondProcess.setTitle("Second");
         processes.add(secondProcess);
 
         User firstUser = new User();
         firstUser.setId(1);
+        firstUser.setLogin("first");
+        firstUser.setName("Tic");
+        firstUser.setSurname("Tac");
         users.add(firstUser);
 
         User secondUser = new User();
         secondUser.setId(2);
+        secondUser.setLogin("second");
+        secondUser.setName("Ted");
+        secondUser.setSurname("Barney");
         users.add(secondUser);
 
         Project firstProject = new Project();
@@ -144,7 +152,8 @@ public class ProjectTypeTest {
         HttpEntity document = processType.createDocument(project);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"archived\":false,"
-                + "\"processes\":[{\"id\":1},{\"id\":2}],\"numberOfPages\":100, \"endDate\":\"2017-03-01\","
+                + "\"processes\":[{\"id\":1,\"title\":\"First\"},{\"id\":2,\"title\":\"Second\"}],\"numberOfPages\":100,"
+                + "\"endDate\":\"2017-03-01\","
                 + "\"numberOfVolumes\":10,\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
                 + "(meta.CatalogIDDigital)\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":"
                 + "\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
@@ -156,14 +165,16 @@ public class ProjectTypeTest {
                 + "xml\",\"suffix\":\"xml\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
                 + "CatalogIDDigital)\\/pdf\\/\",\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/"
                 + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"fileFormatInternal\":\"XStream\""
-                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[{\"id\":1},{\"id\":2}]}");
+                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\",\"id\":1,"
+                + "\"login\":\"first\"},{\"surname\":\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(1);
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"archived\":false,\"processes\":"
-                + "[{\"id\":1},{\"id\":2}],\"numberOfPages\":2000,\"endDate\":\"2017-09-10\",\"numberOfVolumes\":20,"
+                + "[{\"id\":1,\"title\":\"First\"},{\"id\":2,\"title\":\"Second\"}],\"numberOfPages\":2000,"
+                + "\"endDate\":\"2017-09-10\",\"numberOfVolumes\":20,"
                 + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital"
                 + ")\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":\"image\\/jpeg\",\"suffix\":"
                 + "\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"
@@ -175,7 +186,8 @@ public class ProjectTypeTest {
                 + "\"xml\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/pdf\\/\","
                 + "\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/pdf\",\"suffix\":\"pdf\"}],"
                 + "\"startDate\":\"2017-01-10\",\"fileFormatInternal\":\"XStream\",\"fileFormatDmsExport\":\"XStream\","
-                + "\"users\":[{\"id\":1},{\"id\":2}]}");
+                + "\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":"
+                + "\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(2);

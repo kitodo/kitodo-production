@@ -41,8 +41,8 @@ public class ProjectType extends BaseType<Project> {
         projectObject.put("fileFormatDmsExport", project.getFileFormatDmsExport());
         projectObject.put("fileFormatInternal", project.getFileFormatInternal());
         projectObject.put("archived", project.getProjectIsArchived());
-        projectObject.put("processes", addObjectRelation(project.getProcesses()));
-        projectObject.put("users", addObjectRelation(project.getUsers()));
+        projectObject.put("processes", addObjectRelation(project.getProcesses(), true));
+        projectObject.put("users", addObjectRelation(project.getUsers(), true));
 
         JSONArray projectFileGroups = new JSONArray();
         List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();
