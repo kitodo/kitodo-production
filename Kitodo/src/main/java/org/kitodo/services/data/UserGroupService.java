@@ -176,8 +176,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @return list of search result with user groups for specific user login
      */
     List<JSONObject> findByUserLogin(String login) throws DataException {
-        JSONObject user = serviceManager.getUserService().findByLogin(login);
-        return findByUserId(getIdFromJSONObject(user));
+        QueryBuilder query = createSimpleQuery("users.login", login, true);
+        return searcher.findDocuments(query.toString());
     }
 
     @Override
