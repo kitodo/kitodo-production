@@ -1,0 +1,32 @@
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <h:panelGrid columns="1" cellpadding="10">
+        <p:outputLabel for="metsRightsOwner" value="METS Rechteinhaber" />
+        <p:inputText id="metsRightsOwner" placeholder="METS Rechteinhaber"/>
+        <p:outputLabel for="metsRightsOwnerLogo" value="METS Rechteinhaber Logo" />
+        <p:inputText id="metsRightsOwnerLogo" placeholder="METS Rechteinhaber Logo"/>
+        <p:outputLabel for="metsRightsOwnerUrl" value="METS Rechteinhaber URL" />
+        <p:inputText id="metsRightsOwnerUrl" placeholder="METS Rechteinhaber URL"/>
+        <p:outputLabel for="metsRightsOwnerContact" value="METS Rechteinhaber Kontakt" />
+        <p:inputText id="metsRightsOwnerContact" placeholder="METS Rechteinhaber Kontakt"/>
+        <p:outputLabel for="metsDigiprovReference" value="METS Digiprov Referenz" />
+        <p:inputText id="metsDigiprovReference" placeholder="METS Digiprov Referenz"/>
+        <p:outputLabel for="metsDigiprovPresentation" value="METS Digiprov Präsentation" />
+        <p:inputText id="metsDigiprovPresentation" placeholder="METS Digiprov Präsentation"/>
+        <p:outputLabel for="metsDigiprovReferenceAnchor" value="METS Digiprov Referenz (Anker)" />
+        <p:inputText id="metsDigiprovReferenceAnchor" placeholder="METS Digiprov Referenz (Anker)"/>
+        <p:outputLabel for="metsPresentationAnchor" value="METS Präsentation (Anker)" />
+        <p:inputText id="metsPresentationAnchor" placeholder="METS Präsentation (Anker)"/>
+        <p:outputLabel for="metsPointerPath" value="METS Pointer Pfad" />
+        <p:inputText id="metsPointerPath" placeholder="METS Pointer Pfad"/>
+        <p:outputLabel for="metsPointerPathAnchor" value="METS Pointer Pfad (Anker)" />
+        <p:inputText id="metsPointerPathAnchor" placeholder="METS Pointer Pfad (Anker)"/>
+        <p:outputLabel for="metsPurl" value="METS PURL (logische Struktur)" />
+        <p:inputText id="metsPurl" placeholder="METS PURL (logische Struktur)"/>
+        <p:outputLabel for="metsContentId" value="METS ContentIDs (physische Struktur)" />
+        <p:inputText id="metsContentId" placeholder="METS ContentIDs (physische Struktur)"/>
+        <p:button outcome="projectEditMets" value="Dateigruppe hinzufügen" style="left: 5px; bottom: 5px; position: absolute;" icon="fa fa-plus-circle fa-lg"/>
+    </h:panelGrid>
+</ui:composition>

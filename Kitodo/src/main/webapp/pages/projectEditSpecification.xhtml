@@ -1,0 +1,33 @@
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <h:panelGrid columns="1" cellpadding="10">
+        <p:outputLabel for="internalFormat" value="Internes Speicherformat:" />
+        <p:selectOneMenu id="internalFormat" value="" style="width:150px">
+            <!--<p:ajax listener="#{dropdownView.onCountryChange}" update="city" />-->
+            <!--<f:selectItem itemLabel="Select Country" itemValue="" noSelectionOption="true" />-->
+            <!--<f:selectItems value="#{dropdownView.countries}" />-->
+        </p:selectOneMenu>
+        <p:outputLabel for="DmsFormat" value="DMS Exportformat" />
+        <p:selectOneMenu id="DmsFormat" value="" style="width:150px">
+            <!--<p:ajax listener="#{dropdownView.onCountryChange}" update="city" />-->
+            <!--<f:selectItem itemLabel="Select Country" itemValue="" noSelectionOption="true" />-->
+            <!--<f:selectItems value="#{dropdownView.countries}" />-->
+        </p:selectOneMenu>
+        <p:outputLabel for="automaticExport" value="Automatischer DMS-Export" />
+        <p:selectBooleanCheckbox id="automaticExport" value="aktiv" />
+        <p:outputLabel for="dmsExportDir" value="DMS-Export-Ordner für XML-Datei" />
+        <p:inputText id="dmsExportDir" placeholder="Titel"/>
+        <p:outputLabel for="dmsExportImageDir" value="DMS-Export-Images-Ordner" />
+        <p:inputText id="dmsExportImageDir" placeholder="Titel"/>
+        <p:outputLabel for="dmsExportSuccessDir" value="DMS-Export-Success-Ordner" />
+        <p:inputText id="dmsExportSuccessDir" placeholder="Titel"/>
+        <p:outputLabel for="dmsExportErrorDir" value="DMS-Export-Error-Ordner" />
+        <p:inputText id="dmsExportErrorDir" placeholder="Titel"/>
+        <p:outputLabel for="createDir" value="Erzeuge Vorgangsordner" />
+        <p:selectBooleanCheckbox id="createDir" value="aktiv" />
+        <p:outputLabel for="timeout" value="Zeitüberschreitung (ms)" />
+        <p:inputText id="timeout" placeholder="Titel"/>
+    </h:panelGrid>
+</ui:composition>
