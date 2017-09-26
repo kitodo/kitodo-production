@@ -31,6 +31,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Task;
 
 /**
  * Test class for ProcessType.
@@ -42,12 +43,15 @@ public class ProcessTypeTest {
         List<Process> processes = new ArrayList<>();
         List<Property> properties = new ArrayList<>();
         List<Batch> batches = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
 
         Batch batch = new Batch();
         batch.setId(1);
+        batch.setTitle("First");
         batches.add(batch);
 
         Project project = new Project();
+        project.setTitle("Project");
         project.setId(1);
 
         Ruleset ruleset = new Ruleset();
@@ -64,6 +68,16 @@ public class ProcessTypeTest {
         secondProperty.setId(2);
         properties.add(secondProperty);
 
+        Task firstTask = new Task();
+        firstTask.setId(1);
+        firstTask.setTitle("Task one");
+        tasks.add(firstTask);
+
+        Task secondTask = new Task();
+        secondTask.setId(2);
+        secondTask.setTitle("Task two");
+        tasks.add(secondTask);
+
         Process firstProcess = new Process();
         firstProcess.setId(1);
         firstProcess.setTitle("Testing");
@@ -72,6 +86,7 @@ public class ProcessTypeTest {
         firstProcess.setCreationDate(localDate.toDate());
         firstProcess.setSortHelperImages(20);
         firstProcess.setBatches(batches);
+        firstProcess.setTasks(tasks);
         firstProcess.setWikiField("Wiki");
         firstProcess.setProject(project);
         firstProcess.setRuleset(ruleset);
@@ -106,26 +121,29 @@ public class ProcessTypeTest {
         HttpEntity document = processType.createDocument(process);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
-                + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project\":1,\"sortHelperStatus\":null,"
+                + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project.id\":1,\"sortHelperStatus\":null,"
                 + "\"creationDate\":\"2017-01-01\",\"processBaseUri\":null,\"template\":false,\"sortHelperImages\":20,"
-                + "\"batches\":[{\"id\":1}],\"workpieces\":[],\"tasks\":[],\"properties\":[]}");
+                + "\"batches\":[{\"id\":1,\"title\":\"First\"}]\"workpieces\":[],\"tasks\":[{\"id\":1,\"title\":"
+                + "\"Task one\"},{\"id\":2,\"title\":\"Task two\"}],\"project.title\":\"Project\",\"properties\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(1);
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
-                + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project\":1,\"template\":false,\"sortHelperStatus\""
-                + ":null,\"processBaseUri\":null,\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"sortHelperImages\":30,\"workpieces\":[],\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
+                + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project.id\":1,\"template\":false,"
+                + "\"project.title\":\"Project\",\"sortHelperStatus\":null,\"processBaseUri\":null,\"creationDate\":\""
+                + dateFormat.format(process.getCreationDate()) + "\",\"sortHelperImages\":30,\"workpieces\":[],"
+                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
-                + "\"docket\":null,\"ruleset\":null,\"project\":null,\"template\":false," + "\"creationDate\":\""
-                + dateFormat.format(process.getCreationDate()) + "\",\"tasks\":[],\"properties\":[],\"batches\":[],"
+                + "\"docket\":null,\"ruleset\":null,\"project.id\":null,\"project.title\":null,\"template\":false,"
+                + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
+                + "\",\"tasks\":[],\"properties\":[],\"batches\":[],"
                 + "\"workpieces\":[],\"sortHelperImages\":0,\"sortHelperStatus\":null,\"processBaseUri\":null}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
