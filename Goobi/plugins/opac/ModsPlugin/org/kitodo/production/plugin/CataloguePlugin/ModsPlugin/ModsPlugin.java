@@ -710,18 +710,15 @@ public class ModsPlugin implements Plugin {
 
         String xmlString = xmlOutputter.outputString(inputXML);
 
-        String inputXMLFilename = dmdSecCounter + "_original_SRW_MODS.xml";
-        String outputXMLFilename = dmdSecCounter + "_xslTransformedSRU.xml";
+        String outputXMLFilename = dmdSecCounter + "_xslTransformedSRU";
         dmdSecCounter++;
-
-        File outputFile = new File(outputXMLFilename);
 
         StreamSource transformSource = new StreamSource(stylesheetfile);
 
         TransformerFactoryImpl impl = new TransformerFactoryImpl();
 
         try {
-            xmlOutputter.output(inputXML, new FileWriter(inputXMLFilename));
+	     File outputFile = File.createTempFile(outputXMLFilename, "xml");
 
             FileOutputStream outputStream = new FileOutputStream(outputFile);
 
@@ -738,9 +735,7 @@ public class ModsPlugin implements Plugin {
             xslfoTransformer.transform(saxSource, saxResult);
 
             Document resultDoc = builder.build(outputFile);
-
-            deleteFile(inputXMLFilename);
-            deleteFile(outputXMLFilename);
+            deleteFile(outputXMLFilename + ".xml");
 
             return resultDoc;
 
