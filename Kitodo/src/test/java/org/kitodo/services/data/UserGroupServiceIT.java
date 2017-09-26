@@ -27,6 +27,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.dto.UserGroupDTO;
 
 /**
  * Tests for UserGroupService class.
@@ -70,7 +71,15 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldFindUserGroup() throws Exception {
+    public void shouldFindAllUserGroups() throws Exception {
+        UserGroupService userGroupService = new UserGroupService();
+
+        List<UserGroupDTO> userGroups = userGroupService.findAll();
+        assertEquals("Not all user's groups were found in database!", 3, userGroups.size());
+    }
+
+    @Test
+    public void shouldGetUserGroup() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
         UserGroup userGroup = userGroupService.getById(1);
@@ -146,9 +155,13 @@ public class UserGroupServiceIT {
     public void shouldFindById() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
-        String actual = userGroupService.findById(1).getTitle();
+        UserGroupDTO userGroup = userGroupService.findById(1);
+        String actual = userGroup.getTitle();
         String expected = "Admin";
         assertEquals("User group was not found in index!", expected, actual);
+
+        int usersSize = userGroup.getUsersSize();
+        assertEquals("User group was not found in index!", 2, usersSize);
     }
 
     @Test
