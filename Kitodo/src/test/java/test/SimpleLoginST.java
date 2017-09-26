@@ -43,7 +43,6 @@ import org.kitodo.MockDatabase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -101,6 +100,9 @@ public class SimpleLoginST {
         }
     }
 
+    /**
+     * Watcher for WebDriverExceptions on travis which makes screenshot and sends email
+     */
     @Rule
     public TestRule seleniumExceptionWatcher = new TestWatcher() {
 
@@ -185,7 +187,7 @@ public class SimpleLoginST {
 
     }
 
-    public void sendEmail(String user, String password, String subject, String message, File attachedFile,
+    private void sendEmail(String user, String password, String subject, String message, File attachedFile,
             String recipient) throws EmailException, AddressException {
 
         InternetAddress address = new InternetAddress(recipient);
@@ -214,7 +216,7 @@ public class SimpleLoginST {
         email.send();
     }
 
-    public static File captureScreenShot(WebDriver driver) {
+    private static File captureScreenShot(WebDriver driver) {
 
         File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         File screenshotFile = new File(System.getProperty("user.dir") + "/target/Selenium/" + "screen.png");
