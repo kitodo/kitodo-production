@@ -7,7 +7,7 @@ implemented so far.
 |User group|Permissions|Permission Id|
 |---|---|:---:|
 |Admin|Administration|1|
-|Manager|Entire workflow|2|
+|Manager|Entire workflow except creation of new process templates|2|
 |...|...|3|
 |User|Search processes, display corresponding tasks, edit processes with meta data editor|4|
 
