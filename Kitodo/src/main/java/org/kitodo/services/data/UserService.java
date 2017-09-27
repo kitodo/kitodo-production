@@ -447,6 +447,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
         userDTO.setLogin(getStringPropertyForDTO(userJSONObject, "login"));
         userDTO.setName(getStringPropertyForDTO(userJSONObject, "name"));
         userDTO.setSurname(getStringPropertyForDTO(userJSONObject, "surname"));
+        userDTO.setActive(getBooleanPropertyForDTO(userJSONObject, "active"));
         userDTO.setLdapLogin(getStringPropertyForDTO(userJSONObject, "ldapLogin"));
         userDTO.setLocation(getStringPropertyForDTO(userJSONObject, "location"));
         userDTO.setFullName(getFullName(userDTO));
