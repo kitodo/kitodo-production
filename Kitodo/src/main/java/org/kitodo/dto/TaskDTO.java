@@ -13,6 +13,7 @@ package org.kitodo.dto;
 
 import java.util.List;
 
+import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 /**
@@ -21,9 +22,11 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 public class TaskDTO extends BaseDTO {
 
     private String title;
+    private String localizedTitle;
     private Integer priority;
     private Integer ordering;
     private TaskStatus processingStatus;
+    private TaskEditType editType;
     private UserDTO processingUser;
     private String processingTime;
     private String processingBegin;
@@ -55,6 +58,25 @@ public class TaskDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * Get localized title.
+     *
+     * @return localized title as String
+     */
+    public String getLocalizedTitle() {
+        return localizedTitle;
+    }
+
+    /**
+     * Set localized title.
+     *
+     * @param localizedTitle
+     *            as String
+     */
+    public void setLocalizedTitle(String localizedTitle) {
+        this.localizedTitle = localizedTitle;
     }
 
     /**
@@ -112,6 +134,25 @@ public class TaskDTO extends BaseDTO {
      */
     public void setProcessingStatus(TaskStatus processingStatus) {
         this.processingStatus = processingStatus;
+    }
+
+    /**
+     * Get editType as {@link TaskEditType}.
+     *
+     * @return current edit type
+     */
+    public TaskEditType getEditType() {
+        return editType;
+    }
+
+    /**
+     * Set editType to specific value from {@link TaskEditType}.
+     *
+     * @param editType
+     *            as {@link TaskEditType}
+     */
+    public void setEditType(TaskEditType editType) {
+        this.editType = editType;
     }
 
     /**
