@@ -13,8 +13,10 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.ProjectHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
 import org.json.simple.JSONObject;
@@ -215,8 +218,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            if true - find archived projects, if false - find not archived
      *            projects
      * @param related
-     *            if true - found project is related to some other DTO object, if
-     *            false - not and it collects all related objects
+     *            if true - found project is related to some other DTO object,
+     *            if false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
@@ -360,5 +363,22 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     @XmlElement(name = "field")
     public List<Field> getFieldConfig(Project project) throws IOException {
         return Field.getFieldConfigForProject(project);
+    }
+
+    /**
+     * Checks if a project can be actually used.
+     *
+     * @param project
+     *            The project to check
+     * @return true, if project is complete and can be used, false, if project
+     *         is incomplete
+     */
+    public boolean isProjectComplete(Project project) {
+        boolean projectsXmlExists = (new File(ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE)).exists();
+        boolean digitalCollectionsXmlExists = (new File(
+                ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE)).exists();
+
+        return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
+                && project.getFileFormatInternal() != null && digitalCollectionsXmlExists && projectsXmlExists;
     }
 }

@@ -37,6 +37,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.importer.ImportObject;
 import org.jdom.Document;
@@ -916,7 +917,7 @@ public class CopyProcess extends ProzesskopieForm {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollection = new ArrayList<>();
         ArrayList<String> defaultCollections = new ArrayList<>();
-        String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
+        String filename = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;

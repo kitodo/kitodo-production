@@ -34,4 +34,10 @@ public class FileNames {
      * their respective DocType mappings.
      */
     public static final String OPAC_CONFIGURATION_FILE = "kitodo_opac.xml";
+
+    /**
+     * Configuration file for project configuration.
+     */
+    public static final String PROJECT_CONFIGURATION_FILE = "kitodo_projects.xml";
+
 }
