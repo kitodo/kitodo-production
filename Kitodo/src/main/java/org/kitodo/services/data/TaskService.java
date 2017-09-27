@@ -336,7 +336,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setProcessingTime(getStringPropertyForDTO(taskJSONObject, "processingTime"));
         taskDTO.setProcessingBegin(getStringPropertyForDTO(taskJSONObject, "processingBegin"));
         taskDTO.setProcessingEnd(getStringPropertyForDTO(taskJSONObject, "processingEnd"));
-        taskDTO.setTypeImagesWrite(true);
+        taskDTO.setTypeAutomatic(getBooleanPropertyForDTO(taskJSONObject, "typeAutomatic"));
+        taskDTO.setTypeMetadata(getBooleanPropertyForDTO(taskJSONObject, "typeMetadata"));
+        taskDTO.setTypeImportFileUpload(getBooleanPropertyForDTO(taskJSONObject, "typeImportFileUpload"));
+        taskDTO.setTypeExportRussian(getBooleanPropertyForDTO(taskJSONObject, "typeExportRussian"));
+        taskDTO.setTypeImagesWrite(getBooleanPropertyForDTO(taskJSONObject, "typeImagesWrite"));
+        taskDTO.setTypeImagesRead(getBooleanPropertyForDTO(taskJSONObject, "typeImagesRead"));
         taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "users"));
         taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "userGroups"));
         if (!related) {
