@@ -30,7 +30,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,6 +63,7 @@ import org.goobi.production.chart.IProvideProjectTaskList;
 import org.goobi.production.chart.ProjectStatusDataTable;
 import org.goobi.production.chart.ProjectStatusDraw;
 import org.goobi.production.chart.WorkflowProjectTaskList;
+import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -90,14 +90,6 @@ import org.xml.sax.SAXParseException;
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
-
-    private static final HashMap<String, String> configurationFiles;
-    static {
-        configurationFiles = new HashMap<>();
-        configurationFiles.put("PROJECT", "kitodo_projects.xml");
-        configurationFiles.put("DISPLAY_RULES", "kitodo_metadataDisplayRules.xml");
-        configurationFiles.put("DIGITAL_COLLECTIONS", "kitodo_digitalCollections.xml");
-    }
 
     private String currentConfigurationFile = "";
 
@@ -277,7 +269,7 @@ public class ProjekteForm extends BasisForm {
     @PostConstruct
     public void initializeProjectList() {
         filterKein();
-        loadXMLConfiguration("PROJECT");
+        loadProjectConfiguration();
         try {
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -879,22 +871,21 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Load the content of the XML configuration file denoted by given String
-     * 'configurationName'. This must be one of the keys in the static HashMap
-     * 'configurationFiles'.
+     * Load the content of the XML configuration file with the given name
+     * 'configurationFile'.
      *
-     * @param configurationName
+     * @param configurationFile
      *            name of the configuration to be loaded
      */
-    public void loadXMLConfiguration(String configurationName) {
+    public void loadXMLConfiguration(String configurationFile) {
         try (StringWriter stringWriter = new StringWriter()) {
-            currentConfigurationFile = configurationFiles.get(configurationName);
+            currentConfigurationFile = configurationFile;
             XMLConfiguration currentConfiguration = new XMLConfiguration(
                     ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
             currentConfiguration.save(stringWriter);
             this.xmlConfigurationString = stringWriter.toString();
         } catch (ConfigurationException e) {
-            String errorMessage = "ERROR: Unable to load configuration file for '" + configurationName + "'.";
+            String errorMessage = "ERROR: Unable to load configuration file '" + configurationFile + "'.";
             logger.error(errorMessage + " " + e.getMessage());
             this.xmlConfigurationString = errorMessage;
         } catch (IOException e) {
@@ -981,5 +972,26 @@ public class ProjekteForm extends BasisForm {
      */
     public String getCurrentConfigurationFile() {
         return currentConfigurationFile;
+    }
+
+    /**
+     * Load the project XML configuration file.
+     */
+    public void loadProjectConfiguration() {
+        loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
+    }
+
+    /**
+     * Load the display rules XML configuration file.
+     */
+    public void loadDisplayRulesConfiguration() {
+        loadXMLConfiguration(FileNames.METADATA_DISPLAY_RULES_FILE);
+    }
+
+    /**
+     * Load the digital collections XML configuration file.
+     */
+    public void loadDigitalCollectionsConfiguration() {
+        loadXMLConfiguration(FileNames.DIGITAL_COLLECTIONS_FILE);
     }
 }

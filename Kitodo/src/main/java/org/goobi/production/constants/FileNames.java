@@ -12,8 +12,7 @@
 package org.goobi.production.constants;
 
 /**
- * This class collects file names used throughout the code. TODO: Make all file
- * name String literals constants here.
+ * This class collects file names used throughout the code.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -39,5 +38,10 @@ public class FileNames {
      * Configuration file for project configuration.
      */
     public static final String PROJECT_CONFIGURATION_FILE = "kitodo_projects.xml";
+
+    /**
+     * Configuration file for metadata display rules.
+     */
+    public static final String METADATA_DISPLAY_RULES_FILE = "kitodo_metadataDisplayRules.xml";
 
 }
