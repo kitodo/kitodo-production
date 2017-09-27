@@ -1,8 +1,7 @@
 Role Management
 ===============
 There are currently three user groups with a permission id.
-A fourth intermediate stage (Id = 3) was planned, but has never been
-implemented so far.
+A fourth intermediate stage (Id = 3) existed, but has been removed.
 
 |User group|Permissions|Permission Id|
 |---|---|:---:|
