@@ -36,8 +36,13 @@ public class TaskDTO extends BaseDTO {
     private Integer usersSize;
     private List<UserGroupDTO> userGroups;
     private Integer userGroupsSize;
-    private boolean batchStep;
+    private boolean typeAutomatic;
+    private boolean typeMetadata;
+    private boolean typeImportFileUpload;
+    private boolean typeExportRussian;
+    private boolean typeImagesRead;
     private boolean typeImagesWrite;
+    private boolean batchStep;
     private boolean panelShown = false;
     private boolean selected = false;
 
@@ -327,6 +332,120 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
+     * Get information if task type is automatic.
+     *
+     * @return true or false
+     */
+    public boolean isTypeAutomatic() {
+        return typeAutomatic;
+    }
+
+    /**
+     * Set information if task type is automatic.
+     *
+     * @param typeAutomatic
+     *            as boolean
+     */
+    public void setTypeAutomatic(boolean typeAutomatic) {
+        this.typeAutomatic = typeAutomatic;
+    }
+
+    /**
+     * Get information if task type is metadata.
+     *
+     * @return true or false
+     */
+    public boolean isTypeMetadata() {
+        return typeMetadata;
+    }
+
+    /**
+     * Set information if task type is metadata.
+     *
+     * @param typeMetadata
+     *            as boolean
+     */
+    public void setTypeMetadata(boolean typeMetadata) {
+        this.typeMetadata = typeMetadata;
+    }
+
+    /**
+     * Get information if task type is import file upload.
+     * 
+     * @return true or false
+     */
+    public boolean isTypeImportFileUpload() {
+        return typeImportFileUpload;
+    }
+
+    /**
+     * Set information if task type is import file upload.
+     * 
+     * @param typeImportFileUpload
+     *            as boolean
+     */
+    public void setTypeImportFileUpload(boolean typeImportFileUpload) {
+        this.typeImportFileUpload = typeImportFileUpload;
+    }
+
+    /**
+     * Get information if task type is export russian.
+     *
+     * @return true or false
+     */
+    public boolean isTypeExportRussian() {
+        return typeExportRussian;
+    }
+
+    /**
+     * Set information if task type is export russian.
+     *
+     * @param typeExportRussian
+     *            as boolean
+     */
+    public void setTypeExportRussian(boolean typeExportRussian) {
+        this.typeExportRussian = typeExportRussian;
+    }
+
+    /**
+     * Get information if task type is images read.
+     *
+     * @return true or false
+     */
+    public boolean isTypeImagesRead() {
+        return typeImagesRead;
+    }
+
+    /**
+     * Set information if task type is images read.
+     *
+     * @param typeImagesRead
+     *            as boolean
+     */
+    public void setTypeImagesRead(boolean typeImagesRead) {
+        this.typeImagesRead = typeImagesRead;
+    }
+
+    /**
+     * Get information if task type is images write.
+     *
+     * @return true or false
+     */
+    public boolean isTypeImagesWrite() {
+        return typeImagesWrite;
+    }
+
+    /**
+     * Set information if task type is images write.
+     *
+     * @param typeImagesWrite
+     *            as boolean
+     */
+    public void setTypeImagesWrite(boolean typeImagesWrite) {
+        this.typeImagesWrite = typeImagesWrite;
+    }
+
+    /**
      * Get information if task is batch(step).
      * 
      * @return true or false
@@ -343,25 +462,6 @@ public class TaskDTO extends BaseDTO {
      */
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
-    }
-
-    /**
-     * Get information if task type is images write.
-     * 
-     * @return true or false
-     */
-    public boolean isTypeImagesWrite() {
-        return typeImagesWrite;
-    }
-
-    /**
-     * Set information if task type is images write.
-     * 
-     * @param typeImagesWrite
-     *            as boolean
-     */
-    public void setTypeImagesWrite(boolean typeImagesWrite) {
-        this.typeImagesWrite = typeImagesWrite;
     }
 
     /**
