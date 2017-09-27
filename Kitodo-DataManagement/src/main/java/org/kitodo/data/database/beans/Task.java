@@ -553,16 +553,15 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Concatenates the script names for displaying in the Frontend.
+     * Get script names for displaying in the frontend.
      * 
-     * @return The concatenation of script names
+     * @return script name as String
      */
     public String getListOfPaths() {
-        String answer = "";
         if (!StringUtils.isBlank(this.scriptName)) {
-            answer += this.scriptName;
+            return this.scriptName;
         }
-        return answer;
+        return "";
 
     }
 
