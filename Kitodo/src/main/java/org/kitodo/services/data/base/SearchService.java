@@ -853,11 +853,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            JSONObject
      * @return display properties as String
      */
-    protected String getStringPropertyForDTO(JSONObject object, String key) {
+    protected Boolean getBooleanPropertyForDTO(JSONObject object, String key) {
         if (object != null) {
-            return (String) object.get(key);
+            return (Boolean) object.get(key);
         }
-        return "";
+        return null;
     }
 
     /**
@@ -875,6 +875,20 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             }
         }
         return 0;
+    }
+
+    /**
+     * Converts properties' values returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject
+     * @return display properties as String
+     */
+    protected String getStringPropertyForDTO(JSONObject object, String key) {
+        if (object != null) {
+            return (String) object.get(key);
+        }
+        return "";
     }
 
     /**
