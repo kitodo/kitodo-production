@@ -15,7 +15,6 @@ sudo: required
 addons:
   firefox: "55.0"
 
-
 env: DB=mysql
 
 services:
@@ -29,7 +28,6 @@ script:
 install: true
 
 before_install:
-
 
 before_script:
   - cp config/database.yml.travis config/database.yml

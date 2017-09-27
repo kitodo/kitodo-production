@@ -614,7 +614,7 @@
             <!-- The resources will be placed in reversed order in the war
               that means first entry will be added as last resource and may override other resources -->
             <resource>
-                <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
+                <!-- ATTENTION! This config is only loaded in all-tests and selenium profile with specified path-->
                 <directory>${build.resources.path}</directory>
                 <filtering>true</filtering>
                 <includes>
@@ -632,8 +632,6 @@
         </resources>
 
         <plugins>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -660,7 +658,6 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
     <profiles>
         <profile>
@@ -725,6 +722,7 @@
                             </execution>
                         </executions>
                     </plugin>
+
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
@@ -807,11 +805,7 @@
                         </executions>
                     </plugin>
                 </plugins>
-
             </build>
-
         </profile>
-
     </profiles>
-
 </project>

@@ -42,9 +42,7 @@ public class KitodoServiceLoader<T> {
      *            path to module folder
      */
     public KitodoServiceLoader(Class clazz, String modulePath) {
-
         this.clazz = clazz;
-
         if (!new File(modulePath).exists()) {
                 logger.error("Specified module folder does not exist: " + modulePath);
         } else {
@@ -73,6 +71,7 @@ public class KitodoServiceLoader<T> {
      */
     private void loadModulesIntoClasspath() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
+
         URLClassLoader sysLoader;
         try {
             DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar");
