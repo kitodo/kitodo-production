@@ -212,7 +212,7 @@ public class ModsPlugin implements Plugin {
     /**
      * Path of the output file for the XSL transformation.
      */
-    private static final String TEMP_FILENAME = "tempMETSMODS.xml";
+    private static final String TEMP_FILENAME = "tempMETSMODS";
 
     /**
      * Filename of the XSL transformation file. This filename is being loaded
@@ -522,13 +522,15 @@ public class ModsPlugin implements Plugin {
 
                 MetsMods mm = new MetsMods(preferences);
 
-                xmlOutputter.output(metsDocument, new FileWriter(TEMP_FILENAME));
+                File tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
 
-                mm.read(TEMP_FILENAME);
+                xmlOutputter.output(metsDocument, new FileWriter(tempFile.getAbsoluteFile()));
+
+                mm.read(tempFile.getAbsolutePath());
                 // reviewing the constructed DigitalDocument can be done via
                 // "System.out.println(mm.getDigitalDocument());"
 
-                deleteFile(TEMP_FILENAME);
+                deleteFile(tempFile.getAbsolutePath());
                 DigitalDocument dd = mm.getDigitalDocument();
                 ff = new XStream(preferences);
                 ff.setDigitalDocument(dd);
@@ -718,7 +720,7 @@ public class ModsPlugin implements Plugin {
         TransformerFactoryImpl impl = new TransformerFactoryImpl();
 
         try {
-	     File outputFile = File.createTempFile(outputXMLFilename, "xml");
+            File outputFile = File.createTempFile(outputXMLFilename, "xml");
 
             FileOutputStream outputStream = new FileOutputStream(outputFile);
 
@@ -735,7 +737,7 @@ public class ModsPlugin implements Plugin {
             xslfoTransformer.transform(saxSource, saxResult);
 
             Document resultDoc = builder.build(outputFile);
-            deleteFile(outputXMLFilename + ".xml");
+            deleteFile(outputFile.getAbsolutePath());
 
             return resultDoc;
 
