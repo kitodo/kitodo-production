@@ -1,32 +1,36 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.lugh;
 
 import java.util.Collection;
 
 import org.apache.jena.rdf.model.Model;
 
+/**
+ * Factory interface to create data objects in a given storage implementation.
+ *
+ * @author Matthias Ronge
+ */
 public interface Storage {
     /**
-     * Creates nodes from a Jena model. Returns all nodes not referenced from
-     * anywhere (the “top nodes”), or all nodes if there aren’t any “top nodes”.
-     *
-     * @param model
-     *            model to read out
-     * @param alwaysAll
-     *            if true, returns all nodes from the model, independent of
-     *            whether there are “top nodes” or not
-     * @return all nodes not referenced from anywhere, or really all nodes
-     */
-    Result createResultFrom(Model model, boolean alwaysAll);
-
-    /**
-     * Creates a new localised Literal.
+     * Creates a new language-tagged string.
      *
      * @param value
      *            literal value
      * @param languageTag
      *            locale code
+     * @return the created language-tagged string
      */
-    public LangString newLangString(String value, String languageTag);
+    LangString createLangString(String value, String languageTag);
 
     /**
      * Creates a new Literal with a value and a type.
@@ -36,51 +40,68 @@ public interface Storage {
      * @param type
      *            literal type, one of RDF.HTML, RDF.PLAIN_LITERAL,
      *            RDF.XML_LITERAL, or a literal type defined in XMLSchema.
+     * @return the created literal
      */
-    public Literal newLiteral(String value, NodeReference type);
+    default Literal createLiteral(String value, IdentifiableNode type) {
+        return createLiteral(value, type.getIdentifier());
+    }
 
     /**
-     * Creates a literal object from a String. If a language is given, a
-     * LangString will be created, otherwise a plain literal.
+     * Creates a new Literal with a value and a type.
      *
      * @param value
-     *            the literal value
+     *            literal value
      * @param type
-     *            literal type
-     * @return the literal object
+     *            literal type, one of RDF.HTML, RDF.PLAIN_LITERAL,
+     *            RDF.XML_LITERAL, or a literal type defined in XMLSchema.
+     * @return the created literal
      */
-    public Literal newLiteral(String value, String type);
+    Literal createLiteral(String value, String type);
 
     /**
      * Creates a new named node.
      *
      * @param identifier
      *            the name URI of this node
+     * @return the created named node
      */
-    public NamedNode newNamedNode(String identifier);
+    NamedNode createNamedNode(String identifier);
 
     /**
      * Creates an empty node.
+     *
+     * @return the created node
      */
-    Node newNode();
+    Node createNode();
 
     /**
      * Create a node with a type attribute set.
      *
      * @param type
      *            node type
+     * @return the created node
      */
-    Node newNode(NodeReference type);
+    default Node createNode(NodeReference type) {
+        return createNode(type.getIdentifier());
+    }
 
     /**
      * Create a node with a type attribute set.
      *
      * @param type
      *            node type
+     * @return the created node
      */
-    public Node newNode(String type);
+    Node createNode(String type);
 
-    NodeReference newNodeReference(String url);
+    /**
+     * Creates a node reference.
+     *
+     * @param url
+     *            URI to reference
+     * @return the created node reference
+     */
+    NodeReference createNodeReference(String url);
 
     /**
      * Creates a literal object from a String. If the literal starts with
@@ -93,34 +114,52 @@ public interface Storage {
      *            language, may be {@code ""} but not {@code null}
      * @return the literal object
      */
-    public ObjectType newObjectType(String value, String lang);
+    ObjectType createObjectType(String value, String lang);
 
     /**
      * Create an empty result.
+     *
+     * @return the created result
      */
-    Result newResult();
+    Result createResult();
 
     /**
      * Create a result with elements.
      *
      * @param arg0
      *            result elements
+     * @return the created result
      */
-    Result newResult(Collection<? extends ObjectType> arg0);
+    Result createResult(Collection<? extends ObjectType> arg0);
 
     /**
      * Create a result for the given amount of elements.
      *
      * @param capacity
      *            elements to be added
+     * @return the created result
      */
-    Result newResult(int capacity);
+    Result createResult(int capacity);
+
+    /**
+     * Creates nodes from a Jena model. Returns all nodes not referenced from
+     * anywhere (the “top nodes”), or all nodes if there aren’t any “top nodes”.
+     *
+     * @param model
+     *            model to read out
+     * @param alwaysAll
+     *            if true, returns all nodes from the model, independent of
+     *            whether there are “top nodes” or not
+     * @return all nodes not referenced from anywhere, or really all nodes
+     */
+    Result createResult(Model model, boolean alwaysAll);
 
     /**
      * Create a result with one element.
      *
      * @param element
      *            result element
+     * @return the created result
      */
-    Result newResult(ObjectType element);
+    Result createResult(ObjectType element);
 }

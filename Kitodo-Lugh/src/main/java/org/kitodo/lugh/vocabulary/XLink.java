@@ -13,8 +13,7 @@ package org.kitodo.lugh.vocabulary;
 
 import java.util.*;
 
-import org.kitodo.lugh.NodeReference;
-import org.kitodo.lugh.mem.MemoryStorage;
+import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.w3.org/1999/xlink} namespace.
@@ -24,19 +23,19 @@ import org.kitodo.lugh.mem.MemoryStorage;
 public class XLink {
 
     public static final NodeReference FROM = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/xlink#from");
+            .createNodeReference("http://www.w3.org/1999/xlink#from");
 
     public static final NodeReference HREF = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/xlink#href");
+            .createNodeReference("http://www.w3.org/1999/xlink#href");
 
-    public static final String NAMESPACE = "http://www.w3.org/1999/xlink";
+    public static final String NAMESPACE = "http://www.w3.org/1999/xlink#";
 
     /**
      * A reverse map of the URLs to the constants.
      */
     private static final Map<String, NodeReference> reversed;
 
-    public static final NodeReference TO = MemoryStorage.INSTANCE.newNodeReference("http://www.w3.org/1999/xlink#to");
+    public static final NodeReference TO = MemoryStorage.INSTANCE.createNodeReference("http://www.w3.org/1999/xlink#to");
 
     /**
      * Populates the reverse map of the URLs to the constants.

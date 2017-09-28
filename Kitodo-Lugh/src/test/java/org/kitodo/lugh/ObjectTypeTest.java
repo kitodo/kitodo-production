@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -21,7 +21,7 @@ public class ObjectTypeTest {
     @Test
     public void testLangStringIsAnObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            ObjectType ot = storage.newLangString("Hello world!", "en");
+            ObjectType ot = storage.createLangString("Hello world!", "en");
             assertNotNull(ot);
         }
     }
@@ -29,7 +29,7 @@ public class ObjectTypeTest {
     @Test
     public void testLiteralIsAnObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            ObjectType ot = storage.newLiteral("abcdefghijklmnopqrstuvwxyz", RDF.PLAIN_LITERAL);
+            ObjectType ot = storage.createLiteral("abcdefghijklmnopqrstuvwxyz", RDF.PLAIN_LITERAL);
             assertNotNull(ot);
         }
     }
@@ -37,7 +37,7 @@ public class ObjectTypeTest {
     @Test
     public void testNamedNodeIsAnObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            ObjectType ot = storage.newNamedNode("http://test.example/foo");
+            ObjectType ot = storage.createNamedNode("http://test.example/foo");
             assertNotNull(ot);
         }
     }
@@ -45,7 +45,7 @@ public class ObjectTypeTest {
     @Test
     public void testNodeIsAnObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            ObjectType ot = storage.newNode();
+            ObjectType ot = storage.createNode();
             assertNotNull(ot);
         }
     }
@@ -53,7 +53,7 @@ public class ObjectTypeTest {
     @Test
     public void testNodeReferenceIsAnObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            ObjectType ot = storage.newNodeReference("http://test.example/foo");
+            ObjectType ot = storage.createNodeReference("http://test.example/foo");
             assertNotNull(ot);
         }
     }

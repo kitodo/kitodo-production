@@ -3,13 +3,13 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.mem;
+package org.kitodo.lugh;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 
 import org.junit.Test;
-import org.kitodo.lugh.*;
 import org.kitodo.lugh.vocabulary.*;
 
 public class GraphPathTest {
@@ -73,7 +72,7 @@ public class GraphPathTest {
                         .add(new MemoryNode(Mods.EXTENT).add(new MemoryLiteral("getr. Zählung", RDF.PLAIN_LITERAL))));
 
         Result result = modsSection.find(new GraphPath(gpath, prefixes));
-        assertEquals("Pineau, Severin", result.strings(" ; ", true));
+        assertEquals("Pineau, Severin", result.leaves(" ; "));
     }
 
     @Test
@@ -87,23 +86,31 @@ public class GraphPathTest {
 
         GraphPath expected = (GraphPath) new GraphPath().put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                 .put(RDF.OBJECT, new MemoryNode(Mets.DMD_SEC))
-                .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP).put(RDF.OBJECT, new MemoryNode(Mets.MD_WRAP))
-                        .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                        .put(RDF.OBJECT, new MemoryNode(Mets.MD_WRAP))
+                        .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                                 .put(RDF.OBJECT, new MemoryNode(Mets.XML_DATA))
-                                .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                                .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                                         .put(RDF.OBJECT, new MemoryNode(Mods.MODS))
-                                        .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
-                                                .put(RDF.OBJECT, new MemoryNode(Mods.NAME).put(Mods.TYPE, "personal")
-                                                        .put(GraphPath.ANY_PREDICATE, new MemoryNode(Mods.ROLE).put(
+                                        .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP).put(
+                                                RDF.OBJECT,
+                                                new MemoryNode(Mods.NAME).put(Mods.TYPE, "personal").<MemoryNode>put(
+                                                        GraphPath.ANY_PREDICATE,
+                                                        new MemoryNode(Mods.ROLE).<MemoryNode>put(
                                                                 GraphPath.ANY_PREDICATE,
-                                                                new MemoryNode(Mods.ROLE_TERM).add(
+                                                                new MemoryNode(Mods.ROLE_TERM).<MemoryNode>add(
                                                                         new MemoryLiteral("aut", RDF.PLAIN_LITERAL)))))
-                                                .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                                                .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                                                         .put(RDF.OBJECT, new MemoryNode(Mods.DISPLAY_FORM))
-                                                        .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
-                                                                .put(RDF.PREDICATE, RDF.toURL(Node.FIRST_INDEX)))))))));
+                                                        .<MemoryNode>put(GraphPath.TO,
+                                                                new MemoryNode(GraphPath.LOCATION_STEP).<MemoryNode>put(
+                                                                        RDF.PREDICATE,
+                                                                        RDF.toURL(Node.FIRST_INDEX)))))))));
 
         assertTrue(expected.equals(new GraphPath(gpath, prefixes)));
+
+        new MemoryNode(Mods.ROLE).put(GraphPath.ANY_PREDICATE,
+                new MemoryNode(Mods.ROLE_TERM).<MemoryNode>add(new MemoryLiteral("aut", RDF.PLAIN_LITERAL)));
     }
 
     @Test(expected = NullPointerException.class)

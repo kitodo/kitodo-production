@@ -16,7 +16,6 @@ import java.util.*;
 
 import org.apache.jena.rdf.model.*;
 import org.kitodo.lugh.*;
-import org.kitodo.lugh.mem.MemoryStorage;
 
 /**
  * The XML Schema datatypes.
@@ -31,7 +30,7 @@ public class XMLSchema {
         private final BigInteger min;
 
         public IntegerDatatype(String url, String min, String max, Storage s) {
-            delegate = s.newNodeReference(url);
+            delegate = s.createNodeReference(url);
             this.min = min != null ? new BigInteger(min) : null;
             this.max = max != null ? new BigInteger(max) : null;
         }
@@ -50,102 +49,102 @@ public class XMLSchema {
         }
 
         @Override
-        public RDFNode toRDFNode(Model model) {
-            return delegate.toRDFNode(model);
+        public RDFNode toRDFNode(Model model, Boolean addNamedNodesRecursively) {
+            return delegate.toRDFNode(model, addNamedNodesRecursively);
         }
     }
 
     public static final NodeReference ANY_URI = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#anyURI");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#anyURI");
 
     public static final NodeReference BASE_64_BINARY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#base64Binary");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#base64Binary");
 
     public static final NodeReference BOOLEAN = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#boolean");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#boolean");
 
     public static final NodeReference BYTE = new IntegerDatatype("http://www.w3.org/2001/XMLSchema#byte", "-128", "127",
             MemoryStorage.INSTANCE);
 
     public static final NodeReference DATE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#date");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#date");
 
     public static final NodeReference DATE_TIME = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#dateTime");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#dateTime");
 
     public static final NodeReference DECIMAL = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#decimal");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#decimal");
 
     public static final NodeReference DOUBLE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#double");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#double");
 
     public static final NodeReference DURATION = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#duration");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#duration");
 
     public static final NodeReference ENTITIES = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#ENTITIES");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#ENTITIES");
 
     public static final NodeReference ENTITY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#ENTITY");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#ENTITY");
 
     public static final NodeReference FLOAT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#float");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#float");
 
     public static final NodeReference G_DAY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#gDay");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#gDay");
 
     public static final NodeReference G_MONTH = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#gMonth");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#gMonth");
 
     public static final NodeReference G_MONTH_DAY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#gMonthDay");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#gMonthDay");
 
     public static final NodeReference G_YEAR = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#gYear");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#gYear");
 
     public static final NodeReference G_YEAR_MONTH = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#gYearMonth");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#gYearMonth");
 
     public static final NodeReference HEX_BINARY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#hexBinary");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#hexBinary");
 
     public static final NodeReference ID = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#ID");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#ID");
 
     public static final NodeReference IDREF = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#IDREF");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#IDREF");
 
     public static final NodeReference IDREFS = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#IDREFS");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#IDREFS");
 
     public static final NodeReference INT = new IntegerDatatype("http://www.w3.org/2001/XMLSchema#int", "-2147483648",
             "2147483647", MemoryStorage.INSTANCE);
 
     public static final NodeReference INTEGER = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#integer");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#integer");
 
     public static final NodeReference LANGUAGE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#language");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#language");
 
     public static final NodeReference LONG = new IntegerDatatype("http://www.w3.org/2001/XMLSchema#long",
             "-9223372036854775808", "9223372036854775807", MemoryStorage.INSTANCE);
 
     public static final NodeReference NAME = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#Name");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#Name");
 
-    static final String NAMESPACE = "http://www.w3.org/2001/XMLSchema";
+    static final String NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 
     public static final NodeReference NC_NAME = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#NCName");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#NCName");
 
     public static final NodeReference NEGATIVE_INTEGER = new IntegerDatatype(
             "http://www.w3.org/2001/XMLSchema#negativeInteger", null, "-1", MemoryStorage.INSTANCE);
 
     public static final NodeReference NMTOKEN = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#NMTOKEN");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#NMTOKEN");
 
     public static final NodeReference NMTOKENS = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#NMTOKENS");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#NMTOKENS");
 
     public static final NodeReference NON_NEGATIVE_INTEGER = new IntegerDatatype(
             "http://www.w3.org/2001/XMLSchema#nonNegativeInteger", "0", null, MemoryStorage.INSTANCE);
@@ -154,16 +153,16 @@ public class XMLSchema {
             "http://www.w3.org/2001/XMLSchema#nonPositiveInteger", null, "0", MemoryStorage.INSTANCE);
 
     public static final NodeReference NORMALIZED_STRING = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#normalizedString");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#normalizedString");
 
     public static final NodeReference NOTATION = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#NOTATION");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#NOTATION");
 
     public static final NodeReference POSITIVE_INTEGER = new IntegerDatatype(
             "http://www.w3.org/2001/XMLSchema#positiveInteger", "1", null, MemoryStorage.INSTANCE);
 
     public static final NodeReference Q_NAME = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#QName");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#QName");
 
     /**
      * A reverse map of the URLs to the constants.
@@ -174,13 +173,13 @@ public class XMLSchema {
             "32767", MemoryStorage.INSTANCE);
 
     public static final NodeReference STRING = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#string");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#string");
 
     public static final NodeReference TIME = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#time");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#time");
 
     public static final NodeReference TOKEN = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2001/XMLSchema#token");
+            .createNodeReference("http://www.w3.org/2001/XMLSchema#token");
 
     public static final NodeReference UNSIGNED_BYTE = new IntegerDatatype(
             "http://www.w3.org/2001/XMLSchema#unsignedByte", "0", "255", MemoryStorage.INSTANCE);

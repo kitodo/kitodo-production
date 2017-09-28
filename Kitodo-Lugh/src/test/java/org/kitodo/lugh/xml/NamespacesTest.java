@@ -3,20 +3,19 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh;
+package org.kitodo.lugh.xml;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.kitodo.xml.Namespaces;
 
-public class NamespaceTest {
+public class NamespacesTest {
 
     @Test
     public void testConcatWithHash() {
@@ -48,7 +47,7 @@ public class NamespaceTest {
 
     @Test
     public void testNamespaceOfWithHash() {
-        assertEquals("http://names.kitodo.org/jUnitTest",
+        assertEquals("http://names.kitodo.org/jUnitTest#",
                 Namespaces.namespaceOf("http://names.kitodo.org/jUnitTest#foo/bar"));
     }
 

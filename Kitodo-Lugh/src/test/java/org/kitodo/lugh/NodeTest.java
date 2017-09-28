@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -19,8 +19,8 @@ import static org.junit.Assert.fail;
 import java.nio.BufferOverflowException;
 import java.util.*;
 
+import org.apache.jena.rdf.model.*;
 import org.junit.Test;
-import org.kitodo.lugh.mem.GraphPathTest;
 import org.kitodo.lugh.vocabulary.*;
 
 public class NodeTest {
@@ -28,8 +28,8 @@ public class NodeTest {
     @Test
     public void testAdd() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node mets = storage.newNode(Mets.METS);
-            mets.add(storage.newNode(Mets.METS_HDR));
+            Node mets = storage.createNode(Mets.METS);
+            mets.add(storage.createNode(Mets.METS_HDR));
 
             assertEquals(1, mets.get(RDF.toURL(Node.FIRST_INDEX)).size());
         }
@@ -38,8 +38,8 @@ public class NodeTest {
     @Test
     public void testEqualsForTwoDifferentNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node one = storage.newNode(Mets.METS);
-            Node other = storage.newNode(Mods.DISPLAY_FORM);
+            Node one = storage.createNode(Mets.METS);
+            Node other = storage.createNode(Mods.DISPLAY_FORM);
 
             assertFalse(one.equals(other));
         }
@@ -48,8 +48,8 @@ public class NodeTest {
     @Test
     public void testEqualsForTwoEqualNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node one = storage.newNode(Mets.METS);
-            Node other = storage.newNode(Mets.METS);
+            Node one = storage.createNode(Mets.METS);
+            Node other = storage.createNode(Mets.METS);
 
             assertTrue(one.equals(other));
         }
@@ -63,15 +63,15 @@ public class NodeTest {
     @Test
     public void testGetNodeReference() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node classification = storage.newNode(Mods.CLASSIFICATION)
-                    .put(Mods.AUTHORITY, storage.newLiteral("GDZ", RDF.PLAIN_LITERAL))
-                    .add(storage.newLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL));
+            Node classification = storage.createNode(Mods.CLASSIFICATION)
+                    .put(Mods.AUTHORITY, storage.createLiteral("GDZ", RDF.PLAIN_LITERAL))
+                    .add(storage.createLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL));
 
-            assertEquals(storage.newResult(storage.newLiteral("GDZ", RDF.PLAIN_LITERAL)),
+            assertEquals(storage.createResult(storage.createLiteral("GDZ", RDF.PLAIN_LITERAL)),
                     classification.get(Mods.AUTHORITY));
 
-            NodeReference refToFirstIndex = storage.newNodeReference(RDF.toURL(Node.FIRST_INDEX));
-            assertEquals(storage.newResult(storage.newLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)),
+            NodeReference refToFirstIndex = storage.createNodeReference(RDF.toURL(Node.FIRST_INDEX));
+            assertEquals(storage.createResult(storage.createLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)),
                     classification.get(refToFirstIndex));
         }
     }
@@ -79,10 +79,10 @@ public class NodeTest {
     @Test
     public void testGetRelations() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node node = storage.newNode(Mods.NAME);
-            node.add(storage.newNode("http://names.example/alice"));
-            node.add(storage.newNode("http://names.example/bob"));
-            node.add(storage.newNode("http://names.example/charlie"));
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            node.add(storage.createNode("http://names.example/bob"));
+            node.add(storage.createNode("http://names.example/charlie"));
 
             Set<String> expected = new HashSet<>();
             expected.add(RDF.TYPE.getIdentifier());
@@ -97,20 +97,20 @@ public class NodeTest {
     @Test
     public void testGetSetOfStringSetOfObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node mets = storage.newNode(Mets.METS)
-                    .add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph")))
-                    .add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "PHYSICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
+            Node mets = storage.createNode(Mets.METS)
+                    .add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph")))
+                    .add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "PHYSICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
 
             Set<String> relation = new HashSet<>();
             relation.add(RDF.toURL(Node.FIRST_INDEX));
             Set<ObjectType> condition = new HashSet<>();
-            condition.add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
+            condition.add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
 
             assertEquals(
-                    storage.newResult(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                    storage.createResult((Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
 
                     mets.get(relation, condition));
         }
@@ -119,19 +119,19 @@ public class NodeTest {
     @Test
     public void testGetSetOfStringSetOfObjectTypeWithAnyRelation() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node mets = storage.newNode(Mets.METS)
-                    .add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph")))
-                    .add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "PHYSICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
+            Node mets = storage.createNode(Mets.METS)
+                    .add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph")))
+                    .add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "PHYSICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
 
             final Set<String> ANY_RELATION = Collections.emptySet();
             Set<ObjectType> condition = new HashSet<>();
-            condition.add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
+            condition.add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
 
             assertEquals(
-                    storage.newResult(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                    storage.createResult((Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
 
                     mets.get(ANY_RELATION, condition));
         }
@@ -140,19 +140,19 @@ public class NodeTest {
     @Test
     public void testGetSetOfStringSetOfObjectTypeWithEmptyConditions() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node mets = storage.newNode(Mets.METS)
-                    .add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph")))
-                    .add(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "PHYSICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
+            Node mets = storage.createNode(Mets.METS)
+                    .add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph")))
+                    .add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "PHYSICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
 
             Set<String> relation = new HashSet<>();
             relation.add(RDF.toURL(Node.FIRST_INDEX));
             final Set<ObjectType> ANY_NON_EMPTY_RESULT = Collections.emptySet();
 
             assertEquals(
-                    storage.newResult(storage.newNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.newNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                    storage.createResult((Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
 
                     mets.get(relation, ANY_NON_EMPTY_RESULT));
         }
@@ -161,13 +161,13 @@ public class NodeTest {
     @Test
     public void testGetString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node node = storage.newNode();
+            Node node = storage.createNode();
             node.put(RDF.TYPE, "http://names.example/petAnimal");
             node.put(RDF.TYPE, "http://names.example/mammal");
 
-            Result expected = storage.newResult();
-            expected.add(storage.newObjectType("http://names.example/petAnimal", null));
-            expected.add(storage.newObjectType("http://names.example/mammal", null));
+            Result expected = storage.createResult();
+            expected.add(storage.createObjectType("http://names.example/petAnimal", null));
+            expected.add(storage.createObjectType("http://names.example/mammal", null));
 
             String relation = RDF.TYPE.getIdentifier();
 
@@ -179,7 +179,7 @@ public class NodeTest {
     public void testGetType0() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             try {
-                storage.newNode().getType();
+                storage.createNode().getType();
                 fail(storage.getClass().getSimpleName() + " should throw NoSuchElementException, but does not.");
             } catch (NoSuchElementException e) {
                 /* expected */
@@ -190,14 +190,14 @@ public class NodeTest {
     @Test
     public void testGetType1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertEquals(Mods.NAME.getIdentifier(), storage.newNode(Mods.NAME).getType());
+            assertEquals(Mods.NAME.getIdentifier(), storage.createNode(Mods.NAME).getType());
         }
     }
 
     @Test
     public void testGetType2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node node = storage.newNode();
+            Node node = storage.createNode();
             node.put(RDF.TYPE, "http://names.example/petAnimal");
             node.put(RDF.TYPE, "http://names.example/mammal");
 
@@ -213,8 +213,8 @@ public class NodeTest {
     @Test
     public void testHashCodeIsDifferentForTwoDifferentNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node one = storage.newNode(Mets.METS);
-            Node other = storage.newNode(Mods.MODS);
+            Node one = storage.createNode(Mets.METS);
+            Node other = storage.createNode(Mods.MODS);
 
             assertFalse(one.hashCode() == other.hashCode());
         }
@@ -223,8 +223,8 @@ public class NodeTest {
     @Test
     public void testHashCodeIsEqualForTwoEqualNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node one = storage.newNode(Mets.METS);
-            Node other = storage.newNode(Mets.METS);
+            Node one = storage.createNode(Mets.METS);
+            Node other = storage.createNode(Mets.METS);
 
             assertTrue(one.hashCode() == other.hashCode());
         }
@@ -233,29 +233,29 @@ public class NodeTest {
     @Test
     public void testIsEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertTrue(storage.newNode().isEmpty());
+            assertTrue(storage.createNode().isEmpty());
         }
     }
 
     @Test
     public void testIsNotEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertFalse(storage.newNode(Mets.METS).isEmpty());
+            assertFalse(storage.createNode(Mets.METS).isEmpty());
         }
     }
 
     @Test
     public void testIterator() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node node = storage.newNode(Mods.NAME);
-            node.add(storage.newNode("http://names.example/alice"));
-            node.add(storage.newNamedNode("http://names.example/bob"));
-            node.add(storage.newNodeReference("http://names.example/charlie"));
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            node.add(storage.createNamedNode("http://names.example/bob"));
+            node.add(storage.createNodeReference("http://names.example/charlie"));
 
             Set<ObjectType> expected = new HashSet<>();
-            expected.add(storage.newNode("http://names.example/alice"));
-            expected.add(storage.newNamedNode("http://names.example/bob"));
-            expected.add(storage.newNodeReference("http://names.example/charlie"));
+            expected.add(storage.createNode("http://names.example/alice"));
+            expected.add(storage.createNamedNode("http://names.example/bob"));
+            expected.add(storage.createNodeReference("http://names.example/charlie"));
 
             Iterator<ObjectType> i = node.iterator();
             while (i.hasNext()) {
@@ -268,24 +268,24 @@ public class NodeTest {
     @Test
     public void testLast() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node node = storage.newNode(Mods.NAME);
-            node.add(storage.newNode("http://names.example/alice"));
-            node.add(storage.newNode("http://names.example/bob"));
-            node.add(storage.newNode("http://names.example/charlie"));
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            node.add(storage.createNode("http://names.example/bob"));
+            node.add(storage.createNode("http://names.example/charlie"));
 
-            assertEquals((long) 3, (long) node.last());
+            assertEquals((long) 3, (long) node.last().orElse(null));
         }
     }
 
     @Test
     public void testMatches() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node node = storage.newNode(Mods.NAME);
-            node.add(storage.newNode("http://names.example/alice"));
-            node.add(storage.newNode("http://names.example/bob"));
-            node.add(storage.newNode("http://names.example/charlie"));
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            node.add(storage.createNode("http://names.example/bob"));
+            node.add(storage.createNode("http://names.example/charlie"));
 
-            Node condition = storage.newNode().put(RDF.toURL(2), storage.newNode("http://names.example/bob"));
+            Node condition = storage.createNode().put(RDF.toURL(2), storage.createNode("http://names.example/bob"));
 
             assertTrue(node.matches(condition));
         }
@@ -294,13 +294,13 @@ public class NodeTest {
     @Test
     public void testMatchesNot() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node node = storage.newNode(Mods.NAME);
-            node.add(storage.newNode("http://names.example/alice"));
-            node.add(storage.newNode("http://names.example/bob"));
-            node.add(storage.newNode("http://names.example/charlie"));
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            node.add(storage.createNode("http://names.example/bob"));
+            node.add(storage.createNode("http://names.example/charlie"));
 
-            Node condition = storage.newNode(Mods.NAME).put(RDF.toURL(9),
-                    storage.newNode("http://names.example/alice"));
+            Node condition = storage.createNode(Mods.NAME).put(RDF.toURL(9),
+                    storage.createNode("http://names.example/alice"));
 
             assertFalse(node.matches(condition));
         }
@@ -309,14 +309,14 @@ public class NodeTest {
     @Test
     public void testNodeCanBeCreatedEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.newNode();
+            storage.createNode();
         }
     }
 
     @Test
     public void testNodeCanBeCreatedWithNodeReferenceAsType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node mets = storage.newNode(Mets.METS);
+            Node mets = storage.createNode(Mets.METS);
 
             assertEquals(Mets.METS.getIdentifier(), mets.getType());
         }
@@ -326,7 +326,7 @@ public class NodeTest {
     public void testNodeCanBeCreatedWithStringAsType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             final String MODS = Mods.MODS.getIdentifier();
-            Node mods = storage.newNode(MODS);
+            Node mods = storage.createNode(MODS);
 
             assertEquals(MODS, mods.getType());
         }
@@ -340,7 +340,7 @@ public class NodeTest {
         } catch (AssertionError e) {
             for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
                 try {
-                    storage.newNode("");
+                    storage.createNode("");
                     fail(storage.getClass().getSimpleName() + " should throw AssertionError, but does not.");
                 } catch (AssertionError e1) {
                     /* expected */
@@ -352,7 +352,7 @@ public class NodeTest {
     @Test
     public void testNodeCreatedWithUnitializedNodeReferenceIsEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node a = storage.newNode((NodeReference) null);
+            Node a = storage.createNode((NodeReference) null);
             assertTrue(a.isEmpty());
         }
     }
@@ -360,7 +360,7 @@ public class NodeTest {
     @Test
     public void testNodeCreatedWithUnitializedStringIsEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node a = storage.newNode((String) null);
+            Node a = storage.createNode((String) null);
             assertTrue(a.isEmpty());
         }
     }
@@ -368,79 +368,83 @@ public class NodeTest {
     @Test
     public void testPutNodeReferenceObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.newNode().put(Mods.NAME, storage.newObjectType("Wilhelm Busch", "de"));
+            storage.createNode().put(Mods.NAME, storage.createObjectType("Wilhelm Busch", "de"));
         }
     }
 
     @Test
     public void testPutNodeReferenceString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.newNode().put(Mods.NAME, "Wilhelm Busch");
+            storage.createNode().put(Mods.NAME, "Wilhelm Busch");
         }
     }
 
     @Test
     public void testPutStringObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.newNode().put("http://www.loc.gov/mods/v3#name", storage.newObjectType("Wilhelm Busch", "de"));
+            storage.createNode().put("http://www.loc.gov/mods/v3#name",
+                    storage.createObjectType("Wilhelm Busch", "de"));
         }
     }
 
     @Test
     public void testPutStringString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.newNode().put("http://www.loc.gov/mods/v3#name", "Wilhelm Busch");
+            storage.createNode().put("http://www.loc.gov/mods/v3#name", "Wilhelm Busch");
         }
     }
 
     @Test
     public void testToModel() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node modsSection = storage.newNode(Mods.MODS)
-                    .add(storage.newNode(Mods.CLASSIFICATION)
-                            .put(Mods.AUTHORITY, storage.newLiteral("GDZ", RDF.PLAIN_LITERAL))
-                            .add(storage.newLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)))
-                    .add(storage.newNode(Mods.RECORD_INFO)
-                            .add(storage.newNode(Mods.RECORD_IDENTIFIER)
-                                    .put(Mods.SOURCE, storage.newLiteral("gbv-ppn", RDF.PLAIN_LITERAL))
-                                    .add(storage.newLiteral("PPN313539384", RDF.PLAIN_LITERAL))))
-                    .add(storage.newNode(Mods.IDENTIFIER)
-                            .put(Mods.TYPE, storage.newLiteral("PPNanalog", RDF.PLAIN_LITERAL))
-                            .add(storage.newLiteral("PPN313539383", RDF.PLAIN_LITERAL)))
-                    .add(storage.newNode(Mods.TITLE_INFO).add(storage.newNode(Mods.TITLE).add(storage.newLiteral(
-                            "Sever. Pinaeus de virginitatis notis, graviditate et partu. Ludov. Bonaciolus de conformatione foetus. Accedeunt alia",
-                            RDF.PLAIN_LITERAL))))
-                    .add(storage.newNode(Mods.LANGUAGE)
-                            .add(storage.newNode(Mods.LANGUAGE_TERM)
-                                    .put(Mods.AUTHORITY, storage.newLiteral("iso639-2b", RDF.PLAIN_LITERAL))
-                                    .put(Mods.TYPE, storage.newLiteral("code", RDF.PLAIN_LITERAL))
-                                    .add(storage.newLiteral("la", RDF.PLAIN_LITERAL))))
-                    .add(storage.newNode(Mods.PLACE)
-                            .add(storage.newNode(Mods.PLACE_TERM)
-                                    .put(Mods.TYPE, storage.newLiteral("text", RDF.PLAIN_LITERAL))
-                                    .add(storage.newLiteral("Lugduni Batavorum", RDF.PLAIN_LITERAL))))
-                    .add(storage.newNode(Mods.DATE_ISSUED)
-                            .put(Mods.ENCODING, storage.newLiteral("w3cdtf", RDF.PLAIN_LITERAL))
-                            .add(storage.newLiteral("1641", RDF.PLAIN_LITERAL)))
-                    .add(storage.newNode(Mods.PUBLISHER).add(storage.newLiteral("Heger", RDF.PLAIN_LITERAL)))
-                    .add(storage.newNode(Mods.NAME).put(Mods.TYPE, storage.newLiteral("personal", RDF.PLAIN_LITERAL))
-                            .add(storage.newNode(Mods.ROLE)
-                                    .add(storage.newNode(Mods.ROLE_TERM)
-                                            .put(Mods.AUTHORITY, storage.newLiteral("marcrelator", RDF.PLAIN_LITERAL))
-                                            .put(Mods.TYPE, storage.newLiteral("code", RDF.PLAIN_LITERAL))
-                                            .add(storage.newLiteral("aut", RDF.PLAIN_LITERAL)))
-                                    .add(storage.newNode(Mods.NAME_PART)
-                                            .put(Mods.TYPE, storage.newLiteral("family", RDF.PLAIN_LITERAL))
-                                            .add(storage.newLiteral("Pineau", RDF.PLAIN_LITERAL)))
-                                    .add(storage.newNode(Mods.NAME_PART)
-                                            .put(Mods.TYPE, storage.newLiteral("given", RDF.PLAIN_LITERAL))
-                                            .add(storage.newLiteral("Severin", RDF.PLAIN_LITERAL)))
-                                    .add(storage.newNode(Mods.DISPLAY_FORM)
-                                            .add(storage.newLiteral("Pineau, Severin", RDF.PLAIN_LITERAL)))))
-                    .add(storage.newNode(Mods.PHYSICAL_DESCRIPTION).add(
-                            storage.newNode(Mods.EXTENT).add(storage.newLiteral("getr. Zählung", RDF.PLAIN_LITERAL))));
+            Node modsSection = storage.createNode(Mods.MODS)
+                    .add(storage.createNode(Mods.CLASSIFICATION)
+                            .put(Mods.AUTHORITY, storage.createLiteral("GDZ", RDF.PLAIN_LITERAL))
+                            .add(storage.createLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)))
+                    .add(storage.createNode(Mods.RECORD_INFO)
+                            .add(storage.createNode(Mods.RECORD_IDENTIFIER)
+                                    .put(Mods.SOURCE, storage.createLiteral("gbv-ppn", RDF.PLAIN_LITERAL))
+                                    .add(storage.createLiteral("PPN313539384", RDF.PLAIN_LITERAL))))
+                    .add(storage.createNode(Mods.IDENTIFIER)
+                            .put(Mods.TYPE, storage.createLiteral("PPNanalog", RDF.PLAIN_LITERAL))
+                            .add(storage.createLiteral("PPN313539383", RDF.PLAIN_LITERAL)))
+                    .add(storage.createNode(Mods.TITLE_INFO)
+                            .add(storage.createNode(Mods.TITLE).add(storage.createLiteral(
+                                    "Sever. Pinaeus de virginitatis notis, graviditate et partu. Ludov. Bonaciolus de conformatione foetus. Accedeunt alia",
+                                    RDF.PLAIN_LITERAL))))
+                    .add(storage.createNode(Mods.LANGUAGE)
+                            .add(storage.createNode(Mods.LANGUAGE_TERM)
+                                    .put(Mods.AUTHORITY, storage.createLiteral("iso639-2b", RDF.PLAIN_LITERAL))
+                                    .put(Mods.TYPE, storage.createLiteral("code", RDF.PLAIN_LITERAL))
+                                    .add(storage.createLiteral("la", RDF.PLAIN_LITERAL))))
+                    .add(storage.createNode(Mods.PLACE)
+                            .add(storage.createNode(Mods.PLACE_TERM)
+                                    .put(Mods.TYPE, storage.createLiteral("text", RDF.PLAIN_LITERAL))
+                                    .add(storage.createLiteral("Lugduni Batavorum", RDF.PLAIN_LITERAL))))
+                    .add(storage.createNode(Mods.DATE_ISSUED)
+                            .put(Mods.ENCODING, storage.createLiteral("w3cdtf", RDF.PLAIN_LITERAL))
+                            .add(storage.createLiteral("1641", RDF.PLAIN_LITERAL)))
+                    .add(storage.createNode(Mods.PUBLISHER).add(storage.createLiteral("Heger", RDF.PLAIN_LITERAL)))
+                    .add(storage.createNode(Mods.NAME)
+                            .put(Mods.TYPE, storage.createLiteral("personal", RDF.PLAIN_LITERAL))
+                            .add(storage.createNode(Mods.ROLE).add(storage.createNode(Mods.ROLE_TERM)
+                                    .put(Mods.AUTHORITY, storage.createLiteral("marcrelator", RDF.PLAIN_LITERAL))
+                                    .put(Mods.TYPE, storage.createLiteral("code", RDF.PLAIN_LITERAL))
+                                    .add(storage.createLiteral("aut", RDF.PLAIN_LITERAL)))
+                                    .add(storage.createNode(Mods.NAME_PART)
+                                            .put(Mods.TYPE, storage.createLiteral("family", RDF.PLAIN_LITERAL))
+                                            .add(storage.createLiteral("Pineau", RDF.PLAIN_LITERAL)))
+                                    .add(storage.createNode(Mods.NAME_PART)
+                                            .put(Mods.TYPE, storage.createLiteral("given", RDF.PLAIN_LITERAL))
+                                            .add(storage.createLiteral("Severin", RDF.PLAIN_LITERAL)))
+                                    .add(storage.createNode(Mods.DISPLAY_FORM)
+                                            .add(storage.createLiteral("Pineau, Severin", RDF.PLAIN_LITERAL)))))
+                    .add(storage.createNode(Mods.PHYSICAL_DESCRIPTION).add(storage.createNode(Mods.EXTENT)
+                            .add(storage.createLiteral("getr. Zählung", RDF.PLAIN_LITERAL))));
 
-            assertEquals(modsSection, storage.createResultFrom(modsSection.toModel(), false).node());
+            Model m = ModelFactory.createDefaultModel();
+            modsSection.toRDFNode(m, true);
+            assertEquals(modsSection, storage.createResult(m, false).node());
         }
     }
 }

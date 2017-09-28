@@ -3,22 +3,20 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.mem;
+package org.kitodo.lugh;
 
 import java.util.*;
 import java.util.regex.*;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.*;
-import org.kitodo.lugh.Literal;
 import org.kitodo.lugh.vocabulary.*;
-import org.kitodo.xml.Namespaces;
+import org.kitodo.lugh.xml.Namespaces;
 
 /**
  * A linked data literal.
@@ -59,7 +57,7 @@ public class MemoryLiteral implements Literal {
      */
     private static final Pattern SCHEME_TEST = Pattern.compile("[+\\-\\.0-9A-Za-z]+:[^ ]+");
 
-    static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
+    static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 
     /**
      * Creates a literal object from a String. If the literal starts with
@@ -274,7 +272,7 @@ public class MemoryLiteral implements Literal {
      * @return an RDFNode representing this node
      */
     @Override
-    public RDFNode toRDFNode(Model model) {
+    public RDFNode toRDFNode(Model model, Boolean unused) {
         if (type.equals(RDF.PLAIN_LITERAL.getIdentifier())) {
             return model.createLiteral(value);
         } else {

@@ -3,13 +3,13 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.mem;
+package org.kitodo.lugh;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,7 +19,6 @@ import java.nio.BufferOverflowException;
 import java.util.*;
 
 import org.junit.Test;
-import org.kitodo.lugh.*;
 import org.kitodo.lugh.vocabulary.*;
 
 public class MemoryResultTest {
@@ -42,11 +41,6 @@ public class MemoryResultTest {
         r.add(Mods.EXTENT);
         r.clear();
         assertEquals(0, r.size());
-    }
-
-    @Test
-    public void testCreateFrom() throws LinkedDataException {
-        new MemoryNodeTest().testToModel();
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -114,7 +108,7 @@ public class MemoryResultTest {
         r.add(new MemoryNode("http://example.org/baz"));
         r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
 
-        Set<IdentifiableNode> expected = new HashSet<IdentifiableNode>();
+        Set<IdentifiableNode> expected = new HashSet<>();
         expected.add(new MemoryNamedNode("http://example.org/foo"));
         expected.add(new MemoryNodeReference("http://example.org/bar"));
 
@@ -174,6 +168,36 @@ public class MemoryResultTest {
         r.add(new MemoryNode("http://example.org/bar"));
 
         assertFalse(r.isUniqueIdentifiableNode());
+    }
+
+    @Test
+    public void testLeaves() {
+        MemoryResult r = new MemoryResult();
+        r.add(new MemoryNamedNode("http://example.org/foo"));
+        r.add(new MemoryNodeReference("http://example.org/bar"));
+        r.add(new MemoryNode("http://example.org/baz"));
+        r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
+
+        Set<String> expected = new HashSet<>();
+        expected.add("http://example.org/bar");
+        expected.add("Hello world!");
+
+        assertEquals(expected, r.leaves());
+    }
+
+    @Test
+    public void testLeavesString() {
+        MemoryResult r = new MemoryResult();
+        r.add(new MemoryNamedNode("http://example.org/foo"));
+        r.add(new MemoryNodeReference("http://example.org/bar"));
+        r.add(new MemoryNode("http://example.org/baz"));
+        r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
+
+        Set<String> expectedOneOf = new HashSet<>();
+        expectedOneOf.add("http://example.org/bar ; Hello world!");
+        expectedOneOf.add("Hello world! ; http://example.org/bar");
+
+        assertTrue(expectedOneOf.contains(r.leaves(" ; ")));
     }
 
     @Test
@@ -255,7 +279,7 @@ public class MemoryResultTest {
         r.add(new MemoryNode("http://example.org/baz"));
         r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
 
-        Set<Node> expected = new HashSet<Node>();
+        Set<Node> expected = new HashSet<>();
         expected.add(new MemoryNamedNode("http://example.org/foo"));
         expected.add(new MemoryNode("http://example.org/baz"));
 
@@ -276,36 +300,6 @@ public class MemoryResultTest {
         expected.add("public static void main(String[] args)");
 
         assertEquals(expected, r.strings());
-    }
-
-    @Test
-    public void testStringsBoolean() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(new MemoryNodeReference("http://example.org/bar"));
-        r.add(new MemoryNode("http://example.org/baz"));
-        r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
-
-        Set<String> expected = new HashSet<>();
-        expected.add("http://example.org/bar");
-        expected.add("Hello world!");
-
-        assertEquals(expected, r.strings(true));
-    }
-
-    @Test
-    public void testStringsStringBoolean() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(new MemoryNodeReference("http://example.org/bar"));
-        r.add(new MemoryNode("http://example.org/baz"));
-        r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
-
-        Set<String> expectedOneOf = new HashSet<>();
-        expectedOneOf.add("http://example.org/bar ; Hello world!");
-        expectedOneOf.add("Hello world! ; http://example.org/bar");
-
-        assertTrue(expectedOneOf.contains(r.strings(" ; ", true)));
     }
 
 }

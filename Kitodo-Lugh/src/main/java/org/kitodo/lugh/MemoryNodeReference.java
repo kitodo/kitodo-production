@@ -3,16 +3,15 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.mem;
+package org.kitodo.lugh;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.NodeReference;
 
 /**
  * A reference to a named linked data node.
@@ -93,7 +92,7 @@ public class MemoryNodeReference implements NodeReference {
      * @return an RDFNode representing this node
      */
     @Override
-    public RDFNode toRDFNode(Model model) {
+    public RDFNode toRDFNode(Model model, Boolean unused) {
         return model.createResource(identifier);
     }
 

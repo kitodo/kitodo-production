@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -21,7 +21,7 @@ public class IdentifiableNodeTest {
     public void testGetIdentifierFromANamedNode() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals("http://kitodo.org/",
-                    ((IdentifiableNode) storage.newNamedNode("http://kitodo.org/")).getIdentifier());
+                    ((IdentifiableNode) storage.createNamedNode("http://kitodo.org/")).getIdentifier());
         }
     }
 

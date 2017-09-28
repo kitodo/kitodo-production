@@ -13,8 +13,7 @@ package org.kitodo.lugh.vocabulary;
 
 import java.util.*;
 
-import org.kitodo.lugh.NodeReference;
-import org.kitodo.lugh.mem.MemoryStorage;
+import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.loc.gov/mods/v3} namespace.
@@ -24,79 +23,79 @@ import org.kitodo.lugh.mem.MemoryStorage;
 public class Mods {
 
     public static final NodeReference AUTHORITY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#authority");
+            .createNodeReference("http://www.loc.gov/mods/v3#authority");
 
     public static final NodeReference CLASSIFICATION = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#classification");
+            .createNodeReference("http://www.loc.gov/mods/v3#classification");
 
     public static final NodeReference DATE_ISSUED = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#dateIssued");
+            .createNodeReference("http://www.loc.gov/mods/v3#dateIssued");
 
     public static final NodeReference DISPLAY_FORM = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#displayForm");
+            .createNodeReference("http://www.loc.gov/mods/v3#displayForm");
 
     public static final NodeReference ENCODING = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#encoding");
+            .createNodeReference("http://www.loc.gov/mods/v3#encoding");
 
     public static final NodeReference EXTENT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#extent");
+            .createNodeReference("http://www.loc.gov/mods/v3#extent");
 
     public static final NodeReference IDENTIFIER = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#identifier");
+            .createNodeReference("http://www.loc.gov/mods/v3#identifier");
 
     public static final NodeReference LANGUAGE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#language");
+            .createNodeReference("http://www.loc.gov/mods/v3#language");
 
     public static final NodeReference LANGUAGE_TERM = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#languageTerm");
+            .createNodeReference("http://www.loc.gov/mods/v3#languageTerm");
 
-    public static final NodeReference MODS = MemoryStorage.INSTANCE.newNodeReference("http://www.loc.gov/mods/v3#mods");
+    public static final NodeReference MODS = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#mods");
 
-    public static final NodeReference NAME = MemoryStorage.INSTANCE.newNodeReference("http://www.loc.gov/mods/v3#name");
+    public static final NodeReference NAME = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#name");
 
     public static final NodeReference NAME_PART = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#namePart");
+            .createNodeReference("http://www.loc.gov/mods/v3#namePart");
 
-    public static final String NAMESPACE = "http://www.loc.gov/mods/v3";
+    public static final String NAMESPACE = "http://www.loc.gov/mods/v3#";
 
     public static final NodeReference PHYSICAL_DESCRIPTION = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#physicalDescription");
+            .createNodeReference("http://www.loc.gov/mods/v3#physicalDescription");
 
     public static final NodeReference PLACE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#place");
+            .createNodeReference("http://www.loc.gov/mods/v3#place");
 
     public static final NodeReference PLACE_TERM = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#placeTerm");
+            .createNodeReference("http://www.loc.gov/mods/v3#placeTerm");
 
     public static final NodeReference PUBLISHER = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#publisher");
+            .createNodeReference("http://www.loc.gov/mods/v3#publisher");
 
     public static final NodeReference RECORD_IDENTIFIER = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#recordIdentifier");
+            .createNodeReference("http://www.loc.gov/mods/v3#recordIdentifier");
 
     public static final NodeReference RECORD_INFO = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#recordInfo");
+            .createNodeReference("http://www.loc.gov/mods/v3#recordInfo");
 
     /**
      * A reverse map of the URLs to the constants.
      */
     private static final Map<String, NodeReference> reversed;
 
-    public static final NodeReference ROLE = MemoryStorage.INSTANCE.newNodeReference("http://www.loc.gov/mods/v3#role");
+    public static final NodeReference ROLE = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#role");
 
     public static final NodeReference ROLE_TERM = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#roleTerm");
+            .createNodeReference("http://www.loc.gov/mods/v3#roleTerm");
 
     public static final NodeReference SOURCE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#source");
+            .createNodeReference("http://www.loc.gov/mods/v3#source");
 
     public static final NodeReference TITLE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#title");
+            .createNodeReference("http://www.loc.gov/mods/v3#title");
 
     public static final NodeReference TITLE_INFO = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.loc.gov/mods/v3#titleInfo");
+            .createNodeReference("http://www.loc.gov/mods/v3#titleInfo");
 
-    public static final NodeReference TYPE = MemoryStorage.INSTANCE.newNodeReference("http://www.loc.gov/mods/v3#type");
+    public static final NodeReference TYPE = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#type");
 
     /**
      * Populates the reverse map of the URLs to the constants.

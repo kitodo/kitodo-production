@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -20,7 +20,7 @@ public class NodeTypeTest {
     @Test
     public void testNamedNodeIsANodeType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            NodeType nt = storage.newNamedNode("http://test.example/foo");
+            NodeType nt = storage.createNamedNode("http://test.example/foo");
             assertNotNull(nt);
         }
     }
@@ -28,7 +28,7 @@ public class NodeTypeTest {
     @Test
     public void testNodeIsANodeType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            NodeType nt = storage.newNode();
+            NodeType nt = storage.createNode();
             assertNotNull(nt);
         }
     }
@@ -36,7 +36,7 @@ public class NodeTypeTest {
     @Test
     public void testNodeReferenceIsANodeType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            NodeType nt = storage.newNodeReference("http://test.example/foo");
+            NodeType nt = storage.createNodeReference("http://test.example/foo");
             assertNotNull(nt);
         }
     }

@@ -3,19 +3,18 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.mem;
+package org.kitodo.lugh;
 
 import java.util.*;
 
-import org.kitodo.lugh.*;
 import org.kitodo.lugh.vocabulary.RDF;
-import org.kitodo.xml.Namespaces;
+import org.kitodo.lugh.xml.Namespaces;
 
 /**
  * A path to select objects through a linked data graph.
@@ -94,7 +93,7 @@ public class GraphPath extends MemoryNode {
                         }
                         String predicate = string.substring(predicatesStart, index);
                         currentPredicate = predicate.equals(ANY_PREDICATE_CHAR) ? ANY_PREDICATE
-                                : MemoryStorage.INSTANCE.newNodeReference(applyPrefixes(prefixes, predicate));
+                                : MemoryStorage.INSTANCE.createNodeReference(applyPrefixes(prefixes, predicate));
                     } else {
                         int literalStart = index;
                         int cp;
@@ -116,7 +115,7 @@ public class GraphPath extends MemoryNode {
      * predicate of the reference is not specified.
      */
     public static final NodeReference ANY_PREDICATE = MemoryStorage.INSTANCE
-            .newNodeReference("http://names.kitodo.org/GraphPath/v1#anyPredicate");
+            .createNodeReference("http://names.kitodo.org/GraphPath/v1#anyPredicate");
 
     /**
      * Character in the graph path string indicating that the object must be
@@ -129,18 +128,19 @@ public class GraphPath extends MemoryNode {
      * This is a graph path.
      */
     private static final NodeReference GRAPH_PATH = MemoryStorage.INSTANCE
-            .newNodeReference("http://names.kitodo.org/GraphPath/v1#GraphPath");
+            .createNodeReference("http://names.kitodo.org/GraphPath/v1#GraphPath");
 
     /**
      * This is a location step of a graph path.
      */
     static final NodeReference LOCATION_STEP = MemoryStorage.INSTANCE
-            .newNodeReference("http://names.kitodo.org/GraphPath/v1#LocationStep");
+            .createNodeReference("http://names.kitodo.org/GraphPath/v1#LocationStep");
 
     /**
      * Direction of reference is forwards one step.
      */
-    static final NodeReference TO = MemoryStorage.INSTANCE.newNodeReference("http://names.kitodo.org/GraphPath/v1#to");
+    static final NodeReference TO = MemoryStorage.INSTANCE
+            .createNodeReference("http://names.kitodo.org/GraphPath/v1#to");
 
     /**
      * Applies a graph path on a collection of nodes.
@@ -151,14 +151,16 @@ public class GraphPath extends MemoryNode {
      *            nodes to apply the graph path on
      * @param path
      *            the graph path to apply
+     * @param storage
+     *            storage to use to create the result of the operation
      * @return the matching nodes
      */
-    public static Result apply(Set<ObjectType> nodes, Node path, Storage ctors) {
-        Result result = ctors.newResult();
+    public static Result apply(Set<ObjectType> nodes, Node path, Storage storage) {
+        Result result = storage.createResult();
 
         Set<Node> allTo = path.get(TO).nodes();
 
-        Result nodeResult = nodes instanceof Result ? (Result) nodes : ctors.newResult();
+        Result nodeResult = nodes instanceof Result ? (Result) nodes : storage.createResult();
 
         if (allTo.isEmpty() || nodes.isEmpty()) {
             return nodeResult;
@@ -167,7 +169,7 @@ public class GraphPath extends MemoryNode {
         Set<Node> nodesOnly = nodeResult.nodes();
 
         for (Node toSegment : allTo) {
-            Result thisResult = ctors.newResult();
+            Result thisResult = storage.createResult();
             Set<String> predicates = new HashSet<>();
             for (IdentifiableNode predicate : toSegment.get(RDF.PREDICATE).identifiableNodes()) {
                 predicates.add(predicate.getIdentifier());
@@ -176,7 +178,7 @@ public class GraphPath extends MemoryNode {
             for (Node node : nodesOnly) {
                 thisResult.addAll(node.get(predicates, objects));
             }
-            result.addAll(apply(thisResult, toSegment, ctors));
+            result.addAll(apply(thisResult, toSegment, storage));
         }
 
         return result;

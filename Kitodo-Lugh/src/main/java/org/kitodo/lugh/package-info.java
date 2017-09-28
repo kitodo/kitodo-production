@@ -14,30 +14,32 @@
  * Java’s collections interface. Linked Data objects are multimaps. A multimap
  * is a {@code Map} which can take several values for each key
  * ({@code Map<K, Collection<V>>}). In Lugh, they are represented by the
- * {@link Node} interface.
+ * {@link org.kitodo.lugh.Node} interface.
  * <p>
  * A node can either be an <em>anonymous</em> node or have a unique name, which
- * makes it a {@link NamedNode}. The name must be an URI. (URIs comprise URLs
- * and comparable identifiers, such as URN.) The other way round, an URI
- * ({@link IdentifiableNode}) can either be a node of the current data set
- * ({@code instanceof NamedNode}), or just a link to anything else
- * ({@link NodeReference}).
+ * makes it a {@link org.kitodo.lugh.NamedNode}. The name must be an URI. (URIs
+ * comprise URLs and comparable identifiers, such as URN.) The other way round,
+ * an URI ({@link org.kitodo.lugh.IdentifiableNode}) can either be a node of the
+ * current data set ({@code instanceof NamedNode}), or just a link to anything
+ * else ({@link org.kitodo.lugh.NodeReference}).
  * <p>
  * One particularity of Linked Data is that the <em>keys</em> <strong>must
  * be</strong> URIs. (However, we use plain old {@code String}s to store them.)
  * <p>
  * The <em>values</em> that can be associated with a node can either be nodes,
  * or literals. The property “either nodes or literals” is represented by the
- * {@link ObjectType} interface. Literals cannot immediately be identified by an
- * URI.
+ * {@link org.kitodo.lugh.ObjectType} interface. Literals cannot immediately be
+ * identified by an URI.
  * <p>
- * The {@link Literal} interface is intended to be used to represent technical
- * data ({@code int}s, {@code String}s, …). For literals representing
- * human-readable text, there is the specialized subclass {@link LangString}
- * which takes the language as an additional attribute.
+ * The {@link org.kitodo.lugh.Literal} interface is intended to be used to
+ * represent technical data ({@code int}s, {@code String}s, …). For literals
+ * representing human-readable text, there is the specialized subclass
+ * {@link org.kitodo.lugh.LangString} which takes the language as an additional
+ * attribute.
  * <p>
- * The {@link AccessibleObject} interface represents both nodes and literals
- * that are part of the current data set, but not {@link NodeReference}s.
+ * The {@link org.kitodo.lugh.AccessibleObject} interface represents both nodes
+ * and literals that are part of the current data set, but not
+ * {@link org.kitodo.lugh.NodeReference}s.
  * <p>
  * Interface hierarchy:
  *
@@ -80,16 +82,17 @@
  * <em>Storage-implementation-agnostically creating Java objects</em>
  * <p>
  * It is also possible to write code that creates objects without knowledge of
- * the storage implementation by using the {@link Storage} interface:
- * 
+ * the storage implementation by using the {@link org.kitodo.lugh.Storage}
+ * interface:
+ *
  * <pre>
  * function createAnEmptyMetsDiv(Storage storage) {
- *     return storage.newNode(Mets.DIV);
+ *     return storage.createNode(Mets.DIV);
  * }
  * </pre>
- * 
+ *
  * The function can later be called with the implementation to work with:
- * 
+ *
  * <pre>
  * Node div = createAnEmptyMetsDiv(MemoryStorage.INSTANCE);
  * </pre>
@@ -98,11 +101,11 @@
  * <p>
  * Because a node is a {@code Map<K, Collection<ObjectType>>}, the result of a
  * get operation is a collection of {@code ObjectType}. For convenience, the
- * collection is wrapped in a {@link Result} which provides getters for the
- * different {@code nodes()} or {@code literals()}, which provide the casting.
- * In principle, it is better to use the set getters and iterate over their
- * outcome, if that is meaningfully possible, even if—at the moment—only one
- * result object is expected.
+ * collection is wrapped in a {@link org.kitodo.lugh.Result} which provides
+ * getters for the different {@code nodes()} or {@code literals()}, which
+ * provide the casting. In principle, it is better to use the set getters and
+ * iterate over their outcome, if that is meaningfully possible, even if—at the
+ * moment—only one result object is expected.
  *
  * <pre>
  * for (Node n : node.get(whatever).nodes()) {
@@ -149,7 +152,7 @@
  * Lugh uses the Apache Jena framework to read and write common Linked Data
  * formats such as RDF-XML or Turtle.
  * <p>
- * Loading a file:
+ * <em>Loading a file:</em>
  *
  * <pre>
  * Model model = ModelFactory.createDefaultModel();
@@ -160,7 +163,7 @@
  * A data file may contain unrelated nodes, thus a load operation creates a
  * {@code Result} that must be queried.
  * <p>
- * Saving a file:
+ * <em>Saving a file:</em>
  *
  * <pre>
  * SerializationFormat.TURTLE.write(node, new Namespaces(), new File("node.ttl"));
@@ -168,7 +171,7 @@
  * <p>
  * <strong>The name</strong>
  * <p>
- * The name “Lugh” also refers to an Irish god that takes the role of a youthful
+ * The name “Lugh” refers to an Irish god that takes the role of a youthful
  * warrior hero in the pantheon known as Tuatha Dé Danann.
  * <p>
  *

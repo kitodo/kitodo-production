@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -14,8 +14,7 @@ package org.kitodo.lugh;
 import java.io.*;
 import java.util.Map;
 
-import org.apache.jena.rdf.model.Model;
-import org.kitodo.xml.XMLWriter;
+import org.apache.jena.rdf.model.*;
 
 /**
  * Convenience class to serialize a node.
@@ -86,17 +85,6 @@ public enum SerializationFormat {
         public void write(Node node, Map<String, String> map, File file) throws FileNotFoundException {
             write(node, map, file, "TURTLE");
         }
-    },
-    /**
-     * The XML serialization format ({@code application/xml}, {@code text/xml}).
-     *
-     * @see "https://en.wikipedia.org/wiki/XML"
-     */
-    XML {
-        @Override
-        public void write(Node node, Map<String, String> map, File file) throws IOException {
-            XMLWriter.toFile(node, file, 2, map);
-        }
     };
 
     /**
@@ -151,7 +139,8 @@ public enum SerializationFormat {
      *            {@code TURTLE} and {@code N3}.
      */
     private static void write(Node node, Map<String, String> map, OutputStream out, String lang) {
-        Model model = node.toModel();
+        Model model = ModelFactory.createDefaultModel();
+        node.toRDFNode(model, true);
         if (map != null) {
             model.setNsPrefixes(map);
         }

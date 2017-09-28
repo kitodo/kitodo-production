@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -71,6 +71,11 @@ public class RDFTest {
     @Test
     public void testSequenceNumberOfWithGarbage() {
         assertNull(RDF.sequenceNumberOf("http://www.example.org/this-is-no-numeric-RDF-reference"));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testSequenceNumberOfZero() {
+        RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_0");
     }
 
     @Test

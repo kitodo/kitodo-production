@@ -1,7 +1,5 @@
 package org.kitodo.lugh;
 
-import org.kitodo.lugh.mem.MemoryStorage;
-
 /**
  * Configure the test package here.
  *

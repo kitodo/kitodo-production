@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -15,7 +15,6 @@ import java.math.BigInteger;
 import java.util.*;
 
 import org.kitodo.lugh.*;
-import org.kitodo.lugh.mem.MemoryStorage;
 
 /**
  * The {@code http://www.w3.org/1999/02/22-rdf-syntax-ns} namespace.
@@ -27,91 +26,91 @@ public class RDF {
      * The RDF subject.
      */
     public static final NodeReference ABOUT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#about");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#about");
 
     /**
      * The class of containers of alternatives.
      */
     public static final NodeReference ALT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt");
 
     /**
      * The class of unordered containers.
      */
     public static final NodeReference BAG = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag");
 
     public static final NodeReference CLASS = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Class");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Class");
 
     public static final NodeReference DESCRIPTION = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Description");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Description");
 
     /**
      * The first item in the subject RDF list.
      */
     public static final NodeReference FIRST = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
 
     /**
      * The datatype of RDF literals storing fragments of HTML content
      */
     public static final NodeReference HTML = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML");
 
     /**
      * The datatype of language-tagged string values
      */
     public static final NodeReference LANG_STRING = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString");
 
     /**
      * The class of RDF Lists.
      */
     public static final NodeReference LIST = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#List");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#List");
 
     /**
      * The RDF namespace.
      */
-    public static final String NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns";
+    public static final String NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     /**
      * The empty list, with no items in it. If the rest of a list is nil then
      * the list has no more items in it.
      */
     public static final NodeReference NIL = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
 
     /**
      * The object of the subject RDF statement.
      */
     public static final NodeReference OBJECT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#object");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#object");
 
     /**
      * The class of plain (i.e. untyped) literal values, as used in RIF and OWL
      * 2
      */
     public static final NodeReference PLAIN_LITERAL = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral");
 
     /**
      * The predicate of the subject RDF statement.
      */
     public static final NodeReference PREDICATE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate");
 
     /**
      * The class of RDF properties.
      */
     public static final NodeReference PROPERTY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property");
     /**
      * The rest of the subject RDF list after the first item.
      */
     public static final NodeReference REST = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
 
     /**
      * A reverse map of the URLs to the constants.
@@ -122,7 +121,7 @@ public class RDF {
      * The class of ordered containers.
      */
     public static final NodeReference SEQ = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq");
 
     /**
      * The prefix, followed by a natural integer, to indicate an element’s
@@ -130,7 +129,7 @@ public class RDF {
      *
      * @see "http://www.w3.org/TR/rdf-schema/#ch_containermembershipproperty"
      */
-    static final String SEQ_NO_PREFIX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#_";
+    public static final String SEQ_NO_PREFIX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#_";
 
     /**
      * The length of the prefix which is indicating an element’s position in an
@@ -142,31 +141,31 @@ public class RDF {
      * The class of RDF statements.
      */
     public static final NodeReference STATEMENT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement");
 
     /**
      * The subject of the subject RDF statement.
      */
     public static final NodeReference SUBJECT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
 
     /**
      * The subject is an instance of a class.
      */
     public static final NodeReference TYPE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
     /**
      * Idiomatic property used for structured values.
      */
     public static final NodeReference VALUE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#value");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#value");
 
     /**
      * The datatype of XML literal values.
      */
     public static final NodeReference XML_LITERAL = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral");
+            .createNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral");
 
     /**
      * Populates the reverse map of the URLs to the constants.

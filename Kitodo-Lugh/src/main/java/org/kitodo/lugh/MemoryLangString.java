@@ -3,20 +3,18 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.mem;
+package org.kitodo.lugh;
 
 import java.util.Locale;
 import java.util.regex.*;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.*;
-import org.kitodo.lugh.Literal;
 import org.kitodo.lugh.vocabulary.RDF;
 
 /**
@@ -77,6 +75,11 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
         return true;
     }
 
+    /**
+     * Returns the locale of the language-tagged string.
+     *
+     * @return the locale
+     */
     @Override
     public Locale getLocale() {
         return locale;
@@ -148,7 +151,7 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
      * @return an RDFNode representing this node
      */
     @Override
-    public RDFNode toRDFNode(Model model) {
+    public RDFNode toRDFNode(Model model, Boolean unused) {
         return model.createLiteral(value, locale.toLanguageTag());
     }
 

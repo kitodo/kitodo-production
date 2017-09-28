@@ -31,7 +31,12 @@ public interface ObjectType {
      *
      * @param model
      *            model to create objects in
+     * @param addNamedNodesRecursively
+     *            if true, named nodes will not be treated specially, if false,
+     *            only their identifier will be added. If null, this node will
+     *            be added if it is a named node, but named node children will
+     *            only be referenced.
      * @return an RDFNode representing this node
      */
-    RDFNode toRDFNode(Model model);
+    RDFNode toRDFNode(Model model, Boolean addNamedNodesRecursively);
 }

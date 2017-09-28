@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -13,8 +13,7 @@ package org.kitodo.lugh.vocabulary;
 
 import java.util.*;
 
-import org.kitodo.lugh.NodeReference;
-import org.kitodo.lugh.mem.MemoryStorage;
+import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.w3.org/2000/01/rdf-schema} namespace.
@@ -23,33 +22,33 @@ import org.kitodo.lugh.mem.MemoryStorage;
  */
 public class RDFS {
     public static final NodeReference CLASS = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#Class");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#Class");
 
     public static final NodeReference COMMENT = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#comment");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#comment");
 
     public static final NodeReference CONTAINER_MEMBERSHIP_PROPERTY = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty");
 
     public static final NodeReference DATATYPE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#Datatype");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#Datatype");
 
     public static final NodeReference DOMAIN = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#domain");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#domain");
 
     public static final NodeReference LABEL = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#label");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#label");
 
     public static final NodeReference MEMBER = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#member");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#member");
 
-    public static final String NAMESPACE = "http://www.w3.org/2000/01/rdf-schema";
+    public static final String NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#";
 
     public static final NodeReference RANGE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#range");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#range");
 
     public static final NodeReference RESOURCE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#Resource");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#Resource");
 
     /**
      * A reverse map of the URLs to the constants.
@@ -57,10 +56,10 @@ public class RDFS {
     private static final Map<String, NodeReference> reversed;
 
     public static final NodeReference SUB_CLASS_OF = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#subClassOf");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#subClassOf");
 
     public static final NodeReference SUB_PROPERTY_OF = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/2000/01/rdf-schema#subPropertyOf");
+            .createNodeReference("http://www.w3.org/2000/01/rdf-schema#subPropertyOf");
 
     /**
      * Populates the reverse map of the URLs to the constants.

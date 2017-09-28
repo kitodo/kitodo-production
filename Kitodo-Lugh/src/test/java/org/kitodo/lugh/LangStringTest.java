@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -26,8 +26,8 @@ public class LangStringTest {
     @Test
     public void testEqualsObject() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString one = storage.newLangString("Hoc est corpus meum.", "la");
-            LangString other = storage.newLangString("Hoc est corpus meum.", "la");
+            LangString one = storage.createLangString("Hoc est corpus meum.", "la");
+            LangString other = storage.createLangString("Hoc est corpus meum.", "la");
 
             assertTrue(one.equals(other));
         }
@@ -36,8 +36,8 @@ public class LangStringTest {
     @Test
     public void testHashCode() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString one = storage.newLangString("Hoc est corpus meum.", "la");
-            LangString other = storage.newLangString("Hoc est corpus meum.", "la");
+            LangString one = storage.createLangString("Hoc est corpus meum.", "la");
+            LangString other = storage.createLangString("Hoc est corpus meum.", "la");
 
             assertEquals(one.hashCode(), other.hashCode());
         }
@@ -46,7 +46,7 @@ public class LangStringTest {
     @Test
     public void testLangStringCanBeCreatedWithBothTextAndLanguageGiven() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.newLangString("In vino veritas est.", "la");
+            storage.createLangString("In vino veritas est.", "la");
         }
     }
 
@@ -54,7 +54,7 @@ public class LangStringTest {
     public void testLangStringCannotBeCreatedWithoutLanguage1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             try {
-                storage.newLangString("In aqua bacillus est.", null);
+                storage.createLangString("In aqua bacillus est.", null);
                 fail(storage.getClass().getSimpleName() + " should throw NullPointerException, but does not.");
             } catch (NullPointerException e) {
                 /* expected */
@@ -66,7 +66,7 @@ public class LangStringTest {
     public void testLangStringCannotBeCreatedWithoutLanguage2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             try {
-                storage.newLangString("In aqua bacillus est.", "");
+                storage.createLangString("In aqua bacillus est.", "");
                 fail(storage.getClass().getSimpleName() + " should throw IllegalArgumentException, but does not.");
             } catch (IllegalArgumentException e) {
                 /* expected */
@@ -77,8 +77,8 @@ public class LangStringTest {
     @Test
     public void testMatchesNotOnANodeThatRequestsADifferentLanguage() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString object = storage.newLangString("Hoc est corpus meum.", "la");
-            Node condition = storage.newNode().put(XML_LANG, "fr");
+            LangString object = storage.createLangString("Hoc est corpus meum.", "la");
+            Node condition = storage.createNode().put(XML_LANG, "fr");
 
             assertFalse(object.matches(condition));
         }
@@ -87,8 +87,8 @@ public class LangStringTest {
     @Test
     public void testMatchesNotOnANodeThatRequestsADifferentType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString object = storage.newLangString("Hoc est corpus meum.", "la");
-            Node condition = storage.newNode(Mets.FILE_SEC);
+            LangString object = storage.createLangString("Hoc est corpus meum.", "la");
+            Node condition = storage.createNode(Mets.FILE_SEC);
 
             assertFalse(object.matches(condition));
         }
@@ -97,8 +97,8 @@ public class LangStringTest {
     @Test
     public void testMatchesNotOnANodeThatRequestsADifferentValue() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString object = storage.newLangString("In vino veritas est.", "la");
-            Node condition = storage.newNode().put(RDF.VALUE, "In aqua bacillus est.");
+            LangString object = storage.createLangString("In vino veritas est.", "la");
+            Node condition = storage.createNode().put(RDF.VALUE, "In aqua bacillus est.");
 
             assertFalse(object.matches(condition));
         }
@@ -107,8 +107,8 @@ public class LangStringTest {
     @Test
     public void testMatchesOnANodeThatRequestsALangString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString object = storage.newLangString("Hoc est corpus meum.", "la");
-            Node condition = storage.newNode(RDF.LANG_STRING);
+            LangString object = storage.createLangString("Hoc est corpus meum.", "la");
+            Node condition = storage.createNode(RDF.LANG_STRING);
 
             assertTrue(object.matches(condition));
         }
@@ -117,8 +117,8 @@ public class LangStringTest {
     @Test
     public void testMatchesOnANodeThatRequestsTheCorrectValue() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString object = storage.newLangString("Hoc est corpus meum.", "la");
-            Node condition = storage.newNode().put(RDF.VALUE, "Hoc est corpus meum.");
+            LangString object = storage.createLangString("Hoc est corpus meum.", "la");
+            Node condition = storage.createNode().put(RDF.VALUE, "Hoc est corpus meum.");
 
             assertTrue(object.matches(condition));
         }
@@ -127,8 +127,8 @@ public class LangStringTest {
     @Test
     public void testMatchesOnANodeThatRequestsTheLanguage() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString object = storage.newLangString("Hoc est corpus meum.", "la");
-            Node condition = storage.newNode().put(XML_LANG, "la");
+            LangString object = storage.createLangString("Hoc est corpus meum.", "la");
+            Node condition = storage.createNode().put(XML_LANG, "la");
 
             assertTrue(object.matches(condition));
         }
@@ -137,8 +137,8 @@ public class LangStringTest {
     @Test
     public void testMatchesOnAnotherLangStringIfTheyAreEqual() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString object = storage.newLangString("Hoc est corpus meum.", "la");
-            LangString condition = storage.newLangString("Hoc est corpus meum.", "la");
+            LangString object = storage.createLangString("Hoc est corpus meum.", "la");
+            LangString condition = storage.createLangString("Hoc est corpus meum.", "la");
 
             assertTrue(object.matches(condition));
         }
@@ -147,7 +147,7 @@ public class LangStringTest {
     @Test
     public void testToString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            LangString LangString = storage.newLangString(
+            LangString LangString = storage.createLangString(
                     "Control characters like \r and \n should be visible in the toString() result.", "en");
 
             assertEquals("\"Control characters like \\I and \\F should be visible in the toString() result.\"@en",

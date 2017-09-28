@@ -3,13 +3,13 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.mem;
+package org.kitodo.lugh;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,7 +20,6 @@ import java.nio.BufferOverflowException;
 import java.util.*;
 
 import org.junit.Test;
-import org.kitodo.lugh.*;
 import org.kitodo.lugh.vocabulary.*;
 
 public class MemoryNodeTest {
@@ -30,7 +29,7 @@ public class MemoryNodeTest {
         MemoryNode mets = new MemoryNode(Mets.METS);
         mets.add(new MemoryNode(Mets.METS_HDR));
 
-        assertEquals(1, mets.get(RDF.toURL(MemoryNode.FIRST_INDEX)).size());
+        assertEquals(1, mets.get(RDF.toURL(Node.FIRST_INDEX)).size());
     }
 
     @Test
@@ -62,7 +61,7 @@ public class MemoryNodeTest {
 
         assertEquals(new MemoryResult(new MemoryLiteral("GDZ", RDF.PLAIN_LITERAL)), classification.get(Mods.AUTHORITY));
 
-        MemoryNodeReference refToFirstIndex = new MemoryNodeReference(RDF.toURL(MemoryNode.FIRST_INDEX));
+        MemoryNodeReference refToFirstIndex = new MemoryNodeReference(RDF.toURL(Node.FIRST_INDEX));
         assertEquals(new MemoryResult(new MemoryLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)),
                 classification.get(refToFirstIndex));
     }
@@ -92,13 +91,13 @@ public class MemoryNodeTest {
                         .add(new MemoryNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
 
         Set<String> relation = new HashSet<>();
-        relation.add(RDF.toURL(MemoryNode.FIRST_INDEX));
+        relation.add(RDF.toURL(Node.FIRST_INDEX));
         Set<ObjectType> condition = new HashSet<>();
         condition.add(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
 
         assertEquals(
-                new MemoryResult(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                        .add(new MemoryNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                new MemoryResult(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL").<MemoryNode>add(
+                        new MemoryNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
 
                 mets.get(relation, condition));
     }
@@ -116,8 +115,8 @@ public class MemoryNodeTest {
         condition.add(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
 
         assertEquals(
-                new MemoryResult(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                        .add(new MemoryNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                new MemoryResult(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL").<MemoryNode>add(
+                        new MemoryNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
 
                 mets.get(ANY_RELATION, condition));
     }
@@ -131,12 +130,12 @@ public class MemoryNodeTest {
                         .add(new MemoryNode(Mets.DIV).put(Mets.TYPE, "physSequence")));
 
         Set<String> relation = new HashSet<>();
-        relation.add(RDF.toURL(MemoryNode.FIRST_INDEX));
+        relation.add(RDF.toURL(Node.FIRST_INDEX));
         final Set<ObjectType> ANY_NON_EMPTY_RESULT = Collections.emptySet();
 
         assertEquals(
-                new MemoryResult(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                        .add(new MemoryNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                new MemoryResult(new MemoryNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL").<MemoryNode>add(
+                        new MemoryNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
 
                 mets.get(relation, ANY_NON_EMPTY_RESULT));
     }
@@ -227,7 +226,7 @@ public class MemoryNodeTest {
         node.add(new MemoryNode("http://names.example/bob"));
         node.add(new MemoryNode("http://names.example/charlie"));
 
-        assertEquals((long) 3, (long) node.last());
+        assertEquals((long) 3, (long) node.last().orElse(null));
     }
 
     @Test
@@ -323,52 +322,5 @@ public class MemoryNodeTest {
         a.replaceAllNamedNodesWithNoDataByNodeReferences(true);
 
         assertEquals(new MemoryNode().put(RDF.TYPE, new MemoryNodeReference("http://www.loc.gov/mods/v3#name")), a);
-    }
-
-    @Test
-    public void testToModel() throws LinkedDataException {
-        MemoryNode modsSection = new MemoryNode(Mods.MODS)
-                .add(new MemoryNode(Mods.CLASSIFICATION)
-                        .put(Mods.AUTHORITY, new MemoryLiteral("GDZ", RDF.PLAIN_LITERAL))
-                        .add(new MemoryLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)))
-                .add(new MemoryNode(Mods.RECORD_INFO).add(new MemoryNode(Mods.RECORD_IDENTIFIER)
-                        .put(Mods.SOURCE, new MemoryLiteral("gbv-ppn", RDF.PLAIN_LITERAL))
-                        .add(new MemoryLiteral("PPN313539384", RDF.PLAIN_LITERAL))))
-                .add(new MemoryNode(Mods.IDENTIFIER).put(Mods.TYPE, new MemoryLiteral("PPNanalog", RDF.PLAIN_LITERAL))
-                        .add(new MemoryLiteral("PPN313539383", RDF.PLAIN_LITERAL)))
-                .add(new MemoryNode(Mods.TITLE_INFO).add(new MemoryNode(Mods.TITLE).add(new MemoryLiteral(
-                        "Sever. Pinaeus de virginitatis notis, graviditate et partu. Ludov. Bonaciolus de conformatione foetus. Accedeunt alia",
-                        RDF.PLAIN_LITERAL))))
-                .add(new MemoryNode(Mods.LANGUAGE).add(new MemoryNode(Mods.LANGUAGE_TERM)
-                        .put(Mods.AUTHORITY, new MemoryLiteral("iso639-2b", RDF.PLAIN_LITERAL))
-                        .put(Mods.TYPE, new MemoryLiteral("code", RDF.PLAIN_LITERAL))
-                        .add(new MemoryLiteral("la", RDF.PLAIN_LITERAL))))
-                .add(new MemoryNode(Mods.PLACE).add(
-                        new MemoryNode(Mods.PLACE_TERM).put(Mods.TYPE, new MemoryLiteral("text", RDF.PLAIN_LITERAL))
-                                .add(new MemoryLiteral("Lugduni Batavorum", RDF.PLAIN_LITERAL))))
-                .add(new MemoryNode(Mods.DATE_ISSUED).put(Mods.ENCODING, new MemoryLiteral("w3cdtf", RDF.PLAIN_LITERAL))
-                        .add(new MemoryLiteral("1641", RDF.PLAIN_LITERAL)))
-                .add(new MemoryNode(Mods.PUBLISHER).add(new MemoryLiteral("Heger", RDF.PLAIN_LITERAL))).add(
-                        new MemoryNode(Mods.NAME)
-                                .put(Mods.TYPE,
-                                        new MemoryLiteral("personal", RDF.PLAIN_LITERAL))
-                                .add(new MemoryNode(Mods.ROLE)
-                                        .add(new MemoryNode(Mods.ROLE_TERM)
-                                                .put(Mods.AUTHORITY,
-                                                        new MemoryLiteral("marcrelator", RDF.PLAIN_LITERAL))
-                                                .put(Mods.TYPE, new MemoryLiteral("code", RDF.PLAIN_LITERAL))
-                                                .add(new MemoryLiteral("aut", RDF.PLAIN_LITERAL)))
-                                        .add(new MemoryNode(Mods.NAME_PART)
-                                                .put(Mods.TYPE, new MemoryLiteral("family", RDF.PLAIN_LITERAL))
-                                                .add(new MemoryLiteral("Pineau", RDF.PLAIN_LITERAL)))
-                                        .add(new MemoryNode(Mods.NAME_PART)
-                                                .put(Mods.TYPE, new MemoryLiteral("given", RDF.PLAIN_LITERAL))
-                                                .add(new MemoryLiteral("Severin", RDF.PLAIN_LITERAL)))
-                                        .add(new MemoryNode(Mods.DISPLAY_FORM)
-                                                .add(new MemoryLiteral("Pineau, Severin", RDF.PLAIN_LITERAL)))))
-                .add(new MemoryNode(Mods.PHYSICAL_DESCRIPTION)
-                        .add(new MemoryNode(Mods.EXTENT).add(new MemoryLiteral("getr. Zählung", RDF.PLAIN_LITERAL))));
-
-        assertEquals(modsSection, MemoryResult.createFrom(modsSection.toModel(), false).node());
     }
 }

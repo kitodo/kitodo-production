@@ -13,8 +13,7 @@ package org.kitodo.lugh.vocabulary;
 
 import java.util.*;
 
-import org.kitodo.lugh.NodeReference;
-import org.kitodo.lugh.mem.MemoryStorage;
+import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.w3.org/XML/1998/namespace} namespace.
@@ -30,7 +29,7 @@ public class XML {
      * @see "http://www.w3.org/TR/xmlbase/"
      */
     public static final NodeReference BASE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/XML/1998/namespace#base");
+            .createNodeReference("http://www.w3.org/XML/1998/namespace#base");
 
     /**
      * An attribute known to be of type ID that can be used independently of any
@@ -39,17 +38,17 @@ public class XML {
      * @see "http://www.w3.org/TR/xml-id/"
      */
     public static final NodeReference ID = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/XML/1998/namespace#id");
+            .createNodeReference("http://www.w3.org/XML/1998/namespace#id");
 
     /**
      * Identifies the human language of the subject as a RFC 4646 code.
      */
     public static final NodeReference LANG = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/XML/1998/namespace#lang");
+            .createNodeReference("http://www.w3.org/XML/1998/namespace#lang");
     /**
      * The namespace for "xml:".
      */
-    public static final String NAMESPACE = "http://www.w3.org/XML/1998/namespace";
+    public static final String NAMESPACE = "http://www.w3.org/XML/1998/namespace#";
     /**
      * A reverse map of the URLs to the constants.
      */
@@ -59,7 +58,7 @@ public class XML {
      * significant in the scope of the subject.
      */
     public static final NodeReference SPACE = MemoryStorage.INSTANCE
-            .newNodeReference("http://www.w3.org/XML/1998/namespace#space");
+            .createNodeReference("http://www.w3.org/XML/1998/namespace#space");
 
     /**
      * Populates the reverse map of the URLs to the constants.

@@ -3,7 +3,7 @@
  *
  * This file is part of the Kitodo project.
  *
- * It is licensed under GNU General private License version 3 or later.
+ * It is licensed under GNU General Public License version 3 or later.
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
@@ -27,11 +27,11 @@ public class ResultTest {
     @Test
     public void testAddObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
 
             assertEquals(0, r.size());
 
-            r.add(storage.newNode(Mets.METS_HDR));
+            r.add(storage.createNode(Mets.METS_HDR));
 
             assertEquals(1, r.size());
         }
@@ -40,7 +40,7 @@ public class ResultTest {
     @Test
     public void testClear() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
             r.add(Mets.ADMID);
             r.add(Mods.EXTENT);
             r.clear();
@@ -56,7 +56,7 @@ public class ResultTest {
     @Test
     public void testIdentifiableNodeExpectable0() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
 
             try {
                 r.identifiableNodeExpectable();
@@ -70,7 +70,7 @@ public class ResultTest {
     @Test
     public void testIdentifiableNodeExpectable0ButLiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult(storage.newObjectType("Hello world!", "en"));
+            Result r = storage.createResult(storage.createObjectType("Hello world!", "en"));
 
             try {
                 r.identifiableNodeExpectable();
@@ -85,7 +85,7 @@ public class ResultTest {
     public void testIdentifiableNodeExpectable1NamedNode() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             IdentifiableNode expected;
-            Result r = storage.newResult(expected = storage.newNamedNode("http://example.org/fooBar"));
+            Result r = storage.createResult(expected = storage.createNamedNode("http://example.org/fooBar"));
 
             assertEquals(expected, r.identifiableNodeExpectable());
         }
@@ -95,7 +95,7 @@ public class ResultTest {
     public void testIdentifiableNodeExpectable1NodeReference() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             IdentifiableNode expected;
-            Result r = storage.newResult(expected = storage.newNodeReference("http://example.org/fooBar"));
+            Result r = storage.createResult(expected = storage.createNodeReference("http://example.org/fooBar"));
 
             assertEquals(expected, r.identifiableNodeExpectable());
         }
@@ -104,9 +104,9 @@ public class ResultTest {
     @Test
     public void testIdentifiableNodeExpectable2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNamedNode("http://example.org/bar"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNamedNode("http://example.org/bar"));
 
             try {
                 r.identifiableNodeExpectable();
@@ -120,9 +120,9 @@ public class ResultTest {
     @Test
     public void testIdentifiableNodeExpectable2WhereOneIsALiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newObjectType("Hello world!", "en"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createObjectType("Hello world!", "en"));
 
             try {
                 r.identifiableNodeExpectable();
@@ -136,9 +136,9 @@ public class ResultTest {
     @Test
     public void testIdentifiableNodeExpectable2WhereOneIsIdentifiable() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNode("http://example.org/bar"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNode("http://example.org/bar"));
 
             try {
                 r.identifiableNodeExpectable();
@@ -152,15 +152,15 @@ public class ResultTest {
     @Test
     public void testIdentifiableNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNodeReference("http://example.org/bar"));
-            r.add(storage.newNode("http://example.org/baz"));
-            r.add(storage.newObjectType("Hello world!", "en"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNodeReference("http://example.org/bar"));
+            r.add(storage.createNode("http://example.org/baz"));
+            r.add(storage.createObjectType("Hello world!", "en"));
 
             Set<IdentifiableNode> expected = new HashSet<>();
-            expected.add(storage.newNamedNode("http://example.org/foo"));
-            expected.add(storage.newNodeReference("http://example.org/bar"));
+            expected.add(storage.createNamedNode("http://example.org/foo"));
+            expected.add(storage.createNodeReference("http://example.org/bar"));
 
             assertEquals(expected, r.identifiableNodes());
         }
@@ -169,7 +169,7 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode0() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
 
             assertFalse(r.isUniqueIdentifiableNode());
         }
@@ -178,7 +178,7 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode0ButLiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult(storage.newObjectType("Hello world!", "en"));
+            Result r = storage.createResult(storage.createObjectType("Hello world!", "en"));
 
             assertFalse(r.isUniqueIdentifiableNode());
         }
@@ -187,7 +187,7 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode1NamedNode() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult(storage.newNamedNode("http://example.org/fooBar"));
+            Result r = storage.createResult(storage.createNamedNode("http://example.org/fooBar"));
 
             assertTrue(r.isUniqueIdentifiableNode());
         }
@@ -196,7 +196,7 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode1NodeReference() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult(storage.newNodeReference("http://example.org/fooBar"));
+            Result r = storage.createResult(storage.createNodeReference("http://example.org/fooBar"));
 
             assertTrue(r.isUniqueIdentifiableNode());
         }
@@ -205,9 +205,9 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNamedNode("http://example.org/bar"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNamedNode("http://example.org/bar"));
 
             assertFalse(r.isUniqueIdentifiableNode());
         }
@@ -216,9 +216,9 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode2WhereOneIsALiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newObjectType("Hello world!", "en"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createObjectType("Hello world!", "en"));
 
             assertFalse(r.isUniqueIdentifiableNode());
         }
@@ -227,18 +227,52 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode2WhereOneIsIdentifiable() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNode("http://example.org/bar"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNode("http://example.org/bar"));
 
             assertFalse(r.isUniqueIdentifiableNode());
         }
     }
 
     @Test
+    public void testLeaves() {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNodeReference("http://example.org/bar"));
+            r.add(storage.createNode("http://example.org/baz"));
+            r.add(storage.createObjectType("Hello world!", "en"));
+
+            Set<String> expected = new HashSet<>();
+            expected.add("http://example.org/bar");
+            expected.add("Hello world!");
+
+            assertEquals(expected, r.leaves());
+        }
+    }
+
+    @Test
+    public void testLeavesString() {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNodeReference("http://example.org/bar"));
+            r.add(storage.createNode("http://example.org/baz"));
+            r.add(storage.createObjectType("Hello world!", "en"));
+
+            Set<String> expectedOneOf = new HashSet<>();
+            expectedOneOf.add("http://example.org/bar ; Hello world!");
+            expectedOneOf.add("Hello world! ; http://example.org/bar");
+
+            assertTrue(expectedOneOf.contains(r.leaves(" ; ")));
+        }
+    }
+
+    @Test
     public void testNode0Empty() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
             try {
                 r.node();
                 fail(storage.getClass().getSimpleName() + " should throw NoDataException, but does not.");
@@ -251,8 +285,8 @@ public class ResultTest {
     @Test
     public void testNode0LiteralsOnly() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newObjectType("Hello world!", "en"));
+            Result r = storage.createResult();
+            r.add(storage.createObjectType("Hello world!", "en"));
             try {
                 r.node();
                 fail(storage.getClass().getSimpleName() + " should throw NoDataException, but does not.");
@@ -265,9 +299,9 @@ public class ResultTest {
     @Test
     public void testNode1NamedNode() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
             NamedNode expected;
-            r.add(expected = storage.newNamedNode("http://example.org/foo"));
+            r.add(expected = storage.createNamedNode("http://example.org/foo"));
             assertEquals(expected, r.node());
         }
     }
@@ -275,9 +309,9 @@ public class ResultTest {
     @Test
     public void testNode1Node() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
             Node expected;
-            r.add(expected = storage.newNode("http://example.org/foo"));
+            r.add(expected = storage.createNode("http://example.org/foo"));
             assertEquals(expected, r.node());
         }
     }
@@ -285,9 +319,9 @@ public class ResultTest {
     @Test
     public void testNode2() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNamedNode("http://example.org/bar"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNamedNode("http://example.org/bar"));
             try {
                 r.node();
                 fail(storage.getClass().getSimpleName() + " should throw AmbiguousDataException, but does not.");
@@ -300,15 +334,15 @@ public class ResultTest {
     @Test
     public void testNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNodeReference("http://example.org/bar"));
-            r.add(storage.newNode("http://example.org/baz"));
-            r.add(storage.newObjectType("Hello world!", "en"));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNodeReference("http://example.org/bar"));
+            r.add(storage.createNode("http://example.org/baz"));
+            r.add(storage.createObjectType("Hello world!", "en"));
 
             Set<Node> expected = new HashSet<>();
-            expected.add(storage.newNamedNode("http://example.org/foo"));
-            expected.add(storage.newNode("http://example.org/baz"));
+            expected.add(storage.createNamedNode("http://example.org/foo"));
+            expected.add(storage.createNode("http://example.org/baz"));
 
             assertEquals(expected, r.nodes());
         }
@@ -317,7 +351,7 @@ public class ResultTest {
     @Test
     public void testResult() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
+            Result r = storage.createResult();
             assertEquals(0, r.size());
         }
     }
@@ -325,11 +359,11 @@ public class ResultTest {
     @Test
     public void testResultCollectionOfQextendsObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result other = storage.newResult();
-            other.add(storage.newNode(Mets.METS_HDR));
+            Result other = storage.createResult();
+            other.add(storage.createNode(Mets.METS_HDR));
             other.add(Mods.IDENTIFIER);
 
-            Result r = storage.newResult(other);
+            Result r = storage.createResult(other);
             assertEquals(other.size(), r.size());
             assertEquals(other, r);
         }
@@ -338,7 +372,7 @@ public class ResultTest {
     @Test
     public void testResultInt() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult(42);
+            Result r = storage.createResult(42);
             assertEquals(0, r.size());
         }
     }
@@ -346,10 +380,10 @@ public class ResultTest {
     @Test
     public void testResultObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result expected = storage.newResult();
-            expected.add(storage.newNode(Mets.METS_HDR));
+            Result expected = storage.createResult();
+            expected.add(storage.createNode(Mets.METS_HDR));
 
-            Result r = storage.newResult(storage.newNode(Mets.METS_HDR));
+            Result r = storage.createResult(storage.createNode(Mets.METS_HDR));
 
             assertEquals(expected.size(), r.size());
             assertEquals(expected, r);
@@ -359,52 +393,18 @@ public class ResultTest {
     @Test
     public void testStrings() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNodeReference("http://example.org/bar"));
-            r.add(storage.newNode("http://example.org/baz"));
-            r.add(storage.newObjectType("Hello world!", "en"));
-            r.add(storage.newObjectType("public static void main(String[] args)", null));
+            Result r = storage.createResult();
+            r.add(storage.createNamedNode("http://example.org/foo"));
+            r.add(storage.createNodeReference("http://example.org/bar"));
+            r.add(storage.createNode("http://example.org/baz"));
+            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createObjectType("public static void main(String[] args)", null));
 
             Set<String> expected = new HashSet<>();
             expected.add("Hello world!");
             expected.add("public static void main(String[] args)");
 
             assertEquals(expected, r.strings());
-        }
-    }
-
-    @Test
-    public void testStringsBoolean() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNodeReference("http://example.org/bar"));
-            r.add(storage.newNode("http://example.org/baz"));
-            r.add(storage.newObjectType("Hello world!", "en"));
-
-            Set<String> expected = new HashSet<>();
-            expected.add("http://example.org/bar");
-            expected.add("Hello world!");
-
-            assertEquals(expected, r.strings(true));
-        }
-    }
-
-    @Test
-    public void testStringsStringBoolean() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.newResult();
-            r.add(storage.newNamedNode("http://example.org/foo"));
-            r.add(storage.newNodeReference("http://example.org/bar"));
-            r.add(storage.newNode("http://example.org/baz"));
-            r.add(storage.newObjectType("Hello world!", "en"));
-
-            Set<String> expectedOneOf = new HashSet<>();
-            expectedOneOf.add("http://example.org/bar ; Hello world!");
-            expectedOneOf.add("Hello world! ; http://example.org/bar");
-
-            assertTrue(expectedOneOf.contains(r.strings(" ; ", true)));
         }
     }
 
