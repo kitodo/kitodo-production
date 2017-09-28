@@ -56,7 +56,7 @@
     <!-- Add user group -->
     <h:panelGroup>
         <p:commandLink value="#{msgs.benutzergruppenHinzufuegen}"
-                       actionListener="#{BenutzergruppenForm.filterKeinMitZurueck()}"
+                       actionListener="#{ProzessverwaltungForm.userGroups}"
                        oncomplete="PF('addUserGroupDialog').show()"
                        styleClass="standardlink"/>
         <p:dialog widgetVar="addUserGroupDialog" header="#{msgs.benutzergruppenHinzufuegen}"
