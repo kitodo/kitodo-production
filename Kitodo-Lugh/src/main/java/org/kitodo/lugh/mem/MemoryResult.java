@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import org.apache.jena.rdf.model.*;
 import org.kitodo.lugh.*;
 import org.kitodo.lugh.Literal;
-import org.kitodo.lugh.vocabulary.RDF;
+import org.kitodo.lugh.vocabulary.*;
 
 /**
  * The results returned by a call to a getter on a node.
@@ -114,14 +114,16 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
                 result.remove(objectIdentifier);
             } else {
                 org.apache.jena.rdf.model.Literal literalObject = object.asLiteral();
+                String datatypeURI;
                 if (literalObject.isWellFormedXML()) {
                     objectNode = new MemoryLiteral(literalObject.toString(), RDF.XML_LITERAL);
                 } else if (!literalObject.getLanguage().isEmpty()) {
                     objectNode = new MemoryLangString(literalObject.getValue().toString(), literalObject.getLanguage());
-                } else if (literalObject.getDatatype() != null) {
-                    objectNode = new MemoryLiteral(literalObject.getValue().toString(), literalObject.getDatatypeURI());
-                } else {
+                } else if ((literalObject.getDatatype() == null)
+                        || XMLSchema.STRING.getIdentifier().equals(datatypeURI = literalObject.getDatatypeURI())) {
                     objectNode = new MemoryLiteral(literalObject.getValue().toString(), RDF.PLAIN_LITERAL);
+                } else {
+                    objectNode = new MemoryLiteral(literalObject.getValue().toString(), datatypeURI);
                 }
             }
             subjectNode.put(predicate.toString(), objectNode);

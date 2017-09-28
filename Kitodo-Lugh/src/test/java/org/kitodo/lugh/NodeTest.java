@@ -180,8 +180,8 @@ public class NodeTest {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             try {
                 storage.newNode().getType();
-                fail(storage.getClass().getSimpleName() + " should throw BufferOverflowException, but does not.");
-            } catch (BufferOverflowException e) {
+                fail(storage.getClass().getSimpleName() + " should throw NoSuchElementException, but does not.");
+            } catch (NoSuchElementException e) {
                 /* expected */
             }
         }

@@ -30,8 +30,8 @@ public class MemoryNodeReference implements NodeReference {
      *            referenced URL
      */
     MemoryNodeReference(String identifier) {
-        if (identifier == null) {
-            throw new NullPointerException("Identifier must not be null.");
+        if ((identifier == null) || identifier.isEmpty()) {
+            throw new IllegalArgumentException("Identifier must not be null.");
         }
         assert URI_SCHEME.matcher(identifier).find() : "Identifier isn't a valid URI: " + identifier;
         this.identifier = identifier;

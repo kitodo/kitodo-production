@@ -17,7 +17,7 @@ import java.util.regex.*;
 import org.apache.jena.rdf.model.*;
 import org.kitodo.lugh.*;
 import org.kitodo.lugh.Literal;
-import org.kitodo.lugh.vocabulary.RDF;
+import org.kitodo.lugh.vocabulary.*;
 import org.kitodo.xml.Namespaces;
 
 /**
@@ -135,8 +135,8 @@ public class MemoryLiteral implements Literal {
      */
     protected MemoryLiteral(String value, String type) {
         this.value = value != null ? value : "";
-        assert URI_SCHEME.matcher(type).find() : "Illegal type.";
-        this.type = type;
+        this.type = (type == null) || type.isEmpty() ? RDF.PLAIN_LITERAL.getIdentifier() : type;
+        assert URI_SCHEME.matcher(this.type).find() : "Illegal type.";
     }
 
     /**
@@ -158,14 +158,21 @@ public class MemoryLiteral implements Literal {
             if (other.type != null) {
                 return false;
             }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        if (value == null) {
-            if (other.type != null) {
+        } else {
+            String canonicalType = XMLSchema.STRING.getIdentifier().equals(type) ? RDF.PLAIN_LITERAL.getIdentifier()
+                    : type;
+            String canonicalOtherType = XMLSchema.STRING.getIdentifier().equals(other.type)
+                    ? RDF.PLAIN_LITERAL.getIdentifier()
+                    : other.type;
+            if (!canonicalType.equals(canonicalOtherType)) {
                 return false;
             }
-        } else if (!value.equals(other.type)) {
+        }
+        if (value == null) {
+            if (other.value != null) {
+                return false;
+            }
+        } else if (!value.equals(other.value)) {
             return false;
         }
         return true;
@@ -196,7 +203,8 @@ public class MemoryLiteral implements Literal {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + (type == null ? 0 : type.hashCode());
+        String canonicalType = XMLSchema.STRING.getIdentifier().equals(type) ? RDF.PLAIN_LITERAL.getIdentifier() : type;
+        result = (prime * result) + (canonicalType == null ? 0 : canonicalType.hashCode());
         result = (prime * result) + (value == null ? 0 : value.hashCode());
         return result;
     }

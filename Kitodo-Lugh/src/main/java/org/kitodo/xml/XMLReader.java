@@ -528,16 +528,11 @@ public class XMLReader {
             return toNode(new ByteArrayInputStream(data.getBytes("UTF-16")), Optional.of("UTF-16"), documentNS,
                     storage);
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e.getMessage(), e); // "UTF-16" is
-                                                                // alsways
-                                                                // supported by
-                                                                // Java
+            /* "UTF-16" is always supported by Java */
+            throw new IllegalStateException(e.getMessage(), e);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e); // there is no
-                                                           // IOException to
-                                                           // expect when
-                                                           // reading from a
-                                                           // String
+            /* there is no IOException to expect when reading from a String */
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

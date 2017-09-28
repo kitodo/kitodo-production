@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.RDF;
+import org.kitodo.lugh.vocabulary.*;
 
 public class LiteralTest {
 
@@ -74,7 +74,7 @@ public class LiteralTest {
     public void testCreateLiteralCreatesPlainLiteral1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.newLiteral("http://www.kitodo.org/", RDF.PLAIN_LITERAL),
-                    storage.newObjectType("http://www.kitodo.org/", null));
+                    storage.newLiteral("http://www.kitodo.org/", (NodeReference) null));
         }
     }
 
@@ -82,7 +82,7 @@ public class LiteralTest {
     public void testCreateLiteralCreatesPlainLiteral2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.newLiteral("http://www.kitodo.org/", RDF.PLAIN_LITERAL),
-                    storage.newObjectType("http://www.kitodo.org/", ""));
+                    storage.newLiteral("http://www.kitodo.org/", ""));
         }
     }
 
@@ -115,6 +115,16 @@ public class LiteralTest {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Literal one = storage.newLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Literal other = storage.newLiteral("Lorem ipsum dolor sit amet", "");
+
+            assertTrue(one.equals(other));
+        }
+    }
+
+    @Test
+    public void testEqualsObjectForTwoEqualLiteralsWithAndWithoutStringDeclared() {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal one = storage.newLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
+            Literal other = storage.newLiteral("Lorem ipsum dolor sit amet", XMLSchema.STRING);
 
             assertTrue(one.equals(other));
         }

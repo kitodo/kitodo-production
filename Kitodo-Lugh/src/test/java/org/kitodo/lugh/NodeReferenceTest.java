@@ -84,17 +84,12 @@ public class NodeReferenceTest {
 
     @Test
     public void testNodeReferenceCannotBeCreatedFromEmptyString() {
-        try {
-            assert (false);
-            fail("Assertions disabled. Run JVM with -ea option.");
-        } catch (AssertionError e) {
-            for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-                try {
-                    storage.newNodeReference("");
-                    fail(storage.getClass().getSimpleName() + " should throw AssertionError, but does not.");
-                } catch (AssertionError e1) {
-                    /* expected */
-                }
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            try {
+                storage.newNodeReference("");
+                fail(storage.getClass().getSimpleName() + " should throw IllegalArgumentException, but does not.");
+            } catch (IllegalArgumentException e) {
+                /* expected */
             }
         }
     }
@@ -125,8 +120,8 @@ public class NodeReferenceTest {
             for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
                 try {
                     storage.newNodeReference(null);
-                    fail(storage.getClass().getSimpleName() + " should throw NullPointerException, but does not.");
-                } catch (NullPointerException e1) {
+                    fail(storage.getClass().getSimpleName() + " should throw IllegalArgumentException, but does not.");
+                } catch (IllegalArgumentException e1) {
                     /* expected */
                 }
             }

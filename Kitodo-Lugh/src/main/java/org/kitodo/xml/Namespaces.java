@@ -12,9 +12,7 @@
 package org.kitodo.xml;
 
 import java.util.*;
-import java.util.Map.Entry;
 
-import org.kitodo.lugh.*;
 import org.kitodo.lugh.vocabulary.*;
 
 /**
@@ -22,7 +20,7 @@ import org.kitodo.lugh.vocabulary.*;
  *
  * @author Matthias Ronge
  */
-public class Namespaces {
+public class Namespaces extends HashMap<String, String> {
     /**
      * Maps the constant namespaces "xml:" and "xmlns:" to their reserved
      * prefixes. The map is populated in a static block below.
@@ -68,6 +66,20 @@ public class Namespaces {
     }
 
     /**
+     * Returns a sequence of letters from a positive whole number.
+     *
+     * @param value
+     *            number to convert
+     * @return a, b, c, …, x, y, z, aa, ab, ac, …
+     */
+    private static String asLetters(long value) {
+        int codePoint = (int) ('a' + (--value % 26));
+        long higher = value / 26;
+        String letter = new String(Character.toChars(codePoint));
+        return higher == 0 ? letter : asLetters(higher).concat(letter);
+    }
+
+    /**
      * Recomposes an URL from a namespace and a local name, adding a number sign
      * in between if the URL does not end in a slash.
      *
@@ -88,12 +100,12 @@ public class Namespaces {
         return result.toString();
     }
 
-    public static String expandPrefix(String url, Map<String, String> prefixes) {
-        String namespace = prefixes.get(getPrefix(url));
+    public static String expand(String abbreviatedUrl, Map<String, String> prefixes) {
+        String namespace = prefixes.get(getPrefix(abbreviatedUrl));
         if (namespace == null) {
-            return url;
+            return abbreviatedUrl;
         }
-        return concat(namespace, url.substring(url.indexOf(':') + 1));
+        return concat(namespace, abbreviatedUrl.substring(abbreviatedUrl.indexOf(':') + 1));
     }
 
     public static String getPrefix(String url) {
@@ -136,21 +148,25 @@ public class Namespaces {
     }
 
     /**
-     * A map to resolve the namespaces. Mapping direction is namespace to
-     * prefix, {@code #} namespaces are stored without the {@code #} at the end,
-     * {@code /} namespaces are stored with a {@code /} as last character.
-     */
-    private final Map<String, String> map;
-
-    /**
      * Counter to create new namespace prefixes.
      */
     private long next;
 
     /**
-     * A map of predefined namespace prefixes.
+     * The map of used namespaces in serializing an XML document. Mapping
+     * direction is namespace to prefix, {@code #} namespaces are stored without
+     * the {@code #} at the end, {@code /} namespaces are stored with a
+     * {@code /} as last character.
      */
-    private final Map<String, String> presets;
+    private final Map<String, String> used;
+
+    /**
+     * Creates a new NamespaceHandler for a given Node which is considered the
+     * root node of the XML document.
+     */
+    public Namespaces() {
+        this(null);
+    }
 
     /**
      * Creates a new NamespaceHandler for a given Node which is considered the
@@ -160,15 +176,14 @@ public class Namespaces {
      *            Presets of namespace shortcuts, mapped namespace to shortcut.
      *            May be null or empty.
      */
-    Namespaces(Map<String, String> presets) {
-        this.presets = new HashMap<>(
-                (int) Math.ceil(((presets != null ? presets.size() : 0) + 2) / 0.75));
-        this.presets.put(RDF.NAMESPACE, DEFAULT_PREFIX_RDF);
-        this.presets.put(RDFS.NAMESPACE, DEFAULT_PREFIX_RDFS);
+    public Namespaces(Map<String, String> presets) {
+        super((int) Math.ceil(((presets != null ? presets.size() : 0) + 2) / 0.75));
+        super.put(RDF.NAMESPACE, DEFAULT_PREFIX_RDF);
+        super.put(RDFS.NAMESPACE, DEFAULT_PREFIX_RDFS);
         if (presets != null) {
-            this.presets.putAll(presets);
+            super.putAll(presets);
         }
-        map = new HashMap<>();
+        used = new HashMap<>();
     }
 
     /**
@@ -188,7 +203,7 @@ public class Namespaces {
         }
         available(ns);
         String tag = attribute.substring(ns.endsWith("/") ? ns.length() : ns.length() + 1);
-        return namespaceOf(element).equals(ns) ? tag : map.get(ns) + ':' + tag;
+        return namespaceOf(element).equals(ns) ? tag : used.get(ns) + ':' + tag;
     }
 
     /**
@@ -204,21 +219,7 @@ public class Namespaces {
             return element;
         }
         available(ns);
-        return map.get(ns) + ':' + element.substring(ns.endsWith("/") ? ns.length() : ns.length() + 1);
-    }
-
-    /**
-     * Returns a sequence of letters from a positive whole number.
-     *
-     * @param value
-     *            number to convert
-     * @return a, b, c, …, x, y, z, aa, ab, ac, …
-     */
-    private String asLetters(long value) {
-        int codePoint = (int) ('a' + (--value % 26));
-        long higher = value / 26;
-        String letter = new String(Character.toChars(codePoint));
-        return higher == 0 ? letter : asLetters(higher).concat(letter);
+        return used.get(ns) + ':' + element.substring(ns.endsWith("/") ? ns.length() : ns.length() + 1);
     }
 
     /**
@@ -230,30 +231,37 @@ public class Namespaces {
      *            the namespace
      */
     private void available(String namespace) {
-        if (!map.containsKey(namespace)) {
+        if (!used.containsKey(namespace)) {
             if (CONSTANTS.containsKey(namespace)) {
-                map.put(namespace, CONSTANTS.get(namespace));
-            } else if (presets.containsKey(namespace)) {
-                map.put(namespace, presets.get(namespace));
+                used.put(namespace, CONSTANTS.get(namespace));
+            } else if (super.containsKey(namespace)) {
+                used.put(namespace, super.get(namespace));
             } else {
                 String prefix;
                 do {
                     prefix = asLetters(++next);
-                } while (presets.containsValue(prefix) || CONSTANTS.containsValue(prefix));
-                map.put(namespace, prefix);
+                } while (super.containsValue(prefix) || CONSTANTS.containsValue(prefix));
+                used.put(namespace, prefix);
             }
         }
     }
 
+    public String expand(String abbreviatedUrl) {
+        return expand(abbreviatedUrl, this);
+    }
+
     /**
-     * Returns all namespaces to be added to th document head. The method must
-     * be called after the document has been converted.
+     * Returns all namespaces to be added to the document head. Mapping
+     * direction is namespace to prefix, {@code #} namespaces are stored without
+     * the {@code #} at the end, {@code /} namespaces are stored with a
+     * {@code /} as last character. The method must be called after the document
+     * has been converted.
      *
      * @return all namespaces
      */
-    Set<Entry<String, String>> namespaceSet() {
-        Map<String, String> result = new HashMap<>((int) Math.ceil(map.size() / 0.75));
-        for (Entry<String, String> entry : map.entrySet()) {
+    Set<Entry<String, String>> namespaceSetForXMLFile() {
+        Map<String, String> result = new HashMap<>((int) Math.ceil(used.size() / 0.75));
+        for (Entry<String, String> entry : used.entrySet()) {
             String prefix = entry.getKey();
             result.put(PREFIX_XMLNS + ':' + entry.getValue(), prefix);
         }

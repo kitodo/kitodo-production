@@ -14,6 +14,7 @@ package org.kitodo.lugh.mem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -71,9 +72,14 @@ public class MemoryNodeReferenceTest {
         new MemoryNodeReference("");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = AssertionError.class)
     public void testMemoryNodeReferenceCannotBeCreatedFromGarbage() {
-        new MemoryNodeReference("This isn’t an URI.");
+        try {
+            assert (false);
+            fail("Assertions disabled. Run JVM with -ea option.");
+        } catch (AssertionError e) {
+            new MemoryNodeReference("This isn’t an URI.");
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -11,9 +11,10 @@
 
 package org.kitodo.lugh.vocabulary;
 
+import java.math.BigInteger;
 import java.util.*;
 
-import org.kitodo.lugh.NodeReference;
+import org.kitodo.lugh.*;
 import org.kitodo.lugh.mem.MemoryStorage;
 
 /**
@@ -189,11 +190,19 @@ public class RDF {
         if (!url.startsWith(SEQ_NO_PREFIX)) {
             return null;
         }
+        BigInteger value;
         try {
-            return Long.valueOf(url.substring(SEQ_NO_PREFIX_LENGTH));
+            value = new BigInteger(url.substring(SEQ_NO_PREFIX_LENGTH));
         } catch (NumberFormatException e) {
             return null;
         }
+        if (value.compareTo(BigInteger.valueOf(Node.FIRST_INDEX)) < 0) {
+            throw new IndexOutOfBoundsException(value + " is below " + Node.FIRST_INDEX);
+        }
+        if (value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
+            throw new ArithmeticException(value + " does not fit into long");
+        }
+        return value.longValue();
     }
 
     /**
@@ -205,6 +214,9 @@ public class RDF {
      * @return an URL for the sequence number
      */
     public static String toURL(long nnn) {
+        if (nnn < Node.FIRST_INDEX) {
+            throw new IllegalArgumentException(nnn + " is below " + Node.FIRST_INDEX);
+        }
         return SEQ_NO_PREFIX.concat(Long.toString(nnn));
     }
 

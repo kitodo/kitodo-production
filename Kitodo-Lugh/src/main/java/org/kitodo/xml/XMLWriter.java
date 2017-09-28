@@ -184,7 +184,7 @@ public class XMLWriter {
                     ((NamedNode) node).getIdentifier());
         }
         nodeToElement(node, document, abbr, root);
-        for (Entry<String, String> nsAttr : abbr.namespaceSet()) {
+        for (Entry<String, String> nsAttr : abbr.namespaceSetForXMLFile()) {
             root.setAttribute(nsAttr.getKey(), nsAttr.getValue());
         }
         return document;

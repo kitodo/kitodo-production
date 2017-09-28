@@ -45,11 +45,11 @@ public interface Storage {
      *
      * @param value
      *            the literal value
-     * @param lang
-     *            language, may be {@code ""} but not {@code null}
+     * @param type
+     *            literal type
      * @return the literal object
      */
-    public Literal newLiteral(String value, String lang);
+    public Literal newLiteral(String value, String type);
 
     /**
      * Creates a new named node.

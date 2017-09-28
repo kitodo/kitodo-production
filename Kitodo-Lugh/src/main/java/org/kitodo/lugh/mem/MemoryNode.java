@@ -151,11 +151,6 @@ public class MemoryNode implements Node {
     }
 
     /**
-     * The index of the first child node that is referenced by index.
-     */
-    public static final short FIRST_INDEX = 1;
-
-    /**
      * The edges leading from this node to other nodes and leaves.
      */
     protected final HashMap<String, Collection<ObjectType>> edges = new HashMap<>();

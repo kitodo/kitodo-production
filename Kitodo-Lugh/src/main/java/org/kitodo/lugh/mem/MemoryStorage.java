@@ -32,8 +32,8 @@ public class MemoryStorage implements Storage {
     }
 
     @Override
-    public Literal newLiteral(String value, String lang) {
-        return new MemoryLiteral(value, lang);
+    public Literal newLiteral(String value, String type) {
+        return new MemoryLiteral(value, type);
     }
 
     @Override

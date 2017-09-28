@@ -24,7 +24,7 @@ import org.kitodo.xml.XMLWriter;
  */
 public enum SerializationFormat {
     /**
-     * The N-Triples serialisation format ({@code application/n-triples}).
+     * The N-Triples serialization format ({@code application/n-triples}).
      *
      * @see "https://en.wikipedia.org/wiki/N-Triples"
      */
@@ -35,7 +35,7 @@ public enum SerializationFormat {
         }
     },
     /**
-     * The N3 serialisation format ({@code text/n3;charset=utf-8}).
+     * The N3 serialization format ({@code text/n3;charset=utf-8}).
      *
      * @see "https://en.wikipedia.org/wiki/Notation3"
      */
@@ -46,8 +46,8 @@ public enum SerializationFormat {
         }
     },
     /**
-     * The RDF/XML serialisation format ({@code application/rdf+xml}), linear
-     * style. This serialiser creates identifiers for all nodes and serialises
+     * The RDF/XML serialization format ({@code application/rdf+xml}), linear
+     * style. This serializer creates identifiers for all nodes and serializes
      * them in a linear way. It produces an output which reminds you of
      * N-Triples and is hardly readable. However, it is comparably faster for
      * larger models than the {@link #RDF_XML_ABBREV} serializer.
@@ -62,8 +62,8 @@ public enum SerializationFormat {
         }
     },
     /**
-     * The RDF/XML serialisation format ({@code application/rdf+xml}), pretty
-     * printed. This serialiser creates serialises the nodes in a way which
+     * The RDF/XML serialization format ({@code application/rdf+xml}), pretty
+     * printed. This serializer creates serializes the nodes in a way which
      * reminds you of Turtle and improves readability. However, its runtime may
      * become unacceptable for large models.
      *
@@ -77,7 +77,7 @@ public enum SerializationFormat {
         }
     },
     /**
-     * The Turtle serialisation format ({@code text/turtle}).
+     * The Turtle serialization format ({@code text/turtle}).
      *
      * @see "https://en.wikipedia.org/wiki/Turtle_(syntax)"
      */
@@ -88,7 +88,7 @@ public enum SerializationFormat {
         }
     },
     /**
-     * The XML format ({@code application/xml}, {@code text/xml}).
+     * The XML serialization format ({@code application/xml}, {@code text/xml}).
      *
      * @see "https://en.wikipedia.org/wiki/XML"
      */

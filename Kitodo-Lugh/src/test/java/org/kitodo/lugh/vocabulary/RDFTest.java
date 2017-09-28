@@ -16,18 +16,17 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.kitodo.lugh.Node;
-import org.kitodo.lugh.vocabulary.RDF;
 
 public class RDFTest {
 
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testSequenceNumberOfBelowBelowLongMinValue() {
-        assertNull(RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_-9223372036854775809"));
+        RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_-9223372036854775809");
     }
 
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testSequenceNumberOfBelowMin() {
-        assertNull(RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_0"));
+        RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_0");
     }
 
     @Test
@@ -47,9 +46,9 @@ public class RDFTest {
         assertEquals(Node.FIRST_INDEX, (long) RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_1"));
     }
 
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testSequenceNumberOfNegative() {
-        assertNull(RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_-1"));
+        RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_-1");
     }
 
     @Test(expected = ArithmeticException.class)
@@ -88,11 +87,6 @@ public class RDFTest {
     @Test
     public void testToURLMin() {
         assertEquals("http://www.w3.org/1999/02/22-rdf-syntax-ns#_1", RDF.toURL(Node.FIRST_INDEX));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testToURLOneAboveMax() {
-        RDF.toURL(Long.MAX_VALUE + 1);
     }
 
     @Test

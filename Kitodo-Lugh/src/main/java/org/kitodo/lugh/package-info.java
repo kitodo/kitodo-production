@@ -77,6 +77,23 @@
  * Node n = new MemoryNode(); // Node: interface, MemoryNode: class
  * </pre>
  * <p>
+ * <em>Storage-implementation-agnostically creating Java objects</em>
+ * <p>
+ * It is also possible to write code that creates objects without knowledge of
+ * the storage implementation by using the {@link Storage} interface:
+ * 
+ * <pre>
+ * function createAnEmptyMetsDiv(Storage storage) {
+ *     return storage.newNode(Mets.DIV);
+ * }
+ * </pre>
+ * 
+ * The function can later be called with the implementation to work with:
+ * 
+ * <pre>
+ * Node div = createAnEmptyMetsDiv(MemoryStorage.INSTANCE);
+ * </pre>
+ * <p>
  * <strong>Reading from Linked Data objects</strong>
  * <p>
  * Because a node is a {@code Map<K, Collection<ObjectType>>}, the result of a
@@ -92,7 +109,7 @@
  *     // do something with ‘n’
  * }
  * </pre>
- * 
+ *
  * However, in some cases, only exactly one object or literal is expected. To
  * provide for this situation, there are also getters for just this purpose
  * (i.e. {@code node()}, {@code literal()}, …). These getters will throw an
@@ -125,6 +142,28 @@
  * Result r = node.get(whatever);
  * if(r.isUniqueNode()) {
  *     Node n = r.nodeExpectable();    // throws unchecked exception
+ * </pre>
+ * <p>
+ * <strong>Reading and writing Linked Data files</strong>
+ * <p>
+ * Lugh uses the Apache Jena framework to read and write common Linked Data
+ * formats such as RDF-XML or Turtle.
+ * <p>
+ * Loading a file:
+ *
+ * <pre>
+ * Model model = ModelFactory.createDefaultModel();
+ * model.read("data.ttl");
+ * Result = MemoryResult.createFrom(model, false);
+ * </pre>
+ *
+ * A data file may contain unrelated nodes, thus a load operation creates a
+ * {@code Result} that must be queried.
+ * <p>
+ * Saving a file:
+ *
+ * <pre>
+ * SerializationFormat.TURTLE.write(node, new Namespaces(), new File("node.ttl"));
  * </pre>
  * <p>
  * <strong>The name</strong>
