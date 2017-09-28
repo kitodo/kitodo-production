@@ -739,20 +739,20 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void deleteSymlinksFromUserHomes() {
-        WebDav myDav = new WebDav();
+        WebDav webDav = new WebDav();
         /* alle Benutzer */
-        for (User b : this.task.getUsers()) {
+        for (User user : this.task.getUsers()) {
             try {
-                myDav.uploadFromHome(b, this.task.getProcess());
+                webDav.uploadFromHome(user, this.task.getProcess());
             } catch (RuntimeException e) {
                 logger.error(e);
             }
         }
         /* alle Benutzergruppen mit ihren Benutzern */
-        for (UserGroup bg : this.task.getUserGroups()) {
-            for (User b : bg.getUsers()) {
+        for (UserGroup userGroup : this.task.getUserGroups()) {
+            for (User user : userGroup.getUsers()) {
                 try {
-                    myDav.uploadFromHome(b, this.task.getProcess());
+                    webDav.uploadFromHome(user, this.task.getProcess());
                 } catch (RuntimeException e) {
                     logger.error(e);
                 }
@@ -951,9 +951,9 @@ public class ProzessverwaltungForm extends BasisForm {
     public void exportDMSPage() {
         ExportDms export = new ExportDms();
         Boolean flagError = false;
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
+        for (ProcessDTO processDTO : (List<ProcessDTO>) this.page.getListReload()) {
             try {
-                Process process = serviceManager.getProcessService().convertDtoToBean(proz);
+                Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
             } catch (Exception e) {
                 // without this a new exception is thrown, if an exception
@@ -965,7 +965,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 } else {
                     errorMessage = e.toString();
                 }
-                Helper.setFehlerMeldung("ExportErrorID" + proz.getId() + ":", errorMessage);
+                Helper.setFehlerMeldung("ExportErrorID" + processDTO.getId() + ":", errorMessage);
                 logger.error(e);
                 flagError = true;
             }
@@ -1312,7 +1312,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Set my process.
+     * Set process.
      *
      * @param process
      *            Process object
@@ -1487,12 +1487,12 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProjektAuswahlListe() {
-        List<SelectItem> myProjekte = new ArrayList<>();
+        List<SelectItem> projects = new ArrayList<>();
         List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
-        for (Project proj : temp) {
-            myProjekte.add(new SelectItem(proj.getId(), proj.getTitle(), null));
+        for (Project project : temp) {
+            projects.add(new SelectItem(project.getId(), project.getTitle(), null));
         }
-        return myProjekte;
+        return projects;
     }
 
     /**
@@ -1736,7 +1736,6 @@ public class ProzessverwaltungForm extends BasisForm {
     /*
      * Downloads
      */
-
     public void downloadTiffHeader() throws IOException {
         TiffHeader tiff = new TiffHeader(this.process);
         tiff.exportStart();
