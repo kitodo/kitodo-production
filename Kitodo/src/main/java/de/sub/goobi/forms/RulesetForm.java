@@ -125,7 +125,7 @@ public class RulesetForm extends BasisForm {
             logger.error(e);
         }
         this.page = new Page<>(0, rulesets);
-        return "/pages/RegelsaetzeAlle/?faces-redirect=true";
+        return "/pages/RegelsaetzeAlle?faces-redirect=true";
     }
 
     /**
