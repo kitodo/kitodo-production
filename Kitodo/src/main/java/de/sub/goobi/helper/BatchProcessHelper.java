@@ -12,8 +12,6 @@
 package de.sub.goobi.helper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,22 +53,6 @@ public class BatchProcessHelper {
         loadProcessProperties(this.currentProcess);
     }
 
-    public Process getCurrentProcess() {
-        return this.currentProcess;
-    }
-
-    public void setCurrentProcess(Process currentProcess) {
-        this.currentProcess = currentProcess;
-    }
-
-    public List<ProcessProperty> getProcessPropertyList() {
-        return this.processPropertyList;
-    }
-
-    public void setProcessPropertyList(List<ProcessProperty> processPropertyList) {
-        this.processPropertyList = processPropertyList;
-    }
-
     public ProcessProperty getProcessProperty() {
         return this.processProperty;
     }
@@ -81,10 +63,6 @@ public class BatchProcessHelper {
 
     public int getPropertyListSize() {
         return this.processPropertyList.size();
-    }
-
-    public List<ProcessProperty> getProcessProperties() {
-        return this.processPropertyList;
     }
 
     private List<String> processNameList = new ArrayList<>();
@@ -290,29 +268,6 @@ public class BatchProcessHelper {
     }
 
     /**
-     * Get containers size.
-     *
-     * @return size
-     */
-    public int getContainersSize() {
-        if (this.containers == null) {
-            return 0;
-        }
-        return this.containers.size();
-    }
-
-    /**
-     * Get sorted properties.
-     *
-     * @return list of process properties
-     */
-    public List<ProcessProperty> getSortedProperties() {
-        Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
-        Collections.sort(this.processPropertyList, comp);
-        return this.processPropertyList;
-    }
-
-    /**
      * Get containerless properties.
      *
      * @return list of process properties
@@ -329,10 +284,6 @@ public class BatchProcessHelper {
 
     public Integer getContainer() {
         return this.container;
-    }
-
-    public List<Integer> getContainerList() {
-        return new ArrayList<>(this.containers.keySet());
     }
 
     /**
@@ -369,81 +320,5 @@ public class BatchProcessHelper {
         return answer;
     }
 
-    /**
-     * Duplicate container for single.
-     *
-     * @return String
-     */
-    public String duplicateContainerForSingle() {
-        Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<>();
-        // search for all properties in container
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getContainer() == currentContainer) {
-                plist.add(pt);
-            }
-        }
-        int newContainerNumber = 0;
-        if (currentContainer > 0) {
-            newContainerNumber++;
-            // find new unused container number
-            boolean search = true;
-            while (search) {
-                if (!this.containers.containsKey(newContainerNumber)) {
-                    search = false;
-                } else {
-                    newContainerNumber++;
-                }
-            }
-        }
-        // clone properties
-        for (ProcessProperty pt : plist) {
-            ProcessProperty newProp = pt.getClone(newContainerNumber);
-            this.processPropertyList.add(newProp);
-            this.processProperty = newProp;
-            saveCurrentProperty();
-        }
-        loadProcessProperties(this.currentProcess);
-
-        return "";
-    }
-
-    /**
-     * TODO wird nur für currentStep ausgeführt.
-     * 
-     * @return String
-     */
-    public String duplicateContainerForAll() {
-        Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<>();
-        // search for all properties in container
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getContainer() == currentContainer) {
-                plist.add(pt);
-            }
-        }
-
-        int newContainerNumber = 0;
-        if (currentContainer > 0) {
-            newContainerNumber++;
-            boolean search = true;
-            while (search) {
-                if (!this.containers.containsKey(newContainerNumber)) {
-                    search = false;
-                } else {
-                    newContainerNumber++;
-                }
-            }
-        }
-        // clone properties
-        for (ProcessProperty pt : plist) {
-            ProcessProperty newProp = pt.getClone(newContainerNumber);
-            this.processPropertyList.add(newProp);
-            this.processProperty = newProp;
-            saveCurrentPropertyForAll();
-        }
-        loadProcessProperties(this.currentProcess);
-        return "";
-    }
 
 }
