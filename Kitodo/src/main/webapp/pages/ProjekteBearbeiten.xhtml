@@ -76,7 +76,7 @@
                                         </h3>
 
                                         <!-- globale Warn- und Fehlermeldungen -->
-                                        <h:messages id="id8" globalOnly="true" errorClass="text_red"
+                                        <h:messages id="messages" globalOnly="true" errorClass="text_red"
                                                     infoClass="text_blue" showDetail="true" showSummary="true"
                                                     tooltip="true"/>
 
@@ -144,11 +144,12 @@
                                                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                                                      rendered="#{ProjekteForm.myProjekt.id != null and ProjekteForm.myProjekt.deleteAble}"/>
                                                     <p:commandButton id="id123" ajax="true" value="#{msgs.uebernehmen}"
-                                                                     action="#{ProjekteForm.apply}"/>
+                                                                     action="#{ProjekteForm.apply}"
+                                                                     update = "messages"/>
 
                                                     <p:commandButton id="id124" ajax="true" value="#{msgs.speichern}"
                                                                      action="#{ProjekteForm.save}"
-                                                                     update = "id8"/>
+                                                                     update = "messages"/>
 
                                                 </td>
 
