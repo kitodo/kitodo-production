@@ -228,7 +228,7 @@ public class ProjekteForm extends BasisForm {
             logger.error(e);
         }
         this.page = new Page<>(0, projects);
-        return "/pages/ProjekteAlle";
+        return "/pages/ProjekteAlle?faces-redirect=true";
     }
 
     /**

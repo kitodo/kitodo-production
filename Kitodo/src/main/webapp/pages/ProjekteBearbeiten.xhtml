@@ -24,6 +24,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:metadata>
         <f:viewParam name="id" value="#{ProjekteForm.itemId}"/>
@@ -99,7 +100,7 @@
                                             <tr>
                                                 <td class="eingabeBoxen_row2" colspan="2">
 
-                                                    <t:panelTabbedPane serverSideTabSwitch="true"
+                                                    <t:panelTabbedPane serverSideTabSwitch="false"
                                                                        immediateTabChange="false" styleClass="tabbedPane"
                                                                        activeTabStyleClass="activeTab"
                                                                        inactiveTabStyleClass="inactiveTab"
@@ -142,11 +143,12 @@
                                                                      action="#{ProjekteForm.delete}"
                                                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                                                      rendered="#{ProjekteForm.myProjekt.id != null and ProjekteForm.myProjekt.deleteAble}"/>
-                                                    <h:commandButton id="id123" value="#{msgs.uebernehmen}"
+                                                    <p:commandButton id="id123" ajax="true" value="#{msgs.uebernehmen}"
                                                                      action="#{ProjekteForm.apply}"/>
 
-                                                    <h:commandButton id="id124" value="#{msgs.speichern}"
-                                                                     action="#{ProjekteForm.save}"/>
+                                                    <p:commandButton id="id124" ajax="true" value="#{msgs.speichern}"
+                                                                     action="#{ProjekteForm.save}"
+                                                                     update = "id8"/>
 
                                                 </td>
 
