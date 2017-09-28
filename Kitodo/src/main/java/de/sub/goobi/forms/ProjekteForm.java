@@ -158,14 +158,13 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Save.
+     * Saves current project if title is not empty and redirects to projects page.
      *
      * @return page or empty String
      */
     public String save() {
         // call this to make saving and deleting permanent
         this.commitFileGroups();
-
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
             Helper.setFehlerMeldung("Can not save project with empty title!");
             return null;
@@ -179,20 +178,16 @@ public class ProjekteForm extends BasisForm {
                 return null;
             }
         }
-
-
     }
 
     /**
-     * Apply.
+     * Saves current project if title is not empty
      *
      * @return String
      */
     public String apply() {
         // call this to make saving and deleting permanent
-        logger.trace("apply wird aufgerufen...");
         this.commitFileGroups();
-
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
             Helper.setFehlerMeldung("Can not save project with empty title!");
             return null;
