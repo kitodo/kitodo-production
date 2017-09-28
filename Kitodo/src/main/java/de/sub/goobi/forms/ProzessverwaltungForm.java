@@ -731,8 +731,12 @@ public class ProzessverwaltungForm extends BasisForm {
         if (user != null) {
             task.setProcessingUser(user);
         }
-        this.process = this.task.getProcess();
-        save();
+
+        try {
+            serviceManager.getTaskService().save(this.task);
+        } catch (DataException e) {
+            logger.error(e);
+        }
     }
 
     /**
@@ -741,8 +745,18 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return page
      */
     public String deleteTask() {
-        this.process = this.task.getProcess();
         this.process.getTasks().remove(this.task);
+
+        List<User> users = this.task.getUsers();
+        for (User user : users) {
+            user.getTasks().remove(this.task);
+        }
+
+        List<UserGroup> userGroups = this.task.getUserGroups();
+        for (UserGroup userGroup : userGroups) {
+            userGroup.getTasks().remove(this.task);
+        }
+
         try {
             serviceManager.getTaskService().remove(this.task);
         } catch (DataException e) {
