@@ -351,7 +351,7 @@
         </f:facet>
     
         <h:graphicImage alt="" value="#{item.processingStatus.bigImagePath}"
-                        title="#{msgs.get(item.processingStatus.title)}"/>
+                        title="#{item.processingStatus.title}"/>
     
         <h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px"
                       rendered="#{item.priority == 1}"/>

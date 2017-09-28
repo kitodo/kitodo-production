@@ -65,7 +65,7 @@
         <ui:fragment rendered="#{item.editTypeEnum !=null}">
             <p:row>
                 <p:column>#{msgs.aktualisierungstyp}:</p:column>
-                <p:column>#{msgs.get(item.editTypeEnum.title)}</p:column>
+                <p:column>#{item.editTypeEnum.title}</p:column>
             </p:row>
         </ui:fragment>
 
