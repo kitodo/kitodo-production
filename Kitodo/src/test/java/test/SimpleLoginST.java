@@ -273,19 +273,17 @@ public class SimpleLoginST {
                 destinationParent.mkdirs();
 
                 if (!entry.isDirectory()) {
-                    BufferedInputStream bufferedInputStream = new BufferedInputStream(zip.getInputStream(entry));
                     int currentByte;
                     byte data[] = new byte[BUFFER_SIZE];
 
-                    FileOutputStream fileOutputStream = new FileOutputStream(destFile);
-                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, BUFFER_SIZE);
+                    try(BufferedInputStream bufferedInputStream = new BufferedInputStream(zip.getInputStream(entry));
+                        FileOutputStream fileOutputStream = new FileOutputStream(destFile);
+                        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, BUFFER_SIZE)) {
 
-                    while ((currentByte = bufferedInputStream.read(data, 0, BUFFER_SIZE)) != -1) {
-                        bufferedOutputStream.write(data, 0, currentByte);
+                        while ((currentByte = bufferedInputStream.read(data, 0, BUFFER_SIZE)) != -1) {
+                            bufferedOutputStream.write(data, 0, currentByte);
+                        }
                     }
-                    bufferedOutputStream.flush();
-                    bufferedOutputStream.close();
-                    bufferedInputStream.close();
                 }
             }
         } catch (Exception e) {
@@ -304,29 +302,13 @@ public class SimpleLoginST {
      *            True if the file is gzipped.
      */
     private static void extractTarFileToFolder(File file, File outputDir, boolean isGZipped) {
-        FileInputStream fileInputStream = null;
-        TarInputStream tarArchiveInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(file);
-            tarArchiveInputStream = (isGZipped) ? new TarInputStream(new GZIPInputStream(fileInputStream, BUFFER_SIZE))
-                    : new TarInputStream(new BufferedInputStream(fileInputStream, BUFFER_SIZE));
+        try (FileInputStream fileInputStream = new FileInputStream(file);
+             TarInputStream tarArchiveInputStream = (isGZipped) ? new TarInputStream(new GZIPInputStream(fileInputStream, BUFFER_SIZE))
+                     : new TarInputStream(new BufferedInputStream(fileInputStream, BUFFER_SIZE))){
+
             unTar(tarArchiveInputStream, outputDir);
         } catch (IOException e) {
             logger.error(e.getMessage());
-        } finally {
-            if (tarArchiveInputStream != null) {
-                try {
-                    tarArchiveInputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
-                }
-            } else if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
-                }
-            }
         }
     }
 
@@ -350,28 +332,20 @@ public class SimpleLoginST {
                         }
                     }
                 } else {
-                    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-                    try {
+                    try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
                         int length;
                         byte data[] = new byte[BUFFER_SIZE];
                         while ((length = tarInputStream.read(data, 0, BUFFER_SIZE)) != -1) {
                             out.write(data, 0, length);
                         }
-                        out.flush();
-                    } finally {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
+                    } catch (IOException e) {
                             logger.error(e.getMessage());
-                        }
                     }
                 }
             }
-
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-
     }
 
     /**
