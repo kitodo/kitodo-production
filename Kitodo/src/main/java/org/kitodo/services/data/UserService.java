@@ -48,7 +48,11 @@ import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.FilterDTO;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
@@ -417,6 +421,16 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      */
     public List<UserDTO> findAllVisibleUsers() throws DataException {
         List<JSONObject> jsonObjects = findAllDocuments(sortByLogin());
+        return convertJSONObjectsToDTOs(jsonObjects, true);
+    }
+
+    /**
+     * Find all visible users with related objects.
+     *
+     * @return a list of all visible users as UserDTO
+     */
+    public List<UserDTO> findAllVisibleUsersWithRelations() throws DataException {
+        List<JSONObject> jsonObjects = findAllDocuments(sortByLogin());
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
 
@@ -426,6 +440,16 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      * @return a list of all active users as UserDTO
      */
     public List<UserDTO> findAllActiveUsers() throws DataException {
+        List<JSONObject> jsonObjects = findByActive(true);
+        return convertJSONObjectsToDTOs(jsonObjects, true);
+    }
+
+    /**
+     * Find all active users wit related objects.
+     *
+     * @return a list of all active users as UserDTO
+     */
+    public List<UserDTO> findAllActiveUsersWithRelations() throws DataException {
         List<JSONObject> jsonObjects = findByActive(true);
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
@@ -439,7 +463,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      */
     public List<UserDTO> findActiveUsersByName(String name) throws DataException {
         List<JSONObject> jsonObjects = findByActiveAndName(true, name);
-        return convertJSONObjectsToDTOs(jsonObjects, false);
+        return convertJSONObjectsToDTOs(jsonObjects, true);
     }
 
     private String sortByLogin() {
@@ -480,9 +504,15 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
         userDTO.setTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "tasks"));
         userDTO.setProcessingTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "processingTasks"));
         userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "userGroups"));
+
         if (!related) {
             userDTO = convertRelatedJSONObjects(userJSONObject, userDTO);
+        } else {
+            userDTO = addBasicFilterRelation(userDTO, userJSONObject);
+            userDTO = addBasicProjectRelation(userDTO, userJSONObject);
+            userDTO = addBasicUserGroupRelation(userDTO, userJSONObject);
         }
+
         return userDTO;
     }
 
@@ -492,6 +522,64 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
         userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         userDTO.setUserGroups(
                 convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+        return userDTO;
+    }
+
+    private UserDTO addBasicFilterRelation(UserDTO userDTO, JSONObject jsonObject) {
+        if (userDTO.getFiltersSize() > 0) {
+            List<FilterDTO> filters = new ArrayList<>();
+            List<String> subKeys = new ArrayList<>();
+            subKeys.add("value");
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "filters", subKeys);
+            for (RelatedProperty relatedProperty : relatedProperties) {
+                FilterDTO filter = new FilterDTO();
+                filter.setId(relatedProperty.getId());
+                if (relatedProperty.getValues().size() > 0) {
+                    filter.setValue(relatedProperty.getValues().get(0));
+                }
+                filters.add(filter);
+            }
+            userDTO.setFilters(filters);
+        }
+        return userDTO;
+    }
+
+    private UserDTO addBasicProjectRelation(UserDTO userDTO, JSONObject jsonObject) {
+        if (userDTO.getProjectsSize() > 0) {
+            List<ProjectDTO> projects = new ArrayList<>();
+            List<String> subKeys = new ArrayList<>();
+            subKeys.add("title");
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "projects", subKeys);
+            for (RelatedProperty relatedProperty : relatedProperties) {
+                ProjectDTO project = new ProjectDTO();
+                project.setId(relatedProperty.getId());
+                if (relatedProperty.getValues().size() > 0) {
+                    project.setTitle(relatedProperty.getValues().get(0));
+                }
+                project.setTitle(relatedProperty.getValues().get(0));
+                projects.add(project);
+            }
+            userDTO.setProjects(projects);
+        }
+        return userDTO;
+    }
+
+    private UserDTO addBasicUserGroupRelation(UserDTO userDTO, JSONObject jsonObject) {
+        if (userDTO.getUserGroupSize() > 0) {
+            List<UserGroupDTO> userGroups = new ArrayList<>();
+            List<String> subKeys = new ArrayList<>();
+            subKeys.add("title");
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "userGroups", subKeys);
+            for (RelatedProperty relatedProperty : relatedProperties) {
+                UserGroupDTO userGroup = new UserGroupDTO();
+                userGroup.setId(relatedProperty.getId());
+                if (relatedProperty.getValues().size() > 0) {
+                    userGroup.setTitle(relatedProperty.getValues().get(0));
+                }
+                userGroups.add(userGroup);
+            }
+            userDTO.setUserGroups(userGroups);
+        }
         return userDTO;
     }
 

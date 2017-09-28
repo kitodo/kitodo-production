@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +32,9 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -51,7 +54,18 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
 
     @Override
     public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), true);
+    }
+
+    /**
+     * Get all user groups from index and covert results to format accepted by
+     * frontend.
+     *
+     * @return list of UserGroupDTO objects
+     */
+    public List<UserGroupDTO> findAll() throws DataException {
+        List<JSONObject> jsonObjects = findAllDocuments();
+        return convertJSONObjectsToDTOs(jsonObjects, true);
     }
 
     @Override
@@ -188,17 +202,6 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Get all user groups from index and covert results to format accepted by
-     * frontend.
-     *
-     * @return list of UserGroupDTO objects
-     */
-    public List<UserGroupDTO> findAll() throws DataException {
-        List<JSONObject> jsonObjects = findAllDocuments();
-        return convertJSONObjectsToDTOs(jsonObjects, false);
-    }
-
-    /**
      * Method adds all object found in database to Elastic Search index.
      */
     @SuppressWarnings("unchecked")
@@ -216,12 +219,36 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, "users"));
         if (!related) {
             userGroupDTO = convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
+        } else {
+            userGroupDTO = addBasicUserRelation(userGroupDTO, userGroupJSONObject);
         }
         return userGroupDTO;
     }
 
     private UserGroupDTO convertRelatedJSONObjects(JSONObject jsonObject, UserGroupDTO userGroupDTO) throws DataException {
         userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
+        return userGroupDTO;
+    }
+
+    private UserGroupDTO addBasicUserRelation(UserGroupDTO userGroupDTO, JSONObject jsonObject) {
+        if (userGroupDTO.getUsersSize() > 0) {
+            List<UserDTO> users = new ArrayList<>();
+            List<String> subKeys = new ArrayList<>();
+            subKeys.add("name");
+            subKeys.add("surname");
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "users", subKeys);
+            for (RelatedProperty relatedProperty : relatedProperties) {
+                UserDTO user = new UserDTO();
+                user.setId(relatedProperty.getId());
+                if (relatedProperty.getValues().size() > 0) {
+                    user.setName(relatedProperty.getValues().get(0));
+                    user.setSurname(relatedProperty.getValues().get(1));
+                }
+                user.setFullName(serviceManager.getUserService().getFullName(user));
+                users.add(user);
+            }
+            userGroupDTO.setUsers(users);
+        }
         return userGroupDTO;
     }
 

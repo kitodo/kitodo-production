@@ -37,10 +37,16 @@ public class UserGroupTypeTest {
 
         User firstUser = new User();
         firstUser.setId(1);
+        firstUser.setLogin("first");
+        firstUser.setName("Tic");
+        firstUser.setSurname("Tac");
         users.add(firstUser);
 
         User secondUser = new User();
         secondUser.setId(2);
+        secondUser.setLogin("second");
+        secondUser.setName("Ted");
+        secondUser.setSurname("Barney");
         users.add(secondUser);
 
         UserGroup firstUserGroup = new UserGroup();
@@ -67,7 +73,8 @@ public class UserGroupTypeTest {
         HttpEntity document = userGroupType.createDocument(userGroup);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser
-                .parse("{\"title\":\"Administrator\",\"permission\":1," + "\"users\":[{\"id\":1},{\"id\":2}]}");
+                .parse("{\"title\":\"Administrator\",\"permission\":1,\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\""
+                        + ",\"id\":1,\"login\":\"first\"},{\"surname\":\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}");
         assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
 
         userGroup = prepareData().get(1);

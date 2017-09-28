@@ -47,6 +47,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BaseDTO;
+import org.kitodo.helper.RelatedProperty;
 
 /**
  * Class for implementing methods used by all service classes which search in
@@ -96,6 +97,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param jsonObject
      *            return from find methods
+     * @param related true or false
      * @return DTO object
      */
     public abstract S convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException;
@@ -801,7 +803,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            JSONObject
      * @return display properties as list of Integers
      */
-    protected List<Integer> getRelatedPropertyForDTO(JSONObject object, String key) {
+    private List<Integer> getRelatedPropertyForDTO(JSONObject object, String key) {
         if (object != null) {
             JSONArray jsonArray = (JSONArray) object.get(key);
             List<Integer> ids = new ArrayList<>();
@@ -809,6 +811,37 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
                 ids.add(convertIdForDTO(singleObject));
             }
             return ids;
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Converts properties' values returned from ElasticSearch index.
+     *
+     * @param object
+     *            JSONObject
+     * @param key to access JSONArray
+     * @param subKeys to access specified values in objects of JSONArray
+     * @return display properties as list of Integers
+     */
+    protected List<RelatedProperty> getRelatedArrayPropertyForDTO(JSONObject object, String key, List<String> subKeys) {
+        if (object != null) {
+            JSONArray jsonArray = (JSONArray) object.get(key);
+            List<RelatedProperty> relatedProperties = new ArrayList<>();
+            for (Object singleObject : jsonArray) {
+                JSONObject jsonObject = (JSONObject) singleObject;
+                RelatedProperty relatedProperty = new RelatedProperty();
+                Long id = (Long) jsonObject.get("id");
+                relatedProperty.setId(id.intValue());
+                ArrayList<String> values = new ArrayList<>();
+                for (String subKey : subKeys) {
+                    String value = (String) jsonObject.get(subKey);
+                    values.add(value);
+                }
+                relatedProperty.setValues(values);
+                relatedProperties.add(relatedProperty);
+            }
+            return relatedProperties;
         }
         return new ArrayList<>();
     }

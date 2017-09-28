@@ -21,6 +21,10 @@ import org.apache.http.HttpEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseIndexedBean;
+import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
 
 /**
@@ -45,37 +49,52 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      * 
      * @param objects
      *            list
+     * @param title
+     *            true or false, if true also title information is included
+     * @return JSONArray
+     */
+    @SuppressWarnings("unchecked")
+    <F extends BaseIndexedBean> JSONArray addObjectRelation(List<F> objects, boolean title) {
+        JSONArray result = new JSONArray();
+        if (objects != null) {
+            for (F property : objects) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", property.getId());
+                if (title) {
+                    if (property instanceof Project) {
+                        jsonObject.put("title", ((Project) property).getTitle());
+                    } else if (property instanceof User) {
+                        jsonObject.put("login", ((User) property).getLogin());
+                        jsonObject.put("name", ((User) property).getName());
+                        jsonObject.put("surname", ((User) property).getSurname());
+                    } else if (property instanceof UserGroup) {
+                        jsonObject.put("title", ((UserGroup) property).getTitle());
+                    } else if (property instanceof Filter) {
+                        jsonObject.put("value", ((Filter) property).getValue());
+                    }
+                }
+                result.add(jsonObject);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Method for adding relationship between bean objects.
+     * 
+     * @param objects
+     *            list
      * @return JSONArray
      */
     @SuppressWarnings("unchecked")
     <F extends BaseIndexedBean> JSONArray addObjectRelation(List<F> objects) {
-        JSONArray jsonArray = new JSONArray();
-        if (objects != null) {
-            for (F property : objects) {
-                jsonArray.add(addIdForRelation(property.getId()));
-            }
-        }
-        return jsonArray;
+        return addObjectRelation(objects, false);
     }
 
     /**
-     * Method for adding id to JSONObject.
-     *
-     * @param id
-     *            of object
-     * @return JSONObject
-     */
-    @SuppressWarnings("unchecked")
-    private JSONObject addIdForRelation(Integer id) {
-        JSONObject object = new JSONObject();
-        object.put("id", id);
-        return object;
-    }
-
-    /**
-     * Method used for formatting Date as String. It will help to change fast a
-     * way of Date formatting or expected String format.
-     *
+     * Method used for formatting Date as String. It will help to change fast a way
+     * of Date formatting or expected String format.
+     * 
      * @param date
      *            as Date
      * @return formatted date as String
