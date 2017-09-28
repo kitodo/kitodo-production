@@ -2163,13 +2163,6 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void loadProcessProperties() {
-        try {
-            this.process = serviceManager.getProcessService().getById(this.process.getId());
-        } catch (Exception e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("could not refresh process with id " + this.process.getId(), e);
-            }
-        }
         this.containers = new TreeMap<>();
         this.processPropertyList = PropertyParser.getPropertiesForProcess(this.process);
 
