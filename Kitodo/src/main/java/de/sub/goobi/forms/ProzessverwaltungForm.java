@@ -714,11 +714,9 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        save();
         this.modusBearbeiten = "schritt";
         this.taskId = this.task.getId();
-        //TODO: enforce http://.../kitodo/pages/inc_Prozessverwaltung/schritt.jsf?id=6
-        return "/pages/inc_Prozessverwaltung?faces-redirect=true";
+        return "/pages/inc_Prozessverwaltung/schritt?faces-redirect=true&id=" + this.taskId;
     }
 
     /**
@@ -748,10 +746,8 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-
         deleteSymlinksFromUserHomes();
-        //TODO: redirect to correct task
-        return "/pages/ProzessverwaltungBearbeiten?faces-redirect=true";
+        return "/pages/ProzessverwaltungBearbeiten?faces-redirect=true&id=" + this.process.getId();
     }
 
     private void deleteSymlinksFromUserHomes() {
