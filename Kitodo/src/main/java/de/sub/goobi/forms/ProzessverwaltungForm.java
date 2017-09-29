@@ -33,8 +33,6 @@ import de.sub.goobi.helper.WebDav;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,7 +75,6 @@ import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.goobi.production.properties.Type;
 import org.jdom.transform.XSLTransformException;
-import org.jfree.chart.plot.PlotOrientation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -114,8 +111,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private Property myProzessEigenschaft;
     private Template template;
     private Property templateProperty;
-    private User myBenutzer;
-    private UserGroup userGroup;
     private Workpiece workpiece;
     private Property workpieceProperty;
     private String modusAnzeige = "aktuell";
@@ -1453,22 +1448,6 @@ public class ProzessverwaltungForm extends BasisForm {
         return null;
     }
 
-    public User getMyBenutzer() {
-        return this.myBenutzer;
-    }
-
-    public void setMyBenutzer(User myBenutzer) {
-        this.myBenutzer = myBenutzer;
-    }
-
-    public UserGroup getMyBenutzergruppe() {
-        return this.userGroup;
-    }
-
-    public void setMyBenutzergruppe(UserGroup myBenutzergruppe) {
-        this.userGroup = myBenutzergruppe;
-    }
-
     /**
      * Get choice of project.
      *
@@ -1751,14 +1730,6 @@ public class ProzessverwaltungForm extends BasisForm {
         return this.page.getCompleteList().size() * 20;
     }
 
-    public NumberFormat getMyFormatter() {
-        return new DecimalFormat("#,##0");
-    }
-
-    public PlotOrientation getMyOrientation() {
-        return PlotOrientation.HORIZONTAL;
-    }
-
     /*
      * Downloads
      */
@@ -1916,6 +1887,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     /**
      * transforms xml logfile with given xslt and provides download.
+     * //TODO: why this whole stuff is not used?
      */
     public void transformXml() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -2337,18 +2309,6 @@ public class ProzessverwaltungForm extends BasisForm {
 
     public List<Integer> getContainerList() {
         return new ArrayList<>(this.containers.keySet());
-    }
-
-    /**
-     * Get containers' size.
-     *
-     * @return size
-     */
-    public int getContainersSize() {
-        if (this.containers == null) {
-            return 0;
-        }
-        return this.containers.size();
     }
 
     /**
