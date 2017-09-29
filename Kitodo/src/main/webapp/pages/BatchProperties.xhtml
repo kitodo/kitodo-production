@@ -120,9 +120,7 @@
                                                                 </tr>
                                                             </thead>
 
-                                                            <t:dataList var="container"
-                                                                        value="#{BatchForm.batchHelper.containerList}"
-                                                                        rowCountVar="rowCount" rowIndexVar="rowIndex">
+
                                                                 <t:dataList var="proc"
                                                                             value="#{BatchForm.batchHelper.containerlessProperties}"
                                                                             rowCountVar="propCount" rowIndexVar="propInd">
@@ -136,8 +134,7 @@
                                                                             </td>
                                                                             <td class="standardTable_ColumnCentered">
 
-                                                                                <h:commandLink action="BatchProperties"
-                                                                                               title="#{msgs.bearbeiten}">
+                                                                                <h:commandLink action="#{NavigationForm.Reload}" title="#{msgs.bearbeiten}">
                                                                                     <h:graphicImage alt="edit"
                                                                                             value="/pages/images/buttons/edit.gif"/>
                                                                                     <t:updateActionListener
@@ -149,7 +146,6 @@
                                                                                     <t:updateActionListener
                                                                                             property="#{BatchForm.modusBearbeiten}"
                                                                                             value="eigenschaft"/>
-                                                                                    <f:ajax render="editBatch"/>
                                                                                 </h:commandLink>
                                                                             </td>
                                                                         </tr>
@@ -163,49 +159,6 @@
                                                                         </td>
                                                                     </tr>
                                                                 </ui:fragment>
-
-                                                                <t:dataList var="process_item"
-                                                                            value="#{BatchForm.batchHelper.containers[container].propertyList}"
-                                                                            rowCountVar="propCount"
-                                                                            rowIndexVar="propInd">
-                                                                    <ui:fragment rendered="#{container!=0 }">
-                                                                        <tr class="standardTable_Row1">
-                                                                            <td>
-                                                                                <h:outputText value="#{process_item.name}"/>
-                                                                            </td>
-                                                                            <td>
-                                                                                <h:outputText value="#{process_item.value}"/>
-                                                                            </td>
-                                                                            <ui:fragment rendered="#{propInd ==0}">
-                                                                                <td class="standardTable_ColumnCentered"
-                                                                                        rowspan="#{BatchForm.batchHelper.containers[container].propertyListSizeString}">
-                                                                                    <!-- edit container -->
-                                                                                    <h:panelGroup>
-                                                                                        <h:commandLink action="BatchProperties"
-                                                                                                       title="#{msgs.bearbeiten}">
-                                                                                            <h:graphicImage alt="edit"
-                                                                                                    value="/pages/images/buttons/edit.gif"/>
-                                                                                            <t:updateActionListener
-                                                                                                    property="#{BatchForm.batchHelper.container}"
-                                                                                                    value="#{container}"/>
-                                                                                            <t:updateActionListener
-                                                                                                    property="#{BatchForm.modusBearbeiten}"
-                                                                                                    value="eigenschaft"/>
-                                                                                            <f:ajax render="editBatch" />
-                                                                                        </h:commandLink>
-                                                                                    </h:panelGroup>
-                                                                                </td>
-                                                                            </ui:fragment>
-                                                                        </tr>
-                                                                    </ui:fragment>
-                                                                </t:dataList>
-                                                            </t:dataList>
-                                                            <!--
-                                                            <h:outputText value="Nummer: #{container}" />
-                                                            <h:outputText value="  Anzahl: #{BatchForm.batchHelper.containers[container]}" />
-                                                            <br />
-                                                            rendered="#{propInd + 1 == propCount}"
-                                                            -->
                                                         </table>
                                                     </ui:fragment>
 
