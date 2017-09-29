@@ -933,8 +933,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
 
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
-                    && process.getSortHelperStatus().equals("100000000")) {
-                fileService.createMetaDirectory(result, origOrdner.toString());
+                    && process.getSortHelperStatus() != null) {
+                if (process.getSortHelperStatus().equals("100000000")) {
+                    fileService.createMetaDirectory(result, origOrdner.toString());
+                }
             }
 
             return origOrdner;
