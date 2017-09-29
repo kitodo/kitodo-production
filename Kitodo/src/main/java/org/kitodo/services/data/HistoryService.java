@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
@@ -50,23 +48,7 @@ public class HistoryService extends SearchService<History, HistoryDTO, HistoryDA
      * Constructor with Searcher and Indexer assigning.
      */
     public HistoryService() {
-        super(new HistoryDAO(), new Searcher(History.class));
-        this.indexer = new Indexer<>(History.class);
-    }
-
-    /**
-     * Method saves history document to the index of Elastic Search.
-     *
-     * @param history
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(History history) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (history != null) {
-            indexer.performSingleRequest(history, historyType);
-        }
+        super(new HistoryDAO(), new HistoryType(), new Indexer<>(History.class), new Searcher(History.class));
     }
 
     /**
@@ -84,28 +66,8 @@ public class HistoryService extends SearchService<History, HistoryDTO, HistoryDA
     }
 
     @Override
-    public List<HistoryDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM History");
-    }
-
-    /**
-     * Method removes history object from index of Elastic Search.
-     *
-     * @param history
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(History history) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (history != null) {
-            indexer.performSingleRequest(history, historyType);
-        }
     }
 
     /**
@@ -184,15 +146,6 @@ public class HistoryService extends SearchService<History, HistoryDTO, HistoryDA
             processIds.add(getIdFromJSONObject(process));
         }
         return searcher.findDocuments(createSetQuery("process", processIds, true).toString());
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), historyType);
     }
 
     @Override

@@ -41,49 +41,17 @@ import ugh.exceptions.PreferencesException;
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
-    private RulesetType rulesetType = new RulesetType();
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
     public RulesetService() {
-        super(new RulesetDAO(), new Searcher(Ruleset.class));
-        this.indexer = new Indexer<>(Ruleset.class);
-    }
-
-    /**
-     * Method saves ruleset document to the index of Elastic Search.
-     *
-     * @param ruleset
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Ruleset ruleset) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (ruleset != null) {
-            indexer.performSingleRequest(ruleset, rulesetType);
-        }
+        super(new RulesetDAO(), new RulesetType(), new Indexer<>(Ruleset.class), new Searcher(Ruleset.class));
     }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM Ruleset");
-    }
-
-    /**
-     * Method removes ruleset object from index of Elastic Search.
-     *
-     * @param ruleset
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Ruleset ruleset) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (ruleset != null) {
-            indexer.performSingleRequest(ruleset, rulesetType);
-        }
     }
 
     /**
@@ -140,29 +108,6 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         query.should(createSimpleQuery("title", title, true));
         query.should(createSimpleQuery("file", file, true));
         return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find all rulesets from index an convert them for frontend.
-     *
-     * @return list of DocketDTO objects
-     */
-    public List<RulesetDTO> findAll() throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(), false);
-    }
-
-    @Override
-    public List<RulesetDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), rulesetType);
     }
 
     @Override

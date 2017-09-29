@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -39,7 +37,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class PropertyService extends TitleSearchService<Property, PropertyDTO, PropertyDAO> {
 
-    private PropertyType propertyType = new PropertyType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(PropertyService.class);
 
@@ -47,23 +44,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      * Constructor with Searcher and Indexer assigning.
      */
     public PropertyService() {
-        super(new PropertyDAO(), new Searcher(Property.class));
-        this.indexer = new Indexer<>(Property.class);
-    }
-
-    /**
-     * Method saves property document to the index of Elastic Search.
-     *
-     * @param property
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Property property) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (property != null) {
-            indexer.performSingleRequest(property, propertyType);
-        }
+        super(new PropertyDAO(), new PropertyType(), new Indexer<>(Property.class), new Searcher(Property.class));
     }
 
     /**
@@ -83,11 +64,6 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         for (Workpiece workpiece : property.getWorkpieces()) {
             serviceManager.getWorkpieceService().saveToIndex(workpiece);
         }
-    }
-
-    @Override
-    public List<PropertyDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
     }
 
     @Override
@@ -128,21 +104,6 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
 
     private QueryBuilder getQueryForType(String type) {
         return createSimpleQuery("type", type, true, Operator.AND);
-    }
-
-    /**
-     * Method removes property object from index of Elastic Search.
-     *
-     * @param property
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Property property) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (property != null) {
-            indexer.performSingleRequest(property, propertyType);
-        }
     }
 
     /**
@@ -208,15 +169,6 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
             query.must(createSimpleQuery("type", type, true));
         }
         return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), propertyType);
     }
 
     @Override

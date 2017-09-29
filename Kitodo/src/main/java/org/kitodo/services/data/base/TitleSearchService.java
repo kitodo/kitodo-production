@@ -20,6 +20,8 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.persistence.BaseDAO;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.BaseType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BaseDTO;
@@ -28,10 +30,23 @@ import org.kitodo.dto.BaseDTO;
  * Class for implementing methods used by service classes which search for title
  * in ElasticSearch index.
  */
-public abstract class TitleSearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>> extends SearchService<T, S, V> {
+public abstract class TitleSearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
+        extends SearchService<T, S, V> {
 
-    public TitleSearchService(V dao, Searcher searcher) {
-        super(dao, searcher);
+    /**
+     * Constructor necessary to use searcher in child classes.
+     *
+     * @param dao
+     *            DAO object for executing operations on database
+     * @param type
+     *            Type object for ElasticSearch
+     * @param indexer
+     *            for executing insert / updates to ElasticSearch
+     * @param searcher
+     *            for executing queries to ElasticSearch
+     */
+    public TitleSearchService(V dao, BaseType type, Indexer indexer, Searcher searcher) {
+        super(dao, type, indexer, searcher);
     }
 
     /**

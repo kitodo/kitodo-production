@@ -43,6 +43,7 @@ import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.BaseType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
@@ -53,34 +54,69 @@ import org.kitodo.helper.RelatedProperty;
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>> extends SearchDatabaseService<T,V> {
+public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
+        extends SearchDatabaseService<T, V> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);
     protected Searcher searcher;
     protected Indexer indexer;
+    protected BaseType type;
 
     /**
      * Constructor necessary to use searcher in child classes.
-     *
+     * 
+     * @param dao
+     *            DAO object for executing operations on database
+     * @param type
+     *            Type object for ElasticSearch
+     * @param indexer
+     *            for executing insert / updates to ElasticSearch
      * @param searcher
-     *            for executing queries
+     *            for executing queries to ElasticSearch
      */
-    public SearchService(V dao, Searcher searcher) {
+    public SearchService(V dao, BaseType type, Indexer indexer, Searcher searcher) {
         super(dao);
         this.searcher = searcher;
+        this.indexer = indexer;
+        this.type = type;
     }
 
     /**
-     * Method saves document to the index of Elastic Search.
+     * Method converts JSON object object to DTO. Necessary for displaying in the
+     * frontend.
      *
-     * @param baseIndexedBean
-     *            object
+     * @param jsonObject
+     *            return from find methods
+     * @param related
+     *            true or false
+     * @return DTO object
      */
-    public abstract void saveToIndex(T baseIndexedBean) throws CustomResponseException, IOException;
+    public abstract S convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException;
+
+    /**
+     * Get all DTO objects from index an convert them for frontend wit all
+     * relations.
+     * 
+     * @return List of DTO objects
+     */
+    public List<S> findAll() throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(), false);
+    }
+
+    /**
+     * Get all DTO objects from index an convert them for frontend.
+     * 
+     * @param related
+     *            true or false
+     * @return List of DTO objects
+     */
+    public List<S> findAll(boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(), related);
+    }
 
     /**
      * Find list of all objects from ES.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @param offset
@@ -89,26 +125,26 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            amount of requested results
      * @return list of all objects from ES
      */
-    public abstract List<S> findAll(String sort, Integer offset, Integer size) throws DataException;
+    public List<S> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
 
     /**
-     * Method converts JSON object object to DTO. Necessary for displaying in the
-     * frontend.
+     * Find list of all objects from ES.
      *
-     * @param jsonObject
-     *            return from find methods
-     * @param related true or false
-     * @return DTO object
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @param related
+     *            true or false
+     * @return list of all objects from ES
      */
-    public abstract S convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException;
-
-    /**
-     * Method removes document from the index of Elastic Search.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
-    public abstract void removeFromIndex(T baseIndexedBean) throws CustomResponseException, IOException;
+    public List<S> findAll(String sort, Integer offset, Integer size, boolean related) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), related);
+    }
 
     /**
      * Method saves object to database.
@@ -118,6 +154,37 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     public T saveToDatabase(T baseIndexedBean) throws DAOException {
         return dao.save(baseIndexedBean);
+    }
+
+    /**
+     * Method saves document to the index of Elastic Search.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    @SuppressWarnings("unchecked")
+    public void saveToIndex(T baseIndexedBean) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        if (baseIndexedBean != null) {
+            indexer.performSingleRequest(baseIndexedBean, type);
+        }
+    }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     *
+     * @param baseIndexedBeans
+     *            List of BaseIndexedBean objects
+     */
+    @SuppressWarnings("unchecked")
+    public void addAllObjectsToIndex(List<T> baseIndexedBeans)
+            throws CustomResponseException, DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(baseIndexedBeans, type);
+        for (T baseIndexedBean : baseIndexedBeans) {
+            baseIndexedBean.setIndexAction(IndexAction.DONE);
+            dao.save(baseIndexedBean);
+        }
     }
 
     /**
@@ -131,7 +198,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Method removes object from database.
+     * Method removes object from database by given id.
      *
      * @param id
      *            of object
@@ -142,6 +209,20 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Method removes document from the index of Elastic Search.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    @SuppressWarnings("unchecked")
+    public void removeFromIndex(T baseIndexedBean) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.DELETE);
+        if (baseIndexedBean != null) {
+            indexer.performSingleRequest(baseIndexedBean, type);
+        }
+    }
+
+    /**
+     * Method removes document from the index of Elastic Search by given id.
      *
      * @param id
      *            of object
@@ -188,7 +269,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             saveToDatabase(baseIndexedBean);
             saveToIndex(baseIndexedBean);
             manageDependenciesForIndex(baseIndexedBean);
-            //TODO: search for some more elegant way
+            // TODO: search for some more elegant way
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -251,7 +332,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             saveToDatabase(baseIndexedBean);
             removeFromIndex(baseIndexedBean);
             manageDependenciesForIndex(baseIndexedBean);
-            //TODO: search for some more elegant way
+            // TODO: search for some more elegant way
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -820,8 +901,10 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param object
      *            JSONObject
-     * @param key to access JSONArray
-     * @param subKeys to access specified values in objects of JSONArray
+     * @param key
+     *            to access JSONArray
+     * @param subKeys
+     *            to access specified values in objects of JSONArray
      * @return display properties as list of Integers
      */
     protected List<RelatedProperty> getRelatedArrayPropertyForDTO(JSONObject object, String key, List<String> subKeys) {

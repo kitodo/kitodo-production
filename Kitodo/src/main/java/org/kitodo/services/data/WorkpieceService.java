@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +38,6 @@ import org.kitodo.services.data.base.SearchService;
 
 public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO, WorkpieceDAO> {
 
-    private WorkpieceType workpieceType = new WorkpieceType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(WorkpieceService.class);
 
@@ -48,23 +45,7 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO, Wor
      * Constructor with Searcher and Indexer assigning.
      */
     public WorkpieceService() {
-        super(new WorkpieceDAO(), new Searcher(Workpiece.class));
-        this.indexer = new Indexer<>(Workpiece.class);
-    }
-
-    /**
-     * Method saves workpiece document to the index of Elastic Search.
-     *
-     * @param workpiece
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Workpiece workpiece) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (workpiece != null) {
-            indexer.performSingleRequest(workpiece, workpieceType);
-        }
+        super(new WorkpieceDAO(), new WorkpieceType(), new Indexer<>(Workpiece.class), new Searcher(Workpiece.class));
     }
 
     /**
@@ -102,28 +83,8 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO, Wor
     }
 
     @Override
-    public List<WorkpieceDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM Workpiece");
-    }
-
-    /**
-     * Method removes workpiece object from index of Elastic Search.
-     *
-     * @param workpiece
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Workpiece workpiece) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (workpiece != null) {
-            indexer.performSingleRequest(workpiece, workpieceType);
-        }
     }
 
     /**
@@ -182,15 +143,6 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO, Wor
             propertyIds.add(getIdFromJSONObject(property));
         }
         return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), workpieceType);
     }
 
     @Override

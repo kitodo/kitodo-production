@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
@@ -43,7 +41,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
 
-    private BatchType batchType = new BatchType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BatchService.class);
 
@@ -51,23 +48,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * Constructor with Searcher and Indexer assigning.
      */
     public BatchService() {
-        super(new BatchDAO(), new Searcher(Batch.class));
-        this.indexer = new Indexer<>(Batch.class);
-    }
-
-    /**
-     * Method saves batch document to the index of Elastic Search.
-     *
-     * @param batch
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (batch != null) {
-            indexer.performSingleRequest(batch, batchType);
-        }
+        super(new BatchDAO(), new BatchType(), new Indexer<>(Batch.class), new Searcher(Batch.class));
     }
 
     /**
@@ -91,27 +72,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
-    public List<BatchDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM Batch");
-    }
-
-    /**
-     * Method removes batch object from index of Elastic Search.
-     *
-     * @param batch
-     *            object
-     */
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Batch batch) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (batch != null) {
-            indexer.performSingleRequest(batch, batchType);
-        }
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {
@@ -204,15 +166,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
             processIds.add(getIdFromJSONObject(process));
         }
         return searcher.findDocuments(createSetQuery("processes.id", processIds, true).toString());
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), batchType);
     }
 
     @Override

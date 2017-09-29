@@ -11,13 +11,10 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +31,6 @@ import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.FilterDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.FilterType;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -60,7 +56,6 @@ import org.kitodo.services.data.base.SearchService;
  */
 public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
-    private FilterType filterType = new FilterType();
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
@@ -68,48 +63,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * Constructor with Searcher and Indexer assigning.
      */
     public FilterService() {
-        super(new FilterDAO(), new Searcher(Filter.class));
-        this.indexer = new Indexer<>(Filter.class);
-    }
-
-    /**
-     * Method saves filter document to the index of Elastic Search.
-     *
-     * @param filter
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(Filter filter) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        if (filter != null) {
-            indexer.performSingleRequest(filter, filterType);
-        }
-    }
-
-    @Override
-    public List<FilterDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+        super(new FilterDAO(), new FilterType(), new Indexer<>(Filter.class), new Searcher(Filter.class));
     }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM Filter");
-    }
-
-    /**
-     * Method removes filter object from index of Elastic Search.
-     *
-     * @param filter
-     *            object
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(Filter filter) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        if (filter != null) {
-            indexer.performSingleRequest(filter, filterType);
-        }
     }
 
     /**
@@ -124,15 +83,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     List<JSONObject> findByValue(String value, boolean contains) throws DataException {
         QueryBuilder query = createSimpleQuery("value", value, contains, Operator.AND);
         return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     */
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(getAll(), filterType);
     }
 
     @Override
