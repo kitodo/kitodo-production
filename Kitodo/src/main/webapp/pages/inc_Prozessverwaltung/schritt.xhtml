@@ -50,7 +50,9 @@
                                                    outcome="/pages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:link value="#{msgs.prozessDetails}"
-                                                   outcome="/pages/ProzessverwaltungBearbeiten"/>
+                                            outcome="/pages/ProzessverwaltungBearbeiten">
+                                        <f:param name="id" value="#{ProzessverwaltungForm.process.id}"/>
+                                    </h:link>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText value="#{msgs.schrittDetails}"/>
                                 </h:panelGroup>

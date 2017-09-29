@@ -46,9 +46,11 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
+
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.view.ViewScoped;
+
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -102,7 +104,7 @@ import org.kitodo.services.file.FileService;
  */
 
 @Named("ProzessverwaltungForm")
-@ViewScoped
+@SessionScoped
 public class ProzessverwaltungForm extends BasisForm {
     private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
