@@ -39,6 +39,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,6 +89,8 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.UserDTO;
+import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -2550,6 +2553,34 @@ public class ProzessverwaltungForm extends BasisForm {
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving task with ID '" + this.taskId + "'; ", e.getMessage());
+        }
+    }
+
+    /**
+     * Return list of users.
+     *
+     * @return list of user groups
+     */
+    public List<UserDTO> getActiveUsers() {
+        try {
+            return serviceManager.getUserService().findAllActiveUsers();
+        } catch (DataException e) {
+            logger.error("Unable to load users: " + e.getMessage());
+            return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Return list of user groups.
+     *
+     * @return list of user groups
+     */
+    public List<UserGroupDTO> getUserGroups() {
+        try {
+            return serviceManager.getUserGroupService().findAll();
+        } catch (DataException e) {
+            logger.error("Unable to load user groups: " + e.getMessage());
+            return new LinkedList<>();
         }
     }
 }
