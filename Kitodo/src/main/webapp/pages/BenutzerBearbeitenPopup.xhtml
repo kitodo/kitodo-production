@@ -34,7 +34,7 @@
                                     tooltip="true"/>
 
                         <!-- Data table for user groups -->
-                        <p:dataTable var="group" value="#{BenutzergruppenForm.usergroups}" rows="10" paginator="true">
+                        <p:dataTable var="group" value="#{BenutzerverwaltungForm.userGroups}" rows="10" paginator="true">
                             <p:column headerText="#{msgs.benutzergruppe}">
                                 <h:outputText value="#{group.title}"/>
                             </p:column>
