@@ -145,7 +145,7 @@
                              style="background: transparent"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                     <!-- Bearbeitungsstatus hoch und runter -->
-                    <h:commandLink action="#{ProzessverwaltungForm.taskStatusUp}"
+                    <h:commandLink action="#{ProzessverwaltungForm.setTaskStatusUp}"
                                    title="#{msgs.statusHoeherSetzen}">
                         <h:graphicImage alt="status up"
                                         value="/pages/images/buttons/order_right_klein.gif"/>
@@ -155,7 +155,7 @@
                         <f:ajax render="statuscolumn"/>
                     </h:commandLink>
                     <!-- Bearbeitungsstatus hoch und runter -->
-                    <h:commandLink action="#{ProzessverwaltungForm.taskStatusDown}"
+                    <h:commandLink action="#{ProzessverwaltungForm.setTaskStatusDown}"
                                    title="#{msgs.statusRunterSetzen}">
                         <h:graphicImage alt="status down"
                                         value="/pages/images/buttons/order_left_klein.gif"/>
