@@ -367,13 +367,10 @@
                     "type": "long"
                 },
                 "processingStatus": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
+                    "type": "long"
+                },
+                "editType": {
+                    "type": "long"
                 },
                 "processingTime": {
                     "type": "date"

@@ -32,6 +32,9 @@ public class TaskType extends BaseType<Task> {
         Integer processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
                 : null;
         taskObject.put("processingStatus", processingStatus);
+        Integer editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue()
+                : null;
+        taskObject.put("editType", editType);
         String processingTime = task.getProcessingTime() != null ? formatDate(task.getProcessingTime()) : null;
         taskObject.put("processingTime", processingTime);
         String processingBegin = task.getProcessingBegin() != null ? formatDate(task.getProcessingBegin()) : null;

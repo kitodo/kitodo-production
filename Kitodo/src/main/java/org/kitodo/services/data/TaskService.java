@@ -326,10 +326,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setId(getIdFromJSONObject(jsonObject));
         JSONObject taskJSONObject = getSource(jsonObject);
         taskDTO.setTitle(getStringPropertyForDTO(taskJSONObject, "title"));
+        taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
         taskDTO.setPriority(getIntegerPropertyForDTO(taskJSONObject, "priority"));
         taskDTO.setOrdering(getIntegerPropertyForDTO(taskJSONObject, "ordering"));
         Integer taskStatus = getIntegerPropertyForDTO(taskJSONObject, "processingStatus");
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
+        Integer editType = getIntegerPropertyForDTO(taskJSONObject, "processingStatus");
+        taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setProcessingTime(getStringPropertyForDTO(taskJSONObject, "processingTime"));
         taskDTO.setProcessingBegin(getStringPropertyForDTO(taskJSONObject, "processingBegin"));
         taskDTO.setProcessingEnd(getStringPropertyForDTO(taskJSONObject, "processingEnd"));
