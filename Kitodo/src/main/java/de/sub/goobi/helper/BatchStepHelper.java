@@ -501,7 +501,7 @@ public class BatchStepHelper {
         this.myProblemStep = "";
         saveStep();
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAlleStart();
+        return asf.filterAll();
     }
 
     /**
@@ -517,7 +517,7 @@ public class BatchStepHelper {
         this.problemMessage = "";
         this.myProblemStep = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAlleStart();
+        return asf.filterAll();
     }
 
     private void reportProblem() {
@@ -632,7 +632,7 @@ public class BatchStepHelper {
             this.mySolutionStep = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.filterAlleStart();
+            return asf.filterAll();
         } catch (AuthenticationException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return "";
@@ -655,7 +655,7 @@ public class BatchStepHelper {
             this.mySolutionStep = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.filterAlleStart();
+            return asf.filterAll();
         } catch (AuthenticationException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return "";
@@ -884,7 +884,7 @@ public class BatchStepHelper {
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAlleStart();
+        return asf.filterAll();
     }
 
     /**
@@ -970,7 +970,7 @@ public class BatchStepHelper {
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAlleStart();
+        return asf.filterAll();
     }
 
     /**

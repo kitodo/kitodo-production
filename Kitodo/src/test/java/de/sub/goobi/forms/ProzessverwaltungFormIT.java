@@ -50,19 +50,19 @@ public class ProzessverwaltungFormIT {
         prozessverwaltungForm.setModusAnzeige("aktuell");
         prozessverwaltungForm.setFilter("id:2 3");
 
-        prozessverwaltungForm.filterAlleStart();
+        prozessverwaltungForm.filterAll();
         List<ProcessDTO> processDTOS = prozessverwaltungForm.getProcessDTOS();
         assertEquals("Amount of found processes is incorrect!", 2, processDTOS.size());
 
         prozessverwaltungForm.setFilter("");
 
-        prozessverwaltungForm.filterAlleStart();
+        prozessverwaltungForm.filterAll();
         processDTOS = prozessverwaltungForm.getProcessDTOS();
         assertEquals("Amount of found processes is incorrect!", 3, processDTOS.size());
 
         prozessverwaltungForm.setModusAnzeige("vorlagen");
 
-        prozessverwaltungForm.filterAlleStart();
+        prozessverwaltungForm.filterAll();
         processDTOS = prozessverwaltungForm.getProcessDTOS();
         assertEquals("Amount of found processes is incorrect!", 1, processDTOS.size());
     }
@@ -71,7 +71,7 @@ public class ProzessverwaltungFormIT {
     public void shouldGetStatisticsManager() throws Exception {
         ProzessverwaltungForm prozessverwaltungForm = new ProzessverwaltungForm();
 
-        prozessverwaltungForm.filterAlleStart();
+        prozessverwaltungForm.filterAll();
         //TODO: think how to test this manager
         //prozessverwaltungForm.StatisticsProject();
 

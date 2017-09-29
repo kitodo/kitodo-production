@@ -224,7 +224,7 @@ public class BatchForm extends BasisForm {
      *
      * @return page - all batches
      */
-    public String filterAlleStart() {
+    public String filterAll() {
         filterBatches();
         filterProcesses();
         return "/pages/BatchesAll";
@@ -236,7 +236,7 @@ public class BatchForm extends BasisForm {
      */
     @PostConstruct
     public void initializeBatchList() {
-        filterAlleStart();
+        filterAll();
         setModusBearbeiten("");
     }
 
@@ -278,7 +278,7 @@ public class BatchForm extends BasisForm {
         ids.addAll(this.selectedBatches);
         try {
             serviceManager.getBatchService().removeAll(ids);
-            filterAlleStart();
+            filterAll();
         } catch (DAOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
@@ -348,7 +348,7 @@ public class BatchForm extends BasisForm {
                 this.serviceManager.getProcessService().saveList(this.selectedProcesses);
             }
         }
-        filterAlleStart();
+        filterAll();
     }
 
     /**
@@ -403,7 +403,7 @@ public class BatchForm extends BasisForm {
                 this.serviceManager.getProcessService().saveList(selectedProcesses);
             }
         }
-        filterAlleStart();
+        filterAll();
     }
 
     /*
