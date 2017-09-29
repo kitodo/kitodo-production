@@ -26,7 +26,7 @@
                     <h:outputText value="#{msgs.details}"/>
                 </td>
                 <td class="main_statistikboxen_row1" align="right">
-                    <h:commandLink action="#{ProzessverwaltungForm.Reload}">
+                    <h:commandLink action="#{ProzessverwaltungForm.reload}">
                         <h:graphicImage value="/pages/images/reload.gif" alt="reload"/>
                     </h:commandLink>
                 </td>
@@ -41,7 +41,7 @@
                                 <h:outputText value="#{msgs.titel}:"/>
                             </td>
                             <td>
-                                <h:outputText value="#{ProzessverwaltungForm.mySchritt.localizedTitle}"/>
+                                <h:outputText value="#{ProzessverwaltungForm.task.localizedTitle}"/>
                             </td>
                             <td rowspan="2" align="right">
                                 <h:commandLink title="#{msgs.bearbeiten}" action="#{NavigationForm.Reload}"
@@ -58,7 +58,7 @@
                                 <h:outputText styleClass="text_light" value="#{msgs.id}:"/>
                             </td>
                             <td>
-                                <h:outputText styleClass="text_light" value="#{ProzessverwaltungForm.mySchritt.id}"/>
+                                <h:outputText styleClass="text_light" value="#{ProzessverwaltungForm.task.id}"/>
                             </td>
                         </tr>
                         <tr>
@@ -66,7 +66,7 @@
                                 <h:outputText value="#{msgs.reihenfolge}:"/>
                             </td>
                             <td>
-                                <h:outputText value="#{ProzessverwaltungForm.mySchritt.ordering}"/>
+                                <h:outputText value="#{ProzessverwaltungForm.task.ordering}"/>
                             </td>
                         </tr>
                         <tr>
@@ -74,7 +74,7 @@
                                 <h:outputText value="#{msgs.prioritaet}:"/>
                             </td>
                             <td>
-                                <h:outputText value="#{ProzessverwaltungForm.mySchritt.priority}"/>
+                                <h:outputText value="#{ProzessverwaltungForm.task.priority}"/>
                             </td>
                         </tr>
 
@@ -84,61 +84,61 @@
                             </td>
                             <td>
                                 <h:outputText value="#{msgs.metadaten}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeMetadata}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeMetadata}"/>
 
                                 <h:outputText value="#{msgs.importMittelsFileUpload}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeImportFileUpload}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeImportFileUpload}"/>
 
                                 <h:outputText value="#{msgs.exportDMS}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeExportDMS}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeExportDMS}"/>
 
                                 <h:outputText value="#{msgs.schrittBeimAnnehmenAbschliessen}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeAcceptClose}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeAcceptClose}"/>
 
                                 <h:outputText value="#{msgs.beimAnnehmenModulStarten}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeAcceptModule}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeAcceptModule}"/>
 
                                 <h:outputText value="#{msgs.beimAnnehmenModulStartenUndSchrittAbschliessen}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeAcceptModuleAndClose}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeAcceptModuleAndClose}"/>
                                 <!--
                                 <h:outputText value="#{msgs.exportRus}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typExportRus}" />
+                                              rendered="#{ProzessverwaltungForm.task.typExportRus}" />
                                 -->
                                 <h:outputText value="#{msgs.imagesLesen}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeImagesRead}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeImagesRead}"/>
 
                                 <h:outputText value="#{msgs.imagesSchreiben}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeImagesWrite}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeImagesWrite}"/>
 
                                 <h:outputText value="#{msgs.beimAbschliessenVerifizieren}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeCloseVerify}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeCloseVerify}"/>
 
                                 <h:outputText value="#{msgs.automatischerSchritt}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeAutomatic}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeAutomatic}"/>
 
                                 <h:outputText
-                                        value="#{msgs.typScriptStep}(#{ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath}),"
-                                        rendered="#{ProzessverwaltungForm.mySchritt.typeScriptStep}"/>
+                                        value="#{msgs.typScriptStep}(#{ProzessverwaltungForm.task.typeAutomaticScriptPath}),"
+                                        rendered="#{ProzessverwaltungForm.task.typeScriptStep}"/>
 
                                 <h:outputText value="#{msgs.modulSchritt}, "
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeModuleName!=null and ProzessverwaltungForm.mySchritt.typeModuleName!=''}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeModuleName!=null and ProzessverwaltungForm.task.typeModuleName!=''}"/>
                                 <h:outputText value="#{msgs.typAutomatisch}"
-                                              rendered="#{ProzessverwaltungForm.mySchritt.typeAutomatic}"/>
+                                              rendered="#{ProzessverwaltungForm.task.typeAutomatic}"/>
                                 <h:outputText value="#{msgs.batchStep}"
-                                              rendered="#{ProzessverwaltungForm.mySchritt.batchStep}"/>
+                                              rendered="#{ProzessverwaltungForm.task.batchStep}"/>
 
                             </td>
                         </tr>
 
-                        <ui:fragment rendered="#{ProzessverwaltungForm.mySchritt.typeScriptStep and
-                                                ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath!='' and
-                                                ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath!=null}">
+                        <ui:fragment rendered="#{ProzessverwaltungForm.task.typeScriptStep and
+                                                ProzessverwaltungForm.task.typeAutomaticScriptPath!='' and
+                                                ProzessverwaltungForm.task.typeAutomaticScriptPath!=null}">
                             <tr>
                                 <td width="150">
                                     <h:outputText value="#{msgs.script}:"/>
                                 </td>
                                 <td>
-                                    <h:outputText value="#{ProzessverwaltungForm.mySchritt.listOfPaths}"/>
+                                    <h:outputText value="#{ProzessverwaltungForm.task.listOfPaths}"/>
                                 </td>
                             </tr>
                         </ui:fragment>
@@ -148,7 +148,7 @@
                                 <h:outputText value="#{msgs.status}:"/>
                             </td>
                             <td>
-                                <h:outputText value="#{ProzessverwaltungForm.mySchritt.processingStatusEnum.title}"/>
+                                <h:outputText value="#{ProzessverwaltungForm.task.processingStatusEnum.title}"/>
                             </td>
                         </tr>
                     </table>
@@ -177,75 +177,75 @@
                         <h:outputLabel for="titel2" value="#{msgs.titel}"/>
                         <h:panelGroup>
                             <h:inputText id="titel2" style="width: 300px;margin-right:15px"
-                                         value="#{ProzessverwaltungForm.mySchritt.title}" required="true"/>
+                                         value="#{ProzessverwaltungForm.task.title}" required="true"/>
                             <t:message for="titel2" style="color: red" replaceIdWithLabel="true"/>
                         </h:panelGroup>
 
                         <h:outputLabel for="reihenfolge2" value="#{msgs.reihenfolge}"/>
                         <h:panelGroup>
                             <h:inputText id="reihenfolge2" style="width: 300px;margin-right:15px"
-                                         value="#{ProzessverwaltungForm.mySchritt.ordering}" required="true"/>
+                                         value="#{ProzessverwaltungForm.task.ordering}" required="true"/>
                             <t:message for="reihenfolge2" style="color: red" replaceIdWithLabel="true"/>
                         </h:panelGroup>
 
                         <h:outputLabel for="prioritaet" value="#{msgs.prioritaet}"/>
                         <h:panelGroup>
                             <h:inputText id="prioritaet" style="width: 300px;margin-right:15px"
-                                         value="#{ProzessverwaltungForm.mySchritt.priority}" required="true"/>
+                                         value="#{ProzessverwaltungForm.task.priority}" required="true"/>
                             <t:message for="prioritaet" style="color: red" replaceIdWithLabel="true"/>
                         </h:panelGroup>
 
                         <h:outputText value="#{msgs.metadaten}"/>
-                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.typeMetadata}"/>
+                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.task.typeMetadata}"/>
 
                         <h:outputText value="#{msgs.importMittelsFileUpload}"/>
-                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.typeImportFileUpload}"/>
+                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.task.typeImportFileUpload}"/>
 
                         <h:outputText value="#{msgs.imagesLesen}"/>
                         <t:selectBooleanCheckbox forceId="true" id="chkLesen"
                                                  onclick="if(!this.checked) document.getElementById('chkSchreiben').checked=false;"
-                                                 value="#{ProzessverwaltungForm.mySchritt.typeImagesRead}"/>
+                                                 value="#{ProzessverwaltungForm.task.typeImagesRead}"/>
 
                         <h:outputText value="#{msgs.imagesSchreiben}"/>
                         <t:selectBooleanCheckbox forceId="true" id="chkSchreiben"
                                                  onclick="if(this.checked) document.getElementById('chkLesen').checked=true;"
-                                                 value="#{ProzessverwaltungForm.mySchritt.typeImagesWrite}"/>
+                                                 value="#{ProzessverwaltungForm.task.typeImagesWrite}"/>
 
                         <h:outputText value="#{msgs.beimAbschliessenVerifizieren}"/>
-                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.typeCloseVerify}"/>
+                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.task.typeCloseVerify}"/>
                         <!--
                         <h:outputText value="#{msgs.exportRus}" />
                         <h:selectBooleanCheckbox
-                                value="#{ProzessverwaltungForm.mySchritt.typExportRus}" />
+                                value="#{ProzessverwaltungForm.task.typExportRus}" />
                         -->
                         <h:outputText value="#{msgs.exportDMS}"/>
-                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.typeExportDMS}"/>
+                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.task.typeExportDMS}"/>
 
                         <h:outputText value="#{msgs.schrittBeimAnnehmenAbschliessen}"/>
                         <t:selectBooleanCheckbox forceId="true" id="chkmanuell1" onclick="chkManuellAutomatischSetzen(this)"
-                                                 value="#{ProzessverwaltungForm.mySchritt.typeAcceptClose}"/>
+                                                 value="#{ProzessverwaltungForm.task.typeAcceptClose}"/>
 
                         <h:outputText value="#{msgs.beimAnnehmenModulStarten}" rendered="#{NavigationForm.showModuleManager}"/>
                         <t:selectBooleanCheckbox forceId="true" id="chkmanuell2" onclick="chkManuellAutomatischSetzen(this)"
-                                                 value="#{ProzessverwaltungForm.mySchritt.typeAcceptModule}"
+                                                 value="#{ProzessverwaltungForm.task.typeAcceptModule}"
                                                  rendered="#{NavigationForm.showModuleManager}"/>
 
                         <h:outputText value="#{msgs.beimAnnehmenModulStartenUndSchrittAbschliessen}"
                                       rendered="#{NavigationForm.showModuleManager}"/>
                         <t:selectBooleanCheckbox forceId="true" id="chkmanuell3" onclick="chkManuellAutomatischSetzen(this)"
-                                                 value="#{ProzessverwaltungForm.mySchritt.typeAcceptModuleAndClose}"
+                                                 value="#{ProzessverwaltungForm.task.typeAcceptModuleAndClose}"
                                                  rendered="#{NavigationForm.showModuleManager}"/>
 
 
                         <h:outputText value="#{msgs.automatischerSchritt}"/>
                         <t:selectBooleanCheckbox forceId="true" id="chkmanuell4" onclick="chkManuellAutomatischSetzen(this)"
-                                                 value="#{ProzessverwaltungForm.mySchritt.typeAutomatic}"/>
+                                                 value="#{ProzessverwaltungForm.task.typeAutomatic}"/>
 
                         <h:outputLabel for="chkautomatisch" value="#{msgs.ScriptSchritt}"/>
                         <h:panelGroup>
                             <t:selectBooleanCheckbox style="vertical-align:top" forceId="true" id="chkautomatisch"
                                                      onclick="txtAutomatischAnzeigen()"
-                                                     value="#{ProzessverwaltungForm.mySchritt.typeScriptStep}"/>
+                                                     value="#{ProzessverwaltungForm.task.typeScriptStep}"/>
                             <t:panelGrid columns="2" forceId="true" id="scripttable">
 
                                 <h:outputText id="scriptname" value="#{msgs.scriptname}"/>
@@ -253,22 +253,22 @@
                                 <h:outputText id="scrpitpfad" value="#{msgs.scriptpath}"/>
 
                                 <t:inputText id="nameautomatisch" forceId="true" style="width: 150px;margin-right:15px"
-                                             value="#{ProzessverwaltungForm.mySchritt.scriptName}"/>
+                                             value="#{ProzessverwaltungForm.task.scriptName}"/>
 
                                 <t:inputText id="txtautomatisch" forceId="true" style="width: 500px;margin-right:15px"
-                                             value="#{ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath}"/>
+                                             value="#{ProzessverwaltungForm.task.typeAutomaticScriptPath}"/>
                             </t:panelGrid>
                             <t:message for="chkautomatisch" style="color: red" replaceIdWithLabel="true"/>
                         </h:panelGroup>
 
                         <h:outputText value="#{msgs.modul}" rendered="#{NavigationForm.showModuleManager}"/>
-                        <h:inputText value="#{ProzessverwaltungForm.mySchritt.typeModuleName}"
+                        <h:inputText value="#{ProzessverwaltungForm.task.typeModuleName}"
                                      rendered="#{NavigationForm.showModuleManager}"/>
 
                         <h:outputLabel for="status" value="#{msgs.status}"/>
                         <h:panelGroup>
                             <h:selectOneMenu id="status" style="width: 300px;margin-right:15px"
-                                             value="#{ProzessverwaltungForm.mySchritt.processingStatusAsString}"
+                                             value="#{ProzessverwaltungForm.task.processingStatusAsString}"
                                              required="true">
                                 <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
                                 <f:selectItem itemValue="0" itemLabel="#{msgs.statusGesperrt}"/>
@@ -280,16 +280,16 @@
                         </h:panelGroup>
 
                         <h:outputText value="#{msgs.batchStep}"/>
-                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.batchStep}"/>
+                        <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.task.batchStep}"/>
 
                         <h:outputText value="#{msgs.stepPlugin}"/>
 
-                        <h:inputText value="#{ProzessverwaltungForm.mySchritt.stepPlugin}"
+                        <h:inputText value="#{ProzessverwaltungForm.task.stepPlugin}"
                                      style="width: 300px;margin-right:15px;"/>
 
 
                         <h:outputText value="#{msgs.validationPlugin}"/>
-                        <h:inputText value="#{ProzessverwaltungForm.mySchritt.validationPlugin}"
+                        <h:inputText value="#{ProzessverwaltungForm.task.validationPlugin}"
                                      style="width: 300px;margin-right:15px"/>
                     </h:panelGrid>
 
@@ -303,11 +303,11 @@
                     </h:commandButton>
                 </td>
                 <td class="eingabeBoxen_row3" align="right">
-                    <h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.SchrittLoeschen}"
+                    <h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteTask}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-                                     rendered="#{ProzessverwaltungForm.mySchritt.id != null}"/>
+                                     rendered="#{ProzessverwaltungForm.task.id != null}"/>
                     <h:commandButton value="#{msgs.uebernehmen}" id="absenden"
-                                     action="#{ProzessverwaltungForm.SchrittUebernehmen}">
+                                     action="#{ProzessverwaltungForm.saveTask}">
                         <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
                     </h:commandButton>
                 </td>

@@ -41,7 +41,7 @@
             rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige!='vorlagen'}"/>
 
     <!-- newUser-Schaltknopf -->
-    <h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
+    <h:commandLink action="#{ProzessverwaltungForm.newTemplate}" immediate="true"
                    rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige=='vorlagen'}"
                    id="new2">
         <h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"/>
@@ -69,11 +69,11 @@
                 <t:div>
                     <!-- Header -->
                     <h:outputText value="#{msgs.auswahl2}"/>
-                    <h:commandLink action="#{ProzessverwaltungForm.SelectionAll}" id="selectall"
+                    <h:commandLink action="#{ProzessverwaltungForm.selectAll}" id="selectall"
                                    title="#{msgs.alleAuswaehlen}" style="margin-left:10px">
                         <h:graphicImage value="/pages/images/check_true.gif" alt="select all"/>
                     </h:commandLink>
-                    <h:commandLink action="#{ProzessverwaltungForm.SelectionNone}" id="selectnone"
+                    <h:commandLink action="#{ProzessverwaltungForm.deselectAll}" id="selectnone"
                                    title="#{msgs.auswahlEntfernen}" style="margin-left:5px">
                         <h:graphicImage value="/pages/images/check_false.gif" alt="select none"/>
                     </h:commandLink>
@@ -104,21 +104,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.batch}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort13a"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort13a"
                                    rendered="#{ProzessverwaltungForm.sortierung=='batchAsc'}">
                         <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort14a"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort14a"
                                    rendered="#{ProzessverwaltungForm.sortierung=='batchDesc'}">
                         <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort15a"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort15a"
                                    rendered="#{ProzessverwaltungForm.sortierung!='batchDesc' and ProzessverwaltungForm.sortierung!='batchAsc'}">
                         <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -142,21 +142,21 @@
                     </h:panelGroup>
 
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort1"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort1"
                                    rendered="#{ProzessverwaltungForm.sortierung=='titelAsc'}">
                         <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="titelDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort2"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort2"
                                    rendered="#{ProzessverwaltungForm.sortierung=='titelDesc'}">
                         <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="titelAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort3"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort3"
                                    rendered="#{ProzessverwaltungForm.sortierung!='titelDesc' and ProzessverwaltungForm.sortierung!='titelAsc'}">
                         <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -223,7 +223,7 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.vorgangsdatum}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort4"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort4"
                                    rendered="#{ProzessverwaltungForm.sortierung=='vorgangsdatumAsc'}">
                         <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -231,7 +231,7 @@
                                                 value="vorgangsdatumDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort5"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort5"
                                    rendered="#{ProzessverwaltungForm.sortierung=='vorgangsdatumDesc'}">
                         <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -239,7 +239,7 @@
                                                 value="vorgangsdatumAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort6"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort6"
                                    rendered="#{ProzessverwaltungForm.sortierung!='vorgangsdatumDesc' and ProzessverwaltungForm.sortierung!='vorgangsdatumAsc'}">
                         <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -259,21 +259,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.status}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort7"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort7"
                                    rendered="#{ProzessverwaltungForm.sortierung=='fortschrittAsc'}">
                         <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="fortschrittDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort8"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort8"
                                    rendered="#{ProzessverwaltungForm.sortierung=='fortschrittDesc'}">
                         <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="fortschrittAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort9"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort9"
                                    rendered="#{ProzessverwaltungForm.sortierung!='fortschrittDesc' and ProzessverwaltungForm.sortierung!='fortschrittAsc'}">
                         <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -299,21 +299,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.projekt}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort10"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort10"
                                    rendered="#{ProzessverwaltungForm.sortierung=='projektAsc'}">
                         <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="projektDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort11"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort11"
                                    rendered="#{ProzessverwaltungForm.sortierung=='projektDesc'}">
                         <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="projektAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort12"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort12"
                                    rendered="#{ProzessverwaltungForm.sortierung!='projektDesc' and ProzessverwaltungForm.sortierung!='projektAsc'}">
                         <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -331,21 +331,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.sperrungen}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort13"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort13"
                                    rendered="#{ProzessverwaltungForm.sortierung=='sperrungenAsc'}">
                         <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="sperrungenDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort14"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort14"
                                    rendered="#{ProzessverwaltungForm.sortierung=='sperrungenDesc'}">
                         <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="sperrungenAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort15"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort15"
                                    rendered="#{ProzessverwaltungForm.sortierung!='sperrungenDesc' and ProzessverwaltungForm.sortierung!='sperrungenAsc'}">
                         <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -380,20 +380,20 @@
             </h:link>
 
             <!-- tif-Header-Schaltknopf -->
-            <h:commandLink action="#{ProzessverwaltungForm.DownloadTiffHeader}" id="action12"
+            <h:commandLink action="#{ProzessverwaltungForm.downloadTiffHeader}" id="action12"
                            title="#{msgs.dateiMitTiffHeaderSpeichern}"
                            rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and 0==1}">
                 <h:graphicImage value="/pages/images/buttons/tif.gif" alt="tif export" style="margin-right:1px"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
             </h:commandLink>
 
             <!-- Multi-Tiff-Export-Schaltknopf -->
-            <h:commandLink action="#{ProzessverwaltungForm.DownloadMultiTiff}" id="action13"
+            <h:commandLink action="#{ProzessverwaltungForm.downloadMultiTiff}" id="action13"
                            title="#{msgs.multiTiffDownloaden}"
                            rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and LoginForm.maximaleBerechtigung == 1 and 0==1}">
                 <h:graphicImage value="/pages/images/buttons/view3.gif" alt="multiple tiff export"
                                 style="margin-right:3px"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
             </h:commandLink>
 
             <!-- Metadaten-Schaltknopf -->
@@ -418,40 +418,40 @@
                 </h:commandLink>
 
                 <!-- Download-Schaltknopf -->
-                <h:commandLink action="#{ProzessverwaltungForm.DownloadToHome}" id="action16"
+                <h:commandLink action="#{ProzessverwaltungForm.downloadToHome}" id="action16"
                                title="#{msgs.imHomeVerzeichnisVerlinken}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and !item.imageFolderInUse}">
                     <h:graphicImage value="/pages/images/buttons/load_down2.gif" alt="download"
                                     style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- Download-Schaltknopf -->
-                <h:commandLink action="#{ProzessverwaltungForm.DownloadToHome}" id="action17"
+                <h:commandLink action="#{ProzessverwaltungForm.downloadToHome}" id="action17"
                                title="#{msgs.imHomeVerzeichnisVerlinkenTrotzBearbeitung}"
                                onclick="if (!confirm('#{msgs.warningAdminBeforeLinking}')) return"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and item.imageFolderInUse}">
                     <h:graphicImage value="/pages/images/buttons/load_down3.gif" alt="download"
                                     style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- Upload-Schaltknopf -->
-                <h:commandLink action="#{ProzessverwaltungForm.UploadFromHome}" id="action18"
+                <h:commandLink action="#{ProzessverwaltungForm.uploadFromHome}" id="action18"
                                title="#{msgs.ausHomeverzeichnisEntfernen}"
                                onclick="if (!confirm('#{msgs.ausHomeverzeichnisEntfernen}?')) return"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
                     <h:graphicImage value="/pages/images/buttons/load_up2.gif" alt="upload"
                                     style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- XML Export-Schaltknopf -->
-                <h:commandLink id="ubid119" action="#{ProzessverwaltungForm.CreateXML}" title="#{msgs.createXML}"
+                <h:commandLink id="ubid119" action="#{ProzessverwaltungForm.createXML}" title="#{msgs.createXML}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
                     <h:graphicImage id="ubid120" alt="xml export" value="/pages/images/buttons/xml.gif"
                                     style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- Docket Export -->
@@ -460,15 +460,15 @@
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
                     <h:graphicImage id="ubid1120" alt="docket export" value="/pages/images/buttons/laufzettel.png"
                                     style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- Mets-Export-Schaltknopf -->
-                <h:commandLink action="#{ProzessverwaltungForm.ExportMets}" id="action19" title="#{msgs.exportMets}"
+                <h:commandLink action="#{ProzessverwaltungForm.exportMets}" id="action19" title="#{msgs.exportMets}"
                                rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/mets.png" alt="mets export"
                                     style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- Mets-Export-Schaltknopf greyed -->
@@ -479,10 +479,10 @@
                     title="#{msgs.exportMets}"/>
 
                 <!-- PDF-Export-Schaltknopf -->
-                <h:commandLink action="#{ProzessverwaltungForm.ExportPdf}" id="action20" title="#{msgs.exportPdf}"
+                <h:commandLink action="#{ProzessverwaltungForm.exportPdf}" id="action20" title="#{msgs.exportPdf}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/pdf.png" alt="pdf export" style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- PDF-Export-Schaltknopf greyed -->
@@ -492,10 +492,10 @@
                     title="#{msgs.exportPdf}"/>
 
                 <!-- DMS-Export-Schaltknopf -->
-                <h:commandLink action="#{ProzessverwaltungForm.ExportDMS}" id="action21" title="#{msgs.importDms}"
+                <h:commandLink action="#{ProzessverwaltungForm.exportDMS}" id="action21" title="#{msgs.importDms}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/dms.png" alt="dms export" style="margin-right:0px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
                 </h:commandLink>
 
                 <!-- PDF-Export-Schaltknopf greyed -->
@@ -534,7 +534,7 @@
             rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige!='vorlagen' and (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"/>
 
     <!-- newUser-Schaltknopf -->
-    <h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
+    <h:commandLink action="#{ProzessverwaltungForm.newTemplate}" immediate="true"
                    rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige=='vorlagen' and (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
                    id="new4">
         <h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"/>

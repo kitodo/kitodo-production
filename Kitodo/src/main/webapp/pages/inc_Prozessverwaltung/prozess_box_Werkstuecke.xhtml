@@ -28,7 +28,7 @@
                  cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
                  rowClasses="standardTable_Row1,standardTable_Row2"
                  columnClasses="standardTable_ColumnCentered,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
-                 var="item" value="#{ProzessverwaltungForm.myProzess.workpieces}"
+                 var="item" value="#{ProzessverwaltungForm.process.workpieces}"
                  rowIndexVar="index">
 
     <!-- ===================== Nr ====================== -->
@@ -66,7 +66,7 @@
                        title="#{msgs.werkstueckBearbeiten}">
             <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit"/>
             <t:updateActionListener
-                    property="#{ProzessverwaltungForm.myWerkstueckReload}"
+                    property="#{ProzessverwaltungForm.workpieceReload}"
                     value="#{item}"/>
         </h:commandLink>
     </h:column>

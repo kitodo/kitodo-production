@@ -19,7 +19,7 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.myAnzahlList != null}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.processCounterObjects != null}">
         <h4 style="margin-top:20px">
             <h:outputText value="#{msgs.anzahlDerArtikelUndImages}"/>
         </h4>
@@ -30,8 +30,8 @@
                  cellpadding="1px" headerClass="standardTable_Header" style="margin-top:5px"
                  rowClasses="standardTable_Row1,standardTable_Row2"
                  columnClasses="standardTable_Column"
-                 rendered="#{ProzessverwaltungForm.myAnzahlList != null}" var="item"
-                 value="#{ProzessverwaltungForm.myAnzahlList}">
+                 rendered="#{ProzessverwaltungForm.processCounterObjects != null}" var="item"
+                 value="#{ProzessverwaltungForm.processCounterObjects}">
 
         <h:column>
             <f:facet name="header">
@@ -87,7 +87,7 @@
         </h:column>
     </t:dataTable>
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.myAnzahlList != null}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.processCounterObjects != null}">
         <table cellpadding="3" cellspacing="0" style="margin-top:10px; width:250px"
                    class="main_statistikboxen">
             <tr>
@@ -99,19 +99,19 @@
                 <td class="main_statistikboxen_row2">
                     <h:panelGrid width="100%" columns="2" columnClasses="columnLinks,columnRechts">
                         <h:outputText value="#{msgs.baendeGesamt}:"/>
-                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumProcesses}"/>
+                        <h:outputText value="#{ProzessverwaltungForm.counterSummary.sumProcesses}"/>
                         <h:outputText value="#{msgs.imagesGesamt}:"/>
-                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumImages}"/>
+                        <h:outputText value="#{ProzessverwaltungForm.counterSummary.sumImages}"/>
                         <h:outputText value="#{msgs.imagesDurchschnitt}:"/>
-                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageImages}"/>
+                        <h:outputText value="#{ProzessverwaltungForm.counterSummary.averageImages}"/>
                         <h:outputText value="#{msgs.docstructsGesamt}:"/>
-                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumDocstructs}"/>
+                        <h:outputText value="#{ProzessverwaltungForm.counterSummary.sumDocstructs}"/>
                         <h:outputText value="#{msgs.docstructsDurchschnitt}:"/>
-                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageDocstructs}"/>
+                        <h:outputText value="#{ProzessverwaltungForm.counterSummary.averageDocstructs}"/>
                         <h:outputText value="#{msgs.metadataGesamt}:"/>
-                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumMetadata}"/>
+                        <h:outputText value="#{ProzessverwaltungForm.counterSummary.sumMetadata}"/>
                         <h:outputText value="#{msgs.metadataDurchschnitt}:"/>
-                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageMetadata}"/>
+                        <h:outputText value="#{ProzessverwaltungForm.counterSummary.averageMetadata}"/>
                     </h:panelGrid>
                 </td>
             </tr>
