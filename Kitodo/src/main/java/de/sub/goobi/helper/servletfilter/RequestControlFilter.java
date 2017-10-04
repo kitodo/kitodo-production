@@ -61,6 +61,8 @@ import org.hibernate.LazyInitializationException;
  */
 public class RequestControlFilter implements Filter {
 
+    private String encoding;
+
     /**
      * Initialize this filter by reading its configuration parameters.
      *
@@ -70,6 +72,11 @@ public class RequestControlFilter implements Filter {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes" })
     public void init(FilterConfig config) throws ServletException {
+
+        encoding = config.getInitParameter("requestEncoding");
+        if (encoding == null) {
+            encoding = "UTF-8";
+        }
 
         // parse all of the initialization parameters, collecting the exclude
         // patterns and the max wait parameters
@@ -125,6 +132,14 @@ public class RequestControlFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession();
+
+        if (request.getCharacterEncoding() == null) {
+            request.setCharacterEncoding(encoding);
+        }
+
+        // Set the default response content type and encoding
+        response.setContentType("text/html; charset=" + encoding);
+        response.setCharacterEncoding(encoding);
 
         // if this request is excluded from the filter, then just process it
         if (!isFilteredRequest(httpRequest)) {
