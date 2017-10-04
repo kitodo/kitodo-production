@@ -74,7 +74,7 @@
                                     <h:outputText value="#{msgs.status}:"/>
                                 </td>
                                 <td>
-                                    <h:outputText value="#{msgs.get(AktuelleSchritteForm.mySchritt.processingStatusEnum.title)}"/>
+                                    <h:outputText value="#{AktuelleSchritteForm.mySchritt.processingStatusEnum.title}"/>
                                 </td>
                             </tr>
                             <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingBegin !=null and !HelperForm.anonymized}">
@@ -105,7 +105,7 @@
                                         <h:outputText value="#{msgs.aktualisierungstyp}:"/>
                                     </td>
                                     <td>
-                                        <h:outputText value="#{msgs.get(AktuelleSchritteForm.mySchritt.editTypeEnum.title)}"/>
+                                        <h:outputText value="#{AktuelleSchritteForm.mySchritt.editTypeEnum.title}"/>
                                     </td>
                                 </tr>
                             </ui:fragment>

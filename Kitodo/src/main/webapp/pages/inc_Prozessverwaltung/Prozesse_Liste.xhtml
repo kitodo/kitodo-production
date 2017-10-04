@@ -201,13 +201,13 @@
                             <h:outputText value="#{msgs.status}"/>
                         </f:facet>
                         <h:graphicImage value="#{step.processingStatus.smallImagePath}" alt=""
-                                        title="#{msgs.get(step.processingStatus.title)}"
+                                        title="#{step.processingStatus.title}"
                                         rendered="#{step.processingStatus == 'OPEN' || step.processingStatus == 'LOCKED'}"/>
                         <h:graphicImage value="#{step.processingStatus.smallImagePath}" alt=""
-                                        title="#{msgs.get(step.processingStatus.title)}: #{step.processingUser!=null and step.processingUser.id!=0?step.processingUser.fullName:''} (#{step.processingTime !=null?step.processingTime:''})  - #{msgs.get(step.editType.title)}"
+                                        title="#{step.processingStatus.title}: #{step.processingUser!=null and step.processingUser.id!=0?step.processingUser.fullName:''} (#{step.processingTime !=null?step.processingTime:''})  - #{step.editType.title}"
                                         rendered="#{(step.processingStatus == 'DONE' || step.processingStatus == 'INWORK') and !HelperForm.anonymized}"/>
                         <h:graphicImage value="#{step.processingStatus.smallImagePath}" alt=""
-                                        title="#{msgs.get(step.processingStatus.title)}: #{msgs.get(step.editType.title)}"
+                                        title="#{step.processingStatus.title}: #{step.editType.title}"
                                         rendered="#{(step.processingStatus == 'DONE' || step.processingStatus == 'INWORK') and HelperForm.anonymized}"/>
                     </p:column>
 
