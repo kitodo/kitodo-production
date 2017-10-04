@@ -18,25 +18,25 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:pe="http://primefaces.org/ui/extensions"
     >
-    <pe:remoteCommand name="loadProjectConfiguration" update="editorWrapper" actionListener="#{ProjekteForm.loadProjectConfiguration}"/>
-    <pe:remoteCommand name="loadMetadataDisplayRules" update="editorWrapper" actionListener="#{ProjekteForm.loadDisplayRulesConfiguration}"/>
-    <pe:remoteCommand name="loadDigitalCollections" update="editorWrapper" actionListener="#{ProjekteForm.loadDigitalCollectionsConfiguration}"/>
+    <pe:remoteCommand name="loadProjectConfiguration" update="editorWrapper" actionListener="#{XMLEditor.loadProjectConfiguration}"/>
+    <pe:remoteCommand name="loadMetadataDisplayRules" update="editorWrapper" actionListener="#{XMLEditor.loadDisplayRulesConfiguration}"/>
+    <pe:remoteCommand name="loadDigitalCollections" update="editorWrapper" actionListener="#{XMLEditor.loadDigitalCollectionsConfiguration}"/>
     <p:commandButton value="#{msgs.projectConfiguration}" onclick="loadProjectConfiguration()" />
     <p:commandButton value="#{msgs.displayRules}" onclick="loadMetadataDisplayRules()" />
     <p:commandButton value="#{msgs.digitaleKollektionen}" onclick="loadDigitalCollections()" />
     <h:panelGroup layout="block" id="editorWrapper">
         <h:panelGroup layout="block" style="margin: 5px 0;">
             <h:outputText value="#{msgs.configurationFile}: "/>
-            <h:outputText value="#{ProjekteForm.currentConfigurationFile}"
+            <h:outputText value="#{XMLEditor.currentConfigurationFile}"
                           style="font-family: Monospace; background-color: mintcream; color: purple; border: 1px solid purple"/>
         </h:panelGroup>
         <pe:codeMirror theme="blackboard" matchBrackets="true" id="projectEditor"
-                       widgetVar="editorVar" validator="#{ProjekteForm.validateXML}" indentUnit="4"
+                       widgetVar="editorVar" validator="#{XMLEditor.validateXMLConfiguration}" indentUnit="4"
                        lineNumbers="true" lineWrapping="true" mode="xml" keyMap="default"
-                       value="#{ProjekteForm.XMLConfiguration}"/>
+                       value="#{XMLEditor.XMLConfiguration}"/>
     </h:panelGroup>
     <p:message id="validationErrors" for="projectEditor" showDetail="true" />
-    <pe:remoteCommand name="saveConfiguration" actionListener="#{ProjekteForm.saveXMLConfiguration()}" />
+    <pe:remoteCommand name="saveConfiguration" actionListener="#{XMLEditor.saveXMLConfiguration()}" />
     <p:commandButton widgetVar="saveButton" value="#{msgs.saveConfiguration}" onclick="saveConfiguration()"
                      style="margin-top: 5px;" update="projectform"/>
 </ui:composition>

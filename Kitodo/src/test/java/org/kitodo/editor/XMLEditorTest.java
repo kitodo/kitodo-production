@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.editor;
 
 import de.sub.goobi.config.ConfigCore;
 
@@ -28,23 +28,23 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test class for class 'ProjekteForm'.
+ * Test class for class 'XMLEditorTest'.
  */
-public class ProjekteFormTest {
+public class XMLEditorTest {
 
     private static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     private static final String LOAD_XML = XML_DECLARATION + "<loadRoot>LoadRootValue</loadRoot>";
     private static final String SAVE_XML = XML_DECLARATION + "<saveRoot>SaveRootValue</saveRoot>";
     private static String absolutePath = ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE;
-    private static ProjekteForm projekteForm = null;
+    private static XMLEditor xmlEditor = null;
 
     @BeforeClass
     public static void setUp() throws IOException {
         List<String> lines = new ArrayList<>();
         lines.add(LOAD_XML);
         Files.write(Paths.get(absolutePath), lines);
-        projekteForm = new ProjekteForm();
-        projekteForm.initializeProjectList();
+        xmlEditor = new XMLEditor();
+        xmlEditor.loadInititalConfiguration();
     }
 
     @AfterClass
@@ -54,15 +54,15 @@ public class ProjekteFormTest {
 
     @Test
     public void shouldLoadXMLConfiguration() {
-        projekteForm.loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
-        Assert.assertEquals(LOAD_XML, projekteForm.getXMLConfiguration().replace("\n", "").replace("\r", ""));
+        xmlEditor.loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
+        Assert.assertEquals(LOAD_XML, xmlEditor.getXMLConfiguration().replace("\n", "").replace("\r", ""));
     }
 
     @Test
     public void shouldSaveXMLConfiguration() throws IOException {
-        projekteForm.loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
-        projekteForm.setXMLConfiguration(SAVE_XML);
-        projekteForm.saveXMLConfiguration();
+        xmlEditor.loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
+        xmlEditor.setXMLConfiguration(SAVE_XML);
+        xmlEditor.saveXMLConfiguration();
         String savedString = FileUtils.readFileToString(new File(absolutePath), "utf-8");
         Assert.assertEquals(SAVE_XML, savedString);
     }

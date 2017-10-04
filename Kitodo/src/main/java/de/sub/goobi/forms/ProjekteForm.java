@@ -20,12 +20,7 @@ import de.sub.goobi.helper.Page;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,26 +30,13 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -63,7 +45,6 @@ import org.goobi.production.chart.IProvideProjectTaskList;
 import org.goobi.production.chart.ProjectStatusDataTable;
 import org.goobi.production.chart.ProjectStatusDraw;
 import org.goobi.production.chart.WorkflowProjectTaskList;
-import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -80,18 +61,12 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 @Named("ProjekteForm")
 @SessionScoped
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
-
-    private String currentConfigurationFile = "";
 
     private Project myProjekt = new Project();
     private ProjectFileGroup myFilegroup;
@@ -115,11 +90,6 @@ public class ProjekteForm extends BasisForm {
     private boolean showStatistics;
 
     private int itemId;
-
-    private String xmlConfigurationString = "";
-
-    private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    private static DocumentBuilder documentBuilder = null;
 
     public ProjekteForm() {
         super();
@@ -269,12 +239,6 @@ public class ProjekteForm extends BasisForm {
     @PostConstruct
     public void initializeProjectList() {
         filterKein();
-        loadProjectConfiguration();
-        try {
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            logger.error("ERROR: unable to instantiate document builder: " + e.getMessage());
-        }
     }
 
     /**
@@ -851,147 +815,4 @@ public class ProjekteForm extends BasisForm {
         }
     }
 
-    /**
-     * Get the XML configuration string.
-     *
-     * @return the XML configuration string
-     */
-    public String getXMLConfiguration() {
-        return this.xmlConfigurationString;
-    }
-
-    /**
-     * Set the XML configuration string.
-     *
-     * @param configuration
-     *            the XML configuration string
-     */
-    public void setXMLConfiguration(String configuration) {
-        this.xmlConfigurationString = configuration;
-    }
-
-    /**
-     * Load the content of the XML configuration file with the given name
-     * 'configurationFile'.
-     *
-     * @param configurationFile
-     *            name of the configuration to be loaded
-     */
-    public void loadXMLConfiguration(String configurationFile) {
-        try (StringWriter stringWriter = new StringWriter()) {
-            currentConfigurationFile = configurationFile;
-            XMLConfiguration currentConfiguration = new XMLConfiguration(
-                    ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
-            currentConfiguration.save(stringWriter);
-            this.xmlConfigurationString = stringWriter.toString();
-        } catch (ConfigurationException e) {
-            String errorMessage = "ERROR: Unable to load configuration file '" + configurationFile + "'.";
-            logger.error(errorMessage + " " + e.getMessage());
-            this.xmlConfigurationString = errorMessage;
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    /**
-     * Save the String 'xmlConfigurationString' to the XML file denoted by
-     * 'configurationFile'.
-     */
-    public void saveXMLConfiguration() {
-        logger.info("Saving configuration to file " + currentConfigurationFile);
-        try {
-            Document document = documentBuilder.parse(new InputSource(new StringReader(this.xmlConfigurationString)));
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource domSource = new DOMSource(document);
-            File xmlConfigurationFile = new File(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
-            try (FileOutputStream outputStream = new FileOutputStream(xmlConfigurationFile, false);
-                    PrintWriter printWriter = new PrintWriter(outputStream)) {
-                StreamResult streamResult = new StreamResult(printWriter);
-                transformer.transform(domSource, streamResult);
-            } catch (TransformerException e) {
-                logger.error("ERROR: transformation failed: " + e.getMessage());
-            }
-        } catch (TransformerConfigurationException e) {
-            logger.error("ERROR: transformer configuration exception: " + e.getMessage());
-        } catch (FileNotFoundException e) {
-            logger.error("ERROR: file not found: " + e.getMessage());
-        } catch (IOException e) {
-            logger.error("ERROR: could not save XML configuration: " + e.getMessage());
-        } catch (SAXException e) {
-            logger.error("ERROR: error parsing given XML string: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Check and return whether the given String 'xmlCode' contains well formed XML
-     * code or not.
-     *
-     * @param facesContext
-     *            the current FacesContext
-     * @param uiComponent
-     *            the component containing the String that is being validated
-     * @param xmlCode
-     *            XML code that will be validated
-     * @return whether 'xmlCode' is well formed or not
-     */
-    public boolean validateXML(FacesContext facesContext, UIComponent uiComponent, String xmlCode) {
-        if (!Objects.equals(documentBuilder, null)) {
-            InputSource inputSource = new InputSource(new StringReader(xmlCode));
-            try {
-                documentBuilder.parse(inputSource);
-                return true;
-            } catch (SAXParseException e) {
-                // parse method throwing an SAXParseException means given xml code is not well
-                // formed!
-                String errorString = "Error while parsing XML: line = " + e.getLineNumber() + ", column = "
-                        + e.getColumnNumber() + ": " + e.getMessage();
-                FacesMessage errorMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "XML parsing error",
-                        errorString);
-                FacesContext currentFacesContext = FacesContext.getCurrentInstance();
-                currentFacesContext.addMessage(uiComponent.getClientId(), errorMessage);
-                logger.error(errorString);
-                return false;
-            } catch (SAXException e) {
-                logger.error("SAXException: " + e.getMessage());
-                return false;
-            } catch (IOException e) {
-                logger.error("IOException: " + e.getMessage());
-                return false;
-            }
-        } else {
-            logger.error("ERROR: document builder is null!");
-            return false;
-        }
-    }
-
-    /**
-     * Get name of configuration file currently loaded into frontend editor.
-     *
-     * @return configuration file name
-     */
-    public String getCurrentConfigurationFile() {
-        return currentConfigurationFile;
-    }
-
-    /**
-     * Load the project XML configuration file.
-     */
-    public void loadProjectConfiguration() {
-        loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
-    }
-
-    /**
-     * Load the display rules XML configuration file.
-     */
-    public void loadDisplayRulesConfiguration() {
-        loadXMLConfiguration(FileNames.METADATA_DISPLAY_RULES_FILE);
-    }
-
-    /**
-     * Load the digital collections XML configuration file.
-     */
-    public void loadDigitalCollectionsConfiguration() {
-        loadXMLConfiguration(FileNames.DIGITAL_COLLECTIONS_FILE);
-    }
 }
