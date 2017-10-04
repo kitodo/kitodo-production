@@ -46,11 +46,11 @@ public class FileServiceTest {
     }
 
     @Test
-    @Ignore("Script is not working")
     public void testCreateMetaDirectory() throws IOException {
-        fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
+        boolean result = fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
         File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
 
+        Assert.assertTrue(result);
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
         Assert.assertTrue(file.exists());

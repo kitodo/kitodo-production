@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -792,6 +793,9 @@ public class ProzesskopieForm implements Serializable {
             logger.error("error on save: ", e);
             return null;
         }
+
+        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
+        serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
 
         /*
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage

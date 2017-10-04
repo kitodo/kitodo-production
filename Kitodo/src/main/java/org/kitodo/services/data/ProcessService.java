@@ -1695,14 +1695,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
-
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
             fileService.createMetaDirectory(this.getProcessDataDirectory(process),
                     processDir.replace("(processtitle)", process.getTitle()));
         }
-
     }
 
     /**
