@@ -280,15 +280,13 @@ public class ProcessServiceIT {
     public void shouldCheckIfTifDirectoryExists() throws Exception {
         ProcessService processService = new ProcessService();
 
-        Process process = processService.getById(1);
         fileService.createDirectory(URI.create("1"), "images");
         URI directory = fileService.createDirectory(URI.create("1/images"), "First__process_tif");
         fileService.createResource(directory, "test.jpg");
-        boolean condition = processService.checkIfTifDirectoryExists(process);
+        boolean condition = processService.checkIfTifDirectoryExists(1, "First process", null);
         assertTrue("Images TIF directory doesn't exist!", condition);
 
-        process = processService.getById(2);
-        condition = processService.checkIfTifDirectoryExists(process);
+        condition = processService.checkIfTifDirectoryExists(2, "Second process", null);
         assertTrue("Images TIF directory exists, but it shouldn't!", !condition);
     }
 
