@@ -1426,7 +1426,14 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return String
      */
     public String setOrderingUp() {
-        this.task.setOrdering(this.task.getOrdering() - 1);
+        List<Task> tasks = this.process.getTasks();
+        Integer ordering = this.task.getOrdering() - 1;
+        for (Task task : tasks) {
+            if (task.getOrdering().equals(ordering)) {
+                task.setOrdering(ordering + 1);
+            }
+        }
+        this.task.setOrdering(ordering);
         save();
         return reload();
     }
@@ -1437,7 +1444,14 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return String
      */
     public String setOrderingDown() {
-        this.task.setOrdering(this.task.getOrdering() + 1);
+        List<Task> tasks = this.process.getTasks();
+        Integer ordering = this.task.getOrdering() + 1;
+        for (Task task : tasks) {
+            if (task.getOrdering().equals(ordering)) {
+                task.setOrdering(ordering - 1);
+            }
+        }
+        this.task.setOrdering(ordering);
         save();
         return reload();
     }
