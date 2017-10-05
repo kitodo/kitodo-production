@@ -230,7 +230,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             Helper.setFehlerMeldung("titleEmpty");
         }
-        return null;
+        return reload();
     }
 
     /**
@@ -1222,7 +1222,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 break;
             }
         }
-        serviceManager.getProcessService().save(process);
+        save();
     }
 
     /**
@@ -1434,8 +1434,7 @@ public class ProzessverwaltungForm extends BasisForm {
             }
         }
         this.task.setOrdering(ordering);
-        save();
-        return reload();
+        return save();
     }
 
     /**
@@ -1452,8 +1451,7 @@ public class ProzessverwaltungForm extends BasisForm {
             }
         }
         this.task.setOrdering(ordering);
-        save();
-        return reload();
+        return save();
     }
 
     /**
