@@ -13,23 +13,27 @@
 
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id" value="#{ProjekteForm.itemId}"/>
+        <f:viewAction action="#{ProjekteForm.loadProject}"/>
+    </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper" style="width: 95%; margin: auto; border-radius: 5px; padding: 0;">
             <p:panel style="text-align: left; position: relative; padding: 5px;">
                 <h3 style="display: inline;">Projekt bearbeiten</h3>
-                <p:button value="Speichern" style="right: 5px; bottom: 5px; position: absolute;" icon="fa fa-floppy-o fa-lg"/>
+                <p:button value="#{msgs.speichern}" style="right: 5px; bottom: 5px; position: absolute;" icon="fa fa-floppy-o fa-lg"/>
             </p:panel>
             <p:tabView>
-                <p:tab title="Details">
+                <p:tab title="#{msgs.details}">
                     <ui:include src="projectEditDetail.xhtml"/>
                 </p:tab>
-                <p:tab title="Technische Daten">
+                <p:tab title="#{msgs.technischeDaten}">
                     <ui:include src="projectEditSpecification.xhtml"/>
                 </p:tab>
-                <p:tab title="Mets Parameter">
+                <p:tab title="#{msgs.metsParamater}">
                     <ui:include src="projectEditMets.xhtml"/>
                 </p:tab>
             </p:tabView>

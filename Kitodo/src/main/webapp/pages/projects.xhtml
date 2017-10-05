@@ -15,7 +15,8 @@
         template="/WEB-INF/templates/base.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core">
     <ui:define name="content">
         <p:panel id="listWrapper" style="width: 95%; margin: auto; border-radius: 5px; padding: 0;">
             <p:panel style="text-align: left; position: relative; padding: 5px;">
@@ -34,20 +35,23 @@
                     <h:outputText rendered="#{project.projectIsArchived}"><i class="fa fa-minus-square-o"/></h:outputText>
                 </p:column>
                 <p:column headerText="Aktionen">
-                    <h:link><i class="fa fa-pencil-square-o" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
+                    <h:link outcome="projectEdit">
+                        <f:param name="id" value="#{project.id}" />
+                        <i class="fa fa-pencil-square-o" style="color: #2B6FB6; margin-right: 10px;"/>
+                    </h:link>
                     <h:link><i class="fa fa-clone" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
                     <h:link><i class="fa fa-bar-chart" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
                 </p:column>
 
                 <p:rowExpansion>
                     <p:panelGrid columns="2" columnClasses="label,value">
-                        <h:outputText value="Internes Speicherformat:"/>
+                        <h:outputText value="#{msgs.internesSpeicherformat}:"/>
                         <h:outputText value="#{project.fileFormatInternal}"/>
 
-                        <h:outputText value="DMS Exportformat:"/>
+                        <h:outputText value="#{msgs.dmsExportformat}:"/>
                         <h:outputText value="#{project.fileFormatDmsExport}"/>
 
-                        <h:outputText value="METS-Rechteinhaber:"/>
+                        <h:outputText value="#{msgs.metsRightsOwner}:"/>
                         <h:outputText value="Uni Hamburg"/>
                     </p:panelGrid>
                 </p:rowExpansion>

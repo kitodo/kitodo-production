@@ -18,29 +18,29 @@
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="title" value="Titel:" />
-                <p:inputText id="title" placeholder="Titel" class="input"/>
+                <p:outputLabel for="title" value="#{msgs.titel}:" />
+                <p:inputText id="title" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.title}"/>
             </div>
             <div>
-                <p:outputLabel for="pages" value="Anzahl der Seiten:" />
-                <p:inputText id="pages" placeholder="10" class="input"/>
+                <p:outputLabel for="pages" value="#{msgs.numberImages}:" />
+                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjekteForm.myProjekt.numberOfPages}"/>
             </div>
             <div>
-                <p:outputLabel for="band" value="Anzahl der Bände:" />
-                <p:inputText id="band" placeholder="1" class="input"/>
+                <p:outputLabel for="band" value="#{msgs.numberVolumes}:" />
+                <p:inputText id="band" placeholder="1" class="input" value="#{ProjekteForm.myProjekt.numberOfVolumes}"/>
             </div>
         </p:row>
         <p:row>
             <div>
-                <p:outputLabel for="startdate" value="Startdatum:" />
-                <p:calendar id="startdate" value="" showOn="button" inputStyleClass="input-with-button"/>
+                <p:outputLabel for="startdate" value="#{msgs.startdate}:" />
+                <p:calendar id="startdate" value="#{ProjekteForm.myProjekt.startDate}" showOn="button" inputStyleClass="input-with-button" />
             </div>
             <div>
-                <p:outputLabel for="enddate" value="Enddatum:" />
-                <p:calendar id="enddate" value="" showOn="button" inputStyleClass="input-with-button"/>
+                <p:outputLabel for="enddate" value="#{msgs.enddate}:" />
+                <p:calendar id="enddate" value="#{ProjekteForm.myProjekt.endDate}" showOn="button" inputStyleClass="input-with-button"/>
             </div>
             <div>
-                <h:outputText value="Projekt ist inaktiv" />
+                <h:outputText value="#{msgs.projectIsArchived}" />
                 <p:selectBooleanCheckbox value="aktiv" />
             </div>
         </p:row>

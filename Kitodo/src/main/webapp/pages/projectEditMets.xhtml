@@ -13,61 +13,60 @@
 
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="metsRightsOwner" value="METS Rechteinhaber" />
-                <p:inputText id="metsRightsOwner" placeholder="METS Rechteinhaber" class="input"/>
+                <p:outputLabel for="metsRightsOwner" value="#{msgs.metsRightsOwner}" />
+                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwner}"/>
             </div>
             <div>
-                <p:outputLabel for="metsRightsOwnerUrl" value="METS Rechteinhaber URL" />
-                <p:inputText id="metsRightsOwnerUrl" placeholder="METS Rechteinhaber URL" class="input" />
+                <p:outputLabel for="metsRightsOwnerUrl" value="#{msgs.metsRightsOwnerSite}" />
+                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}"/>
             </div>
             <div>
-                <p:outputLabel for="metsDigiprovReference" value="METS Digiprov Referenz" />
-                <p:inputText id="metsDigiprovReference" placeholder="METS Digiprov Referenz" class="input" />
+                <p:outputLabel for="metsDigiprovReference" value="#{msgs.metsDigiprovReference}" />
+                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovReference}"/>
             </div>
             <div>
-                <p:outputLabel for="metsDigiprovReferenceAnchor" value="METS Digiprov Referenz (Anker)" />
-                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="METS Digiprov Referenz (Anker)" class="input" />
+                <p:outputLabel for="metsDigiprovReferenceAnchor" value="#{msgs.metsDigiprovReferenceAnchor}" />
+                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}"/>
             </div>
             <div>
-                <p:outputLabel for="metsPointerPath" value="METS Pointer Pfad" />
-                <p:inputText id="metsPointerPath" placeholder="METS Pointer Pfad" class="input" />
+                <p:outputLabel for="metsPointerPath" value="#{msgs.metsPointerPath}" />
+                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" class="input" value="#{ProjekteForm.myProjekt.metsPointerPath}"/>
             </div>
             <div>
-                <p:outputLabel for="metsPurl" value="METS PURL (logische Struktur)" />
-                <p:inputText id="metsPurl" placeholder="METS PURL (logische Struktur)" class="input" />
+                <p:outputLabel for="metsPurl" value="#{msgs.metsPurl}" />
+                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" class="input" value="#{ProjekteForm.myProjekt.metsPurl}"/>
             </div>
         </p:row>
         <p:row>
             <div>
-                <p:outputLabel for="metsRightsOwnerLogo" value="METS Rechteinhaber Logo" />
-                <p:inputText id="metsRightsOwnerLogo" placeholder="METS Rechteinhaber Logo" class="input" />
+                <p:outputLabel for="metsRightsOwnerLogo" value="#{msgs.metsRightsOwnerLogo}" />
+                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}"/>
             </div>
             <div>
-                <p:outputLabel for="metsRightsOwnerContact" value="METS Rechteinhaber Kontakt" />
-                <p:inputText id="metsRightsOwnerContact" placeholder="METS Rechteinhaber Kontakt" class="input" />
+                <p:outputLabel for="metsRightsOwnerContact" value="#{msgs.metsRightsOwnerMail}" />
+                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}"/>
             </div>
             <div>
-                <p:outputLabel for="metsDigiprovPresentation" value="METS Digiprov Präsentation" />
-                <p:inputText id="metsDigiprovPresentation" placeholder="METS Digiprov Präsentation" class="input" />
+                <p:outputLabel for="metsDigiprovPresentation" value="#{msgs.metsDigiprovPresentation}" />
+                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}"/>
             </div>
             <div>
-                <p:outputLabel for="metsPresentationAnchor" value="METS Präsentation (Anker)" />
-                <p:inputText id="metsPresentationAnchor" placeholder="METS Präsentation (Anker)" class="input" />
+                <p:outputLabel for="metsPresentationAnchor" value="#{msgs.metsDigiprovPresentationAnchor}" />
+                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}"/>
             </div>
             <div>
-                <p:outputLabel for="metsPointerPathAnchor" value="METS Pointer Pfad (Anker)" />
-                <p:inputText id="metsPointerPathAnchor" placeholder="METS Pointer Pfad (Anker)" class="input" />
+                <p:outputLabel for="metsPointerPathAnchor" value="#{msgs.metsPointerPathAnchor}" />
+                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" class="input" value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}"/>
             </div>
             <div>
-                <p:outputLabel for="metsContentId" value="METS ContentIDs (physische Struktur)" />
-                <p:inputText id="metsContentId" placeholder="METS ContentIDs (physische Struktur)" class="input" />
+                <p:outputLabel for="metsContentId" value="#{msgs.metsContentIDs}" />
+                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" class="input" value="#{ProjekteForm.myProjekt.metsContentIDs}"/>
             </div>
         </p:row>
-        <p:button outcome="projectEditMets" value="Dateigruppe hinzufügen" style="left: 5px; bottom: 5px; position: absolute;" icon="fa fa-plus-circle fa-lg"/>
+        <p:button outcome="projectEditMets" value="#{msgs.filegroupHinzufuegen}" style="left: 5px; bottom: 5px; position: absolute;" icon="fa fa-plus-circle fa-lg"/>
     </p:panelGrid>
 </ui:composition>

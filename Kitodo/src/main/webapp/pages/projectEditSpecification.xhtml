@@ -13,55 +13,51 @@
 
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="internalFormat" value="Internes Speicherformat:" />
-                <p:selectOneMenu id="internalFormat" value="" style="width:150px">
-                    <!--<p:ajax listener="#{dropdownView.onCountryChange}" update="city" />-->
-                    <!--<f:selectItem itemLabel="Select Country" itemValue="" noSelectionOption="true" />-->
-                    <!--<f:selectItems value="#{dropdownView.countries}" />-->
+                <p:outputLabel for="internalFormat" value="#{msgs.internesSpeicherformat}:" />
+                <p:selectOneMenu id="internalFormat" value="#{ProjekteForm.myProjekt.fileFormatInternal}" style="width:150px">
+                    <f:selectItems value="#{HelperForm.fileFormatsInternalOnly}" />
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="automaticExport" value="Automatischer DMS-Export" />
-                <p:selectBooleanCheckbox id="automaticExport" value="aktiv" class="input" />
+                <p:outputLabel for="automaticExport" value="#{msgs.automatischerDmsImport}:" />
+                <p:selectBooleanCheckbox id="automaticExport" value="#{ProjekteForm.myProjekt.useDmsImport}" class="input" />
             </div>
             <div>
-                <p:outputLabel for="dmsExportImageDir" value="DMS-Export-Images-Ordner" />
-                <p:inputText id="dmsExportImageDir" placeholder="Titel" class="input" />
+                <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportImagesPfad}:" />
+                <p:inputText id="dmsExportImageDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportImagesPath}"/>
             </div>
             <div>
-                <p:outputLabel for="dmsExportErrorDir" value="DMS-Export-Error-Ordner" />
-                <p:inputText id="dmsExportErrorDir" placeholder="Titel" class="input" />
+                <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPfad}:" />
+                <p:inputText id="dmsExportErrorDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportErrorPath}"/>
             </div>
             <div>
-                <p:outputLabel for="timeout" value="Zeitüberschreitung (ms)" />
-                <p:inputText id="timeout" placeholder="Titel" class="input" />
+                <p:outputLabel for="timeout" value="#{msgs.timeout}" />
+                <p:inputText id="timeout" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportTimeOut}"/>
             </div>
         </p:row>
         <p:row>
             <div>
-                <p:outputLabel for="DmsFormat" value="DMS Exportformat" />
-                <p:selectOneMenu id="DmsFormat" value="" style="width:150px">
-                    <!--<p:ajax listener="#{dropdownView.onCountryChange}" update="city" />-->
-                    <!--<f:selectItem itemLabel="Select Country" itemValue="" noSelectionOption="true" />-->
-                    <!--<f:selectItems value="#{dropdownView.countries}" />-->
+                <p:outputLabel for="DmsFormat" value="#{msgs.dmsExportformat}" />
+                <p:selectOneMenu id="DmsFormat" value="#{ProjekteForm.myProjekt.fileFormatDmsExport}" style="width:150px">
+                    <f:selectItems value="#{HelperForm.fileFormats}" />
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="dmsExportDir" value="DMS-Export-Ordner für XML-Datei" />
-                <p:inputText id="dmsExportDir" placeholder="Titel" class="input" />
+                <p:outputLabel for="dmsExportDir" value="#{msgs.dmsImportPfadXmlDatei}:" />
+                <p:inputText id="dmsExportDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportRootPath}"/>
             </div>
             <div>
-                <p:outputLabel for="dmsExportSuccessDir" value="DMS-Export-Success-Ordner" />
-                <p:inputText id="dmsExportSuccessDir" placeholder="Titel" class="input" />
+                <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPfad}:" />
+                <p:inputText id="dmsExportSuccessDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportSuccessPath}"/>
             </div>
             <div>
-                <p:outputLabel for="createDir" value="Erzeuge Vorgangsordner" />
-                <p:selectBooleanCheckbox id="createDir" value="aktiv" class="input" />
+                <p:outputLabel for="createDir" value="#{msgs.dmsImportCreateProcessFolder}" />
+                <p:selectBooleanCheckbox id="createDir" class="input" value="#{ProjekteForm.myProjekt.dmsImportCreateProcessFolder}"/>
             </div>
         </p:row>
     </p:panelGrid>
