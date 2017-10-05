@@ -441,12 +441,67 @@ main {
     height: 500px;
     }
 
+#ListWrapper {
+    width: 95%;
+    margin: auto;
+    border-radius: 5px;
+    padding: 0;
+}
+
+#ListWrapper > div {
+    padding: 0;
+}
+
 .input {
     width:100%;
 }
 
 .input-with-button {
     width:90%;
+}
+
+.filter-input {
+    width: 250px;
+    border-radius: 3px 0 0 3px !important;
+}
+
+.filter-menu {
+    border-radius: 3px;
+}
+
+.filter-menu > div {
+    padding: 0;
+    width: 250px;
+    background: #f3f3f3;
+    border-radius: 3px;
+}
+
+.filter-menu li {
+    list-style: none;
+    border-top: solid 1px #D8D8D8;
+}
+
+.filter-menu li a {
+    display: inline-block;
+    padding: 10px;
+    text-decoration: none;
+    color: #006DBD;
+}
+
+.filter-menu li > a:first-child {
+    width: 75%;
+}
+
+.filter-menu li:first-child a {
+    width: 100%;
+    box-sizing: border-box;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.filter-menu li .filter-delete {
+    float: right;
+    vertical-align: middle;
 }
 
 /*----------------------------------------------------------------------
@@ -509,6 +564,15 @@ th.ui-state-default {
     text-align: left;
 }
 
+.ui-datatable tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+.ui-datatable.ui-widget tr th {
+    background: #DADADA;
+    border: 0;
+}
+
 .ui-datatable tr th:nth-child(2) {
     width: 70%;
 }
@@ -526,6 +590,74 @@ th.ui-state-default {
 
 .ui-row-toggler:before {
     content: "\f13a";
+}
+
+.ui-widget.ui-button, .ui-widget.ui-inputfield {
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.ui-commandlink.button-blue,
+.ui-button.button-blue,
+.button-blue .ui-icon {
+    color: #006DBD;
+    background: transparent;
+    border: none;
+}
+
+.ui-commandlink.button-filled-blue,
+.ui-button.button-filled-blue,
+.ui-commandlink.button-filled-green,
+.ui-button.button-filled-green {
+    color: white;
+}
+
+.ui-commandlink.button-filled-blue,
+.ui-button.button-filled-blue {
+    background: #006DBD;
+}
+
+.ui-commandlink.button-filled-green,
+.ui-button.button-filled-green {
+    background: #00C62F;
+}
+
+.ui-inputfield.standard-available {
+    border: solid 1px #006DBD;
+    color: #006DBD;
+    border-radius: 3px;
+}
+
+.ui-inputfield.standard-available::-webkit-input-placeholder { /* Webkit, Blink */
+    color: #006DBD;
+}
+.ui-inputfield.standard-available:-moz-placeholder { /* Firefox 4-18 */
+    color: #006DBD;
+}
+.ui-inputfield.standard-available::-moz-placeholder { /* Firefox 19+ */
+    color: #006DBD;
+}
+.ui-inputfield.standard-available:-ms-input-placeholder { /* IE 10-11 */
+    color: #006DBD;
+}
+.ui-inputfield.standard-available::-ms-input-placeholder { /* Edge */
+    color: #006DBD;
+}
+
+.ui-inputfield.standard-blocked::-webkit-input-placeholder { /* Webkit, Blink */
+    color: #DADADA;
+}
+.ui-inputfield.standard-blocked:-moz-placeholder { /* Firefox 4-18 */
+    color: #DADADA;
+}
+.ui-inputfield.standard-blocked::-moz-placeholder { /* Firefox 19+ */
+    color: #DADADA;
+}
+.ui-inputfield.standard-blocked:-ms-input-placeholder { /* IE 10-11 */
+    color: #DADADA;
+}
+.ui-inputfield.standard-blocked::-ms-input-placeholder { /* Edge */
+    color: #DADADA;
 }
 
 

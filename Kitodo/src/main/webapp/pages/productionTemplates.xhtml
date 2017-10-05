@@ -1,0 +1,112 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="ListWrapper">
+            <div style="height: 30px; padding: 1.3em 1.5em;">
+                <h3 style="display: inline; line-height: 30px;">Produktionsvorlagen</h3>
+                <p:button value="Neue Vorlage" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" styleClass="button-filled-green" style="float: right; margin-left: 20px; border: 0; font-weight: lighter;"></p:button>
+                <!-- filters -->
+                <h:form style="display: inline; float: right;">
+                    <div class="ui-inputgroup">
+                        <p:inputText placeholder="Filter" class="standard-available filter-input"/>
+                        <p:commandButton icon="fa fa-refresh" styleClass="button-blue" style="margin-left: -40px;"/>
+                        <p:commandButton id="triggerFilterMenu" icon="fa fa-chevron-down" styleClass="button-filled-blue" style="border: 0; border-radius: 0 3px 3px 0; margin-left: 3px;"/>
+                        <p:overlayPanel for="triggerFilterMenu" my="right top" at="right bottom" styleClass="filter-menu">
+                            <ul>
+                                <li>
+                                    <p:commandLink styleClass="button-filled-blue">
+                                        <i class="fa fa-floppy-o fa-lg"/> Filter speichern
+                                    </p:commandLink>
+                                </li>
+                                <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
+                                    <li>
+                                        <p:commandLink value="#{filter}"/>
+                                        <p:commandLink styleClass="filter-delete button-blue">
+                                            <i class="fa fa-trash-o fa-lg"/>
+                                        </p:commandLink>
+                                    </li>
+                                </ui:repeat>
+                            </ul>
+                        </p:overlayPanel>
+
+                    </div>
+                </h:form>
+            </div>
+            <!-- content -->
+            <p:dataTable var="template" value="#{ProzessverwaltungForm.page.listReload}">
+
+                <!-- 1st column -->
+                <p:column style="width: 50px; text-align: center; color: black;">
+                    <!-- header -->
+                    <f:facet name="header">
+                            <i class="fa fa-sort-alpha-asc" style="color: rgb(0,109,189);"/>
+                    </f:facet>
+                    <!-- content -->
+                    <p:commandLink onclick="PF('details-#{template.id}').toggle()" style="color: black;">
+                        <i class="fa fa-chevron-circle-down fa-lg"/>
+                    </p:commandLink>
+                </p:column>
+
+                <!-- 2nd column -->
+                <p:column headerText="Titel" style="width: 45%;">
+                    <h:outputText value="#{template.title}"/>
+                    <p:panel id="details" toggleable="true" closeable="true" widgetVar="details-#{template.id}" collapsed="true">
+                        <p:dataTable var="task" value="#{template.tasks}">
+                            <p:column headerText="Nr.">
+                                <h:outputText value="#{task.ordering}"/>
+                            </p:column>
+                            <p:column headerText="Vorgangstitel">
+                                <h:outputText value="#{task.localizedTitle}"/>
+                            </p:column>
+                            <p:column headerText="Status">
+                                <h:outputText value="#{task.processingStatus}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </p:column>
+
+                <!-- 3rd column -->
+                <p:column headerText="Projekt">
+                    <h:outputText value="#{template.project.title}"/>
+                </p:column>
+
+                <!-- 4th column -->
+                <p:column headerText="Aktionen" style="width: 150px;">
+                    <h:outputText>
+                        <h:link outcome="/pages/ProzessverwaltungBearbeiten" style="color: rgb(0,109,189); padding-right: 10px;">
+                            <i class="fa fa-pencil-square-o fa-lg"></i>
+                            <f:param name="id" value="#{template.id}"/>
+                        </h:link>
+                        <h:link outcome="" style="color: rgb(0,109,189); padding-right: 10px;">
+                            <i class="fa fa-clipboard fa-lg"></i>
+                        </h:link>
+                        <h:link outcome="" style="color: rgb(0,109,189); padding-right: 10px;">
+                            <i class="fa fa-inbox fa-lg"></i>
+                        </h:link>
+                        <h:link outcome="" style="color: rgb(0,109,189); padding-right: 10px;">
+                            <i class="fa fa-clone fa-lg"></i>
+                        </h:link>
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+        </p:panel>
+    </ui:define>
+</ui:composition>
