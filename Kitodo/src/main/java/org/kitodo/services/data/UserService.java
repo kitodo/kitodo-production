@@ -280,7 +280,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      * @return list of JSON objects
      */
     List<JSONObject> findByActive(boolean active) throws DataException {
-        QueryBuilder query = createSimpleQuery("active", String.valueOf(active), true, Operator.AND);
+        QueryBuilder query = createSimpleQuery("active", active, true);
         return searcher.findDocuments(query.toString(), sortByLogin());
     }
 
@@ -295,7 +295,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      */
     List<JSONObject> findByActiveAndName(boolean active, String name) throws DataException {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery.must(createSimpleQuery("active", String.valueOf(active), true, Operator.AND));
+        boolQuery.must(createSimpleQuery("active", active, true));
         BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
         nestedBoolQuery.should(createSimpleWildcardQuery("name", name));
         nestedBoolQuery.should(createSimpleWildcardQuery("surname", name));
@@ -447,6 +447,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
         userDTO.setLogin(getStringPropertyForDTO(userJSONObject, "login"));
         userDTO.setName(getStringPropertyForDTO(userJSONObject, "name"));
         userDTO.setSurname(getStringPropertyForDTO(userJSONObject, "surname"));
+        userDTO.setActive(getBooleanPropertyForDTO(userJSONObject, "active"));
         userDTO.setLdapLogin(getStringPropertyForDTO(userJSONObject, "ldapLogin"));
         userDTO.setLocation(getStringPropertyForDTO(userJSONObject, "location"));
         userDTO.setFullName(getFullName(userDTO));

@@ -31,7 +31,7 @@ public class UserType extends BaseType<User> {
         userObject.put("surname", user.getSurname());
         userObject.put("login", user.getLogin());
         userObject.put("ldapLogin", user.getLdapLogin());
-        userObject.put("active", String.valueOf(user.isActive()));
+        userObject.put("active", user.isActive());
         userObject.put("location", user.getLocation());
         userObject.put("metadataLanguage", user.getMetadataLanguage());
         userObject.put("userGroups", addObjectRelation(user.getUserGroups(), true));

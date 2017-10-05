@@ -116,36 +116,37 @@ public class TaskTypeTest {
         HttpEntity document = taskType.createDocument(task);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"process\":1,"
-                + "\"homeDirectory\":\"1\",\"typeAutomatic\":\"false\",\"ordering\":1,\"typeMetadata\":\"true\","
-                + "\"priority\":1,\"typeImportFileUpload\":\"false\",\"processingTime\":\"2017-02-17\","
-                + "\"processingBegin\":\"2017-02-01\",\"batchStep\":\"true\",\"users\":[{\"id\":1},{\"id\":2}],"
+                + "\"homeDirectory\":\"1\",\"typeAutomatic\":false,\"ordering\":1,\"typeMetadata\":true,"
+                + "\"priority\":1,\"typeImportFileUpload\":false,\"processingTime\":\"2017-02-17\","
+                + "\"processingBegin\":\"2017-02-01\",\"batchStep\":true,\"users\":[{\"id\":1},{\"id\":2}],"
                 + "\"processingUser\":1,\"processingStatus\":3,\"userGroups\":[{\"id\":1},{\"id\":2}],\"editType\":1,"
-                + "\"typeImagesWrite\":\"false\",\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":\"false\","
-                + "\"typeExportRussian\":\"false\",\"typeModuleName\":null}");
+                + "\"typeImagesWrite\":false,\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":false,"
+                + "\"typeExportRussian\":false,\"typeModuleName\":null}");
+
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(1);
         document = taskType.createDocument(task);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"process\":null,"
-                + "\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":2,\"typeMetadata\":\"false\","
-                + "\"title\":\"Rendering\",\"priority\":2,\"typeImportFileUpload\":\"false\","
-                + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-10\",\"batchStep\":\"false\","
+                + "\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":2,\"typeMetadata\":false,"
+                + "\"title\":\"Rendering\",\"priority\":2,\"typeImportFileUpload\":false,"
+                + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-10\",\"batchStep\":false,"
                 + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":2,\"processingStatus\":2,\"editType\":0,"
-                + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"typeImagesWrite\":\"false\",\"processingEnd\":null,"
-                + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\",\"typeModuleName\":null}");
+                + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"typeImagesWrite\":false,\"processingEnd\":null,"
+                + "\"typeImagesRead\":false,\"typeExportRussian\":false,\"typeModuleName\":null}");
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(2);
         document = taskType.createDocument(task);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"process\":null,"
-                + "\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":0,"
-                + "\"typeMetadata\":\"false\",\"priority\":0,\"typeImportFileUpload\":\"false\","
-                + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":\"false\",\"users\":[],"
+                + "\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":0,"
+                + "\"typeMetadata\":false,\"priority\":0,\"typeImportFileUpload\":false,"
+                + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":false,\"users\":[],"
                 + "\"processingUser\":null,\"processingStatus\":1,\"userGroups\":[],\"editType\":0,"
-                + "\"typeImagesWrite\":\"false\",\"processingEnd\":null,\"typeImagesRead\":\"false\","
-                + "\"typeExportRussian\":\"false\",\"typeModuleName\":null}");
+                + "\"typeImagesWrite\":false,\"processingEnd\":null,\"typeImagesRead\":false,"
+                + "\"typeExportRussian\":false,\"typeModuleName\":null}");
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

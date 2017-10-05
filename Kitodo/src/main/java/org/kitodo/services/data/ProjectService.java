@@ -184,7 +184,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
-        QueryBuilder query = createSimpleQuery("archived", archived.toString(), true);
+        QueryBuilder query = createSimpleQuery("archived", archived, true);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
@@ -280,8 +280,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setFileFormatInternal(getStringPropertyForDTO(projectJSONObject, "fileFormatInternal"));
         projectDTO.setNumberOfPages(getIntegerPropertyForDTO(projectJSONObject, "numberOfPages"));
         projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(projectJSONObject, "numberOfVolumes"));
-        // projectDTO.setProjectIsArchived(getStringPropertyForDTO(jsonObject,
-        // "archived"));
+        projectDTO.setProjectIsArchived(getBooleanPropertyForDTO(jsonObject, "archived"));
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }

@@ -143,7 +143,7 @@ public class ProjectTypeTest {
         Project project = prepareData().get(0);
         HttpEntity document = processType.createDocument(project);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"archived\":\"false\","
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"archived\":false,"
                 + "\"processes\":[{\"id\":1},{\"id\":2}],\"numberOfPages\":100, \"endDate\":\"2017-03-01\","
                 + "\"numberOfVolumes\":10,\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
                 + "(meta.CatalogIDDigital)\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":"
@@ -162,7 +162,7 @@ public class ProjectTypeTest {
         project = prepareData().get(1);
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"archived\":\"false\",\"processes\":"
+        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"archived\":false,\"processes\":"
                 + "[{\"id\":1},{\"id\":2}],\"numberOfPages\":2000,\"endDate\":\"2017-09-10\",\"numberOfVolumes\":20,"
                 + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital"
                 + ")\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":\"image\\/jpeg\",\"suffix\":"
@@ -181,7 +181,7 @@ public class ProjectTypeTest {
         project = prepareData().get(2);
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"archived\":\"false\",\"processes\":[],"
+        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"archived\":false,\"processes\":[],"
                 + "\"numberOfPages\":0,\"endDate\":\"" + dateFormat.format(project.getEndDate())
                 + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
                 + dateFormat.format(project.getEndDate()) + "\",\"fileFormatInternal\":\"XStream\","
