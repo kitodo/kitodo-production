@@ -55,7 +55,7 @@
     <!-- Add user -->
     <h:panelGroup>
         <p:commandLink value="#{msgs.benutzerHinzufuegen}"
-                       actionListener="#{BenutzerverwaltungForm.filterKeinMitZurueck()}"
+                       actionListener="#{ProzessverwaltungForm.activeUsers}"
                        oncomplete="PF('addUserDialog').show()"
                        styleClass="standardlink"/>
         <p:dialog widgetVar="addUserDialog" header="#{msgs.benutzerHinzufuegen}"

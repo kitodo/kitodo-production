@@ -707,8 +707,18 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String newTask() {
         this.task = new Task();
+        this.task.setProcess(this.process);
+        this.process.getTasks().add(this.task);
+        try {
+            serviceManager.getTaskService().save(task);
+        } catch (DataException e) {
+            logger.error(e);
+        }
+        save();
         this.modusBearbeiten = "schritt";
-        return "/pages/inc_Prozessverwaltung/schritt";
+        this.taskId = this.task.getId();
+        //TODO: enforce http://.../kitodo/pages/inc_Prozessverwaltung/schritt.jsf?id=6
+        return "/pages/inc_Prozessverwaltung?faces-redirect=true";
     }
 
     /**
@@ -717,12 +727,11 @@ public class ProzessverwaltungForm extends BasisForm {
     public void saveTask() {
         this.task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            task.setProcessingUser(ben);
+        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        if (user != null) {
+            task.setProcessingUser(user);
         }
-        this.process.getTasks().add(this.task);
-        this.task.setProcess(this.process);
+        this.process = this.task.getProcess();
         save();
     }
 
@@ -732,27 +741,34 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return page
      */
     public String deleteTask() {
+        this.process = this.task.getProcess();
         this.process.getTasks().remove(this.task);
-        save();
+        try {
+            serviceManager.getTaskService().remove(this.task);
+        } catch (DataException e) {
+            logger.error(e);
+        }
+
         deleteSymlinksFromUserHomes();
-        return "/pages/ProzessverwaltungBearbeiten";
+        //TODO: redirect to correct task
+        return "/pages/ProzessverwaltungBearbeiten?faces-redirect=true";
     }
 
     private void deleteSymlinksFromUserHomes() {
-        WebDav myDav = new WebDav();
+        WebDav webDav = new WebDav();
         /* alle Benutzer */
-        for (User b : this.task.getUsers()) {
+        for (User user : this.task.getUsers()) {
             try {
-                myDav.uploadFromHome(b, this.task.getProcess());
+                webDav.uploadFromHome(user, this.task.getProcess());
             } catch (RuntimeException e) {
                 logger.error(e);
             }
         }
         /* alle Benutzergruppen mit ihren Benutzern */
-        for (UserGroup bg : this.task.getUserGroups()) {
-            for (User b : bg.getUsers()) {
+        for (UserGroup userGroup : this.task.getUserGroups()) {
+            for (User user : userGroup.getUsers()) {
                 try {
-                    myDav.uploadFromHome(b, this.task.getProcess());
+                    webDav.uploadFromHome(user, this.task.getProcess());
                 } catch (RuntimeException e) {
                     logger.error(e);
                 }
@@ -770,7 +786,6 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             User user = serviceManager.getUserService().getById(userId);
             this.task.getUsers().remove(user);
-            save();
             return null;
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
@@ -788,7 +803,6 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
             this.task.getUserGroups().remove(userGroup);
-            save();
             return null;
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
@@ -811,7 +825,6 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
             this.task.getUserGroups().add(userGroup);
-            save();
             return null;
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
@@ -834,7 +847,6 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
             this.task.getUsers().add(user);
-            save();
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
             return null;
@@ -951,9 +963,9 @@ public class ProzessverwaltungForm extends BasisForm {
     public void exportDMSPage() {
         ExportDms export = new ExportDms();
         Boolean flagError = false;
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
+        for (ProcessDTO processDTO : (List<ProcessDTO>) this.page.getListReload()) {
             try {
-                Process process = serviceManager.getProcessService().convertDtoToBean(proz);
+                Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
             } catch (Exception e) {
                 // without this a new exception is thrown, if an exception
@@ -965,7 +977,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 } else {
                     errorMessage = e.toString();
                 }
-                Helper.setFehlerMeldung("ExportErrorID" + proz.getId() + ":", errorMessage);
+                Helper.setFehlerMeldung("ExportErrorID" + processDTO.getId() + ":", errorMessage);
                 logger.error(e);
                 flagError = true;
             }
@@ -1312,7 +1324,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Set my process.
+     * Set process.
      *
      * @param process
      *            Process object
@@ -1487,12 +1499,12 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProjektAuswahlListe() {
-        List<SelectItem> myProjekte = new ArrayList<>();
+        List<SelectItem> projects = new ArrayList<>();
         List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
-        for (Project proj : temp) {
-            myProjekte.add(new SelectItem(proj.getId(), proj.getTitle(), null));
+        for (Project project : temp) {
+            projects.add(new SelectItem(project.getId(), project.getTitle(), null));
         }
-        return myProjekte;
+        return projects;
     }
 
     /**
@@ -1736,7 +1748,6 @@ public class ProzessverwaltungForm extends BasisForm {
     /*
      * Downloads
      */
-
     public void downloadTiffHeader() throws IOException {
         TiffHeader tiff = new TiffHeader(this.process);
         tiff.exportStart();
@@ -2164,13 +2175,6 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void loadProcessProperties() {
-        try {
-            this.process = serviceManager.getProcessService().getById(this.process.getId());
-        } catch (Exception e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("could not refresh process with id " + this.process.getId(), e);
-            }
-        }
         this.containers = new TreeMap<>();
         this.processPropertyList = PropertyParser.getPropertiesForProcess(this.process);
 
@@ -2548,8 +2552,11 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void loadTask() {
         try {
-            if (!Objects.equals(this.taskId, null)) {
+            if (taskId != 0) {
                 setTask(this.serviceManager.getTaskService().getById(this.taskId));
+            } else {
+                //TODO: find way to redirect with usage of inserted task
+                setTask(this.serviceManager.getTaskService().getByQuery("FROM Task ORDER BY id DESC").get(0));
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving task with ID '" + this.taskId + "'; ", e.getMessage());
