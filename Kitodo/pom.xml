@@ -31,6 +31,8 @@
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
         <maxAllowedViolations>223</maxAllowedViolations>
+        <selenium.tomcat.baseversion>7</selenium.tomcat.baseversion>
+        <selenium.tomcat.subversion>0.81</selenium.tomcat.subversion>
     </properties>
 
     <dependencies>
@@ -734,7 +736,7 @@
                                 <containerId>tomcat7x</containerId>
                                 <zipUrlInstaller>
                                     <url>
-                                        http://mirror.softaculous.com/apache/tomcat/tomcat-7/v7.0.81/bin/apache-tomcat-7.0.81.zip
+                                        https://archive.apache.org/dist/tomcat/tomcat-${selenium.tomcat.baseversion}/v${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}//bin/apache-tomcat-${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}.zip
                                     </url>
                                     <downloadDir>${project.build.directory}/downloads</downloadDir>
                                     <extractDir>${project.build.directory}/extracts</extractDir>
@@ -745,7 +747,7 @@
                             <configuration>
                                 <type>existing</type>
                                 <home>
-                                    ${project.build.directory}/extracts/apache-tomcat-7.0.81/apache-tomcat-7.0.81
+                                    ${project.build.directory}/extracts/apache-tomcat-${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}/apache-tomcat-${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}
                                 </home>
                                 <properties>
                                     <cargo.logging>low</cargo.logging>
