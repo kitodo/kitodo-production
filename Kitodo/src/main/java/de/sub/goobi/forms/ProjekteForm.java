@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -799,20 +798,6 @@ public class ProjekteForm extends BasisForm {
 
     public int getItemId() {
         return this.itemId;
-    }
-
-    /**
-     * Return list of projects
-     *
-     * @return list of projects
-     */
-    public List<ProjectDTO> getProjects() {
-        try {
-            return serviceManager.getProjectService().findAll();
-        } catch (DataException e) {
-            logger.error("Unable to load projects: " + e.getMessage());
-            return new LinkedList<>();
-        }
     }
 
 }
