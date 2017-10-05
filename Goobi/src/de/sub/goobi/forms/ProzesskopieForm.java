@@ -565,7 +565,17 @@ public class ProzesskopieForm {
                     /* welches Docstruct */
                     DocStruct myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
                     if (field.getDocstruct().equals("firstchild")) {
-                        myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+                        List<DocStruct> allChildren = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren();
+                        if (allChildren != null) {
+                            myTempStruct = allChildren.get(0);
+                        } else {
+                            List<String> translationFields = new ArrayList<>();
+                            translationFields.add(field.getTitel());
+                            translationFields.add(this.docType);
+                            String translation = Helper.getTranslation("ErrorAdditionalFieldsNoChildForDocType", translationFields);
+                            Helper.setMeldung(translation);
+                            logger.info(translation);
+                        }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
                         myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
