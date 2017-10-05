@@ -31,8 +31,6 @@
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
         <maxAllowedViolations>223</maxAllowedViolations>
-        <selenium.tomcat.baseversion>7</selenium.tomcat.baseversion>
-        <selenium.tomcat.subversion>0.81</selenium.tomcat.subversion>
     </properties>
 
     <dependencies>
@@ -44,7 +42,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
-            <version>7.0.68</version>
+            <version>${tomcat.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -736,7 +734,7 @@
                                 <containerId>tomcat7x</containerId>
                                 <zipUrlInstaller>
                                     <url>
-                                        https://archive.apache.org/dist/tomcat/tomcat-${selenium.tomcat.baseversion}/v${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}//bin/apache-tomcat-${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}.zip
+                                        https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
                                     </url>
                                     <downloadDir>${project.build.directory}/downloads</downloadDir>
                                     <extractDir>${project.build.directory}/extracts</extractDir>
@@ -747,7 +745,7 @@
                             <configuration>
                                 <type>existing</type>
                                 <home>
-                                    ${project.build.directory}/extracts/apache-tomcat-${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}/apache-tomcat-${selenium.tomcat.baseversion}.${selenium.tomcat.subversion}
+                                    ${project.build.directory}/extracts/apache-tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}
                                 </home>
                                 <properties>
                                     <cargo.logging>low</cargo.logging>
