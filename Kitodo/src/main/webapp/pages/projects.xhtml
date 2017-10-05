@@ -14,14 +14,15 @@
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:f="http://java.sun.com/jsf/core">
+        >
     <ui:define name="content">
         <p:panel id="listWrapper" style="width: 95%; margin: auto; border-radius: 5px; padding: 0;">
             <p:panel style="text-align: left; position: relative; padding: 5px;">
                 <h3 style="display: inline;">Projekte</h3>
-                <p:button outcome="projectEdit" value="Neues Projekt" style="right: 5px; bottom: 5px; position: absolute;" icon="fa fa-plus-circle fa-lg"/>
+                <p:button outcome="projectEdit" value="#{msgs.newProject}" style="right: 5px; bottom: 5px; position: absolute;" icon="fa fa-plus-circle fa-lg"/>
             </p:panel>
             <p:dataTable var="project" value="#{ProjekteForm.projects}" style="margin-top: 10px;">
                 <p:column style="width: 16px;">
@@ -31,10 +32,16 @@
                     <h:outputText value="#{project.title}"/>
                 </p:column>
                 <p:column headerText="aktiv">
-                    <h:outputText rendered="#{!project.projectIsArchived}"><i class="fa fa-check-square-o" style="color: limegreen;"/></h:outputText>
-                    <h:outputText rendered="#{project.projectIsArchived}"><i class="fa fa-minus-square-o"/></h:outputText>
+                    <h:outputText>
+                        <ui:fragment rendered="#{not project.projectIsArchived}">
+                            <i class="fa fa-check-square-o" style="color: limegreen;"/>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{project.projectIsArchived}">
+                            <i class="fa fa-minus-square-o" style="color: darkred"/>
+                        </ui:fragment>
+                    </h:outputText>
                 </p:column>
-                <p:column headerText="Aktionen">
+                <p:column headerText="#{msgs.auswahl}">
                     <h:link outcome="projectEdit">
                         <f:param name="id" value="#{project.id}" />
                         <i class="fa fa-pencil-square-o" style="color: #2B6FB6; margin-right: 10px;"/>
