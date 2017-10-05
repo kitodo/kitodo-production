@@ -118,14 +118,21 @@
         </td>
         <td>
 
-            <h:form id="htmleditorform">
-                <h:inputText id="myTextArea" value="#{AktuelleSchritteForm.wikiField}" style="width: 50%"/>
-            </h:form>
-
-            <h:form id="addToWikiForm">
-                <h:inputText id="addToTextArea" value="#{AktuelleSchritteForm.addToWikiField}" style="width: 60%"/>
-                <h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{AktuelleSchritteForm.addToWikiField}"/>
-            </h:form>
+            <table>
+                <tr>
+                    <td style="border: 1px solid lightgray; height: 100px;">
+                        <h:outputText escape="false" value="#{AktuelleSchritteForm.wikiField}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h:form id="addToWikiForm">
+                            <h:inputText id="addToTextArea" value="#{AktuelleSchritteForm.addToWikiField}" style="width: 60%"/>
+                            <h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{AktuelleSchritteForm.addToWikiField}"/>
+                        </h:form>
+                    </td>
+                </tr>
+            </table>
 
         </td>
     </tr>

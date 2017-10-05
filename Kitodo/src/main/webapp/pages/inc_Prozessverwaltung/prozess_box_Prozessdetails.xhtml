@@ -149,14 +149,22 @@
             </td>
             <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">
                 <td>
-                    <h:form id="htmleditorform">
-                        <h:inputText id="myTextArea" value="#{ProzessverwaltungForm.wikiField}" style="width: 50%"/>
-                    </h:form>
 
-                    <h:form id="addToWikiForm">
-                        <h:inputText id="addToTextArea" value="#{ProzessverwaltungForm.addToWikiField}" style="width: 60%"/>
-                        <h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{ProzessverwaltungForm.addToWikiField}"/>
-                    </h:form>
+                    <table>
+                        <tr>
+                            <td style="border: 1px solid lightgray; height: 100px;">
+                                <h:outputText escape="false" value="#{ProzessverwaltungForm.wikiField}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h:form id="addToWikiForm">
+                                    <h:inputText id="addToTextArea" value="#{ProzessverwaltungForm.addToWikiField}" style="width: 60%"/>
+                                    <h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{ProzessverwaltungForm.addToWikiField}"/>
+                                </h:form>
+                            </td>
+                        </tr>
+                    </table>
 
                 </td>
             </ui:fragment>
