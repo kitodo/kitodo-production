@@ -38,7 +38,7 @@
                         <!-- Upload-Schaltknopf -->
                         <h:commandLink
                                 rendered="#{LoginForm.myBenutzer.withMassDownload and ProzessverwaltungForm.page.totalResults > 0 }"
-                                id="action1" action="#{ProzessverwaltungForm.UploadFromHomeAlle}"
+                                id="action1" action="#{ProzessverwaltungForm.uploadFromHomeAll}"
                                 title="#{msgs.verzeichnisFertigAusHomeverzeichnisEntfernen}"
                                 onclick="if (!confirm('#{msgs.upload}?')) return">
                             <h:graphicImage value="/pages/images/buttons/load_up_set_20px.gif" alt="upload set"
@@ -64,7 +64,7 @@
 
                                     <!-- Download-Schaltknopf für Selection-->
                                     <h:commandLink id="action2"
-                                                   action="#{ProzessverwaltungForm.DownloadToHomeSelection}"
+                                                   action="#{ProzessverwaltungForm.downloadToHomeSelection}"
                                                    rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
                                                    title="#{msgs.auswahl2}"
                                                    onclick="if (!confirm('#{msgs.download}?')) return">
@@ -72,14 +72,14 @@
                                     </h:commandLink>
 
                                     <!-- Download-Schaltknopf für Page-->
-                                    <h:commandLink id="action3" action="#{ProzessverwaltungForm.DownloadToHomePage}"
+                                    <h:commandLink id="action3" action="#{ProzessverwaltungForm.downloadToHomePage}"
                                                    title="#{msgs.trefferDieserSeite}"
                                                    onclick="if (!confirm('#{msgs.download}?')) return">
                                         <h:outputText value="- #{msgs.trefferDieserSeite}"/>
                                     </h:commandLink>
 
                                     <!-- Download-Schaltknopf für gesamtes Trefferset -->
-                                    <h:commandLink id="action4" action="#{ProzessverwaltungForm.DownloadToHomeHits}"
+                                    <h:commandLink id="action4" action="#{ProzessverwaltungForm.downloadToHomeHits}"
                                                    title="#{msgs.gesamtesTrefferset}"
                                                    onclick="if (!confirm('#{msgs.download}?')) return">
                                         <h:outputText value="- #{msgs.gesamtesTrefferset}"/>
@@ -110,7 +110,7 @@
                                                   value="#{msgs.timeoutWarningDMS}"/>
 
                                     <!-- Download-Schaltknopf für Selection-->
-                                    <h:commandLink id="action6" action="#{ProzessverwaltungForm.ExportDMSSelection}"
+                                    <h:commandLink id="action6" action="#{ProzessverwaltungForm.exportDMSSelection}"
                                                    rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
                                                    title="#{msgs.auswahl2}"
                                                    onclick="if (!confirm('#{msgs.download}?')) return">
@@ -118,14 +118,14 @@
                                     </h:commandLink>
 
                                     <!-- Download-Schaltknopf für Page-->
-                                    <h:commandLink action="#{ProzessverwaltungForm.ExportDMSPage}"
+                                    <h:commandLink action="#{ProzessverwaltungForm.exportDMSPage}"
                                                    title="#{msgs.trefferDieserSeite}" id="action7"
                                                    onclick="if (!confirm('#{msgs.download}?')) return">
                                         <h:outputText value="- #{msgs.trefferDieserSeite}"/>
                                     </h:commandLink>
 
                                     <!-- Download-Schaltknopf für gesamtes Trefferset -->
-                                    <h:commandLink action="#{ProzessverwaltungForm.ExportDMSHits}"
+                                    <h:commandLink action="#{ProzessverwaltungForm.exportDMSHits}"
                                                    title="#{msgs.gesamtesTrefferset}" id="action8"
                                                    onclick="if (!confirm('#{msgs.download}?')) return">
                                         <h:outputText value="- #{msgs.gesamtesTrefferset}"/>
@@ -379,7 +379,7 @@
                                 <h:panelGrid columns="1" style="margin-left:40px">
                                     <!-- Statistische Auswertung-Schaltknopf für Page-->
                                     <h:commandLink id="action20"
-                                                   action="#{ProzessverwaltungForm.CalcMetadataAndImagesSelection}"
+                                                   action="#{ProzessverwaltungForm.calculateMetadataAndImagesSelection}"
                                                    rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
                                                    title="#{msgs.auswahl2}">
                                         <h:outputText value="- #{msgs.auswahl2}"/>
@@ -387,14 +387,14 @@
 
                                     <!-- Statistische Auswertung-Schaltknopf für Page-->
                                     <h:commandLink id="action21"
-                                                   action="#{ProzessverwaltungForm.CalcMetadataAndImagesPage}"
+                                                   action="#{ProzessverwaltungForm.calculateMetadataAndImagesPage}"
                                                    title="#{msgs.trefferDieserSeite}">
                                         <h:outputText value="- #{msgs.trefferDieserSeite}"/>
                                     </h:commandLink>
 
                                     <!-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset -->
                                     <h:commandLink id="action22"
-                                                   action="#{ProzessverwaltungForm.CalcMetadataAndImagesHits}"
+                                                   action="#{ProzessverwaltungForm.calculateMetadataAndImagesHits}"
                                                    title="#{msgs.gesamtesTrefferset}"
                                                    onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                         <h:outputText value="- #{msgs.gesamtesTrefferset}"/>
@@ -512,7 +512,7 @@
                                     <h:outputText value="#{msgs.showClosedProcesses}:"/>
                                     <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.showClosedProcesses}"/>
                                 </h:panelGrid>
-                                <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}"
+                                <h:commandLink action="#{ProzessverwaltungForm.filterAll}"
                                                style="margin-left:44px"
                                                title="#{msgs.uebernehmen}">
                                     <h:outputText value="#{msgs.uebernehmen}"/>

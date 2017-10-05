@@ -108,7 +108,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     /**
      * Anzeige der gefilterten Nutzer.
      */
-    public String filterAlleStart() {
+    public String filterAll() {
         List<UserDTO> users = new ArrayList<>();
         try {
             if (this.filter != null && this.filter.length() != 0) {

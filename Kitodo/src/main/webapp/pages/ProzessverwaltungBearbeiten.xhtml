@@ -26,7 +26,7 @@
     >
     <f:metadata>
         <f:viewParam name="id" value="#{ProzessverwaltungForm.processId}"/>
-        <f:viewAction action="#{ProzessverwaltungForm.loadMyProcess}" />
+        <f:viewAction action="#{ProzessverwaltungForm.loadProcess}" />
     </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -50,9 +50,9 @@
                                     <h:link id="id3" value="#{msgs.prozessverwaltung}" outcome="/pages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.einenNeuenProzessAnlegen}"
-                                                  rendered="#{ProzessverwaltungForm.myProzess.id == null}"/>
+                                                  rendered="#{ProzessverwaltungForm.process.id == null}"/>
                                     <h:outputText id="id5" value="#{msgs.prozessDetails}"
-                                                  rendered="#{ProzessverwaltungForm.myProzess.id != null}"/>
+                                                  rendered="#{ProzessverwaltungForm.process.id != null}"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                         </h:form>
@@ -62,9 +62,9 @@
                                 <td>
                                     <h3>
                                         <h:outputText id="id6" value="#{msgs.einenNeuenProzessAnlegen}"
-                                                      rendered="#{ProzessverwaltungForm.myProzess.id == null}"/>
+                                                      rendered="#{ProzessverwaltungForm.process.id == null}"/>
                                         <h:outputText id="id7" value="#{msgs.prozessDetails}"
-                                                      rendered="#{ProzessverwaltungForm.myProzess.id != null}"/>
+                                                      rendered="#{ProzessverwaltungForm.process.id != null}"/>
                                     </h3>
 
                                     <!-- globale Warn- und Fehlermeldungen -->
@@ -76,19 +76,19 @@
 
                                     <h:form id="proceditform" onkeypress="ifEnterClick(event, 'proceditform:absenden');">
 
-                                        <f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null}">
+                                        <f:subview id="sub001" rendered="#{ProzessverwaltungForm.process.id != null}">
                                             <!-- Schritte -->
                                             <ui:include src="inc_Prozessverwaltung/prozess_box_Schritte.xhtml" />
 
                                             <!-- Vorlagen -->
                                             <f:subview id="subVorlage"
-                                                       rendered="#{ProzessverwaltungForm.myProzess.templatesSize != 0}">
+                                                       rendered="#{ProzessverwaltungForm.process.templatesSize != 0}">
                                                 <ui:include src="inc_Prozessverwaltung/prozess_box_Vorlagen.xhtml" />
                                             </f:subview>
 
                                             <!-- Werkstuecke -->
                                             <f:subview id="subWerk"
-                                                       rendered="#{ProzessverwaltungForm.myProzess.workpiecesSize != 0}">
+                                                       rendered="#{ProzessverwaltungForm.process.workpiecesSize != 0}">
                                                 <ui:include src="inc_Prozessverwaltung/prozess_box_Werkstuecke.xhtml" />
                                             </f:subview>
 

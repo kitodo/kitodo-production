@@ -23,7 +23,7 @@
                 <h:outputText value="#{msgs.eigenschaften}"/>
             </td>
             <td class="main_statistikboxen_row1" align="right">
-                <h:commandLink action="#{ProzessverwaltungForm.Reload}">
+                <h:commandLink action="#{ProzessverwaltungForm.reload}">
                     <h:graphicImage value="/pages/images/reload.gif" alt="reload"/>
                 </h:commandLink>
             </td>
@@ -38,7 +38,7 @@
                             <h:outputText value="#{msgs.id}:"/>
                         </td>
                         <td>
-                            <h:outputText value="#{ProzessverwaltungForm.myWerkstueck.id}"/>
+                            <h:outputText value="#{ProzessverwaltungForm.workpiece.id}"/>
                         </td>
                         <td rowspan="2" align="right">
 

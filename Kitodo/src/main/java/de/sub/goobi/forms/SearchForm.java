@@ -409,7 +409,7 @@ public class SearchForm {
         if (form != null) {
             form.filter = search;
             form.setModusAnzeige("aktuell");
-            return form.filterAlleStart();
+            return form.filterAll();
         }
         return null;
     }

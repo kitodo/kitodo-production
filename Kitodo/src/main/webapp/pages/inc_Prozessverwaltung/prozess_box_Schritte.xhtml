@@ -31,7 +31,7 @@
                  cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
                  rowClasses="standardTable_Row1,standardTable_Row2"
                  columnClasses="standardTable_ColumnCentered,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
-                 var="item" value="#{ProzessverwaltungForm.myProzess.tasks}"
+                 var="item" value="#{ProzessverwaltungForm.process.tasks}"
                  sortBy="#{item.ordering}">
 
         <!-- ===================== Reihenfolge ====================== -->
@@ -41,20 +41,20 @@
             </f:facet>
             <h:outputText value="#{item.ordering}"/>
             <!-- Schaltknopf: Reihenfolge nach oben -->
-            <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeUp}"
+            <h:commandLink action="#{ProzessverwaltungForm.setOrderingUp}"
                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                 <h:graphicImage value="/pages/images/buttons/order_up_klein.gif" alt="sort ascending"
                                 style="margin-left:5px;vertical-align:middle"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.mySchritt}"
+                <t:updateActionListener property="#{ProzessverwaltungForm.task}"
                                         value="#{item}"/>
                 <f:ajax render="vorgaenge"/>
             </h:commandLink>
             <!-- Schaltknopf: Reihenfolge nach unten -->
-            <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeDown}"
+            <h:commandLink action="#{ProzessverwaltungForm.setOrderingDown}"
                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                 <h:graphicImage value="/pages/images/buttons/order_down_klein.gif" alt="sort descending"
                                 style="vertical-align:middle"/>
-                <t:updateActionListener property="#{ProzessverwaltungForm.mySchritt}"
+                <t:updateActionListener property="#{ProzessverwaltungForm.task}"
                                         value="#{item}"/>
                 <f:ajax render="vorgaenge"/>
             </h:commandLink>
@@ -145,22 +145,22 @@
                              style="background: transparent"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                     <!-- Bearbeitungsstatus hoch und runter -->
-                    <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusUp}"
+                    <h:commandLink action="#{ProzessverwaltungForm.taskStatusUp}"
                                    title="#{msgs.statusHoeherSetzen}">
                         <h:graphicImage alt="status up"
                                         value="/pages/images/buttons/order_right_klein.gif"/>
                         <t:updateActionListener
-                            property="#{ProzessverwaltungForm.mySchrittReload}"
+                            property="#{ProzessverwaltungForm.taskReload}"
                             value="#{item}"/>
                         <f:ajax render="statuscolumn"/>
                     </h:commandLink>
                     <!-- Bearbeitungsstatus hoch und runter -->
-                    <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusDown}"
+                    <h:commandLink action="#{ProzessverwaltungForm.taskStatusDown}"
                                    title="#{msgs.statusRunterSetzen}">
                         <h:graphicImage alt="status down"
                                         value="/pages/images/buttons/order_left_klein.gif"/>
                         <t:updateActionListener
-                            property="#{ProzessverwaltungForm.mySchrittReload}"
+                            property="#{ProzessverwaltungForm.taskReload}"
                             value="#{item}"/>
                         <f:ajax render="statuscolumn"/>
                     </h:commandLink>
@@ -184,8 +184,8 @@
     </p:dataTable>
 
     <!-- newUser-Schaltknopf -->
-    <h:commandLink id="addStepLink" action="#{ProzessverwaltungForm.SchrittNeu}"
+    <h:commandLink id="addStepLink" action="#{ProzessverwaltungForm.newTask}"
                    value="#{msgs.schrittHinzufuegen}" title="#{msgs.schrittHinzufuegen}"
-                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2) and (ProzessverwaltungForm.myProzess.title != '')}">
+                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2) and (ProzessverwaltungForm.process.title != '')}">
     </h:commandLink>
 </ui:composition>

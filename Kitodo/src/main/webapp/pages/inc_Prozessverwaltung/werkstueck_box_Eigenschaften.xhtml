@@ -32,7 +32,7 @@
                  cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
                  rowClasses="standardTable_Row1"
                  columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
-                 var="item" value="#{ProzessverwaltungForm.myWerkstueck.eigenschaftenList}"
+                 var="item" value="#{ProzessverwaltungForm.workpiece.eigenschaftenList}"
                  rendered="#{ProzessverwaltungForm.modusBearbeiten!='werkstueckeigenschaft'}">
 
         <h:column>
@@ -58,7 +58,7 @@
                            title="#{msgs.bearbeiten}">
                 <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
                 <t:updateActionListener
-                        property="#{ProzessverwaltungForm.myWerkstueckEigenschaft}"
+                        property="#{ProzessverwaltungForm.workpieceProperty}"
                         value="#{item}"/>
                 <t:updateActionListener
                         property="#{ProzessverwaltungForm.modusBearbeiten}"
@@ -108,7 +108,7 @@
                         <h:panelGroup>
                             <h:inputText id="eigenschafttitel"
                                          style="width: 300px;margin-right:15px"
-                                         value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.title}"
+                                         value="#{ProzessverwaltungForm.workpieceProperty.title}"
                                          required="true"/>
                             <t:message for="eigenschafttitel" style="color: red"
                                        detailFormat="#{msgs.keinTitelAngegeben}"/>
@@ -118,7 +118,7 @@
                         <h:panelGroup>
                             <h:inputText id="eigenschaftwert"
                                          style="width: 300px;margin-right:15px"
-                                         value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.value}"/>
+                                         value="#{ProzessverwaltungForm.workpieceProperty.value}"/>
                         </h:panelGroup>
                     </h:panelGrid>
 
@@ -137,7 +137,7 @@
                     <h:commandButton value="#{msgs.loeschen}"
                                      action="#{ProzessverwaltungForm.WerkstueckEigenschaftLoeschen}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-                                     rendered="#{ProzessverwaltungForm.myWerkstueckEigenschaft.id != null}">
+                                     rendered="#{ProzessverwaltungForm.workpieceProperty.id != null}">
                         <t:updateActionListener
                                 property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
                     </h:commandButton>

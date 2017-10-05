@@ -135,7 +135,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Anzeige der Schritte.
      */
-    public String filterAlleStart() {
+    public String filterAll() {
         try {
             List<TaskDTO> tasks;
             if (!showAutomaticTasks) {
@@ -165,7 +165,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @PostConstruct
     public void initializeTaskList() {
-        filterAlleStart();
+        filterAll();
     }
 
     /**
@@ -445,7 +445,7 @@ public class AktuelleSchritteForm extends BasisForm {
             logger.error("Task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
-        return filterAlleStart();
+        return filterAll();
     }
 
     /**
@@ -533,7 +533,7 @@ public class AktuelleSchritteForm extends BasisForm {
         // it returns null! - not possible to close task
         Task t = serviceManager.getTaskService().getById(this.mySchritt.getId());
         serviceManager.getTaskService().close(t, true);
-        return filterAlleStart();
+        return filterAll();
     }
 
     public String sperrungAufheben() {
@@ -622,7 +622,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         this.problemMessage = "";
         this.myProblemID = 0;
-        return filterAlleStart();
+        return filterAll();
     }
 
     /**
@@ -706,7 +706,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         this.solutionMessage = "";
         this.mySolutionID = 0;
-        return filterAlleStart();
+        return filterAll();
     }
 
     /**
@@ -759,7 +759,7 @@ public class AktuelleSchritteForm extends BasisForm {
          */
         if (fertigListe != null && fertigListe.size() > 0 && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
-            filterAlleStart();
+            filterAll();
         }
         for (URI element : fertigListe) {
             String myID = element.toString()
@@ -1030,7 +1030,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
              */
             if (this.page == null && Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
-                filterAlleStart();
+                filterAll();
             }
             Integer inParam = Integer.valueOf(param);
             if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {

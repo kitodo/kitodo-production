@@ -30,7 +30,7 @@
                                     <h:outputText value="#{msgs.prozess}"/>
                                 </td>
                                 <td class="main_statistikboxen_row1" align="right">
-                                    <h:commandLink action="#{ProzessverwaltungForm.Reload}">
+                                    <h:commandLink action="#{ProzessverwaltungForm.reload}">
                                         <h:graphicImage value="/pages/images/reload.gif" alt="reload"/>
                                     </h:commandLink>
                                 </td>
@@ -44,7 +44,7 @@
                                                 <h:outputText value="#{msgs.prozessTitel}:"/>
                                             </td>
                                             <td>
-                                                <h:outputText value="#{ProzessverwaltungForm.myProzess.title}"/>
+                                                <h:outputText value="#{ProzessverwaltungForm.process.title}"/>
                                             </td>
                                             <ui:fragment rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                                 <td rowspan="2" align="right">
@@ -63,7 +63,7 @@
                                                 <h:outputText value="#{msgs.projekt}:"/>
                                             </td>
                                             <td>
-                                                <h:outputText value="#{ProzessverwaltungForm.myProzess.project.title}"/>
+                                                <h:outputText value="#{ProzessverwaltungForm.process.project.title}"/>
                                             </td>
                                         </tr>
 
@@ -74,7 +74,7 @@
                                             </td>
                                             <td>
                                                 <h:outputText
-                                                        value="#{ProzessverwaltungForm.myProzess.ausgabename}" />
+                                                        value="#{ProzessverwaltungForm.process.ausgabename}" />
                                             </td>
                                         </tr>
                                         -->
@@ -83,7 +83,7 @@
                                                 <h:outputText value="#{msgs.erstellungsdatum}:"/>
                                             </td>
                                             <td>
-                                                <h:outputText value="#{ProzessverwaltungForm.myProzess.creationDate}"/>
+                                                <h:outputText value="#{ProzessverwaltungForm.process.creationDate}"/>
                                             </td>
                                         </tr>
 
@@ -92,7 +92,7 @@
                                                 <h:outputText value="#{msgs.regelsatz}:"/>
                                             </td>
                                             <td>
-                                                <h:outputText value="#{ProzessverwaltungForm.myProzess.ruleset.title}"/>
+                                                <h:outputText value="#{ProzessverwaltungForm.process.ruleset.title}"/>
                                             </td>
                                         </tr>
 
@@ -102,9 +102,9 @@
                                             </td>
                                             <td>
                                                 <h:graphicImage value="/pages/images/check_false.gif" alt="do not show in list"
-                                                                rendered="#{not ProzessverwaltungForm.myProzess.inChoiceListShown}"/>
+                                                                rendered="#{not ProzessverwaltungForm.process.inChoiceListShown}"/>
                                                 <h:graphicImage value="/pages/images/check_true.gif" alt="show in list"
-                                                                rendered="#{ProzessverwaltungForm.myProzess.inChoiceListShown}"/>
+                                                                rendered="#{ProzessverwaltungForm.process.inChoiceListShown}"/>
                                             </td>
                                         </tr>
 
@@ -114,9 +114,9 @@
                                             </td>
                                             <td>
                                                 <h:graphicImage value="/pages/images/check_false.gif" alt="is not template"
-                                                                rendered="#{not ProzessverwaltungForm.myProzess.template}"/>
+                                                                rendered="#{not ProzessverwaltungForm.process.template}"/>
                                                 <h:graphicImage value="/pages/images/check_true.gif" alt="is template"
-                                                                rendered="#{ProzessverwaltungForm.myProzess.template}"/>
+                                                                rendered="#{ProzessverwaltungForm.process.template}"/>
                                             </td>
                                         </tr>
 
@@ -126,7 +126,7 @@
                                             </td>
                                             <td>
                                                 <h:outputText styleClass="text_light"
-                                                              value="#{ProzessverwaltungForm.myProzess.id}"/>
+                                                              value="#{ProzessverwaltungForm.process.id}"/>
                                             </td>
                                         </tr>
 
@@ -136,7 +136,7 @@
                                             </td>
                                             <td>
                                                 <h:outputText styleClass="text_light"
-                                                              value="#{ProzessverwaltungForm.myProzess.batchID}"/>
+                                                              value="#{ProzessverwaltungForm.process.batchID}"/>
                                             </td>
                                         </tr>
                                     </table>
@@ -181,7 +181,7 @@
                             <h:outputLabel for="titel" value="#{msgs.prozessTitel}"/>
                             <h:panelGroup>
                                 <h:inputText id="titel" style="width: 300px;margin-right:15px"
-                                             value="#{ProzessverwaltungForm.myNewProcessTitle}" required="true"/>
+                                             value="#{ProzessverwaltungForm.newProcessTitle}" required="true"/>
                                 <t:message for="titel" style="color: red" detailFormat="#{msgs.keinTitelAngegeben}"/>
                             </h:panelGroup>
 
@@ -200,14 +200,14 @@
                             <h:panelGroup>
                                 <h:inputText id="ausgabename"
                                              style="width: 300px;margin-right:15px"
-                                             value="#{ProzessverwaltungForm.myProzess.ausgabename}" />
+                                             value="#{ProzessverwaltungForm.process.ausgabename}" />
                                 <t:message for="ausgabename" style="color: red" />
                             </h:panelGroup>
                             -->
                             <!-- Preferences -->
                             <h:outputLabel for="Regelsatz" value="#{msgs.regelsatz}"/>
                             <h:panelGroup>
-                                <h:selectOneMenu id="Regelsatz" value="#{ProzessverwaltungForm.myProzess.ruleset}"
+                                <h:selectOneMenu id="Regelsatz" value="#{ProzessverwaltungForm.process.ruleset}"
                                                  converter="RegelsatzConverter"
                                                  style="width: 300px;margin-right:15px" required="true">
                                     <f:selectItems value="#{HelperForm.regelsaetze}"/>
@@ -218,7 +218,7 @@
                             <h:outputLabel for="docket" value="#{msgs.docket}"/>
                             <h:panelGroup>
                                 <h:selectOneMenu id="docket" style="width: 300px;margin-right:15px"
-                                                 value="#{ProzessverwaltungForm.myProzess.docket}"
+                                                 value="#{ProzessverwaltungForm.process.docket}"
                                                  converter="DocketConverter">
                                     <!-- 							<f:selectItem itemValue="" itemLabel="#{msgs.defaultDocket}" /> -->
                                     <f:selectItems value="#{HelperForm.dockets}"/>
@@ -226,10 +226,10 @@
                             </h:panelGroup>
 
                             <h:outputText value="#{msgs.inAuswahllisteAnzeigen}"/>
-                            <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.myProzess.inChoiceListShown}"/>
+                            <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.process.inChoiceListShown}"/>
 
                             <h:outputText value="#{msgs.istTemplate}"/>
-                            <h:selectBooleanCheckbox id="check" value="#{ProzessverwaltungForm.myProzess.template}"/>
+                            <h:selectBooleanCheckbox id="check" value="#{ProzessverwaltungForm.process.template}"/>
                         </h:panelGrid>
 
                     </td>
@@ -242,13 +242,13 @@
                         </h:commandButton>
                     </td>
                     <td class="eingabeBoxen_row3" align="right">
-                        <h:commandButton value="#{msgs.contentLoeschen}" action="#{ProzessverwaltungForm.ContentLoeschen}"
+                        <h:commandButton value="#{msgs.contentLoeschen}" action="#{ProzessverwaltungForm.deleteContent}"
                                          onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}?')"
-                                         rendered="#{ProzessverwaltungForm.myProzess.id != null}"/>
-                        <h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.Loeschen}"
+                                         rendered="#{ProzessverwaltungForm.process.id != null}"/>
+                        <h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.delete}"
                                          onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-                                         rendered="#{ProzessverwaltungForm.myProzess.id != null}"/>
-                        <h:commandButton value="#{msgs.speichern}" action="#{ProzessverwaltungForm.Speichern}" id="absenden">
+                                         rendered="#{ProzessverwaltungForm.process.id != null}"/>
+                        <h:commandButton value="#{msgs.speichern}" action="#{ProzessverwaltungForm.save}" id="absenden">
                             <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
                         </h:commandButton>
                     </td>
