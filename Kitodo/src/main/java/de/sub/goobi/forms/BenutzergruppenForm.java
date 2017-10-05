@@ -160,18 +160,4 @@ public class BenutzergruppenForm extends BasisForm {
     public int getUserGroupId() {
         return this.userGroupId;
     }
-
-    /**
-     * Return list of user groups
-     *
-     * @return list of user groups
-     */
-    public List<UserGroupDTO> getUsergroups() {
-        try {
-            return serviceManager.getUserGroupService().findAll();
-        } catch (DataException e) {
-            logger.error("Unable to load user groups: " + e.getMessage());
-            return new LinkedList<>();
-        }
-    }
 }

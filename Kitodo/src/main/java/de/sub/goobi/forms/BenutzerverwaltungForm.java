@@ -45,7 +45,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzerverwaltungForm")
@@ -128,20 +130,6 @@ public class BenutzerverwaltungForm extends BasisForm {
             return serviceManager.getUserService().findAllActiveUsers();
         } else {
             return serviceManager.getUserService().findAllVisibleUsers();
-        }
-    }
-
-    /**
-     * Return list of users.
-     *
-     * @return list of user groups
-     */
-    public List<UserDTO> getActiveUsers() {
-        try {
-            return serviceManager.getUserService().findAllActiveUsers();
-        } catch (DataException e) {
-            logger.error("Unable to load users: " + e.getMessage());
-            return new LinkedList<>();
         }
     }
 
@@ -424,4 +412,31 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.userId = id;
     }
 
+    /**
+     * Return list of projects.
+     *
+     * @return list of projects
+     */
+    public List<ProjectDTO> getProjects() {
+        try {
+            return serviceManager.getProjectService().findAll(true);
+        } catch (DataException e) {
+            logger.error("Unable to load projects: " + e.getMessage());
+            return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Return list of user groups.
+     *
+     * @return list of user groups
+     */
+    public List<UserGroupDTO> getUserGroups() {
+        try {
+            return serviceManager.getUserGroupService().findAll();
+        } catch (DataException e) {
+            logger.error("Unable to load user groups: " + e.getMessage());
+            return new LinkedList<>();
+        }
+    }
 }
