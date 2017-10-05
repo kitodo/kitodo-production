@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
-            <version>7.0.68</version>
+            <version>${tomcat.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -734,7 +734,7 @@
                                 <containerId>tomcat7x</containerId>
                                 <zipUrlInstaller>
                                     <url>
-                                        http://mirror.softaculous.com/apache/tomcat/tomcat-7/v7.0.81/bin/apache-tomcat-7.0.81.zip
+                                        https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
                                     </url>
                                     <downloadDir>${project.build.directory}/downloads</downloadDir>
                                     <extractDir>${project.build.directory}/extracts</extractDir>
@@ -745,7 +745,7 @@
                             <configuration>
                                 <type>existing</type>
                                 <home>
-                                    ${project.build.directory}/extracts/apache-tomcat-7.0.81/apache-tomcat-7.0.81
+                                    ${project.build.directory}/extracts/apache-tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}
                                 </home>
                                 <properties>
                                     <cargo.logging>low</cargo.logging>
