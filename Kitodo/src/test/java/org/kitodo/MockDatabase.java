@@ -20,6 +20,7 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
+import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.LocalDate;
@@ -68,11 +70,23 @@ public class MockDatabase {
     private static final String HTTP_TRANSPORT_PORT = "9305";
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static final ServiceManager serviceManager = new ServiceManager();
+    private static Server tcpServer;
+
+    public static void startDatabaseServer() throws SQLException {
+        tcpServer = Server.createTcpServer().start();
+    }
+
+    public static void stopDatabaseServer() throws SQLException {
+        if(tcpServer.isRunning(true)){
+            tcpServer.shutdown();
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public static void startNode() throws Exception {
         String nodeName = randomString(6);
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
+
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         indexRestClient = initializeIndexRestClient();
 
@@ -674,7 +688,7 @@ public class MockDatabase {
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
         firstUser.setLogin("kowal");
-        firstUser.setPassword("test");
+        firstUser.setPasswordDecrypted("test");
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);

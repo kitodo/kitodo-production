@@ -43,7 +43,11 @@ public class KitodoServiceLoader<T> {
      */
     public KitodoServiceLoader(Class clazz, String modulePath) {
         this.clazz = clazz;
-        this.modulePath = modulePath;
+        if (!new File(modulePath).exists()) {
+                logger.error("Specified module folder does not exist: " + modulePath);
+        } else {
+            this.modulePath = modulePath;
+        }
     }
 
     /**

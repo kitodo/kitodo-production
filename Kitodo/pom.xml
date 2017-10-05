@@ -12,7 +12,7 @@
  *
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kitodo</artifactId>
     <packaging>war</packaging>
@@ -271,6 +271,31 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>1.8.6</version>
+        </dependency>
+
+        <!--https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>3.5.3</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.5</version>
         </dependency>
 
         <dependency>
@@ -534,6 +559,12 @@
             <artifactId>truezip</artifactId>
             <version>6.6</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.xeustechnologies/jtar -->
+        <dependency>
+            <groupId>org.xeustechnologies</groupId>
+            <artifactId>jtar</artifactId>
+            <version>1.1</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -583,15 +614,17 @@
             <!-- The resources will be placed in reversed order in the war
               that means first entry will be added as last resource and may override other resources -->
             <resource>
-                <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
-                <directory>../config-local</directory>
-            </resource>
-            <resource>
-                <directory>src/main/java</directory>
+                <!-- ATTENTION! This config is only loaded in all-tests and selenium profile with specified path-->
+                <directory>${build.resources.path}</directory>
+                <filtering>true</filtering>
                 <includes>
                     <include>**/*.xml</include>
                     <include>**/*.properties</include>
                 </includes>
+            </resource>
+            <resource>
+                <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
+                <directory>../config-local</directory>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
@@ -629,6 +662,9 @@
     <profiles>
         <profile>
             <id>all-tests</id>
+            <properties>
+                <build.resources.path>src/test/resources</build.resources.path>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -647,6 +683,129 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
 
+        <profile>
+            <id>selenium</id>
+            <properties>
+                <build.resources.path>src/test/resources/selenium/resources</build.resources.path>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>1.4.193</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- Copy config local resources to target -->
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/resources</outputDirectory>
+                                    <includeEmptyDirs>true</includeEmptyDirs>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/src/test/resources/selenium/config_local/</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.6.4</version>
+
+                        <configuration>
+                            <!-- Provide Tomcat -->
+                            <container>
+                                <containerId>tomcat7x</containerId>
+                                <zipUrlInstaller>
+                                    <url>
+                                        http://mirror.softaculous.com/apache/tomcat/tomcat-7/v7.0.81/bin/apache-tomcat-7.0.81.zip
+                                    </url>
+                                    <downloadDir>${project.build.directory}/downloads</downloadDir>
+                                    <extractDir>${project.build.directory}/extracts</extractDir>
+                                </zipUrlInstaller>
+                            </container>
+
+                            <!-- Tomcat configuration -->
+                            <configuration>
+                                <type>existing</type>
+                                <home>
+                                    ${project.build.directory}/extracts/apache-tomcat-7.0.81/apache-tomcat-7.0.81
+                                </home>
+                                <properties>
+                                    <cargo.logging>low</cargo.logging>
+                                </properties>
+                            </configuration>
+                            <deployables>
+                                <deployable>
+                                    <location>${project.build.directory}/kitodo-${project.version}.war</location>
+                                    <type>war</type>
+                                </deployable>
+                            </deployables>
+                        </configuration>
+
+                        <executions>
+                            <!-- start Tomcat -->
+                            <execution>
+                                <id>start-container</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <!-- stop Tomcat -->
+                            <execution>
+                                <id>stop-container</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <!-- Run tests -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.19.1</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*IT.java</exclude>
+                                <exclude>**/*Test.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*ST.java</include>
+                            </includes>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
