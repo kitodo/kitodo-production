@@ -171,14 +171,12 @@ public class BatchStepHelper {
             List<Property> props = p.getProperties();
             for (Property processProperty : props) {
                 if (processProperty.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
+                    p.getProperties().remove(processProperty);
                 }
             }
             for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
-                if (!this.serviceManager.getProcessService().getPropertiesInitialized(process)
-                        .contains(this.processProperty.getProzesseigenschaft())) {
-                    this.serviceManager.getProcessService().getPropertiesInitialized(process)
-                            .add(this.processProperty.getProzesseigenschaft());
+                if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
+                    process.getProperties().add(this.processProperty.getProzesseigenschaft());
                 }
             }
             try {
@@ -232,21 +230,19 @@ public class BatchStepHelper {
                             property.setContainer(processProperty.getContainer());
                             property.setType(processProperty.getType());
                             property.getProcesses().add(process);
-                            this.serviceManager.getProcessService().getPropertiesInitialized(process).add(property);
+                            process.getProperties().add(property);
                         }
                     }
                 } else {
                     if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
-                        this.serviceManager.getProcessService().getPropertiesInitialized(process)
-                                .add(this.processProperty.getProzesseigenschaft());
+                        process.getProperties().add(this.processProperty.getProzesseigenschaft());
                     }
                 }
 
                 List<Property> props = process.getProperties();
                 for (Property nextProcessProperty : props) {
                     if (nextProcessProperty.getTitle() == null) {
-                        this.serviceManager.getProcessService().getPropertiesInitialized(process)
-                                .remove(nextProcessProperty);
+                        process.getProperties().remove(nextProcessProperty);
                     }
                 }
 
@@ -273,8 +269,7 @@ public class BatchStepHelper {
             Property processProperty = new Property();
             processProperty.getProcesses().add(this.currentStep.getProcess());
             this.processProperty.setProzesseigenschaft(processProperty);
-            this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess())
-                    .add(processProperty);
+            this.currentStep.getProcess().getProperties().add(processProperty);
         }
         return true;
     }
@@ -291,7 +286,7 @@ public class BatchStepHelper {
                 Property processProperty = new Property();
                 processProperty.getProcesses().add(s.getProcess());
                 pt.setProzesseigenschaft(processProperty);
-                this.serviceManager.getProcessService().getPropertiesInitialized(s.getProcess()).add(processProperty);
+                s.getProcess().getProperties().add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -438,7 +433,7 @@ public class BatchStepHelper {
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
             if (processProperty.getTitle() == null) {
-                this.serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
+                p.getProperties().remove(processProperty);
             }
         }
         try {
@@ -553,9 +548,8 @@ public class BatchStepHelper {
                         this.currentStep.getProcess().getWikiField(), "error", message));
 
                 this.serviceManager.getTaskService().save(temp);
-                this.serviceManager.getProcessService().getHistoryInitialized(this.currentStep.getProcess())
-                        .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(),
-                                HistoryTypeEnum.taskError, temp.getProcess()));
+                this.currentStep.getProcess().getHistory().add(new History(myDate, temp.getOrdering().doubleValue(),
+                        temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
                 /*
                  * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
                  * wieder schliessen

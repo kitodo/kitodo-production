@@ -27,7 +27,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -893,16 +892,13 @@ public class GoobiScript {
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
         boolean withoutImages = exportImages != null && exportImages.equals("false");
-        for (Process prozess : processes) {
+        for (Process process : processes) {
             try {
-                Hibernate.initialize(prozess.getProject());
-                Hibernate.initialize(prozess.getProject().getProjectFileGroups());
-                Hibernate.initialize(prozess.getRuleset());
                 ExportDms dms = new ExportDms(!withoutImages);
                 if (withoutImages) {
                     dms.setExportFullText(exportFulltext);
                 }
-                dms.startExport(prozess);
+                dms.startExport(process);
             } catch (DocStructHasNoTypeException e) {
                 logger.error("DocStructHasNoTypeException", e);
             } catch (PreferencesException e) {

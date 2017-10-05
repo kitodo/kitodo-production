@@ -2189,7 +2189,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 Property processProperty = new Property();
                 processProperty.getProcesses().add(process);
                 pt.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(process).add(processProperty);
+                process.getProperties().add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -2459,7 +2459,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 Property processProperty = new Property();
                 processProperty.getProcesses().add(this.process);
                 this.processProperty.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(this.process).add(processProperty);
+                this.process.getProperties().add(processProperty);
             }
             this.processProperty.transfer();
 

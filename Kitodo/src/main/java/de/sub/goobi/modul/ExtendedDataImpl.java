@@ -83,14 +83,14 @@ public class ExtendedDataImpl extends DataImpl {
          * Prozesseigenschaft
          */
         if (type.equals("") || type.equals(isProcess)) {
-            if (serviceManager.getProcessService().getPropertiesInitialized(p) == null) {
+            if (p.getProperties() == null) {
                 p.setProperties(new ArrayList<>());
             }
             Property processProperty = new Property();
             processProperty.getProcesses().add(p);
             processProperty.setTitle(gpp.getName());
             processProperty.setValue(gpp.getValue());
-            serviceManager.getProcessService().getPropertiesInitialized(p).add(processProperty);
+            p.getProperties().add(processProperty);
         }
 
         /*

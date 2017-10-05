@@ -674,12 +674,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Returns whether this is a step of a process that is part of at least one
      * batch as read-only property "batchSize".
+     * //TODO: is it ever used?
      *
      * @return whether this step’s process is in a batch
      */
     public boolean isBatchSize(Task task) {
-        ProcessService processService = new ProcessService();
-        return processService.getBatchesInitialized(task.getProcess()).size() > 0;
+        return task.getProcess().getBatches().size() > 0;
     }
 
     /**

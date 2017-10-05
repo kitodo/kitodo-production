@@ -212,7 +212,7 @@ public class ExportXmlLog {
         processElements.add(comment);
 
         StringBuilder batches = new StringBuilder();
-        for (Batch batch : serviceManager.getProcessService().getBatchesInitialized(process)) {
+        for (Batch batch : process.getBatches()) {
             if (batch.getType() != null) {
                 batches.append(serviceManager.getBatchService().getTypeTranslated(batch));
                 batches.append(": ");

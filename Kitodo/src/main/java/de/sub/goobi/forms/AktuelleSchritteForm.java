@@ -250,8 +250,7 @@ public class AktuelleSchritteForm extends BasisForm {
                         Date myDate = new Date();
                         this.mySchritt.setProcessingBegin(myDate);
                     }
-                    this.serviceManager.getProcessService().getHistoryInitialized(this.mySchritt.getProcess())
-                            .add(new History(this.mySchritt.getProcessingBegin(),
+                    this.mySchritt.getProcess().getHistory().add(new History(this.mySchritt.getProcessingBegin(),
                                     this.mySchritt.getOrdering().doubleValue(), this.mySchritt.getTitle(),
                                     HistoryTypeEnum.taskInWork, this.mySchritt.getProcess()));
                     try {
@@ -343,9 +342,8 @@ public class AktuelleSchritteForm extends BasisForm {
                     Date myDate = new Date();
                     s.setProcessingBegin(myDate);
                 }
-                serviceManager.getProcessService().getHistoryInitialized(s.getProcess())
-                        .add(new History(s.getProcessingBegin(), s.getOrdering().doubleValue(), s.getTitle(),
-                                HistoryTypeEnum.taskInWork, s.getProcess()));
+                s.getProcess().getHistory().add(new History(s.getProcessingBegin(), s.getOrdering().doubleValue(),
+                        s.getTitle(), HistoryTypeEnum.taskInWork, s.getProcess()));
 
                 if (s.isTypeImagesRead() || s.isTypeImagesWrite()) {
                     try {
@@ -593,9 +591,8 @@ public class AktuelleSchritteForm extends BasisForm {
             this.mySchritt.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.mySchritt.getProcess(),
                     this.mySchritt.getProcess().getWikiField(), "error", message));
             serviceManager.getTaskService().save(temp);
-            serviceManager.getProcessService().getHistoryInitialized(this.mySchritt.getProcess())
-                    .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(),
-                            HistoryTypeEnum.taskError, temp.getProcess()));
+            this.mySchritt.getProcess().getHistory().add(new History(myDate, temp.getOrdering().doubleValue(),
+                    temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
             /*
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
              * wieder schliessen
@@ -1170,8 +1167,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 Property processProperty = new Property();
                 processProperty.getProcesses().add(this.mySchritt.getProcess());
                 pt.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                        .add(processProperty);
+                this.mySchritt.getProcess().getProperties().add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -1198,7 +1194,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     Property processProperty = new Property();
                     processProperty.getProcesses().add(this.mySchritt.getProcess());
                     this.processProperty.setProzesseigenschaft(processProperty);
-                    serviceManager.getProcessService().getPropertiesInitialized(this.myProcess).add(processProperty);
+                    this.myProcess.getProperties().add(processProperty);
                 }
                 this.processProperty.transfer();
             } else {
@@ -1371,8 +1367,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 Property processProperty = new Property();
                 processProperty.getProcesses().add(this.mySchritt.getProcess());
                 this.processProperty.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                        .add(processProperty);
+                this.mySchritt.getProcess().getProperties().add(processProperty);
             }
             this.processProperty.transfer();
 
