@@ -360,7 +360,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         Integer process = getIntegerPropertyForDTO(jsonObject, "process");
         taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
         Integer processingUser = getIntegerPropertyForDTO(jsonObject, "processingUser");
-        taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
+        if (processingUser != 0) {
+            taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
+        }
         taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
         taskDTO.setUserGroups(
                 convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));

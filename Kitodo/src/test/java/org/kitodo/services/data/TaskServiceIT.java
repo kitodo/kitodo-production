@@ -27,6 +27,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.dto.TaskDTO;
 
 /**
  * Tests for TaskService class.
@@ -91,13 +92,30 @@ public class TaskServiceIT {
     public void shouldFindTask() throws Exception {
         TaskService taskService = new TaskService();
 
+        TaskDTO task = taskService.findById(1);
+        boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
+        assertTrue("Task was not found in index!", condition);
+    }
+
+    @Test
+    public void shouldFindAllTasks() throws Exception {
+        TaskService taskService = new TaskService();
+
+        List<TaskDTO> tasks = taskService.findAll();
+        assertEquals("Not all tasks were found in index!", 6, tasks.size());
+    }
+
+    @Test
+    public void shouldGetTask() throws Exception {
+        TaskService taskService = new TaskService();
+
         Task task = taskService.getById(1);
         boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
         assertTrue("Task was not found in database!", condition);
     }
 
     @Test
-    public void shouldFindAllTasks() {
+    public void shouldGetAllTasks() {
         TaskService taskService = new TaskService();
 
         List<Task> tasks = taskService.getAll();
