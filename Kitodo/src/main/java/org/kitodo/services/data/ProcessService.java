@@ -644,6 +644,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setWikiField(getStringPropertyForDTO(processJSONObject, "wikiField"));
         processDTO.setCreationDate(getStringPropertyForDTO(processJSONObject, "creationDate"));
         processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(processJSONObject, "properties"));
+        processDTO.setProperties(
+                convertRelatedJSONObjectToDTO(processJSONObject, "properties", serviceManager.getPropertyService()));
+        processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
         processDTO.setSortHelperArticles(getIntegerPropertyForDTO(processJSONObject, "sortHelperArticles"));
         processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(processJSONObject, "sortHelperDocstructs"));
         processDTO.setSortHelperImages(getIntegerPropertyForDTO(processJSONObject, "sortHelperImages"));
@@ -660,9 +663,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setProject(serviceManager.getProjectService().findById(project));
         processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
-        processDTO.setProperties(
-                convertRelatedJSONObjectToDTO(jsonObject, "properties", serviceManager.getPropertyService()));
-        processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO));
