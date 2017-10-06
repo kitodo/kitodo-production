@@ -1367,21 +1367,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public Fileformat readMetadataAsTemplateFile(Process process)
             throws ReadException, IOException, PreferencesException {
-        RulesetService rulesetService = new RulesetService();
+        URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         Hibernate.initialize(process.getRuleset());
-        if (new File(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null)).exists()) {
-            Fileformat ff = null;
-            String type = MetadatenHelper
-                    .getMetaFileType(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null));
+        if (fileService.fileExist(processSubTypeURI)) {
+            String type = MetadatenHelper.getMetaFileType(processSubTypeURI);
             if (logger.isDebugEnabled()) {
                 logger.debug("current template.xml file type: " + type);
             }
-            ff = determineFileFormat(type, process);
-            ff.read(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null).toString());
+            Fileformat ff = determineFileFormat(type, process);
+            ff.read(processSubTypeURI.toString());
             return ff;
         } else {
-            throw new IOException(
-                    "File does not exist: " + fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null));
+            throw new IOException("File does not exist: " + processSubTypeURI);
         }
     }
 
