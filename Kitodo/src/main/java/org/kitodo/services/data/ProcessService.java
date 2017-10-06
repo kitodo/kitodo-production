@@ -154,6 +154,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         manageTaskDependenciesForIndex(process);
         manageTemplatesDependenciesForIndex(process);
         manageWorkpiecesDependenciesForIndex(process);
+        managePropertiesDependenciesForIndex(process);
     }
 
     /**
@@ -185,6 +186,25 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void manageProjectDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getProject() != null) {
             serviceManager.getProjectService().saveToIndex(process.getProject());
+        }
+    }
+
+    /**
+     * Remove properties if process is removed, add properties if process is
+     * marked as indexed.
+     *
+     * @param process
+     *            object
+     */
+    private void managePropertiesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+        if (process.getIndexAction() == IndexAction.DELETE) {
+            for (Property property : process.getProperties()) {
+                serviceManager.getPropertyService().removeFromIndex(property);
+            }
+        } else {
+            for (Property property : process.getProperties()) {
+                serviceManager.getPropertyService().saveToIndex(property);
+            }
         }
     }
 
