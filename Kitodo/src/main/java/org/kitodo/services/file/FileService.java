@@ -35,6 +35,7 @@ import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
@@ -629,6 +630,39 @@ public class FileService {
     }
 
     /**
+     * Get the URI for a process sub-location. Possible locations are listed in
+     * ProcessSubType.
+     *
+     * @param processId
+     *            the id of process to get the sublocation for
+     * @param processTitle
+     *            the title of process to get the sublocation for
+     * @param processDataDirectory
+     *            the base URI of process to get the sublocation for
+     * @param processSubType
+     *            The subType.
+     * @param resourceName
+     *            the name of the single object (e.g. image) if null, the root
+     *            folder of the sublocation is returned
+     * @return The URI of the requested location
+     */
+    public URI getProcessSubTypeURI(Integer processId, String processTitle, URI processDataDirectory,
+                                    ProcessSubType processSubType, String resourceName) throws DAOException {
+
+        if (processDataDirectory == null) {
+            Process process = serviceManager.getProcessService().getById(processId);
+            processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+        }
+
+        if (resourceName == null) {
+            resourceName = "";
+        }
+        FileManagementInterface fileManagementModule = getFileManagementModule();
+        return fileManagementModule.getProcessSubTypeUri(processDataDirectory, processTitle, processSubType,
+                resourceName);
+    }
+
+    /**
      * Get's the URI for a Process Sub-location. Possible Locations are listed
      * in ProcessSubType
      *
@@ -651,6 +685,29 @@ public class FileService {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
                 resourceName);
+    }
+
+    /**
+     * Get part of the URI for specific process.
+     *
+     * @param filter
+     *            FilenameFilter object
+     * @param processId
+     *            the id of process
+     * @param processTitle
+     *            the title of process
+     * @param processDataDirectory
+     *            the base URI of process
+     * @param processSubType
+     *            object
+     * @param resourceName
+     *            as String
+     * @return unmapped URI
+     */
+    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle, URI processDataDirectory, ProcessSubType processSubType,
+                                               String resourceName) throws DAOException {
+        URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType, resourceName);
+        return getSubUris(filter, processSubTypeURI);
     }
 
     /**
