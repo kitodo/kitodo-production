@@ -2268,12 +2268,10 @@ public class ProzessverwaltungForm extends BasisForm {
                     this.process.getProperties().add(processProperty);
                 }
                 this.processProperty.transfer();
-                List<Property> props = this.process.getProperties();
-                for (Property processProperty : props) {
-                    if (processProperty.getTitle() == null) {
-                        this.process.getProperties().remove(processProperty);
-                    }
-                }
+
+                List<Property> properties = this.process.getProperties();
+                removePropertiesWithEmptyTitle(properties);
+
                 this.processProperty.getProzesseigenschaft().getProcesses().add(this.process);
             } else {
                 return;
@@ -2301,6 +2299,22 @@ public class ProzessverwaltungForm extends BasisForm {
             String errorMessage = Helper.getTranslation("propertyNotValid", propertyNames);
             Helper.setFehlerMeldung(errorMessage);
             return false;
+        }
+    }
+
+    //TODO: is it really a case that title is empty?
+    private void removePropertiesWithEmptyTitle(List<Property> properties) {
+        for (Property processProperty : properties) {
+            if (processProperty.getTitle() == null) {
+                try {
+                    processProperty.getProcesses().clear();
+                    this.process.getProperties().remove(processProperty);
+                    serviceManager.getProcessService().save(this.process);
+                    serviceManager.getPropertyService().remove(processProperty);
+                } catch (DataException e) {
+                    logger.error("Property couldn't be removed: " + e.getMessage());
+                }
+            }
         }
     }
 
@@ -2342,23 +2356,20 @@ public class ProzessverwaltungForm extends BasisForm {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processPropertyList.remove(pp);
-            serviceManager.getProcessService().getPropertiesInitialized(this.process)
-                    .remove(pp.getProzesseigenschaft());
-
-        }
-
-        List<Property> props = this.process.getProperties();
-        for (Property processProperty : props) {
-            if (processProperty.getTitle() == null) {
-                serviceManager.getProcessService().getPropertiesInitialized(this.process).remove(processProperty);
+            try {
+                pp.getProzesseigenschaft().getProcesses().clear();
+                this.process.getProperties().remove(pp.getProzesseigenschaft());
+                serviceManager.getProcessService().save(this.process);
+                serviceManager.getPropertyService().remove(pp.getProzesseigenschaft());
+            } catch (DataException e) {
+                logger.error("Property couldn't be removed: " + e.getMessage());
+                Helper.setFehlerMeldung("propertiesNotDeleted");
             }
         }
-        try {
-            serviceManager.getProcessService().save(this.process);
-        } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotDeleted");
-        }
+
+        List<Property> properties = this.process.getProperties();
+        removePropertiesWithEmptyTitle(properties);
+
         // saveWithoutValidation();
         loadProcessProperties();
     }
