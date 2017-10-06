@@ -46,9 +46,11 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
+
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.view.ViewScoped;
+
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -102,7 +104,7 @@ import org.kitodo.services.file.FileService;
  */
 
 @Named("ProzessverwaltungForm")
-@ViewScoped
+@SessionScoped
 public class ProzessverwaltungForm extends BasisForm {
     private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
@@ -714,11 +716,9 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        save();
         this.modusBearbeiten = "schritt";
         this.taskId = this.task.getId();
-        //TODO: enforce http://.../kitodo/pages/inc_Prozessverwaltung/schritt.jsf?id=6
-        return "/pages/inc_Prozessverwaltung?faces-redirect=true";
+        return "/pages/inc_Prozessverwaltung/schritt?faces-redirect=true&id=" + this.taskId;
     }
 
     /**
@@ -748,10 +748,8 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-
         deleteSymlinksFromUserHomes();
-        //TODO: redirect to correct task
-        return "/pages/ProzessverwaltungBearbeiten?faces-redirect=true";
+        return "/pages/ProzessverwaltungBearbeiten?faces-redirect=true&id=" + this.process.getId();
     }
 
     private void deleteSymlinksFromUserHomes() {
