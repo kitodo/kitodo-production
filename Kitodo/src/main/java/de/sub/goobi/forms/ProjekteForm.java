@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -800,4 +799,5 @@ public class ProjekteForm extends BasisForm {
     public int getItemId() {
         return this.itemId;
     }
+
 }

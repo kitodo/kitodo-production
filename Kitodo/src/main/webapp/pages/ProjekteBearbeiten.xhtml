@@ -120,6 +120,10 @@
                                                             <ui:include src="/pages/inc_editProjects/metsParameterTab.xhtml"/>
                                                         </t:panelTab>
 
+                                                        <t:panelTab label="#{msgs.editor}">
+                                                            <ui:include src="/pages/inc_editProjects/editorTab.xhtml"/>
+                                                        </t:panelTab>
+
                                                         <t:panelTab label="#{msgs.statistik}"
                                                             rendered="#{ProjekteForm.myProjekt.id != null and !HelperForm.anonymized}">
                                                             <ui:include src="/pages/inc_editProjects/statisticsTab.xhtml"/>
