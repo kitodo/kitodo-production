@@ -63,28 +63,28 @@ public class FolderInformation {
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
-        URI tifOrdner = null;
+        URI tifDirectory = null;
         ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
         for (URI directory : directories) {
-            tifOrdner = directory;
+            tifDirectory = directory;
         }
 
-        if (tifOrdner == null && useFallBack) {
+        if (tifDirectory == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                tifOrdner = iterateOverDirectories(dir, suffix);
+                tifDirectory = iterateOverDirectories(dir, suffix);
             }
         }
-        if (!(tifOrdner == null) && useFallBack) {
+        if (!(tifDirectory == null) && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                URI tif = tifOrdner;
+                URI tif = tifDirectory;
                 ArrayList<URI> files = fileService.getSubUris(tif);
                 if (files == null || files.size() == 0) {
                     ArrayList<URI> folderList = fileService.getSubUris(dir);
                     for (URI folder : folderList) {
                         if (folder.toString().endsWith(suffix)) {
-                            tifOrdner = folder;
+                            tifDirectory = folder;
                             break;
                         }
                     }
@@ -92,28 +92,17 @@ public class FolderInformation {
             }
         }
 
-        if (tifOrdner == null) {
-            tifOrdner = URI.create(this.title + "_" + DIRECTORY_SUFFIX);
+        if (tifDirectory == null) {
+            tifDirectory = URI.create(this.title + "_" + DIRECTORY_SUFFIX);
         }
 
-        URI rueckgabe = getImagesDirectory().resolve(tifOrdner);
+        URI result = getImagesDirectory().resolve(tifDirectory);
 
-        if (!rueckgabe.toString().endsWith(File.separator)) {
-            rueckgabe = rueckgabe.resolve(File.separator);
+        if (!result.toString().endsWith(File.separator)) {
+            result = result.resolve(File.separator);
         }
 
-        return rueckgabe;
-    }
-
-    /**
-     * Get tif directory exists.
-     *
-     * @return true if the Tif-Image-Directory exists, false if not
-     */
-    public Boolean getTifDirectoryExists() {
-        URI testMe = getImagesTifDirectory(true);
-        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                && fileService.getSubUris(testMe).size() > 0;
+        return result;
     }
 
     /**
@@ -131,34 +120,34 @@ public class FolderInformation {
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
             FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_",
                     "_" + DIRECTORY_SUFFIX);
-            URI origOrdner = null;
-            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
+            URI origDirectory = null;
+            ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
             // TODO: does it actually make sense?
-            for (URI directory : verzeichnisse) {
-                origOrdner = directory;
+            for (URI directory : directories) {
+                origDirectory = directory;
             }
-            if (origOrdner == null && useFallBack) {
+            if (origDirectory == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    origOrdner = iterateOverDirectories(dir, suffix);
+                    origDirectory = iterateOverDirectories(dir, suffix);
                 }
             }
-            if (!(origOrdner == null) && useFallBack) {
+            if (!(origDirectory == null) && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    URI tif = origOrdner;
+                    URI tif = origDirectory;
                     ArrayList<URI> files = fileService.getSubUris(tif);
                     if (files == null || files.size() == 0) {
-                        origOrdner = iterateOverDirectories(dir, suffix);
+                        origDirectory = iterateOverDirectories(dir, suffix);
                     }
                 }
             }
 
-            if (origOrdner == null) {
-                origOrdner = URI.create(DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX);
+            if (origDirectory == null) {
+                origDirectory = URI.create(DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX);
             }
 
-            return getImagesDirectory().resolve(origOrdner + File.separator);
+            return getImagesDirectory().resolve(origDirectory + "/");
         } else {
             return getImagesTifDirectory(useFallBack);
         }
@@ -180,7 +169,7 @@ public class FolderInformation {
      * @return path
      */
     public URI getImagesDirectory() {
-        return getProcessDataDirectory().resolve("images" + File.separator);
+        return getProcessDataDirectory().resolve("images/");
     }
 
     /**
@@ -195,7 +184,7 @@ public class FolderInformation {
     }
 
     public URI getOcrDirectory() {
-        return URI.create(getProcessDataDirectory() + "ocr" + File.separator);
+        return URI.create(getProcessDataDirectory() + "ocr/");
     }
 
     public URI getMetadataFilePath() {

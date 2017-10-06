@@ -1154,9 +1154,10 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenPage() throws DAOException, DataException {
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
-            stepStatusUp(proz.getId());
+    public void setTaskStatusUpForPage() throws DAOException, DataException {
+        List<ProcessDTO> processes = this.page.getListReload();
+        for (ProcessDTO process : processes) {
+            setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -1164,10 +1165,11 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenSelection() throws DAOException, DataException {
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
-            if (proz.isSelected()) {
-                stepStatusUp(proz.getId());
+    public void setTaskStatusUpForSelection() throws DAOException, DataException {
+        List<ProcessDTO> processes = this.page.getListReload();
+        for (ProcessDTO process : processes) {
+            if (process.isSelected()) {
+                setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
             }
         }
     }
@@ -1176,26 +1178,27 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenHits() throws DAOException, DataException {
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getCompleteList()) {
-            stepStatusUp(proz.getId());
+    public void setTaskStatusUpForHits() throws DAOException, DataException {
+        List<ProcessDTO> processes = this.page.getCompleteList();
+        for (ProcessDTO process : processes) {
+            setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
-    private void stepStatusUp(int processId) throws DAOException, DataException {
-        List<Task> taskList = serviceManager.getProcessService().getById(processId).getTasks();
+    private void setTaskStatusUp(Process process) throws DAOException, DataException {
+        List<Task> tasks = process.getTasks();
 
-        for (Task t : taskList) {
-            if (!t.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                t.setProcessingStatus(t.getProcessingStatus() + 1);
-                t.setEditType(TaskEditType.ADMIN.getValue());
-                if (t.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                    serviceManager.getTaskService().close(t, true);
+        for (Task task : tasks) {
+            if (!task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
+                task.setProcessingStatus(task.getProcessingStatus() + 1);
+                task.setEditType(TaskEditType.ADMIN.getValue());
+                if (task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
+                    serviceManager.getTaskService().close(task, true);
                 } else {
                     User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                     if (user != null) {
-                        t.setProcessingUser(user);
-                        serviceManager.getTaskService().save(t);
+                        task.setProcessingUser(user);
+                        serviceManager.getTaskService().save(task);
                     }
                 }
                 break;
@@ -1212,7 +1215,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
-    private void stepStatusDown(Process process) throws DataException {
+    private void setTaskStatusDown(Process process) throws DataException {
         List<Task> tempList = new ArrayList<>(process.getTasks());
         debug("templist: ", tempList);
 
@@ -1238,9 +1241,10 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusRuntersetzenPage() throws DAOException, DataException {
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
-            stepStatusDown(serviceManager.getProcessService().convertDtoToBean(proz));
+    public void setTaskStatusDownForPage() throws DAOException, DataException {
+        List<ProcessDTO> processes = this.page.getListReload();
+        for (ProcessDTO process : processes) {
+            setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -1248,10 +1252,11 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusRuntersetzenSelection() throws DAOException, DataException {
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
-            if (proz.isSelected()) {
-                stepStatusDown(serviceManager.getProcessService().convertDtoToBean(proz));
+    public void setTaskStatusDownForSelection() throws DAOException, DataException {
+        List<ProcessDTO> processes = this.page.getListReload();
+        for (ProcessDTO process : processes) {
+            if (process.isSelected()) {
+                setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
             }
         }
     }
@@ -1260,9 +1265,10 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusRuntersetzenHits() throws DAOException, DataException {
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getCompleteList()) {
-            stepStatusDown(serviceManager.getProcessService().convertDtoToBean(proz));
+    public void setTaskStatusDownForHits() throws DAOException, DataException {
+        List<ProcessDTO> processes = this.page.getCompleteList();
+        for (ProcessDTO process : processes) {
+            setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 

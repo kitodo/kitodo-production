@@ -19,6 +19,7 @@ import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,6 +67,9 @@ import ugh.exceptions.WriteException;
 
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
+    private int openTasksWithTheSameOrdering;
+    private List<Task> automaticTasks;
+    private List<Task> tasksToFinish;
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
@@ -668,126 +672,108 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     //TODO: check why requestFromGUI is never used
     public void close(Task task, boolean requestFromGUI) throws DataException {
-        Integer processId = task.getProcess().getId();
-        if (logger.isDebugEnabled()) {
-            logger.debug("closing step with id " + task.getId() + " and process id " + processId);
-        }
         task.setProcessingStatus(3);
-        Date myDate = new Date();
-        logger.debug("set new date for edit time");
-        task.setProcessingTime(myDate);
-        LoginForm lf = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (lf != null) {
-            User ben = lf.getMyBenutzer();
-            if (ben != null) {
-                logger.debug("set new user");
-                task.setProcessingUser(ben);
+        task.setProcessingTime(new Date());
+        LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        if (loginForm != null) {
+            User user = loginForm.getMyBenutzer();
+            if (user != null) {
+                task.setProcessingUser(user);
             }
         }
-        logger.debug("set new end date");
-        task.setProcessingEnd(myDate);
-        logger.debug("saving step");
+        task.setProcessingEnd(new Date());
+
         serviceManager.getTaskService().save(task);
-        List<Task> automatischeSchritte = new ArrayList<>();
-        List<Task> stepsToFinish = new ArrayList<>();
+        automaticTasks = new ArrayList<>();
+        tasksToFinish = new ArrayList<>();
 
-        logger.debug("create history events for step");
-
-        History history = new History(myDate, task.getOrdering(), task.getTitle(), HistoryTypeEnum.taskDone,
+        History history = new History(new Date(), task.getOrdering(), task.getTitle(), HistoryTypeEnum.taskDone,
                 task.getProcess());
         serviceManager.getHistoryService().save(history);
+
         /*
          * prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht
          * abgeschlossen sind
          */
+        List<Task> tasks = task.getProcess().getTasks();
+        List<Task> allHigherTasks = getAllHigherTasks(tasks, task);
 
-        List<Task> steps = task.getProcess().getTasks();
-        List<Task> allehoeherenSchritte = new ArrayList<>();
-        int offeneSchritteGleicherReihenfolge = 0;
-        for (Task so : steps) {
-            if (so.getOrdering().equals(task.getOrdering()) && so.getProcessingStatus() != 3
-                    && !so.getId().equals(task.getId())) {
-                offeneSchritteGleicherReihenfolge++;
-            } else if (so.getOrdering() > task.getOrdering()) {
-                allehoeherenSchritte.add(so);
+        activateNextTask(allHigherTasks);
+
+        Process po = task.getProcess();
+        FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
+        URI imagesOrigDirectory = fi.getImagesOrigDirectory(true);
+        Integer numberOfFiles = serviceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
+        if (!po.getSortHelperImages().equals(numberOfFiles)) {
+            po.setSortHelperImages(numberOfFiles);
+            serviceManager.getProcessService().save(po);
+        }
+
+        updateProcessStatus(po);
+
+        for (Task automaticTask : automaticTasks) {
+            TaskScriptThread thread = new TaskScriptThread(automaticTask);
+            TaskManager.addTask(thread);
+        }
+        for (Task finish : tasksToFinish) {
+            serviceManager.getTaskService().close(finish, false);
+        }
+    }
+
+    private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
+        List<Task> allHigherTasks = new ArrayList<>();
+        this.openTasksWithTheSameOrdering = 0;
+        for (Task tempTask : tasks) {
+            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() != 3
+                    && !tempTask.getId().equals(task.getId())) {
+                openTasksWithTheSameOrdering++;
+            } else if (tempTask.getOrdering() > task.getOrdering()) {
+                allHigherTasks.add(tempTask);
             }
         }
-        /*
-         * wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte
-         * aktivieren
-         */
-        if (offeneSchritteGleicherReihenfolge == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("found " + allehoeherenSchritte.size() + " tasks");
-            }
-            int reihenfolge = 0;
+        return allHigherTasks;
+    }
+
+    /**
+    * If no open parallel tasks are available, activate the next tasks.
+    */
+    private void activateNextTask(List<Task> allHigherTasks) throws DataException {
+        if (openTasksWithTheSameOrdering == 0) {
+            int ordering = 0;
             boolean matched = false;
-            for (Task myTask : allehoeherenSchritte) {
-                if (reihenfolge < myTask.getOrdering() && !matched) {
-                    reihenfolge = myTask.getOrdering();
+            for (Task task : allHigherTasks) {
+                if (ordering < task.getOrdering() && !matched) {
+                    ordering = task.getOrdering();
                 }
 
-                if (reihenfolge == myTask.getOrdering() && myTask.getProcessingStatus() != 3
-                        && myTask.getProcessingStatus() != 2) {
+                if (ordering == task.getOrdering() && task.getProcessingStatus() != 3
+                        && task.getProcessingStatus() != 2) {
                     /*
                      * den Schritt aktivieren, wenn es kein vollautomatischer ist
                      */
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("open step " + myTask.getTitle());
-                    }
-                    myTask.setProcessingStatus(1);
-                    myTask.setProcessingTime(myDate);
-                    myTask.setEditType(4);
-                    logger.debug("create history events for next step");
-                    History historyOpen = new History(myDate, myTask.getOrdering(), myTask.getTitle(),
-                            HistoryTypeEnum.taskOpen, task.getProcess());
-                    serviceManager.getHistoryService().save(history);
-                    /* wenn es ein automatischer Schritt mit Script ist */
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("check if step is an automatic task: " + myTask.isTypeAutomatic());
-                    }
-                    if (myTask.isTypeAutomatic()) {
-                        logger.debug("add step to list of automatic tasks");
-                        automatischeSchritte.add(myTask);
-                    } else if (myTask.isTypeAcceptClose()) {
-                        stepsToFinish.add(myTask);
-                    }
-                    logger.debug("");
-                    serviceManager.getTaskService().save(myTask);
-                    matched = true;
+                    task.setProcessingStatus(1);
+                    task.setProcessingTime(new Date());
+                    task.setEditType(4);
 
+                    History historyOpen = new History(new Date(), task.getOrdering(), task.getTitle(),
+                            HistoryTypeEnum.taskOpen, task.getProcess());
+                    serviceManager.getHistoryService().save(historyOpen);
+
+                    /* wenn es ein automatischer Schritt mit Script ist */
+                    if (task.isTypeAutomatic()) {
+                        automaticTasks.add(task);
+                    } else if (task.isTypeAcceptClose()) {
+                        tasksToFinish.add(task);
+                    }
+
+                    serviceManager.getTaskService().save(task);
+                    matched = true;
                 } else {
                     if (matched) {
                         break;
                     }
                 }
             }
-        }
-        Process po = task.getProcess();
-        FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-        if (po.getSortHelperImages() != serviceManager.getFileService()
-                .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
-            po.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)));
-            serviceManager.getProcessService().save(po);
-        }
-        logger.debug("update process status");
-        updateProcessStatus(po);
-        if (logger.isDebugEnabled()) {
-            logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
-        }
-        for (Task automaticStep : automatischeSchritte) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
-                        + automaticStep.getId());
-            }
-            TaskScriptThread myThread = new TaskScriptThread(automaticStep);
-            TaskManager.addTask(myThread);
-        }
-        for (Task finish : stepsToFinish) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("closing task " + finish.getTitle());
-            }
-            serviceManager.getTaskService().close(finish, false);
         }
     }
 

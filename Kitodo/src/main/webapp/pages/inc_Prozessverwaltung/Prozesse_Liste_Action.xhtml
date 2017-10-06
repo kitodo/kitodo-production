@@ -152,7 +152,7 @@
 
                                     <!-- Download-Schaltknopf für Selection-->
                                     <h:commandLink id="action9"
-                                                   action="#{ProzessverwaltungForm.BearbeitungsstatusHochsetzenSelection}"
+                                                   action="#{ProzessverwaltungForm.setTaskStatusUpForSelection}"
                                                    rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
                                                    title="#{msgs.auswahl2}"
                                                    onclick="if (!confirm('#{msgs.bearbeitungsstatusHochsetzen}?')) return">
@@ -160,7 +160,7 @@
                                     </h:commandLink>
 
                                     <!-- Download-Schaltknopf für Page-->
-                                    <h:commandLink action="#{ProzessverwaltungForm.BearbeitungsstatusHochsetzenPage}"
+                                    <h:commandLink action="#{ProzessverwaltungForm.setTaskStatusUpForPage}"
                                                    title="#{msgs.trefferDieserSeite}" id="action10"
                                                    onclick="if (!confirm('#{msgs.bearbeitungsstatusHochsetzen}?')) return">
                                         <h:outputText value="- #{msgs.trefferDieserSeite}"/>
@@ -168,7 +168,7 @@
 
                                     <!-- Download-Schaltknopf für gesamtes Trefferset -->
                                     <h:commandLink id="action11"
-                                                   action="#{ProzessverwaltungForm.BearbeitungsstatusHochsetzenHits}"
+                                                   action="#{ProzessverwaltungForm.setTaskStatusUpForHits}"
                                                    title="#{msgs.gesamtesTrefferset}"
                                                    onclick="if (!confirm('#{msgs.bearbeitungsstatusHochsetzen}?')) return">
                                         <h:outputText value="- #{msgs.gesamtesTrefferset}"/>
@@ -194,7 +194,7 @@
 
                                     <!-- Download-Schaltknopf für Selection-->
                                     <h:commandLink id="action12"
-                                                   action="#{ProzessverwaltungForm.BearbeitungsstatusRuntersetzenSelection}"
+                                                   action="#{ProzessverwaltungForm.setTaskStatusDownForSelection}"
                                                    rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
                                                    title="#{msgs.auswahl2}"
                                                    onclick="if (!confirm('#{msgs.bearbeitungsstatusRuntersetzen}?')) return">
@@ -203,7 +203,7 @@
 
                                     <!-- Download-Schaltknopf für Page-->
                                     <h:commandLink id="action13"
-                                                   action="#{ProzessverwaltungForm.BearbeitungsstatusRuntersetzenPage}"
+                                                   action="#{ProzessverwaltungForm.setTaskStatusDownForPage}"
                                                    title="#{msgs.trefferDieserSeite}"
                                                    onclick="if (!confirm('#{msgs.bearbeitungsstatusRuntersetzen}?')) return">
                                         <h:outputText value="- #{msgs.trefferDieserSeite}"/>
@@ -211,7 +211,7 @@
 
                                     <!-- Download-Schaltknopf für gesamtes Trefferset -->
                                     <h:commandLink id="action14"
-                                                   action="#{ProzessverwaltungForm.BearbeitungsstatusRuntersetzenHits}"
+                                                   action="#{ProzessverwaltungForm.setTaskStatusDownForHits}"
                                                    title="#{msgs.gesamtesTrefferset}"
                                                    onclick="if (!confirm('#{msgs.bearbeitungsstatusRuntersetzen}?')) return">
                                         <h:outputText value="- #{msgs.gesamtesTrefferset}"/>
