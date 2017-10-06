@@ -14,7 +14,6 @@ package org.goobi.mq.processors;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
-import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.util.ArrayList;
@@ -28,9 +27,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ServiceManager;
 
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to
@@ -68,6 +66,7 @@ import org.kitodo.data.database.beans.Process;
  */
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final Logger logger = LogManager.getLogger(CreateNewProcessProcessor.class);
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     public CreateNewProcessProcessor() {
         super(ConfigCore.getParameter("activeMQ.createNewProcess.queue", null));
@@ -178,13 +177,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             templateTitle
      */
     private static Process getTemplateByTitle(String templateTitle) throws IllegalArgumentException {
-
-        Criteria request = Helper.getHibernateSession().createCriteria(Process.class);
-        request.add(Restrictions.eq("istTemplate", Boolean.TRUE));
-        request.add(Restrictions.like("titel", templateTitle));
-
-        @SuppressWarnings("unchecked")
-        List<Process> response = request.list();
+        List<Process> response = serviceManager.getProcessService().getProcessTemplatesWithTitle(templateTitle);
 
         if (response.size() > 0) {
             return response.get(0);

@@ -276,6 +276,7 @@ public class MockDatabase {
         batches.add(secondBatch);
         firstProcess.setBatches(batches);
         firstProcess.setTemplate(true);
+        firstProcess.setInChoiceListShown(true);
         firstProcess.setDocket(serviceManager.getDocketService().getById(1));
         firstProcess.setProject(project);
         firstProcess.setRuleset(serviceManager.getRulesetService().getById(1));
@@ -287,6 +288,7 @@ public class MockDatabase {
         secondProcess.setWikiField("field");
         localDate = new LocalDate(2017, 1, 20);
         secondProcess.setCreationDate(localDate.toDate());
+        secondProcess.setInChoiceListShown(true);
         secondProcess.setSortHelperImages(30);
         secondProcess.setDocket(serviceManager.getDocketService().getById(1));
         secondProcess.setProject(project);
@@ -300,6 +302,7 @@ public class MockDatabase {
         thirdProcess.setWikiField("problem");
         localDate = new LocalDate(2017, 2, 10);
         thirdProcess.setCreationDate(localDate.toDate());
+        thirdProcess.setInChoiceListShown(true);
         thirdProcess.setDocket(serviceManager.getDocketService().getById(1));
         thirdProcess.setProject(project);
         thirdProcess.setRuleset(serviceManager.getRulesetService().getById(1));
@@ -307,6 +310,7 @@ public class MockDatabase {
 
         Process fourthProcess = new Process();
         fourthProcess.setTitle("DBConnectionTest");
+        fourthProcess.setInChoiceListShown(true);
         serviceManager.getProcessService().save(fourthProcess);
 
         project.getProcesses().add(firstProcess);
@@ -326,6 +330,7 @@ public class MockDatabase {
         fifthProcess.setProject(thirdProject);
         fifthProcess.setRuleset(serviceManager.getRulesetService().getById(1));
         fifthProcess.setTemplate(true);
+        fifthProcess.setInChoiceListShown(true);
         serviceManager.getProcessService().save(fifthProcess);
         serviceManager.getProjectService().save(thirdProject);
     }
