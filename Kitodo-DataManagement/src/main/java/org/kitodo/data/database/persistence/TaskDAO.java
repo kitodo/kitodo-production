@@ -121,7 +121,7 @@ public class TaskDAO extends BaseDAO<Task> {
      *            id of process for which tasks are searched as Integer
      * @return list of Task objects
      */
-    public List<Task> getPreviousTaskForProblemReporting(Integer ordering, Integer processId) {
+    public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
         return getByQuery("FROM Task WHERE process_id = " + processId + " AND ordering < " + ordering
                 + " ORDER BY ordering DESC");
     }
