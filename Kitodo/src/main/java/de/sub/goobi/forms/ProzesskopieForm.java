@@ -238,7 +238,7 @@ public class ProzesskopieForm implements Serializable {
      */
     private CataloguePlugin importCatalogue;
 
-    private Fileformat myRdf;
+    private Fileformat rdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -284,7 +284,7 @@ public class ProzesskopieForm implements Serializable {
 
         clearValues();
         readProjectConfigs();
-        this.myRdf = null;
+        this.rdf = null;
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setTemplate(false);
@@ -517,10 +517,10 @@ public class ProzesskopieForm implements Serializable {
      *            Hit to load
      */
     protected void importHit(Hit hit) throws PreferencesException {
-        myRdf = hit.getFileformat();
+        rdf = hit.getFileformat();
         docType = hit.getDocType();
         fillFieldsFromMetadataFile();
-        applyCopyingRules(new CopierData(myRdf, prozessVorlage));
+        applyCopyingRules(new CopierData(rdf, prozessVorlage));
         atstsl = createAtstsl(hit.getTitle(), hit.getAuthors());
     }
 
@@ -553,22 +553,22 @@ public class ProzesskopieForm implements Serializable {
      * füllen.
      */
     private void fillFieldsFromMetadataFile() throws PreferencesException {
-        if (this.myRdf != null) {
+        if (this.rdf != null) {
 
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     /* welches Docstruct */
-                    DocStruct myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
+                    DocStruct myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
-                            myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
+                            myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
                                     .get(0);
                         } catch (RuntimeException e) {
                             logger.error(e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
-                        myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
+                        myTempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
                     }
                     /* welches Metadatum */
                     try {
@@ -653,14 +653,14 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         try {
-            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
+            this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (Exception e) {
             Helper.setFehlerMeldung("Error on reading template-metadata ", e);
         }
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
         try {
-            DocStruct colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
+            DocStruct colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct);
@@ -781,30 +781,7 @@ public class ProzesskopieForm implements Serializable {
         }
         addProperties();
 
-        for (Task step : this.prozessKopie.getTasks()) {
-            /*
-             * always save date and user for each step
-             */
-            step.setProcessingTime(this.prozessKopie.getCreationDate());
-            step.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            if (loginForm != null) {
-                step.setProcessingUser(loginForm.getMyBenutzer());
-            }
-
-            /*
-             * only if its done, set edit start and end date
-             */
-            if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
-                step.setProcessingBegin(this.prozessKopie.getCreationDate());
-                // this concerns steps, which are set as done right on creation
-                // bearbeitungsbeginn is set to creation timestamp of process
-                // because the creation of it is basically begin of work
-                Date myDate = new Date();
-                step.setProcessingTime(myDate);
-                step.setProcessingEnd(myDate);
-            }
-        }
+        updateTasks();
 
         try {
             this.prozessKopie.setSortHelperImages(this.guessedImages);
@@ -820,7 +797,7 @@ public class ProzesskopieForm implements Serializable {
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
          * stattfand, dann jetzt eine anlegen
          */
-        if (this.myRdf == null) {
+        if (this.rdf == null) {
             createNewFileformat();
         }
 
@@ -828,18 +805,18 @@ public class ProzesskopieForm implements Serializable {
          * wenn eine RDF-Konfiguration vorhanden ist (z.B. aus dem Opac-Import,
          * oder frisch angelegt), dann diese ergänzen
          */
-        if (this.myRdf != null) {
+        if (this.rdf != null) {
 
             // there must be at least one non-anchor level doc struct
             // if missing, insert logical doc structs until you reach it
             DocStruct populizer = null;
             try {
-                populizer = myRdf.getDigitalDocument().getLogicalDocStruct();
+                populizer = rdf.getDigitalDocument().getLogicalDocStruct();
                 if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
                     Prefs ruleset = serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                     while (populizer.getType().getAnchorClass() != null) {
                         populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
-                                myRdf.getDigitalDocument(), ruleset);
+                                rdf.getDigitalDocument(), ruleset);
                     }
                 }
             } catch (NullPointerException | IndexOutOfBoundsException e) { // if
@@ -854,17 +831,14 @@ public class ProzesskopieForm implements Serializable {
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     /* welches Docstruct */
-                    DocStruct myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
-                    DocStruct myTempChild = null;
+                    DocStruct tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+                    DocStruct tempChild = null;
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
-                            myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
+                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
                                     .get(0);
                         } catch (RuntimeException e) {
-                            /*
-                             * das Firstchild unterhalb des Topstructs konnte
-                             * nicht ermittelt werden
-                             */
+                            logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
                         }
                     }
                     /*
@@ -873,13 +847,13 @@ public class ProzesskopieForm implements Serializable {
                      */
                     if (!field.getDocstruct().equals("firstchild") && field.getDocstruct().contains("firstchild")) {
                         try {
-                            myTempChild = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+                            tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
                             logger.error(e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
-                        myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
+                        tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
                     }
                     /* welches Metadatum */
                     try {
@@ -891,97 +865,33 @@ public class ProzesskopieForm implements Serializable {
                             MetadataType mdt = UghHelper.getMetadataType(
                                     serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                     field.getMetadata());
-                            Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
-                            if (md != null) {
-                                md.setValue(field.getValue());
+                            Metadata metadata = UghHelper.getMetadata(tempStruct, mdt);
+                            if (metadata != null) {
+                                metadata.setValue(field.getValue());
                             }
                             /*
                              * wenn dem Topstruct und dem Firstchild der Wert
                              * gegeben werden soll
                              */
-                            if (myTempChild != null) {
-                                md = UghHelper.getMetadata(myTempChild, mdt);
-                                if (md != null) {
-                                    md.setValue(field.getValue());
+                            if (tempChild != null) {
+                                metadata = UghHelper.getMetadata(tempChild, mdt);
+                                if (metadata != null) {
+                                    metadata.setValue(field.getValue());
                                 }
                             }
                         }
                     } catch (Exception e) {
                         Helper.setFehlerMeldung(e);
-
-                    }
-                } // end if ughbinding
-            } // end for
-
-            /*
-             * Metadata inheritance and enrichment
-             */
-            if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
-                DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
-                Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<>();
-                while (enricher.getAllChildren() != null) {
-                    // save higher level metadata for lower enrichment
-                    List<Metadata> allMetadata = enricher.getAllMetadata();
-                    if (allMetadata == null) {
-                        allMetadata = Collections.emptyList();
-                    }
-                    for (Metadata available : allMetadata) {
-                        Map<String, Metadata> availableMetadata = higherLevelMetadata
-                                .containsKey(available.getType().getName())
-                                        ? higherLevelMetadata.get(available.getType().getName()) : new HashMap<>();
-                        if (!availableMetadata.containsKey(available.getValue())) {
-                            availableMetadata.put(available.getValue(), available);
-                        }
-                        higherLevelMetadata.put(available.getType().getName(), availableMetadata);
-                    }
-
-                    // enrich children with inherited metadata
-                    for (DocStruct nextChild : enricher.getAllChildren()) {
-                        enricher = nextChild;
-                        for (Entry<String, Map<String, Metadata>> availableHigherMetadata : higherLevelMetadata
-                                .entrySet()) {
-                            String enrichable = availableHigherMetadata.getKey();
-                            boolean addable = false;
-                            List<MetadataType> addableTypesNotNull = enricher.getAddableMetadataTypes();
-                            if (addableTypesNotNull == null) {
-                                addableTypesNotNull = Collections.emptyList();
-                            }
-                            for (MetadataType addableMetadata : addableTypesNotNull) {
-                                if (addableMetadata.getName().equals(enrichable)) {
-                                    addable = true;
-                                    break;
-                                }
-                            }
-                            if (!addable) {
-                                continue;
-                            }
-                            there: for (Entry<String, Metadata> higherElement : availableHigherMetadata.getValue()
-                                    .entrySet()) {
-                                List<Metadata> amNotNull = enricher.getAllMetadata();
-                                if (amNotNull == null) {
-                                    amNotNull = Collections.emptyList();
-                                }
-                                for (Metadata existentMetadata : amNotNull) {
-                                    if (existentMetadata.getType().getName().equals(enrichable)
-                                            && existentMetadata.getValue().equals(higherElement.getKey())) {
-                                        continue there;
-                                    }
-                                }
-                                try {
-                                    enricher.addMetadata(higherElement.getValue());
-                                } catch (UGHException didNotWork) {
-                                    logger.info(didNotWork);
-                                }
-                            }
-                        }
                     }
                 }
             }
 
+            updateMetadata();
+
             /*
              * Collectionen hinzufügen
              */
-            DocStruct colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
+            DocStruct colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             try {
                 addCollections(colStruct);
                 /*
@@ -991,10 +901,7 @@ public class ProzesskopieForm implements Serializable {
                 colStruct = colStruct.getAllChildren().get(0);
                 addCollections(colStruct);
             } catch (RuntimeException e) {
-                /*
-                 * das Firstchild unterhalb des Topstructs konnte nicht
-                 * ermittelt werden
-                 */
+                logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
             }
 
             /*
@@ -1002,31 +909,31 @@ public class ProzesskopieForm implements Serializable {
              */
             try {
                 MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
-                List<? extends Metadata> alleImagepfade = this.myRdf.getDigitalDocument().getPhysicalDocStruct()
+                List<? extends Metadata> allImagePaths = this.rdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
-                if (alleImagepfade != null && alleImagepfade.size() > 0) {
-                    for (Metadata md : alleImagepfade) {
-                        this.myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
+                if (allImagePaths != null && allImagePaths.size() > 0) {
+                    for (Metadata metadata : allImagePaths) {
+                        this.rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(metadata);
                     }
                 }
-                Metadata newmd = new Metadata(mdt);
+                Metadata newMetadata = new Metadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                    newMetadata.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
                             + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 } else {
-                    newmd.setValue("file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                    newMetadata.setValue("file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
                             + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 }
-                this.myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
+                this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
 
                 /* Rdf-File schreiben */
-                serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
+                serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
 
                 /*
                  * soll der Prozess als Vorlage verwendet werden?
                  */
                 if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
-                    serviceManager.getFileService().writeMetadataAsTemplateFile(this.myRdf, this.prozessKopie);
+                    serviceManager.getFileService().writeMetadataAsTemplateFile(this.rdf, this.prozessKopie);
                 }
 
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
@@ -1043,7 +950,6 @@ public class ProzesskopieForm implements Serializable {
         }
 
         // Create configured directories
-
         serviceManager.getProcessService().createProcessDirs(this.prozessKopie);
 
         // Adding process to history
@@ -1054,7 +960,6 @@ public class ProzesskopieForm implements Serializable {
             try {
                 serviceManager.getProcessService().save(this.prozessKopie);
             } catch (DataException e) {
-                logger.error(e);
                 logger.error("error on save: ", e);
                 return null;
             }
@@ -1062,18 +967,116 @@ public class ProzesskopieForm implements Serializable {
 
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
+        startTaskScriptThreads();
+
+        return "/pages/NewProcess/Page3";
+    }
+
+    private void updateTasks() {
+        for (Task task : this.prozessKopie.getTasks()) {
+            /*
+             * always save date and user for each step
+             */
+            task.setProcessingTime(this.prozessKopie.getCreationDate());
+            task.setEditTypeEnum(TaskEditType.AUTOMATIC);
+            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+            if (loginForm != null) {
+                task.setProcessingUser(loginForm.getMyBenutzer());
+            }
+
+            /*
+             * only if its done, set edit start and end date
+             */
+            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
+                task.setProcessingBegin(this.prozessKopie.getCreationDate());
+                // this concerns steps, which are set as done right on creation
+                // bearbeitungsbeginn is set to creation timestamp of process
+                // because the creation of it is basically begin of work
+                Date date = new Date();
+                task.setProcessingTime(date);
+                task.setProcessingEnd(date);
+            }
+        }
+    }
+
+    /**
+     * Metadata inheritance and enrichment.
+     */
+    private void updateMetadata() throws PreferencesException {
+        if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+            DocStruct enricher = rdf.getDigitalDocument().getLogicalDocStruct();
+            Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<>();
+            while (enricher.getAllChildren() != null) {
+                // save higher level metadata for lower enrichment
+                List<Metadata> allMetadata = enricher.getAllMetadata();
+                if (allMetadata == null) {
+                    allMetadata = Collections.emptyList();
+                }
+                for (Metadata available : allMetadata) {
+                    Map<String, Metadata> availableMetadata = higherLevelMetadata
+                            .containsKey(available.getType().getName())
+                            ? higherLevelMetadata.get(available.getType().getName()) : new HashMap<>();
+                    if (!availableMetadata.containsKey(available.getValue())) {
+                        availableMetadata.put(available.getValue(), available);
+                    }
+                    higherLevelMetadata.put(available.getType().getName(), availableMetadata);
+                }
+
+                // enrich children with inherited metadata
+                for (DocStruct nextChild : enricher.getAllChildren()) {
+                    enricher = nextChild;
+                    for (Entry<String, Map<String, Metadata>> availableHigherMetadata : higherLevelMetadata
+                            .entrySet()) {
+                        String enrichable = availableHigherMetadata.getKey();
+                        boolean addable = false;
+                        List<MetadataType> addableTypesNotNull = enricher.getAddableMetadataTypes();
+                        if (addableTypesNotNull == null) {
+                            addableTypesNotNull = Collections.emptyList();
+                        }
+                        for (MetadataType addableMetadata : addableTypesNotNull) {
+                            if (addableMetadata.getName().equals(enrichable)) {
+                                addable = true;
+                                break;
+                            }
+                        }
+                        if (!addable) {
+                            continue;
+                        }
+                        there: for (Entry<String, Metadata> higherElement : availableHigherMetadata.getValue()
+                                .entrySet()) {
+                            List<Metadata> amNotNull = enricher.getAllMetadata();
+                            if (amNotNull == null) {
+                                amNotNull = Collections.emptyList();
+                            }
+                            for (Metadata existentMetadata : amNotNull) {
+                                if (existentMetadata.getType().getName().equals(enrichable)
+                                        && existentMetadata.getValue().equals(higherElement.getKey())) {
+                                    continue there;
+                                }
+                            }
+                            try {
+                                enricher.addMetadata(higherElement.getValue());
+                            } catch (UGHException didNotWork) {
+                                logger.info(didNotWork);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void startTaskScriptThreads() {
         /* damit die Sortierung stimmt nochmal einlesen */
         Helper.getHibernateSession().refresh(this.prozessKopie);
 
-        List<Task> tasks = serviceManager.getProcessService().getById(prozessKopie.getId()).getTasks();
-        for (Task t : tasks) {
-            if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                TaskScriptThread myThread = new TaskScriptThread(t);
-                myThread.start();
+        List<Task> tasks = this.prozessKopie.getTasks();
+        for (Task task : tasks) {
+            if (task.getProcessingStatus() == 1 && task.isTypeAutomatic()) {
+                TaskScriptThread thread = new TaskScriptThread(task);
+                thread.start();
             }
         }
-        return "/pages/NewProcess/Page3";
-
     }
 
     private void addCollections(DocStruct colStruct) {
@@ -1132,7 +1135,7 @@ public class ProzesskopieForm implements Serializable {
                         .getDocStrctTypeByName(ConfigOpac.getDoctypeByName(this.docType).getRulesetType());
                 DocStruct ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
-                this.myRdf = ff;
+                this.rdf = ff;
             } else if (ConfigOpac.getDoctypeByName(this.docType).isPeriodical()) {
                 /* Zeitschrift */
                 DocStructType dsty = myPrefs.getDocStrctTypeByName("Periodical");
@@ -1142,7 +1145,7 @@ public class ProzesskopieForm implements Serializable {
                 DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
                 DocStruct dsvolume = dd.createDocStruct(dstyvolume);
                 ds.addChild(dsvolume);
-                this.myRdf = ff;
+                this.rdf = ff;
             } else if (ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
                 /* MultivolumeBand */
                 DocStructType dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
@@ -1152,7 +1155,7 @@ public class ProzesskopieForm implements Serializable {
                 DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("Volume");
                 DocStruct dsvolume = dd.createDocStruct(dstyvolume);
                 ds.addChild(dsvolume);
-                this.myRdf = ff;
+                this.rdf = ff;
             }
             if (this.docType.equals("volumerun")) {
                 DocStructType dsty = myPrefs.getDocStrctTypeByName("VolumeRun");
@@ -1162,7 +1165,7 @@ public class ProzesskopieForm implements Serializable {
                 DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("Record");
                 DocStruct dsvolume = dd.createDocStruct(dstyvolume);
                 ds.addChild(dsvolume);
-                this.myRdf = ff;
+                this.rdf = ff;
             }
 
         } catch (TypeNotAllowedForParentException | TypeNotAllowedAsChildException | PreferencesException e) {
@@ -1241,18 +1244,18 @@ public class ProzesskopieForm implements Serializable {
     public void setDocType(String docType) {
         if (!this.docType.equals(docType)) {
             this.docType = docType;
-            if (myRdf != null) {
+            if (rdf != null) {
 
-                Fileformat tmp = myRdf;
+                Fileformat tmp = rdf;
 
                 createNewFileformat();
                 try {
-                    if (myRdf.getDigitalDocument().getLogicalDocStruct()
+                    if (rdf.getDigitalDocument().getLogicalDocStruct()
                             .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
-                        myRdf = tmp;
+                        rdf = tmp;
                     } else {
                         DocStruct oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
-                        DocStruct newLogicalDocstruct = myRdf.getDigitalDocument().getLogicalDocStruct();
+                        DocStruct newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
                         // both have no children
                         if (oldLogicalDocstruct.getAllChildren() == null
                                 && newLogicalDocstruct.getAllChildren() == null) {
@@ -2043,6 +2046,6 @@ public class ProzesskopieForm implements Serializable {
      * @return the metadata file in memory
      */
     public Fileformat getFileformat() {
-        return myRdf;
+        return rdf;
     }
 }
