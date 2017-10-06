@@ -62,7 +62,7 @@
                                 <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
                             </td>
                             <td>
-                                <h:outputText value="#{item.processingBeginAsFormattedString}"/>
+                                <h:outputText value="#{item.processingBegin}"/>
                             </td>
                         </tr>
                     </ui:fragment>
@@ -72,7 +72,7 @@
                                 <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
                             </td>
                             <td>
-                                <h:outputText value="#{item.processingTimeAsFormattedString}"/>
+                                <h:outputText value="#{item.processingTime}"/>
                             </td>
                         </tr>
                     </ui:fragment>
@@ -91,7 +91,7 @@
                             <h:outputText value="#{msgs.aktualisierungstyp}:"/>
                         </td>
                         <td>
-                            <h:outputText value="#{item.editTypeEnum.title}"/>
+                            <h:outputText value="#{item.editType.title}"/>
                         </td>
                     </tr>
                 </table>
