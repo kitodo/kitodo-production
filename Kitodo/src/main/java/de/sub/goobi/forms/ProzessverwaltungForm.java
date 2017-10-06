@@ -203,7 +203,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String editProcess() {
         reload();
-        return "/pages/ProzessverwaltungBearbeiten";
+        return "/pages/ProzessverwaltungBearbeiten?faces-redirect=true&id=" + this.process.getId();
     }
 
     /**
