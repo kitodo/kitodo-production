@@ -1868,17 +1868,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         /*
          * Speicherort vorbereiten und downloaden
          */
-        URI zielVerzeichnis;
-        URI benutzerHome;
-
-        zielVerzeichnis = new File(project.getDmsImportImagesPath()).toURI();
-        benutzerHome = zielVerzeichnis;
+        URI targetDirectory = new File(project.getDmsImportImagesPath()).toURI();
+        URI userHome = targetDirectory;
 
         /* ggf. noch einen Vorgangsordner anlegen */
         if (project.isDmsImportCreateProcessFolder()) {
-            zielVerzeichnis = benutzerHome.resolve(File.separator + process.getTitle());
+            targetDirectory = userHome.resolve(File.separator + process.getTitle());
             /* alte Import-Ordner löschen */
-            if (!fileService.delete(benutzerHome)) {
+            if (!fileService.delete(userHome)) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Import folder could not be cleared");
                 return false;
@@ -1898,8 +1895,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 return false;
             }
 
-            if (!fileService.fileExist(benutzerHome)) {
-                fileService.createDirectory(benutzerHome, File.separator + process.getTitle());
+            if (!fileService.fileExist(userHome)) {
+                fileService.createDirectory(userHome, File.separator + process.getTitle());
             }
         }
 
@@ -1908,13 +1905,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         try {
             if (exportWithImages) {
-                imageDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX, fi);
-                fulltextDownload(benutzerHome, atsPpnBand, fi);
+                imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX, fi);
+                fulltextDownload(userHome, atsPpnBand, fi);
             } else if (exportFullText) {
-                fulltextDownload(benutzerHome, atsPpnBand, fi);
+                fulltextDownload(userHome, atsPpnBand, fi);
             }
 
-            directoryDownload(process, zielVerzeichnis);
+            directoryDownload(process, targetDirectory);
         } catch (Exception e) {
             Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
             return false;
@@ -1927,16 +1924,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (project.isUseDmsImport()) {
             if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
-                writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
+                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
             } else {
                 /* ...wenn nicht, nur ein Fileformat schreiben. */
-                gdzfile.write(benutzerHome + File.separator + atsPpnBand + ".xml");
+                gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
             }
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
             if (MetadataFormat
                     .findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
