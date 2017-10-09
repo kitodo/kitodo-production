@@ -498,11 +498,6 @@
             <version>9.0.0.4</version>
         </dependency>
         <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0-oracle-thin-extras</artifactId>
-            <version>0.9.5.2</version>
-        </dependency>
-        <dependency>
             <groupId>net.sf.jsfcomp.chartcreator</groupId>
             <artifactId>chartcreator</artifactId>
             <version>1.2.0</version>
