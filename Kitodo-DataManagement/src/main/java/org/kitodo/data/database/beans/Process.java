@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -341,7 +342,8 @@ public class Process extends BaseIndexedBean {
     /**
      * Set batches, if list is empty just set, if not first clear and next set.
      *
-     * @param batches list
+     * @param batches
+     *            list
      */
     public void setBatches(List<Batch> batches) {
         if (this.batches == null) {
@@ -384,6 +386,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * TODO: find way to set up this value from service.
+     * 
      * @return null
      */
     public User getBlockedUsers() {
@@ -405,8 +408,8 @@ public class Process extends BaseIndexedBean {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated
-     * with as readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated with as
+     * readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -422,5 +425,29 @@ public class Process extends BaseIndexedBean {
             result.append(batch.getLabel());
         }
         return result.toString();
+    }
+
+    /**
+     * Determines whether or not two processes are equal. Two instances of
+     * {@code Process} are equal if the values of their {@code Id}, {@code Title},
+     * {@code OutputName} and {@code CreationDate} member fields are the same.
+     * 
+     * @param o
+     *            An object to be compared with this {@code Process}.
+     * @return {@code true} if the object to be compared is an instance of
+     *         {@code Process} and has the same values; {@code false} otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Process process = (Process) o;
+        return Objects.equals(getTitle(), process.getTitle()) && Objects.equals(getId(), process.getId())
+                && Objects.equals(getOutputName(), process.getOutputName())
+                && Objects.equals(getCreationDate(), process.getCreationDate());
     }
 }
