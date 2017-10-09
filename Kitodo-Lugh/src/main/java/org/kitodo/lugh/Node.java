@@ -25,8 +25,7 @@ import org.kitodo.lugh.vocabulary.RDF;
  * <p>
  * The class offers functions known from Java’s collections, and they are
  * intended to intuitively behave the same way.
- *
- * @author Matthias Ronge
+ * 
  */
 public interface Node extends AccessibleObject, NodeType {
 

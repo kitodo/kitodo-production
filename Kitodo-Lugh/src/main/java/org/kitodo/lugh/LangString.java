@@ -16,8 +16,6 @@ import java.util.Locale;
 /**
  * An RDF lang string, that is a linked data literal with a language tag
  * attached.
- *
- * @author Matthias Ronge
  */
 public interface LangString extends Literal {
     /**

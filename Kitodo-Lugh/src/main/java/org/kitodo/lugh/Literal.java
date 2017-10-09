@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 
 /**
  * A linked data literal.
- *
- * @author Matthias Ronge
  */
 public interface Literal extends AccessibleObject {
 

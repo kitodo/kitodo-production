@@ -18,8 +18,6 @@ import org.apache.jena.rdf.model.*;
 
 /**
  * Convenience class to serialize a node.
- *
- * @author Matthias Ronge
  */
 public enum SerializationFormat {
     /**

@@ -17,8 +17,6 @@ import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.w3.org/2000/01/rdf-schema} namespace.
- *
- * @author Matthias Ronge
  */
 public class RDFS {
     public static final NodeReference CLASS = MemoryStorage.INSTANCE

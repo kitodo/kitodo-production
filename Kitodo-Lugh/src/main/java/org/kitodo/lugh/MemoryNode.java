@@ -27,16 +27,12 @@ import org.kitodo.lugh.vocabulary.RDF;
  * <p>
  * The class offers functions known from Java’s collections, and they are
  * intended to intuitively behave the same way.
- *
- * @author Matthias Ronge
  */
 public class MemoryNode implements Node {
 
     /**
      * Iterator to iterate through the edges and return all directly referenced
      * nodes. Leaves that are not nodes are not returned.
-     *
-     * @author Matthias Ronge
      */
     private class ChildNodeIterator implements Iterator<ObjectType> {
         /**
@@ -122,8 +118,6 @@ public class MemoryNode implements Node {
     /**
      * The pair of the first and last index in use, as return type of the
      * {@code range()} function.
-     *
-     * @author Matthias Ronge
      */
     private class Indices {
         /**

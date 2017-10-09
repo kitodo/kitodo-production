@@ -14,8 +14,6 @@ package org.kitodo.lugh;
 /**
  * A checked exception being thrown if a result is to be retrieved but more than
  * one result is available.
- *
- * @author Matthias Ronge
  */
 public class AmbiguousDataException extends LinkedDataException {
     private static final long serialVersionUID = 1L;

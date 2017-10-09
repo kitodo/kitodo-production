@@ -20,8 +20,6 @@ package org.kitodo.lugh;
  * literals”. Functionally, these classes do not have much in common. That is
  * why this interface is empty. However, it is used for filtering in
  * {@link Result}.
- *
- * @author Matthias Ronge
  */
 public interface NodeType extends ObjectType {
 }

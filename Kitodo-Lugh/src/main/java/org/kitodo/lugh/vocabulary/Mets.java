@@ -17,14 +17,14 @@ import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.loc.gov/METS/} namespace.
- *
- * @author Matthias Ronge
  */
 public class Mets {
 
-    public static final NodeReference ADMID = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/ADMID");
+    public static final NodeReference ADMID = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/METS/ADMID");
 
-    public static final NodeReference AGENT = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/agent");
+    public static final NodeReference AGENT = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/METS/agent");
 
     public static final NodeReference AMD_SEC = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/METS/amdSec");
@@ -34,7 +34,8 @@ public class Mets {
     public static final NodeReference DMD_SEC = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/METS/dmdSec");
 
-    public static final NodeReference DMDID = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/DMDID");
+    public static final NodeReference DMDID = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/METS/DMDID");
 
     public static final NodeReference F_LOCAT = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/METS/FLocat");
@@ -54,7 +55,8 @@ public class Mets {
 
     public static final NodeReference ID = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/ID");
 
-    public static final NodeReference LABEL = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/LABEL");
+    public static final NodeReference LABEL = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/METS/LABEL");
 
     public static final NodeReference LASTMODDATE = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/METS/LASTMODDATE");
@@ -79,7 +81,8 @@ public class Mets {
 
     public static final NodeReference NOTE = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/note");
 
-    public static final NodeReference ORDER = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/ORDER");
+    public static final NodeReference ORDER = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/METS/ORDER");
 
     public static final NodeReference ORDERLABEL = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/METS/ORDERLABEL");

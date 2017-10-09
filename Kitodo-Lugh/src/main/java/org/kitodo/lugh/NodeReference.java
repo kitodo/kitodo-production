@@ -13,8 +13,6 @@ package org.kitodo.lugh;
 
 /**
  * A reference to a named linked data node.
- *
- * @author Matthias Ronge
  */
 public interface NodeReference extends IdentifiableNode, NodeType {
 }

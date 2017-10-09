@@ -17,8 +17,6 @@ import java.util.function.Supplier;
 
 /**
  * The results returned by a call to a getter on a node.
- *
- * @author Matthias Ronge
  */
 public interface Result extends Set<ObjectType> {
 

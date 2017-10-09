@@ -31,8 +31,6 @@ import org.kitodo.lugh.xml.Namespaces;
  * * [rdf:type mods:displayForm] rdf:_1}
  * <p>
  * Inspired by XPath.
- *
- * @author Matthias Ronge
  */
 public class GraphPath extends MemoryNode {
 
@@ -40,8 +38,6 @@ public class GraphPath extends MemoryNode {
      * Parser to recursively parse an object. The parsing method returns the
      * number of code points consumed, the result is provided in the field
      * {@code result}.
-     *
-     * @author Matthias Ronge
      */
     private static class ObjectParser {
         private final Map<String, String> prefixes;

@@ -46,8 +46,6 @@ import java.util.Map;
  * number sign are declared <strong>without</strong> the trailing number sign,
  * while namespaces ending in a slash are declared <strong>with</strong> the
  * trailing slash.
- *
- * @author Matthias Ronge
  */
 public class Namespaces {
     /**

@@ -20,8 +20,6 @@ import org.kitodo.lugh.xml.Namespaces;
 
 /**
  * A linked data literal.
- *
- * @author Matthias Ronge
  */
 public class MemoryLiteral implements Literal {
 

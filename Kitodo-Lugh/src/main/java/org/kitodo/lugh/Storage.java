@@ -17,8 +17,6 @@ import org.apache.jena.rdf.model.Model;
 
 /**
  * Factory interface to create data objects in a given storage implementation.
- *
- * @author Matthias Ronge
  */
 public interface Storage {
     /**

@@ -18,7 +18,6 @@ import org.kitodo.lugh.*;
 /**
  * The {@code http://www.w3.org/XML/1998/namespace} namespace.
  *
- * @author Matthias Ronge
  * @see "http://www.w3.org/XML/1998/namespace"
  */
 public class XML {

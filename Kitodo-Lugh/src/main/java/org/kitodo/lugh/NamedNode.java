@@ -13,8 +13,6 @@ package org.kitodo.lugh;
 
 /**
  * A named linked data node whose contents are available.
- *
- * @author Matthias Ronge
  */
 public interface NamedNode extends IdentifiableNode, Node {
 }

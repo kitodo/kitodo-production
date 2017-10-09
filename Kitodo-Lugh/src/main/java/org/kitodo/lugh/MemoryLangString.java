@@ -20,8 +20,6 @@ import org.kitodo.lugh.vocabulary.RDF;
 /**
  * An RDF lang string, that is a linked data literal with a language tag
  * attached.
- *
- * @author Matthias Ronge
  */
 public class MemoryLangString extends MemoryLiteral implements LangString {
     /**

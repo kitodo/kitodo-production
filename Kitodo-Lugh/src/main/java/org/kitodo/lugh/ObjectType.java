@@ -17,8 +17,6 @@ import org.apache.jena.rdf.model.*;
 
 /**
  * A node, a reference to a node, or any kind of literal.
- *
- * @author Matthias Ronge
  */
 public interface ObjectType {
     /**

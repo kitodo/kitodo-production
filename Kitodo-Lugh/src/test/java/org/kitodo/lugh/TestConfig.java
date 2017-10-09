@@ -2,8 +2,6 @@ package org.kitodo.lugh;
 
 /**
  * Configure the test package here.
- *
- * @author Matthias Ronge
  */
 public class TestConfig {
 

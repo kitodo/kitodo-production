@@ -15,8 +15,6 @@ import java.util.*;
 
 /**
  * The results returned by a call to a getter on a node.
- *
- * @author Matthias Ronge
  */
 public class MemoryResult extends HashSet<ObjectType> implements Result {
     /**

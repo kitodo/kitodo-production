@@ -15,8 +15,6 @@ import org.apache.jena.rdf.model.*;
 
 /**
  * A reference to a named linked data node.
- *
- * @author Matthias Ronge
  */
 public class MemoryNodeReference implements NodeReference {
 

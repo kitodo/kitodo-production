@@ -16,8 +16,6 @@ import java.util.NoSuchElementException;
 
 /**
  * A node or a literal, which is accessible and provides access methods.
- *
- * @author Matthias Ronge
  */
 public interface AccessibleObject extends ObjectType {
     /**

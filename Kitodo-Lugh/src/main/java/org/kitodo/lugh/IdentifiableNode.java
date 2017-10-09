@@ -13,8 +13,6 @@ package org.kitodo.lugh;
 
 /**
  * A named node, which has an identifier, but may be reference-only.
- *
- * @author Matthias Ronge
  */
 public interface IdentifiableNode extends NodeType {
     /**

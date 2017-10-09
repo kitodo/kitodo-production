@@ -18,8 +18,6 @@ import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.w3.org/1999/02/22-rdf-syntax-ns} namespace.
- *
- * @author Matthias Ronge
  */
 public class RDF {
     /**

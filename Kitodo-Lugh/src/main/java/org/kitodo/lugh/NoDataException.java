@@ -14,8 +14,6 @@ package org.kitodo.lugh;
 /**
  * An checked exception being thrown if a result is to be retrieved but no
  * result is available.
- *
- * @author Matthias Ronge
  */
 public class NoDataException extends LinkedDataException {
     private static final long serialVersionUID = 1L;

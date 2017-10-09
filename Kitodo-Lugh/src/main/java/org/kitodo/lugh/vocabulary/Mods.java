@@ -17,8 +17,6 @@ import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.loc.gov/mods/v3} namespace.
- *
- * @author Matthias Ronge
  */
 public class Mods {
 
@@ -49,9 +47,11 @@ public class Mods {
     public static final NodeReference LANGUAGE_TERM = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/mods/v3#languageTerm");
 
-    public static final NodeReference MODS = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#mods");
+    public static final NodeReference MODS = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/mods/v3#mods");
 
-    public static final NodeReference NAME = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#name");
+    public static final NodeReference NAME = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/mods/v3#name");
 
     public static final NodeReference NAME_PART = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/mods/v3#namePart");
@@ -81,7 +81,8 @@ public class Mods {
      */
     private static final Map<String, NodeReference> reversed;
 
-    public static final NodeReference ROLE = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#role");
+    public static final NodeReference ROLE = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/mods/v3#role");
 
     public static final NodeReference ROLE_TERM = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/mods/v3#roleTerm");
@@ -95,7 +96,8 @@ public class Mods {
     public static final NodeReference TITLE_INFO = MemoryStorage.INSTANCE
             .createNodeReference("http://www.loc.gov/mods/v3#titleInfo");
 
-    public static final NodeReference TYPE = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/mods/v3#type");
+    public static final NodeReference TYPE = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.loc.gov/mods/v3#type");
 
     /**
      * Populates the reverse map of the URLs to the constants.

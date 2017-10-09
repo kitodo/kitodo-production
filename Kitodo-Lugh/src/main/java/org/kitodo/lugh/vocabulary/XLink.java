@@ -17,8 +17,6 @@ import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.w3.org/1999/xlink} namespace.
- *
- * @author Matthias Ronge
  */
 public class XLink {
 
@@ -35,7 +33,8 @@ public class XLink {
      */
     private static final Map<String, NodeReference> reversed;
 
-    public static final NodeReference TO = MemoryStorage.INSTANCE.createNodeReference("http://www.w3.org/1999/xlink#to");
+    public static final NodeReference TO = MemoryStorage.INSTANCE
+            .createNodeReference("http://www.w3.org/1999/xlink#to");
 
     /**
      * Populates the reverse map of the URLs to the constants.

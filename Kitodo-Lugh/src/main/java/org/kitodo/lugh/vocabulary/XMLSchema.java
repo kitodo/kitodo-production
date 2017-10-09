@@ -21,7 +21,6 @@ import org.kitodo.lugh.*;
  * The XML Schema datatypes.
  *
  * @see "https://www.w3.org/TR/xmlschema-2/"
- * @author Matthias Ronge
  */
 public class XMLSchema {
     public static class IntegerDatatype implements NodeReference {

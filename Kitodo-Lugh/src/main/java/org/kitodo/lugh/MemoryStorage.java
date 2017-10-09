@@ -8,8 +8,6 @@ import org.kitodo.lugh.vocabulary.*;
 
 /**
  * MemoryStorage is a storage implementation that is held in memory.
- *
- * @author Matthias Ronge
  */
 public class MemoryStorage implements Storage {
 
