@@ -833,30 +833,43 @@ public class IndexingForm {
 
     /**
      * Create mapping which enables sorting and other aggregation functionalities.
+     *
+     * @param updatePollingChannel
+     *            flag indicating whether the web socket channel to the frontend
+     *            should be updated with the success status of the mapping creation
+     *            or not.
      */
-    public void createMapping() {
-        pollingChannel.send(MAPPING_STARTED_MESSAGE);
+    public void createMapping(boolean updatePollingChannel) {
+        if (updatePollingChannel) {
+            pollingChannel.send(MAPPING_STARTED_MESSAGE);
+        }
         try {
+            String mappingStateMessage;
             if (readMapping().equals("")) {
                 if (indexRestClient.createIndex()) {
                     currentState = indexStates.MAPPING_SUCCESS;
-                    pollingChannel.send(MAPPING_FINISHED_MESSAGE);
+                    mappingStateMessage = MAPPING_FINISHED_MESSAGE;
                 } else {
                     currentState = indexStates.MAPPING_ERROR;
-                    pollingChannel.send(MAPPING_FAILED_MESSAGE);
+                    mappingStateMessage = MAPPING_FAILED_MESSAGE;
                 }
             } else {
                 if (indexRestClient.createIndex(readMapping())) {
                     currentState = indexStates.MAPPING_SUCCESS;
-                    pollingChannel.send(MAPPING_FINISHED_MESSAGE);
+                    mappingStateMessage = MAPPING_FINISHED_MESSAGE;
                 } else {
                     currentState = indexStates.MAPPING_ERROR;
-                    pollingChannel.send(MAPPING_FAILED_MESSAGE);
+                    mappingStateMessage = MAPPING_FAILED_MESSAGE;
                 }
+            }
+            if (updatePollingChannel) {
+                pollingChannel.send(mappingStateMessage);
             }
         } catch (CustomResponseException | IOException | ParseException e) {
             currentState = indexStates.MAPPING_ERROR;
-            pollingChannel.send(MAPPING_FAILED_MESSAGE);
+            if (updatePollingChannel) {
+                pollingChannel.send(MAPPING_FAILED_MESSAGE);
+            }
             logger.error(e);
         }
     }
@@ -864,17 +877,23 @@ public class IndexingForm {
     /**
      * Delete whole Elastic Search index.
      */
-    public void deleteIndex() {
-        pollingChannel.send(DELETION_STARTED_MESSAGE);
+    public void deleteIndex(boolean updatePollingChannel) {
+        if (updatePollingChannel) {
+            pollingChannel.send(DELETION_STARTED_MESSAGE);
+        }
+        String updateMessage;
         try {
             indexRestClient.deleteIndex();
             resetGlobalProgress();
             currentState = indexStates.DELETE_SUCCESS;
-            pollingChannel.send(DELETION_FINISHED_MESSAGE);
+            updateMessage = DELETION_FINISHED_MESSAGE;
         } catch (IOException e) {
             logger.error(e.getMessage());
             currentState = indexStates.DELETE_ERROR;
-            pollingChannel.send(DELETION_FAILED_MESSAGE);
+            updateMessage = DELETION_FAILED_MESSAGE;
+        }
+        if (updatePollingChannel) {
+            pollingChannel.send(updateMessage);
         }
     }
 

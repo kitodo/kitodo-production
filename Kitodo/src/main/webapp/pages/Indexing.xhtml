@@ -141,7 +141,7 @@
                                                 <p:commandButton widgetVar="createMapping"
                                                                  value="#{msgs.createMapping}"
                                                                  style="width: 100%;"
-                                                                 action="#{indexingForm.createMapping()}"
+                                                                 action="#{indexingForm.createMapping(true)}"
                                                                  disabled="#{indexingForm.indexExists() or indexingForm.indexingInProgress()}"
                                                                  update="indexingTable"
                                                                  onclick="createMapping();"/>
@@ -158,7 +158,7 @@
                                                 <p:commandButton widgetVar="deleteIndex"
                                                                  value="#{msgs.deleteIndex}"
                                                                  style="width: 100%;"
-                                                                 action="#{indexingForm.deleteIndex()}"
+                                                                 action="#{indexingForm.deleteIndex(true)}"
                                                                  disabled="#{!indexingForm.indexExists() or indexingForm.indexingInProgress()}"
                                                                  update="indexingTable"
                                                                  onclick="return confirm('Do you REALLY want to delete the whole index?');deleteIndex();"/>

@@ -20,9 +20,9 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.io.InputStream;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,8 +48,21 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.History;
+import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
@@ -101,6 +114,25 @@ public class MockDatabase {
         node = new ExtendedNode(settings, asList(Netty4Plugin.class));
         node.start();
         indexRestClient.createIndex(readMapping());
+    }
+
+    public static void startNodeWithoutMapping() throws Exception {
+        String nodeName = randomString(6);
+        final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
+
+        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
+        indexRestClient = initializeIndexRestClient();
+
+        Map settingsMap = prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
+        Settings settings = Settings.builder().put(settingsMap).build();
+
+        removeOldDataDirectories("target/" + nodeName);
+
+        if (node != null) {
+            stopNode();
+        }
+        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+        node.start();
     }
 
     public static void stopNode() throws Exception {
