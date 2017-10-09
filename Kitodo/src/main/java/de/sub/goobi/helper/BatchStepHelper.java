@@ -39,8 +39,6 @@ import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -564,12 +562,9 @@ public class BatchStepHelper {
                  * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
                  * wieder schliessen
                  */
-                @SuppressWarnings("unchecked")
-                List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-                        .add(Restrictions.le("ordering", this.currentStep.getOrdering()))
-                        .add(Restrictions.gt("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
-                        .createCriteria("process").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
-                for (Task task : alleSchritteDazwischen) {
+                List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
+                        this.currentStep.getOrdering(), temp.getOrdering(), this.currentStep.getProcess().getId());
+                for (Task task : tasksInBetween) {
                     task.setProcessingStatusEnum(TaskStatus.LOCKED);
                     task = serviceManager.getTaskService().setCorrectionStep(task);
                     task.setProcessingEnd(null);
@@ -589,14 +584,13 @@ public class BatchStepHelper {
      *
      * @return list of selected items
      */
-    @SuppressWarnings("unchecked")
     public List<SelectItem> getPreviousStepsForProblemReporting() {
         List<SelectItem> answer = new ArrayList<>();
-        List<Task> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
-                .add(Restrictions.lt("ordering", this.currentStep.getOrdering())).addOrder(Order.desc("ordering"))
-                .createCriteria("process").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
-        for (Task s : alleVorherigenSchritte) {
-            answer.add(new SelectItem(s.getTitle(), serviceManager.getTaskService().getTitleWithUserName(s)));
+        List<Task> previousTasksForProblemReporting = serviceManager.getTaskService()
+                .getPreviousTasksForProblemReporting(this.currentStep.getOrdering(),
+                        this.currentStep.getProcess().getId());
+        for (Task task : previousTasksForProblemReporting) {
+            answer.add(new SelectItem(task.getTitle(), serviceManager.getTaskService().getTitleWithUserName(task)));
         }
         return answer;
     }
@@ -606,15 +600,12 @@ public class BatchStepHelper {
      *
      * @return list of selected items
      */
-    @SuppressWarnings("unchecked")
     public List<SelectItem> getNextStepsForProblemSolution() {
         List<SelectItem> answer = new ArrayList<>();
-        List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
-                .add(Restrictions.gt("ordering", this.currentStep.getOrdering())).add(Restrictions.eq("priority", 10))
-                .addOrder(Order.asc("ordering")).createCriteria("process")
-                .add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
-        for (Task s : alleNachfolgendenSchritte) {
-            answer.add(new SelectItem(s.getTitle(), serviceManager.getTaskService().getTitleWithUserName(s)));
+        List<Task> nextTasksForProblemSolution = serviceManager.getTaskService()
+                .getNextTasksForProblemSolution(this.currentStep.getOrdering(), this.currentStep.getProcess().getId());
+        for (Task task : nextTasksForProblemSolution) {
+            answer.add(new SelectItem(task.getTitle(), serviceManager.getTaskService().getTitleWithUserName(task)));
         }
         return answer;
     }
@@ -677,9 +668,9 @@ public class BatchStepHelper {
 
         try {
             Task temp = null;
-            for (Task s : this.currentStep.getProcess().getTasks()) {
-                if (s.getTitle().equals(this.mySolutionStep)) {
-                    temp = s;
+            for (Task task : this.currentStep.getProcess().getTasks()) {
+                if (task.getTitle().equals(this.mySolutionStep)) {
+                    temp = task;
                 }
             }
             if (temp != null) {
@@ -687,12 +678,9 @@ public class BatchStepHelper {
                  * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
                  * wieder schliessen
                  */
-                @SuppressWarnings("unchecked")
-                List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-                        .add(Restrictions.ge("ordering", this.currentStep.getOrdering()))
-                        .add(Restrictions.le("ordering", temp.getOrdering())).addOrder(Order.asc("ordering"))
-                        .createCriteria("process").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
-                for (Task task : alleSchritteDazwischen) {
+                List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
+                        this.currentStep.getOrdering(), this.currentStep.getProcess().getId());
+                for (Task task : tasksInBetween) {
                     task.setProcessingStatusEnum(TaskStatus.DONE);
                     task.setProcessingEnd(now);
                     task.setPriority(0);

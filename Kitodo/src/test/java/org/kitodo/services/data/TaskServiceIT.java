@@ -251,7 +251,7 @@ public class TaskServiceIT {
     public void shouldGetPreviousTaskForProblemReporting() {
         TaskService taskService = new TaskService();
 
-        List<Task> tasks = taskService.getPreviousTaskForProblemReporting(2, 2);
+        List<Task> tasks = taskService.getPreviousTasksForProblemReporting(2, 2);
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);

@@ -940,7 +940,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            id of process for which tasks are searched as Integer
      * @return list of Task objects
      */
-    public List<Task> getPreviousTaskForProblemReporting(Integer ordering, Integer processId) {
-        return dao.getPreviousTaskForProblemReporting(ordering, processId);
+    public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
+        return dao.getPreviousTasksForProblemReporting(ordering, processId);
     }
 }

@@ -545,7 +545,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Korrekturmeldung an vorherige Schritte.
      */
     public List<Task> getPreviousStepsForProblemReporting() {
-        return serviceManager.getTaskService().getPreviousTaskForProblemReporting(
+        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(
                 this.mySchritt.getOrdering(), this.mySchritt.getProcess().getId());
     }
 
