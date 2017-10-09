@@ -38,14 +38,8 @@ public class MemoryStorage implements Storage {
     }
 
     /**
-     * Creates a new Literal with a value and a type.
-     *
-     * @param value
-     *            literal value
-     * @param type
-     *            literal type, one of RDF.HTML, RDF.PLAIN_LITERAL,
-     *            RDF.XML_LITERAL, or a literal type defined in XMLSchema.
-     * @return the created literal
+     * {@inheritDoc} This implementation overrides the default implementation,
+     * because if the type is a MemoryNodeReference, it can be reused.
      */
     @Override
     public Literal createLiteral(String value, IdentifiableNode type) {

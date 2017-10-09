@@ -25,6 +25,8 @@ import org.kitodo.lugh.vocabulary.*;
 
 public class NodeTest {
 
+    /** Tests {@code add()}. */
+
     @Test
     public void testAdd() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -35,6 +37,43 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code addAll(Collection<? extends ObjectType>)}. */
+    @Test
+    public void testAddAllCollection() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code addFirst(ObjectType)}. */
+    @Test
+    public void testAddFirst() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code asUnordered(boolean)}. */
+    @Test
+    public void testAsUnordered() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code containsKey(IdentifiableNode)}. */
+    @Test
+    public void testContainsKeyIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code containsKey(String)}. */
+    @Test
+    public void testContainsKeyString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code contains(Object)}. */
+    @Test
+    public void testContainsObject() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code equals(Object)} for two different nodes. */
     @Test
     public void testEqualsForTwoDifferentNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -45,6 +84,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code equals(Object)} for two equal nodes. */
     @Test
     public void testEqualsForTwoEqualNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -55,11 +95,97 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code find(Node)}. */
     @Test
     public void testFind() {
         new GraphPathTest().testApplyingAGraphPathToANode();
     }
 
+    /** Tests {@code first()}. */
+    @Test
+    public void testFirst() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getByIdentifier(String)}. */
+    @Test
+    public void testGetByIdentifierString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getByType(IdentifiableNode)}. */
+    @Test
+    public void testGetByTypeIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getByType(IdentifiableNode, IdentifiableNode, Literal)}. */
+    @Test
+    public void testGetByTypeIdentifiableNodeIdentifiableNodeLiteral() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getByType(IdentifiableNode, IdentifiableNode, String)}. */
+    @Test
+    public void testGetByTypeIdentifiableNodeIdentifiableNodeString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getByType(String)}. */
+    @Test
+    public void testGetByTypeString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getByType(String, String, String)}. */
+    @Test
+    public void testGetByTypeStringStringString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getEnumerated()}. */
+    @Test
+    public void testGetEnumerated() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getFirst()}. */
+    @Test
+    public void testGetFirst() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code get(IdentifiableNode, IdentifiableNode)}. */
+    @Test
+    public void testGetIdentifiableNodeIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code get(IdentifiableNode, IdentifiableNode, String)}. */
+    @Test
+    public void testGetIdentifiableNodeIdentifiableNodeString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code get(IdentifiableNode, String)}. */
+    @Test
+    public void testGetIdentifiableNodeString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getLast()}. */
+    @Test
+    public void testGetLast() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code get(long)}. */
+    @Test
+    public void testGetLong() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code get(IdentifiableNode)}. */
     @Test
     public void testGetNodeReference() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -76,6 +202,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code getRelations()}. */
     @Test
     public void testGetRelations() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -94,6 +221,10 @@ public class NodeTest {
         }
     }
 
+    /**
+     * Tests {@code get(Collection<String>, Collection<ObjectType>)} with both
+     * relation and objects condition given.
+     */
     @Test
     public void testGetSetOfStringSetOfObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -116,6 +247,10 @@ public class NodeTest {
         }
     }
 
+    /**
+     * Tests {@code get(Collection<String>, Collection<ObjectType>)} with
+     * unspecified relation, but objects condition given.
+     */
     @Test
     public void testGetSetOfStringSetOfObjectTypeWithAnyRelation() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -137,6 +272,10 @@ public class NodeTest {
         }
     }
 
+    /**
+     * Tests {@code get(Collection<String>, Collection<ObjectType>)} with
+     * relation given, but no objects condition.
+     */
     @Test
     public void testGetSetOfStringSetOfObjectTypeWithEmptyConditions() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -158,6 +297,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code get(String)}. */
     @Test
     public void testGetString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -175,6 +315,25 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code get(String, IdentifiableNode)}. */
+    @Test
+    public void testGetStringIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code get(String, IdentifiableNode, ObjectType)}. */
+    @Test
+    public void testGetStringIdentifiableNodeObjectType() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code get(String, String)}. */
+    @Test
+    public void testGetStringString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code getType()} on a node without a type. */
     @Test
     public void testGetType0() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -187,6 +346,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code getType()} on a node with exactly one type. */
     @Test
     public void testGetType1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -194,6 +354,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code getType()} on a node with several types. */
     @Test
     public void testGetType2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -210,6 +371,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code hashCode()} for two non-equal nodes. */
     @Test
     public void testHashCodeIsDifferentForTwoDifferentNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -220,6 +382,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code hashCode()} for two equal nodes. */
     @Test
     public void testHashCodeIsEqualForTwoEqualNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -230,6 +393,19 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code hasType(IdentifiableNode)}. */
+    @Test
+    public void testHasTypeIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code hasType(String)}. */
+    @Test
+    public void testHasTypeString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code isEmpty()} for an empty node. */
     @Test
     public void testIsEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -237,6 +413,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code isEmpty()} for a non-empty node. */
     @Test
     public void testIsNotEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -244,6 +421,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code iterator()}. */
     @Test
     public void testIterator() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -265,6 +443,13 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code keySet()}. */
+    @Test
+    public void testKeySet() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code last()}. */
     @Test
     public void testLast() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -277,6 +462,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code matches(ObjectType)} for a matching candidate. */
     @Test
     public void testMatches() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -291,6 +477,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code matches(ObjectType)} for a non-matching candidate. */
     @Test
     public void testMatchesNot() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -306,65 +493,19 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code putAll(IdentifiableNode, Set<? extends ObjectType>)}. */
     @Test
-    public void testNodeCanBeCreatedEmpty() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.createNode();
-        }
+    public void testPutAllIdentifiableNodeSet() {
+        fail("Not yet implemented.");
     }
 
+    /** Tests {@code putAll(String, Collection<? extends ObjectType>)}. */
     @Test
-    public void testNodeCanBeCreatedWithNodeReferenceAsType() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node mets = storage.createNode(Mets.METS);
-
-            assertEquals(Mets.METS.getIdentifier(), mets.getType());
-        }
+    public void testPutAllStringCollection() {
+        fail("Not yet implemented.");
     }
 
-    @Test
-    public void testNodeCanBeCreatedWithStringAsType() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            final String MODS = Mods.MODS.getIdentifier();
-            Node mods = storage.createNode(MODS);
-
-            assertEquals(MODS, mods.getType());
-        }
-    }
-
-    @Test
-    public void testNodeCreatedWithEmptyStringAsTypeIsEmpty() {
-        try {
-            assert (false);
-            fail("Assertions disabled. Run JVM with -ea option.");
-        } catch (AssertionError e) {
-            for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-                try {
-                    storage.createNode("");
-                    fail(storage.getClass().getSimpleName() + " should throw AssertionError, but does not.");
-                } catch (AssertionError e1) {
-                    /* expected */
-                }
-            }
-        }
-    }
-
-    @Test
-    public void testNodeCreatedWithUnitializedNodeReferenceIsEmpty() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node a = storage.createNode((NodeReference) null);
-            assertTrue(a.isEmpty());
-        }
-    }
-
-    @Test
-    public void testNodeCreatedWithUnitializedStringIsEmpty() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node a = storage.createNode((String) null);
-            assertTrue(a.isEmpty());
-        }
-    }
-
+    /** Tests {@code put(IdentifiableNode, ObjectType)}. */
     @Test
     public void testPutNodeReferenceObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -372,6 +513,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code put(IdentifiableNode, String)}. */
     @Test
     public void testPutNodeReferenceString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -379,6 +521,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code put(String, ObjectType)}. */
     @Test
     public void testPutStringObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -387,6 +530,7 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code put(String, String)}. */
     @Test
     public void testPutStringString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -394,6 +538,67 @@ public class NodeTest {
         }
     }
 
+    /** Tests {@code removeAll(IdentifiableNode)}. */
+    @Test
+    public void testRemoveAllIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code removeAll(String)}. */
+    @Test
+    public void testRemoveAllString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code removeFirst()}. */
+    @Test
+    public void testRemoveFirst() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code removeFirstOccurrence(Object)}. */
+    @Test
+    public void testRemoveFirstOccurrenceObject() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code removeLast()}. */
+    @Test
+    public void testRemoveLast() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code removeLastOccurrence(Object)}. */
+    @Test
+    public void testRemoveLastOccurrenceObject() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code remove(Object)}. */
+    @Test
+    public void testRemoveObject() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code replace(String, Set<ObjectType>)}. */
+    @Test
+    public void testReplaceStringSet() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code set(int, ObjectType)}. */
+    @Test
+    public void testSetIntObjectType() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code size()}. */
+    @Test
+    public void testSize() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code ObjectType.toRDFNode(Model, Boolean)}. */
     @Test
     public void testToModel() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
@@ -447,4 +652,5 @@ public class NodeTest {
             assertEquals(modsSection, storage.createResult(m, false).node());
         }
     }
+
 }

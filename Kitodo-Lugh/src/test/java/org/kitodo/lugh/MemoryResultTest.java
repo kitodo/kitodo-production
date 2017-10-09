@@ -12,17 +12,18 @@
 package org.kitodo.lugh;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.nio.BufferOverflowException;
 import java.util.*;
 
 import org.junit.Test;
 import org.kitodo.lugh.vocabulary.*;
 
+/** Tests {@code org.kitodo.lugh.MemoryResult}. */
 public class MemoryResultTest {
 
+    /** Tests {@code HashSet.add(ObjectType e)}. */
     @Test
     public void testAddObjectType() {
         MemoryResult r = new MemoryResult();
@@ -34,6 +35,7 @@ public class MemoryResultTest {
         assertEquals(1, r.size());
     }
 
+    /** Tests {@code HashSet.clear()}. */
     @Test
     public void testClear() {
         MemoryResult r = new MemoryResult();
@@ -43,63 +45,13 @@ public class MemoryResultTest {
         assertEquals(0, r.size());
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void testIdentifiableNodeExpectable0() {
-        MemoryResult r = new MemoryResult();
-
-        r.identifiableNodeExpectable();
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testIdentifiableNodeExpectable0ButLiteral() {
-        MemoryResult r = new MemoryResult(MemoryLiteral.createLiteral("Hello world!", "en"));
-
-        r.identifiableNodeExpectable();
-    }
-
+    /** Tests {@code count(Class<? extends ObjectType>, int)}. */
     @Test
-    public void testIdentifiableNodeExpectable1MemoryNamedNode() {
-        IdentifiableNode expected;
-        MemoryResult r = new MemoryResult(expected = new MemoryNamedNode("http://example.org/fooBar"));
-
-        assertEquals(expected, r.identifiableNodeExpectable());
+    public void testCount() {
+        fail("Not yet implemented.");
     }
 
-    @Test
-    public void testIdentifiableNodeExpectable1MemoryNodeReference() {
-        IdentifiableNode expected;
-        MemoryResult r = new MemoryResult(expected = new MemoryNodeReference("http://example.org/fooBar"));
-
-        assertEquals(expected, r.identifiableNodeExpectable());
-    }
-
-    @Test(expected = BufferOverflowException.class)
-    public void testIdentifiableNodeExpectable2() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(new MemoryNamedNode("http://example.org/bar"));
-
-        r.identifiableNodeExpectable();
-    }
-
-    @Test(expected = BufferOverflowException.class)
-    public void testIdentifiableNodeExpectable2WhereOneIsALiteral() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
-
-        r.identifiableNodeExpectable();
-    }
-
-    @Test(expected = BufferOverflowException.class)
-    public void testIdentifiableNodeExpectable2WhereOneIsIdentifiable() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(new MemoryNode("http://example.org/bar"));
-
-        r.identifiableNodeExpectable();
-    }
-
+    /** Tests {@code subset(Class<T>)}. */
     @Test
     public void testIdentifiableNodes() {
         MemoryResult r = new MemoryResult();
@@ -112,64 +64,10 @@ public class MemoryResultTest {
         expected.add(new MemoryNamedNode("http://example.org/foo"));
         expected.add(new MemoryNodeReference("http://example.org/bar"));
 
-        assertEquals(expected, r.identifiableNodes());
+        assertEquals(expected, r.subset(IdentifiableNode.class));
     }
 
-    @Test
-    public void testIsUniqueIdentifiableNode0() {
-        MemoryResult r = new MemoryResult();
-
-        assertFalse(r.isUniqueIdentifiableNode());
-    }
-
-    @Test
-    public void testIsUniqueIdentifiableNode0ButLiteral() {
-        MemoryResult r = new MemoryResult(MemoryLiteral.createLiteral("Hello world!", "en"));
-
-        assertFalse(r.isUniqueIdentifiableNode());
-    }
-
-    @Test
-    public void testIsUniqueIdentifiableNode1MemoryNamedNode() {
-        MemoryResult r = new MemoryResult(new MemoryNamedNode("http://example.org/fooBar"));
-
-        assertTrue(r.isUniqueIdentifiableNode());
-    }
-
-    @Test
-    public void testIsUniqueIdentifiableNode1MemoryNodeReference() {
-        MemoryResult r = new MemoryResult(new MemoryNodeReference("http://example.org/fooBar"));
-
-        assertTrue(r.isUniqueIdentifiableNode());
-    }
-
-    @Test
-    public void testIsUniqueIdentifiableNode2() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(new MemoryNamedNode("http://example.org/bar"));
-
-        assertFalse(r.isUniqueIdentifiableNode());
-    }
-
-    @Test
-    public void testIsUniqueIdentifiableNode2WhereOneIsALiteral() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
-
-        assertFalse(r.isUniqueIdentifiableNode());
-    }
-
-    @Test
-    public void testIsUniqueIdentifiableNode2WhereOneIsIdentifiable() {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(new MemoryNode("http://example.org/bar"));
-
-        assertFalse(r.isUniqueIdentifiableNode());
-    }
-
+    /** Tests {@code leaves()}. */
     @Test
     public void testLeaves() {
         MemoryResult r = new MemoryResult();
@@ -185,6 +83,7 @@ public class MemoryResultTest {
         assertEquals(expected, r.leaves());
     }
 
+    /** Tests {@code leaves(String)}. */
     @Test
     public void testLeavesString() {
         MemoryResult r = new MemoryResult();
@@ -200,12 +99,16 @@ public class MemoryResultTest {
         assertTrue(expectedOneOf.contains(r.leaves(" ; ")));
     }
 
+    /** Tests {@code MemoryResult()} constructor. */
     @Test
     public void testMemoryResult() {
         MemoryResult r = new MemoryResult();
         assertEquals(0, r.size());
     }
 
+    /**
+     * Tests {@code MemoryResult(Collection<? extends ObjectType>)} constructor.
+     */
     @Test
     public void testMemoryResultCollectionOfQextendsObjectType() {
         MemoryResult other = new MemoryResult();
@@ -217,12 +120,14 @@ public class MemoryResultTest {
         assertEquals(other, r);
     }
 
+    /** Tests {@code MemoryResult(int)} constructor. */
     @Test
     public void testMemoryResultInt() {
         MemoryResult r = new MemoryResult(42);
         assertEquals(0, r.size());
     }
 
+    /** Tests {@code MemoryResult(ObjectType)} constructor. */
     @Test
     public void testMemoryResultObjectType() {
         MemoryResult expected = new MemoryResult();
@@ -234,43 +139,7 @@ public class MemoryResultTest {
         assertEquals(expected, r);
     }
 
-    @Test(expected = NoDataException.class)
-    public void testNode0Empty() throws LinkedDataException {
-        MemoryResult r = new MemoryResult();
-        r.node();
-    }
-
-    @Test(expected = NoDataException.class)
-    public void testNode0LiteralsOnly() throws LinkedDataException {
-        MemoryResult r = new MemoryResult();
-        r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
-        r.node();
-    }
-
-    @Test
-    public void testNode1MemoryNamedNode() throws LinkedDataException {
-        MemoryResult r = new MemoryResult();
-        MemoryNamedNode expected;
-        r.add(expected = new MemoryNamedNode("http://example.org/foo"));
-        assertEquals(expected, r.node());
-    }
-
-    @Test
-    public void testNode1Node() throws LinkedDataException {
-        MemoryResult r = new MemoryResult();
-        Node expected;
-        r.add(expected = new MemoryNode("http://example.org/foo"));
-        assertEquals(expected, r.node());
-    }
-
-    @Test(expected = AmbiguousDataException.class)
-    public void testNode2() throws LinkedDataException {
-        MemoryResult r = new MemoryResult();
-        r.add(new MemoryNamedNode("http://example.org/foo"));
-        r.add(new MemoryNamedNode("http://example.org/bar"));
-        r.node();
-    }
-
+    /** Tests {@code subset(Class<T>)}. */
     @Test
     public void testNodes() {
         MemoryResult r = new MemoryResult();
@@ -283,9 +152,10 @@ public class MemoryResultTest {
         expected.add(new MemoryNamedNode("http://example.org/foo"));
         expected.add(new MemoryNode("http://example.org/baz"));
 
-        assertEquals(expected, r.nodes());
+        assertEquals(expected, r.subset(Node.class));
     }
 
+    /** Tests {@code strings()}. */
     @Test
     public void testStrings() {
         MemoryResult r = new MemoryResult();
@@ -300,6 +170,12 @@ public class MemoryResultTest {
         expected.add("public static void main(String[] args)");
 
         assertEquals(expected, r.strings());
+    }
+
+    /** Tests {@code strings(String)}. */
+    @Test
+    public void testStringsString() {
+        fail("Not yet implemented.");
     }
 
 }

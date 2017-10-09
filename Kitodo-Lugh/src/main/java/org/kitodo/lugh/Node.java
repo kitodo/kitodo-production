@@ -25,7 +25,7 @@ import org.kitodo.lugh.vocabulary.RDF;
  * <p>
  * The class offers functions known from Java’s collections, and they are
  * intended to intuitively behave the same way.
- * 
+ *
  */
 public interface Node extends AccessibleObject, NodeType {
 
@@ -443,15 +443,8 @@ public interface Node extends AccessibleObject, NodeType {
     Iterator<ObjectType> iterator();
 
     /**
-     * Returns the edges Strings.
-     *
-     * @return all relations
-     */
-    Set<String> keySet();
-
-    /**
-     * Returns the last (largest) index in use to reference elements by index,
-     * or {@code null} if there is no such.
+     * Returns the last (largest) index in use to reference elements by index.
+     * If there is no such, the optional is empty.
      *
      * @return the largest index in use
      */

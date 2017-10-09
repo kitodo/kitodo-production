@@ -796,16 +796,6 @@ public class MemoryNode implements Node {
     }
 
     /**
-     * Returns the edges Strings.
-     *
-     * @return all relations
-     */
-    @Override
-    public Set<String> keySet() {
-        return edges.keySet();
-    }
-
-    /**
      * Returns the last (largest) index in use to reference elements by index,
      * or {@code null} if there is no such.
      *

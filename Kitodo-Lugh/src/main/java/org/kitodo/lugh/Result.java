@@ -17,6 +17,11 @@ import java.util.function.Supplier;
 
 /**
  * The results returned by a call to a getter on a node.
+ * <p>
+ * Implementation-dependently, the getters may return a collection of objects, a
+ * hit list form a storage with information on how to retrieve the objects in
+ * question, or a wrapped query which will later be combined with the
+ * {@code Result} getters to form a request.
  */
 public interface Result extends Set<ObjectType> {
 

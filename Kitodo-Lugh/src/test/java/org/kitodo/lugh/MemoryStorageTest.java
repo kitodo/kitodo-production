@@ -1,12 +1,93 @@
 package org.kitodo.lugh;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.jena.rdf.model.*;
 import org.junit.Test;
 import org.kitodo.lugh.vocabulary.*;
 
 public class MemoryStorageTest {
+
+    /** Tests {@code createResult(ObjectType)}. */
+    @Test
+    public void test() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createLangString(String, String)}. */
+    @Test
+    public void testCreateLangString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createLiteral(String, IdentifiableNode)}. */
+    @Test
+    public void testCreateLiteralStringIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createLiteral(String, String)}. */
+    @Test
+    public void testCreateLiteralStringString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createNamedNode(String)}. */
+    @Test
+    public void testCreateNamedNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createNode()}. */
+    @Test
+    public void testCreateNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createNode(NodeReference)}. */
+    @Test
+    public void testCreateNodeNodeReference() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createNodeReference(String)}. */
+    @Test
+    public void testCreateNodeReference() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createNode(String)}. */
+    @Test
+    public void testCreateNodeString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createObjectType(String, String)}. */
+    @Test
+    public void testCreateObjectType() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createResult()}. */
+    @Test
+    public void testCreateResult() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createResult(Collection<? extends ObjectType>)}. */
+    @Test
+    public void testCreateResultFromCollectionOfObjectType() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createResult(int)}. */
+    @Test
+    public void testCreateResultInt() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code createResult(Model, boolean)}. */
     @Test
     public void testToModel() throws LinkedDataException {
         MemoryNode modsSection = new MemoryNode(Mods.MODS)
