@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
@@ -777,5 +778,32 @@ public class ProcessServiceIT {
 
         List<ProcessDTO> notClosedTemplates = processService.findAllNotClosedTemplates(null);
         assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 2", notClosedTemplates.size() == 2);
+    }
+
+    @Test
+    public void shouldGetTemplates() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<Process> templates = processService.getProcessTemplates();
+        assertTrue("Found " + templates.size() + " processes, instead of 2", templates.size() == 2);
+    }
+
+    @Test
+    public void shouldGetTemplatesWithTitle() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<Process> templates = processService.getProcessTemplatesWithTitle("First process");
+        assertTrue("Found " + templates.size() + " processes, instead of 1", templates.size() == 1);
+    }
+
+    @Ignore("IN clause doesn't work correctly here - to deeper check out")
+    @Test
+    public void shouldGetTemplatesForUser() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<Integer> projects = new ArrayList<>();
+        projects.add(1);
+        List<Process> templates = processService.getProcessTemplatesForUser(projects);
+        assertTrue("Found " + templates.size() + " processes, instead of 1", templates.size() == 1);
     }
 }

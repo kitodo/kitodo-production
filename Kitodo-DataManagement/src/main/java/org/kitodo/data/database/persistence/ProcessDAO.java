@@ -103,7 +103,16 @@ public class ProcessDAO extends BaseDAO<Process> {
      * @return list of all process templates as Process objects
      */
     public List<Process> getProcessTemplates() {
-        return getByQuery("FROM Process WHERE template = 0 AND inChoiceListShown = 1 ORDER BY title ASC");
+        return getByQuery("FROM Process WHERE template = 1 AND inChoiceListShown = 1 ORDER BY title ASC");
+    }
+
+    /**
+     * Get all process templates with exact title.
+     *
+     * @return list of all process templates as Process objects
+     */
+    public List<Process> getProcessTemplatesWithTitle(String title) {
+        return getByQuery("FROM Process WHERE template = 1 AND title LIKE '" + title + "' ORDER BY title ASC");
     }
 
     /**
@@ -113,15 +122,16 @@ public class ProcessDAO extends BaseDAO<Process> {
      *            list of project ids fof user's projects
      * @return list of all process templates for user as Process objects
      */
-    public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
+    public List<Process> getProcessTemplatesForUser(List<Integer> projects) {
         StringBuilder query = new StringBuilder();
-        query.append("FROM Process WHERE template = 0 AND inChoiceListShown = 1 AND project_id IN ");
+        query.append("SELECT process FROM Process process, Project project WHERE process.template = 1 AND ");
+        query.append("process.inChoiceListShown = 1 AND project.id IN (");
         for (Integer projectId : projects) {
             query.append(projectId);
             query.append(", ");
         }
         query.setLength(query.length() - 2);
-        query.append(" ORDER BY title ASC");
+        query.append(") ORDER BY process.title ASC");
         return getByQuery(query.toString());
     }
 }

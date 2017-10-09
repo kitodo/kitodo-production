@@ -2456,13 +2456,24 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Get all process templates for given title.
+     *
+     * @param title
+     *           of Process
+     * @return list of all process templates as Process objects
+     */
+    public List<Process> getProcessTemplatesWithTitle(String title) {
+        return dao.getProcessTemplatesWithTitle(title);
+    }
+
+    /**
      * Get process templates for users.
      *
      * @param projects
      *            list of project ids fof user's projects
      * @return list of all process templates for user as Process objects
      */
-    public List<Process> getProcessTemplatesForUser(ArrayList<Integer> projects) {
+    public List<Process> getProcessTemplatesForUser(List<Integer> projects) {
         return dao.getProcessTemplatesForUser(projects);
     }
 }
