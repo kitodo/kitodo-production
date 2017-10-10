@@ -181,17 +181,7 @@ public class MemoryNode implements Node {
         }
     }
 
-    /**
-     * Adds a node to the nodes refereced by index. The add function implements
-     * the traditional add behaviour, that is all nodes with an index equal to
-     * the given index or higher are moved upwards by one. If the index list has
-     * holes, only the next elements are moved up until a hole is encountered.
-     *
-     * @param index
-     *            numeric position to add the element
-     * @param element
-     *            element to add
-     */
+    /** {@inheritDoc} */
     @Override
     public void add(int index, ObjectType element) {
         // find first index >= index that is free
@@ -209,15 +199,7 @@ public class MemoryNode implements Node {
         edges.put(RDF.toURL(index), new HashSet<>(Arrays.asList(new ObjectType[] {element })));
     }
 
-    /**
-     * Adds a node to the nodes referenced by index. The add function implements
-     * the traditional behaviour that the node is added with an index that is
-     * one higher that the highest index in use before.
-     *
-     * @param element
-     *            Element to add
-     * @return this node, for in-line use
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked") // this is always instanceof Node
     @Override
     public <T extends Node> T add(ObjectType element) {
@@ -226,14 +208,7 @@ public class MemoryNode implements Node {
         return (T) this;
     }
 
-    /**
-     * Convenience method to {@link #add(ObjectType)} a collection of nodes by a
-     * single method call. The elements are added in the order that they are
-     * returned by the collection’s iterator.
-     *
-     * @param elements
-     *            collection of nodes to add
-     */
+    /** {@inheritDoc} */
     @Override
     public void addAll(Collection<? extends ObjectType> elements) {
         Long pos = last().orElse((long) FIRST_INDEX - 1);
@@ -242,39 +217,13 @@ public class MemoryNode implements Node {
         }
     }
 
-    /**
-     * Adds an element as the first to the list of elements referencey by
-     * number. The add function implements the traditional add behaviour, that
-     * is all nodes with an index equal to the given index or higher are moved
-     * upwards by one. If the index list has holes, only the next elements are
-     * moved up until a hole is encountered.
-     *
-     * @param element
-     *            element to add
-     */
+    /** {@inheritDoc} */
     @Override
     public void addFirst(ObjectType element) {
         add(FIRST_INDEX, element);
     }
 
-    /**
-     * Returns the node as an unordered node. All ordered ({@code rdf:_1},
-     * {@code rdf:_2}, …) and {@code rdf:value} relations are replaced by
-     * relations labelled with the type of the child node, which is removed from
-     * the child node, iff the child node has exactly one type.
-     * <p>
-     * If the remaining node only contains one {@code rdf:value} relation, only
-     * the object form this relation will be returned. This is why the method’s
-     * return type is {@linkplain ObjectType}, not {@linkplain Node}.
-     * <p>
-     * This method is convenient to import sets of objects from XML files, where
-     * they are referenced numerically also if their order isn’t important.
-     *
-     * @param removeType
-     *            remove the type from this node (probably {@code false}, but
-     *            may be convenient)
-     * @return the node as unordered
-     */
+    /** {@inheritDoc} */
     @Override
     public ObjectType asUnordered(boolean removeType) {
         Node result = this instanceof NamedNode ? new MemoryNamedNode(((NamedNode) this).getIdentifier())
@@ -307,16 +256,7 @@ public class MemoryNode implements Node {
 
                         // if the child has no or several types, just copy it
 
-                        // TODO: When switching to a never Java version,
-                        // collapse duplicate catch block
-
-                        catch (NoSuchElementException e) {
-                            if (object instanceof Node) {
-                                result.put(relation, ((Node) object).asUnordered(false));
-                            } else {
-                                result.put(relation, object);
-                            }
-                        } catch (BufferOverflowException e) {
+                        catch (NoSuchElementException | BufferOverflowException e) {
                             if (object instanceof Node) {
                                 result.put(relation, ((Node) object).asUnordered(false));
                             } else {
@@ -353,13 +293,7 @@ public class MemoryNode implements Node {
         return result;
     }
 
-    /**
-     * Tests whether an element is directly referenced by this node.
-     *
-     * @param o
-     *            object to search
-     * @return whether the object is contained
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean contains(Object o) {
         for (Entry<String, Collection<ObjectType>> k : edges.entrySet()) {
@@ -370,16 +304,10 @@ public class MemoryNode implements Node {
         return false;
     }
 
-    /**
-     * Tests whether this node has an outgoing edge labeled by the given label.
-     *
-     * @param label
-     *            label to look for
-     * @return whether the object is contained
-     */
+    /** {@inheritDoc} */
     @Override
-    public boolean containsKey(String label) {
-        return edges.containsKey(label);
+    public boolean containsKey(String key) {
+        return edges.containsKey(key);
     }
 
     /**
@@ -394,11 +322,7 @@ public class MemoryNode implements Node {
         return model.createResource();
     }
 
-    /**
-     * Provides the entrySet of this Node for iteration.
-     *
-     * @return the edges
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<Entry<String, Collection<ObjectType>>> entrySet() {
         return edges.entrySet();
@@ -431,43 +355,20 @@ public class MemoryNode implements Node {
         return true;
     }
 
-    /**
-     * Resolves the given graph path against this node. The node passed in must
-     * be a graph path.
-     *
-     * @param graphPath
-     *            graph path to resolve
-     * @return the results from resolving
-     */
+    /** {@inheritDoc} */
     @Override
     public Result find(Node graphPath) {
         return GraphPath.apply(new MemoryResult(this), graphPath, MemoryStorage.INSTANCE);
     }
 
-    /**
-     * Finds the first index in use to reference elements by index.
-     *
-     * @return the first index in use
-     */
+    /** {@inheritDoc} */
     @Override
     public Optional<Long> first() {
         Indices range = range();
         return range == null ? Optional.empty() : Optional.of(range.first);
     }
 
-    /**
-     * Returns all nodes referenced by the given relations which have all the
-     * data from the conditions nodes. {@code reference} may be empty meaning
-     * <em>any relation</em>. {@code condition} may be empty meaning <em>any
-     * non-empty result</em>.
-     *
-     * @param relations
-     *            referencing relation
-     * @param conditions
-     *            a subset of data to be present on found nodes
-     * @return all nodes referenced by the given relations which fulfil the
-     *         conditions
-     */
+    /** {@inheritDoc} */
     @Override
     public Result get(Collection<String> relations, Collection<ObjectType> conditions) {
         Result result = new MemoryResult();
@@ -501,60 +402,26 @@ public class MemoryNode implements Node {
         return result;
     }
 
-    /**
-     * Returns a node by its index.
-     *
-     * @param index
-     *            Node index to return
-     * @return the node referenced by that index
-     */
+    /** {@inheritDoc} */
     @Override
     public Result get(long index) {
         return new MemoryResult(get(RDF.toURL(index)));
     }
 
-    /**
-     * Gets all elements referenced by a relation.
-     *
-     * @param relation
-     *            relation to look up
-     * @return the elements referenced by this relation
-     */
+    /** {@inheritDoc} */
     @Override
     public Result get(String relation) {
         return new MemoryResult(edges.get(relation));
     }
 
-    /**
-     * Returns all nodes referenced by the given relation which have an
-     * identifier described by relation and value. A null value for relation
-     * means all relations. This is a convenience method to simplify use of the
-     * filtering method.
-     *
-     * @param relation
-     *            relation whose nodes are to be inspected. May be null to
-     *            inspect all relations.
-     * @param identifierRelation
-     *            identifier referencing relation
-     * @param identifierValue
-     *            identifier value
-     * @return found nodes
-     */
+    /** {@inheritDoc} */
     @Override
     public Result get(String relation, IdentifiableNode identifierRelation, ObjectType identifierValue) {
         return get(relation != null ? Arrays.asList(new String[] {relation }) : null,
                 Arrays.asList(new ObjectType[] {new MemoryNode().put(identifierRelation, identifierValue) }));
     }
 
-    /**
-     * Gets all nodes referenced by relation which have a certain type.
-     *
-     * @param relation
-     *            relation to look up
-     * @param type
-     *            node type to filter by
-     * @return the nodes
-     */
+    /** {@inheritDoc} */
     @Override
     public Result get(String relation, String type) {
         Collection<ObjectType> objects = edges.get(relation);
@@ -570,17 +437,7 @@ public class MemoryNode implements Node {
         return result;
     }
 
-    /**
-     * Returns an identifiable held as object.
-     *
-     * @param identifier
-     *            to identify the object
-     * @return the identifier
-     * @throws NoSuchElementException
-     *             if not found
-     * @throws NoSuchMethodError
-     *             if several ones found
-     */
+    /** {@inheritDoc} */
     @Override
     public IdentifiableNode getByIdentifier(String identifier) {
         Result found = new MemoryResult();
@@ -605,13 +462,7 @@ public class MemoryNode implements Node {
         }
     }
 
-    /**
-     * Returns the first child node whose type is equal to the given url.
-     *
-     * @param type
-     *            url of the child to look for
-     * @return the first child of the url type
-     */
+    /** {@inheritDoc} */
     @Override
     public Result getByType(String type) {
         Result found = new MemoryResult();
@@ -632,20 +483,7 @@ public class MemoryNode implements Node {
         return found;
     }
 
-    /**
-     * Returns the first child node whose type is equal to the given url and
-     * which has an attribute with the given name and value. This can be used to
-     * look up a child by its identifier, given an identifying instance and the
-     * desired value of it.
-     *
-     * @param rdfType
-     *            url of the child to look for
-     * @param idType
-     *            url of the identifier
-     * @param idValue
-     *            value of the identifier
-     * @return the first child of the url type
-     */
+    /** {@inheritDoc} */
     @Override
     public Result getByType(String rdfType, String idType, String idValue) {
         Result result = new MemoryResult();
@@ -662,11 +500,7 @@ public class MemoryNode implements Node {
         return result;
     }
 
-    /**
-     * Returns a list of all nodes referenced by a list membership relation.
-     *
-     * @return all nodes referenced by list membership relation
-     */
+    /** {@inheritDoc} */
     @Override
     public List<Result> getEnumerated() {
         Indices range = range();
@@ -683,13 +517,7 @@ public class MemoryNode implements Node {
         return result;
     }
 
-    /**
-     * Returns the first node referenced by numeric index, or {@code null} if no
-     * element is referenced by index or the first element referenced by index
-     * is not a node.
-     *
-     * @return the first node referenced by index
-     */
+    /** {@inheritDoc} */
     @Override
     public Result getFirst() {
         Optional<Long> first = first();
@@ -702,13 +530,7 @@ public class MemoryNode implements Node {
         }
     }
 
-    /**
-     * Returns the first node referenced by numeric index, or {@code null} if no
-     * element is referenced by index or the last element referenced by index is
-     * not a node.
-     *
-     * @return the first node referenced by index
-     */
+    /** {@inheritDoc} */
     @Override
     public Result getLast() {
         Optional<Long> last = last();
@@ -721,24 +543,13 @@ public class MemoryNode implements Node {
         }
     }
 
-    /**
-     * Returns all outgoing relations from this node.
-     *
-     * @return all outgoing relations
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<String> getRelations() {
         return edges.keySet();
     }
 
-    /**
-     * Returns the semantic web class of this node.
-     *
-     * @throws NoSuchElementException
-     *             if there is no named node
-     * @throws BufferOverflowException
-     *             if there are several possible answers
-     */
+    /** {@inheritDoc} */
     @Override
     public String getType() {
         return get(RDF.TYPE).identifiableNodeExpectable().getIdentifier();
@@ -757,13 +568,7 @@ public class MemoryNode implements Node {
         return result;
     }
 
-    /**
-     * Checks whether this node has the given type.
-     *
-     * @param type
-     *            type to check for
-     * @return whether this node has the type
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean hasType(String type) {
         for (IdentifiableNode identifiableNode : get(RDF.TYPE).identifiableNodes()) {
@@ -774,50 +579,26 @@ public class MemoryNode implements Node {
         return false;
     }
 
-    /**
-     * Returns true if this node does not contain any relations.
-     *
-     * @return whether the node is empty
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
         return edges.isEmpty();
     }
 
-    /**
-     * Returns an iterator to iterate all referenced Nodes. Literals will be
-     * skipped. All literals can be retrieved using the values() method.
-     *
-     * @return an iterator over all child nodes
-     */
+    /** {@inheritDoc} */
     @Override
     public Iterator<ObjectType> iterator() {
         return new ChildNodeIterator();
     }
 
-    /**
-     * Returns the last (largest) index in use to reference elements by index,
-     * or {@code null} if there is no such.
-     *
-     * @return the largest index in use
-     */
+    /** {@inheritDoc} */
     @Override
     public Optional<Long> last() {
         Indices range = range();
         return range == null ? Optional.empty() : Optional.of(range.last);
     }
 
-    /**
-     * Returns whether this node has all the data from the conditions node. This
-     * means, that the node contains all the data contained in the condition
-     * node. It may have a different address, and it may have <em>more</em> data
-     * as well.
-     *
-     * @param condition
-     *            a node which may be a subset of the information contained in
-     *            this node
-     * @return whether this node fulfills the set of conditions
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean matches(ObjectType condition) {
         if (condition == null) {
@@ -858,15 +639,7 @@ public class MemoryNode implements Node {
         return true;
     }
 
-    /**
-     * Adds a node by relation.
-     *
-     * @param relation
-     *            Relation the object shall be added under
-     * @param object
-     *            object to add
-     * @return this, for in-line use
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked") // this is always instanceof Node
     @Override
     public <T extends Node> T put(String relation, ObjectType object) {
@@ -882,15 +655,7 @@ public class MemoryNode implements Node {
         return (T) this;
     }
 
-    /**
-     * Adds a literal by relation.
-     *
-     * @param relation
-     *            Relation the object shall be added under
-     * @param object
-     *            object to add
-     * @return this, for in-line use
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked") // this is always instanceof Node
     @Override
     public <T extends Node> T put(String relation, String object) {
@@ -898,14 +663,7 @@ public class MemoryNode implements Node {
         return (T) this;
     }
 
-    /**
-     * Adds all of the objects by the given relation.
-     *
-     * @param relation
-     *            relation to add the objects on
-     * @param objects
-     *            objects to add
-     */
+    /** {@inheritDoc} */
     @Override
     public void putAll(String relation, Collection<? extends ObjectType> objects) {
         if (relation.equals(RDF.ABOUT.getIdentifier())) {
@@ -945,14 +703,7 @@ public class MemoryNode implements Node {
         return (first == null) || (last == null) ? null : new Indices(first, last);
     }
 
-    /**
-     * Removes an object from all relations. If a relations becomes
-     * destinationless by this it will be removed, too.
-     *
-     * @param object
-     *            Object to remove
-     * @return whether the collection was changed
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean remove(Object object) {
         boolean result = false;
@@ -970,24 +721,16 @@ public class MemoryNode implements Node {
         return result;
     }
 
-    /**
-     * Removes all objects linked by the given relation.
-     *
-     * @param relation
-     *            relation to remove
-     * @return the previously linked objects
-     */
+    /** {@inheritDoc} */
     @Override
     public Collection<ObjectType> removeAll(String relation) {
         return edges.remove(relation);
     }
 
-    /**
-     * Removes the first collection of elements of the enumerated elements.
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeFirst() {
-        first().ifPresent((pos) -> {
+        first().ifPresent(pos -> {
             String current = RDF.toURL(pos);
             edges.remove(current);
             String next;
@@ -998,13 +741,7 @@ public class MemoryNode implements Node {
         });
     }
 
-    /**
-     * Removes the first occurence of an object from the enumerated elements.
-     *
-     * @param object
-     *            object to remove
-     * @return if the collection was changed
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean removeFirstOccurrence(Object object) {
         Indices range = range();
@@ -1030,9 +767,7 @@ public class MemoryNode implements Node {
         return false;
     }
 
-    /**
-     * Removes the last object from the enumerated elements.
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeLast() {
         last().ifPresent((value) -> {
@@ -1040,13 +775,7 @@ public class MemoryNode implements Node {
         });
     }
 
-    /**
-     * Removes the last occurence of an object from the enumerated elements.
-     *
-     * @param object
-     *            object to remove
-     * @return if the collection was changed
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean removeLastOccurrence(Object object) {
         Indices range = range();
@@ -1072,16 +801,7 @@ public class MemoryNode implements Node {
         return false;
     }
 
-    /**
-     * Removes all relations of the given kind and replaces them by relations to
-     * the set of objects provided.
-     *
-     * @param relation
-     *            relation to replace
-     * @param objects
-     *            new objects for this relation
-     * @return the objects previously related
-     */
+    /** {@inheritDoc} */
     @Override
     public Collection<ObjectType> replace(String relation, Set<ObjectType> objects) {
         return edges.put(relation, objects);
@@ -1112,35 +832,16 @@ public class MemoryNode implements Node {
         }
     }
 
-    /**
-     * Replaces an element index with a new element, removing all elements at
-     * this index if there were several.
-     *
-     * @param index
-     *            index of elements to replace
-     * @param element
-     *            new element for this index
-     */
+    /** {@inheritDoc} */
     @Override
     public void set(int index, ObjectType element) {
         edges.put(RDF.toURL(index), new HashSet<>(Arrays.asList(new ObjectType[] {element })));
     }
 
-    /**
-     * Sets a literal as only child of this node. Removes all other nodes, but
-     * will keep attribute literals and node references.
-     * <p>
-     * This is a convenience method to <em>set text content</em> when building
-     * XML-like data structure. All <em>tag content</em> will be removed, but
-     * <em>attributes will be kept</em>.
-     * {@code new Node(ns + "SomeType").setValue("value");} should be written to
-     * XML as {@code <ns:SomeType>value</ns:SomeType>}.
-     *
-     * @param value
-     *            literal value to set
-     * @return this, for in-line use
-     */
-    public Node setValue(String value) {
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("unchecked") // this is always instanceof Node
+    public <T extends Node> T setValue(String value) {
         Iterator<Entry<String, Collection<ObjectType>>> outer = edges.entrySet().iterator();
         while (outer.hasNext()) {
             Entry<String, Collection<ObjectType>> nextOuter = outer.next();
@@ -1161,15 +862,10 @@ public class MemoryNode implements Node {
         }
         edges.put(RDF.toURL(FIRST_INDEX),
                 new HashSet<>(Arrays.asList(new ObjectType[] {new MemoryLiteral(value, RDF.PLAIN_LITERAL) })));
-        return this;
+        return (T) this;
     }
 
-    /**
-     * Returns the number of elements in this node, or Intexer.MAX_VALUE if more
-     * than Integer.MAX_VALUE.
-     *
-     * @return the number of elements in this node
-     */
+    /** {@inheritDoc} */
     @Override
     public int size() {
         long result = 0;
@@ -1182,18 +878,7 @@ public class MemoryNode implements Node {
         return (int) result;
     }
 
-    /**
-     * Converts this node to an RDFNode as part of a Jena model.
-     *
-     * @param model
-     *            model to create objects in
-     * @param addNamedNodesRecursively
-     *            if true, named nodes will not be treated specially, if false,
-     *            only their identifier will be added. If null, this node will
-     *            be added if it is a named node, but named node children will
-     *            only be referenced.
-     * @return an RDFNode representing this node
-     */
+    /** {@inheritDoc} */
     @Override
     public RDFNode toRDFNode(Model model, Boolean addNamedNodesRecursively) {
         Resource subject = createRDFSubject(model);

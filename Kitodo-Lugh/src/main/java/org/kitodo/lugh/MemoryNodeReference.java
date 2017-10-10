@@ -82,13 +82,7 @@ public class MemoryNodeReference implements NodeReference {
         return result;
     }
 
-    /**
-     * Converts this NodeReference to an RDFNode as part of a Jena model.
-     *
-     * @param model
-     *            model to create objects in
-     * @return an RDFNode representing this node
-     */
+    /** {@inheritDoc} */
     @Override
     public RDFNode toRDFNode(Model model, Boolean unused) {
         return model.createResource(identifier);

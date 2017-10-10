@@ -124,7 +124,7 @@ public class ResultTest {
     @Test
     public void testIdentifiableNodeExpectable0ButLiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.createResult(storage.createObjectType("Hello world!", "en"));
+            Result r = storage.createResult(storage.createLiteralType("Hello world!", "en"));
 
             try {
                 r.identifiableNodeExpectable();
@@ -180,7 +180,7 @@ public class ResultTest {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Result r = storage.createResult();
             r.add(storage.createNamedNode("http://example.org/foo"));
-            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createLiteralType("Hello world!", "en"));
 
             try {
                 r.identifiableNodeExpectable();
@@ -228,7 +228,7 @@ public class ResultTest {
             r.add(storage.createNamedNode("http://example.org/foo"));
             r.add(storage.createNodeReference("http://example.org/bar"));
             r.add(storage.createNode("http://example.org/baz"));
-            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createLiteralType("Hello world!", "en"));
 
             Set<IdentifiableNode> expected = new HashSet<>();
             expected.add(storage.createNamedNode("http://example.org/foo"));
@@ -324,7 +324,7 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode0ButLiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.createResult(storage.createObjectType("Hello world!", "en"));
+            Result r = storage.createResult(storage.createLiteralType("Hello world!", "en"));
 
             assertFalse(r.isUniqueIdentifiableNode());
         }
@@ -368,7 +368,7 @@ public class ResultTest {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Result r = storage.createResult();
             r.add(storage.createNamedNode("http://example.org/foo"));
-            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createLiteralType("Hello world!", "en"));
 
             assertFalse(r.isUniqueIdentifiableNode());
         }
@@ -461,7 +461,7 @@ public class ResultTest {
             r.add(storage.createNamedNode("http://example.org/foo"));
             r.add(storage.createNodeReference("http://example.org/bar"));
             r.add(storage.createNode("http://example.org/baz"));
-            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createLiteralType("Hello world!", "en"));
 
             Set<String> expected = new HashSet<>();
             expected.add("http://example.org/bar");
@@ -479,7 +479,7 @@ public class ResultTest {
             r.add(storage.createNamedNode("http://example.org/foo"));
             r.add(storage.createNodeReference("http://example.org/bar"));
             r.add(storage.createNode("http://example.org/baz"));
-            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createLiteralType("Hello world!", "en"));
 
             Set<String> expectedOneOf = new HashSet<>();
             expectedOneOf.add("http://example.org/bar ; Hello world!");
@@ -568,7 +568,7 @@ public class ResultTest {
     public void testNode0LiteralsOnly() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Result r = storage.createResult();
-            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createLiteralType("Hello world!", "en"));
             try {
                 r.node();
                 fail(storage.getClass().getSimpleName() + " should throw NoDataException, but does not.");
@@ -672,7 +672,7 @@ public class ResultTest {
             r.add(storage.createNamedNode("http://example.org/foo"));
             r.add(storage.createNodeReference("http://example.org/bar"));
             r.add(storage.createNode("http://example.org/baz"));
-            r.add(storage.createObjectType("Hello world!", "en"));
+            r.add(storage.createLiteralType("Hello world!", "en"));
 
             Set<Node> expected = new HashSet<>();
             expected.add(storage.createNamedNode("http://example.org/foo"));
@@ -739,8 +739,8 @@ public class ResultTest {
             r.add(storage.createNamedNode("http://example.org/foo"));
             r.add(storage.createNodeReference("http://example.org/bar"));
             r.add(storage.createNode("http://example.org/baz"));
-            r.add(storage.createObjectType("Hello world!", "en"));
-            r.add(storage.createObjectType("public static void main(String[] args)", null));
+            r.add(storage.createLiteralType("Hello world!", "en"));
+            r.add(storage.createLiteralType("public static void main(String[] args)", null));
 
             Set<String> expected = new HashSet<>();
             expected.add("Hello world!");

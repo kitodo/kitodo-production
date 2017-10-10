@@ -135,9 +135,7 @@ public class MemoryLiteral implements Literal {
         assert URI_SCHEME.matcher(this.type).find() : "Illegal type.";
     }
 
-    /**
-     * Compares this Literal against another object for equality.
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -174,19 +172,13 @@ public class MemoryLiteral implements Literal {
         return true;
     }
 
-    /**
-     * Returns the semantic web type of this literal.
-     */
+    /** {@inheritDoc} */
     @Override
     public String getType() {
         return type;
     }
 
-    /**
-     * Returns the value of this literal.
-     *
-     * @return the literal value
-     */
+    /** {@inheritDoc} */
     @Override
     public String getValue() {
         return value;
@@ -205,9 +197,7 @@ public class MemoryLiteral implements Literal {
         return result;
     }
 
-    /**
-     * Returns whether this literal is described by the condition node type.
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean matches(ObjectType condition) {
         if (condition instanceof Literal) {
@@ -262,13 +252,7 @@ public class MemoryLiteral implements Literal {
         return true;
     }
 
-    /**
-     * Converts this literal to an RDFNode as part of a Jena model.
-     *
-     * @param model
-     *            model to create objects in
-     * @return an RDFNode representing this node
-     */
+    /** {@inheritDoc} */
     @Override
     public RDFNode toRDFNode(Model model, Boolean unused) {
         if (type.equals(RDF.PLAIN_LITERAL.getIdentifier())) {

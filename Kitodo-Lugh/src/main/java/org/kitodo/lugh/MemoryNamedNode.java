@@ -72,21 +72,13 @@ public class MemoryNamedNode extends MemoryNode implements NamedNode {
         return true;
     }
 
-    /**
-     * Returns the name URI of this node.
-     *
-     * @return the name of this node
-     */
+    /** {@inheritDoc} */
     @Override
     public String getIdentifier() {
         return identifier;
     }
 
-    /**
-     * Returns a hash value of this object.
-     *
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         final int prime = 31;

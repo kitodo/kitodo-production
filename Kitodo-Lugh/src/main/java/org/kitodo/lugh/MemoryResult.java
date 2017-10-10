@@ -97,18 +97,7 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
         this(Arrays.asList(new ObjectType[] {element }));
     }
 
-    /**
-     * Count the elements in this result that can be cast to the given class, at
-     * least up to the given limit. If there are more elements, the function may
-     * or may not return a value equal to or larger than limit.
-     *
-     * @param clazz
-     *            object class to count
-     * @param limit
-     *            limit to count up to, at least
-     * @return the number of elements in this result that can be cast to the
-     *         given class
-     */
+    /** {@inheritDoc} */
     @Override
     public long count(Class<? extends ObjectType> clazz, int limit) {
         if (ObjectType.class.equals(clazz)) {
@@ -127,36 +116,19 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
         return result;
     }
 
-    /**
-     * Returns all leaves from this node, joined by the given separator. Leaves
-     * are literals or node references’ URIs.
-     *
-     * @return all literals from this node as String
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<String> leaves() {
         return strings(true);
     }
 
-    /**
-     * Returns all leaves from this node, joined by the given separator. Leaves
-     * are literals or node references’ URIs.
-     *
-     * @param separator
-     *            separator to use
-     * @return all literals from this node as String
-     */
+    /** {@inheritDoc} */
     @Override
     public String leaves(String separator) {
         return strings(separator, true);
     }
 
-    /**
-     * Returns all the literals as strings. References to other nodes are not
-     * returned.
-     *
-     * @return the literal
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<String> strings() {
         return strings(false);
@@ -182,13 +154,7 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
         return result;
     }
 
-    /**
-     * Returns all literals from this node, joined by the given separator.
-     *
-     * @param separator
-     *            separator to use
-     * @return all literals from this node as String
-     */
+    /** {@inheritDoc} */
     @Override
     public String strings(String separator) {
         return strings(separator, false);

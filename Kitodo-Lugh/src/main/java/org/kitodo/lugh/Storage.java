@@ -57,6 +57,19 @@ public interface Storage {
     Literal createLiteral(String value, String type);
 
     /**
+     * Creates a literal object from a String. If the literal starts with
+     * {@code http://}, a node reference is created, otherwise if a language is
+     * given, a LangString will be created, otherwise a plain literal.
+     *
+     * @param value
+     *            the literal value
+     * @param lang
+     *            language, may be {@code ""} but not {@code null}
+     * @return the literal object
+     */
+    ObjectType createLiteralType(String value, String lang);
+
+    /**
      * Creates a new named node.
      *
      * @param identifier
@@ -100,19 +113,6 @@ public interface Storage {
      * @return the created node reference
      */
     NodeReference createNodeReference(String url);
-
-    /**
-     * Creates a literal object from a String. If the literal starts with
-     * {@code http://}, a node reference is created, otherwise if a language is
-     * given, a LangString will be created, otherwise a plain literal.
-     *
-     * @param value
-     *            the literal value
-     * @param lang
-     *            language, may be {@code ""} but not {@code null}
-     * @return the literal object
-     */
-    ObjectType createObjectType(String value, String lang);
 
     /**
      * Create an empty result.

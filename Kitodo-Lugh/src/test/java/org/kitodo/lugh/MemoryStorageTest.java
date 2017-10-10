@@ -33,6 +33,12 @@ public class MemoryStorageTest {
         fail("Not yet implemented.");
     }
 
+    /** Tests {@code createLiteralType(String, String)}. */
+    @Test
+    public void testCreateLiteralType() {
+        fail("Not yet implemented.");
+    }
+
     /** Tests {@code createNamedNode(String)}. */
     @Test
     public void testCreateNamedNode() {
@@ -60,12 +66,6 @@ public class MemoryStorageTest {
     /** Tests {@code createNode(String)}. */
     @Test
     public void testCreateNodeString() {
-        fail("Not yet implemented.");
-    }
-
-    /** Tests {@code createObjectType(String, String)}. */
-    @Test
-    public void testCreateObjectType() {
         fail("Not yet implemented.");
     }
 

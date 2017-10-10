@@ -26,7 +26,7 @@ public class LiteralTest {
     public void testCreateCreatesLangString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLangString("Hoc est corpus meum.", "la"),
-                    storage.createObjectType("Hoc est corpus meum.", "la"));
+                    storage.createLiteralType("Hoc est corpus meum.", "la"));
         }
     }
 
@@ -34,7 +34,7 @@ public class LiteralTest {
     public void testCreateCreatesNodeReference1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createNodeReference("http://www.kitodo.org/"),
-                    storage.createObjectType("http://www.kitodo.org/", null));
+                    storage.createLiteralType("http://www.kitodo.org/", null));
         }
     }
 
@@ -42,7 +42,7 @@ public class LiteralTest {
     public void testCreateCreatesNodeReference2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createNodeReference("http://www.kitodo.org/"),
-                    storage.createObjectType("http://www.kitodo.org/", ""));
+                    storage.createLiteralType("http://www.kitodo.org/", ""));
         }
     }
 
@@ -50,7 +50,7 @@ public class LiteralTest {
     public void testCreateCreatesPlainLiteral1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL),
-                    storage.createObjectType("public static void main(String[] args)", null));
+                    storage.createLiteralType("public static void main(String[] args)", null));
         }
     }
 
@@ -58,7 +58,7 @@ public class LiteralTest {
     public void testCreateCreatesPlainLiteral2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL),
-                    storage.createObjectType("public static void main(String[] args)", ""));
+                    storage.createLiteralType("public static void main(String[] args)", ""));
         }
     }
 
@@ -66,7 +66,7 @@ public class LiteralTest {
     public void testCreateLiteralCreatesLangString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLangString("Hoc est corpus meum.", "la"),
-                    storage.createObjectType("Hoc est corpus meum.", "la"));
+                    storage.createLiteralType("Hoc est corpus meum.", "la"));
         }
     }
 

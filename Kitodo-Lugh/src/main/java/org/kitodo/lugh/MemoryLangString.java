@@ -73,18 +73,16 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
         return true;
     }
 
-    /**
-     * Returns the locale of the language-tagged string.
-     *
-     * @return the locale
-     */
+    /** {@inheritDoc} */
     @Override
     public Locale getLocale() {
         return locale;
     }
 
     /**
-     * Returns a hash code for the object.
+     * Returns a hash code of the language-tagged string.
+     * 
+     * @return a hash code value for this object.
      */
     @Override
     public int hashCode() {
@@ -94,9 +92,7 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
         return result;
     }
 
-    /**
-     * Returns whether this LangString is described by the condition node type.
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean matches(ObjectType condition) {
         if (condition instanceof LangString) {
@@ -141,21 +137,13 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
         return false;
     }
 
-    /**
-     * Converts this lang string to an RDFNode as part of a Jena model.
-     *
-     * @param model
-     *            model to create objects in
-     * @return an RDFNode representing this node
-     */
+    /** {@inheritDoc} */
     @Override
     public RDFNode toRDFNode(Model model, Boolean unused) {
         return model.createLiteral(value, locale.toLanguageTag());
     }
 
-    /**
-     * Returns a readable description of this literal to be seen in a debugger.
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         String language = locale.toLanguageTag();

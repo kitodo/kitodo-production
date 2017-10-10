@@ -306,8 +306,8 @@ public class NodeTest {
             node.put(RDF.TYPE, "http://names.example/mammal");
 
             Result expected = storage.createResult();
-            expected.add(storage.createObjectType("http://names.example/petAnimal", null));
-            expected.add(storage.createObjectType("http://names.example/mammal", null));
+            expected.add(storage.createLiteralType("http://names.example/petAnimal", null));
+            expected.add(storage.createLiteralType("http://names.example/mammal", null));
 
             String relation = RDF.TYPE.getIdentifier();
 
@@ -509,7 +509,7 @@ public class NodeTest {
     @Test
     public void testPutNodeReferenceObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.createNode().put(Mods.NAME, storage.createObjectType("Wilhelm Busch", "de"));
+            storage.createNode().put(Mods.NAME, storage.createLiteralType("Wilhelm Busch", "de"));
         }
     }
 
@@ -526,7 +526,7 @@ public class NodeTest {
     public void testPutStringObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             storage.createNode().put("http://www.loc.gov/mods/v3#name",
-                    storage.createObjectType("Wilhelm Busch", "de"));
+                    storage.createLiteralType("Wilhelm Busch", "de"));
         }
     }
 

@@ -58,7 +58,7 @@ public interface Node extends AccessibleObject, NodeType {
      *
      * @param element
      *            Element to add
-     * @return this node, for in-line use
+     * @return this node, for method chaining
      */
     <T extends Node> T add(ObjectType element);
 
@@ -461,7 +461,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            Relation the object shall be added under
      * @param object
      *            object to add
-     * @return this, for in-line use
+     * @return this, for method chaining
      */
     @SuppressWarnings("unchecked")
     default <T extends Node> T put(IdentifiableNode relation, ObjectType object) {
@@ -480,7 +480,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            Relation the object shall be added under
      * @param object
      *            object to add
-     * @return this, for in-line use
+     * @return this, for method chaining
      */
     @SuppressWarnings("unchecked")
     default <T extends Node> T put(IdentifiableNode relation, String object) {
@@ -499,7 +499,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            Relation the object shall be added under
      * @param object
      *            object to add
-     * @return this, for in-line use
+     * @return this, for method chaining
      */
     <T extends Node> T put(String relation, ObjectType object);
 
@@ -514,7 +514,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            Relation the object shall be added under
      * @param object
      *            object to add
-     * @return this, for in-line use
+     * @return this, for method chaining
      */
     <T extends Node> T put(String relation, String object);
 
@@ -576,7 +576,7 @@ public interface Node extends AccessibleObject, NodeType {
     void removeFirst();
 
     /**
-     * Removes the first occurence of an object from the enumerated elements.
+     * Removes the first occurrence of an object from the enumerated elements.
      *
      * @param object
      *            object to remove
@@ -590,7 +590,7 @@ public interface Node extends AccessibleObject, NodeType {
     void removeLast();
 
     /**
-     * Removes the last occurence of an object from the enumerated elements.
+     * Removes the last occurrence of an object from the enumerated elements.
      *
      * @param object
      *            object to remove
@@ -620,6 +620,26 @@ public interface Node extends AccessibleObject, NodeType {
      *            new element for this index
      */
     void set(int index, ObjectType element);
+
+    /**
+     * Sets a literal as only child of this node. Removes all other nodes, but
+     * will keep attribute literals and node references.
+     * <p>
+     * This is a convenience method to <em>set text content</em> when building
+     * XML-like data structure. All <em>tag content</em> will be removed, but
+     * <em>attributes will be kept</em>.
+     * {@code Storage.createNode(ns + "SomeType").setValue("value");} should be
+     * written to XML as {@code <ns:SomeType>value</ns:SomeType>}.
+     *
+     * @param <T>
+     *            possible subclass of Node. When invoked on a
+     *            {@code NamedNode}, will return a named node instead.
+     *
+     * @param value
+     *            literal value to set
+     * @return this, for method chaining
+     */
+    <T extends Node> T setValue(String value);
 
     /**
      * Returns the number of elements in this node, or Intexer.MAX_VALUE if more

@@ -28,6 +28,12 @@ public class StorageTest {
         fail("Not yet implemented.");
     }
 
+    /** Tests {@code createLiteralType(String, String)}. */
+    @Test
+    public void testCreateLiteralTypeStringString() {
+        fail("Not yet implemented.");
+    }
+
     /** Tests {@code createNamedNode(String)}. */
     @Test
     public void testCreateNamedNodeString() {
@@ -37,12 +43,6 @@ public class StorageTest {
     /** Tests {@code createNodeReference(String)}. */
     @Test
     public void testCreateNodeReferenceString() {
-        fail("Not yet implemented.");
-    }
-
-    /** Tests {@code createObjectType(String, String)}. */
-    @Test
-    public void testCreateObjectTypeStringString() {
         fail("Not yet implemented.");
     }
 
