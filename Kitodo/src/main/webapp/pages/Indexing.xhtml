@@ -141,7 +141,7 @@
                                                 <p:commandButton widgetVar="createMapping"
                                                                  value="#{msgs.createMapping}"
                                                                  style="width: 100%;"
-                                                                 action="#{indexingForm.createMapping()}"
+                                                                 action="#{indexingForm.createMapping(true)}"
                                                                  disabled="#{indexingForm.indexExists() or indexingForm.indexingInProgress()}"
                                                                  update="indexingTable"
                                                                  onclick="createMapping();"/>
@@ -158,7 +158,7 @@
                                                 <p:commandButton widgetVar="deleteIndex"
                                                                  value="#{msgs.deleteIndex}"
                                                                  style="width: 100%;"
-                                                                 action="#{indexingForm.deleteIndex()}"
+                                                                 action="#{indexingForm.deleteIndex(true)}"
                                                                  disabled="#{!indexingForm.indexExists() or indexingForm.indexingInProgress()}"
                                                                  update="indexingTable"
                                                                  onclick="return confirm('Do you REALLY want to delete the whole index?');deleteIndex();"/>
@@ -205,9 +205,9 @@
                                                     <h:outputText value="#{indexingForm.indexedUsers} / #{indexingForm.userCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress gt 0 and indexingForm.userIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('USER') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('USER') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('USER') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -234,9 +234,9 @@
                                                     <h:outputText value="#{indexingForm.indexedUserGroups} / #{indexingForm.userGroupCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress gt 0 and indexingForm.userGroupIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.userGroupIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('USERGROUP') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('USERGROUP') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('USERGROUP') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -263,9 +263,9 @@
                                                     <h:outputText value="#{indexingForm.indexedProjects} / #{indexingForm.projectCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress gt 0 and indexingForm.projectsIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.projectsIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROJECT') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROJECT') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROJECT') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -292,9 +292,9 @@
                                                     <h:outputText value="#{indexingForm.indexedRulesets} / #{indexingForm.rulesetCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress gt 0 and indexingForm.rulesetsIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.rulesetsIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('RULESET') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('RULESET') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('RULESET') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -321,9 +321,9 @@
                                                     <h:outputText value="#{indexingForm.indexedDockets} / #{indexingForm.docketCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress gt 0 and indexingForm.docketsIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.docketsIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('DOCKET') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('DOCKET') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('DOCKET') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -350,9 +350,9 @@
                                                     <h:outputText value="#{indexingForm.indexedTasks} / #{indexingForm.taskCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress gt 0 and indexingForm.tasksIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.tasksIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('TASK') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('TASK') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('TASK') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -379,9 +379,9 @@
                                                     <h:outputText value="#{indexingForm.indexedTemplates} / #{indexingForm.templateCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress gt 0 and indexingForm.templatesIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.templatesIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('TEMPLATE') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('TEMPLATE') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('TEMPLATE') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -408,9 +408,9 @@
                                                     <h:outputText value="#{indexingForm.indexedProcesses} / #{indexingForm.processCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress gt 0 and indexingForm.processIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.processIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROCESS') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROCESS') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROCESS') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -437,9 +437,9 @@
                                                     <h:outputText value="#{indexingForm.indexedBatches} / #{indexingForm.batchCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress gt 0 and indexingForm.batchIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.batchIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('BATCH') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('BATCH') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('BATCH') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -466,9 +466,9 @@
                                                     <h:outputText value="#{indexingForm.indexedProperties} / #{indexingForm.propertyCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress gt 0 and indexingForm.propertiesIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.propertiesIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROPERTY') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROPERTY') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('PROPERTY') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -495,9 +495,9 @@
                                                     <h:outputText value="#{indexingForm.indexedWorkpieces} / #{indexingForm.workpieceCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress gt 0 and indexingForm.workpieceIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.workpieceIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('WORKPIECE') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('WORKPIECE') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('WORKPIECE') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -524,9 +524,9 @@
                                                     <h:outputText value="#{indexingForm.indexedFilter} / #{indexingForm.filterCount}"/>
                                                 </td>
                                                 <td>
-                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress gt 0 and indexingForm.filterIndexingProgress lt 100}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.filterIndexingProgress == 100}" />
+                                                    <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('FILTER') == indexingForm.indexingStartedState}"/>
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('FILTER') == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState('FILTER') == indexingForm.indexingSuccessfulState}" />
                                                 </td>
                                             </tr>
 
@@ -558,8 +558,8 @@
                                                 </td>
                                                 <td>
                                                     <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.indexingInProgress()}"/>
-                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == -1}"/>
-                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allIndexingProgress == 100 and not indexingForm.indexingInProgress()}" />
+                                                    <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.allObjectsIndexingState == indexingForm.indexingFailedState}"/>
+                                                    <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.allObjectsIndexingState == indexingForm.indexingSuccessfulState and not indexingForm.indexingInProgress()}" />
                                                 </td>
                                             </tr>
                                         </tbody>
