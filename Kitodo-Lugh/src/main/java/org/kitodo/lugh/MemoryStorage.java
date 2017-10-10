@@ -55,9 +55,10 @@ public class MemoryStorage implements Storage {
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
-    public NamedNode createNamedNode(String identifier) {
-        return new MemoryNamedNode(identifier);
+    public <NamedNode extends Node & IdentifiableNode> NamedNode createNamedNode(String identifier) {
+        return (NamedNode) new MemoryNamedNode(identifier);
     }
 
     /** {@inheritDoc} */

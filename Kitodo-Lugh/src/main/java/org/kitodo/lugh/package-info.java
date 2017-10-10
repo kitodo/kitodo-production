@@ -44,14 +44,18 @@
  * Interface hierarchy:
  *
  * <pre>
- *                        ObjectType
- *                         /     \
- *                   NodeType    AccessibleObject
- *                  /        \  /        |
- *       IdentifiableNode    Node     Literal
- *         /          \     /            |
- * NodeReference    NamedNode        LangString
+ *                              &lt; ObjectType &gt;
+ *                                 /      \
+ *                       &lt; NodeType &gt;    &lt; AccessibleObject &gt;
+ *                        /         \    /         |
+ *         &lt; IdentifiableNode &gt;    { Node }    &lt; Literal &gt;
+ *            /            \        /              |
+ * &lt; NodeReference &gt;    (( named node ))     &lt; LangString &gt;
  * </pre>
+ *
+ * <small>&lt; &gt; − Interface<br>
+ * { } − abstract class<br>
+ * (( )) − concept; no equivalent in code</small>
  * <p>
  * <strong>Types</strong>
  * <p>
@@ -79,6 +83,24 @@
  * Node n = new MemoryNode(); // Node: interface, MemoryNode: class
  * </pre>
  * <p>
+ * Implementation object hierarchy:
+ *
+ * <pre>
+ *                                      &lt; ObjectType &gt;
+ *                                        /       \
+ *                             &lt; NodeType &gt;       &lt; AccessibleObject &gt;
+ *                             /          \      /                  \
+ *             &lt; IdentifiableNode &gt;       { Node }                &lt; Literal &gt;
+ *               /              \            |                      /      \
+ *    &lt; NodeReference &gt;          \     [ MemoryNode ]   &lt; LangString &gt;   [ MemoryLiteral ]
+ *            |                   \        /                       \           /
+ * [ MemoryNodeReference ]   [ MemoryNamedNode ]               [ MemoryLangString ]
+ * </pre>
+ *
+ * <small>&lt; &gt; − Interface<br>
+ * { } − abstract class<br>
+ * [ ] − class</small>
+ * <p>
  * <em>Storage-implementation-agnostically creating Java objects</em>
  * <p>
  * It is also possible to write code that creates objects without knowledge of
@@ -105,12 +127,14 @@
  * getters for the different {@code nodes()} or {@code literals()}, which
  * provide the casting. In principle, it is better to use the set getters and
  * iterate over their outcome, if that is meaningfully possible, even if—at the
- * moment—only one result object is expected.
+ * moment—only one result object is expected. Since the result set does not
+ * provide a particular order, a
+ * {@linkplain java.util.Collection#parallelStream()} is used.
  *
  * <pre>
- * for (Node n : node.get(whatever).nodes()) {
+ * node.get(whatever).forEachNode(n -> {
  *     // do something with ‘n’
- * }
+ * });
  * </pre>
  *
  * However, in some cases, only exactly one object or literal is expected. To

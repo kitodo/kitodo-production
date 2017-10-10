@@ -71,12 +71,15 @@ public interface Storage {
 
     /**
      * Creates a new named node.
+     * 
+     * @param <NamedNode>
+     *            The concept of a named node
      *
      * @param identifier
      *            the name URI of this node
      * @return the created named node
      */
-    NamedNode createNamedNode(String identifier);
+    <NamedNode extends Node & IdentifiableNode> NamedNode createNamedNode(String identifier);
 
     /**
      * Creates an empty node.

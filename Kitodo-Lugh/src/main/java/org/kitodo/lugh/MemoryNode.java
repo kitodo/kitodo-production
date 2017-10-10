@@ -28,7 +28,7 @@ import org.kitodo.lugh.vocabulary.RDF;
  * The class offers functions known from Java’s collections, and they are
  * intended to intuitively behave the same way.
  */
-public class MemoryNode implements Node {
+public class MemoryNode extends Node {
 
     /**
      * Iterator to iterate through the edges and return all directly referenced
@@ -226,7 +226,7 @@ public class MemoryNode implements Node {
     /** {@inheritDoc} */
     @Override
     public ObjectType asUnordered(boolean removeType) {
-        Node result = this instanceof NamedNode ? new MemoryNamedNode(((NamedNode) this).getIdentifier())
+        Node result = this instanceof IdentifiableNode ? new MemoryNamedNode(((IdentifiableNode) this).getIdentifier())
                 : new MemoryNode();
         for (Entry<String, Collection<ObjectType>> edge : edges.entrySet()) {
 
@@ -311,8 +311,9 @@ public class MemoryNode implements Node {
     }
 
     /**
-     * Creates an anonymous resource. Overridden in {@link NamedNode} to create
-     * a named resource.
+     * Creates an anonymous resource. Overridden in
+     * {@link MemoryNamedNode#createRDFSubject(Model)} to create a named
+     * resource.
      *
      * @param model
      *            model to create the resource in
@@ -821,8 +822,8 @@ public class MemoryNode implements Node {
             Iterator<ObjectType> objectsIterator = objects.iterator();
             while (objectsIterator.hasNext()) {
                 ObjectType object = objectsIterator.next();
-                if ((object instanceof MemoryNamedNode) && ((NamedNode) object).isEmpty()) {
-                    replacedObjects.add(new MemoryNodeReference(((NamedNode) object).getIdentifier()));
+                if ((object instanceof MemoryNamedNode) && ((MemoryNamedNode) object).isEmpty()) {
+                    replacedObjects.add(new MemoryNodeReference(((MemoryNamedNode) object).getIdentifier()));
                     objectsIterator.remove();
                 } else if (recursive && (object instanceof MemoryNode)) {
                     ((MemoryNode) object).replaceAllNamedNodesWithNoDataByNodeReferences(recursive);
@@ -882,7 +883,7 @@ public class MemoryNode implements Node {
     @Override
     public RDFNode toRDFNode(Model model, Boolean addNamedNodesRecursively) {
         Resource subject = createRDFSubject(model);
-        if (!(this instanceof NamedNode) || !Boolean.FALSE.equals(addNamedNodesRecursively)) {
+        if (!(this instanceof IdentifiableNode) || !Boolean.FALSE.equals(addNamedNodesRecursively)) {
             for (Entry<String, Collection<ObjectType>> entry : edges.entrySet()) {
                 Property relation = model.createProperty(entry.getKey());
                 for (ObjectType object : entry.getValue()) {

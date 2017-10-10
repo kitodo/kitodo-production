@@ -99,16 +99,16 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
 
     /** {@inheritDoc} */
     @Override
-    public long count(Class<? extends ObjectType> clazz, int limit) {
-        if (ObjectType.class.equals(clazz)) {
-            return super.size();
-        }
+    public long count(int limit, Class<?>... filterClasses) {
         long result = 0;
-        for (ObjectType entry : this) {
-            if (clazz.isAssignableFrom(entry.getClass())) {
-                result++;
-                limit--;
+        WITH_NEXT_ENTRY: for (ObjectType entry : this) {
+            for (Class<?> clazz : filterClasses) {
+                if (!clazz.isAssignableFrom(entry.getClass())) {
+                    continue WITH_NEXT_ENTRY;
+                }
             }
+            result++;
+            limit--;
             if (limit <= 0) {
                 break;
             }
@@ -192,22 +192,19 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
         return result.toString();
     }
 
-    /**
-     * Creates a subset by type check. Used for filtering.
-     *
-     * @param clazz
-     *            Subclass to create a subset of
-     * @param <T>
-     *            subclass type
-     * @return a subset of a given type
-     */
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked") // The compiler does not understand that
                                    // isAssignableFrom() does the type check
-    public <T extends ObjectType> Set<T> subset(Class<T> clazz) {
+    public <T extends ObjectType> Set<T> subset(Class<T> returnClass, Class<?>... secondaryClasses) {
         Set<T> result = new HashSet<>();
-        for (ObjectType entry : this) {
-            if (clazz.isAssignableFrom(entry.getClass())) {
+        WITH_NEXT_ENTRY: for (ObjectType entry : this) {
+            if (returnClass.isAssignableFrom(entry.getClass())) {
+                for (Class<?> clazz : secondaryClasses) {
+                    if (!clazz.isAssignableFrom(entry.getClass())) {
+                        continue WITH_NEXT_ENTRY;
+                    }
+                }
                 result.add((T) entry);
             }
         }

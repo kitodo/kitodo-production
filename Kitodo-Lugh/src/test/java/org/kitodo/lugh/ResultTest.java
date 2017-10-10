@@ -99,6 +99,78 @@ public class ResultTest {
         fail("Not yet implemented.");
     }
 
+    /** Tests {@code forEach(Consumer<? super ObjectType>)}. */
+    @Test
+    public void testForEach() {
+        fail("Not yet implemented.");
+    }
+
+    /**
+     * Tests
+     * {@code forEachAccessibleObject(Consumer<? super AccessibleObject>)}.
+     */
+    @Test
+    public void testForEachAccessibleObject() {
+        fail("Not yet implemented.");
+    }
+
+    /**
+     * Tests
+     * {@code forEachIdentifiableNode(Consumer<? super IdentifiableNode>)}.
+     */
+    @Test
+    public void testForEachIdentifiableNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachLangString(Consumer<? super LangString>)}. */
+    @Test
+    public void testForEachLangString() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachLeaf(Consumer<? super String>)}. */
+    @Test
+    public void testForEachLeaf() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachLiteral(Consumer<? super Literal>)}. */
+    @Test
+    public void testForEachLiteral() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachNamedNode(Consumer<? super NamedNode>)}. */
+    @Test
+    public void testForEachNamedNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachNode(Consumer<? super Node>)}. */
+    @Test
+    public void testForEachNode() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachNodeReference(Consumer<? super NodeReference>)}. */
+    @Test
+    public void testForEachNodeReference() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachNodeType(Consumer<? super NodeType>)}. */
+    @Test
+    public void testForEachNodeType() {
+        fail("Not yet implemented.");
+    }
+
+    /** Tests {@code forEachString(Consumer<? super String>)}. */
+    @Test
+    public void testForEachString() {
+        fail("Not yet implemented.");
+    }
+
     /** Tests {@code identifiableNode()}. */
     @Test
     public void testIdentifiableNode() {
@@ -334,7 +406,7 @@ public class ResultTest {
     @Test
     public void testIsUniqueIdentifiableNode1NamedNode() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.createResult(storage.createNamedNode("http://example.org/fooBar"));
+            Result r = storage.createResult((ObjectType) storage.createNamedNode("http://example.org/fooBar"));
 
             assertTrue(r.isUniqueIdentifiableNode());
         }
@@ -583,7 +655,7 @@ public class ResultTest {
     public void testNode1NamedNode() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Result r = storage.createResult();
-            NamedNode expected;
+            Node expected;
             r.add(expected = storage.createNamedNode("http://example.org/foo"));
             assertEquals(expected, r.node());
         }

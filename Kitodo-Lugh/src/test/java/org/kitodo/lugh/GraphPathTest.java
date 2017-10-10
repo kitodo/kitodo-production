@@ -86,31 +86,26 @@ public class GraphPathTest {
 
         GraphPath expected = (GraphPath) new GraphPath().put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                 .put(RDF.OBJECT, new MemoryNode(Mets.DMD_SEC))
-                .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
-                        .put(RDF.OBJECT, new MemoryNode(Mets.MD_WRAP))
-                        .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP).put(RDF.OBJECT, new MemoryNode(Mets.MD_WRAP))
+                        .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                                 .put(RDF.OBJECT, new MemoryNode(Mets.XML_DATA))
-                                .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                                .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                                         .put(RDF.OBJECT, new MemoryNode(Mods.MODS))
-                                        .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP).put(
-                                                RDF.OBJECT,
-                                                new MemoryNode(Mods.NAME).put(Mods.TYPE, "personal").<MemoryNode>put(
-                                                        GraphPath.ANY_PREDICATE,
-                                                        new MemoryNode(Mods.ROLE).<MemoryNode>put(
+                                        .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                                                .put(RDF.OBJECT, new MemoryNode(Mods.NAME).put(Mods.TYPE, "personal")
+                                                        .put(GraphPath.ANY_PREDICATE, new MemoryNode(Mods.ROLE).put(
                                                                 GraphPath.ANY_PREDICATE,
-                                                                new MemoryNode(Mods.ROLE_TERM).<MemoryNode>add(
+                                                                new MemoryNode(Mods.ROLE_TERM).add(
                                                                         new MemoryLiteral("aut", RDF.PLAIN_LITERAL)))))
-                                                .<MemoryNode>put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                                                .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                                                         .put(RDF.OBJECT, new MemoryNode(Mods.DISPLAY_FORM))
-                                                        .<MemoryNode>put(GraphPath.TO,
-                                                                new MemoryNode(GraphPath.LOCATION_STEP).<MemoryNode>put(
-                                                                        RDF.PREDICATE,
-                                                                        RDF.toURL(Node.FIRST_INDEX)))))))));
+                                                        .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
+                                                                .put(RDF.PREDICATE, RDF.toURL(Node.FIRST_INDEX)))))))));
 
         assertTrue(expected.equals(new GraphPath(gpath, prefixes)));
 
         new MemoryNode(Mods.ROLE).put(GraphPath.ANY_PREDICATE,
-                new MemoryNode(Mods.ROLE_TERM).<MemoryNode>add(new MemoryLiteral("aut", RDF.PLAIN_LITERAL)));
+                new MemoryNode(Mods.ROLE_TERM).add(new MemoryLiteral("aut", RDF.PLAIN_LITERAL)));
     }
 
     @Test(expected = NullPointerException.class)

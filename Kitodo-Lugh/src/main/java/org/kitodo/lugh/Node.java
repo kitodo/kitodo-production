@@ -27,16 +27,16 @@ import org.kitodo.lugh.vocabulary.RDF;
  * intended to intuitively behave the same way.
  *
  */
-public interface Node extends AccessibleObject, NodeType {
+public abstract class Node implements AccessibleObject, NodeType {
 
     /**
      * The index of the first child node that is referenced by index.
      */
-    static final short FIRST_INDEX = 1;
+    public static final short FIRST_INDEX = 1;
 
     /**
-     * Adds a node to the nodes refereced by index. The add function implements
-     * the traditional add behaviour, that is all nodes with an index equal to
+     * Adds a node to the nodes referenced by index. The add function implements
+     * the traditional add behavior, that is all nodes with an index equal to
      * the given index or higher are moved upwards by one. If the index list has
      * holes, only the next elements are moved up until a hole is encountered.
      *
@@ -45,7 +45,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @param element
      *            element to add
      */
-    void add(int index, ObjectType element);
+    public abstract void add(int index, ObjectType element);
 
     /**
      * Adds a node to the nodes referenced by index. The add function implements
@@ -60,7 +60,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            Element to add
      * @return this node, for method chaining
      */
-    <T extends Node> T add(ObjectType element);
+    public abstract <T extends Node> T add(ObjectType element);
 
     /**
      * Convenience method to {@link #add(ObjectType)} a collection of nodes by a
@@ -70,7 +70,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @param elements
      *            collection of nodes to add
      */
-    void addAll(Collection<? extends ObjectType> elements);
+    public abstract void addAll(Collection<? extends ObjectType> elements);
 
     /**
      * Adds an element as the first to the list of elements referencey by
@@ -82,7 +82,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @param element
      *            element to add
      */
-    void addFirst(ObjectType element);
+    public abstract void addFirst(ObjectType element);
 
     /**
      * Returns the node as an unordered node. All ordered ({@code rdf:_1},
@@ -102,7 +102,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            may be convenient)
      * @return the node as unordered
      */
-    ObjectType asUnordered(boolean removeType);
+    public abstract ObjectType asUnordered(boolean removeType);
 
     /**
      * Tests whether an element is directly referenced by this node.
@@ -111,7 +111,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            object to search
      * @return whether the object is contained
      */
-    boolean contains(Object o);
+    public abstract boolean contains(Object o);
 
     /**
      * Tests whether this node has an outgoing edge labeled by the given label.
@@ -120,7 +120,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            label to look for
      * @return whether the object is contained
      */
-    default boolean containsKey(IdentifiableNode label) {
+    public boolean containsKey(IdentifiableNode label) {
         return containsKey(label.getIdentifier());
     }
 
@@ -131,14 +131,14 @@ public interface Node extends AccessibleObject, NodeType {
      *            label to look for
      * @return whether the object is contained
      */
-    boolean containsKey(String label);
+    public abstract boolean containsKey(String label);
 
     /**
      * Provides the entrySet of this Node for iteration.
      *
      * @return the edges
      */
-    Set<Entry<String, Collection<ObjectType>>> entrySet();
+    public abstract Set<Entry<String, Collection<ObjectType>>> entrySet();
 
     /**
      * Resolves the given graph path against this node. The node passed in must
@@ -148,14 +148,14 @@ public interface Node extends AccessibleObject, NodeType {
      *            graph path to resolve
      * @return the results from resolving
      */
-    Result find(Node graphPath);
+    public abstract Result find(Node graphPath);
 
     /**
      * Finds the first index in use to reference elements by index.
      *
      * @return the first index in use
      */
-    Optional<Long> first();
+    public abstract Optional<Long> first();
 
     /**
      * Returns all nodes referenced by the given relations which have all the
@@ -170,7 +170,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @return all nodes referenced by the given relations which fulfil the
      *         conditions
      */
-    Result get(Collection<String> relations, Collection<ObjectType> conditions);
+    public abstract Result get(Collection<String> relations, Collection<ObjectType> conditions);
 
     /**
      * Gets a literal referenced by relation.
@@ -179,7 +179,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            relation to look up
      * @return the value of the literal.
      */
-    default Result get(IdentifiableNode relation) {
+    public Result get(IdentifiableNode relation) {
         return get(relation.getIdentifier());
     }
 
@@ -192,7 +192,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            node type to filter by
      * @return the nodes
      */
-    default Result get(IdentifiableNode relation, IdentifiableNode type) {
+    public Result get(IdentifiableNode relation, IdentifiableNode type) {
         return get(relation.getIdentifier(), type.getIdentifier());
     }
 
@@ -211,7 +211,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            identifier value
      * @return found nodes
      */
-    default Result get(IdentifiableNode relation, IdentifiableNode identifierRelation, String identifierValue) {
+    public Result get(IdentifiableNode relation, IdentifiableNode identifierRelation, String identifierValue) {
         return get(relation != null ? relation.getIdentifier() : null, identifierRelation,
                 new MemoryLiteral(identifierValue, RDF.PLAIN_LITERAL));
     }
@@ -225,7 +225,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            node type to filter by
      * @return the nodes
      */
-    default Result get(IdentifiableNode relation, String type) {
+    public Result get(IdentifiableNode relation, String type) {
         return get(relation.getIdentifier(), type);
     }
 
@@ -236,7 +236,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            Node index to return
      * @return the node referenced by that index
      */
-    Result get(long index);
+    public abstract Result get(long index);
 
     /**
      * Gets all elements referenced by a relation.
@@ -245,7 +245,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            relation to look up
      * @return the elements referenced by this relation
      */
-    Result get(String relation);
+    public abstract Result get(String relation);
 
     /**
      * Gets all nodes referenced by relation which have a certain type.
@@ -256,7 +256,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            node type to filter by
      * @return the nodes
      */
-    default Result get(String relation, IdentifiableNode type) {
+    public Result get(String relation, IdentifiableNode type) {
         return get(relation, type.getIdentifier());
     }
 
@@ -275,7 +275,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            identifier value
      * @return found nodes
      */
-    Result get(String relation, IdentifiableNode identifierRelation, ObjectType identifierValue);
+    public abstract Result get(String relation, IdentifiableNode identifierRelation, ObjectType identifierValue);
 
     /**
      * Gets all nodes referenced by relation which have a certain type.
@@ -286,7 +286,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            node type to filter by
      * @return the nodes
      */
-    Result get(String relation, String type);
+    public abstract Result get(String relation, String type);
 
     /**
      * Returns an identifiable held as object.
@@ -299,7 +299,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @throws NoSuchMethodError
      *             if several ones found
      */
-    IdentifiableNode getByIdentifier(String identifier);
+    public abstract IdentifiableNode getByIdentifier(String identifier);
 
     /**
      * Returns the first child node whose type is equal to the given url.
@@ -310,7 +310,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @throws NoSuchElementException
      *             if there is none
      */
-    default Result getByType(IdentifiableNode url) {
+    public Result getByType(IdentifiableNode url) {
         return getByType(url.getIdentifier());
     }
 
@@ -328,7 +328,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            value of the identifier
      * @return the first child of the url type
      */
-    default Result getByType(IdentifiableNode rdfType, IdentifiableNode idType, Literal idValue) {
+    public Result getByType(IdentifiableNode rdfType, IdentifiableNode idType, Literal idValue) {
         return getByType(rdfType.getIdentifier(), idType.getIdentifier(), idValue.getValue());
     }
 
@@ -346,7 +346,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            value of the identifier
      * @return the first child of the url type
      */
-    default Result getByType(IdentifiableNode rdfType, IdentifiableNode idType, String idValue) {
+    public Result getByType(IdentifiableNode rdfType, IdentifiableNode idType, String idValue) {
         return getByType(rdfType.getIdentifier(), idType.getIdentifier(), idValue);
     }
 
@@ -357,7 +357,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            url of the child to look for
      * @return the first child of the url type
      */
-    Result getByType(String type);
+    public abstract Result getByType(String type);
 
     /**
      * Returns the first child node whose type is equal to the given url and
@@ -373,14 +373,14 @@ public interface Node extends AccessibleObject, NodeType {
      *            value of the identifier
      * @return the first child of the url type
      */
-    Result getByType(String rdfType, String idType, String idValue);
+    public abstract Result getByType(String rdfType, String idType, String idValue);
 
     /**
      * Returns a list of all nodes referenced by a list membership relation.
      *
      * @return all nodes referenced by list membership relation
      */
-    List<Result> getEnumerated();
+    public abstract List<Result> getEnumerated();
 
     /**
      * Returns the first node referenced by numeric index, or {@code null} if no
@@ -389,7 +389,7 @@ public interface Node extends AccessibleObject, NodeType {
      *
      * @return the first node referenced by index
      */
-    Result getFirst();
+    public abstract Result getFirst();
 
     /**
      * Returns the first node referenced by numeric index, or {@code null} if no
@@ -398,14 +398,14 @@ public interface Node extends AccessibleObject, NodeType {
      *
      * @return the first node referenced by index
      */
-    Result getLast();
+    public abstract Result getLast();
 
     /**
      * Returns all outgoing relations from this node.
      *
      * @return all outgoing relations
      */
-    Set<String> getRelations();
+    public abstract Set<String> getRelations();
 
     /**
      * Checks whether this node has the given type.
@@ -414,7 +414,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            type to check for
      * @return whether this node has the type
      */
-    default boolean hasType(IdentifiableNode type) {
+    public boolean hasType(IdentifiableNode type) {
         return hasType(type.getIdentifier());
     }
 
@@ -425,14 +425,14 @@ public interface Node extends AccessibleObject, NodeType {
      *            type to check for
      * @return whether this node has the type
      */
-    boolean hasType(String type);
+    public abstract boolean hasType(String type);
 
     /**
      * Returns true if this node does not contain any relations.
      *
      * @return whether the node is empty
      */
-    boolean isEmpty();
+    public abstract boolean isEmpty();
 
     /**
      * Returns an iterator to iterate all referenced Nodes. Literals will be
@@ -440,7 +440,7 @@ public interface Node extends AccessibleObject, NodeType {
      *
      * @return an iterator over all child nodes
      */
-    Iterator<ObjectType> iterator();
+    public abstract Iterator<ObjectType> iterator();
 
     /**
      * Returns the last (largest) index in use to reference elements by index.
@@ -448,7 +448,7 @@ public interface Node extends AccessibleObject, NodeType {
      *
      * @return the largest index in use
      */
-    Optional<Long> last();
+    public abstract Optional<Long> last();
 
     /**
      * Adds a node by relation.
@@ -464,7 +464,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @return this, for method chaining
      */
     @SuppressWarnings("unchecked")
-    default <T extends Node> T put(IdentifiableNode relation, ObjectType object) {
+    public <T extends Node> T put(IdentifiableNode relation, ObjectType object) {
         put(relation.getIdentifier(), object);
         return (T) this;
     }
@@ -483,7 +483,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @return this, for method chaining
      */
     @SuppressWarnings("unchecked")
-    default <T extends Node> T put(IdentifiableNode relation, String object) {
+    public <T extends Node> T put(IdentifiableNode relation, String object) {
         put(relation.getIdentifier(), object);
         return (T) this;
     }
@@ -501,7 +501,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            object to add
      * @return this, for method chaining
      */
-    <T extends Node> T put(String relation, ObjectType object);
+    public abstract <T extends Node> T put(String relation, ObjectType object);
 
     /**
      * Adds a literal by relation.
@@ -516,7 +516,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            object to add
      * @return this, for method chaining
      */
-    <T extends Node> T put(String relation, String object);
+    public abstract <T extends Node> T put(String relation, String object);
 
     /**
      * Adds all of the objects by the given relation.
@@ -526,7 +526,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @param objects
      *            objects to add
      */
-    default void putAll(IdentifiableNode relation, Set<? extends ObjectType> objects) {
+    public void putAll(IdentifiableNode relation, Set<? extends ObjectType> objects) {
         putAll(relation.getIdentifier(), objects);
     }
 
@@ -538,7 +538,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @param objects
      *            objects to add
      */
-    void putAll(String relation, Collection<? extends ObjectType> objects);
+    public abstract void putAll(String relation, Collection<? extends ObjectType> objects);
 
     /**
      * Removes an object from all relations. If a relations becomes
@@ -548,7 +548,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            Object to remove
      * @return whether the collection was changed
      */
-    boolean remove(Object object);
+    public abstract boolean remove(Object object);
 
     /**
      * Removes all objects linked by the given relation.
@@ -557,7 +557,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            relation to remove
      * @return the previously linked objects
      */
-    default Collection<ObjectType> removeAll(IdentifiableNode relation) {
+    public Collection<ObjectType> removeAll(IdentifiableNode relation) {
         return removeAll(relation.getIdentifier());
     }
 
@@ -568,12 +568,12 @@ public interface Node extends AccessibleObject, NodeType {
      *            relation to remove
      * @return the previously linked objects
      */
-    Collection<ObjectType> removeAll(String relation);
+    public abstract Collection<ObjectType> removeAll(String relation);
 
     /**
      * Removes the first collection of elements of the enumerated elements.
      */
-    void removeFirst();
+    public abstract void removeFirst();
 
     /**
      * Removes the first occurrence of an object from the enumerated elements.
@@ -582,12 +582,12 @@ public interface Node extends AccessibleObject, NodeType {
      *            object to remove
      * @return if the collection was changed
      */
-    boolean removeFirstOccurrence(Object object);
+    public abstract boolean removeFirstOccurrence(Object object);
 
     /**
      * Removes the last object from the enumerated elements.
      */
-    void removeLast();
+    public abstract void removeLast();
 
     /**
      * Removes the last occurrence of an object from the enumerated elements.
@@ -596,7 +596,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            object to remove
      * @return if the collection was changed
      */
-    boolean removeLastOccurrence(Object object);
+    public abstract boolean removeLastOccurrence(Object object);
 
     /**
      * Removes all relations of the given kind and replaces them by relations to
@@ -608,7 +608,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            new objects for this relation
      * @return the objects previously related
      */
-    Collection<ObjectType> replace(String relation, Set<ObjectType> objects);
+    public abstract Collection<ObjectType> replace(String relation, Set<ObjectType> objects);
 
     /**
      * Replaces an element index with a new element, removing all elements at
@@ -619,7 +619,7 @@ public interface Node extends AccessibleObject, NodeType {
      * @param element
      *            new element for this index
      */
-    void set(int index, ObjectType element);
+    public abstract void set(int index, ObjectType element);
 
     /**
      * Sets a literal as only child of this node. Removes all other nodes, but
@@ -639,7 +639,7 @@ public interface Node extends AccessibleObject, NodeType {
      *            literal value to set
      * @return this, for method chaining
      */
-    <T extends Node> T setValue(String value);
+    public abstract <T extends Node> T setValue(String value);
 
     /**
      * Returns the number of elements in this node, or Intexer.MAX_VALUE if more
@@ -647,5 +647,5 @@ public interface Node extends AccessibleObject, NodeType {
      *
      * @return the number of elements in this node
      */
-    int size();
+    public abstract int size();
 }

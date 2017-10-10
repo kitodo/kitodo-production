@@ -16,7 +16,7 @@ import org.apache.jena.rdf.model.*;
 /**
  * A named linked data node whose contents are available.
  */
-public class MemoryNamedNode extends MemoryNode implements NamedNode {
+public class MemoryNamedNode extends MemoryNode implements IdentifiableNode {
 
     private final String identifier;
 

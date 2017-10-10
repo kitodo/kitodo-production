@@ -68,7 +68,7 @@ public class AccessibleObjectTest {
     @Test
     public void testMatchesForANodeThatShouldMatch() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            NamedNode kitodo = storage.createNamedNode("http://kitodo.org/");
+            Node kitodo = storage.createNamedNode("http://kitodo.org/");
             kitodo.put(RDF.TYPE, "http://de.wikipedia.org/wiki/Verein#Eingetragener_Verein");
             kitodo.put(RDF.TYPE, "http://schema.org/Organization");
             kitodo.put("http://schema.org/name", storage.createLangString("Kitodo. Key to digital objects", "de"));
@@ -84,7 +84,7 @@ public class AccessibleObjectTest {
     @Test
     public void testMatchesForANodeThatShouldNotMatch() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            NamedNode kitodo = storage.createNamedNode("http://kitodo.org/");
+            Node kitodo = storage.createNamedNode("http://kitodo.org/");
             kitodo.put(RDF.TYPE, "http://de.wikipedia.org/wiki/Verein#Eingetragener_Verein");
             kitodo.put(RDF.TYPE, "http://schema.org/Organization");
             kitodo.put("http://schema.org/name", storage.createLangString("Kitodo. Key to digital objects", "de"));

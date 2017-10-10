@@ -13,7 +13,7 @@ package org.kitodo.lugh;
 
 import java.nio.BufferOverflowException;
 import java.util.*;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  * The results returned by a call to a getter on a node.
@@ -103,7 +103,7 @@ public interface Result extends Set<ObjectType> {
      * @return the number of elements in this result that can be cast to the
      *         given class
      */
-    long count(Class<? extends ObjectType> clazz, int limit);
+    long count(int limit, Class<?>... clazz);
 
     /**
      * Returns the contained element. This should only be called if its presence
@@ -121,13 +121,15 @@ public interface Result extends Set<ObjectType> {
 
     /**
      * Returns the contained object. This method should be used if the presence
-     * of exactly one object was previously checked by {@link #isUnique()}.
+     * of exactly one object was previously checked by the corresponding
+     * is-unique check.
      *
+     * @param returnType
+     *            return type
+     * @param additionalTypes
+     *            additional types the result must implement
      * @param <T>
-     *            subclass type to return
-     *
-     * @param clazz
-     *            subclass type to return
+     *            range of allowed return types
      *
      * @return the contained object
      * @throws NoSuchElementException
@@ -135,23 +137,158 @@ public interface Result extends Set<ObjectType> {
      * @throws BufferOverflowException
      *             if there is more than one result
      */
-
-    default <T extends ObjectType> T expectableSingleton(Class<T> clazz) {
-        Set<T> elements = subset(clazz);
+    default <T extends ObjectType> T expectableSingleton(Class<T> returnType, Class<?>... additionalTypes) {
+        Set<T> elements = subset(returnType, additionalTypes);
         switch (elements.size()) {
             case 0:
-                throw new NoSuchElementException(); // No element of clazz
+                throw new NoSuchElementException(); // No corresponding element
             case 1:
                 if (size() > 1) {
-                    throw new BufferOverflowException(); // Element of clazz
-                                                         // intermingled with
-                                                         // other objects
+                    throw new BufferOverflowException(); // One corresponding
+                                                         // element intermingled
+                                                         // with other objects
                 }
                 return (T) elements.iterator().next();
             default:
-                throw new BufferOverflowException(); // More than one element of
-                                                     // clazz
+                throw new BufferOverflowException(); // More than one
+                                                     // corresponding element
         }
+    }
+
+    /**
+     * Convenience method to iterate over the contents of the result. Since the
+     * result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    @Override
+    default void forEach(Consumer<? super ObjectType> action) {
+        parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the accessible objects contained in
+     * the result. Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachAccessibleObject(Consumer<? super AccessibleObject> action) {
+        accessibleObjects().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the identifiable nodes contained in
+     * the result. Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachIdentifiableNode(Consumer<? super IdentifiableNode> action) {
+        identifiableNodes().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the language-tagged strings contained
+     * in the result. Since the result set does not provide a particular order,
+     * a {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachLangString(Consumer<? super LangString> action) {
+        langStrings().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the leavf values contained in the
+     * result. Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachLeaf(Consumer<? super String> action) {
+        leaves().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the literals contained in the result.
+     * Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachLiteral(Consumer<? super Literal> action) {
+        literals().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the named nodes contained in the
+     * result. Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param <NamedNode>
+     *            The concept of a named node
+     * @param action
+     *            the action to be performed for each element
+     */
+    @SuppressWarnings("unchecked")
+    default <NamedNode extends Node & IdentifiableNode> void forEachNamedNode(Consumer<? super NamedNode> action) {
+        ((Set<NamedNode>) namedNodes()).parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the nodes contained in the result.
+     * Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachNode(Consumer<? super Node> action) {
+        nodes().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the node references contained in the
+     * result. Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachNodeReference(Consumer<? super NodeReference> action) {
+        nodeReferences().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the named nodes contained in the
+     * result. Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachNodeType(Consumer<? super NodeType> action) {
+        nodeTypes().parallelStream().forEach(action);
+    }
+
+    /**
+     * Convenience method to iterate over the strings contained in the result.
+     * Since the result set does not provide a particular order, a
+     * {@linkplain Collection#parallelStream()} is used.
+     *
+     * @param action
+     *            the action to be performed for each element
+     */
+    default void forEachString(Consumer<? super String> action) {
+        strings().parallelStream().forEach(action);
     }
 
     /**
@@ -226,7 +363,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one element
      */
     default boolean isAny() {
-        return count(ObjectType.class, 1) > 0;
+        return count(1) > 0;
     }
 
     /**
@@ -235,7 +372,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one accessible object
      */
     default boolean isAnyAccessibleObject() {
-        return count(AccessibleObject.class, 1) > 0;
+        return count(1, AccessibleObject.class) > 0;
     }
 
     /**
@@ -244,7 +381,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one identifiable node
      */
     default boolean isAnyIdentifiableNode() {
-        return count(IdentifiableNode.class, 1) > 0;
+        return count(1, IdentifiableNode.class) > 0;
     }
 
     /**
@@ -253,7 +390,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one language-tagged string
      */
     default boolean isAnyLangString() {
-        return count(LangString.class, 1) > 0;
+        return count(1, LangString.class) > 0;
     }
 
     /**
@@ -262,7 +399,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one literal
      */
     default boolean isAnyLiteral() {
-        return count(Literal.class, 1) > 0;
+        return count(1, Literal.class) > 0;
     }
 
     /**
@@ -271,7 +408,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one named node
      */
     default boolean isAnyNamedNode() {
-        return count(NamedNode.class, 1) > 0;
+        return count(1, Node.class, IdentifiableNode.class) > 0;
     }
 
     /**
@@ -280,7 +417,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one node
      */
     default boolean isAnyNode() {
-        return count(Node.class, 1) > 0;
+        return count(1, Node.class) > 0;
     }
 
     /**
@@ -289,7 +426,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one node reference
      */
     default boolean isAnyNodeReference() {
-        return count(NodeReference.class, 1) > 0;
+        return count(1, NodeReference.class) > 0;
     }
 
     /**
@@ -298,7 +435,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is at least one node type
      */
     default boolean isAnyNodeType() {
-        return count(NodeType.class, 1) > 0;
+        return count(1, NodeType.class) > 0;
     }
 
     /**
@@ -309,7 +446,7 @@ public interface Result extends Set<ObjectType> {
      * @return whether this contains exactly one object of that class
      */
     default boolean isSingleton(Class<? extends ObjectType> clazz) {
-        return (count(clazz, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, clazz) == 1) && (count(2) == 1);
     }
 
     /**
@@ -318,7 +455,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one element
      */
     default boolean isUnique() {
-        return count(ObjectType.class, 2) == 1;
+        return count(2) == 1;
     }
 
     /**
@@ -327,7 +464,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one accessible object
      */
     default boolean isUniqueAccessibleObject() {
-        return (count(AccessibleObject.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, AccessibleObject.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -336,7 +473,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one identifiable node
      */
     default boolean isUniqueIdentifiableNode() {
-        return (count(IdentifiableNode.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, IdentifiableNode.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -345,7 +482,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one language-tagged string
      */
     default boolean isUniqueLangString() {
-        return (count(LangString.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, LangString.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -354,7 +491,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one literal
      */
     default boolean isUniqueLiteral() {
-        return (count(Literal.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, Literal.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -363,7 +500,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one named node
      */
     default boolean isUniqueNamedNode() {
-        return (count(NamedNode.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, Node.class, IdentifiableNode.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -372,7 +509,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one node
      */
     default boolean isUniqueNode() {
-        return (count(Node.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, Node.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -381,7 +518,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one node reference
      */
     default boolean isUniqueNodeReference() {
-        return (count(NodeReference.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, NodeReference.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -390,7 +527,7 @@ public interface Result extends Set<ObjectType> {
      * @return true, if there is exactly one node type
      */
     default boolean isUniqueNodeType() {
-        return (count(NodeType.class, 2) == 1) && (count(ObjectType.class, 2) == 1);
+        return (count(2, NodeType.class) == 1) && (count(2) == 1);
     }
 
     /**
@@ -545,6 +682,9 @@ public interface Result extends Set<ObjectType> {
 
     /**
      * Returns the named node.
+     * 
+     * @param <NamedNode>
+     *            The concept of a named node
      *
      * @return the named node
      * @throws LinkedDataException
@@ -552,13 +692,17 @@ public interface Result extends Set<ObjectType> {
      *             {@link AmbiguousDataException} if there are several possible
      *             answers
      */
-    default NamedNode namedNode() throws LinkedDataException {
-        return singleton(NamedNode.class);
+    @SuppressWarnings("unchecked")
+    default <NamedNode extends Node & IdentifiableNode> NamedNode namedNode() throws LinkedDataException {
+        return (NamedNode) singleton(Node.class, IdentifiableNode.class);
     }
 
     /**
      * Returns the named node. This should only be called if its presence was
      * previously checked by {@link #isUniqueNamedNode()}.
+     * 
+     * @param <NamedNode>
+     *            The concept of a named node
      *
      * @return the named node
      * @throws NoSuchElementException
@@ -566,26 +710,34 @@ public interface Result extends Set<ObjectType> {
      * @throws BufferOverflowException
      *             if there are several possible answers
      */
-    default NamedNode namedNodeExpectable() {
-        return expectableSingleton(NamedNode.class);
+    @SuppressWarnings("unchecked")
+    default <NamedNode extends Node & IdentifiableNode> NamedNode namedNodeExpectable() {
+        return (NamedNode) expectableSingleton(Node.class, IdentifiableNode.class);
     }
 
     /**
      * Returns the named node if unique, otherwise returns {@code other}.
+     * 
+     * @param <NamedNode>
+     *            The concept of a named node
      *
      * @param other
      *            the value to be returned if there is no unique named node
      *
      * @return the named node, if present, otherwise other
      */
-    default NamedNode namedNodeOrElse(NamedNode other) {
-        Set<NamedNode> namedNode = subset(NamedNode.class);
+    default <NamedNode extends Node & IdentifiableNode> NamedNode namedNodeOrElse(NamedNode other) {
+        @SuppressWarnings("unchecked")
+        Set<NamedNode> namedNode = (Set<NamedNode>) subset(Node.class, IdentifiableNode.class);
         return (namedNode.size() == 1) && (size() == 1) ? namedNode.iterator().next() : other;
     }
 
     /**
      * Returns the named node if unique, otherwise invokes {@code other} and
      * return the result of that invocation.
+     * 
+     * @param <NamedNode>
+     *            The concept of a named node
      *
      * @param other
      *            a {@code Supplier} whose result is returned if there is no
@@ -594,18 +746,23 @@ public interface Result extends Set<ObjectType> {
      * @return the named node, if present, otherwise the result of
      *         {@code other.get()}
      */
-    default NamedNode namedNodeOrElseGet(Supplier<NamedNode> other) {
-        Set<NamedNode> namedNode = subset(NamedNode.class);
+    default <NamedNode extends Node & IdentifiableNode> NamedNode namedNodeOrElseGet(Supplier<NamedNode> other) {
+        @SuppressWarnings("unchecked")
+        Set<NamedNode> namedNode = (Set<NamedNode>) subset(Node.class, IdentifiableNode.class);
         return (namedNode.size() == 1) && (size() == 1) ? namedNode.iterator().next() : other.get();
     }
 
     /**
      * Returns all named nodes.
+     * 
+     * @param <NamedNode>
+     *            The concept of a named node
      *
      * @return all named nodes
      */
-    default Set<NamedNode> namedNodes() {
-        return subset(NamedNode.class);
+    @SuppressWarnings("unchecked")
+    default <NamedNode extends Node & IdentifiableNode> Set<NamedNode> namedNodes() {
+        return (Set<NamedNode>) subset(Node.class, IdentifiableNode.class);
     }
 
     /**
@@ -811,7 +968,7 @@ public interface Result extends Set<ObjectType> {
      * @return the contained element, if present, otherwise other
      */
     default ObjectType orElse(ObjectType other) {
-        return count(ObjectType.class, 2) == 1 ? iterator().next() : other;
+        return count(2) == 1 ? iterator().next() : other;
     }
 
     /**
@@ -826,35 +983,41 @@ public interface Result extends Set<ObjectType> {
      *         {@code other.get()}
      */
     default ObjectType orElseGet(Supplier<ObjectType> other) {
-        return count(ObjectType.class, 2) == 1 ? iterator().next() : other.get();
+        return count(2) == 1 ? iterator().next() : other.get();
     }
 
     /**
      * Returns the singleton value object by class.
-     *
+     * 
+     * @param returnType
+     *            return type
+     * @param additionalTypes
+     *            additional types the result must implement
      * @param <T>
-     * @param clazz
+     *            range of allowed return types
+     *
      * @return the singleton value object
      * @throws LinkedDataException
      *             {@link NoDataException} if there is no such object,
      *             {@link AmbiguousDataException} if there are several possible
      *             answers
      */
-    default <T extends ObjectType> T singleton(Class<T> clazz) throws LinkedDataException {
-        Set<T> elements = subset(clazz);
+    default <T extends ObjectType> T singleton(Class<T> returnType, Class<?>... additionalTypes)
+            throws LinkedDataException {
+        Set<T> elements = subset(returnType, additionalTypes);
         switch (elements.size()) {
             case 0:
-                throw new NoDataException(); // No element of clazz
+                throw new NoDataException(); // No corresponding element
             case 1:
                 if (size() > 1) {
-                    throw new AmbiguousDataException(); // Element of clazz
-                                                        // intermingled with
-                                                        // other objects
+                    throw new AmbiguousDataException(); // One corresponding
+                                                        // element intermingled
+                                                        // with other objects
                 }
                 return (T) elements.iterator().next();
             default:
-                throw new AmbiguousDataException(); // More than one element of
-                                                    // clazz
+                throw new AmbiguousDataException(); // More than one
+                                                    // corresponding element
         }
     }
 
@@ -878,13 +1041,15 @@ public interface Result extends Set<ObjectType> {
      * Returns all elements from this result that can be cast to the given
      * subclass.
      *
+     * @param returnType
+     *            return type
+     * @param additionalTypes
+     *            additional types the result must implement
      * @param <T>
-     *            subclass to filter for
-     * @param clazz
-     *            subclass to filter for
+     *            range of allowed return types
      * @return all elements that can be cast to the subclass
      */
-    <T extends ObjectType> Set<T> subset(Class<T> clazz);
+    <T extends ObjectType> Set<T> subset(Class<T> returnType, Class<?>... additionalTypes);
 
     /**
      * Returns the contained element.
