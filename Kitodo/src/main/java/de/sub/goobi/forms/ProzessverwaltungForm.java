@@ -56,6 +56,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import de.sub.goobi.model.LazyDTOModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -139,6 +140,16 @@ public class ProzessverwaltungForm extends BasisForm {
     private static String DONEDIRECTORYNAME = "fertig/";
     private int processId;
     private int taskId;
+
+    private LazyDTOModel lazyDataModel = new LazyDTOModel(serviceManager.getProcessService());
+
+    public LazyDTOModel getLazyDataModel() {
+        return this.lazyDataModel;
+    }
+
+    public void setLazyDataModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDataModel = lazyDTOModel;
+    }
 
     /**
      * Constructor.
