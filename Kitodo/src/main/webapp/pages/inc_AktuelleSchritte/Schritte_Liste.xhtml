@@ -17,12 +17,13 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
-    
+
     <h4>
         <h:outputText value="#{msgs.meineAufgabenMsg}"/>
     </h4>
-    
+
     <!-- +++++++++++++++++  Anzeigefilter ++++++++++++++++++++++++ -->
     
     <t:aliasBeansScope>
@@ -361,32 +362,21 @@
                       rendered="#{item.priority == 3}"/>
     
         <!-- Popup -->
-        <t:popup id="popup" closePopupOnExitingElement="true" closePopupOnExitingPopup="true" displayAtDistanceX="-400"
-                 displayAtDistanceY="5"
-                 rendered="#{item.priority == 10}">
-    
-            <f:facet name="popup">
-                <div>
-                    <h:panelGrid columns="1" width="400"
-                                 style="background-color:#f3ebeb; font-size:11px; border: 1px solid #a24033; padding: 1px;">
-    
-                        <t:dataTable var="intern" rendered="#{item.process.propertiesSize!=0}"
-                                     value="#{item.process.sortedCorrectionSolutionMessages}">
-                            <t:column style="vertical-align: top;">
-                                <h:outputText value="#{intern.title}:"/>
-                            </t:column>
-                            <t:column style="vertical-align: top;">
-                                <h:outputText value="#{intern.value}"/>
-                            </t:column>
-                        </t:dataTable>
-    
-                    </h:panelGrid>
-                </div>
-            </f:facet>
-    
-            <h:outputText value="#{msgs.correctionK}"
-                          style="color:red;font-weight:bold;font-size:20px;margin-left:5px"/>
-        </t:popup>
+        <h:outputText value="#{msgs.correctionK}" id="correctionIndicator" rendered="#{item.priority == 10}"
+                      style="color:red;font-weight:bold;font-size:20px;margin-left:5px" />
+        <p:tooltip id="toolTipCorrection" for="correctionIndicator" position="bottom">
+            <h:panelGrid columns="1" width="400">
+                <t:dataTable var="intern" rendered="#{item.process.propertiesSize!=0}"
+                             value="#{item.process.sortedCorrectionSolutionMessages}">
+                    <t:column style="vertical-align: top;">
+                        <h:outputText value="#{intern.title}:"/>
+                    </t:column>
+                    <t:column style="vertical-align: top;">
+                        <h:outputText value="#{intern.value}"/>
+                    </t:column>
+                </t:dataTable>
+            </h:panelGrid>
+        </p:tooltip>
     </t:column>
     
     <!-- ===================== Action ====================== -->
