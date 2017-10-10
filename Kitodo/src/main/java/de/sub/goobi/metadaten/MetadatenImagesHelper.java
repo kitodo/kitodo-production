@@ -496,7 +496,7 @@ public class MetadatenImagesHelper {
      */
     public List<URI> getImageFiles(Process myProcess, URI directory) {
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = fileService.getSubUrisForProcess(Helper.imageNameFilter, myProcess, ProcessSubType.IMAGE, "");
+        ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, directory);
         ArrayList<URI> finalFiles = new ArrayList<>();
         for (URI file : files) {
             String newURI = file.toString().replace(directory.toString(), "");
@@ -513,7 +513,7 @@ public class MetadatenImagesHelper {
             if (pagesList != null) {
                 for (DocStruct page : pagesList) {
                     String filename = page.getImageName();
-                    String filenamePrefix = filename.replace(Metadaten.getFileExtension(filename), "");
+                    String filenamePrefix = filename.replace("." + Metadaten.getFileExtension(filename), "");
                     for (URI currentImage : dataList) {
                         String currentFileName = fileService.getFileName(currentImage);
                         String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),"");

@@ -22,7 +22,7 @@
     <navigation-rule>
         <navigation-case>
             <from-outcome>Metadaten</from-outcome>
-            <to-view-id>/pages/Metadaten2.jsp</to-view-id>
+            <to-view-id>/pages/Metadaten2.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 
@@ -30,7 +30,7 @@
     <navigation-rule>
         <navigation-case>
             <from-outcome>Metadaten3links</from-outcome>
-            <to-view-id>/pages/Metadaten3links.jsp</to-view-id>
+            <to-view-id>/pages/Metadaten3links.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 
@@ -38,7 +38,7 @@
     <navigation-rule>
         <navigation-case>
             <from-outcome>Metadaten2rechts</from-outcome>
-            <to-view-id>/pages/Metadaten2rechts.jsp</to-view-id>
+            <to-view-id>/pages/Metadaten2rechts.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 
@@ -46,7 +46,7 @@
     <navigation-rule>
         <navigation-case>
             <from-outcome>SperrungAbgelaufen</from-outcome>
-            <to-view-id>/pages/MetadatenGesperrt.jsp</to-view-id>
+            <to-view-id>/pages/MetadatenGesperrt.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 

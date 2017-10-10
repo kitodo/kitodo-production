@@ -48,22 +48,22 @@
                            action="#{Metadaten.scrollImage}" value="|&lt;"
                            immediate="true">
             <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="-#{Metadaten.bildNummer}"/>
+            <f:param name="Anzahl" value="-#{Metadaten.imageNumber}"/>
         </h:commandButton>
         <h:commandButton id="imageLast" style="display:none"
                            action="#{Metadaten.scrollImage}" value=">|"
                            immediate="true">
             <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="#{Metadaten.bildLetztes}"/>
+            <f:param name="Anzahl" value="#{Metadaten.pagesEnd}"/>
         </h:commandButton>
 
-        <t:panelGrid id="BildArea" forceId="true" columns="1" rendered="#{Metadaten.bildNummer != '-1'}">
+        <t:panelGrid id="BildArea" forceId="true" columns="1" rendered="#{Metadaten.imageNumber != '-1'}">
             <h:panelGroup style="text-align: left">
                 <!-- Bildnavigation -->
                 <!-- nur anzeigen, wenn nicht erste Seite -->
                 <table width="400px" border="0">
                     <tr>
-                        <ui:fragment rendered="#{Metadaten.bildNummer != '1'}">
+                        <ui:fragment rendered="#{Metadaten.imageNumber != '1'}">
                             <td>
                                 <!-- zurueck-Schaltknopf-->
                                 <h:commandLink action="#{Metadaten.scrollImage}"
@@ -76,27 +76,27 @@
                             </td>
                         </ui:fragment>
                         <td align="center">
-                            <h:panelGroup rendered="#{Metadaten.bildNummer != '1'}">
+                            <h:panelGroup rendered="#{Metadaten.imageNumber != '1'}">
                                 <!-- erstes-Schaltknopf -->
                                 <h:commandLink action="#{Metadaten.scrollImage}"
                                                  value="1" immediate="true">
                                     <f:ajax render="BildArea myBild imageform"/>
-                                    <f:param name="Anzahl" value="-#{Metadaten.bildNummer}"/>
+                                    <f:param name="Anzahl" value="-#{Metadaten.imageNumber}"/>
                                 </h:commandLink>
                                 <!-- Trennzeichen -->
                                 <h:outputText value=" | "/>
 
                                 <!-- wenn Bild groesser als 2 dann vorherige Seiten -->
-                                <h:panelGroup rendered="#{Metadaten.bildNummer > '2'}">
+                                <h:panelGroup rendered="#{Metadaten.imageNumber > '2'}">
 
                                     <!-- wenn Bild groesser als 4 dann grosses Trennzeichen Seiten -->
-                                    <h:outputText value=" ... | " rendered="#{Metadaten.bildNummer > '4'}"/>
+                                    <h:outputText value=" ... | " rendered="#{Metadaten.imageNumber > '4'}"/>
 
                                     <!-- wenn Bild groesser als 3 dann vorvorherige Seiten -->
-                                    <h:panelGroup rendered="#{Metadaten.bildNummer > '3'}">
+                                    <h:panelGroup rendered="#{Metadaten.imageNumber > '3'}">
                                         <!-- vorvorheriges Bild -->
                                         <h:commandLink action="#{Metadaten.scrollImage}"
-                                                         value="#{Metadaten.bildNummer -2}" immediate="true">
+                                                         value="#{Metadaten.imageNumber -2}" immediate="true">
                                             <f:ajax render="BildArea myBild imageform"/>
                                             <f:param name="Anzahl" value="-2"/>
                                         </h:commandLink>
@@ -105,7 +105,7 @@
                                     </h:panelGroup>
 
                                     <!-- vorheriges Bild -->
-                                    <h:commandLink action="#{Metadaten.scrollImage}" value="#{Metadaten.bildNummer -1}"
+                                    <h:commandLink action="#{Metadaten.scrollImage}" value="#{Metadaten.imageNumber -1}"
                                                      immediate="true">
                                         <f:ajax render="BildArea myBild imageform"/>
                                         <f:param name="Anzahl" value="-1"/>
@@ -115,28 +115,28 @@
                                 </h:panelGroup>
                             </h:panelGroup>
 
-                            <h:outputText value="#{Metadaten.bildNummer}" style="font-weight: bold"/>
+                            <h:outputText value="#{Metadaten.imageNumber}" style="font-weight: bold"/>
 
                             <!-- nur anzeigen, wenn nicht letzte Seite -->
-                            <h:panelGroup rendered="#{Metadaten.bildNummer != Metadaten.bildLetztes}">
+                            <h:panelGroup rendered="#{Metadaten.imageNumber != Metadaten.pagesEnd}">
 
                                 <!-- wenn es mindestens das vorvorletzte Bild ist -->
-                                <h:panelGroup rendered="#{Metadaten.bildNummer lt (Metadaten.bildLetztes - 1)}">
+                                <h:panelGroup rendered="#{Metadaten.imageNumber lt (Metadaten.imageNumber - 1)}">
                                     <!-- Trennzeichen -->
                                     <h:outputText value=" | "/>
                                     <!-- naechste Seite -->
-                                    <h:commandLink action="#{Metadaten.scrollImage}" value="#{Metadaten.bildNummer + 1}"
+                                    <h:commandLink action="#{Metadaten.scrollImage}" value="#{Metadaten.imageNumber + 1}"
                                                      immediate="true">
                                         <f:ajax render="BildArea myBild imageform"/>
                                         <f:param name="Anzahl" value="1"/>
                                     </h:commandLink>
                                     <!-- wenn es mindestens das vorvorvorletzte Bild ist -->
-                                    <h:panelGroup rendered="#{Metadaten.bildNummer lt (Metadaten.bildLetztes - 2)}">
+                                    <h:panelGroup rendered="#{Metadaten.imageNumber lt (Metadaten.pagesEnd - 2)}">
                                         <!-- Trennzeichen -->
                                         <h:outputText value=" | "/>
                                         <!-- Uebernaechste Seite -->
                                         <h:commandLink action="#{Metadaten.scrollImage}"
-                                                         value="#{Metadaten.bildNummer + 2}"
+                                                         value="#{Metadaten.imageNumber + 2}"
                                                          immediate="true">
                                             <f:ajax render="BildArea myBild imageform"/>
                                             <f:param name="Anzahl" value="2"/>
@@ -144,20 +144,20 @@
                                     </h:panelGroup>
                                     <!-- wenn noch mehr als drei Seiten folgen, dann ein grosses Trennzeichen -->
                                     <h:outputText value=" | ... "
-                                                  rendered="#{Metadaten.bildNummer lt (Metadaten.bildLetztes - 3)}"/>
+                                                  rendered="#{Metadaten.imageNumber lt (Metadaten.pagesEnd - 3)}"/>
                                 </h:panelGroup>
                                 <!-- Trennzeichen -->
                                 <h:outputText value=" | "/>
                                 <!-- letztes-Schaltknopf -->
                                 <h:commandLink action="#{Metadaten.scrollImage}"
-                                                 value="#{Metadaten.bildLetztes}" immediate="true">
+                                                 value="#{Metadaten.pagesEnd}" immediate="true">
                                     <f:ajax render="BildArea myBild imageform"/>
-                                    <f:param name="Anzahl" value="#{Metadaten.bildLetztes}"/>
+                                    <f:param name="Anzahl" value="#{Metadaten.pagesEnd}"/>
                                 </h:commandLink>
                             </h:panelGroup>
                         </td>
 
-                        <ui:fragment rendered="#{Metadaten.bildNummer != Metadaten.bildLetztes}">
+                        <ui:fragment rendered="#{Metadaten.imageNumber != Metadaten.pagesEnd}">
                             <td align="right">
                                 <!-- vorwaerts-Schaltknopf -->
                                 <!-- Trennzeichen -->
@@ -183,14 +183,14 @@
                 </h:commandLink>
 
                 <!-- aktuelle Seite anzeigen -->
-                <t:outputText id="txtZoom1" forceId="true" value="#{Metadaten.bildGroesse}%" style="font-size: 11px"
+                <t:outputText id="txtZoom1" forceId="true" value="#{Metadaten.imageSize}%" style="font-size: 11px"
                               onclick="document.getElementById('txtZoom2').style.display='inline';
                            document.getElementById('txtZoom1').style.display='none';
                            document.getElementById('txtZoom2').focus();
                            document.getElementById('txtZoom2').select();"/>
 
                 <!-- Zoom direkt eingeben -->
-                <t:inputText id="txtZoom2" forceId="true" value="#{Metadaten.bildGroesse}"
+                <t:inputText id="txtZoom2" forceId="true" value="#{Metadaten.imageSize}"
                              style="display:none;font-size:9px;width:30px" required="true"
                              onblur="document.getElementById('txtZoom2').style.display='none';
                              document.getElementById('txtZoom1').style.display='inline';"
@@ -255,7 +255,7 @@
 
     <t:panelGroup id="myBild" forceId="true">
 
-        <h:panelGroup rendered="#{Metadaten.bildNummer != '-1' and Metadaten.ocrResult!=''}">
+        <h:panelGroup rendered="#{Metadaten.imageNumber != '-1' and Metadaten.ocrResult!=''}">
             <div style="background-color: #ffffff;border-style: solid; border-width: 1px; border-color: #CCCCCC;margin-bottom:15px;padding:5px;">
                 <h3>
                     <h:outputText value="OCR"/>
@@ -265,7 +265,8 @@
         </h:panelGroup>
 
         <!-- das Bild selbst -->
-        <h:graphicImage alt="" value="#{Metadaten.bild}" rendered="#{Metadaten.bildNummer != '-1'}" onclick="focusForPicture()"/>
+        <!--<h:graphicImage alt="" value="#{Metadaten.bild}" rendered="#{Metadaten.imageNumber != '-1'}" onclick="focusForPicture()"/>-->
+        <h:graphicImage id="myImage" alt="image" value="#{Metadaten.bild}"/>
     </t:panelGroup>
 
 
@@ -302,6 +303,6 @@
     </h:form>
 
     <h:form id="imageform">
-        <t:inputHidden id="hiddenBildNummer" forceId="true" value=" #{Metadaten.bildNummer}"/>
+        <t:inputHidden id="hiddenBildNummer" forceId="true" value=" #{Metadaten.imageNumber}"/>
     </h:form>
 </ui:composition>

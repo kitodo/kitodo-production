@@ -23,6 +23,7 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1752,9 +1754,9 @@ public class Metadaten {
                         logger.trace("myBildNummer: " + this.imageNumber);
                     }
                     /* Pages-Verzeichnis ermitteln */
-                    URI myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
+                    URI pagesDirectory = ConfigCore.getTempImagesPathAsCompleteDirectory();
                     if (logger.isTraceEnabled()) {
-                        logger.trace("myPfad: " + myPfad);
+                        logger.trace("myPfad: " + pagesDirectory);
                     }
                     /*
                      * den Counter für die Bild-ID auf einen neuen Wert setzen,
@@ -1768,30 +1770,51 @@ public class Metadaten {
                     /* Session ermitteln */
                     FacesContext context = FacesContext.getCurrentInstance();
                     HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-                    String mySession = session.getId() + "_" + this.imageCounter + ".png";
+                    String currentPngFile = session.getId() + "_" + this.imageCounter + ".png";
                     logger.trace("facescontext");
 
+                    File temporaryTifFile = null;
+                    try {
+                        temporaryTifFile = File.createTempFile("tempTif_",".tif");
+                    } catch (IOException e) {
+                        logger.error(e);
+                    }
                     /* das neue Bild zuweisen */
                     try {
-                        URI tiffconverterpfad = fileService.getImagesDirectory(this.process)
-                                .resolve(this.currentTifFolder + "/" + this.image);
+                        URI tifFile = this.currentTifFolder.resolve(this.image);
                         if (logger.isTraceEnabled()) {
-                            logger.trace("tiffconverterpfad: " + tiffconverterpfad);
+                            logger.trace("tiffconverterpfad: " + tifFile);
                         }
-                        if (!fileService.fileExist(tiffconverterpfad)) {
-                            tiffconverterpfad = serviceManager.getProcessService()
+                        if (!fileService.fileExist(tifFile)) {
+                            tifFile = serviceManager.getProcessService()
                                     .getImagesTifDirectory(true, this.process).resolve(this.image);
                             Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
                                     "image " + this.image + " does not exist in folder " + this.currentTifFolder
                                             + ", using image from " + new File(serviceManager.getProcessService()
                                                     .getImagesTifDirectory(true, this.process)).getName());
                         }
-                        this.imageHelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.imageSize,
+
+                        InputStream tifFileInputStream = fileService.read(tifFile);
+
+                        FileUtils.copyInputStreamToFile(tifFileInputStream,temporaryTifFile);
+
+                        this.imageHelper.scaleFile(temporaryTifFile.toURI(), pagesDirectory.resolve(currentPngFile), this.imageSize,
                                 this.imageRotation);
                         logger.trace("scaleFile");
                     } catch (Exception e) {
                         Helper.setFehlerMeldung("could not getById image folder", e);
                         logger.error(e);
+                    } finally {
+                        if (temporaryTifFile != null) {
+                            if (temporaryTifFile.exists()) {
+                                try {
+                                    fileService.delete(temporaryTifFile.toURI());  //not working
+                                } catch (IOException e) {
+                                    logger.error("Error while deleting temporary tif file: " + temporaryTifFile.getAbsolutePath());
+                                }
+                            }
+                        }
+
                     }
                     break;
                 }
