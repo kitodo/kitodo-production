@@ -19,9 +19,9 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
         <p:panel id="listWrapper">
-            <div style="height: 30px; padding: 1.3em 1.5em;">
-                <h3 style="display: inline; line-height: 30px;">Produktionsvorlagen</h3>
-                <p:button value="Neue Vorlage" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" styleClass="button-filled-green" style="float: right; margin-left: 20px; border: 0; font-weight: lighter;"></p:button>
+            <p:panel class="content-header">
+                <h3>Produktionsvorlagen</h3>
+                <p:button value="Neue Vorlage" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" styleClass="button-filled-green"></p:button>
                 <!-- filters -->
                 <h:form style="display: inline; float: right;">
                     <div class="ui-inputgroup">
@@ -48,7 +48,7 @@
 
                     </div>
                 </h:form>
-            </div>
+            </p:panel>
             <!-- content -->
             <p:dataTable var="template" value="#{ProzessverwaltungForm.page.listReload}">
 

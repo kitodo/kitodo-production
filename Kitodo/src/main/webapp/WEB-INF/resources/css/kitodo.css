@@ -452,6 +452,26 @@ main {
     padding: 0;
 }
 
+.content-header {
+    height: 30px;
+    padding: 1.3em 1.5em;
+}
+
+.content-header .ui-panel-content {
+    padding: 0;
+}
+
+.content-header .ui-panel-content > h3 {
+    display: inline;
+    line-height: 30px;
+}
+
+.content-header .ui-panel-content > form,
+.content-header .ui-panel-content > button {
+    float: right;
+    margin-left: 20px;
+}
+
 .input {
     width:100%;
 }
@@ -610,6 +630,8 @@ th.ui-state-default {
 .ui-commandlink.button-filled-green,
 .ui-button.button-filled-green {
     color: white;
+    font-weight: lighter;
+    border: 0;
 }
 
 .ui-commandlink.button-filled-blue,

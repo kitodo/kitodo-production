@@ -24,9 +24,9 @@
     <ui:define name="content">
         <p:panel id="listWrapper">
             <h:form id="projectEditForm">
-                <p:panel style="text-align: left; position: relative; padding: 5px;">
-                    <h3 style="display: inline;">Projekt bearbeiten</h3>
-                    <h:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" style="right: 5px; bottom: 5px; position: absolute;" icon="fa fa-floppy-o fa-lg"/>
+                <p:panel styleClass="content-header">
+                    <h3>Projekt bearbeiten</h3>
+                    <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" styleClass="button-filled-blue"/>
                 </p:panel>
                 <p:tabView>
                     <p:tab title="#{msgs.details}">

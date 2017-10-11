@@ -20,11 +20,11 @@
         >
     <ui:define name="content">
         <p:panel id="listWrapper">
-            <p:panel style="text-align: left; position: relative; padding: 5px;">
-                <h3 style="display: inline;">Projekte</h3>
-                <p:button outcome="projectEdit" value="#{msgs.newProject}" style="right: 5px; bottom: 5px; position: absolute;" icon="fa fa-plus-circle fa-lg"/>
+            <p:panel styleClass="content-header">
+                <h3>Projekte</h3>
+                <p:button outcome="projectEdit" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" styleClass="button-filled-green"/>
             </p:panel>
-            <p:dataTable var="project" value="#{ProjekteForm.projects}" style="margin-top: 10px;">
+            <p:dataTable var="project" value="#{ProjekteForm.projects}">
                 <p:column style="width: 16px;">
                     <p:rowToggler/>
                 </p:column>
