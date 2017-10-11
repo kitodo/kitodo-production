@@ -441,14 +441,14 @@ main {
     height: 500px;
     }
 
-#ListWrapper {
+#listWrapper {
     width: 95%;
     margin: auto;
     border-radius: 5px;
     padding: 0;
 }
 
-#ListWrapper > div {
+#listWrapper > div {
     padding: 0;
 }
 
