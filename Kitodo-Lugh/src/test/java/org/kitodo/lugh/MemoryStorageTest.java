@@ -1,6 +1,7 @@
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 import org.apache.jena.rdf.model.*;
@@ -134,6 +135,6 @@ public class MemoryStorageTest {
 
         Model m = ModelFactory.createDefaultModel();
         modsSection.toRDFNode(m, true);
-        assertEquals(modsSection, MemoryStorage.INSTANCE.createResult(m, false).node());
+        assertThat(new MemoryResult(m, false).node(), is(equalTo(modsSection)));
     }
 }

@@ -147,16 +147,14 @@ public class GraphPath extends MemoryNode {
      *            nodes to apply the graph path on
      * @param path
      *            the graph path to apply
-     * @param storage
-     *            storage to use to create the result of the operation
      * @return the matching nodes
      */
-    public static Result apply(Set<ObjectType> nodes, Node path, Storage storage) {
-        Result result = storage.createResult();
+    public static Result apply(Set<ObjectType> nodes, Node path) {
+        MemoryResult result = new MemoryResult();
 
         Set<Node> allTo = path.get(TO).nodes();
 
-        Result nodeResult = nodes instanceof Result ? (Result) nodes : storage.createResult();
+        Result nodeResult = nodes instanceof Result ? (Result) nodes : new MemoryResult();
 
         if (allTo.isEmpty() || nodes.isEmpty()) {
             return nodeResult;
@@ -165,16 +163,17 @@ public class GraphPath extends MemoryNode {
         Set<Node> nodesOnly = nodeResult.nodes();
 
         for (Node toSegment : allTo) {
-            Result thisResult = storage.createResult();
+            MemoryResult thisResult = new MemoryResult();
             Set<String> predicates = new HashSet<>();
             for (IdentifiableNode predicate : toSegment.get(RDF.PREDICATE).identifiableNodes()) {
                 predicates.add(predicate.getIdentifier());
             }
-            Set<ObjectType> objects = toSegment.get(RDF.OBJECT);
+            Collection<ObjectType> objects = new LinkedList<>();
+            toSegment.get(RDF.OBJECT).forEach(objects::add);
             for (Node node : nodesOnly) {
-                thisResult.addAll(node.get(predicates, objects));
+                node.get(predicates, objects).forEach(thisResult::add);
             }
-            result.addAll(apply(thisResult, toSegment, storage));
+            apply(thisResult, toSegment).forEach(result::add);
         }
 
         return result;

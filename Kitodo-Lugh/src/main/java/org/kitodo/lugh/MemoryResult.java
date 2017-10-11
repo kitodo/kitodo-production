@@ -12,6 +12,10 @@
 package org.kitodo.lugh;
 
 import java.util.*;
+import java.util.Map.Entry;
+
+import org.apache.jena.rdf.model.*;
+import org.kitodo.lugh.vocabulary.*;
 
 /**
  * The results returned by a call to a getter on a node.
@@ -20,8 +24,8 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
     /**
      * Constant defining an empty result.
      */
-    static final Result EMPTY = new MemoryResult() {
-        private static final String IMMUTABILITY = "The empty Result is immutable.";
+    static final MemoryResult EMPTY = new MemoryResult() {
+        private static final String IMMUTABILITY = "The empty MemoryResult is immutable.";
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -61,6 +65,76 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
     }
 
     /**
+     * Parses a Jena model. Returns all nodes not referenced from anywhere (the
+     * “top nodes”), or all nodes if there aren’t any “top nodes”.
+     * <p>
+     * This method is {@code static final} because it is used from within a
+     * constructor.
+     *
+     * @param model
+     *            model to read out
+     * @param alwaysAll
+     *            if true, returns all nodes from the model, independent of
+     *            whether there are “top nodes” or not
+     * @return all nodes not referenced from anywhere, or really all nodes
+     */
+    private static final Collection<MemoryNode> parseModel(Model model, boolean alwaysAll) {
+        HashMap<String, MemoryNode> result = new HashMap<>();
+        HashMap<String, MemoryNode> resolver = new HashMap<>();
+
+        StmtIterator iter = model.listStatements();
+        while (iter.hasNext()) {
+            Statement statement = iter.nextStatement();
+
+            Resource subject = statement.getSubject();
+            String subjectIdentifier = subject.toString();
+            Property predicate = statement.getPredicate();
+            RDFNode object = statement.getObject();
+
+            if (!resolver.containsKey(subjectIdentifier)) {
+                MemoryNode newNode = subject.asNode().isBlank() ? new MemoryNode()
+                        : new MemoryNamedNode(subjectIdentifier);
+                resolver.put(subjectIdentifier, newNode);
+                result.put(subjectIdentifier, newNode);
+            }
+
+            Node subjectNode = resolver.get(subjectIdentifier);
+            ObjectType objectNode;
+            if (object.isResource()) {
+                String objectIdentifier = object.toString();
+                if (!resolver.containsKey(objectIdentifier)) {
+                    MemoryNode newNode = object.asNode().isBlank() ? new MemoryNode()
+                            : new MemoryNamedNode(objectIdentifier);
+                    resolver.put(objectIdentifier, newNode);
+                    result.put(objectIdentifier, newNode);
+                }
+                objectNode = resolver.get(objectIdentifier);
+                result.remove(objectIdentifier);
+            } else {
+                org.apache.jena.rdf.model.Literal literalObject = object.asLiteral();
+                String datatypeURI;
+                if (literalObject.isWellFormedXML()) {
+                    objectNode = new MemoryLiteral(literalObject.toString(), RDF.XML_LITERAL);
+                } else if (!literalObject.getLanguage().isEmpty()) {
+                    objectNode = new MemoryLangString(literalObject.getValue().toString(), literalObject.getLanguage());
+                } else if ((literalObject.getDatatype() == null)
+                        || XMLSchema.STRING.getIdentifier().equals(datatypeURI = literalObject.getDatatypeURI())) {
+                    objectNode = new MemoryLiteral(literalObject.getValue().toString(), RDF.PLAIN_LITERAL);
+                } else {
+                    objectNode = new MemoryLiteral(literalObject.getValue().toString(), datatypeURI);
+                }
+            }
+            subjectNode.put(predicate.toString(), objectNode);
+        }
+
+        for (Entry<String, MemoryNode> entries : resolver.entrySet()) {
+            entries.getValue().replaceAllNamedNodesWithNoDataByNodeReferences(false);
+        }
+
+        return alwaysAll || result.isEmpty() ? resolver.values() : result.values();
+    }
+
+    /**
      * Create an empty result.
      */
     MemoryResult() {
@@ -88,6 +162,21 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
     }
 
     /**
+     * Creates nodes from a Jena model. The memory result will directly
+     * reference all nodes not referenced from anywhere else in the model (the
+     * “top nodes”), or all nodes if there aren’t any “top nodes”.
+     *
+     * @param model
+     *            model to read out
+     * @param alwaysAll
+     *            if true, the memory result directly references all nodes from
+     *            the model, independent of whether there are “top nodes” or not
+     */
+    public MemoryResult(Model model, boolean alwaysAll) {
+        super(parseModel(model, alwaysAll));
+    }
+
+    /**
      * Create a result with an element.
      *
      * @param element
@@ -99,7 +188,10 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
 
     /** {@inheritDoc} */
     @Override
-    public long count(int limit, Class<?>... filterClasses) {
+    public long count(int atLeastUntil, Class<?>... filterClasses) {
+        if ((atLeastUntil == Integer.MAX_VALUE) && (filterClasses.length == 0)) {
+            return super.size();
+        }
         long result = 0;
         WITH_NEXT_ENTRY: for (ObjectType entry : this) {
             for (Class<?> clazz : filterClasses) {
@@ -108,8 +200,8 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
                 }
             }
             result++;
-            limit--;
-            if (limit <= 0) {
+            atLeastUntil--;
+            if (atLeastUntil <= 0) {
                 break;
             }
         }

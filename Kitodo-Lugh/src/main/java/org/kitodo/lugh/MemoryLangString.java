@@ -81,7 +81,7 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
 
     /**
      * Returns a hash code of the language-tagged string.
-     * 
+     *
      * @return a hash code value for this object.
      */
     @Override
@@ -107,7 +107,7 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
                 return false;
             }
             Result expectedLanguage = filter.get(XML_LANG);
-            switch (expectedLanguage.size()) {
+            switch ((int) expectedLanguage.count(2)) {
                 case 0:
                     break;
                 case 1:

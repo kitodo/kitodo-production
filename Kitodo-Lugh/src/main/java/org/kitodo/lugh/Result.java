@@ -14,6 +14,7 @@ package org.kitodo.lugh;
 import java.nio.BufferOverflowException;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.StreamSupport;
 
 /**
  * The results returned by a call to a getter on a node.
@@ -23,7 +24,7 @@ import java.util.function.*;
  * question, or a wrapped query which will later be combined with the
  * {@code Result} getters to form a request.
  */
-public interface Result extends Set<ObjectType> {
+public interface Result extends Iterable<ObjectType> {
 
     /**
      * Returns the accessible object.
@@ -63,7 +64,7 @@ public interface Result extends Set<ObjectType> {
      */
     default AccessibleObject accessibleObjectOrElse(AccessibleObject other) {
         Set<AccessibleObject> accessibleObject = subset(AccessibleObject.class);
-        return (accessibleObject.size() == 1) && (size() == 1) ? accessibleObject.iterator().next() : other;
+        return (accessibleObject.size() == 1) && (count(2) == 1) ? accessibleObject.iterator().next() : other;
     }
 
     /**
@@ -79,7 +80,7 @@ public interface Result extends Set<ObjectType> {
      */
     default AccessibleObject accessibleObjectOrElseGet(Supplier<AccessibleObject> other) {
         Set<AccessibleObject> accessibleObject = subset(AccessibleObject.class);
-        return (accessibleObject.size() == 1) && (size() == 1) ? accessibleObject.iterator().next() : other.get();
+        return (accessibleObject.size() == 1) && (count(2) == 1) ? accessibleObject.iterator().next() : other.get();
     }
 
     /**
@@ -98,12 +99,12 @@ public interface Result extends Set<ObjectType> {
      *
      * @param clazz
      *            object class to count
-     * @param limit
+     * @param atLeastUntil
      *            limit to count up to, at least
      * @return the number of elements in this result that can be cast to the
      *         given class
      */
-    long count(int limit, Class<?>... clazz);
+    long count(int atLeastUntil, Class<?>... clazz);
 
     /**
      * Returns the contained element. This should only be called if its presence
@@ -143,7 +144,7 @@ public interface Result extends Set<ObjectType> {
             case 0:
                 throw new NoSuchElementException(); // No corresponding element
             case 1:
-                if (size() > 1) {
+                if (count(2) > 1) {
                     throw new BufferOverflowException(); // One corresponding
                                                          // element intermingled
                                                          // with other objects
@@ -165,7 +166,7 @@ public interface Result extends Set<ObjectType> {
      */
     @Override
     default void forEach(Consumer<? super ObjectType> action) {
-        parallelStream().forEach(action);
+        StreamSupport.stream(spliterator(), true).forEach(action);
     }
 
     /**
@@ -329,7 +330,7 @@ public interface Result extends Set<ObjectType> {
      */
     default IdentifiableNode identifiableNodeOrElse(IdentifiableNode other) {
         Set<IdentifiableNode> identifiableNode = subset(IdentifiableNode.class);
-        return (identifiableNode.size() == 1) && (size() == 1) ? identifiableNode.iterator().next() : other;
+        return (identifiableNode.size() == 1) && (count(2) == 1) ? identifiableNode.iterator().next() : other;
     }
 
     /**
@@ -345,7 +346,7 @@ public interface Result extends Set<ObjectType> {
      */
     default IdentifiableNode identifiableNodeOrElseGet(Supplier<IdentifiableNode> other) {
         Set<IdentifiableNode> identifiableNode = subset(IdentifiableNode.class);
-        return (identifiableNode.size() == 1) && (size() == 1) ? identifiableNode.iterator().next() : other.get();
+        return (identifiableNode.size() == 1) && (count(2) == 1) ? identifiableNode.iterator().next() : other.get();
     }
 
     /**
@@ -569,7 +570,7 @@ public interface Result extends Set<ObjectType> {
      */
     default LangString langStringOrElse(LangString other) {
         Set<LangString> langString = subset(LangString.class);
-        return (langString.size() == 1) && (size() == 1) ? langString.iterator().next() : other;
+        return (langString.size() == 1) && (count(2) == 1) ? langString.iterator().next() : other;
     }
 
     /**
@@ -585,7 +586,7 @@ public interface Result extends Set<ObjectType> {
      */
     default LangString langStringOrElseGet(Supplier<LangString> other) {
         Set<LangString> langString = subset(LangString.class);
-        return (langString.size() == 1) && (size() == 1) ? langString.iterator().next() : other.get();
+        return (langString.size() == 1) && (count(2) == 1) ? langString.iterator().next() : other.get();
     }
 
     /**
@@ -652,7 +653,7 @@ public interface Result extends Set<ObjectType> {
      */
     default Literal literalOrElse(Literal other) {
         Set<Literal> literal = subset(Literal.class);
-        return (literal.size() == 1) && (size() == 1) ? literal.iterator().next() : other;
+        return (literal.size() == 1) && (count(2) == 1) ? literal.iterator().next() : other;
     }
 
     /**
@@ -668,7 +669,7 @@ public interface Result extends Set<ObjectType> {
      */
     default Literal literalOrElseGet(Supplier<Literal> other) {
         Set<Literal> literal = subset(Literal.class);
-        return (literal.size() == 1) && (size() == 1) ? literal.iterator().next() : other.get();
+        return (literal.size() == 1) && (count(2) == 1) ? literal.iterator().next() : other.get();
     }
 
     /**
@@ -682,7 +683,7 @@ public interface Result extends Set<ObjectType> {
 
     /**
      * Returns the named node.
-     * 
+     *
      * @param <NamedNode>
      *            The concept of a named node
      *
@@ -700,7 +701,7 @@ public interface Result extends Set<ObjectType> {
     /**
      * Returns the named node. This should only be called if its presence was
      * previously checked by {@link #isUniqueNamedNode()}.
-     * 
+     *
      * @param <NamedNode>
      *            The concept of a named node
      *
@@ -717,7 +718,7 @@ public interface Result extends Set<ObjectType> {
 
     /**
      * Returns the named node if unique, otherwise returns {@code other}.
-     * 
+     *
      * @param <NamedNode>
      *            The concept of a named node
      *
@@ -729,13 +730,13 @@ public interface Result extends Set<ObjectType> {
     default <NamedNode extends Node & IdentifiableNode> NamedNode namedNodeOrElse(NamedNode other) {
         @SuppressWarnings("unchecked")
         Set<NamedNode> namedNode = (Set<NamedNode>) subset(Node.class, IdentifiableNode.class);
-        return (namedNode.size() == 1) && (size() == 1) ? namedNode.iterator().next() : other;
+        return (namedNode.size() == 1) && (count(2) == 1) ? namedNode.iterator().next() : other;
     }
 
     /**
      * Returns the named node if unique, otherwise invokes {@code other} and
      * return the result of that invocation.
-     * 
+     *
      * @param <NamedNode>
      *            The concept of a named node
      *
@@ -749,12 +750,12 @@ public interface Result extends Set<ObjectType> {
     default <NamedNode extends Node & IdentifiableNode> NamedNode namedNodeOrElseGet(Supplier<NamedNode> other) {
         @SuppressWarnings("unchecked")
         Set<NamedNode> namedNode = (Set<NamedNode>) subset(Node.class, IdentifiableNode.class);
-        return (namedNode.size() == 1) && (size() == 1) ? namedNode.iterator().next() : other.get();
+        return (namedNode.size() == 1) && (count(2) == 1) ? namedNode.iterator().next() : other.get();
     }
 
     /**
      * Returns all named nodes.
-     * 
+     *
      * @param <NamedNode>
      *            The concept of a named node
      *
@@ -802,7 +803,7 @@ public interface Result extends Set<ObjectType> {
      */
     default Node nodeOrElse(Node other) {
         Set<Node> node = subset(Node.class);
-        return (node.size() == 1) && (size() == 1) ? node.iterator().next() : other;
+        return (node.size() == 1) && (count(2) == 1) ? node.iterator().next() : other;
     }
 
     /**
@@ -817,7 +818,7 @@ public interface Result extends Set<ObjectType> {
      */
     default Node nodeOrElseGet(Supplier<Node> other) {
         Set<Node> node = subset(Node.class);
-        return (node.size() == 1) && (size() == 1) ? node.iterator().next() : other.get();
+        return (node.size() == 1) && (count(2) == 1) ? node.iterator().next() : other.get();
     }
 
     /**
@@ -857,7 +858,7 @@ public interface Result extends Set<ObjectType> {
      */
     default NodeReference nodeReferenceOrElse(NodeReference other) {
         Set<NodeReference> nodeReference = subset(NodeReference.class);
-        return (nodeReference.size() == 1) && (size() == 1) ? nodeReference.iterator().next() : other;
+        return (nodeReference.size() == 1) && (count(2) == 1) ? nodeReference.iterator().next() : other;
     }
 
     /**
@@ -873,7 +874,7 @@ public interface Result extends Set<ObjectType> {
      */
     default NodeReference nodeReferenceOrElseGet(Supplier<NodeReference> other) {
         Set<NodeReference> nodeReference = subset(NodeReference.class);
-        return (nodeReference.size() == 1) && (size() == 1) ? nodeReference.iterator().next() : other.get();
+        return (nodeReference.size() == 1) && (count(2) == 1) ? nodeReference.iterator().next() : other.get();
     }
 
     /**
@@ -931,7 +932,7 @@ public interface Result extends Set<ObjectType> {
      */
     default NodeType nodeTypeOrElse(NodeType other) {
         Set<NodeType> nodeType = subset(NodeType.class);
-        return (nodeType.size() == 1) && (size() == 1) ? nodeType.iterator().next() : other;
+        return (nodeType.size() == 1) && (count(2) == 1) ? nodeType.iterator().next() : other;
     }
 
     /**
@@ -947,7 +948,7 @@ public interface Result extends Set<ObjectType> {
      */
     default NodeType nodeTypeOrElseGet(Supplier<NodeType> other) {
         Set<NodeType> nodeType = subset(NodeType.class);
-        return (nodeType.size() == 1) && (size() == 1) ? nodeType.iterator().next() : other.get();
+        return (nodeType.size() == 1) && (count(2) == 1) ? nodeType.iterator().next() : other.get();
     }
 
     /**
@@ -988,7 +989,7 @@ public interface Result extends Set<ObjectType> {
 
     /**
      * Returns the singleton value object by class.
-     * 
+     *
      * @param returnType
      *            return type
      * @param additionalTypes
@@ -1009,7 +1010,7 @@ public interface Result extends Set<ObjectType> {
             case 0:
                 throw new NoDataException(); // No corresponding element
             case 1:
-                if (size() > 1) {
+                if (count(2) > 1) {
                     throw new AmbiguousDataException(); // One corresponding
                                                         // element intermingled
                                                         // with other objects
@@ -1019,6 +1020,19 @@ public interface Result extends Set<ObjectType> {
                 throw new AmbiguousDataException(); // More than one
                                                     // corresponding element
         }
+    }
+
+    /**
+     * @deprecated Counting the available elements up to
+     *             {@code Integer.MAX_VALUE} may cause unnecessary load on the
+     *             storage and is not necessary in most cases. Use
+     *             {@code (int) count(Integer.MAX_VALUE)} if this really is what
+     *             you want.
+     * @return the number of elements in this result
+     */
+    @Deprecated
+    default int size() {
+        return (int) count(Integer.MAX_VALUE);
     }
 
     /**

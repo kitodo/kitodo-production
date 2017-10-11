@@ -11,10 +11,9 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.nio.BufferOverflowException;
 import java.util.*;
@@ -24,6 +23,19 @@ import org.junit.Test;
 import org.kitodo.lugh.vocabulary.*;
 
 public class NodeTest {
+
+    /**
+     * Creates a result with elements in a storage-agnostic manner.
+     *
+     * @param elements
+     *            elements to add
+     * @return the created result
+     */
+    private static Result createResult(Storage storage, ObjectType... elements) {
+        Node node = storage.createNode();
+        Arrays.asList(elements).forEach(element -> node.put(RDF.VALUE, element));
+        return node.get(RDF.VALUE);
+    }
 
     /** Tests {@code add()}. */
 
@@ -193,11 +205,11 @@ public class NodeTest {
                     .put(Mods.AUTHORITY, storage.createLiteral("GDZ", RDF.PLAIN_LITERAL))
                     .add(storage.createLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL));
 
-            assertEquals(storage.createResult(storage.createLiteral("GDZ", RDF.PLAIN_LITERAL)),
+            assertEquals(createResult(storage, storage.createLiteral("GDZ", RDF.PLAIN_LITERAL)),
                     classification.get(Mods.AUTHORITY));
 
             NodeReference refToFirstIndex = storage.createNodeReference(RDF.toURL(Node.FIRST_INDEX));
-            assertEquals(storage.createResult(storage.createLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)),
+            assertEquals(createResult(storage, storage.createLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)),
                     classification.get(refToFirstIndex));
         }
     }
@@ -240,8 +252,10 @@ public class NodeTest {
             condition.add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
 
             assertEquals(
-                    storage.createResult((Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                    createResult(storage,
+                            (Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                                    .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE,
+                                            "Monograph"))),
 
                     mets.get(relation, condition));
         }
@@ -265,8 +279,10 @@ public class NodeTest {
             condition.add(storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL"));
 
             assertEquals(
-                    storage.createResult((Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                    createResult(storage,
+                            (Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                                    .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE,
+                                            "Monograph"))),
 
                     mets.get(ANY_RELATION, condition));
         }
@@ -290,8 +306,10 @@ public class NodeTest {
             final Set<ObjectType> ANY_NON_EMPTY_RESULT = Collections.emptySet();
 
             assertEquals(
-                    storage.createResult((Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
-                            .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE, "Monograph"))),
+                    createResult(storage,
+                            (Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                                    .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE,
+                                            "Monograph"))),
 
                     mets.get(relation, ANY_NON_EMPTY_RESULT));
         }
@@ -305,13 +323,11 @@ public class NodeTest {
             node.put(RDF.TYPE, "http://names.example/petAnimal");
             node.put(RDF.TYPE, "http://names.example/mammal");
 
-            Result expected = storage.createResult();
-            expected.add(storage.createLiteralType("http://names.example/petAnimal", null));
-            expected.add(storage.createLiteralType("http://names.example/mammal", null));
-
             String relation = RDF.TYPE.getIdentifier();
 
-            assertEquals(expected, node.get(relation));
+            assertThat(node.get(relation),
+                    containsInAnyOrder(storage.createLiteralType("http://names.example/petAnimal", null),
+                            storage.createLiteralType("http://names.example/mammal", null)));
         }
     }
 
@@ -649,7 +665,7 @@ public class NodeTest {
 
             Model m = ModelFactory.createDefaultModel();
             modsSection.toRDFNode(m, true);
-            assertEquals(modsSection, storage.createResult(m, false).node());
+            assertThat(new MemoryResult(m, false).node(), is(equalTo(modsSection)));
         }
     }
 

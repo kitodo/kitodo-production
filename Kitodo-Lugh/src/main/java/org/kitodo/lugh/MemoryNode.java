@@ -358,8 +358,8 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public Result find(Node graphPath) {
-        return GraphPath.apply(new MemoryResult(this), graphPath, MemoryStorage.INSTANCE);
+    public MemoryResult find(Node graphPath) {
+        return (MemoryResult) GraphPath.apply(new MemoryResult(this), graphPath);
     }
 
     /** {@inheritDoc} */
@@ -371,8 +371,8 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public Result get(Collection<String> relations, Collection<ObjectType> conditions) {
-        Result result = new MemoryResult();
+    public MemoryResult get(Collection<String> relations, Collection<ObjectType> conditions) {
+        MemoryResult result = new MemoryResult();
         if (relations.isEmpty()) {
             relations = new LinkedList<>(Arrays.asList(new String[] {GraphPath.ANY_PREDICATE.getIdentifier() }));
         }
@@ -405,28 +405,28 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public Result get(long index) {
+    public MemoryResult get(long index) {
         return new MemoryResult(get(RDF.toURL(index)));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Result get(String relation) {
+    public MemoryResult get(String relation) {
         return new MemoryResult(edges.get(relation));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Result get(String relation, IdentifiableNode identifierRelation, ObjectType identifierValue) {
+    public MemoryResult get(String relation, IdentifiableNode identifierRelation, ObjectType identifierValue) {
         return get(relation != null ? Arrays.asList(new String[] {relation }) : null,
                 Arrays.asList(new ObjectType[] {new MemoryNode().put(identifierRelation, identifierValue) }));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Result get(String relation, String type) {
+    public MemoryResult get(String relation, String type) {
         Collection<ObjectType> objects = edges.get(relation);
-        Result result = new MemoryResult(objects.size());
+        MemoryResult result = new MemoryResult(objects.size());
         for (ObjectType object : objects) {
             if (object instanceof Node) {
                 Node nodeObject = (Node) object;
@@ -441,7 +441,7 @@ public class MemoryNode extends Node {
     /** {@inheritDoc} */
     @Override
     public IdentifiableNode getByIdentifier(String identifier) {
-        Result found = new MemoryResult();
+        MemoryResult found = new MemoryResult();
         for (Entry<String, Collection<ObjectType>> predicate : edges.entrySet()) {
             for (ObjectType object : predicate.getValue()) {
                 if (object instanceof IdentifiableNode) {
@@ -465,8 +465,8 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public Result getByType(String type) {
-        Result found = new MemoryResult();
+    public MemoryResult getByType(String type) {
+        MemoryResult found = new MemoryResult();
         for (Entry<String, Collection<ObjectType>> predicate : edges.entrySet()) {
             OBJECTS: for (ObjectType object : predicate.getValue()) {
                 if (object instanceof Node) {
@@ -486,8 +486,8 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public Result getByType(String rdfType, String idType, String idValue) {
-        Result result = new MemoryResult();
+    public MemoryResult getByType(String rdfType, String idType, String idValue) {
+        MemoryResult result = new MemoryResult();
         for (Entry<String, Collection<ObjectType>> entry : edges.entrySet()) {
             for (ObjectType value : entry.getValue()) {
                 if (value instanceof Node) {
@@ -520,7 +520,7 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public Result getFirst() {
+    public MemoryResult getFirst() {
         Optional<Long> first = first();
         if (first.isPresent()) {
             return get(first.orElseThrow(() -> {
@@ -533,7 +533,7 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public Result getLast() {
+    public MemoryResult getLast() {
         Optional<Long> last = last();
         if (last.isPresent()) {
             return get(last.orElseThrow(() -> {
@@ -619,7 +619,8 @@ public class MemoryNode extends Node {
                 }
                 candidates = related.iterator();
             }
-            Collection<ObjectType> conditions = ((Node) condition).get(relation);
+            Collection<ObjectType> conditions = new LinkedList<>();
+            ((Node) condition).get(relation).forEach(conditions::add);
             while (candidates.hasNext() && !conditions.isEmpty()) {
                 ObjectType candidate = candidates.next();
                 if (candidate instanceof AccessibleObject) {

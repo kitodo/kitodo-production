@@ -216,7 +216,7 @@ public class MemoryLiteral implements Literal {
             }
 
             Result expectedType = filter.get(RDF.TYPE);
-            switch (expectedType.size()) {
+            switch ((int) expectedType.count(2)) {
                 case 0:
                     break;
                 case 1:
@@ -233,7 +233,7 @@ public class MemoryLiteral implements Literal {
             }
 
             Result expectedValue = filter.get(RDF.VALUE);
-            switch (expectedValue.size()) {
+            switch ((int) expectedValue.count(2)) {
                 case 0:
                     break;
                 case 1:

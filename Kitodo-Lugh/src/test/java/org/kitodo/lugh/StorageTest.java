@@ -1,8 +1,6 @@
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.kitodo.lugh.vocabulary.*;
@@ -120,52 +118,6 @@ public class StorageTest {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Node a = storage.createNode((String) null);
             assertTrue(a.isEmpty());
-        }
-    }
-
-    /** Tests {@code createResult()}. */
-    @Test
-    public void testResult() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.createResult();
-            assertEquals(0, r.size());
-        }
-    }
-
-    /** Tests {@code createResult(Collection<? extends ObjectType>)}. */
-    @Test
-    public void testResultCollectionOfQextendsObjectType() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result other = storage.createResult();
-            other.add(storage.createNode(Mets.METS_HDR));
-            other.add(Mods.IDENTIFIER);
-
-            Result r = storage.createResult(other);
-            assertEquals(other.size(), r.size());
-            assertEquals(other, r);
-        }
-    }
-
-    /** Tests {@code createResult(int)}. */
-    @Test
-    public void testResultInt() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result r = storage.createResult(42);
-            assertEquals(0, r.size());
-        }
-    }
-
-    /** Tests {@code createResult(ObjectType)}. */
-    @Test
-    public void testResultObjectType() {
-        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Result expected = storage.createResult();
-            expected.add(storage.createNode(Mets.METS_HDR));
-
-            Result r = storage.createResult(storage.createNode(Mets.METS_HDR));
-
-            assertEquals(expected.size(), r.size());
-            assertEquals(expected, r);
         }
     }
 }

@@ -11,10 +11,6 @@
 
 package org.kitodo.lugh;
 
-import java.util.Collection;
-
-import org.apache.jena.rdf.model.Model;
-
 /**
  * Factory interface to create data objects in a given storage implementation.
  */
@@ -71,7 +67,7 @@ public interface Storage {
 
     /**
      * Creates a new named node.
-     * 
+     *
      * @param <NamedNode>
      *            The concept of a named node
      *
@@ -116,51 +112,4 @@ public interface Storage {
      * @return the created node reference
      */
     NodeReference createNodeReference(String url);
-
-    /**
-     * Create an empty result.
-     *
-     * @return the created result
-     */
-    Result createResult();
-
-    /**
-     * Create a result with elements.
-     *
-     * @param arg0
-     *            result elements
-     * @return the created result
-     */
-    Result createResult(Collection<? extends ObjectType> arg0);
-
-    /**
-     * Create a result for the given amount of elements.
-     *
-     * @param capacity
-     *            elements to be added
-     * @return the created result
-     */
-    Result createResult(int capacity);
-
-    /**
-     * Creates nodes from a Jena model. Returns all nodes not referenced from
-     * anywhere (the “top nodes”), or all nodes if there aren’t any “top nodes”.
-     *
-     * @param model
-     *            model to read out
-     * @param alwaysAll
-     *            if true, returns all nodes from the model, independent of
-     *            whether there are “top nodes” or not
-     * @return all nodes not referenced from anywhere, or really all nodes
-     */
-    Result createResult(Model model, boolean alwaysAll);
-
-    /**
-     * Create a result with one element.
-     *
-     * @param element
-     *            result element
-     * @return the created result
-     */
-    Result createResult(ObjectType element);
 }

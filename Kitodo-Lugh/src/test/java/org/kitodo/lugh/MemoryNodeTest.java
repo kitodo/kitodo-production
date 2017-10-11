@@ -248,7 +248,7 @@ public class MemoryNodeTest {
         node.put(RDF.TYPE, "http://names.example/petAnimal");
         node.put(RDF.TYPE, "http://names.example/mammal");
 
-        Result expected = new MemoryResult();
+        MemoryResult expected = new MemoryResult();
         expected.add(MemoryLiteral.create("http://names.example/petAnimal", null));
         expected.add(MemoryLiteral.create("http://names.example/mammal", null));
 
