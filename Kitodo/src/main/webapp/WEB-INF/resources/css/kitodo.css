@@ -612,6 +612,39 @@ th.ui-state-default {
     content: "\f13a";
 }
 
+.ui-tabs.ui-tabs-top {
+    padding: 0;
+}
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav {
+    padding: 0 1.5em;
+    background: #d8d8d8;
+    border-top: solid 3px #999;
+}
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li {
+    border: 0;
+    border-top: solid 3px #999;
+    background: transparent;
+    color: #999;
+    box-shadow: none;
+    border-radius: 0;
+    margin: -3px 0 0 0;
+    padding: 0 10px;
+    top: 0;
+}
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-selected {
+    background: white;
+    color: #006DBD;
+    border-color: #f94a15;
+}
+
+.ui-tabs.ui-tabs-top > .ui-tabs-nav li a {
+    color: inherit;
+    text-shadow: none;
+}
+
 .ui-widget.ui-button, .ui-widget.ui-inputfield {
     box-shadow: none;
     text-shadow: none;
