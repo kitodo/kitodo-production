@@ -498,7 +498,7 @@ main {
 
 .filter-menu li {
     list-style: none;
-    border-top: solid 1px #D8D8D8;
+    border-top: solid 1px #d8d8d8;
 }
 
 .filter-menu li a {
@@ -589,7 +589,7 @@ th.ui-state-default {
 }
 
 .ui-datatable.ui-widget tr th {
-    background: #DADADA;
+    background: #d8d8d8;
     border: 0;
 }
 
@@ -667,19 +667,19 @@ th.ui-state-default {
 }
 
 .ui-inputfield.standard-blocked::-webkit-input-placeholder { /* Webkit, Blink */
-    color: #DADADA;
+    color: #d8d8d8;
 }
 .ui-inputfield.standard-blocked:-moz-placeholder { /* Firefox 4-18 */
-    color: #DADADA;
+    color: #d8d8d8;
 }
 .ui-inputfield.standard-blocked::-moz-placeholder { /* Firefox 19+ */
-    color: #DADADA;
+    color: #d8d8d8;
 }
 .ui-inputfield.standard-blocked:-ms-input-placeholder { /* IE 10-11 */
-    color: #DADADA;
+    color: #d8d8d8;
 }
 .ui-inputfield.standard-blocked::-ms-input-placeholder { /* Edge */
-    color: #DADADA;
+    color: #d8d8d8;
 }
 
 
