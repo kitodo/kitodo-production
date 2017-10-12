@@ -18,38 +18,37 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.RDF;
 
 public class MemoryLiteralTest {
 
     @Test
     public void testCreateCreatesLangString() {
         assertEquals(new MemoryLangString("Hoc est corpus meum.", "la"),
-                MemoryLiteral.create("Hoc est corpus meum.", "la"));
+                MemoryLiteral.createLeaf("Hoc est corpus meum.", "la"));
     }
 
     @Test
     public void testCreateCreatesMemoryNodeReference1() {
         assertEquals(new MemoryNodeReference("http://www.kitodo.org/"),
-                MemoryLiteral.create("http://www.kitodo.org/", null));
+                MemoryLiteral.createLeaf("http://www.kitodo.org/", null));
     }
 
     @Test
     public void testCreateCreatesMemoryNodeReference2() {
         assertEquals(new MemoryNodeReference("http://www.kitodo.org/"),
-                MemoryLiteral.create("http://www.kitodo.org/", ""));
+                MemoryLiteral.createLeaf("http://www.kitodo.org/", ""));
     }
 
     @Test
     public void testCreateCreatesPlainMemoryLiteral1() {
         assertEquals(new MemoryLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL),
-                MemoryLiteral.create("public static void main(String[] args)", null));
+                MemoryLiteral.createLeaf("public static void main(String[] args)", null));
     }
 
     @Test
     public void testCreateCreatesPlainMemoryLiteral2() {
         assertEquals(new MemoryLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL),
-                MemoryLiteral.create("public static void main(String[] args)", ""));
+                MemoryLiteral.createLeaf("public static void main(String[] args)", ""));
     }
 
     @Test

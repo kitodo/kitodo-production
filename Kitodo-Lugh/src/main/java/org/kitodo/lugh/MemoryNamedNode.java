@@ -26,7 +26,7 @@ public class MemoryNamedNode extends MemoryNode implements IdentifiableNode {
      * @param identifier
      *            the name URI of this node
      */
-    MemoryNamedNode(String identifier) {
+    public MemoryNamedNode(String identifier) {
         if (identifier == null) {
             throw new NullPointerException("Identifier must not be null.");
         }

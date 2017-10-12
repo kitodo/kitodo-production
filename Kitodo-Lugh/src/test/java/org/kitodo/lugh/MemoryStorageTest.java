@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import org.apache.jena.rdf.model.*;
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.*;
 
 public class MemoryStorageTest {
 

@@ -15,7 +15,6 @@ import java.util.Locale;
 import java.util.regex.*;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.vocabulary.RDF;
 
 /**
  * An RDF lang string, that is a linked data literal with a language tag
@@ -40,7 +39,7 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
      * @param languageTag
      *            locale code
      */
-    MemoryLangString(String value, String languageTag) {
+    public MemoryLangString(String value, String languageTag) {
         super(value, RDF.LANG_STRING.getIdentifier());
         if (languageTag.isEmpty()) {
             throw new IllegalArgumentException("For language tag: " + languageTag);

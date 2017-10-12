@@ -36,9 +36,9 @@ public interface Literal extends AccessibleObject {
      * the Literal constructor when creating a common literal.
      */
     /*
-     * Constants from `vocabulary/RDF.java` cannot be used here because the
-     * constants are MemoryNodeReference objects, thus a subclass of this class
-     * and hence cannot yet be accessed at creation time of this class.
+     * Constants from `RDF.java` cannot be used here because the constants are
+     * MemoryNodeReference objects, thus a subclass of this class and hence
+     * cannot yet be accessed at creation time of this class.
      */
     static final List<String> LITERAL_TYPES = Arrays
             .asList(new String[] {"http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral",

@@ -45,7 +45,7 @@ public class MemoryStorage implements Storage {
     /** {@inheritDoc} */
     @Override
     public ObjectType createLiteralType(String value, String lang) {
-        return MemoryLiteral.create(value, lang);
+        return MemoryLiteral.createLeaf(value, lang);
     }
 
     /** {@inheritDoc} */

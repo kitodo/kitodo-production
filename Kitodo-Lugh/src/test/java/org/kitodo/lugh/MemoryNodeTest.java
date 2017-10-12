@@ -11,16 +11,12 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.nio.BufferOverflowException;
 import java.util.*;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.*;
 
 public class MemoryNodeTest {
 
@@ -249,8 +245,8 @@ public class MemoryNodeTest {
         node.put(RDF.TYPE, "http://names.example/mammal");
 
         MemoryResult expected = new MemoryResult();
-        expected.add(MemoryLiteral.create("http://names.example/petAnimal", null));
-        expected.add(MemoryLiteral.create("http://names.example/mammal", null));
+        expected.add(MemoryLiteral.createLeaf("http://names.example/petAnimal", null));
+        expected.add(MemoryLiteral.createLeaf("http://names.example/mammal", null));
 
         String relation = RDF.TYPE.getIdentifier();
 
@@ -449,7 +445,7 @@ public class MemoryNodeTest {
 
     @Test
     public void testPutStringObjectType() {
-        new MemoryNode().put("http://www.loc.gov/mods/v3#name", MemoryLiteral.create("Wilhelm Busch", "de"));
+        new MemoryNode().put("http://www.loc.gov/mods/v3#name", MemoryLiteral.createLeaf("Wilhelm Busch", "de"));
     }
 
     /** Tests {@code put(String, String)}. */

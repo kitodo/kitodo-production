@@ -20,7 +20,6 @@ import java.util.*;
 
 import org.apache.jena.rdf.model.*;
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.*;
 
 public class NodeTest {
 

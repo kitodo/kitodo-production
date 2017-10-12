@@ -14,7 +14,6 @@ package org.kitodo.lugh;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.RDF;
 
 public class IdentifiableNodeTest {
     @Test

@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.vocabulary.RDF;
 
 /**
  * An anonymous linked data Node. The most nodes are anonymous. In Java, they
@@ -151,7 +150,7 @@ public class MemoryNode extends Node {
     /**
      * Creates an empty node.
      */
-    MemoryNode() {
+    public MemoryNode() {
     }
 
     /**
@@ -160,7 +159,7 @@ public class MemoryNode extends Node {
      * @param type
      *            node type
      */
-    MemoryNode(IdentifiableNode type) {
+    public MemoryNode(IdentifiableNode type) {
         if (type != null) {
             assert URI_SCHEME.matcher(type.getIdentifier()).find() : "Type isn’t a valid URI.";
             edges.put(RDF.TYPE.getIdentifier(), new LinkedList<>(Arrays.asList(new ObjectType[] {type })));
@@ -173,7 +172,7 @@ public class MemoryNode extends Node {
      * @param type
      *            node type
      */
-    MemoryNode(String type) {
+    public MemoryNode(String type) {
         if (type != null) {
             assert URI_SCHEME.matcher(type).find() : "Type isn’t a valid URI.";
             edges.put(RDF.TYPE.getIdentifier(),
@@ -661,7 +660,7 @@ public class MemoryNode extends Node {
     @SuppressWarnings("unchecked") // this is always instanceof Node
     @Override
     public <T extends Node> T put(String relation, String object) {
-        this.put(relation, MemoryLiteral.create(object, null));
+        this.put(relation, MemoryLiteral.createLeaf(object, null));
         return (T) this;
     }
 

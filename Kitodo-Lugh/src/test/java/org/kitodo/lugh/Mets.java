@@ -9,11 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.vocabulary;
+package org.kitodo.lugh;
 
 import java.util.*;
-
-import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.loc.gov/METS/} namespace.
@@ -93,7 +91,7 @@ public class Mets {
     /**
      * A reverse map of the URLs to the constants.
      */
-    private static final Map<String, NodeReference> reversed;
+    public static final Map<String, NodeReference> reversed;
 
     public static final NodeReference ROLE = MemoryStorage.INSTANCE.createNodeReference("http://www.loc.gov/METS/ROLE");
 

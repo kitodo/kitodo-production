@@ -9,11 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.vocabulary;
+package org.kitodo.lugh;
 
 import java.util.*;
-
-import org.kitodo.lugh.*;
 
 /**
  * The {@code http://www.loc.gov/mods/v3} namespace.

@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.vocabulary.*;
 
 /**
  * The results returned by a call to a getter on a node.

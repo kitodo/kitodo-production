@@ -13,7 +13,6 @@ package org.kitodo.lugh;
 
 import java.util.*;
 
-import org.kitodo.lugh.vocabulary.RDF;
 import org.kitodo.lugh.xml.Namespaces;
 
 /**
@@ -98,7 +97,7 @@ public class GraphPath extends MemoryNode {
                             index += Character.charCount(cp);
                         }
                         String value = applyPrefixes(prefixes, string.substring(literalStart, index));
-                        result.put(currentPredicate, MemoryLiteral.create(value, null));
+                        result.put(currentPredicate, MemoryLiteral.createLeaf(value, null));
                     }
                 }
             } while (index < length);

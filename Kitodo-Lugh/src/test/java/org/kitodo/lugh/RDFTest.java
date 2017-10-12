@@ -9,13 +9,13 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.lugh.vocabulary;
+package org.kitodo.lugh;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import org.kitodo.lugh.Node;
+import org.kitodo.lugh.*;
 
 public class RDFTest {
 

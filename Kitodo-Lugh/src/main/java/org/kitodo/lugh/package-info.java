@@ -41,7 +41,7 @@
  * and literals that are part of the current data set, but not
  * {@link org.kitodo.lugh.NodeReference}s.
  * <p>
- * Interface hierarchy:
+ * <em>Interface hierarchy:</em>
  *
  * <pre>
  *                              &lt; ObjectType &gt;
@@ -83,7 +83,7 @@
  * Node n = new MemoryNode(); // Node: interface, MemoryNode: class
  * </pre>
  * <p>
- * Implementation object hierarchy:
+ * <em>Implementation object hierarchy:</em>
  *
  * <pre>
  *                                      &lt; ObjectType &gt;
@@ -181,16 +181,18 @@
  * <pre>
  * Model model = ModelFactory.createDefaultModel();
  * model.read("data.ttl");
- * Result = MemoryResult.createFrom(model, false);
+ * Result result = new MemoryResult(model, false);
  * </pre>
  *
  * A data file may contain unrelated nodes, thus a load operation creates a
- * {@code Result} that must be queried.
+ * {@code Result} that must be queried. In the common case that the result only
+ * contains one top node, it can be accessed using
+ * {@code Node node = new MemoryResult(model, false).node();}.
  * <p>
  * <em>Saving a file:</em>
  *
  * <pre>
- * SerializationFormat.TURTLE.write(node, new Namespaces(), new File("node.ttl"));
+ * SerializationFormat.RDF_XML_ABBREV.write(node, new Namespaces(), new File("out.xml"));
  * </pre>
  * <p>
  * <strong>The name</strong>

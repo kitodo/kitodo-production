@@ -25,6 +25,17 @@ public interface LangString extends Literal {
             .createNodeReference("http://www.w3.org/XML/1998/namespace#lang");
 
     /**
+     * Returns a well-formed IETF BCP 47 language tag representing the locale of
+     * the language-tagged string.
+     * 
+     * @return a BCP47 language tag representing the locale of the
+     *         language-tagged string
+     */
+    default String getLanguageTag() {
+        return getLocale().toLanguageTag();
+    }
+
+    /**
      * Returns the locale of the language-tagged string.
      *
      * @return the locale

@@ -14,8 +14,6 @@ package org.kitodo.lugh;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.kitodo.lugh.vocabulary.RDF;
-
 /**
  * An anonymous linked data Node. The most nodes are anonymous. In Java, they
  * are identified by the variable that holds them. In the data, they are often

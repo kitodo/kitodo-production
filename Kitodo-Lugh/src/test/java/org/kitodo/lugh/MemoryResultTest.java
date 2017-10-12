@@ -11,14 +11,11 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.*;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.*;
 
 /** Tests {@code org.kitodo.lugh.MemoryResult}. */
 public class MemoryResultTest {
@@ -163,7 +160,7 @@ public class MemoryResultTest {
         r.add(new MemoryNodeReference("http://example.org/bar"));
         r.add(new MemoryNode("http://example.org/baz"));
         r.add(MemoryLiteral.createLiteral("Hello world!", "en"));
-        r.add(MemoryLiteral.create("public static void main(String[] args)", null));
+        r.add(MemoryLiteral.createLeaf("public static void main(String[] args)", null));
 
         Set<String> expected = new HashSet<>();
         expected.add("Hello world!");

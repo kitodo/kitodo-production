@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.regex.*;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.vocabulary.*;
 import org.kitodo.lugh.xml.Namespaces;
 
 /**
@@ -68,7 +67,7 @@ public class MemoryLiteral implements Literal {
      *            language, may be {@code ""} but not {@code null}
      * @return the literal object
      */
-    static ObjectType create(String value, String lang) {
+    public static ObjectType createLeaf(String value, String lang) {
         if (SCHEME_TEST.matcher(value).matches()) {
             return new MemoryNodeReference(value);
         } else {
@@ -86,7 +85,7 @@ public class MemoryLiteral implements Literal {
      *            language, may be {@code ""} but not {@code null}
      * @return the literal object
      */
-    static MemoryLiteral createLiteral(String value, String lang) {
+    public static MemoryLiteral createLiteral(String value, String lang) {
         if ((lang == null) || lang.isEmpty()) {
             return new MemoryLiteral(value, RDF.PLAIN_LITERAL);
         } else {
@@ -113,7 +112,7 @@ public class MemoryLiteral implements Literal {
      *            literal type, one of RDF.HTML, RDF.PLAIN_LITERAL,
      *            RDF.XML_LITERAL, or a literal type defined in XMLSchema.
      */
-    MemoryLiteral(String value, NodeReference type) {
+    public MemoryLiteral(String value, NodeReference type) {
         this.value = value != null ? value : "";
         this.type = type != null ? type.getIdentifier() : RDF.PLAIN_LITERAL.getIdentifier();
         if (!LITERAL_TYPES.contains(this.type) && !XSD_NAMESPACE.equals(Namespaces.namespaceOf(this.type))) {

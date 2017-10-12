@@ -23,10 +23,10 @@ public class MemoryNodeReference implements NodeReference {
     /**
      * Creates a new NodeReference.
      *
-     * @param url
+     * @param identifier
      *            referenced URL
      */
-    MemoryNodeReference(String identifier) {
+    public MemoryNodeReference(String identifier) {
         if ((identifier == null) || identifier.isEmpty()) {
             throw new IllegalArgumentException("Identifier must not be null.");
         }

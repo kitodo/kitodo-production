@@ -20,7 +20,6 @@ import java.nio.BufferOverflowException;
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.RDF;
 
 public class AccessibleObjectTest {
 

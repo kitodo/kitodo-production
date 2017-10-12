@@ -17,7 +17,6 @@ import java.nio.BufferOverflowException;
 import java.util.*;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.RDF;
 
 /** Tests {@code org.kitodo.lugh.Result}. */
 public class ResultTest {

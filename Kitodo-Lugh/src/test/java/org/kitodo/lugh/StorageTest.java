@@ -3,7 +3,6 @@ package org.kitodo.lugh;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.kitodo.lugh.vocabulary.*;
 
 /** Tests {@code org.kitodo.lugh.Storage}. */
 public class StorageTest {
