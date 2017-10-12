@@ -11,11 +11,9 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -78,7 +76,7 @@ public class MemoryLiteralTest {
                 "<mods:role><mods:roleTerm authority=\"marcrelator\" type=\"code\">edt</mods:roleTerm></mods:role>",
                 RDF.XML_LITERAL);
 
-        assertFalse(one.equals(other));
+        assertThat(one, is(not(equalTo(other))));
     }
 
     @Test
@@ -86,15 +84,15 @@ public class MemoryLiteralTest {
         MemoryLiteral one = new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#string");
         MemoryLiteral other = new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#integer");
 
-        assertFalse(one.equals(other));
+        assertThat(one, is(not(equalTo(other))));
     }
 
     @Test
     public void testEqualsObjectForTwoEqualMemoryLiterals() {
         MemoryLiteral one = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
-        MemoryLiteral other = MemoryLiteral.createLiteral("Lorem ipsum dolor sit amet", "");
+        MemoryLiteral another = MemoryLiteral.createLiteral("Lorem ipsum dolor sit amet", "");
 
-        assertTrue(one.equals(other));
+        assertThat(one, is(equalTo(another)));
     }
 
     @Test
@@ -118,7 +116,7 @@ public class MemoryLiteralTest {
                 "<mods:role><mods:roleTerm authority=\"marcrelator\" type=\"code\">edt</mods:roleTerm></mods:role>",
                 RDF.XML_LITERAL);
 
-        assertFalse(one.hashCode() == other.hashCode());
+        assertThat(one.hashCode() == other.hashCode(), is(false));
     }
 
     @Test
@@ -126,7 +124,7 @@ public class MemoryLiteralTest {
         MemoryLiteral one = new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#string");
         MemoryLiteral other = new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#integer");
 
-        assertFalse(one.hashCode() == other.hashCode());
+        assertThat(one.hashCode() == other.hashCode(), is(false));
     }
 
     @Test
@@ -134,7 +132,7 @@ public class MemoryLiteralTest {
         MemoryLiteral one = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryLiteral other = MemoryLiteral.createLiteral("Lorem ipsum dolor sit amet", "");
 
-        assertTrue(one.hashCode() == other.hashCode());
+        assertThat(one.hashCode() == other.hashCode(), is(true));
     }
 
     @Test
@@ -142,7 +140,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryNode condition = new MemoryNode(RDF.PLAIN_LITERAL).put(RDF.VALUE, "javac.exe");
 
-        assertFalse(object.matches(condition));
+        assertThat(object.matches(condition), is(false));
     }
 
     @Test
@@ -150,7 +148,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryNode condition = new MemoryNode(RDF.PLAIN_LITERAL).put(RDF.VALUE, "javac.exe");
 
-        assertFalse(object.matches(condition));
+        assertThat(object.matches(condition), is(false));
     }
 
     @Test
@@ -158,7 +156,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryNode condition = new MemoryNode(RDF.PLAIN_LITERAL);
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -166,7 +164,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryNode condition = new MemoryNode(RDF.PLAIN_LITERAL).put(RDF.VALUE, "Lorem ipsum dolor sit amet");
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -174,7 +172,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryNode condition = new MemoryNode().put(RDF.VALUE, "Lorem ipsum dolor sit amet");
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -182,7 +180,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryLiteral condition = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -190,7 +188,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryLiteral condition = new MemoryLiteral("", RDF.PLAIN_LITERAL);
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -198,7 +196,7 @@ public class MemoryLiteralTest {
         MemoryLiteral object = new MemoryLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
         MemoryLiteral condition = new MemoryLiteral("Lorem ipsum dolor sit amet", (MemoryNodeReference) null);
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -216,12 +214,12 @@ public class MemoryLiteralTest {
 
     @Test
     public void testMemoryLiteralCanBeCreatedAsRDFPlainMemoryLiteral() {
-        assertNotNull(new MemoryLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL));
+        assertThat(new MemoryLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL), is(notNullValue()));
     }
 
     @Test
     public void testMemoryLiteralCanBeCreatedAsXSDType() {
-        assertNotNull(new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#integer"));
+        assertThat(new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#integer"), is(notNullValue()));
     }
 
     @Test(expected = AssertionError.class)
@@ -237,17 +235,17 @@ public class MemoryLiteralTest {
     @Test
     public void testMemoryLiteralCreatedWithoutTypeIsAPlainMemoryLiteral() {
         MemoryLiteral tested = new MemoryLiteral("Lorem ipsum dolor sit amet", (MemoryNodeReference) null);
-        assertEquals(RDF.PLAIN_LITERAL.getIdentifier(), tested.getType());
+        assertThat(tested.getType(), is(equalTo(RDF.PLAIN_LITERAL.getIdentifier())));
     }
 
     @Test
     public void testMemoryLiteralStringString() {
-        assertNotNull(new MemoryLiteral("In vino veritas est.", RDF.LANG_STRING.getIdentifier()));
+        assertThat(new MemoryLiteral("In vino veritas est.", RDF.LANG_STRING.getIdentifier()), is(notNullValue()));
     }
 
     @Test
     public void testToStringForInteger() {
-        assertEquals("42", new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#integer").toString());
+        assertThat(new MemoryLiteral("42", "http://www.w3.org/2001/XMLSchema#integer").toString(), is(equalTo("42")));
     }
 
     @Test

@@ -11,7 +11,9 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -22,9 +24,9 @@ public class MemoryLangStringTest {
     @Test
     public void testEqualsObject() {
         MemoryLangString one = new MemoryLangString("Hoc est corpus meum.", "la");
-        MemoryLangString other = new MemoryLangString("Hoc est corpus meum.", "la");
+        MemoryLangString another = new MemoryLangString("Hoc est corpus meum.", "la");
 
-        assertTrue(one.equals(other));
+        assertThat(one, is(equalTo(another)));
     }
 
     @Test
@@ -32,7 +34,7 @@ public class MemoryLangStringTest {
         MemoryLangString one = new MemoryLangString("Hoc est corpus meum.", "la");
         MemoryLangString other = new MemoryLangString("Hoc est corpus meum.", "la");
 
-        assertEquals(one.hashCode(), other.hashCode());
+        assertThat(other.hashCode(), is(equalTo(one.hashCode())));
     }
 
     @Test
@@ -40,7 +42,7 @@ public class MemoryLangStringTest {
         MemoryLangString object = new MemoryLangString("Hoc est corpus meum.", "la");
         MemoryNode condition = new MemoryNode().put(XML_LANG, "fr");
 
-        assertFalse(object.matches(condition));
+        assertThat(object.matches(condition), is(false));
     }
 
     @Test
@@ -48,7 +50,7 @@ public class MemoryLangStringTest {
         MemoryLangString object = new MemoryLangString("Hoc est corpus meum.", "la");
         MemoryNode condition = new MemoryNode(Mets.FILE_SEC);
 
-        assertFalse(object.matches(condition));
+        assertThat(object.matches(condition), is(false));
     }
 
     @Test
@@ -56,7 +58,7 @@ public class MemoryLangStringTest {
         MemoryLangString object = new MemoryLangString("In vino veritas est.", "la");
         MemoryNode condition = new MemoryNode().put(RDF.VALUE, "In aqua bacillus est.");
 
-        assertFalse(object.matches(condition));
+        assertThat(object.matches(condition), is(false));
     }
 
     @Test
@@ -64,7 +66,7 @@ public class MemoryLangStringTest {
         MemoryLangString object = new MemoryLangString("Hoc est corpus meum.", "la");
         MemoryNode condition = new MemoryNode(RDF.LANG_STRING);
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -72,7 +74,7 @@ public class MemoryLangStringTest {
         MemoryLangString object = new MemoryLangString("Hoc est corpus meum.", "la");
         MemoryNode condition = new MemoryNode().put(RDF.VALUE, "Hoc est corpus meum.");
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -80,7 +82,7 @@ public class MemoryLangStringTest {
         MemoryLangString object = new MemoryLangString("Hoc est corpus meum.", "la");
         MemoryNode condition = new MemoryNode().put(XML_LANG, "la");
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class MemoryLangStringTest {
         MemoryLangString object = new MemoryLangString("Hoc est corpus meum.", "la");
         MemoryLangString condition = new MemoryLangString("Hoc est corpus meum.", "la");
 
-        assertTrue(object.matches(condition));
+        assertThat(object.matches(condition), is(true));
     }
 
     @Test

@@ -64,7 +64,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default AccessibleObject accessibleObjectOrElse(AccessibleObject other) {
         Set<AccessibleObject> accessibleObject = subset(AccessibleObject.class);
-        return (accessibleObject.size() == 1) && (count(2) == 1) ? accessibleObject.iterator().next() : other;
+        return (accessibleObject.size() == 1) && (countUntil(2) == 1) ? accessibleObject.iterator().next() : other;
     }
 
     /**
@@ -80,7 +80,8 @@ public interface Result extends Iterable<ObjectType> {
      */
     default AccessibleObject accessibleObjectOrElseGet(Supplier<AccessibleObject> other) {
         Set<AccessibleObject> accessibleObject = subset(AccessibleObject.class);
-        return (accessibleObject.size() == 1) && (count(2) == 1) ? accessibleObject.iterator().next() : other.get();
+        return (accessibleObject.size() == 1) && (countUntil(2) == 1) ? accessibleObject.iterator().next()
+                : other.get();
     }
 
     /**
@@ -104,7 +105,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return the number of elements in this result that can be cast to the
      *         given class
      */
-    long count(int atLeastUntil, Class<?>... clazz);
+    long countUntil(long atLeastUntil, Class<?>... clazz);
 
     /**
      * Returns the contained element. This should only be called if its presence
@@ -144,7 +145,7 @@ public interface Result extends Iterable<ObjectType> {
             case 0:
                 throw new NoSuchElementException(); // No corresponding element
             case 1:
-                if (count(2) > 1) {
+                if (countUntil(2) > 1) {
                     throw new BufferOverflowException(); // One corresponding
                                                          // element intermingled
                                                          // with other objects
@@ -330,7 +331,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default IdentifiableNode identifiableNodeOrElse(IdentifiableNode other) {
         Set<IdentifiableNode> identifiableNode = subset(IdentifiableNode.class);
-        return (identifiableNode.size() == 1) && (count(2) == 1) ? identifiableNode.iterator().next() : other;
+        return (identifiableNode.size() == 1) && (countUntil(2) == 1) ? identifiableNode.iterator().next() : other;
     }
 
     /**
@@ -346,7 +347,8 @@ public interface Result extends Iterable<ObjectType> {
      */
     default IdentifiableNode identifiableNodeOrElseGet(Supplier<IdentifiableNode> other) {
         Set<IdentifiableNode> identifiableNode = subset(IdentifiableNode.class);
-        return (identifiableNode.size() == 1) && (count(2) == 1) ? identifiableNode.iterator().next() : other.get();
+        return (identifiableNode.size() == 1) && (countUntil(2) == 1) ? identifiableNode.iterator().next()
+                : other.get();
     }
 
     /**
@@ -364,7 +366,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one element
      */
     default boolean isAny() {
-        return count(1) > 0;
+        return countUntil(1) > 0;
     }
 
     /**
@@ -373,7 +375,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one accessible object
      */
     default boolean isAnyAccessibleObject() {
-        return count(1, AccessibleObject.class) > 0;
+        return countUntil(1, AccessibleObject.class) > 0;
     }
 
     /**
@@ -382,7 +384,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one identifiable node
      */
     default boolean isAnyIdentifiableNode() {
-        return count(1, IdentifiableNode.class) > 0;
+        return countUntil(1, IdentifiableNode.class) > 0;
     }
 
     /**
@@ -391,7 +393,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one language-tagged string
      */
     default boolean isAnyLangString() {
-        return count(1, LangString.class) > 0;
+        return countUntil(1, LangString.class) > 0;
     }
 
     /**
@@ -400,7 +402,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one literal
      */
     default boolean isAnyLiteral() {
-        return count(1, Literal.class) > 0;
+        return countUntil(1, Literal.class) > 0;
     }
 
     /**
@@ -409,7 +411,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one named node
      */
     default boolean isAnyNamedNode() {
-        return count(1, Node.class, IdentifiableNode.class) > 0;
+        return countUntil(1, Node.class, IdentifiableNode.class) > 0;
     }
 
     /**
@@ -418,7 +420,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one node
      */
     default boolean isAnyNode() {
-        return count(1, Node.class) > 0;
+        return countUntil(1, Node.class) > 0;
     }
 
     /**
@@ -427,7 +429,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one node reference
      */
     default boolean isAnyNodeReference() {
-        return count(1, NodeReference.class) > 0;
+        return countUntil(1, NodeReference.class) > 0;
     }
 
     /**
@@ -436,7 +438,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is at least one node type
      */
     default boolean isAnyNodeType() {
-        return count(1, NodeType.class) > 0;
+        return countUntil(1, NodeType.class) > 0;
     }
 
     /**
@@ -447,7 +449,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return whether this contains exactly one object of that class
      */
     default boolean isSingleton(Class<? extends ObjectType> clazz) {
-        return (count(2, clazz) == 1) && (count(2) == 1);
+        return (countUntil(2, clazz) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -456,7 +458,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one element
      */
     default boolean isUnique() {
-        return count(2) == 1;
+        return countUntil(2) == 1;
     }
 
     /**
@@ -465,7 +467,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one accessible object
      */
     default boolean isUniqueAccessibleObject() {
-        return (count(2, AccessibleObject.class) == 1) && (count(2) == 1);
+        return (countUntil(2, AccessibleObject.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -474,7 +476,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one identifiable node
      */
     default boolean isUniqueIdentifiableNode() {
-        return (count(2, IdentifiableNode.class) == 1) && (count(2) == 1);
+        return (countUntil(2, IdentifiableNode.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -483,7 +485,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one language-tagged string
      */
     default boolean isUniqueLangString() {
-        return (count(2, LangString.class) == 1) && (count(2) == 1);
+        return (countUntil(2, LangString.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -492,7 +494,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one literal
      */
     default boolean isUniqueLiteral() {
-        return (count(2, Literal.class) == 1) && (count(2) == 1);
+        return (countUntil(2, Literal.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -501,7 +503,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one named node
      */
     default boolean isUniqueNamedNode() {
-        return (count(2, Node.class, IdentifiableNode.class) == 1) && (count(2) == 1);
+        return (countUntil(2, Node.class, IdentifiableNode.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -510,7 +512,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one node
      */
     default boolean isUniqueNode() {
-        return (count(2, Node.class) == 1) && (count(2) == 1);
+        return (countUntil(2, Node.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -519,7 +521,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one node reference
      */
     default boolean isUniqueNodeReference() {
-        return (count(2, NodeReference.class) == 1) && (count(2) == 1);
+        return (countUntil(2, NodeReference.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -528,7 +530,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return true, if there is exactly one node type
      */
     default boolean isUniqueNodeType() {
-        return (count(2, NodeType.class) == 1) && (count(2) == 1);
+        return (countUntil(2, NodeType.class) == 1) && (countUntil(2) == 1);
     }
 
     /**
@@ -570,7 +572,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default LangString langStringOrElse(LangString other) {
         Set<LangString> langString = subset(LangString.class);
-        return (langString.size() == 1) && (count(2) == 1) ? langString.iterator().next() : other;
+        return (langString.size() == 1) && (countUntil(2) == 1) ? langString.iterator().next() : other;
     }
 
     /**
@@ -586,7 +588,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default LangString langStringOrElseGet(Supplier<LangString> other) {
         Set<LangString> langString = subset(LangString.class);
-        return (langString.size() == 1) && (count(2) == 1) ? langString.iterator().next() : other.get();
+        return (langString.size() == 1) && (countUntil(2) == 1) ? langString.iterator().next() : other.get();
     }
 
     /**
@@ -653,7 +655,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default Literal literalOrElse(Literal other) {
         Set<Literal> literal = subset(Literal.class);
-        return (literal.size() == 1) && (count(2) == 1) ? literal.iterator().next() : other;
+        return (literal.size() == 1) && (countUntil(2) == 1) ? literal.iterator().next() : other;
     }
 
     /**
@@ -669,7 +671,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default Literal literalOrElseGet(Supplier<Literal> other) {
         Set<Literal> literal = subset(Literal.class);
-        return (literal.size() == 1) && (count(2) == 1) ? literal.iterator().next() : other.get();
+        return (literal.size() == 1) && (countUntil(2) == 1) ? literal.iterator().next() : other.get();
     }
 
     /**
@@ -730,7 +732,7 @@ public interface Result extends Iterable<ObjectType> {
     default <NamedNode extends Node & IdentifiableNode> NamedNode namedNodeOrElse(NamedNode other) {
         @SuppressWarnings("unchecked")
         Set<NamedNode> namedNode = (Set<NamedNode>) subset(Node.class, IdentifiableNode.class);
-        return (namedNode.size() == 1) && (count(2) == 1) ? namedNode.iterator().next() : other;
+        return (namedNode.size() == 1) && (countUntil(2) == 1) ? namedNode.iterator().next() : other;
     }
 
     /**
@@ -750,7 +752,7 @@ public interface Result extends Iterable<ObjectType> {
     default <NamedNode extends Node & IdentifiableNode> NamedNode namedNodeOrElseGet(Supplier<NamedNode> other) {
         @SuppressWarnings("unchecked")
         Set<NamedNode> namedNode = (Set<NamedNode>) subset(Node.class, IdentifiableNode.class);
-        return (namedNode.size() == 1) && (count(2) == 1) ? namedNode.iterator().next() : other.get();
+        return (namedNode.size() == 1) && (countUntil(2) == 1) ? namedNode.iterator().next() : other.get();
     }
 
     /**
@@ -803,7 +805,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default Node nodeOrElse(Node other) {
         Set<Node> node = subset(Node.class);
-        return (node.size() == 1) && (count(2) == 1) ? node.iterator().next() : other;
+        return (node.size() == 1) && (countUntil(2) == 1) ? node.iterator().next() : other;
     }
 
     /**
@@ -818,7 +820,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default Node nodeOrElseGet(Supplier<Node> other) {
         Set<Node> node = subset(Node.class);
-        return (node.size() == 1) && (count(2) == 1) ? node.iterator().next() : other.get();
+        return (node.size() == 1) && (countUntil(2) == 1) ? node.iterator().next() : other.get();
     }
 
     /**
@@ -858,7 +860,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default NodeReference nodeReferenceOrElse(NodeReference other) {
         Set<NodeReference> nodeReference = subset(NodeReference.class);
-        return (nodeReference.size() == 1) && (count(2) == 1) ? nodeReference.iterator().next() : other;
+        return (nodeReference.size() == 1) && (countUntil(2) == 1) ? nodeReference.iterator().next() : other;
     }
 
     /**
@@ -874,7 +876,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default NodeReference nodeReferenceOrElseGet(Supplier<NodeReference> other) {
         Set<NodeReference> nodeReference = subset(NodeReference.class);
-        return (nodeReference.size() == 1) && (count(2) == 1) ? nodeReference.iterator().next() : other.get();
+        return (nodeReference.size() == 1) && (countUntil(2) == 1) ? nodeReference.iterator().next() : other.get();
     }
 
     /**
@@ -932,7 +934,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default NodeType nodeTypeOrElse(NodeType other) {
         Set<NodeType> nodeType = subset(NodeType.class);
-        return (nodeType.size() == 1) && (count(2) == 1) ? nodeType.iterator().next() : other;
+        return (nodeType.size() == 1) && (countUntil(2) == 1) ? nodeType.iterator().next() : other;
     }
 
     /**
@@ -948,7 +950,7 @@ public interface Result extends Iterable<ObjectType> {
      */
     default NodeType nodeTypeOrElseGet(Supplier<NodeType> other) {
         Set<NodeType> nodeType = subset(NodeType.class);
-        return (nodeType.size() == 1) && (count(2) == 1) ? nodeType.iterator().next() : other.get();
+        return (nodeType.size() == 1) && (countUntil(2) == 1) ? nodeType.iterator().next() : other.get();
     }
 
     /**
@@ -969,7 +971,7 @@ public interface Result extends Iterable<ObjectType> {
      * @return the contained element, if present, otherwise other
      */
     default ObjectType orElse(ObjectType other) {
-        return count(2) == 1 ? iterator().next() : other;
+        return countUntil(2) == 1 ? iterator().next() : other;
     }
 
     /**
@@ -984,7 +986,7 @@ public interface Result extends Iterable<ObjectType> {
      *         {@code other.get()}
      */
     default ObjectType orElseGet(Supplier<ObjectType> other) {
-        return count(2) == 1 ? iterator().next() : other.get();
+        return countUntil(2) == 1 ? iterator().next() : other.get();
     }
 
     /**
@@ -1010,7 +1012,7 @@ public interface Result extends Iterable<ObjectType> {
             case 0:
                 throw new NoDataException(); // No corresponding element
             case 1:
-                if (count(2) > 1) {
+                if (countUntil(2) > 1) {
                     throw new AmbiguousDataException(); // One corresponding
                                                         // element intermingled
                                                         // with other objects
@@ -1026,13 +1028,14 @@ public interface Result extends Iterable<ObjectType> {
      * @deprecated Counting the available elements up to
      *             {@code Integer.MAX_VALUE} may cause unnecessary load on the
      *             storage and is not necessary in most cases. Use
-     *             {@code (int) count(Integer.MAX_VALUE)} if this really is what
-     *             you want.
+     *             {@code (int) countUntil(Integer.MAX_VALUE)} if this really is
+     *             what you want.
+     * @see #countUntil(int, Class...)
      * @return the number of elements in this result
      */
     @Deprecated
     default int size() {
-        return (int) count(Integer.MAX_VALUE);
+        return (int) countUntil(Integer.MAX_VALUE);
     }
 
     /**

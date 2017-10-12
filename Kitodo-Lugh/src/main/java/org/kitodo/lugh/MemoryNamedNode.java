@@ -28,6 +28,35 @@ public class MemoryNamedNode extends MemoryNode implements IdentifiableNode {
      */
     public MemoryNamedNode(String identifier) {
         if (identifier == null) {
+            throw new IllegalArgumentException("Identifier must not be null.");
+        }
+        assert URI_SCHEME.matcher(identifier).find() : "Identifier isn't a valid URI: " + identifier;
+        this.identifier = identifier;
+    }
+
+    /**
+     * Creates a new named node.
+     *
+     * @param identifier
+     *            the name URI of this node
+     * @param type
+     *            node type
+     */
+    public MemoryNamedNode(String identifier, NodeReference type) {
+        this(identifier, type.getIdentifier());
+    }
+
+    /**
+     * Creates a new named node.
+     *
+     * @param identifier
+     *            the name URI of this node
+     * @param type
+     *            node type
+     */
+    public MemoryNamedNode(String identifier, String type) {
+        super(type);
+        if (identifier == null) {
             throw new NullPointerException("Identifier must not be null.");
         }
         assert URI_SCHEME.matcher(identifier).find() : "Identifier isn't a valid URI: " + identifier;

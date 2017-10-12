@@ -11,11 +11,11 @@
 
 package org.kitodo.lugh;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import org.kitodo.lugh.*;
 
 public class RDFTest {
 
@@ -43,7 +43,8 @@ public class RDFTest {
 
     @Test
     public void testSequenceNumberOfMin() {
-        assertEquals(Node.FIRST_INDEX, (long) RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_1"));
+        assertThat((long) RDF.sequenceNumberOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#_1"),
+                is((long) Node.FIRST_INDEX));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -70,7 +71,7 @@ public class RDFTest {
 
     @Test
     public void testSequenceNumberOfWithGarbage() {
-        assertNull(RDF.sequenceNumberOf("http://www.example.org/this-is-no-numeric-RDF-reference"));
+        assertThat(RDF.sequenceNumberOf("http://www.example.org/this-is-no-numeric-RDF-reference"), is(nullValue()));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -86,22 +87,24 @@ public class RDFTest {
 
     @Test
     public void testToURLMax() {
-        assertEquals("http://www.w3.org/1999/02/22-rdf-syntax-ns#_9223372036854775807", RDF.toURL(Long.MAX_VALUE));
+        assertThat(RDF.toURL(Long.MAX_VALUE),
+                is(equalTo("http://www.w3.org/1999/02/22-rdf-syntax-ns#_9223372036854775807")));
     }
 
     @Test
     public void testToURLMin() {
-        assertEquals("http://www.w3.org/1999/02/22-rdf-syntax-ns#_1", RDF.toURL(Node.FIRST_INDEX));
+        assertThat(RDF.toURL(Node.FIRST_INDEX), is(equalTo("http://www.w3.org/1999/02/22-rdf-syntax-ns#_1")));
     }
 
     @Test
     public void testToURLOneAboveMin() {
-        assertEquals("http://www.w3.org/1999/02/22-rdf-syntax-ns#_2", RDF.toURL(Node.FIRST_INDEX + 1));
+        assertThat(RDF.toURL(Node.FIRST_INDEX + 1), is(equalTo("http://www.w3.org/1999/02/22-rdf-syntax-ns#_2")));
     }
 
     @Test
     public void testToURLOneBelowMax() {
-        assertEquals("http://www.w3.org/1999/02/22-rdf-syntax-ns#_9223372036854775806", RDF.toURL(Long.MAX_VALUE - 1));
+        assertThat(RDF.toURL(Long.MAX_VALUE - 1),
+                is(equalTo("http://www.w3.org/1999/02/22-rdf-syntax-ns#_9223372036854775806")));
     }
 
     @Test(expected = IllegalArgumentException.class)

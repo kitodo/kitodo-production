@@ -11,6 +11,8 @@
 
 package org.kitodo.lugh.xml;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -37,12 +39,12 @@ public class NamespacesTest {
 
     @Test
     public void testLocalNameOfWithHash() {
-        assertEquals("foo/bar", Namespaces.localNameOf("http://names.kitodo.org/jUnitTest#foo/bar"));
+        assertThat(Namespaces.localNameOf("http://names.kitodo.org/jUnitTest#foo/bar"), is(equalTo("foo/bar")));
     }
 
     @Test
     public void testLocalNameOfWithSlash() {
-        assertEquals("identifier", Namespaces.localNameOf("http://names.kitodo.org/jUnitTest/identifier"));
+        assertThat(Namespaces.localNameOf("http://names.kitodo.org/jUnitTest/identifier"), is(equalTo("identifier")));
     }
 
     @Test

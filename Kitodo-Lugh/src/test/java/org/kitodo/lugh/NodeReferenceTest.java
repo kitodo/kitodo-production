@@ -11,10 +11,9 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -26,7 +25,7 @@ public class NodeReferenceTest {
             NodeReference one = storage.createNodeReference("http://names.example/foo");
             NodeReference other = storage.createNodeReference("http://names.example/bar");
 
-            assertFalse(one.equals(other));
+            assertThat(one, is(not(equalTo(other))));
         }
     }
 
@@ -34,9 +33,9 @@ public class NodeReferenceTest {
     public void testEqualsObject() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             NodeReference one = storage.createNodeReference("http://names.example/foo");
-            NodeReference other = storage.createNodeReference("http://names.example/foo");
+            NodeReference another = storage.createNodeReference("http://names.example/foo");
 
-            assertTrue(one.equals(other));
+            assertThat(one, is(equalTo(another)));
         }
     }
 
@@ -54,7 +53,7 @@ public class NodeReferenceTest {
             NodeReference one = storage.createNodeReference("http://names.example/foo");
             NodeReference other = storage.createNodeReference("http://names.example/bar");
 
-            assertFalse(one.hashCode() == other.hashCode());
+            assertThat(one.hashCode() == other.hashCode(), is(false));
         }
     }
 
@@ -64,7 +63,7 @@ public class NodeReferenceTest {
             NodeReference one = storage.createNodeReference("http://names.example/foo");
             NodeReference other = storage.createNodeReference("http://names.example/foo");
 
-            assertTrue(one.hashCode() == other.hashCode());
+            assertThat(one.hashCode() == other.hashCode(), is(true));
         }
     }
 

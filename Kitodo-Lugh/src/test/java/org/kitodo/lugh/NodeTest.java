@@ -18,9 +18,9 @@ import static org.junit.Assert.*;
 import java.nio.BufferOverflowException;
 import java.util.*;
 
-import org.apache.jena.rdf.model.*;
 import org.junit.Test;
 
+/** Tests {@code org.kitodo.lugh.Node}. */
 public class NodeTest {
 
     /**
@@ -44,44 +44,114 @@ public class NodeTest {
             Node mets = storage.createNode(Mets.METS);
             mets.add(storage.createNode(Mets.METS_HDR));
 
-            assertEquals(1, mets.get(RDF.toURL(Node.FIRST_INDEX)).size());
+            assertThat(mets.get(RDF.toURL(Node.FIRST_INDEX)).size(), is(equalTo(1)));
         }
     }
 
     /** Tests {@code addAll(Collection<? extends ObjectType>)}. */
     @Test
     public void testAddAllCollection() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode();
+
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNode(Mods.MODS);
+            ArrayList<ObjectType> toAdd = new ArrayList<>();
+            toAdd.add(javac);
+            toAdd.add(mods);
+
+            node.addAll(toAdd);
+
+            assertThat(node.size(), is(equalTo(2)));
+            assertThat(node.first().orElse(null), is(equalTo((long) Node.FIRST_INDEX)));
+            assertThat(node.last().orElse(null), is(equalTo((long) 2)));
+            assertThat(node.getFirst(), contains(javac));
+            assertThat(node.getLast(), contains(mods));
+        }
     }
 
     /** Tests {@code addFirst(ObjectType)}. */
     @Test
     public void testAddFirst() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode();
+
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNode(Mods.MODS);
+
+            node.add(mods);
+            node.addFirst(javac);
+
+            assertThat(node.size(), is(equalTo(2)));
+            assertThat(node.first().orElse(null), is(equalTo((long) Node.FIRST_INDEX)));
+            assertThat(node.last().orElse(null), is(equalTo((long) 2)));
+            assertThat(node.getFirst(), contains(javac));
+            assertThat(node.getLast(), contains(mods));
+        }
     }
 
     /** Tests {@code asUnordered(boolean)}. */
     @Test
     public void testAsUnordered() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node testNode = storage.createNode().add(storage.createNode(Mods.NAME).setValue("Max"))
+                    .add(storage.createNode(Mods.NAME).setValue("Moritz")).put(Mets.USE, "foobar");
+
+            ObjectType outcome = testNode.asUnordered(false);
+
+            assertThat(outcome, is(instanceOf(Node.class)));
+
+            Node node = (Node) outcome;
+
+            assertThat(node.first().isPresent(), is(equalTo(false)));
+            assertThat(node.last().isPresent(), is(equalTo(false)));
+            assertThat(node.get(Mods.NAME), is(iterableWithSize(2)));
+            assertThat(node.get(Mets.USE), is(iterableWithSize(1)));
+        }
     }
 
     /** Tests {@code containsKey(IdentifiableNode)}. */
     @Test
     public void testContainsKeyIdentifiableNode() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNode(Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+
+            assertThat(node.containsKey(Mets.TYPE), is(equalTo(true)));
+        }
     }
 
     /** Tests {@code containsKey(String)}. */
     @Test
     public void testContainsKeyString() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNode(Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+
+            assertThat(node.containsKey(Mets.TYPE.getIdentifier()), is(equalTo(true)));
+        }
     }
 
     /** Tests {@code contains(Object)}. */
     @Test
     public void testContainsObject() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNode(Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+
+            assertThat(node.contains(mods), is(equalTo(true)));
+            assertThat(node.contains(javac), is(equalTo(true)));
+            assertThat(node.contains(kitodo), is(equalTo(true)));
+        }
     }
 
     /** Tests {@code equals(Object)} for two different nodes. */
@@ -91,7 +161,7 @@ public class NodeTest {
             Node one = storage.createNode(Mets.METS);
             Node other = storage.createNode(Mods.DISPLAY_FORM);
 
-            assertFalse(one.equals(other));
+            assertThat(one, is(not(equalTo(other))));
         }
     }
 
@@ -100,9 +170,9 @@ public class NodeTest {
     public void testEqualsForTwoEqualNodes() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Node one = storage.createNode(Mets.METS);
-            Node other = storage.createNode(Mets.METS);
+            Node another = storage.createNode(Mets.METS);
 
-            assertTrue(one.equals(other));
+            assertThat(one, is(equalTo(another)));
         }
     }
 
@@ -115,85 +185,204 @@ public class NodeTest {
     /** Tests {@code first()}. */
     @Test
     public void testFirst() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNode(Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+            node.removeAll(RDF.toURL(Node.FIRST_INDEX));
+
+            assertThat(node.first().orElse(null), is(equalTo((long) 2)));
+        }
     }
 
     /** Tests {@code getByIdentifier(String)}. */
     @Test
     public void testGetByIdentifierString() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNamedNode("http://localhost/test/nodeID", Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+
+            assertThat(node.getByIdentifier("http://localhost/test/nodeID"), is(equalTo(mods)));
+            assertThat(node.getByIdentifier("https://www.kitodo.org/"), is(equalTo(kitodo)));
+        }
     }
 
     /** Tests {@code getByType(IdentifiableNode)}. */
     @Test
-    public void testGetByTypeIdentifiableNode() {
-        fail("Not yet implemented.");
+    public void testGetByTypeIdentifiableNode() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNamedNode("http://localhost/test/nodeID", Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+
+            assertThat(node.getByType(Mods.MODS).node(), is(equalTo(mods)));
+        }
     }
 
     /** Tests {@code getByType(IdentifiableNode, IdentifiableNode, Literal)}. */
     @Test
-    public void testGetByTypeIdentifiableNodeIdentifiableNodeLiteral() {
-        fail("Not yet implemented.");
+    public void testGetByTypeIdentifiableNodeIdentifiableNodeLiteral() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node physical = storage.createNode(Mets.DIV).put(Mets.TYPE, "PHYSICAL");
+            Node logical = storage.createNode(Mets.DIV).put(Mets.TYPE, "LOGICAL");
+
+            Node node = storage.createNode().add(logical).add(physical);
+
+            assertThat(node.getByType(Mets.DIV, Mets.TYPE, storage.createLiteral("LOGICAL", RDF.PLAIN_LITERAL)).node(),
+                    is(equalTo(logical)));
+            assertThat(node.getByType(Mets.DIV, Mets.TYPE, storage.createLiteral("PHYSICAL", RDF.PLAIN_LITERAL)).node(),
+                    is(equalTo(physical)));
+        }
     }
 
     /** Tests {@code getByType(IdentifiableNode, IdentifiableNode, String)}. */
     @Test
-    public void testGetByTypeIdentifiableNodeIdentifiableNodeString() {
-        fail("Not yet implemented.");
+    public void testGetByTypeIdentifiableNodeIdentifiableNodeString() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node physical = storage.createNode(Mets.DIV).put(Mets.TYPE, "PHYSICAL");
+            Node logical = storage.createNode(Mets.DIV).put(Mets.TYPE, "LOGICAL");
+
+            Node node = storage.createNode().add(logical).add(physical);
+
+            assertThat(node.getByType(Mets.DIV, Mets.TYPE, "LOGICAL").node(), is(equalTo(logical)));
+            assertThat(node.getByType(Mets.DIV, Mets.TYPE, "PHYSICAL").node(), is(equalTo(physical)));
+        }
     }
 
     /** Tests {@code getByType(String)}. */
     @Test
-    public void testGetByTypeString() {
-        fail("Not yet implemented.");
+    public void testGetByTypeString() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNamedNode("http://localhost/test/nodeID", Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+
+            assertThat(node.getByType(Mods.MODS.getIdentifier()).node(), is(equalTo(mods)));
+        }
     }
 
     /** Tests {@code getByType(String, String, String)}. */
     @Test
-    public void testGetByTypeStringStringString() {
-        fail("Not yet implemented.");
+    public void testGetByTypeStringStringString() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node physical = storage.createNode(Mets.DIV).put(Mets.TYPE, "PHYSICAL");
+            Node logical = storage.createNode(Mets.DIV).put(Mets.TYPE, "LOGICAL");
+
+            Node node = storage.createNode().add(logical).add(physical);
+
+            assertThat(node.getByType(Mets.DIV.getIdentifier(), Mets.TYPE.getIdentifier(), "LOGICAL").node(),
+                    is(equalTo(logical)));
+            assertThat(node.getByType(Mets.DIV.getIdentifier(), Mets.TYPE.getIdentifier(), "PHYSICAL").node(),
+                    is(equalTo(physical)));
+        }
     }
 
     /** Tests {@code getEnumerated()}. */
     @Test
-    public void testGetEnumerated() {
-        fail("Not yet implemented.");
+    public void testGetEnumerated() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNamedNode("http://localhost/test/nodeID", Mods.MODS);
+            NodeReference kitodo = storage.createNodeReference("https://www.kitodo.org/");
+
+            Node node = storage.createNode().add(javac).add(kitodo).put(Mets.TYPE, mods);
+
+            List<Result> enumerated = node.getEnumerated();
+            assertThat(enumerated, hasSize(2));
+            for (Result enumeratedResult : enumerated) {
+                assertThat(enumeratedResult.value(), is(anyOf(equalTo(javac), equalTo(kitodo))));
+
+            }
+        }
     }
 
     /** Tests {@code getFirst()}. */
     @Test
     public void testGetFirst() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            Node mods = storage.createNode(Mods.MODS);
+
+            Node node = storage.createNode();
+            node.add(mods);
+            node.add(javac);
+
+            assertThat(node.getFirst(), contains(mods));
+        }
     }
 
     /** Tests {@code get(IdentifiableNode, IdentifiableNode)}. */
     @Test
     public void testGetIdentifiableNodeIdentifiableNode() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node mods = storage.createNode(Mods.MODS);
+            Node node = storage.createNode().put(Mets.DIV, mods);
+
+            assertThat(node.get(Mets.DIV, Mods.MODS), contains(mods));
+        }
     }
 
     /** Tests {@code get(IdentifiableNode, IdentifiableNode, String)}. */
     @Test
-    public void testGetIdentifiableNodeIdentifiableNodeString() {
-        fail("Not yet implemented.");
+    public void testGetIdentifiableNodeIdentifiableNodeString() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node physical = storage.createNode(Mets.DIV).put(Mets.TYPE, "PHYSICAL");
+            Node logical = storage.createNode(Mets.DIV).put(Mets.TYPE, "LOGICAL");
+
+            Node node = storage.createNode().add(logical).add(physical);
+
+            assertThat(node.getByType(Mets.DIV, Mets.TYPE, "LOGICAL").node(), is(equalTo(logical)));
+            assertThat(node.getByType(Mets.DIV, Mets.TYPE, "PHYSICAL").node(), is(equalTo(physical)));
+        }
     }
 
     /** Tests {@code get(IdentifiableNode, String)}. */
     @Test
     public void testGetIdentifiableNodeString() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node mods = storage.createNode(Mods.MODS);
+            Node node = storage.createNode().put(Mets.DIV, mods);
+
+            assertThat(node.get(Mets.DIV, Mods.MODS.getIdentifier()), contains(mods));
+        }
     }
 
     /** Tests {@code getLast()}. */
     @Test
     public void testGetLast() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            final Literal javac = storage.createLiteral("javac.exe", RDF.PLAIN_LITERAL);
+            final Node mods = storage.createNode(Mods.MODS);
+
+            Node node = storage.createNode();
+            node.add(mods);
+            node.add(javac);
+
+            assertThat(node.getLast(), contains(javac));
+        }
     }
 
     /** Tests {@code get(long)}. */
     @Test
     public void testGetLong() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            node.add(storage.createNode("http://names.example/bob"));
+            node.add(storage.createNode("http://names.example/charlie"));
+
+            assertThat(node.get(2), contains(storage.createNode("http://names.example/bob")));
+        }
     }
 
     /** Tests {@code get(IdentifiableNode)}. */
@@ -228,7 +417,7 @@ public class NodeTest {
             expected.add(RDF.toURL(2));
             expected.add(RDF.toURL(3));
 
-            assertEquals(expected, node.getRelations());
+            assertThat(node.getRelations(), is(equalTo(expected)));
         }
     }
 
@@ -252,7 +441,7 @@ public class NodeTest {
 
             assertEquals(
                     createResult(storage,
-                            (Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
                                     .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE,
                                             "Monograph"))),
 
@@ -279,7 +468,7 @@ public class NodeTest {
 
             assertEquals(
                     createResult(storage,
-                            (Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
                                     .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE,
                                             "Monograph"))),
 
@@ -306,7 +495,7 @@ public class NodeTest {
 
             assertEquals(
                     createResult(storage,
-                            (Node) storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
+                            storage.createNode(Mets.STRUCT_MAP).put(Mets.TYPE, "LOGICAL")
                                     .add(storage.createNode(Mets.DIV).put(Mets.ORDERLABEL, " - ").put(Mets.TYPE,
                                             "Monograph"))),
 
@@ -325,27 +514,47 @@ public class NodeTest {
             String relation = RDF.TYPE.getIdentifier();
 
             assertThat(node.get(relation),
-                    containsInAnyOrder(storage.createLiteralType("http://names.example/petAnimal", null),
-                            storage.createLiteralType("http://names.example/mammal", null)));
+                    containsInAnyOrder(storage.createLeaf("http://names.example/petAnimal", null),
+                            storage.createLeaf("http://names.example/mammal", null)));
         }
     }
 
     /** Tests {@code get(String, IdentifiableNode)}. */
     @Test
     public void testGetStringIdentifiableNode() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node mods = storage.createNode(Mods.MODS);
+            Node node = storage.createNode().put(Mets.DIV, mods);
+
+            assertThat(node.get(Mets.DIV.getIdentifier(), Mods.MODS), contains(mods));
+        }
     }
 
     /** Tests {@code get(String, IdentifiableNode, ObjectType)}. */
     @Test
-    public void testGetStringIdentifiableNodeObjectType() {
-        fail("Not yet implemented.");
+    public void testGetStringIdentifiableNodeObjectType() throws LinkedDataException {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node physical = storage.createNode().put(Mets.TYPE, "PHYSICAL");
+            Node logical = storage.createNode().put(Mets.TYPE, "LOGICAL");
+
+            Node node = storage.createNode().put(Mets.DIV, logical).put(Mets.DIV, physical);
+
+            assertThat(node.get(Mets.DIV.getIdentifier(), Mets.TYPE, storage.createLiteral("LOGICAL", "")).node(),
+                    is(equalTo(logical)));
+            assertThat(node.get(Mets.DIV.getIdentifier(), Mets.TYPE, storage.createLiteral("PHYSICAL", "")).node(),
+                    is(equalTo(physical)));
+        }
     }
 
     /** Tests {@code get(String, String)}. */
     @Test
     public void testGetStringString() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node mods = storage.createNode(Mods.MODS);
+            Node node = storage.createNode().put(Mets.DIV, mods);
+
+            assertThat(node.get(Mets.DIV.getIdentifier(), Mods.MODS.getIdentifier()), contains(mods));
+        }
     }
 
     /** Tests {@code getType()} on a node without a type. */
@@ -365,7 +574,7 @@ public class NodeTest {
     @Test
     public void testGetType1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertEquals(Mods.NAME.getIdentifier(), storage.createNode(Mods.NAME).getType());
+            assertThat(storage.createNode(Mods.NAME).getType(), is(equalTo(Mods.NAME.getIdentifier())));
         }
     }
 
@@ -393,7 +602,7 @@ public class NodeTest {
             Node one = storage.createNode(Mets.METS);
             Node other = storage.createNode(Mods.MODS);
 
-            assertFalse(one.hashCode() == other.hashCode());
+            assertThat(one.hashCode() == other.hashCode(), is(false));
         }
     }
 
@@ -404,27 +613,37 @@ public class NodeTest {
             Node one = storage.createNode(Mets.METS);
             Node other = storage.createNode(Mets.METS);
 
-            assertTrue(one.hashCode() == other.hashCode());
+            assertThat(one.hashCode() == other.hashCode(), is(true));
         }
     }
 
     /** Tests {@code hasType(IdentifiableNode)}. */
     @Test
     public void testHasTypeIdentifiableNode() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.MODS).put(RDF.TYPE, Mets.MD_WRAP);
+
+            assertThat(node.hasType(Mods.MODS), is(true));
+            assertThat(node.hasType(Mets.MD_WRAP), is(true));
+        }
     }
 
     /** Tests {@code hasType(String)}. */
     @Test
     public void testHasTypeString() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.MODS).put(RDF.TYPE, Mets.MD_WRAP);
+
+            assertThat(node.hasType(Mods.MODS.getIdentifier()), is(true));
+            assertThat(node.hasType(Mets.MD_WRAP.getIdentifier()), is(true));
+        }
     }
 
     /** Tests {@code isEmpty()} for an empty node. */
     @Test
     public void testIsEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertTrue(storage.createNode().isEmpty());
+            assertThat(storage.createNode().isEmpty(), is(true));
         }
     }
 
@@ -432,7 +651,7 @@ public class NodeTest {
     @Test
     public void testIsNotEmpty() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertFalse(storage.createNode(Mets.METS).isEmpty());
+            assertThat(storage.createNode(Mets.METS).isEmpty(), is(false));
         }
     }
 
@@ -454,14 +673,8 @@ public class NodeTest {
             while (i.hasNext()) {
                 expected.remove(i.next());
             }
-            assertTrue(expected.isEmpty());
+            assertThat(expected.isEmpty(), is(true));
         }
-    }
-
-    /** Tests {@code keySet()}. */
-    @Test
-    public void testKeySet() {
-        fail("Not yet implemented.");
     }
 
     /** Tests {@code last()}. */
@@ -488,7 +701,7 @@ public class NodeTest {
 
             Node condition = storage.createNode().put(RDF.toURL(2), storage.createNode("http://names.example/bob"));
 
-            assertTrue(node.matches(condition));
+            assertThat(node.matches(condition), is(true));
         }
     }
 
@@ -504,27 +717,49 @@ public class NodeTest {
             Node condition = storage.createNode(Mods.NAME).put(RDF.toURL(9),
                     storage.createNode("http://names.example/alice"));
 
-            assertFalse(node.matches(condition));
+            assertThat(node.matches(condition), is(false));
         }
     }
 
-    /** Tests {@code putAll(IdentifiableNode, Set<? extends ObjectType>)}. */
+    /**
+     * Tests {@code putAll(IdentifiableNode, Collection<? extends ObjectType>)}.
+     */
     @Test
     public void testPutAllIdentifiableNodeSet() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            List<ObjectType> nodes = new ArrayList<>();
+            nodes.add(storage.createNodeReference("http://names.example/alice"));
+            nodes.add(storage.createNodeReference("http://names.example/bob"));
+            nodes.add(storage.createNodeReference("http://names.example/charlie"));
+
+            Node node = storage.createNode();
+            node.putAll(Mods.NAME, nodes);
+
+            assertThat(node.get(Mods.NAME).countUntil(Long.MAX_VALUE), is((long) 3));
+        }
     }
 
     /** Tests {@code putAll(String, Collection<? extends ObjectType>)}. */
     @Test
     public void testPutAllStringCollection() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            List<ObjectType> nodes = new ArrayList<>();
+            nodes.add(storage.createNodeReference("http://names.example/alice"));
+            nodes.add(storage.createNodeReference("http://names.example/bob"));
+            nodes.add(storage.createNodeReference("http://names.example/charlie"));
+
+            Node node = storage.createNode();
+            node.putAll(Mods.NAME.getIdentifier(), nodes);
+
+            assertThat(node.get(Mods.NAME).countUntil(Long.MAX_VALUE), is((long) 3));
+        }
     }
 
     /** Tests {@code put(IdentifiableNode, ObjectType)}. */
     @Test
     public void testPutNodeReferenceObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.createNode().put(Mods.NAME, storage.createLiteralType("Wilhelm Busch", "de"));
+            storage.createNode().put(Mods.NAME, storage.createLeaf("Wilhelm Busch", "de"));
         }
     }
 
@@ -540,8 +775,7 @@ public class NodeTest {
     @Test
     public void testPutStringObjectType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            storage.createNode().put("http://www.loc.gov/mods/v3#name",
-                    storage.createLiteralType("Wilhelm Busch", "de"));
+            storage.createNode().put("http://www.loc.gov/mods/v3#name", storage.createLeaf("Wilhelm Busch", "de"));
         }
     }
 
@@ -556,115 +790,208 @@ public class NodeTest {
     /** Tests {@code removeAll(IdentifiableNode)}. */
     @Test
     public void testRemoveAllIdentifiableNode() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            Node bob = storage.createNode("http://names.example/bob");
+            node.add(bob);
+            node.add(storage.createNode("http://names.example/charlie"));
+
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(3));
+            IdentifiableNode two = storage.createNodeReference(RDF.toURL(2));
+            assertThat(node.removeAll(two), contains(bob));
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(2));
+            assertThat(node.removeAll(two), is(nullValue()));
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(2));
+        }
     }
 
     /** Tests {@code removeAll(String)}. */
     @Test
     public void testRemoveAllString() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            Node bob = storage.createNode("http://names.example/bob");
+            node.add(bob);
+            node.add(storage.createNode("http://names.example/charlie"));
+
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(3));
+            assertThat(node.removeAll(RDF.toURL(2)), contains(bob));
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(2));
+            assertThat(node.removeAll(RDF.toURL(2)), is(nullValue()));
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(2));
+        }
     }
 
     /** Tests {@code removeFirst()}. */
     @Test
     public void testRemoveFirst() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            Node alice = storage.createNode("http://names.example/alice");
+            node.add(alice);
+            Node bob = storage.createNode("http://names.example/bob");
+            node.add(bob);
+            Node charlie = storage.createNode("http://names.example/charlie");
+            node.add(charlie);
+
+            node.removeFirst();
+
+            assertThat(node.get(1), contains(bob));
+            assertThat(node.get(2), contains(charlie));
+
+            node.removeFirst();
+
+            assertThat(node.get(1), contains(charlie));
+        }
     }
 
     /** Tests {@code removeFirstOccurrence(Object)}. */
     @Test
-    public void testRemoveFirstOccurrenceObject() {
-        fail("Not yet implemented.");
+    public void testRemoveFirstOccurrence1() {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            Node alice = storage.createNode("http://names.example/alice");
+            node.add(alice);
+            Node bob = storage.createNode("http://names.example/bob");
+            node.add(bob);
+            Node charlie = storage.createNode("http://names.example/charlie");
+            node.add(charlie);
+
+            node.removeFirstOccurrence(bob);
+
+            assertThat(node.get(1), contains(alice));
+            assertThat(node.get(2), contains(charlie));
+        }
+    }
+
+    /** Tests {@code removeFirstOccurrence(Object)}. */
+    @Test
+    public void testRemoveFirstOccurrence2() {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            Node alice = storage.createNode("http://names.example/alice");
+            node.add(alice);
+            Node bob = storage.createNode("http://names.example/bob");
+            Node james = storage.createNode("http://names.example/james");
+            node.add(bob).put(RDF.toURL(2), james);
+            Node charlie = storage.createNode("http://names.example/charlie");
+            node.add(charlie);
+
+            node.removeFirstOccurrence(bob);
+
+            assertThat(node.get(1), contains(alice));
+            assertThat(node.get(2), not(contains(bob)));
+            assertThat(node.get(2), contains(james));
+            assertThat(node.get(3), contains(charlie));
+        }
     }
 
     /** Tests {@code removeLast()}. */
     @Test
     public void testRemoveLast() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            Node alice = storage.createNode("http://names.example/alice");
+            node.add(alice);
+            Node bob = storage.createNode("http://names.example/bob");
+            node.add(bob);
+            Node charlie = storage.createNode("http://names.example/charlie");
+            node.add(charlie);
+
+            node.removeLast();
+
+            assertThat(node.getEnumerated(), hasSize(2));
+            assertThat(node.getLast(), contains(bob));
+        }
     }
 
     /** Tests {@code removeLastOccurrence(Object)}. */
     @Test
     public void testRemoveLastOccurrenceObject() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            Node alice = storage.createNode("http://names.example/alice");
+            node.add(alice);
+            Node bob = storage.createNode("http://names.example/bob");
+            node.add(bob);
+            Node charlie = storage.createNode("http://names.example/charlie");
+            node.add(charlie);
+
+            assertThat(node.removeLastOccurrence(bob), is(true));
+            assertThat(node.last().orElse(null), is((long) 2));
+            assertThat(node.get(2), contains(charlie));
+            assertThat(node.removeLastOccurrence(bob), is(false));
+            assertThat(node.last().orElse(null), is((long) 2));
+            assertThat(node.get(2), contains(charlie));
+        }
     }
 
     /** Tests {@code remove(Object)}. */
     @Test
     public void testRemoveObject() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node node = storage.createNode(Mods.NAME);
+            node.add(storage.createNode("http://names.example/alice"));
+            Node bob = storage.createNode("http://names.example/bob");
+            node.add(bob);
+            node.add(storage.createNode("http://names.example/charlie"));
+
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(3));
+            assertThat(node.remove(bob), is(true));
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(2));
+            assertThat(node.remove(bob), is(false));
+            assertThat(node.getEnumerated().stream().mapToInt(r -> r.isAny() ? 1 : 0).sum(), is(2));
+        }
     }
 
     /** Tests {@code replace(String, Set<ObjectType>)}. */
     @Test
     public void testReplaceStringSet() {
-        fail("Not yet implemented.");
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node alice = storage.createNode("http://names.example/alice");
+            Node bob = storage.createNode("http://names.example/bob");
+            Node charlie = storage.createNode("http://names.example/charlie");
+            Node james = storage.createNode("http://names.example/james");
+
+            Node node = storage.createNode(Mods.NAME).add(alice).add(bob).add(charlie);
+
+            node.replace(RDF.toURL(2), new HashSet<>(Arrays.asList(new ObjectType[] {bob, james })));
+
+            assertThat(node.get(2), containsInAnyOrder(james, bob));
+        }
     }
 
-    /** Tests {@code set(int, ObjectType)}. */
+    /** Tests {@code set(long, ObjectType)}. */
     @Test
-    public void testSetIntObjectType() {
-        fail("Not yet implemented.");
+    public void testSetLongObjectType() {
+        for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
+            Node alice = storage.createNode("http://names.example/alice");
+
+            Node node = storage.createNode();
+
+            node.set(42, alice);
+
+            assertThat(node.get(42), contains(alice));
+        }
     }
 
     /** Tests {@code size()}. */
     @Test
     public void testSize() {
-        fail("Not yet implemented.");
-    }
-
-    /** Tests {@code ObjectType.toRDFNode(Model, Boolean)}. */
-    @Test
-    public void testToModel() throws LinkedDataException {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            Node modsSection = storage.createNode(Mods.MODS)
-                    .add(storage.createNode(Mods.CLASSIFICATION)
-                            .put(Mods.AUTHORITY, storage.createLiteral("GDZ", RDF.PLAIN_LITERAL))
-                            .add(storage.createLiteral("Zeutschel Digital", RDF.PLAIN_LITERAL)))
-                    .add(storage.createNode(Mods.RECORD_INFO)
-                            .add(storage.createNode(Mods.RECORD_IDENTIFIER)
-                                    .put(Mods.SOURCE, storage.createLiteral("gbv-ppn", RDF.PLAIN_LITERAL))
-                                    .add(storage.createLiteral("PPN313539384", RDF.PLAIN_LITERAL))))
-                    .add(storage.createNode(Mods.IDENTIFIER)
-                            .put(Mods.TYPE, storage.createLiteral("PPNanalog", RDF.PLAIN_LITERAL))
-                            .add(storage.createLiteral("PPN313539383", RDF.PLAIN_LITERAL)))
-                    .add(storage.createNode(Mods.TITLE_INFO)
-                            .add(storage.createNode(Mods.TITLE).add(storage.createLiteral(
-                                    "Sever. Pinaeus de virginitatis notis, graviditate et partu. Ludov. Bonaciolus de conformatione foetus. Accedeunt alia",
-                                    RDF.PLAIN_LITERAL))))
-                    .add(storage.createNode(Mods.LANGUAGE)
-                            .add(storage.createNode(Mods.LANGUAGE_TERM)
-                                    .put(Mods.AUTHORITY, storage.createLiteral("iso639-2b", RDF.PLAIN_LITERAL))
-                                    .put(Mods.TYPE, storage.createLiteral("code", RDF.PLAIN_LITERAL))
-                                    .add(storage.createLiteral("la", RDF.PLAIN_LITERAL))))
-                    .add(storage.createNode(Mods.PLACE)
-                            .add(storage.createNode(Mods.PLACE_TERM)
-                                    .put(Mods.TYPE, storage.createLiteral("text", RDF.PLAIN_LITERAL))
-                                    .add(storage.createLiteral("Lugduni Batavorum", RDF.PLAIN_LITERAL))))
-                    .add(storage.createNode(Mods.DATE_ISSUED)
-                            .put(Mods.ENCODING, storage.createLiteral("w3cdtf", RDF.PLAIN_LITERAL))
-                            .add(storage.createLiteral("1641", RDF.PLAIN_LITERAL)))
-                    .add(storage.createNode(Mods.PUBLISHER).add(storage.createLiteral("Heger", RDF.PLAIN_LITERAL)))
-                    .add(storage.createNode(Mods.NAME)
-                            .put(Mods.TYPE, storage.createLiteral("personal", RDF.PLAIN_LITERAL))
-                            .add(storage.createNode(Mods.ROLE).add(storage.createNode(Mods.ROLE_TERM)
-                                    .put(Mods.AUTHORITY, storage.createLiteral("marcrelator", RDF.PLAIN_LITERAL))
-                                    .put(Mods.TYPE, storage.createLiteral("code", RDF.PLAIN_LITERAL))
-                                    .add(storage.createLiteral("aut", RDF.PLAIN_LITERAL)))
-                                    .add(storage.createNode(Mods.NAME_PART)
-                                            .put(Mods.TYPE, storage.createLiteral("family", RDF.PLAIN_LITERAL))
-                                            .add(storage.createLiteral("Pineau", RDF.PLAIN_LITERAL)))
-                                    .add(storage.createNode(Mods.NAME_PART)
-                                            .put(Mods.TYPE, storage.createLiteral("given", RDF.PLAIN_LITERAL))
-                                            .add(storage.createLiteral("Severin", RDF.PLAIN_LITERAL)))
-                                    .add(storage.createNode(Mods.DISPLAY_FORM)
-                                            .add(storage.createLiteral("Pineau, Severin", RDF.PLAIN_LITERAL)))))
-                    .add(storage.createNode(Mods.PHYSICAL_DESCRIPTION).add(storage.createNode(Mods.EXTENT)
-                            .add(storage.createLiteral("getr. Zählung", RDF.PLAIN_LITERAL))));
+            Node node = storage.createNode(Mods.NAME); // 1× rdf:type
+            Node alice = storage.createNode("http://names.example/alice"); // 1×
+                                                                           // rdf:_1
+            node.add(alice);
+            Node bob = storage.createNode("http://names.example/bob");
+            Node james = storage.createNode("http://names.example/james");
+            node.add(bob).put(RDF.toURL(2), james); // 2× rdf:_2
+            Node charlie = storage.createNode("http://names.example/charlie");
+            node.add(charlie); // 1× rdf:_3
 
-            Model m = ModelFactory.createDefaultModel();
-            modsSection.toRDFNode(m, true);
-            assertThat(new MemoryResult(m, false).node(), is(equalTo(modsSection)));
+            assertThat(node.size(), is(5));
         }
     }
 

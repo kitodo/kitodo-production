@@ -43,7 +43,7 @@ public abstract class Node implements AccessibleObject, NodeType {
      * @param element
      *            element to add
      */
-    public abstract void add(int index, ObjectType element);
+    public abstract void add(long index, ObjectType element);
 
     /**
      * Adds a node to the nodes referenced by index. The add function implements
@@ -209,10 +209,7 @@ public abstract class Node implements AccessibleObject, NodeType {
      *            identifier value
      * @return found nodes
      */
-    public Result get(IdentifiableNode relation, IdentifiableNode identifierRelation, String identifierValue) {
-        return get(relation != null ? relation.getIdentifier() : null, identifierRelation,
-                new MemoryLiteral(identifierValue, RDF.PLAIN_LITERAL));
-    }
+    public abstract Result get(IdentifiableNode relation, IdentifiableNode identifierRelation, String identifierValue);
 
     /**
      * Gets all nodes referenced by relation which have a certain type.
@@ -524,7 +521,7 @@ public abstract class Node implements AccessibleObject, NodeType {
      * @param objects
      *            objects to add
      */
-    public void putAll(IdentifiableNode relation, Set<? extends ObjectType> objects) {
+    public void putAll(IdentifiableNode relation, Collection<? extends ObjectType> objects) {
         putAll(relation.getIdentifier(), objects);
     }
 
@@ -617,7 +614,7 @@ public abstract class Node implements AccessibleObject, NodeType {
      * @param element
      *            new element for this index
      */
-    public abstract void set(int index, ObjectType element);
+    public abstract void set(long index, ObjectType element);
 
     /**
      * Sets a literal as only child of this node. Removes all other nodes, but

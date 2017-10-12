@@ -11,10 +11,9 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.nio.BufferOverflowException;
 import java.util.NoSuchElementException;
@@ -27,7 +26,7 @@ public class AccessibleObjectTest {
     public void testGetTypeForALiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             LangString langString = storage.createLangString("Kitodo. Key to digital objects", "de");
-            assertEquals(RDF.LANG_STRING.getIdentifier(), ((AccessibleObject) langString).getType());
+            assertThat(((AccessibleObject) langString).getType(), is(equalTo(RDF.LANG_STRING.getIdentifier())));
         }
     }
 
@@ -48,7 +47,7 @@ public class AccessibleObjectTest {
     public void testGetTypeForANodeWithExactlyOneType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             final String SOME_CLASS = "http://names.kitodo.org/tests#SomeClass";
-            assertEquals(SOME_CLASS, ((AccessibleObject) storage.createNode(SOME_CLASS)).getType());
+            assertThat(((AccessibleObject) storage.createNode(SOME_CLASS)).getType(), is(equalTo(SOME_CLASS)));
         }
     }
 
@@ -73,7 +72,8 @@ public class AccessibleObjectTest {
             kitodo.put("http://schema.org/name", storage.createLangString("Kitodo. Key to digital objects", "de"));
             kitodo.put("http://xmlns.com/foaf/0.1/page", "https://www.kitodo.org/");
 
-            assertTrue(((AccessibleObject) kitodo).matches(storage.createNode("http://schema.org/Organization")));
+            assertThat(((AccessibleObject) kitodo).matches(storage.createNode("http://schema.org/Organization")),
+                    is(true));
             assertTrue(((AccessibleObject) kitodo).matches(storage
                     .createNode("http://de.wikipedia.org/wiki/Verein#Eingetragener_Verein")
                     .put("http://schema.org/name", storage.createLangString("Kitodo. Key to digital objects", "de"))));

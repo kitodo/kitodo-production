@@ -187,7 +187,7 @@ public class MemoryResult extends HashSet<ObjectType> implements Result {
 
     /** {@inheritDoc} */
     @Override
-    public long count(int atLeastUntil, Class<?>... filterClasses) {
+    public long countUntil(long atLeastUntil, Class<?>... filterClasses) {
         if ((atLeastUntil == Integer.MAX_VALUE) && (filterClasses.length == 0)) {
             return super.size();
         }

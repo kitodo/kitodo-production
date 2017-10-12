@@ -11,10 +11,9 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -25,7 +24,7 @@ public class MemoryNamedNodeTest {
         MemoryNamedNode one = new MemoryNamedNode("http://names.kitodo.org/test#Object1");
         MemoryNamedNode another = new MemoryNamedNode("http://names.kitodo.org/test#Object1");
 
-        assertTrue(one.equals(another));
+        assertThat(one, is(equalTo(another)));
     }
 
     @Test(expected = AssertionError.class)
@@ -40,7 +39,7 @@ public class MemoryNamedNodeTest {
             one.add(new MemoryNode("http://names.kitodo.org/test#Class1"));
             another.add(new MemoryNodeReference("http://names.kitodo.org/test#Object2"));
 
-            one.equals(another);
+            assertThat(one, is(equalTo(another)));
         }
     }
 
@@ -49,7 +48,7 @@ public class MemoryNamedNodeTest {
         MemoryNamedNode one = new MemoryNamedNode("http://names.kitodo.org/test#Object1");
         MemoryNamedNode another = new MemoryNamedNode("http://names.kitodo.org/test#Object2");
 
-        assertFalse(one.equals(another));
+        assertThat(one, is(not(equalTo(another))));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class MemoryNamedNodeTest {
         MemoryNamedNode one = new MemoryNamedNode("http://names.kitodo.org/test#Object1");
         MemoryNamedNode another = new MemoryNamedNode("http://names.kitodo.org/test#Object1");
 
-        assertTrue(one.hashCode() == another.hashCode());
+        assertThat(one.hashCode() == another.hashCode(), is(true));
     }
 
     @Test
@@ -71,7 +70,7 @@ public class MemoryNamedNodeTest {
         MemoryNamedNode one = new MemoryNamedNode("http://names.kitodo.org/test#Object1");
         MemoryNamedNode another = new MemoryNamedNode("http://names.kitodo.org/test#Object2");
 
-        assertFalse(one.hashCode() == another.hashCode());
+        assertThat(one.hashCode() == another.hashCode(), is(false));
     }
 
     @Test

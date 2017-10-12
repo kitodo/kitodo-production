@@ -23,6 +23,12 @@ public class MemoryStorage implements Storage {
         return new MemoryLangString(value, languageTag);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public ObjectType createLeaf(String value, String lang) {
+        return MemoryLiteral.createLeaf(value, lang);
+    }
+
     /**
      * {@inheritDoc} This implementation overrides the default implementation,
      * because if the type is a MemoryNodeReference, it can be reused.
@@ -43,16 +49,17 @@ public class MemoryStorage implements Storage {
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
-    public ObjectType createLiteralType(String value, String lang) {
-        return MemoryLiteral.createLeaf(value, lang);
+    public <NamedNode extends Node & IdentifiableNode> NamedNode createNamedNode(String identifier) {
+        return (NamedNode) new MemoryNamedNode(identifier);
     }
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    public <NamedNode extends Node & IdentifiableNode> NamedNode createNamedNode(String identifier) {
-        return (NamedNode) new MemoryNamedNode(identifier);
+    public <NamedNode extends Node & IdentifiableNode> NamedNode createNamedNode(String identifier, String type) {
+        return (NamedNode) new MemoryNamedNode(identifier, type);
     }
 
     /** {@inheritDoc} */

@@ -106,7 +106,7 @@ public class MemoryLangString extends MemoryLiteral implements LangString {
                 return false;
             }
             Result expectedLanguage = filter.get(XML_LANG);
-            switch ((int) expectedLanguage.count(2)) {
+            switch ((int) expectedLanguage.countUntil(2)) {
                 case 0:
                     break;
                 case 1:

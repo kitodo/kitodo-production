@@ -113,7 +113,10 @@ public class MemoryLiteral implements Literal {
      *            RDF.XML_LITERAL, or a literal type defined in XMLSchema.
      */
     public MemoryLiteral(String value, NodeReference type) {
-        this.value = value != null ? value : "";
+        if (value == null) {
+            throw new IllegalArgumentException("Value must not be null.");
+        }
+        this.value = value;
         this.type = type != null ? type.getIdentifier() : RDF.PLAIN_LITERAL.getIdentifier();
         if (!LITERAL_TYPES.contains(this.type) && !XSD_NAMESPACE.equals(Namespaces.namespaceOf(this.type))) {
             throw new IllegalArgumentException(type.getIdentifier());
@@ -129,7 +132,10 @@ public class MemoryLiteral implements Literal {
      *            literal type
      */
     protected MemoryLiteral(String value, String type) {
-        this.value = value != null ? value : "";
+        if (value == null) {
+            throw new IllegalArgumentException("Value must not be null.");
+        }
+        this.value = value;
         this.type = (type == null) || type.isEmpty() ? RDF.PLAIN_LITERAL.getIdentifier() : type;
         assert URI_SCHEME.matcher(this.type).find() : "Illegal type.";
     }
@@ -215,7 +221,7 @@ public class MemoryLiteral implements Literal {
             }
 
             Result expectedType = filter.get(RDF.TYPE);
-            switch ((int) expectedType.count(2)) {
+            switch ((int) expectedType.countUntil(2)) {
                 case 0:
                     break;
                 case 1:
@@ -232,7 +238,7 @@ public class MemoryLiteral implements Literal {
             }
 
             Result expectedValue = filter.get(RDF.VALUE);
-            switch ((int) expectedValue.count(2)) {
+            switch ((int) expectedValue.countUntil(2)) {
                 case 0:
                     break;
                 case 1:

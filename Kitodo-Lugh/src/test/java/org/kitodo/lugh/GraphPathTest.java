@@ -11,7 +11,9 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.*;
 
@@ -70,7 +72,7 @@ public class GraphPathTest {
                         .add(new MemoryNode(Mods.EXTENT).add(new MemoryLiteral("getr. Zählung", RDF.PLAIN_LITERAL))));
 
         Result result = modsSection.find(new GraphPath(gpath, prefixes));
-        assertEquals("Pineau, Severin", result.leaves(" ; "));
+        assertThat(result.leaves(" ; "), is(equalTo("Pineau, Severin")));
     }
 
     @Test
@@ -100,7 +102,7 @@ public class GraphPathTest {
                                                         .put(GraphPath.TO, new MemoryNode(GraphPath.LOCATION_STEP)
                                                                 .put(RDF.PREDICATE, RDF.toURL(Node.FIRST_INDEX)))))))));
 
-        assertTrue(expected.equals(new GraphPath(gpath, prefixes)));
+        assertThat(new GraphPath(gpath, prefixes), is(equalTo(expected)));
 
         new MemoryNode(Mods.ROLE).put(GraphPath.ANY_PREDICATE,
                 new MemoryNode(Mods.ROLE_TERM).add(new MemoryLiteral("aut", RDF.PLAIN_LITERAL)));

@@ -11,7 +11,8 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class NodeTypeTest {
     public void testNamedNodeIsANodeType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             NodeType nt = storage.createNamedNode("http://test.example/foo");
-            assertNotNull(nt);
+            assertThat(nt, is(notNullValue()));
         }
     }
 
@@ -29,7 +30,7 @@ public class NodeTypeTest {
     public void testNodeIsANodeType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             NodeType nt = storage.createNode();
-            assertNotNull(nt);
+            assertThat(nt, is(notNullValue()));
         }
     }
 
@@ -37,7 +38,7 @@ public class NodeTypeTest {
     public void testNodeReferenceIsANodeType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             NodeType nt = storage.createNodeReference("http://test.example/foo");
-            assertNotNull(nt);
+            assertThat(nt, is(notNullValue()));
         }
     }
 

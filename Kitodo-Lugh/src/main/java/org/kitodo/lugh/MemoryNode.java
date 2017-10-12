@@ -182,7 +182,7 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public void add(int index, ObjectType element) {
+    public void add(long index, ObjectType element) {
         // find first index >= index that is free
         long freeIndex = index;
         while (edges.containsKey(RDF.toURL(freeIndex))) {
@@ -190,7 +190,7 @@ public class MemoryNode extends Node {
         }
 
         // move all elements till to the free index up by 1
-        for (long i = freeIndex; i >= index; i--) {
+        for (long i = freeIndex; i > index; i--) {
             edges.put(RDF.toURL(i), edges.remove(RDF.toURL(i - 1)));
         }
 
@@ -404,6 +404,13 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
+    public Result get(IdentifiableNode relation, IdentifiableNode identifierRelation, String identifierValue) {
+        return get(relation != null ? relation.getIdentifier() : null, identifierRelation,
+                new MemoryLiteral(identifierValue, RDF.PLAIN_LITERAL));
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public MemoryResult get(long index) {
         return new MemoryResult(get(RDF.toURL(index)));
     }
@@ -509,7 +516,7 @@ public class MemoryNode extends Node {
         }
         ArrayList<Result> result = new ArrayList<>((int) range.last);
         for (long i = 0; i < (range.first - 1); i++) {
-            result.add(null);
+            result.add(new MemoryResult());
         }
         for (long i = range.first; i <= range.last; i++) {
             result.add(get(i));
@@ -835,7 +842,7 @@ public class MemoryNode extends Node {
 
     /** {@inheritDoc} */
     @Override
-    public void set(int index, ObjectType element) {
+    public void set(long index, ObjectType element) {
         edges.put(RDF.toURL(index), new HashSet<>(Arrays.asList(new ObjectType[] {element })));
     }
 

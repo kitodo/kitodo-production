@@ -11,9 +11,8 @@
 
 package org.kitodo.lugh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -25,20 +24,21 @@ public class MemoryNodeReferenceTest {
         MemoryNodeReference one = new MemoryNodeReference("http://names.example/foo");
         MemoryNodeReference other = new MemoryNodeReference("http://names.example/bar");
 
-        assertFalse(one.equals(other));
+        assertThat(one, is(not(equalTo(other))));
     }
 
     @Test
     public void testEqualsObject() {
         MemoryNodeReference one = new MemoryNodeReference("http://names.example/foo");
-        MemoryNodeReference other = new MemoryNodeReference("http://names.example/foo");
+        MemoryNodeReference another = new MemoryNodeReference("http://names.example/foo");
 
-        assertTrue(one.equals(other));
+        assertThat(one, is(equalTo(another)));
     }
 
     @Test
     public void testGetIdentifier() {
-        assertEquals("http://names.example/foo", new MemoryNodeReference("http://names.example/foo").getIdentifier());
+        assertThat(new MemoryNodeReference("http://names.example/foo").getIdentifier(),
+                is(equalTo("http://names.example/foo")));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class MemoryNodeReferenceTest {
         MemoryNodeReference one = new MemoryNodeReference("http://names.example/foo");
         MemoryNodeReference other = new MemoryNodeReference("http://names.example/bar");
 
-        assertFalse(one.hashCode() == other.hashCode());
+        assertThat(one.hashCode() == other.hashCode(), is(false));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class MemoryNodeReferenceTest {
         MemoryNodeReference one = new MemoryNodeReference("http://names.example/foo");
         MemoryNodeReference other = new MemoryNodeReference("http://names.example/foo");
 
-        assertTrue(one.hashCode() == other.hashCode());
+        assertThat(one.hashCode() == other.hashCode(), is(true));
     }
 
     @Test

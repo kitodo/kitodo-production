@@ -11,6 +11,8 @@
 
 package org.kitodo.lugh;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -23,9 +25,9 @@ public class LangStringTest {
     public void testEqualsObject() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             LangString one = storage.createLangString("Hoc est corpus meum.", "la");
-            LangString other = storage.createLangString("Hoc est corpus meum.", "la");
+            LangString another = storage.createLangString("Hoc est corpus meum.", "la");
 
-            assertTrue(one.equals(other));
+            assertThat(one, is(equalTo(another)));
         }
     }
 
@@ -35,7 +37,7 @@ public class LangStringTest {
             LangString one = storage.createLangString("Hoc est corpus meum.", "la");
             LangString other = storage.createLangString("Hoc est corpus meum.", "la");
 
-            assertEquals(one.hashCode(), other.hashCode());
+            assertThat(other.hashCode(), is(equalTo(one.hashCode())));
         }
     }
 
@@ -76,7 +78,7 @@ public class LangStringTest {
             LangString object = storage.createLangString("Hoc est corpus meum.", "la");
             Node condition = storage.createNode().put(XML_LANG, "fr");
 
-            assertFalse(object.matches(condition));
+            assertThat(object.matches(condition), is(false));
         }
     }
 
@@ -86,7 +88,7 @@ public class LangStringTest {
             LangString object = storage.createLangString("Hoc est corpus meum.", "la");
             Node condition = storage.createNode(Mets.FILE_SEC);
 
-            assertFalse(object.matches(condition));
+            assertThat(object.matches(condition), is(false));
         }
     }
 
@@ -96,7 +98,7 @@ public class LangStringTest {
             LangString object = storage.createLangString("In vino veritas est.", "la");
             Node condition = storage.createNode().put(RDF.VALUE, "In aqua bacillus est.");
 
-            assertFalse(object.matches(condition));
+            assertThat(object.matches(condition), is(false));
         }
     }
 
@@ -106,7 +108,7 @@ public class LangStringTest {
             LangString object = storage.createLangString("Hoc est corpus meum.", "la");
             Node condition = storage.createNode(RDF.LANG_STRING);
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -116,7 +118,7 @@ public class LangStringTest {
             LangString object = storage.createLangString("Hoc est corpus meum.", "la");
             Node condition = storage.createNode().put(RDF.VALUE, "Hoc est corpus meum.");
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -126,7 +128,7 @@ public class LangStringTest {
             LangString object = storage.createLangString("Hoc est corpus meum.", "la");
             Node condition = storage.createNode().put(XML_LANG, "la");
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -136,7 +138,7 @@ public class LangStringTest {
             LangString object = storage.createLangString("Hoc est corpus meum.", "la");
             LangString condition = storage.createLangString("Hoc est corpus meum.", "la");
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 

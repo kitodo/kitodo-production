@@ -11,6 +11,8 @@
 
 package org.kitodo.lugh;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -21,7 +23,7 @@ public class LiteralTest {
     public void testCreateCreatesLangString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLangString("Hoc est corpus meum.", "la"),
-                    storage.createLiteralType("Hoc est corpus meum.", "la"));
+                    storage.createLeaf("Hoc est corpus meum.", "la"));
         }
     }
 
@@ -29,7 +31,7 @@ public class LiteralTest {
     public void testCreateCreatesNodeReference1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createNodeReference("http://www.kitodo.org/"),
-                    storage.createLiteralType("http://www.kitodo.org/", null));
+                    storage.createLeaf("http://www.kitodo.org/", null));
         }
     }
 
@@ -37,7 +39,7 @@ public class LiteralTest {
     public void testCreateCreatesNodeReference2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createNodeReference("http://www.kitodo.org/"),
-                    storage.createLiteralType("http://www.kitodo.org/", ""));
+                    storage.createLeaf("http://www.kitodo.org/", ""));
         }
     }
 
@@ -45,7 +47,7 @@ public class LiteralTest {
     public void testCreateCreatesPlainLiteral1() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL),
-                    storage.createLiteralType("public static void main(String[] args)", null));
+                    storage.createLeaf("public static void main(String[] args)", null));
         }
     }
 
@@ -53,7 +55,7 @@ public class LiteralTest {
     public void testCreateCreatesPlainLiteral2() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL),
-                    storage.createLiteralType("public static void main(String[] args)", ""));
+                    storage.createLeaf("public static void main(String[] args)", ""));
         }
     }
 
@@ -61,7 +63,7 @@ public class LiteralTest {
     public void testCreateLiteralCreatesLangString() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             assertEquals(storage.createLangString("Hoc est corpus meum.", "la"),
-                    storage.createLiteralType("Hoc est corpus meum.", "la"));
+                    storage.createLeaf("Hoc est corpus meum.", "la"));
         }
     }
 
@@ -91,7 +93,7 @@ public class LiteralTest {
                     "<mods:role><mods:roleTerm authority=\"marcrelator\" type=\"code\">edt</mods:roleTerm></mods:role>",
                     RDF.XML_LITERAL);
 
-            assertFalse(one.equals(other));
+            assertThat(one, is(not(equalTo(other))));
         }
     }
 
@@ -101,7 +103,7 @@ public class LiteralTest {
             Literal one = storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#string");
             Literal other = storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#integer");
 
-            assertFalse(one.equals(other));
+            assertThat(one, is(not(equalTo(other))));
         }
     }
 
@@ -109,9 +111,9 @@ public class LiteralTest {
     public void testEqualsObjectForTwoEqualLiterals() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Literal one = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
-            Literal other = storage.createLiteral("Lorem ipsum dolor sit amet", "");
+            Literal another = storage.createLiteral("Lorem ipsum dolor sit amet", "");
 
-            assertTrue(one.equals(other));
+            assertThat(one, is(equalTo(another)));
         }
     }
 
@@ -119,9 +121,9 @@ public class LiteralTest {
     public void testEqualsObjectForTwoEqualLiteralsWithAndWithoutStringDeclared() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Literal one = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
-            Literal other = storage.createLiteral("Lorem ipsum dolor sit amet", XMLSchema.STRING);
+            Literal another = storage.createLiteral("Lorem ipsum dolor sit amet", XMLSchema.STRING);
 
-            assertTrue(one.equals(other));
+            assertThat(one, is(equalTo(another)));
         }
     }
 
@@ -151,7 +153,7 @@ public class LiteralTest {
                     "<mods:role><mods:roleTerm authority=\"marcrelator\" type=\"code\">edt</mods:roleTerm></mods:role>",
                     RDF.XML_LITERAL);
 
-            assertFalse(one.hashCode() == other.hashCode());
+            assertThat(one.hashCode() == other.hashCode(), is(false));
         }
     }
 
@@ -161,7 +163,7 @@ public class LiteralTest {
             Literal one = storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#string");
             Literal other = storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#integer");
 
-            assertFalse(one.hashCode() == other.hashCode());
+            assertThat(one.hashCode() == other.hashCode(), is(false));
         }
     }
 
@@ -171,7 +173,7 @@ public class LiteralTest {
             Literal one = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Literal other = storage.createLiteral("Lorem ipsum dolor sit amet", "");
 
-            assertTrue(one.hashCode() == other.hashCode());
+            assertThat(one.hashCode() == other.hashCode(), is(true));
         }
     }
 
@@ -195,14 +197,15 @@ public class LiteralTest {
     @Test
     public void testLiteralCanBeCreatedAsRDFPlainLiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertNotNull(storage.createLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL));
+            assertThat(storage.createLiteral("public static void main(String[] args)", RDF.PLAIN_LITERAL),
+                    is(notNullValue()));
         }
     }
 
     @Test
     public void testLiteralCanBeCreatedAsXSDType() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertNotNull(storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#integer"));
+            assertThat(storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#integer"), is(notNullValue()));
         }
     }
 
@@ -227,7 +230,7 @@ public class LiteralTest {
     public void testLiteralCreatedWithoutTypeIsAPlainLiteral() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
             Literal tested = storage.createLiteral("Lorem ipsum dolor sit amet", (NodeReference) null);
-            assertEquals(RDF.PLAIN_LITERAL.getIdentifier(), tested.getType());
+            assertThat(tested.getType(), is(equalTo(RDF.PLAIN_LITERAL.getIdentifier())));
         }
     }
 
@@ -237,7 +240,7 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Node condition = storage.createNode(RDF.PLAIN_LITERAL).put(RDF.VALUE, "javac.exe");
 
-            assertFalse(object.matches(condition));
+            assertThat(object.matches(condition), is(false));
         }
     }
 
@@ -247,7 +250,7 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Node condition = storage.createNode(RDF.PLAIN_LITERAL).put(RDF.VALUE, "javac.exe");
 
-            assertFalse(object.matches(condition));
+            assertThat(object.matches(condition), is(false));
         }
     }
 
@@ -257,7 +260,7 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Node condition = storage.createNode(RDF.PLAIN_LITERAL);
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -267,7 +270,7 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Node condition = storage.createNode(RDF.PLAIN_LITERAL).put(RDF.VALUE, "Lorem ipsum dolor sit amet");
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -277,7 +280,7 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Node condition = storage.createNode().put(RDF.VALUE, "Lorem ipsum dolor sit amet");
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -287,7 +290,7 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Literal condition = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -297,7 +300,7 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Literal condition = storage.createLiteral("", RDF.PLAIN_LITERAL);
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
@@ -307,14 +310,15 @@ public class LiteralTest {
             Literal object = storage.createLiteral("Lorem ipsum dolor sit amet", RDF.PLAIN_LITERAL);
             Literal condition = storage.createLiteral("Lorem ipsum dolor sit amet", (NodeReference) null);
 
-            assertTrue(object.matches(condition));
+            assertThat(object.matches(condition), is(true));
         }
     }
 
     @Test
     public void testToStringForInteger() {
         for (Storage storage : TestConfig.STORAGES_TO_TEST_AGAINST) {
-            assertEquals("42", storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#integer").toString());
+            assertThat(storage.createLiteral("42", "http://www.w3.org/2001/XMLSchema#integer").toString(),
+                    is(equalTo("42")));
         }
     }
 
