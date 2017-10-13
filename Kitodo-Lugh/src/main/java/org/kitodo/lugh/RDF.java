@@ -14,17 +14,14 @@ package org.kitodo.lugh;
 import java.math.BigInteger;
 import java.util.*;
 
-import org.kitodo.lugh.*;
-
 /**
  * The {@code http://www.w3.org/1999/02/22-rdf-syntax-ns} namespace.
  */
 public class RDF {
     /**
-     * The RDF subject.
+     * Reserved string used to identify RDF subject in XML context.
      */
-    public static final NodeReference ABOUT = new MemoryNodeReference(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#about");
+    public static final String ABOUT = "http://www.w3.org/1999/02/22-rdf-syntax-ns#about";
 
     /**
      * The class of containers of alternatives.
@@ -36,12 +33,6 @@ public class RDF {
      */
     public static final NodeReference BAG = new MemoryNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag");
 
-    public static final NodeReference CLASS = new MemoryNodeReference(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#Class");
-
-    public static final NodeReference DESCRIPTION = new MemoryNodeReference(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#Description");
-
     /**
      * The first item in the subject RDF list.
      */
@@ -49,12 +40,12 @@ public class RDF {
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
 
     /**
-     * The datatype of RDF literals storing fragments of HTML content
+     * The datatype of RDF literals storing fragments of HTML content.
      */
     public static final NodeReference HTML = new MemoryNodeReference("http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML");
 
     /**
-     * The datatype of language-tagged string values
+     * The datatype of language-tagged string values.
      */
     public static final NodeReference LANG_STRING = new MemoryNodeReference(
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString");
@@ -83,7 +74,7 @@ public class RDF {
 
     /**
      * The class of plain (i.e. untyped) literal values, as used in RIF and OWL
-     * 2
+     * 2.
      */
     public static final NodeReference PLAIN_LITERAL = new MemoryNodeReference(
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral");
@@ -99,6 +90,7 @@ public class RDF {
      */
     public static final NodeReference PROPERTY = new MemoryNodeReference(
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property");
+
     /**
      * The rest of the subject RDF list after the first item.
      */

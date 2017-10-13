@@ -15,7 +15,6 @@ import java.math.BigInteger;
 import java.util.*;
 
 import org.apache.jena.rdf.model.*;
-import org.kitodo.lugh.*;
 
 /**
  * The XML Schema datatypes.

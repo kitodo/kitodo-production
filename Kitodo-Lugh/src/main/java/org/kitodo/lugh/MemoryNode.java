@@ -651,7 +651,7 @@ public class MemoryNode extends Node {
     @SuppressWarnings("unchecked") // this is always instanceof Node
     @Override
     public <T extends Node> T put(String relation, ObjectType object) {
-        if (relation.equals(RDF.ABOUT.getIdentifier())) {
+        if (relation.equals(RDF.ABOUT)) {
             throw new IllegalArgumentException(
                     "Forbidden to put http://www.w3.org/1999/02/22-rdf-syntax-ns#about entries. Use new NamedNode(identityURL [, data]); instead.");
         }
@@ -674,7 +674,7 @@ public class MemoryNode extends Node {
     /** {@inheritDoc} */
     @Override
     public void putAll(String relation, Collection<? extends ObjectType> objects) {
-        if (relation.equals(RDF.ABOUT.getIdentifier())) {
+        if (relation.equals(RDF.ABOUT)) {
             throw new IllegalArgumentException("Forbidden to put rdf:about entries. Use NamedNode instead.");
         }
         if (objects.isEmpty()) {
