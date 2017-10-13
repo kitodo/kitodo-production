@@ -39,6 +39,7 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -354,16 +355,18 @@ public class MetadatenImagesHelper {
         }
         if (ConfigCore.getParameter("kitodoContentServerUrl", "").equals("")) {
             logger.trace("api");
-            ImageManager im = new ImageManager(inFileName.toURL());
+            //TODO source image files are locked under windows forever after converting to png begins.
+            ImageManager imageManager = new ImageManager(inFileName.toURL());
             logger.trace("im");
-            RenderedImage ri = im.scaleImageByPixel(tmpSize, tmpSize, ImageManager.SCALE_BY_PERCENT, intRotation);
+            RenderedImage renderedImage = imageManager.scaleImageByPixel(tmpSize, tmpSize, ImageManager.SCALE_BY_PERCENT, intRotation);
             logger.trace("ri");
-            JpegInterpreter pi = new JpegInterpreter(ri);
+            JpegInterpreter jpegInterpreter = new JpegInterpreter(renderedImage);
             logger.trace("pi");
             FileOutputStream outputFileStream = (FileOutputStream) fileService.write(outFileName);
             logger.trace("output");
-            pi.writeToStream(null, outputFileStream);
+            jpegInterpreter.writeToStream(null, outputFileStream);
             logger.trace("write stream");
+            outputFileStream.flush();
             outputFileStream.close();
             logger.trace("close stream");
         } else {
@@ -389,7 +392,7 @@ public class MetadatenImagesHelper {
             InputStream inStream = method.getResponseBodyAsStream();
             logger.trace("inStream");
             try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                    OutputStream fos = fileService.write(outFileName);) {
+                    OutputStream fos = fileService.write(outFileName)) {
                 logger.trace("BufferedInputStream");
                 logger.trace("FileOutputStream");
                 byte[] bytes = new byte[8192];
@@ -403,6 +406,7 @@ public class MetadatenImagesHelper {
                 }
             }
             logger.trace("write");
+            inStream.close();
         }
         logger.trace("end scaleFile");
     }

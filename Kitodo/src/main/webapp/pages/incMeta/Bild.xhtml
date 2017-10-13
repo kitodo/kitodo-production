@@ -17,219 +17,70 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <!-- nur anzeigen, wenn es ein Bild gibt -->
     <h:form id="formularBild">
-        <h:commandButton id="imageBack" style="display:none"
-                           action="#{Metadaten.scrollImage}" value="&lt;"
-                           immediate="true">
-            <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="-1"/>
-        </h:commandButton>
-        <h:commandButton id="imageNext" style="display:none"
-                           action="#{Metadaten.scrollImage}" value=">"
-                           immediate="true">
-            <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="1"/>
-        </h:commandButton>
-        <h:commandButton id="imageBack20" style="display:none"
-                           action="#{Metadaten.scrollImage}" value="&lt;&lt;"
-                           immediate="true">
-            <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="-20"/>
-        </h:commandButton>
-        <h:commandButton id="imageNext20" style="display:none"
-                           action="#{Metadaten.scrollImage}" value=">>"
-                           immediate="true">
-            <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="20"/>
-        </h:commandButton>
-        <h:commandButton id="imageFirst" style="display:none"
-                           action="#{Metadaten.scrollImage}" value="|&lt;"
-                           immediate="true">
-            <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="-#{Metadaten.imageNumber}"/>
-        </h:commandButton>
-        <h:commandButton id="imageLast" style="display:none"
-                           action="#{Metadaten.scrollImage}" value=">|"
-                           immediate="true">
-            <f:ajax render="BildArea myBild imageform"/>
-            <f:param name="Anzahl" value="#{Metadaten.pagesEnd}"/>
-        </h:commandButton>
+        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" /> <tr/>
 
-        <t:panelGrid id="BildArea" forceId="true" columns="1" rendered="#{Metadaten.imageNumber != '-1'}">
-            <h:panelGroup style="text-align: left">
-                <!-- Bildnavigation -->
-                <!-- nur anzeigen, wenn nicht erste Seite -->
-                <table width="400px" border="0">
-                    <tr>
-                        <ui:fragment rendered="#{Metadaten.imageNumber != '1'}">
-                            <td>
-                                <!-- zurueck-Schaltknopf-->
-                                <h:commandLink action="#{Metadaten.scrollImage}"
-                                                 value="#{msgs.previous}" immediate="true">
-                                    <f:ajax render="BildArea myBild imageform"/>
-                                    <f:param name="Anzahl" value="-1"/>
-                                </h:commandLink>
-                                <!-- Trennzeichen -->
-                                <h:outputText value=" | "/>
-                            </td>
-                        </ui:fragment>
-                        <td align="center">
-                            <h:panelGroup rendered="#{Metadaten.imageNumber != '1'}">
-                                <!-- erstes-Schaltknopf -->
-                                <h:commandLink action="#{Metadaten.scrollImage}"
-                                                 value="1" immediate="true">
-                                    <f:ajax render="BildArea myBild imageform"/>
-                                    <f:param name="Anzahl" value="-#{Metadaten.imageNumber}"/>
-                                </h:commandLink>
-                                <!-- Trennzeichen -->
-                                <h:outputText value=" | "/>
 
-                                <!-- wenn Bild groesser als 2 dann vorherige Seiten -->
-                                <h:panelGroup rendered="#{Metadaten.imageNumber > '2'}">
+        <h:panelGrid colums="1">
+            <h:outputText value="#{msgs.aktuellerOrdner}: "/>
+            <p:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}" converter="URIConverter">
+                <f:selectItems value="#{Metadaten.allTifFolders}"/>
+                <p:ajax update="currentImage" listener="#{Metadaten.goToFirstImage}"/>
+            </p:selectOneMenu>
 
-                                    <!-- wenn Bild groesser als 4 dann grosses Trennzeichen Seiten -->
-                                    <h:outputText value=" ... | " rendered="#{Metadaten.imageNumber > '4'}"/>
-
-                                    <!-- wenn Bild groesser als 3 dann vorvorherige Seiten -->
-                                    <h:panelGroup rendered="#{Metadaten.imageNumber > '3'}">
-                                        <!-- vorvorheriges Bild -->
-                                        <h:commandLink action="#{Metadaten.scrollImage}"
-                                                         value="#{Metadaten.imageNumber -2}" immediate="true">
-                                            <f:ajax render="BildArea myBild imageform"/>
-                                            <f:param name="Anzahl" value="-2"/>
-                                        </h:commandLink>
-                                        <!-- Trennzeichen -->
-                                        <h:outputText value=" | "/>
-                                    </h:panelGroup>
-
-                                    <!-- vorheriges Bild -->
-                                    <h:commandLink action="#{Metadaten.scrollImage}" value="#{Metadaten.imageNumber -1}"
-                                                     immediate="true">
-                                        <f:ajax render="BildArea myBild imageform"/>
-                                        <f:param name="Anzahl" value="-1"/>
-                                    </h:commandLink>
-                                    <!-- Trennzeichen -->
-                                    <h:outputText value=" | "/>
-                                </h:panelGroup>
-                            </h:panelGroup>
-
-                            <h:outputText value="#{Metadaten.imageNumber}" style="font-weight: bold"/>
-
-                            <!-- nur anzeigen, wenn nicht letzte Seite -->
-                            <h:panelGroup rendered="#{Metadaten.imageNumber != Metadaten.pagesEnd}">
-
-                                <!-- wenn es mindestens das vorvorletzte Bild ist -->
-                                <h:panelGroup rendered="#{Metadaten.imageNumber lt (Metadaten.imageNumber - 1)}">
-                                    <!-- Trennzeichen -->
-                                    <h:outputText value=" | "/>
-                                    <!-- naechste Seite -->
-                                    <h:commandLink action="#{Metadaten.scrollImage}" value="#{Metadaten.imageNumber + 1}"
-                                                     immediate="true">
-                                        <f:ajax render="BildArea myBild imageform"/>
-                                        <f:param name="Anzahl" value="1"/>
-                                    </h:commandLink>
-                                    <!-- wenn es mindestens das vorvorvorletzte Bild ist -->
-                                    <h:panelGroup rendered="#{Metadaten.imageNumber lt (Metadaten.pagesEnd - 2)}">
-                                        <!-- Trennzeichen -->
-                                        <h:outputText value=" | "/>
-                                        <!-- Uebernaechste Seite -->
-                                        <h:commandLink action="#{Metadaten.scrollImage}"
-                                                         value="#{Metadaten.imageNumber + 2}"
-                                                         immediate="true">
-                                            <f:ajax render="BildArea myBild imageform"/>
-                                            <f:param name="Anzahl" value="2"/>
-                                        </h:commandLink>
-                                    </h:panelGroup>
-                                    <!-- wenn noch mehr als drei Seiten folgen, dann ein grosses Trennzeichen -->
-                                    <h:outputText value=" | ... "
-                                                  rendered="#{Metadaten.imageNumber lt (Metadaten.pagesEnd - 3)}"/>
-                                </h:panelGroup>
-                                <!-- Trennzeichen -->
-                                <h:outputText value=" | "/>
-                                <!-- letztes-Schaltknopf -->
-                                <h:commandLink action="#{Metadaten.scrollImage}"
-                                                 value="#{Metadaten.pagesEnd}" immediate="true">
-                                    <f:ajax render="BildArea myBild imageform"/>
-                                    <f:param name="Anzahl" value="#{Metadaten.pagesEnd}"/>
-                                </h:commandLink>
-                            </h:panelGroup>
-                        </td>
-
-                        <ui:fragment rendered="#{Metadaten.imageNumber != Metadaten.pagesEnd}">
-                            <td align="right">
-                                <!-- vorwaerts-Schaltknopf -->
-                                <!-- Trennzeichen -->
-                                <h:outputText value=" | "/>
-                                <h:commandLink action="#{Metadaten.scrollImage}"
-                                                 value="#{msgs.seiteVor}" immediate="true">
-                                    <f:ajax render="BildArea myBild imageform"/>
-                                    <f:param name="Anzahl" value="1"/>
-                                </h:commandLink>
-                            </td>
-                        </ui:fragment>
-                    </tr>
-                </table>
-                <!-- Ende Bildnavigation -->
+            <!-- image number -->
+            <h:outputText value="#{msgs.imageNumber}:"/>
+            <h:panelGroup>
+                <p:commandButton action="#{Metadaten.goToFirstImage}" icon="ui-icon-seek-first"
+                                 id="firstImage" update="currentImage,imageNumberSpinner" partialSubmit="true"/>
+                <p:spinner id="imageNumberSpinner" value="#{Metadaten.imageNumber}"
+                           min="1" max="#{Metadaten.lastImage}" suffix="/#{Metadaten.lastImage}" size="10">
+                    <p:ajax update="currentImage" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
+                </p:spinner>
+                <p:commandButton action="#{Metadaten.goToLastImage}" icon="ui-icon-seek-end"
+                                 id="lastImage" update="currentImage,imageNumberSpinner" partialSubmit="true"/>
+            </h:panelGroup>
+            <h:outputText value="#{msgs.imageVisualization}:"/>
+            <h:panelGroup>
+                <p:commandButton action="#{Metadaten.rotateLeft}" partialSubmit="true"
+                                 id="rotateLeft" update="currentImage" icon="fa fa-rotate-left">
+                </p:commandButton>
+                <!-- zoom -->
+                <p:spinner id="imageSizeSpinner" value="#{Metadaten.imageSize}" stepFactor="10"
+                           min="10" max="1000" size="10" suffix="%">
+                    <p:ajax update="currentImage" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
+                </p:spinner>
+                <p:commandButton action="#{Metadaten.rotateRight}" partialSubmit="true"
+                                 id="rotateRight" update="currentImage" icon="fa fa-rotate-right">
+                </p:commandButton>
             </h:panelGroup>
 
+            <h:graphicImage id="currentImage" alt="" value="#{Metadaten.bild}" />
+
+            <h:panelGroup>
+                <h:outputText value="#{msgs.bildVerlinken}:"
+                              title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
+                <p:selectBooleanCheckbox id="CheckImageToStructuralElement" value="#{Metadaten.imageToStructuralElement}" partialSubmit="true"/>
+            </h:panelGroup>
+
+
+
+        </h:panelGrid>
+
+            <h:panelGroup rendered="#{Metadaten.imageNumber != '-1' and Metadaten.ocrResult!=''}">
+                <div style="background-color: #ffffff;border-style: solid; border-width: 1px; border-color: #CCCCCC;margin-bottom:15px;padding:5px;">
+                    <h3>
+                        <h:outputText value="OCR"/>
+                    </h3>
+                    <h:outputText value="#{Metadaten.ocrResult}" escape="false"/>
+                </div>
+            </h:panelGroup>
+    </h:form>
+        <t:panelGrid id="BildArea" forceId="true" columns="1" rendered="#{Metadaten.imageNumber != '-1'}">
             <h:panelGroup style="text-align: center">
-                <!-- Zoom -->
-                <h:commandLink action="#{Metadaten.zoomImageOut}" id="zoomMinus"
-                                 style="margin-left: 0px;margin-right:5px">
-                    <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage alt="zoom out" value="/pages/images/zoom-.gif" style="border: 0px;vertical-align:middle"/>
-                </h:commandLink>
-
-                <!-- aktuelle Seite anzeigen -->
-                <t:outputText id="txtZoom1" forceId="true" value="#{Metadaten.imageSize}%" style="font-size: 11px"
-                              onclick="document.getElementById('txtZoom2').style.display='inline';
-                           document.getElementById('txtZoom1').style.display='none';
-                           document.getElementById('txtZoom2').focus();
-                           document.getElementById('txtZoom2').select();"/>
-
-                <!-- Zoom direkt eingeben -->
-                <t:inputText id="txtZoom2" forceId="true" value="#{Metadaten.imageSize}"
-                             style="display:none;font-size:9px;width:30px" required="true"
-                             onblur="document.getElementById('txtZoom2').style.display='none';
-                             document.getElementById('txtZoom1').style.display='inline';"
-                             onkeypress="return submitEnter('cmdZoom',event)"/>
-                <t:commandButton action="#{Metadaten.goToImage}" id="cmdZoom" forceId="true" value="go"
-                                 style="display:none"/>
-
-                <h:commandLink action="#{Metadaten.zoomImageIn}" id="zoomPlus"
-                                 style="margin-left: 7px;margin-right:9px">
-                    <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage alt="zoom in" value="/pages/images/zoom+.gif" style="border: 0px;vertical-align:middle"/>
-                </h:commandLink>
-                <!-- // Zoom -->
-
-                <!-- rotation -->
-                <h:commandLink action="#{Metadaten.rotateLeft}" id="rotateLeft"
-                                 style="margin-left: 7px;margin-right:0px">
-                    <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage alt="rotate left" value="/pages/images/rotateLeft.gif" style="border: 0px;vertical-align:middle"/>
-                </h:commandLink>
-
-                <h:commandLink action="#{Metadaten.rotateRight}" id="rotateRight"
-                                 style="margin-left: 0px;margin-right:9px">
-                    <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage alt="rotate right" value="/pages/images/rotateRight.gif" style="border: 0px;vertical-align:middle"/>
-                </h:commandLink>
-                <!-- // rotation-->
-
-                <!-- gehezu-Schaltknopf -->
-                <h:outputText value="#{msgs.geheZuBild}:" style="margin-left:5px;margin-right:0px;font-size: 12px"
-                              title="#{msgs.geheZuImage}"/>
-                <h:inputText value="#{Metadaten.imageNumberToGo}"
-                             onkeypress="return submitEnter('formularBild:goButton',event)"
-                             style="width:30px;border-style: solid;border-color: silver;border-width: 1px"/>
-                <h:commandButton value="go" id="goButton"
-                                   action="#{Metadaten.goToImage}"
-                                   style="margin-left:5px; display:none">
-                    <f:ajax render="BildArea myBild imageform"/>
-                </h:commandButton>
 
                 <!-- OCR -->
                 <h:commandLink id="ocrButton" action="#{Metadaten.showOcrResult}"
@@ -241,47 +92,17 @@
 
                 <!-- //OCR -->
                 <!-- Verlinkung des Bildes mit dem gewaehlten Strukturelement -->
-                <h:outputText value="#{msgs.bildVerlinken}:" style="margin-left:13px;font-size: 12px"
-                              title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
-                <h:selectBooleanCheckbox value="#{Metadaten.imageToStructuralElement}"
-                                         onclick="document.getElementById('formularBild:goButton').click();"
-                                         style="margin-left:4px" title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
 
-
+                <!--<h:selectBooleanCheckbox value="#{Metadaten.imageToStructuralElement}"-->
+                                         <!--onclick="document.getElementById('formularBild:goButton').click();"-->
+                                         <!--style="margin-left:4px" title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>-->
             </h:panelGroup>
         </t:panelGrid>
 
-    </h:form>
-
-    <t:panelGroup id="myBild" forceId="true">
-
-        <h:panelGroup rendered="#{Metadaten.imageNumber != '-1' and Metadaten.ocrResult!=''}">
-            <div style="background-color: #ffffff;border-style: solid; border-width: 1px; border-color: #CCCCCC;margin-bottom:15px;padding:5px;">
-                <h3>
-                    <h:outputText value="OCR"/>
-                </h3>
-                <h:outputText value="#{Metadaten.ocrResult}" escape="false"/>
-            </div>
-        </h:panelGroup>
-
-        <!-- das Bild selbst -->
-        <!--<h:graphicImage alt="" value="#{Metadaten.bild}" rendered="#{Metadaten.imageNumber != '-1'}" onclick="focusForPicture()"/>-->
-        <h:graphicImage id="myImage" alt="image" value="#{Metadaten.bild}"/>
-    </t:panelGroup>
 
 
     <h:form id="formularOrdner" style="margin-top:15px">
     <h:panelGrid columns="3">
-
-        <h:outputText value="#{msgs.aktuellerOrdner}: "/>
-        <h:selectOneMenu id="TifFolders" style="width: 200px" value="#{Metadaten.currentTifFolder}">
-            <f:selectItems value="#{Metadaten.allTifFolders}" var="step" itemLabel="#{step}" itemValue="#{step}"/>
-        </h:selectOneMenu>
-        <h:commandButton id="cmdOrdnerWechseln" action="#{Metadaten.scrollImage}" type="submit"
-                         value="#{msgs.ordnerWechseln}">
-            <f:param name="Anzahl" value="0"/>
-        </h:commandButton>
-
         <h:outputText value="#{msgs.currentRepresentative}"
                       rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
         <h:outputText value="#{msgs.noFileSelected}"
@@ -302,7 +123,4 @@
 
     </h:form>
 
-    <h:form id="imageform">
-        <t:inputHidden id="hiddenBildNummer" forceId="true" value=" #{Metadaten.imageNumber}"/>
-    </h:form>
 </ui:composition>
