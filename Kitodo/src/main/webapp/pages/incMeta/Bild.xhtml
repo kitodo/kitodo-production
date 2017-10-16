@@ -19,10 +19,13 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui"
     >
-    <!-- nur anzeigen, wenn es ein Bild gibt -->
-    <h:form id="imageForm">
-        <p:messages id="messagesImage" showDetail="true" closable="true" /> <tr/>
 
+    <h:form id="imageForm">
+        <p:messages id="messagesImage" showDetail="true" closable="true" />
+
+        <!--Primefaces workaround for preventing to execute the first commandButton when pressing enter on selectes spinner -->
+        <!--Inserted dummy button with no functionality  https://stackoverflow.com/a/27268362-->
+        <p:commandButton id="dummy" style="display:none;"/>
 
         <h:panelGrid colums="1">
             <h:outputText value="#{msgs.aktuellerOrdner}: "/>
@@ -38,7 +41,7 @@
                                  id="firstImage" update="imageForm" partialSubmit="true"/>
                 <p:spinner id="imageNumberSpinner" value="#{Metadaten.imageNumber}"
                            min="1" max="#{Metadaten.lastImage}" suffix="/#{Metadaten.lastImage}" size="10">
-                    <p:ajax update="currentImage,messagesImage" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
+                    <p:ajax update="imageForm" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
                 </p:spinner>
                 <p:commandButton action="#{Metadaten.goToLastImage}" icon="ui-icon-seek-end"
                                  id="lastImage" update="imageForm" partialSubmit="true"/>
