@@ -20,8 +20,8 @@
     xmlns:p="http://primefaces.org/ui"
     >
     <!-- nur anzeigen, wenn es ein Bild gibt -->
-    <h:form id="formularBild">
-        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" /> <tr/>
+    <h:form id="imageForm">
+        <p:messages id="messagesImage" showDetail="true" closable="true" /> <tr/>
 
 
         <h:panelGrid colums="1">
@@ -35,33 +35,33 @@
             <h:outputText value="#{msgs.imageNumber}:"/>
             <h:panelGroup>
                 <p:commandButton action="#{Metadaten.goToFirstImage}" icon="ui-icon-seek-first"
-                                 id="firstImage" update="currentImage,imageNumberSpinner" partialSubmit="true"/>
+                                 id="firstImage" update="imageForm" partialSubmit="true"/>
                 <p:spinner id="imageNumberSpinner" value="#{Metadaten.imageNumber}"
                            min="1" max="#{Metadaten.lastImage}" suffix="/#{Metadaten.lastImage}" size="10">
-                    <p:ajax update="currentImage" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
+                    <p:ajax update="currentImage,messagesImage" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
                 </p:spinner>
                 <p:commandButton action="#{Metadaten.goToLastImage}" icon="ui-icon-seek-end"
-                                 id="lastImage" update="currentImage,imageNumberSpinner" partialSubmit="true"/>
+                                 id="lastImage" update="imageForm" partialSubmit="true"/>
             </h:panelGroup>
             <h:outputText value="#{msgs.imageVisualization}:"/>
             <h:panelGroup>
                 <p:commandButton action="#{Metadaten.rotateLeft}" partialSubmit="true"
-                                 id="rotateLeft" update="currentImage" icon="fa fa-rotate-left">
+                                 id="rotateLeft" update="imageForm" icon="fa fa-rotate-left">
                 </p:commandButton>
                 <!-- zoom -->
                 <p:spinner id="imageSizeSpinner" value="#{Metadaten.imageSize}" stepFactor="10"
                            min="10" max="1000" size="10" suffix="%">
-                    <p:ajax update="currentImage" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
+                    <p:ajax update="imageForm" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
                 </p:spinner>
                 <p:commandButton action="#{Metadaten.rotateRight}" partialSubmit="true"
-                                 id="rotateRight" update="currentImage" icon="fa fa-rotate-right">
+                                 id="rotateRight" update="imageForm" icon="fa fa-rotate-right">
                 </p:commandButton>
             </h:panelGroup>
 
             <h:graphicImage id="currentImage" alt="" value="#{Metadaten.bild}" />
 
             <h:panelGroup>
-                <h:outputText value="#{msgs.bildVerlinken}:"
+                <h:outputText value="#{msgs.bildVerlinken}: "
                               title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
                 <p:selectBooleanCheckbox id="CheckImageToStructuralElement" value="#{Metadaten.imageToStructuralElement}" partialSubmit="true"/>
             </h:panelGroup>
@@ -93,9 +93,6 @@
                 <!-- //OCR -->
                 <!-- Verlinkung des Bildes mit dem gewaehlten Strukturelement -->
 
-                <!--<h:selectBooleanCheckbox value="#{Metadaten.imageToStructuralElement}"-->
-                                         <!--onclick="document.getElementById('formularBild:goButton').click();"-->
-                                         <!--style="margin-left:4px" title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>-->
             </h:panelGroup>
         </t:panelGrid>
 

@@ -121,7 +121,7 @@ public class Metadaten {
     private String allPagesSelectionLastPage;
     private String[] allPagesSelection;
     private String[] structSeitenAuswahl;
-    private SelectItem[] allPages;
+    private String[] allPages;
     private MetadatumImpl[] allPagesNew;
     private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
     private MetadatumImpl selectedMetadatum;
@@ -177,6 +177,10 @@ public class Metadaten {
     private RenderableMetadataGroup newMetadataGroup;
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
+    private Paginator.Mode paginatorMode = Paginator.Mode.PAGES;
+    private Paginator.Type paginatorType = Paginator.Type.ARABIC;
+    private Paginator.Scope paginatorScope = Paginator.Scope.SELECTED;
+    private Paginator paginator = new Paginator();
 
     /**
      * Konstruktor.
@@ -1350,7 +1354,7 @@ public class Metadaten {
             return;
         }
         int zaehler = meineListe.size();
-        this.allPages = new SelectItem[zaehler];
+        this.allPages = new String[zaehler];
         this.allPagesNew = new MetadatumImpl[zaehler];
         zaehler = 0;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
@@ -1358,9 +1362,7 @@ public class Metadaten {
             List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
             for (Metadata meineSeite : mySeitenDocStructMetadaten) {
                 this.allPagesNew[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.process);
-                this.allPages[zaehler] = new SelectItem(String.valueOf(zaehler),
-                        determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
-                                + meineSeite.getValue());
+                this.allPages[zaehler] = determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": " + meineSeite.getValue();
             }
             zaehler++;
         }
@@ -1461,6 +1463,14 @@ public class Metadaten {
         return result;
     }
 
+    public Paginator getPaginator() {
+        return paginator;
+    }
+
+    public void setPaginator(Paginator paginator) {
+        this.paginator = paginator;
+    }
+
     /**
      * die Paginierung ändern.
      */
@@ -1468,62 +1478,16 @@ public class Metadaten {
 
         int[] pageSelection = new int[allPagesSelection.length];
         for (int i = 0; i < allPagesSelection.length; i++) {
-            pageSelection[i] = Integer.parseInt(allPagesSelection[i]);
-        }
-
-        Paginator.Mode mode;
-        switch (paginationPagesProImage) {
-            case 2:
-                mode = Paginator.Mode.COLUMNS;
-                break;
-            case 3:
-                mode = Paginator.Mode.FOLIATION;
-                break;
-            case 4:
-                mode = Paginator.Mode.RECTOVERSO;
-                break;
-            case 5:
-                mode = Paginator.Mode.RECTOVERSO_FOLIATION;
-                break;
-            case 6:
-                mode = Paginator.Mode.DOUBLE_PAGES;
-                break;
-            default:
-                mode = Paginator.Mode.PAGES;
-        }
-
-        Paginator.Type type;
-        switch (Integer.parseInt(paginationType)) {
-            case 1:
-                type = Paginator.Type.ARABIC;
-                break;
-            case 2:
-                type = Paginator.Type.ROMAN;
-                break;
-            case 6:
-                type = Paginator.Type.FREETEXT;
-                break;
-            default:
-                type = Paginator.Type.UNCOUNTED;
-                break;
-        }
-
-        Paginator.Scope scope;
-        switch (paginationFromPageOrMark) {
-            case 1:
-                scope = Paginator.Scope.FROMFIRST;
-                break;
-            default:
-                scope = Paginator.Scope.SELECTED;
-                break;
+            pageSelection[i] = Integer.parseInt(allPagesSelection[i].split(":")[0]) - 1;
         }
 
         try {
-            Paginator p = new Paginator().setPageSelection(pageSelection).setPagesToPaginate(allPagesNew)
-                    .setPaginationScope(scope).setPaginationType(type).setPaginationMode(mode).setFictitious(fictitious)
-                    .setPaginationSeparator(paginationSeparators.getObject().getSeparatorString())
-                    .setPaginationStartValue(paginationValue);
-            p.run();
+            paginator.setPageSelection(pageSelection);
+            paginator.setPagesToPaginate(allPagesNew);
+            paginator.setFictitious(fictitious);
+            paginator.setPaginationSeparator(paginationSeparators.getObject().getSeparatorString());
+            paginator.setPaginationStartValue(paginationValue);
+            paginator.run();
         } catch (IllegalArgumentException iae) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
         }
@@ -2069,9 +2033,9 @@ public class Metadaten {
      * Current start page.
      */
     public void currentStartpage() {
-        for (SelectItem selectItem : this.allPages) {
-            if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
-                this.pagesStart = selectItem.getLabel();
+        for (String selectItem : this.allPages) {
+            if (selectItem.equals(String.valueOf(this.pageNumber))) {
+                this.pagesStart = selectItem;
             }
         }
     }
@@ -2080,9 +2044,9 @@ public class Metadaten {
      * Current end page.
      */
     public void currentEndpage() {
-        for (SelectItem selectItem : this.allPages) {
-            if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
-                this.pagesEnd = selectItem.getLabel();
+        for (String selectItem : this.allPages) {
+            if (selectItem.equals(String.valueOf(this.pageNumber))) {
+                this.pagesEnd = selectItem;
             }
         }
     }
@@ -2111,9 +2075,9 @@ public class Metadaten {
         logger.debug("Ajax-Liste abgefragt");
         List<String> li = new ArrayList<>();
         if (this.allPages != null && this.allPages.length > 0) {
-            for (SelectItem selectItem : this.allPages) {
-                if (selectItem.getLabel().contains(prefix)) {
-                    li.add(selectItem.getLabel());
+            for (String selectItem : this.allPages) {
+                if (selectItem.contains(prefix)) {
+                    li.add(selectItem);
                 }
             }
         }
@@ -2131,14 +2095,14 @@ public class Metadaten {
          * alle Seiten durchlaufen und prüfen, ob die eingestellte Seite
          * überhaupt existiert
          */
-        for (SelectItem selectItem : this.allPages) {
-            if (selectItem.getLabel().equals(this.ajaxPageStart)) {
+        for (String selectItem : this.allPages) {
+            if (selectItem.equals(this.ajaxPageStart)) {
                 startseiteOk = true;
-                this.allPagesSelectionFirstPage = (String) selectItem.getValue();
+                this.allPagesSelectionFirstPage = (String) selectItem;
             }
-            if (selectItem.getLabel().equals(this.ajaxPageEnd)) {
+            if (selectItem.equals(this.ajaxPageEnd)) {
                 endseiteOk = true;
-                this.allPagesSelectionLastPage = (String) selectItem.getValue();
+                this.allPagesSelectionLastPage = (String) selectItem;
             }
         }
 
@@ -2222,9 +2186,9 @@ public class Metadaten {
     public String imageShowLastPage() {
         this.displayImage = true;
         if (this.treeProperties.get("showpagesasajax")) {
-            for (SelectItem selectItem : this.allPages) {
-                if (selectItem.getLabel().equals(this.ajaxPageEnd)) {
-                    this.allPagesSelectionLastPage = (String) selectItem.getValue();
+            for (String selectItem : this.allPages) {
+                if (selectItem.equals(this.ajaxPageEnd)) {
+                    this.allPagesSelectionLastPage = selectItem;
                     break;
                 }
             }
@@ -2496,11 +2460,11 @@ public class Metadaten {
         return this.allPagesSelection;
     }
 
-    public void setAlleSeitenAuswahl(String[] allPagesSelection) {
+    public void setAllPagesSelection(String[] allPagesSelection) {
         this.allPagesSelection = allPagesSelection;
     }
 
-    public SelectItem[] getAllPages() {
+    public String[] getAllPages() {
         return this.allPages;
     }
 
@@ -2835,8 +2799,8 @@ public class Metadaten {
         String pref = (String) suggest;
         ArrayList<String> result = new ArrayList<>();
         ArrayList<String> all = new ArrayList<>();
-        for (SelectItem si : this.allPages) {
-            all.add(si.getLabel());
+        for (String si : this.allPages) {
+            all.add(si);
         }
 
         for (String element : all) {

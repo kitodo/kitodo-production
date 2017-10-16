@@ -11,6 +11,8 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,24 +28,57 @@ import ugh.dl.RomanNumeral;
 public class Paginator {
 
     public enum Mode {
-        PAGES,
-        COLUMNS,
-        FOLIATION,
-        RECTOVERSO_FOLIATION,
-        RECTOVERSO,
-        DOUBLE_PAGES
+        PAGES(Helper.getTranslation("seitenzaehlung"),"paginierung_seite.svg"),
+        COLUMNS(Helper.getTranslation("spaltenzaehlung"),"paginierung_spalte.svg"),
+        FOLIATION(Helper.getTranslation("blattzaehlung"),"paginierung_blatt.svg"),
+        RECTOVERSO_FOLIATION(Helper.getTranslation("blattzaehlungrectoverso"),"paginierung_blatt_rectoverso.svg"),
+        RECTOVERSO(Helper.getTranslation("seitenzaehlungrectoverso"),"paginierung_seite_rectoverso.svg"),
+        DOUBLE_PAGES(Helper.getTranslation("seitenzaehlungdoppelseiten"),"paginierung_doppelseite.svg");
+
+        private String label;
+        private String image;
+
+        Mode(String label, String image) {
+            this.label = label;
+            this.image = image;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+        public String getImage() { return image; }
     }
 
     public enum Type {
-        ARABIC,
-        ROMAN,
-        UNCOUNTED,
-        FREETEXT
+        ARABIC(Helper.getTranslation("arabisch")),
+        ROMAN(Helper.getTranslation("roemisch")),
+        UNCOUNTED(Helper.getTranslation("unnummeriert")),
+        FREETEXT(Helper.getTranslation("paginationFreetext"));
+
+        private String label;
+
+        Type(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 
     public enum Scope {
-        FROMFIRST,
-        SELECTED
+        FROMFIRST(Helper.getTranslation("abDerErstenMarkiertenSeite")),
+        SELECTED(Helper.getTranslation("nurDieMarkiertenSeiten"));
+
+        private String label;
+
+        Scope(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 
     private int[] selectedPages;
@@ -290,11 +325,9 @@ public class Paginator {
      * @param selectedPages
      *            Array numbers, each pointing to a given page set via
      *            <code>setPagesToPaginate</code>
-     * @return This object for fluent interfacing.
      */
-    public Paginator setPageSelection(int[] selectedPages) {
+    public void setPageSelection(int[] selectedPages) {
         this.selectedPages = selectedPages;
-        return this;
     }
 
     /**
@@ -302,11 +335,9 @@ public class Paginator {
      *
      * @param newPaginated
      *            Array of page objects.
-     * @return This object for fluent interfacing.
      */
-    public Paginator setPagesToPaginate(Metadatum[] newPaginated) {
+    public void setPagesToPaginate(Metadatum[] newPaginated) {
         this.pagesToPaginate = newPaginated;
-        return this;
     }
 
     /**
@@ -314,11 +345,9 @@ public class Paginator {
      *
      * @param paginationMode
      *            Mode of counting pages.
-     * @return This object for fluent interfacing.
      */
-    public Paginator setPaginationMode(Mode paginationMode) {
+    public void setPaginationMode(Mode paginationMode) {
         this.paginationMode = paginationMode;
-        return this;
     }
 
     /**
@@ -326,11 +355,9 @@ public class Paginator {
      *
      * @param paginationScope
      *            Set which pages from a selection get labeled.
-     * @return This object for fluent interfacing.
      */
-    public Paginator setPaginationScope(Scope paginationScope) {
+    public void setPaginationScope(Scope paginationScope) {
         this.paginationScope = paginationScope;
-        return this;
     }
 
     /**
@@ -338,11 +365,9 @@ public class Paginator {
      *
      * @param sep
      *            Set the separator to separate pages.
-     * @return This object for fluent interfacing.
      */
-    public Paginator setPaginationSeparator(String sep) {
+    public void setPaginationSeparator(String sep) {
         this.sep = sep;
-        return this;
     }
 
     /**
@@ -351,11 +376,9 @@ public class Paginator {
      *
      * @param paginationStartValue
      *            May contain arabic or roman number.
-     * @return This object for fluent interfacing.
      */
-    public Paginator setPaginationStartValue(String paginationStartValue) {
+    public void setPaginationStartValue(String paginationStartValue) {
         this.paginationStartValue = paginationStartValue;
-        return this;
     }
 
     /**
@@ -363,11 +386,9 @@ public class Paginator {
      *
      * @param paginationType
      *            Set style of pagination numbers.
-     * @return This object for fluent interfacing.
      */
-    public Paginator setPaginationType(Type paginationType) {
+    public void setPaginationType(Type paginationType) {
         this.paginationType = paginationType;
-        return this;
     }
 
     /**
@@ -376,11 +397,40 @@ public class Paginator {
      *
      * @param b
      *            True, fictitious pagination. False, regular pagination.
-     * @return This object for fluent interfacing.
      */
-    public Paginator setFictitious(boolean b) {
+    public void setFictitious(boolean b) {
         this.fictitiousPagination = b;
-        return this;
     }
 
+    public int[] getSelectedPages() {
+        return selectedPages;
+    }
+
+    public Mode getPaginationMode() {
+        return paginationMode;
+    }
+
+    public Scope getPaginationScope() {
+        return paginationScope;
+    }
+
+    public String getPaginationStartValue() {
+        return paginationStartValue;
+    }
+
+    public Type getPaginationType() {
+        return paginationType;
+    }
+
+    public Paginator.Mode[] getPaginationModes() {
+        return Paginator.Mode.values();
+    }
+
+    public Paginator.Type[] getPaginationTypes() {
+        return Paginator.Type.values();
+    }
+
+    public Paginator.Scope[] getPaginationScopes() {
+        return Paginator.Scope.values();
+    }
 }

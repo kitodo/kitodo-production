@@ -14,8 +14,83 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core">
-<f:view>
-    <h:outputLabel value="#{msgs.paginierung}"/>
-</f:view>
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:commandLink action="#{Metadaten.createPagination}" value="#{msgs.paginierungEinlesen}" update="paginationTab">
+    </p:commandLink>
+
+    <h:panelGrid id="paginationTab" columns="2" layout="grid" rendered="#{Metadaten.allPages !=null}"
+                 style="height: 100%" cellpadding="10">
+
+            <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}" style="height: 100%"
+                              required="true" requiredMessage="#{msgs.paginationNoPagesSelected}">
+                <f:selectItems value="#{Metadaten.allPages}"/>
+                <p:ajax update="paginationSelection"/>
+
+            </p:selectManyMenu>
+
+            <h:panelGroup id="setPaginationGroup">
+
+                <p:messages id="messagesPagination" closable="true" />
+
+                <h:panelGrid id="setPaginationGrid" columns="2">
+                    <h:outputLabel value="#{msgs.counting}:"/>
+                    <p:selectOneMenu value="#{Metadaten.paginator.paginationMode}" var="mode" style="width: 180px" >
+                        <f:selectItems value="#{Metadaten.paginator.paginationModes}" var="modeSelection"
+                                       itemValue="#{modeSelection}" itemLabel="#{modeSelection.label}"/>
+                        <p:column style="width:10%">
+                            <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{mode.label}"/>
+                        </p:column>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel value="Bearbeitungsumfang:"/>
+                    <p:selectOneMenu value="#{Metadaten.paginator.paginationScope}" style="width: 180px">
+                        <f:selectItems value="#{Metadaten.paginator.paginationScopes}" var="scope"
+                                       itemValue="#{scope}" itemLabel="#{scope.label}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel value="#{msgs.paginierung}:"/>
+                    <p:selectOneMenu value="#{Metadaten.paginator.paginationType}" style="width: 180px">
+                        <f:selectItems value="#{Metadaten.paginator.paginationTypes}" var="type"
+                                       itemValue="#{type}" itemLabel="#{type.label}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel value="#{msgs.paginationStartValue}:"/>
+                    <h:panelGrid columns="2">
+                        <p:inputText id="paginationValue" required="true" style="width: 50px"
+                                     value="#{Metadaten.paginationValue}"
+                                     label="#{msgs.paginationStartValue}"
+                                     requiredMessage="#{msgs.paginationStartValueNotSpecified}">
+                            <f:validateLength minimum="1" />
+                        </p:inputText>
+                        <p:message for="paginationValue" display="icon" />
+                    </h:panelGrid>
+
+
+                    <h:outputLabel for="checkbox-fictitious" value="#{msgs.paginationFictitious}"/>
+                    <p:selectBooleanCheckbox id="checkbox-fictitious" value="#{Metadaten.fictitious}"/>
+
+                    <p:commandButton id="startPagination" action="#{Metadaten.changePagination}" update="paginationTab"
+                                     value="start">
+                    </p:commandButton>
+                </h:panelGrid>
+            </h:panelGroup>
+    </h:panelGrid>
+
+    <!--TODO implement pagination separators-->
+    <!--<br/>-->
+    <!--<ui:fragment rendered="#{Metadaten.paginationPagesProImage>=5}">-->
+    <!--<div style=" margin-left: 6px; margin-top: 8px;">-->
+    <!--<h:outputText value="#{msgs.pageSeparator}: "/>-->
+    <!--<h:selectOneMenu value="#{Metadaten.paginationSeparator}">-->
+    <!--<f:selectItems var="ps" value="#{Metadaten.paginationSeparators}"-->
+    <!--itemLabel="#{ps.label}" itemValue="#{ps.id}"/>-->
+    <!--</h:selectOneMenu>-->
+    <!--</div>-->
+    <!--</ui:fragment>-->
+
 </ui:composition>
