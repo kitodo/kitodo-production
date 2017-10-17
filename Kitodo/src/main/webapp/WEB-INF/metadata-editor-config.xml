@@ -16,16 +16,6 @@
 
 <faces-config>
 
-    <!-- ###################  Navigation  ######################## -->
-
-    <!-- Navigation für Benutzerverwaltung-BenutzerGruppe -->
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>Metadaten</from-outcome>
-            <to-view-id>/pages/metadataEditor.xhtml</to-view-id>
-        </navigation-case>
-    </navigation-rule>
-
     <!-- ###################  Managed Beans  ######################## -->
 
     <!-- Bean für Sessions -->
