@@ -19,13 +19,13 @@
 
     <h:form>
         <div align="right">
-            <p:commandButton type="button" value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" />
-            <p:commandButton type="button" value="#{msgs.zurueck}" icon="ui-icon-close" />
-            <p:commandButton type="button" value="#{msgs.speichern}" icon="ui-icon-disk" />
-            <p:commandButton type="button" value="#{msgs.speichernZurueck}" icon="ui-icon-extlink" />
+            <p:button value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" />
+            <p:button value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle" icon="ui-icon-close" />
+            <p:button value="#{msgs.speichern}" icon="ui-icon-disk" />
+            <p:button value="#{msgs.speichernZurueck}" icon="ui-icon-extlink" />
         </div>
 
-        <p:tabView dynamic="true" style = "height: 100%">
+        <p:tabView style = "height: 100%">
             <p:tab title="#{msgs.paginierung}">
                 <ui:include src="incMeta/Paginierung.xhtml" />
             </p:tab>
