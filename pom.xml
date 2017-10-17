@@ -42,6 +42,7 @@
         <tomcat.baseversion>7</tomcat.baseversion>
         <tomcat.version>7.0.81</tomcat.version>
         <log4j.version>2.6.2</log4j.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <repositories>
@@ -228,7 +229,7 @@
                         <version>2.10.4</version>
                         <configuration>
                             <reportOutputDirectory>${doctarget}</reportOutputDirectory>
-                            <destDir>${docdir}</destDir>       
+                            <destDir>${docdir}</destDir>
                             <!-- Default configuration for all reports -->
                             <failOnError>false</failOnError>
                             <additionalparam>-Xdoclint:none</additionalparam>
