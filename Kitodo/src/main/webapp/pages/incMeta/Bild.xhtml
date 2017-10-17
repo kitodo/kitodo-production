@@ -31,7 +31,7 @@
             <h:outputText value="#{msgs.aktuellerOrdner}: "/>
             <p:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}" converter="URIConverter">
                 <f:selectItems value="#{Metadaten.allTifFolders}"/>
-                <p:ajax update="currentImage" listener="#{Metadaten.goToFirstImage}"/>
+                <p:ajax update="currentImage,imageNumberSpinner" listener="#{Metadaten.goToFirstImage}"/>
             </p:selectOneMenu>
 
             <!-- image number -->
@@ -94,7 +94,7 @@
                 </h:commandLink>
 
                 <!-- //OCR -->
-                <!-- Verlinkung des Bildes mit dem gewaehlten Strukturelement -->
+
 
             </h:panelGroup>
         </t:panelGrid>
