@@ -23,18 +23,22 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-
-import com.sun.org.apache.xpath.internal.operations.Equals;
-import org.apache.commons.io.FileUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Random;
+import java.util.ServiceLoader;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class KitodoServiceLoader<T> {
     private Class clazz;
@@ -166,7 +170,7 @@ public class KitodoServiceLoader<T> {
      *
      * @return boolean
      */
-    private String extractModuleName(String temporaryFolderName) throws IOException {
+    protected String extractModuleName(String temporaryFolderName) throws IOException {
         Properties prop = new Properties();
         InputStream input = null;
         String moduleName = "";
@@ -203,10 +207,10 @@ public class KitodoServiceLoader<T> {
      * @return int
      */
     private int getRandomNumber() {
-        final String charList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        int randomInt = 0;
+        final int lenght = 50;
+        int randomInt;
         Random randomGenerator = new Random();
-        randomInt = randomGenerator.nextInt(charList.length());
+        randomInt = randomGenerator.nextInt(lenght);
         if (randomInt - 1 == -1) {
             return randomInt;
         } else {
