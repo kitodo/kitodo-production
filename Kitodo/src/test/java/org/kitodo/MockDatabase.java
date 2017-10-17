@@ -184,8 +184,7 @@ public class MockDatabase {
     }
 
     private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = new IndexRestClient();
-        restClient.initiateClient();
+        IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(testIndexName);
         return restClient;
     }
@@ -888,8 +887,7 @@ public class MockDatabase {
      * Clean index after tests.
      */
     public static void cleanIndex() throws IOException {
-        IndexRestClient restClient = new IndexRestClient();
-        restClient.initiateClient();
+        IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.deleteIndex();
     }
 }

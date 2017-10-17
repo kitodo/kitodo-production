@@ -23,7 +23,9 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +34,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -44,6 +47,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -117,7 +121,7 @@ public class Metadaten {
     private String allPagesSelectionLastPage;
     private String[] allPagesSelection;
     private String[] structSeitenAuswahl;
-    private SelectItem[] allPages;
+    private String[] allPages;
     private MetadatumImpl[] allPagesNew;
     private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
     private MetadatumImpl selectedMetadatum;
@@ -173,6 +177,10 @@ public class Metadaten {
     private RenderableMetadataGroup newMetadataGroup;
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
+    private Paginator.Mode paginatorMode = Paginator.Mode.PAGES;
+    private Paginator.Type paginatorType = Paginator.Type.ARABIC;
+    private Paginator.Scope paginatorScope = Paginator.Scope.SELECTED;
+    private Paginator paginator = new Paginator();
 
     /**
      * Konstruktor.
@@ -740,7 +748,7 @@ public class Metadaten {
             throw new ReadException(Helper.getTranslation("metaDataError"));
         }
 
-        identifyImage(0);
+        identifyImage(1);
         retrieveAllImages();
         if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (this.digitalDocument.getPhysicalDocStruct() == null
@@ -1346,7 +1354,7 @@ public class Metadaten {
             return;
         }
         int zaehler = meineListe.size();
-        this.allPages = new SelectItem[zaehler];
+        this.allPages = new String[zaehler];
         this.allPagesNew = new MetadatumImpl[zaehler];
         zaehler = 0;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
@@ -1354,9 +1362,7 @@ public class Metadaten {
             List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
             for (Metadata meineSeite : mySeitenDocStructMetadaten) {
                 this.allPagesNew[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.process);
-                this.allPages[zaehler] = new SelectItem(String.valueOf(zaehler),
-                        determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
-                                + meineSeite.getValue());
+                this.allPages[zaehler] = determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": " + meineSeite.getValue();
             }
             zaehler++;
         }
@@ -1457,6 +1463,14 @@ public class Metadaten {
         return result;
     }
 
+    public Paginator getPaginator() {
+        return paginator;
+    }
+
+    public void setPaginator(Paginator paginator) {
+        this.paginator = paginator;
+    }
+
     /**
      * die Paginierung ändern.
      */
@@ -1464,62 +1478,16 @@ public class Metadaten {
 
         int[] pageSelection = new int[allPagesSelection.length];
         for (int i = 0; i < allPagesSelection.length; i++) {
-            pageSelection[i] = Integer.parseInt(allPagesSelection[i]);
-        }
-
-        Paginator.Mode mode;
-        switch (paginationPagesProImage) {
-            case 2:
-                mode = Paginator.Mode.COLUMNS;
-                break;
-            case 3:
-                mode = Paginator.Mode.FOLIATION;
-                break;
-            case 4:
-                mode = Paginator.Mode.RECTOVERSO;
-                break;
-            case 5:
-                mode = Paginator.Mode.RECTOVERSO_FOLIATION;
-                break;
-            case 6:
-                mode = Paginator.Mode.DOUBLE_PAGES;
-                break;
-            default:
-                mode = Paginator.Mode.PAGES;
-        }
-
-        Paginator.Type type;
-        switch (Integer.parseInt(paginationType)) {
-            case 1:
-                type = Paginator.Type.ARABIC;
-                break;
-            case 2:
-                type = Paginator.Type.ROMAN;
-                break;
-            case 6:
-                type = Paginator.Type.FREETEXT;
-                break;
-            default:
-                type = Paginator.Type.UNCOUNTED;
-                break;
-        }
-
-        Paginator.Scope scope;
-        switch (paginationFromPageOrMark) {
-            case 1:
-                scope = Paginator.Scope.FROMFIRST;
-                break;
-            default:
-                scope = Paginator.Scope.SELECTED;
-                break;
+            pageSelection[i] = Integer.parseInt(allPagesSelection[i].split(":")[0]) - 1;
         }
 
         try {
-            Paginator p = new Paginator().setPageSelection(pageSelection).setPagesToPaginate(allPagesNew)
-                    .setPaginationScope(scope).setPaginationType(type).setPaginationMode(mode).setFictitious(fictitious)
-                    .setPaginationSeparator(paginationSeparators.getObject().getSeparatorString())
-                    .setPaginationStartValue(paginationValue);
-            p.run();
+            paginator.setPageSelection(pageSelection);
+            paginator.setPagesToPaginate(allPagesNew);
+            paginator.setFictitious(fictitious);
+            paginator.setPaginationSeparator(paginationSeparators.getObject().getSeparatorString());
+            paginator.setPaginationStartValue(paginationValue);
+            paginator.run();
         } catch (IllegalArgumentException iae) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
         }
@@ -1542,20 +1510,6 @@ public class Metadaten {
     public String expandTree() {
         this.treeNodeStruct.expandNodes(this.treeProperties.get("fullexpanded"));
         return "Metadaten3links";
-    }
-
-    /*
-     * Bilder-Anzeige
-     */
-
-    public String scrollImageForth() {
-        identifyImage(1);
-        return "";
-    }
-
-    public String scrollImageBack() {
-        identifyImage(-1);
-        return "";
     }
 
     /**
@@ -1581,53 +1535,30 @@ public class Metadaten {
             this.imageRotation = 360;
         }
         this.imageRotation = (this.imageRotation - 90) % 360;
-        identifyImage(0);
+        identifyImage(this.imageNumber);
     }
 
     public void rotateRight() {
         this.imageRotation = (this.imageRotation + 90) % 360;
-        identifyImage(0);
+        identifyImage(this.imageNumber);
     }
 
     /**
-     * goToImage.
-     *
-     * @return empty String
+     * goToCurrentImageNumber.
      */
-    public String goToImage() {
-        int eingabe;
-        try {
-            eingabe = Integer.parseInt(this.imageNumberToGo);
-        } catch (Exception e) {
-            eingabe = this.imageNumber;
-        }
-
-        identifyImage(eingabe - this.imageNumber);
-        return "";
+    public void goToCurrentImageNumber() {
+        identifyImage(this.imageNumber);
     }
 
-    /**
-     * Image zoom plus.
-     *
-     * @return empty String
-     */
-    public String zoomImageIn() {
-        this.imageSize += 10;
-        identifyImage(0);
-        return "";
+
+    public void goToFirstImage() {
+        this.imageNumber = 1;
+        goToCurrentImageNumber();
     }
 
-    /**
-     * Image zoom down.
-     *
-     * @return empty String
-     */
-    public String zoomImageOut() {
-        if (this.imageSize > 10) {
-            this.imageSize -= 10;
-        }
-        identifyImage(0);
-        return "";
+    public void goToLastImage() {
+        this.imageNumber = this.lastImage;
+        goToCurrentImageNumber();
     }
 
     /**
@@ -1636,7 +1567,6 @@ public class Metadaten {
      * @return String
      */
     public String getBild() {
-        checkImage();
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
@@ -1645,6 +1575,14 @@ public class Metadaten {
 
     public List<URI> getAllTifFolders() {
         return this.allTifFolders;
+    }
+
+    public List<String> getAllTifFoldersAsString() {
+        ArrayList<String> list = new ArrayList<>();
+        for (URI tifFolder : allTifFolders) {
+            list.add(tifFolder.getPath());
+        }
+        return list;
     }
 
     /**
@@ -1677,10 +1615,10 @@ public class Metadaten {
     /**
      * identifyImage.
      *
-     * @param welches
+     * @param pageNumber
      *            int
      */
-    public void identifyImage(int welches) {
+    public void identifyImage(int pageNumber) {
         /*
          * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild
          * nicht neu umrechnen
@@ -1709,95 +1647,88 @@ public class Metadaten {
             logger.trace("dataList not null");
             this.lastImage = dataList.size();
             logger.trace("myBildLetztes");
-            for (int i = 0; i < dataList.size(); i++) {
+
+
+
+            if (this.image == null) {
+                this.image = dataList.get(0);
+            }
+
+            if (this.currentTifFolder != null) {
                 if (logger.isTraceEnabled()) {
-                    logger.trace("file: " + i);
+                    logger.trace("currentTifFolder: " + this.currentTifFolder);
                 }
-                if (this.image == null) {
-                    this.image = dataList.get(0);
+                dataList = this.imageHelper.getImageFiles(this.process, this.currentTifFolder);
+                if (dataList == null) {
+                    return;
                 }
-                /* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
-                if (isCurrentImageCorrectImage(dataList, i)) {
-                    logger.trace("index == picture");
-                    int pos = i + welches;
+            }
+
+            if (dataList.size() >= pageNumber) {
+                this.image = dataList.get(pageNumber - 1);
+            } else {
+                Helper.setFehlerMeldung("Image file for page " + pageNumber + " not found in metadata folder: " + this.currentTifFolder);
+                this.image = null;
+            }
+
+            this.imageNumber = pageNumber;
+
+            URI pagesDirectory = ConfigCore.getTempImagesPathAsCompleteDirectory();
+
+            this.imageCounter++;
+
+            FacesContext context = FacesContext.getCurrentInstance();
+            HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+            String currentPngFile = session.getId() + "_" + this.imageCounter + ".png";
+            logger.trace("facescontext");
+
+            File temporaryTifFile = null;
+            try {
+                temporaryTifFile = File.createTempFile("tempTif_",".tif");
+            } catch (IOException e) {
+                logger.error(e);
+            }
+            /* das neue Bild zuweisen */
+            if (this.image != null) {
+                try {
+                    URI tifFile = this.currentTifFolder.resolve(this.image);
                     if (logger.isTraceEnabled()) {
-                        logger.trace("pos: " + pos);
+                        logger.trace("tiffconverterpfad: " + tifFile);
                     }
-                    /* aber keine Indexes ausserhalb des Array erlauben */
-                    if (pos < 0) {
-                        pos = 0;
-                    }
-                    if (pos > dataList.size() - 1) {
-                        pos = dataList.size() - 1;
-                    }
-                    if (this.currentTifFolder != null) {
-                        if (logger.isTraceEnabled()) {
-                            logger.trace("currentTifFolder: " + this.currentTifFolder);
-                        }
-                        dataList = this.imageHelper.getImageFiles(this.process, this.currentTifFolder);
-                        if (dataList == null) {
-                            return;
-                        }
-                    }
-                    /* das aktuelle tif erfassen */
-                    if (dataList.size() > pos) {
-                        this.image = dataList.get(pos);
-                    } else {
-                        this.image = dataList.get(dataList.size() - 1);
-                    }
-                    logger.trace("found myBild");
-                    /* die korrekte Seitenzahl anzeigen */
-                    this.imageNumber = pos + 1;
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("myBildNummer: " + this.imageNumber);
-                    }
-                    /* Pages-Verzeichnis ermitteln */
-                    URI myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("myPfad: " + myPfad);
-                    }
-                    /*
-                     * den Counter für die Bild-ID auf einen neuen Wert setzen,
-                     * damit nichts gecacht wird
-                     */
-                    this.imageCounter++;
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("myBildCounter: " + this.imageCounter);
+                    if (!fileService.fileExist(tifFile)) {
+                        tifFile = serviceManager.getProcessService()
+                                .getImagesTifDirectory(true, this.process).resolve(this.image);
+                        Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
+                                "image " + this.image + " does not exist in folder " + this.currentTifFolder
+                                        + ", using image from " + new File(serviceManager.getProcessService()
+                                        .getImagesTifDirectory(true, this.process)).getName());
                     }
 
-                    /* Session ermitteln */
-                    FacesContext context = FacesContext.getCurrentInstance();
-                    HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-                    String mySession = session.getId() + "_" + this.imageCounter + ".png";
-                    logger.trace("facescontext");
-
-                    /* das neue Bild zuweisen */
-                    try {
-                        URI tiffconverterpfad = fileService.getImagesDirectory(this.process)
-                                .resolve(this.currentTifFolder + "/" + this.image);
-                        if (logger.isTraceEnabled()) {
-                            logger.trace("tiffconverterpfad: " + tiffconverterpfad);
-                        }
-                        if (!fileService.fileExist(tiffconverterpfad)) {
-                            tiffconverterpfad = serviceManager.getProcessService()
-                                    .getImagesTifDirectory(true, this.process).resolve(this.image);
-                            Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
-                                    "image " + this.image + " does not exist in folder " + this.currentTifFolder
-                                            + ", using image from " + new File(serviceManager.getProcessService()
-                                                    .getImagesTifDirectory(true, this.process)).getName());
-                        }
-                        this.imageHelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.imageSize,
+                    //Copy tif-file to temporay folder
+                    InputStream tifFileInputStream = fileService.read(tifFile);
+                    if (temporaryTifFile != null) {
+                        FileUtils.copyInputStreamToFile(tifFileInputStream,temporaryTifFile);
+                        this.imageHelper.scaleFile(temporaryTifFile.toURI(), pagesDirectory.resolve(currentPngFile), this.imageSize,
                                 this.imageRotation);
                         logger.trace("scaleFile");
-                    } catch (Exception e) {
-                        Helper.setFehlerMeldung("could not getById image folder", e);
-                        logger.error(e);
                     }
-                    break;
+                } catch (Exception e) {
+                    Helper.setFehlerMeldung("could not getById image folder", e);
+                    logger.error(e);
+                } finally {
+                    if (temporaryTifFile != null) {
+                        try {
+                            if (!fileService.delete(temporaryTifFile.toURI())) {
+                                logger.error("Error while deleting temporary tif file: " + temporaryTifFile.getAbsolutePath());
+                            }
+                            //not working
+                        } catch (IOException e) {
+                            logger.error("Error while deleting temporary tif file: " + e.getMessage());
+                        }
+                    }
                 }
             }
         }
-        checkImage();
     }
 
     /**
@@ -2087,9 +2018,9 @@ public class Metadaten {
      * Current start page.
      */
     public void currentStartpage() {
-        for (SelectItem selectItem : this.allPages) {
-            if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
-                this.pagesStart = selectItem.getLabel();
+        for (String selectItem : this.allPages) {
+            if (selectItem.equals(String.valueOf(this.pageNumber))) {
+                this.pagesStart = selectItem;
             }
         }
     }
@@ -2098,9 +2029,9 @@ public class Metadaten {
      * Current end page.
      */
     public void currentEndpage() {
-        for (SelectItem selectItem : this.allPages) {
-            if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
-                this.pagesEnd = selectItem.getLabel();
+        for (String selectItem : this.allPages) {
+            if (selectItem.equals(String.valueOf(this.pageNumber))) {
+                this.pagesEnd = selectItem;
             }
         }
     }
@@ -2115,8 +2046,7 @@ public class Metadaten {
     }
 
     public void setPageNumber(int pageNumber) {
-        this.pageNumber = pageNumber - 1;
-
+        this.pageNumber = pageNumber;
     }
 
     /**
@@ -2130,9 +2060,9 @@ public class Metadaten {
         logger.debug("Ajax-Liste abgefragt");
         List<String> li = new ArrayList<>();
         if (this.allPages != null && this.allPages.length > 0) {
-            for (SelectItem selectItem : this.allPages) {
-                if (selectItem.getLabel().contains(prefix)) {
-                    li.add(selectItem.getLabel());
+            for (String selectItem : this.allPages) {
+                if (selectItem.contains(prefix)) {
+                    li.add(selectItem);
                 }
             }
         }
@@ -2150,14 +2080,14 @@ public class Metadaten {
          * alle Seiten durchlaufen und prüfen, ob die eingestellte Seite
          * überhaupt existiert
          */
-        for (SelectItem selectItem : this.allPages) {
-            if (selectItem.getLabel().equals(this.ajaxPageStart)) {
+        for (String selectItem : this.allPages) {
+            if (selectItem.equals(this.ajaxPageStart)) {
                 startseiteOk = true;
-                this.allPagesSelectionFirstPage = (String) selectItem.getValue();
+                this.allPagesSelectionFirstPage = (String) selectItem;
             }
-            if (selectItem.getLabel().equals(this.ajaxPageEnd)) {
+            if (selectItem.equals(this.ajaxPageEnd)) {
                 endseiteOk = true;
-                this.allPagesSelectionLastPage = (String) selectItem.getValue();
+                this.allPagesSelectionLastPage = (String) selectItem;
             }
         }
 
@@ -2231,7 +2161,7 @@ public class Metadaten {
      */
     public String imageShowFirstPage() {
         image = null;
-        identifyImage(0);
+        identifyImage(1);
         return "";
     }
 
@@ -2241,9 +2171,9 @@ public class Metadaten {
     public String imageShowLastPage() {
         this.displayImage = true;
         if (this.treeProperties.get("showpagesasajax")) {
-            for (SelectItem selectItem : this.allPages) {
-                if (selectItem.getLabel().equals(this.ajaxPageEnd)) {
-                    this.allPagesSelectionLastPage = (String) selectItem.getValue();
+            for (String selectItem : this.allPages) {
+                if (selectItem.equals(this.ajaxPageEnd)) {
+                    this.allPagesSelectionLastPage = selectItem;
                     break;
                 }
             }
@@ -2515,11 +2445,11 @@ public class Metadaten {
         return this.allPagesSelection;
     }
 
-    public void setAlleSeitenAuswahl(String[] allPagesSelection) {
+    public void setAllPagesSelection(String[] allPagesSelection) {
         this.allPagesSelection = allPagesSelection;
     }
 
-    public SelectItem[] getAllPages() {
+    public String[] getAllPages() {
         return this.allPages;
     }
 
@@ -2591,7 +2521,7 @@ public class Metadaten {
         this.displayImage = !this.displayImage;
         if (this.displayImage) {
             try {
-                identifyImage(0);
+                identifyImage(this.imageNumber);
             } catch (Exception e) {
                 Helper.setFehlerMeldung("Error while generating image", e.getMessage());
                 logger.error(e);
@@ -2854,8 +2784,8 @@ public class Metadaten {
         String pref = (String) suggest;
         ArrayList<String> result = new ArrayList<>();
         ArrayList<String> all = new ArrayList<>();
-        for (SelectItem si : this.allPages) {
-            all.add(si.getLabel());
+        for (String si : this.allPages) {
+            all.add(si);
         }
 
         for (String element : all) {
@@ -2933,7 +2863,7 @@ public class Metadaten {
         allPagesSelection = newSelectionList.toArray(new String[newSelectionList.size()]);
 
         retrieveAllImages();
-        identifyImage(0);
+        identifyImage(1);
     }
 
     /**
@@ -2965,7 +2895,7 @@ public class Metadaten {
 
         allPagesSelection = newSelectionList.toArray(new String[newSelectionList.size()]);
         retrieveAllImages();
-        identifyImage(0);
+        identifyImage(1);
     }
 
     /**
@@ -3031,7 +2961,7 @@ public class Metadaten {
 
             imageShowFirstPage();
         } else {
-            identifyImage(0);
+            identifyImage(1);
         }
     }
 
@@ -3100,7 +3030,7 @@ public class Metadaten {
             }
             retrieveAllImages();
 
-            identifyImage(0);
+            identifyImage(1);
         }
     }
 

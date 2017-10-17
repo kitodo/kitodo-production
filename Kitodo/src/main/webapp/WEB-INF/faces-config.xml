@@ -28,6 +28,13 @@
         </resource-bundle>
     </application>
 
+
+    <!-- URI Converter for Select-Boxes -->
+    <converter>
+        <converter-id>URIConverter</converter-id>
+        <converter-class>de.sub.goobi.converter.URIConverter</converter-class>
+    </converter>
+
     <!-- RuleSet Converter for Select-Boxes -->
     <converter>
         <converter-id>RegelsatzConverter</converter-id>
