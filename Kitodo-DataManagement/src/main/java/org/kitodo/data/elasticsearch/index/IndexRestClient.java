@@ -41,6 +41,11 @@ public class IndexRestClient extends KitodoRestClient {
 
     private IndexRestClient() {}
 
+    /**
+     * Return singleton variable of type IndexRestClient.
+     *
+     * @return unique instance of IndexRestClient
+     */
     public static IndexRestClient getInstance() {
         if (Objects.equals(instance, null)) {
             instance = new IndexRestClient();

@@ -39,6 +39,11 @@ public class SearchRestClient extends KitodoRestClient {
 
     private SearchRestClient() {}
 
+    /**
+     * Return singleton variable of type SearchRestClient.
+     *
+     * @return unique instance of SearchRestClient
+     */
     public static SearchRestClient getInstance() {
         if (Objects.equals(instance, null)) {
             instance = new SearchRestClient();
