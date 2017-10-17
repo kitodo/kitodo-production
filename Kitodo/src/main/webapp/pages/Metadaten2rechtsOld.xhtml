@@ -179,14 +179,14 @@
                                 <h:outputText value="#{msgs.docstructAnAndereStelleSchieben}"
                                               rendered="#{Metadaten.modeMoveStructureElement}"/>
                             </h3>
-                            <ui:include src="incMeta/Strukturdaten.xhtml" />
+                            <ui:include src="incMeta/StrukturdatenOld.xhtml" />
                         </h:panelGroup>
 
                         <h:panelGroup rendered="#{Metadaten.modeView =='Paginierung'}">
                             <h3 style="margin-top:10px">
                                 <h:outputText value="#{msgs.paginierungBearbeiten}"/>
                             </h3>
-                            <ui:include src="incMeta/Paginierung.xhtml" />
+                            <ui:include src="incMeta/pagination.xhtml" />
                         </h:panelGroup>
 
 
@@ -201,7 +201,7 @@
                     <td style="top: 30px;">
                         <h:panelGroup id="BildArea2"
                                       style="#{Metadaten.treeProperties.imageSticky?'position: fixed;top: 30px;left: 600px;':''}">
-                            <ui:include src="incMeta/Bild.xhtml" />
+                            <ui:include src="incMeta/imageContol.xhtml" />
                         </h:panelGroup>
                     </td>
                 </ui:fragment>

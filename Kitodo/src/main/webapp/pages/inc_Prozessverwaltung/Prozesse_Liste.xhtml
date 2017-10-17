@@ -397,7 +397,7 @@
             </h:commandLink>
 
             <!-- Metadaten-Schaltknopf -->
-            <h:commandLink action="#{Metadaten.readXml}" id="action14" title="#{msgs.metadatenBearbeiten}123"
+            <h:commandLink action="#{Metadaten.readXml}" id="action14" title="#{msgs.metadatenBearbeiten}"
                            rendered="#{(LoginForm.maximaleBerechtigung != 1) and (LoginForm.maximaleBerechtigung != 2) and item.blockedUsers == null and ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
                 <h:graphicImage value="/pages/images/buttons/view1.gif" alt="view" style="margin-right:10px"/>
                 <f:param name="nurLesen" value="true"/>

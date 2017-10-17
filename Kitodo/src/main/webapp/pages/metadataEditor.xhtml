@@ -25,19 +25,19 @@
 
         <p:layout fullPage="true">
             <p:layoutUnit position="north" size="100">
-                <ui:include src="/pages/Metadaten2oben.xhtml" />
+                <ui:include src="/pages/incMeta/metadataEditorHeader.xhtml" />
             </p:layoutUnit>
 
             <p:layoutUnit position="west" resizable="true" size="200" minSize="100" maxSize="600">
-                <ui:include src="/pages/Metadaten3links.xhtml" />
+                <ui:include src="/pages/incMeta/metadataStructureView.xhtml" />
             </p:layoutUnit>
 
             <p:layoutUnit position="center">
-                <ui:include src="/pages/Metadaten2rechtsNeu.xhtml" />
+                <ui:include src="/pages/incMeta/metadataCenter.xhtml" />
             </p:layoutUnit>
 
             <p:layoutUnit position="east" size="400" resizable="true" header="#{msgs.metadatenBildAnzeigen}" collapsible="true">
-                <ui:include src="/pages/incMeta/Bild.xhtml" />
+                <ui:include src="/pages/incMeta/imageContol.xhtml" />
             </p:layoutUnit>
 
         </p:layout>

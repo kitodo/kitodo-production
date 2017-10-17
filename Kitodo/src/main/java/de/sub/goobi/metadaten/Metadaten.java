@@ -652,10 +652,10 @@ public class Metadaten {
      *
      */
     public String readXml() {
-        String result = "";
+        String redirect = "";
         if (xmlReadingLock.tryLock()) {
             try {
-                result = readXmlAndBuildTree();
+                readXmlAndBuildTree();
             } catch (RuntimeException rte) {
                 throw rte;
             } finally {
@@ -663,12 +663,13 @@ public class Metadaten {
             }
         } else {
             Helper.setFehlerMeldung("metadatenEditorThreadLock");
+            return redirect;
         }
-
-        return result;
+        redirect = "/pages/metadataEditor?faces-redirect=true";
+        return redirect;
     }
 
-    private String readXmlAndBuildTree() {
+    private void readXmlAndBuildTree() {
 
         /*
          * re-reading the config for display rules
@@ -681,7 +682,6 @@ public class Metadaten {
             this.process = serviceManager.getProcessService().getById(id);
         } catch (NumberFormatException | DAOException e1) {
             Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
-            return Helper.getRequestParameter("zurueck");
         }
         this.userId = Helper.getRequestParameter("BenutzerID");
         this.allPagesSelectionFirstPage = "";
@@ -697,15 +697,13 @@ public class Metadaten {
             readXmlStart();
         } catch (ReadException e) {
             Helper.setFehlerMeldung(e.getMessage());
-            return Helper.getRequestParameter("zurueck");
         } catch (PreferencesException | IOException e) {
             Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-            return Helper.getRequestParameter("zurueck");
         }
 
         expandTree();
         this.sperrung.setLocked(this.process.getId(), this.userId);
-        return "Metadaten";
+
     }
 
     /**
