@@ -248,8 +248,7 @@ public class Searcher extends Index {
     }
 
     private SearchRestClient initiateRestClient() {
-        SearchRestClient restClient = new SearchRestClient();
-        restClient.initiateClient();
+        SearchRestClient restClient = SearchRestClient.getInstance();
         restClient.setIndex(index);
         restClient.setType(type);
         return restClient;

@@ -47,7 +47,7 @@ import org.omnifaces.cdi.PushContext;
 @ApplicationScoped
 public class IndexingForm {
 
-    private static IndexRestClient indexRestClient = new IndexRestClient();
+    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
     private static final String MAPPING_STARTED_MESSAGE = "mapping_started";
     private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
     private static final String MAPPING_FAILED_MESSAGE = "mapping_failed";
@@ -197,7 +197,6 @@ public class IndexingForm {
             objectIndexingStates.put(objectType, indexingStates.NO_STATE);
         }
 
-        indexRestClient.initiateClient();
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
     }
 

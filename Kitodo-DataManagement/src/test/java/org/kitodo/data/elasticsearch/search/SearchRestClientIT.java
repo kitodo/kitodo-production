@@ -115,16 +115,14 @@ public class SearchRestClientIT {
     }
 
     private static SearchRestClient initializeSearchRestClient() {
-        SearchRestClient restClient = new SearchRestClient();
-        restClient.initiateClient();
+        SearchRestClient restClient = SearchRestClient.getInstance();
         restClient.setIndex(testIndexName);
         restClient.setType("testsearchclient");
         return restClient;
     }
 
     private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = new IndexRestClient();
-        restClient.initiateClient();
+        IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(testIndexName);
         restClient.setType("testsearchclient");
         return restClient;

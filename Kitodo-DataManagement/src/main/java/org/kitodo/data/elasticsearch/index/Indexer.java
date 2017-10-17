@@ -128,8 +128,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
     }
 
     private IndexRestClient initiateRestClient() {
-        IndexRestClient restClient = new IndexRestClient();
-        restClient.initiateClient();
+        IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(index);
         restClient.setType(type);
         return restClient;
