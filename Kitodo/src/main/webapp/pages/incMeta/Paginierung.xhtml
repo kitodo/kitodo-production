@@ -1,268 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
- *
- * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
- *
- * This file is part of the Kitodo project.
- *
- * It is licensed under GNU General Public License version 3 or later.
- *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
- *
--->
-
-<!-- ########################################
-
-        Paginierungssequenzen
-
-        #########################################-->
+  ~ (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  ~
+  ~ This file is part of the Kitodo project.
+  ~
+  ~ It is licensed under GNU General Public License version 3 or later.
+  ~
+  ~ For the full copyright and license information, please read the
+  ~ GPL3-License.txt file that was distributed with this source code.
+  -->
 
 <ui:composition
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:t="http://myfaces.apache.org/tomahawk"
-    >
-    <!-- <h:form> -->
-    <h:commandLink action="#{Metadaten.createPagination}" value="#{msgs.paginierungEinlesen}">
-        <f:ajax render="mygrid10 myMessages"/>
-    </h:commandLink>
-    <!-- </h:form> -->
-    <h:panelGrid id="mygrid10" columns="2" style="margin:0px;">
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
 
-        <!-- ++++++++++++++++     Auswahl der Seiten      ++++++++++++++++ -->
-        <ui:fragment rendered="#{Metadaten.allPages !=null}">
-            <table cellpadding="3" cellspacing="0" width="200px"
-                   class="eingabeBoxen" style="margin-top:20px">
-                <tr>
-                    <td class="eingabeBoxen_row1">
-                        <h:outputText value="#{msgs.auswahlDerSeiten}"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td id="PaginierungAlleImages" class="eingabeBoxen_row2">
-                        <h:selectManyCheckbox layout="pageDirection" id="myCheckboxes"
-                                              value="#{Metadaten.allPagesSelection}">
-                            <f:selectItems value="#{Metadaten.allPages}" id="myCheckbox"/>
-                        </h:selectManyCheckbox>
-                    </td>
-                </tr>
-            </table>
-        </ui:fragment>
-        <!-- ++++++++++++++++     // Auswahl der Seiten      ++++++++++++++++ -->
+    <p:commandLink action="#{Metadaten.createPagination}" value="#{msgs.paginierungEinlesen}" update="paginationTab">
+    </p:commandLink>
 
-        <!-- ++++++++++++++++     Spacer for valid HTML     ++++++++++++++++ -->
-        <ui:fragment rendered="#{Metadaten.allPages ==null}">
-            <table style="display:none"/>
-        </ui:fragment>
+    <h:panelGrid id="paginationTab" columns="2" layout="grid" rendered="#{Metadaten.allPages !=null}"
+                 style="height: 100%" cellpadding="10">
 
-        <!-- ++++++++++++++++     // Auswahl der Seiten      ++++++++++++++++ -->
+            <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}" style="height: 100%"
+                              required="true" requiredMessage="#{msgs.paginationNoPagesSelected}">
+                <f:selectItems value="#{Metadaten.allPages}"/>
+                <p:ajax update="paginationSelection"/>
 
-        <h:panelGrid id="mygrid11" columns="1" width="270px" style="margin:0px;">
-            <!-- ++++++++++++++++     Paginierung festlegen      ++++++++++++++++ -->
-            <h:panelGroup rendered="#{Metadaten.allPages !=null}" style="position: fixed; top: 122px; left: 250px;">
-                <ui:fragment rendered="#{Metadaten.allPages !=null}">
-                    <table cellpadding="3" cellspacing="0" id="PaginierungActionBox"
-                           class="eingabeBoxen" style="width: 320px;">
-                        <tr>
-                            <td class="eingabeBoxen_row1">
-                                <h:outputText value="#{msgs.paginierungFestlegen}"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="eingabeBoxen_row2">
-                                <h:selectOneMenu value="#{Metadaten.paginationType}"
-                                                 style="width: 270px;margin-top:10px;margin-left:5px"
-                                                 onchange="paginierungWertAnzeigen(this);">
-                                    <f:selectItem itemValue="1" itemLabel="#{msgs.arabisch}"/>
-                                    <!-- 						<f:selectItem itemValue="4" itemLabel="#{msgs.arabischBracket}" /> -->
-                                    <f:selectItem itemValue="2" itemLabel="#{msgs.roemisch}"/>
-                                    <!-- 						<f:selectItem itemValue="5" itemLabel="#{msgs.roemischBracket}" /> -->
-                                    <f:selectItem itemValue="3" itemLabel="#{msgs.unnummeriert}"/>
-                                    <f:selectItem itemValue="6" itemLabel="#{msgs.paginationFreetext}"/>
-                                </h:selectOneMenu>
-                                <br/>
-                                <t:inputText id="paginierungWert" forceId="true"
-                                             value="#{Metadaten.paginationValue}"
-                                             style="width: 270px;margin-top:10px;margin-bottom:5px;margin-left:5px"/>
-                                <br/>
+            </p:selectManyMenu>
 
-                                <div style="margin-top: 5px;margin-bottom:10px">
-                                    <h:selectBooleanCheckbox id="checkbox-fictitious" value="#{Metadaten.fictitious}"/>
-                                    <h:outputLabel for="checkbox-fictitious" value="#{msgs.paginationFictitious}"/>
-                                </div>
+            <h:panelGroup id="setPaginationGroup">
 
-                                <h:commandLink rendered="#{Metadaten.paginationPagesProImage!=1}"
-                                                 title="#{msgs.seitenzaehlung}">
-                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
-                                    <h:graphicImage alt=""
-                                            value="/pages/images/buttons/paginierung_seite_inactive.svg"
-                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <t:updateActionListener value="1"
-                                                            property="#{Metadaten.paginationPagesProImage}"/>
-                                </h:commandLink>
-                                <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginationPagesProImage==1}"
-                                        value="/pages/images/buttons/paginierung_seite.svg"
-                                        style="margin-left:4px;margin-right:6px;vertical-align:middle"
-                                        title="#{msgs.seitenzaehlung}"/>
+                <p:messages id="messagesPagination" closable="true" />
 
-                                <h:commandLink rendered="#{Metadaten.paginationPagesProImage!=2}"
-                                                 title="#{msgs.spaltenzaehlung}">
-                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
-                                    <h:graphicImage alt=""
-                                            value="/pages/images/buttons/paginierung_spalte_inactive.svg"
-                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <t:updateActionListener value="2"
-                                                            property="#{Metadaten.paginationPagesProImage}"/>
-                                </h:commandLink>
-                                <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginationPagesProImage==2}"
-                                        value="/pages/images/buttons/paginierung_spalte.svg"
-                                        style="margin-left:4px;margin-right:6px;vertical-align:middle"
-                                        title="#{msgs.spaltenzaehlung}"/>
+                <h:panelGrid id="setPaginationGrid" columns="2">
+                    <h:outputLabel value="#{msgs.counting}:"/>
+                    <p:selectOneMenu value="#{Metadaten.paginator.paginationMode}" var="mode" style="width: 180px" >
+                        <f:selectItems value="#{Metadaten.paginator.paginationModes}" var="modeSelection"
+                                       itemValue="#{modeSelection}" itemLabel="#{modeSelection.label}"/>
+                        <p:column style="width:10%">
+                            <p:graphicImage value="/pages/images/buttons/#{mode.image}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{mode.label}"/>
+                        </p:column>
+                    </p:selectOneMenu>
 
-                                <h:commandLink rendered="#{Metadaten.paginationPagesProImage!=3}"
-                                                 title="#{msgs.blattzaehlung}">
-                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
-                                    <h:graphicImage alt=""
-                                            value="/pages/images/buttons/paginierung_blatt_inactive.svg"
-                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <t:updateActionListener value="3"
-                                                            property="#{Metadaten.paginationPagesProImage}"/>
-                                </h:commandLink>
-                                <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginationPagesProImage==3}"
-                                        value="/pages/images/buttons/paginierung_blatt.svg"
-                                        style="margin-left:4px;margin-right:6px;vertical-align:middle"
-                                        title="#{msgs.blattzaehlung}"/>
+                    <h:outputLabel value="Bearbeitungsumfang:"/>
+                    <p:selectOneMenu value="#{Metadaten.paginator.paginationScope}" style="width: 180px">
+                        <f:selectItems value="#{Metadaten.paginator.paginationScopes}" var="scope"
+                                       itemValue="#{scope}" itemLabel="#{scope.label}"/>
+                    </p:selectOneMenu>
 
-                                <h:commandLink
-                                        rendered="#{Metadaten.paginationPagesProImage!=4}"
-                                        title="#{msgs.blattzaehlungrectoverso}">
-                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
-                                    <h:graphicImage alt=""
-                                            value="/pages/images/buttons/paginierung_blatt_rectoverso_inactive.svg"
-                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <t:updateActionListener value="4"
-                                                            property="#{Metadaten.paginationPagesProImage}"/>
-                                </h:commandLink>
-                                <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginationPagesProImage==4}"
-                                        value="/pages/images/buttons/paginierung_blatt_rectoverso.svg"
-                                        style="margin-left:4px;margin-right:6px;vertical-align:middle"
-                                        title="#{msgs.blattzaehlungrectoverso}"/>
+                    <h:outputLabel value="#{msgs.paginierung}:"/>
+                    <p:selectOneMenu value="#{Metadaten.paginator.paginationType}" style="width: 180px">
+                        <f:selectItems value="#{Metadaten.paginator.paginationTypes}" var="type"
+                                       itemValue="#{type}" itemLabel="#{type.label}"/>
+                    </p:selectOneMenu>
 
-                                <h:commandLink
-                                        rendered="#{Metadaten.paginationPagesProImage!=5}"
-                                        title="#{msgs.seitenzaehlungrectoverso}">
-                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
-                                    <h:graphicImage alt=""
-                                            value="/pages/images/buttons/paginierung_seite_rectoverso_inactive.svg"
-                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <t:updateActionListener value="5"
-                                                            property="#{Metadaten.paginationPagesProImage}"/>
-                                </h:commandLink>
-                                <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginationPagesProImage==5}"
-                                        value="/pages/images/buttons/paginierung_seite_rectoverso.svg"
-                                        style="margin-left:4px;margin-right:6px;vertical-align:middle"
-                                        title="#{msgs.seitenzaehlungrectoverso}"/>
+                    <h:outputLabel value="#{msgs.paginationStartValue}:"/>
+                    <h:panelGrid columns="2">
+                        <p:inputText id="paginationValue" required="true" style="width: 50px"
+                                     value="#{Metadaten.paginationValue}"
+                                     label="#{msgs.paginationStartValue}"
+                                     requiredMessage="#{msgs.paginationStartValueNotSpecified}">
+                            <f:validateLength minimum="1" />
+                        </p:inputText>
+                        <p:message for="paginationValue" display="icon" />
+                    </h:panelGrid>
 
-                                <h:commandLink
-                                        rendered="#{Metadaten.paginationPagesProImage!=6}"
-                                        title="#{msgs.seitenzaehlungdoppelseiten}">
-                                    <f:ajax render="PaginierungActionBox,myMessages,mygrid10"/>
-                                    <h:graphicImage alt=""
-                                            value="/pages/images/buttons/paginierung_doppelseite_inactive.svg"
-                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <t:updateActionListener value="6"
-                                                            property="#{Metadaten.paginationPagesProImage}"/>
-                                </h:commandLink>
-                                <h:graphicImage alt=""
-                                        rendered="#{Metadaten.paginationPagesProImage==6}"
-                                        value="/pages/images/buttons/paginierung_doppelseite.svg"
-                                        style="margin-left:4px;margin-right:6px;vertical-align:middle"
-                                        title="#{msgs.seitenzaehlungdoppelseiten}"/>
 
-                                <br/>
-                                <ui:fragment rendered="#{Metadaten.paginationPagesProImage>=5}">
-                                    <div style=" margin-left: 6px; margin-top: 8px;">
-                                        <h:outputText value="#{msgs.pageSeparator}: "/>
-                                        <h:selectOneMenu value="#{Metadaten.paginationSeparator}">
-                                            <f:selectItems var="ps" value="#{Metadaten.paginationSeparators}"
-                                                            itemLabel="#{ps.label}" itemValue="#{ps.id}"/>
-                                        </h:selectOneMenu>
-                                    </div>
-                                </ui:fragment>
-                                <br/>
+                    <h:outputLabel for="checkbox-fictitious" value="#{msgs.paginationFictitious}"/>
+                    <p:selectBooleanCheckbox id="checkbox-fictitious" value="#{Metadaten.fictitious}"/>
 
-                                <h:commandLink id="s4" action="#{Metadaten.changePagination}" style="margin-top:15px">
-                                    <f:ajax render="PaginierungAlleImages myMessages mygrid10"/>
-                                    <h:outputText value="#{msgs.nurDieMarkiertenSeiten}"/>
-                                    <t:updateActionListener property="#{Metadaten.paginationFromPageOrMark}" value="2"/>
-                                </h:commandLink>
-                                <br style="margin-top:15px"/>
-                                <h:commandLink id="s5" action="#{Metadaten.changePagination}" style="margin-top:15px">
-                                    <f:ajax render="PaginierungAlleImages,myMessages,mygrid10"/>
-                                    <h:outputText value="#{msgs.abDerErstenMarkiertenSeite}"/>
-                                    <t:updateActionListener property="#{Metadaten.paginationFromPageOrMark}" value="1"/>
-                                </h:commandLink>
-                            </td>
-                        </tr>
-                    </table>
-                </ui:fragment>
-                <!-- ++++++++++++++++     // Paginierung festlegen      ++++++++++++++++ -->
-
-                <ui:fragment rendered="#{Metadaten.displayFileManipulation}">
-                    <table cellpadding="3" cellspacing="0" id="pageOrder" class="eingabeBoxen"
-                               style="width: 320px;margin-top:10px;">
-                        <tr>
-                            <td class="eingabeBoxen_row1">
-                                <h:outputText value="#{msgs.pageOrder}"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="eingabeBoxen_row2">
-                                <h:commandLink action="#{Metadaten.moveSeltectedPagesUp}">
-                                    <h:graphicImage value="/pages/images/buttons/up_20px.gif" alt="move up"
-                                                    style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.moveSeltectedPagesUp}"/>
-                                </h:commandLink>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="eingabeBoxen_row2">
-                                <h:commandLink action="#{Metadaten.moveSelectedPagesDown}">
-                                    <h:graphicImage value="/pages/images/buttons/down_20px.gif" alt="move down"
-                                                    style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.moveSeltectedPagesDown}"/>
-                                </h:commandLink>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="eingabeBoxen_row2">
-                                <h:commandLink action="#{Metadaten.deleteSelectedPages}"
-                                               onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return false">
-                                    <h:graphicImage value="/pages/images/buttons/waste1a_20px.gif" alt="delete"
-                                                    style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.deleteSeltectedPages}"/>
-                                </h:commandLink>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="eingabeBoxen_row2">
-                                <h:commandLink action="#{Metadaten.reOrderPagination}">
-                                    <h:graphicImage value="/pages/images/buttons/reload.gif" alt="reload"
-                                                    style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.reOrder}"/>
-                                </h:commandLink>
-                            </td>
-                        </tr>
-                    </table>
-                </ui:fragment>
+                    <p:commandButton id="startPagination" action="#{Metadaten.changePagination}" update="paginationTab"
+                                     value="start">
+                    </p:commandButton>
+                </h:panelGrid>
             </h:panelGroup>
-        </h:panelGrid>
     </h:panelGrid>
+
+    <!--TODO implement pagination separators-->
+    <!--<ui:fragment rendered="#{Metadaten.paginationPagesProImage>=5}">-->
+    <!--<div style=" margin-left: 6px; margin-top: 8px;">-->
+    <!--<h:outputText value="#{msgs.pageSeparator}: "/>-->
+    <!--<h:selectOneMenu value="#{Metadaten.paginationSeparator}">-->
+    <!--<f:selectItems var="ps" value="#{Metadaten.paginationSeparators}"-->
+    <!--itemLabel="#{ps.label}" itemValue="#{ps.id}"/>-->
+    <!--</h:selectOneMenu>-->
+    <!--</div>-->
+    <!--</ui:fragment>-->
+
 </ui:composition>

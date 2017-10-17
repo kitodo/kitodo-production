@@ -26,30 +26,6 @@
         </navigation-case>
     </navigation-rule>
 
-    <!-- Navigation für Metadaten3links -->
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>Metadaten3links</from-outcome>
-            <to-view-id>/pages/Metadaten3links.xhtml</to-view-id>
-        </navigation-case>
-    </navigation-rule>
-
-    <!-- Navigation für Metadaten2rechts -->
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>Metadaten2rechts</from-outcome>
-            <to-view-id>/pages/Metadaten2rechts.xhtml</to-view-id>
-        </navigation-case>
-    </navigation-rule>
-
-    <!-- Metadatenbearbeitung gesperrt -->
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>SperrungAbgelaufen</from-outcome>
-            <to-view-id>/pages/MetadatenGesperrt.xhtml</to-view-id>
-        </navigation-case>
-    </navigation-rule>
-
     <!-- ###################  Managed Beans  ######################## -->
 
     <!-- Bean für Sessions -->

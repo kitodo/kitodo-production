@@ -1512,20 +1512,6 @@ public class Metadaten {
         return "Metadaten3links";
     }
 
-    /*
-     * Bilder-Anzeige
-     */
-
-    public String scrollImageForth() {
-        identifyImage(1);
-        return "";
-    }
-
-    public String scrollImageBack() {
-        identifyImage(-1);
-        return "";
-    }
-
     /**
      * scrollImage.
      *
@@ -1581,7 +1567,6 @@ public class Metadaten {
      * @return String
      */
     public String getBild() {
-        //checkImage();
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
