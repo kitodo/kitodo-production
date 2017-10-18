@@ -43,10 +43,20 @@ public class Paginator {
             this.image = image;
         }
 
+        /**
+         * Gets label of paginator mode.
+         *
+         * @return The label of paginator mode.
+         */
         public String getLabel() {
             return label;
         }
 
+        /**
+         * Gets image of paginator mode for displaying at frontend.
+         *
+         * @return The label of paginator mode.
+         */
         public String getImage() {
             return image;
         }
@@ -64,6 +74,11 @@ public class Paginator {
             this.label = label;
         }
 
+        /**
+         * Gets label of paginator type.
+         *
+         * @return The label of paginator type.
+         */
         public String getLabel() {
             return label;
         }
@@ -79,6 +94,11 @@ public class Paginator {
             this.label = label;
         }
 
+        /**
+         * Gets label of paginator scope.
+         *
+         * @return The label of paginator scope.
+         */
         public String getLabel() {
             return label;
         }

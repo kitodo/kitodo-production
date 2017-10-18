@@ -25,7 +25,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +33,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -1459,13 +1457,19 @@ public class Metadaten {
     }
 
     /**
-     * Gets paginator
-     * @return
+     * Gets paginator instance.
+     *
+     * @return The paginator instance.
      */
     public Paginator getPaginator() {
         return paginator;
     }
 
+    /**
+     * Sets paginator instance.
+     *
+     * @param paginator The paginator instance.
+     */
     public void setPaginator(Paginator paginator) {
         this.paginator = paginator;
     }
@@ -1549,12 +1553,17 @@ public class Metadaten {
         identifyImage(this.imageNumber);
     }
 
-
+    /**
+     * Changes image number and visualization to 1.
+     */
     public void goToFirstImage() {
         this.imageNumber = 1;
         goToCurrentImageNumber();
     }
 
+    /**
+     * Changes image number and visualization to last image.
+     */
     public void goToLastImage() {
         this.imageNumber = this.lastImage;
         goToCurrentImageNumber();
@@ -1574,14 +1583,6 @@ public class Metadaten {
 
     public List<URI> getAllTifFolders() {
         return this.allTifFolders;
-    }
-
-    public List<String> getAllTifFoldersAsString() {
-        ArrayList<String> list = new ArrayList<>();
-        for (URI tifFolder : allTifFolders) {
-            list.add(tifFolder.getPath());
-        }
-        return list;
     }
 
     /**
@@ -1646,13 +1647,9 @@ public class Metadaten {
             logger.trace("dataList not null");
             this.lastImage = dataList.size();
             logger.trace("myBildLetztes");
-
-
-
             if (this.image == null) {
                 this.image = dataList.get(0);
             }
-
             if (this.currentTifFolder != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("currentTifFolder: " + this.currentTifFolder);
