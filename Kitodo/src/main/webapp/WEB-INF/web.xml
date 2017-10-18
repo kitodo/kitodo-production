@@ -349,4 +349,34 @@
         <servlet-name>Kitodo REST Service based on Jersey</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+
+    <!-- log4j2 for servlet 2.5 based web applications -->
+    <!-- taken from https://logging.apache.org/log4j/2.0/manual/webapp.html#Servlet-2.5 -->
+    <!-- this must be adjusted if applicaton servlet version is raised to 3.0 -->
+    <listener>
+        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>log4jServletFilter</filter-name>
+        <filter-class>org.apache.logging.log4j.web.Log4jServletFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>log4jServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+        <dispatcher>ASYNC</dispatcher> <!-- Servlet 3.0 w/ disabled auto-initialization only; not supported in 2.5 -->
+    </filter-mapping>
+
+    <!-- configuration file to use -->
+    <context-param>
+        <param-name>log4jConfiguration</param-name>
+        <param-value>WEB-INF/classes/log4j2.xml</param-value>
+    </context-param>
+    <!-- end of log4j2 -->
+
 </web-app>

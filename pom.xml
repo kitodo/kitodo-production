@@ -41,6 +41,7 @@
         <maxAllowedViolations>1</maxAllowedViolations>
         <tomcat.baseversion>7</tomcat.baseversion>
         <tomcat.version>7.0.81</tomcat.version>
+        <log4j.version>2.6.2</log4j.version>
     </properties>
 
     <repositories>
