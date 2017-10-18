@@ -46,7 +46,10 @@ public class Paginator {
         public String getLabel() {
             return label;
         }
-        public String getImage() { return image; }
+
+        public String getImage() {
+            return image;
+        }
     }
 
     public enum Type {
@@ -402,34 +405,74 @@ public class Paginator {
         this.fictitiousPagination = b;
     }
 
+    /**
+     * Gets selected Pages.
+     *
+     * @return Array of selected Pages.
+     */
     public int[] getSelectedPages() {
         return selectedPages;
     }
 
+    /**
+     * Gets pagination mode.
+     *
+     * @return The pagination mode.
+     */
     public Mode getPaginationMode() {
         return paginationMode;
     }
 
+    /**
+     * Gets pagination scope.
+     *
+     * @return The pagination scope.
+     */
     public Scope getPaginationScope() {
         return paginationScope;
     }
 
+    /**
+     * Gets pagination strat value.
+     *
+     * @return The pagination start value.
+     */
     public String getPaginationStartValue() {
         return paginationStartValue;
     }
 
+    /**
+     * Gets pagination type.
+     *
+     * @return The pagination type.
+     */
     public Type getPaginationType() {
         return paginationType;
     }
 
+    /**
+     * Gets all pagination modes.
+     *
+     * @return The pagination modes.
+     */
     public Paginator.Mode[] getPaginationModes() {
         return Paginator.Mode.values();
     }
 
+    /**
+     * Gets all pagination types.
+     *
+     * @return The pagination types.
+     */
     public Paginator.Type[] getPaginationTypes() {
         return Paginator.Type.values();
     }
 
+    /**
+     * Gets all pagination scopes.
+     *
+     * @return The pagination scopes.
+     */
     public Paginator.Scope[] getPaginationScopes() {
         return Paginator.Scope.values();
     }
