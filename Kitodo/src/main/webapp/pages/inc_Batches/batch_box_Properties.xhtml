@@ -208,7 +208,9 @@
 
                                         <!--  Date  -->
                                         <h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
-                                            <p:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" locale="#{SpracheForm.locale}" navigator="true" pattern="dd.MM.yyyy" />
+                                            <p:calendar id="prpvw15_5_1" value="#{myprocess_item.value}"
+                                                        locale="#{SpracheForm.locale}" navigator="true"
+                                                        pattern="dd.MM.yyyy" style="width: 500px;margin-right:15px" />
                                         </h:panelGroup>
 
                                     </td>
