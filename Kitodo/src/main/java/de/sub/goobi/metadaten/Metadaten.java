@@ -177,9 +177,6 @@ public class Metadaten {
     private RenderableMetadataGroup newMetadataGroup;
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
-    private Paginator.Mode paginatorMode = Paginator.Mode.PAGES;
-    private Paginator.Type paginatorType = Paginator.Type.ARABIC;
-    private Paginator.Scope paginatorScope = Paginator.Scope.SELECTED;
     private Paginator paginator = new Paginator();
 
     /**
@@ -1461,6 +1458,10 @@ public class Metadaten {
         return result;
     }
 
+    /**
+     * Gets paginator
+     * @return
+     */
     public Paginator getPaginator() {
         return paginator;
     }
