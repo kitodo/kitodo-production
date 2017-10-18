@@ -158,39 +158,49 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Save.
+     * Saves current project if title is not empty and redirects to projects page.
      *
      * @return page or empty String
      */
     public String save() {
         // call this to make saving and deleting permanent
         this.commitFileGroups();
-        try {
-            serviceManager.getProjectService().save(this.myProjekt);
-            return filterKein();
-        } catch (DataException e) {
-            Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
-            logger.error(e);
+        if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
+            Helper.setFehlerMeldung("Can not save project with empty title!");
             return null;
+        } else {
+            try {
+                serviceManager.getProjectService().save(this.myProjekt);
+                return filterKein();
+            } catch (DataException e) {
+                Helper.setFehlerMeldung("Project could not be saved: ", e.getMessage());
+                logger.error(e);
+                return null;
+            }
         }
     }
 
     /**
-     * Apply.
+     * Saves current project if title is not empty
      *
      * @return String
      */
     public String apply() {
         // call this to make saving and deleting permanent
-        logger.trace("apply wird aufgerufen...");
         this.commitFileGroups();
-        try {
-            serviceManager.getProjectService().save(this.myProjekt);
+        if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
+            Helper.setFehlerMeldung("Can not save project with empty title!");
             return null;
-        } catch (DataException e) {
-            Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
-            logger.error(e);
-            return null;
+        } else {
+            try {
+                serviceManager.getProjectService().save(this.myProjekt);
+                Helper.setMeldung("Project saved!");
+                return null;
+            } catch (DataException e) {
+                Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
+                logger.error(e);
+                return null;
+            }
         }
     }
 
@@ -228,7 +238,7 @@ public class ProjekteForm extends BasisForm {
             logger.error(e);
         }
         this.page = new Page<>(0, projects);
-        return "/pages/ProjekteAlle";
+        return "/pages/ProjekteAlle?faces-redirect=true";
     }
 
     /**
