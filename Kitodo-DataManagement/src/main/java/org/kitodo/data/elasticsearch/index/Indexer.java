@@ -76,8 +76,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
             response = "Incorrect HTTP method!";
         }
 
-        restClient.closeClient();
-
         return response;
     }
 
@@ -96,8 +94,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         } else {
             response = "Incorrect HTTP method!";
         }
-
-        restClient.closeClient();
 
         return response;
     }
@@ -121,8 +117,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         } else {
             response = "Incorrect HTTP method!";
         }
-
-        restClient.closeClient();
 
         return response;
     }
@@ -165,7 +159,6 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         String serverInformation = null;
         try {
             serverInformation = restClient.getServerInformation();
-            restClient.closeClient();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
