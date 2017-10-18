@@ -48,8 +48,12 @@ public class IndexRestClient extends KitodoRestClient {
      */
     public static IndexRestClient getInstance() {
         if (Objects.equals(instance, null)) {
-            instance = new IndexRestClient();
-            instance.initiateClient();
+            synchronized (IndexRestClient.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new IndexRestClient();
+                    instance.initiateClient();
+                }
+            }
         }
         return instance;
     }
