@@ -16,6 +16,7 @@ import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
+import de.sub.goobi.model.LazyDTOModel;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -89,6 +90,16 @@ public class ProjekteForm extends BasisForm {
     private boolean showStatistics;
 
     private int itemId;
+
+    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getProjectService());
+
+    public LazyDTOModel getLazyDTOModel() {
+        return lazyDTOModel;
+    }
+
+    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDTOModel = lazyDTOModel;
+    }
 
     public ProjekteForm() {
         super();

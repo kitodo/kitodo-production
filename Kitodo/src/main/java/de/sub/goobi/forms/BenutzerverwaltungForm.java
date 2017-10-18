@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.ldap.Ldap;
+import de.sub.goobi.model.LazyDTOModel;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,6 +60,16 @@ public class BenutzerverwaltungForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private int userId;
+
+    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getUserService());
+
+    public LazyDTOModel getLazyDTOModel() {
+        return this.lazyDTOModel;
+    }
+
+    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDTOModel = lazyDTOModel;
+    }
 
     /**
      * New user.

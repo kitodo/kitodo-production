@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
+import de.sub.goobi.model.LazyDTOModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +41,16 @@ public class RulesetForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
     private int rulesetId;
+
+    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getRulesetService());
+
+    public LazyDTOModel getLazyDTOModel() {
+        return lazyDTOModel;
+    }
+
+    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDTOModel = lazyDTOModel;
+    }
 
     /**
      * Initialize new Ruleset.

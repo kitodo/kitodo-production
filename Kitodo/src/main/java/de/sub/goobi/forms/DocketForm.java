@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
+import de.sub.goobi.model.LazyDTOModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,9 +43,19 @@ public class DocketForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
     private int docketId;
 
+    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getDocketService());
+
+    public LazyDTOModel getLazyDTOModel() {
+        return this.lazyDTOModel;
+    }
+
+    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDTOModel = lazyDTOModel;
+    }
+
     /**
      * Creates a new Docket.
-     * 
+     *
      * @return the navigation String
      */
     public String Neu() {

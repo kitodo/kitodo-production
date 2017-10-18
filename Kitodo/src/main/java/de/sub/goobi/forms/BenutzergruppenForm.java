@@ -13,9 +13,9 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
+import de.sub.goobi.model.LazyDTOModel;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +40,16 @@ public class BenutzergruppenForm extends BasisForm {
     private UserGroup myBenutzergruppe = new UserGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
+
+    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getUserGroupService());
+
+    public LazyDTOModel getLazyDTOModel() {
+        return lazyDTOModel;
+    }
+
+    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDTOModel = lazyDTOModel;
+    }
 
     /**
      * Create new user group.

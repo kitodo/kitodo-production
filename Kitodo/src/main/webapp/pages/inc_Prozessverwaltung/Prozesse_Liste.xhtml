@@ -56,14 +56,10 @@
         </f:subview>
     </t:aliasBeansScope>
 
-    <!-- Datentabelle -->
-    <!--<t:dataTable id="auflistung" styleClass="standardTable" width="100%" cellspacing="1px" cellpadding="1px"-->
-                 <!--headerClass="standardTable_Header"-->
-                 <!--rowClasses="standardTable_Row1,standardTable_Row2,standardTable_Row1,standardTable_Row2" var="item"-->
-                 <!--value="#{ProzessverwaltungForm.page.listReload}">-->
+    <!-- List of processes -->
     <p:dataTable id="auflistung" tableStyleClass="standardTable" width="100%" cellspacing="1px" cellpadding="1px"
-                 rowStyleClass="standardTable_Row1,standardTable_Row2,standardTable_Row1,standardTable_Row2" var="item"
-                 value="#{ProzessverwaltungForm.lazyDataModel}" rows="10" lazy="true" paginator="true">
+                 var="item" value="#{ProzessverwaltungForm.lazyDataModel}" rows="#{LoginForm.myBenutzer.tableSize}"
+                 lazy="true" paginator="true">
 
         <!-- +++++++++++++++++  SelectionBoxes ++++++++++++++++++++++++ -->
         <p:column style="text-align:center" headerText="#{msgs.auswahl2}"

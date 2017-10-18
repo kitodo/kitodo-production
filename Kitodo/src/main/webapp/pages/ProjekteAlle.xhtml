@@ -24,6 +24,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -72,21 +73,16 @@
                                                     infoClass="text_blue" showDetail="true" showSummary="true"
                                                     tooltip="true"/>
 
-                                        <!-- Datentabelle -->
-                                        <t:dataTable id="id8" styleClass="standardTable" width="100%"
-                                                     cellspacing="1px" cellpadding="1px"
-                                                     headerClass="standardTable_Header"
-                                                     rowClasses="standardTable_Row1,standardTable_Row2"
-                                                     columnClasses="standardTable_Column,standardTable_ColumnCentered"
-                                                     var="item" value="#{ProjekteForm.page.listReload}"
-                                                     style="margin-top: 10px;">
+                                        <!-- List of projects -->
+                                        <p:dataTable id="id8" tableStyleClass="standardTable"
+                                                     var="item" value="#{ProjekteForm.lazyDTOModel}"
+                                                     lazy="true" paginator="true"
+                                                     rows="#{LoginForm.myBenutzer.tableSize}"
+                                                     style="margin-top: 10px; width: 100%">
 
-                                            <h:column id="id9">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id10" value="#{msgs.projekt}"/>
-                                                </f:facet>
+                                            <p:column id="id9" headerText="#{msgs.projekt}">
                                                 <h:outputText id="id11" value="#{item.title}"/>
-                                            </h:column>
+                                            </p:column>
 
                                             <!-- +++++++++++++++++  Mets ++++++++++++++++++++++++
                                             <t:column id="id12" style="text-align:center">
@@ -109,24 +105,13 @@
                                             </t:column>-->
 
                                             <!-- +++++++++++++++++  FileFormats ++++++++++++++++++++++++ -->
-                                            <t:column id="id20" style="text-align:center">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id21"
-                                                                  value="#{msgs.internesSpeicherformat}"/>
-                                                </f:facet>
+                                            <p:column id="id20" style="text-align:center" headerText="#{msgs.internesSpeicherformat}">
                                                 <h:outputText id="id22" value="#{item.fileFormatInternal}"/>
-                                            </t:column>
-                                            <t:column id="id23" style="text-align:center">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id24" value="#{msgs.dmsExportformat}"/>
-                                                </f:facet>
+                                            </p:column>
+                                            <p:column id="id23" style="text-align:center" headerText="#{msgs.dmsExportformat}">
                                                 <h:outputText id="id25" value="#{item.fileFormatDmsExport}"/>
-                                            </t:column>
-                                            <t:column id="id234" style="text-align:center">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id2440" value="#{msgs.projectIsArchived}"/>
-                                                </f:facet>
-
+                                            </p:column>
+                                            <p:column id="id234" style="text-align:center" headerText="#{msgs.projectIsArchived}">
                                                 <h:graphicImage id="id2341"
                                                                 value="/pages/images/check_true.gif"
                                                                 rendered="#{item.projectIsArchived}"
@@ -135,21 +120,18 @@
                                                                 value="/pages/images/check_false.gif"
                                                                 rendered="#{!item.projectIsArchived}"
                                                                 alt="not archived"/>
-                                            </t:column>
-                                            <t:column id="id26" style="text-align:center"
+                                            </p:column>
+                                            <p:column id="id26" style="text-align:center" headerText="#{msgs.auswahl}"
                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id27" value="#{msgs.auswahl}"/>
-                                                </f:facet>
-                                                <!-- Bearbeiten-Schaltknopf -->
+                                                <!-- Edit button -->
                                                 <h:link id="id28" outcome="/pages/ProjekteBearbeiten"
                                                                title="#{msgs.projektBearbeiten}">
                                                     <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage alt="edit" id="id29"
                                                                     value="/pages/images/buttons/edit.gif"/>
                                                 </h:link>
-                                            </t:column>
-                                        </t:dataTable>
+                                            </p:column>
+                                        </p:dataTable>
 
                                         <!-- newUser-Schaltknopf -->
                                         <h:commandLink id="id52" action="#{ProjekteForm.newProject}"
@@ -157,21 +139,6 @@
                                                        rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (ProjekteForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
                                             <h:outputText id="id62" value="#{msgs.neuesProjektAnlegen}"/>
                                         </h:commandLink>
-
-                                        <table width="100%" border="0">
-                                            <tr valign="top">
-                                                <td align="left">
-
-                                                </td>
-                                                <td align="center">
-                                                    <!-- ===================== Datascroller für die Ergebnisse ====================== -->
-                                                    <t:aliasBean alias="#{mypage}" value="#{ProjekteForm.page}">
-                                                        <ui:include src="/pages/inc/datascroller.xhtml"/>
-                                                    </t:aliasBean>
-                                                    <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
-                                                </td>
-                                            </tr>
-                                        </table>
                                     </td>
                                 </tr>
                             </table>

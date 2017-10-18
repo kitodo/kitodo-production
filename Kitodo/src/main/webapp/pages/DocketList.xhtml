@@ -24,6 +24,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -72,65 +73,38 @@
                                                     infoClass="text_blue" showDetail="true" showSummary="true"
                                                     tooltip="true"/>
 
-                                        <!-- Datentabelle -->
-                                        <t:dataTable id="id8" styleClass="standardTable" width="100%"
-                                                     cellspacing="1px" cellpadding="1px"
-                                                     headerClass="standardTable_Header"
-                                                     rowClasses="standardTable_Row1,standardTable_Row2"
-                                                     columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
-                                                     style="margin-top: 10px;"
-                                                     var="item" value="#{DocketForm.page.listReload}">
+                                        <!-- List of dockets -->
+                                        <p:dataTable id="id8" tableStyleClass="standardTable"
+                                                     var="item" lazy="true" paginator="true"
+                                                     rows="#{LoginForm.myBenutzer.tableSize}"
+                                                     value="#{DocketForm.lazyDTOModel}"
+                                                     style="margin-top: 10px; width: 100%;">
 
-                                            <h:column id="id9">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id10" value="#{msgs.titel}"/>
-                                                </f:facet>
+                                            <p:column id="id9" headerText="#{msgs.titel}">
                                                 <h:outputText id="id11" value="#{item.title}"/>
-                                            </h:column>
+                                            </p:column>
 
-                                            <h:column id="id12">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id13" value="#{msgs.datei}"/>
-                                                </f:facet>
+                                            <p:column id="id12" headerText="#{msgs.datei}">
                                                 <h:outputText id="id14" value="#{item.file}"/>
-                                            </h:column>
+                                            </p:column>
 
-
-                                            <h:column id="id19"
+                                            <p:column id="id19" headerText="#{msgs.auswahl}"
                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id20" value="#{msgs.auswahl}"/>
-                                                </f:facet>
-                                                <!-- Bearbeiten-Schaltknopf -->
+                                                <!-- Edit button -->
                                                 <h:link id="id21" outcome="/pages/DocketEdit"
                                                                title="#{msgs.editDocket}">
                                                     <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage id="id22" alt="edit"
                                                                     value="/pages/images/buttons/edit.gif"/>
                                                 </h:link>
-                                            </h:column>
+                                            </p:column>
 
-                                        </t:dataTable>
+                                        </p:dataTable>
                                         <h:commandLink id="id52" action="#{DocketForm.Neu}"
                                                        immediate="true"
                                                        rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (DocketForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
                                             <h:outputText id="id62" value="#{msgs.createNewDocket}"/>
                                         </h:commandLink>
-                                        <table width="100%" border="0">
-                                            <tr valign="top">
-                                                <td align="left">
-
-                                                </td>
-                                                <td align="center">
-                                                    <!-- ===================== Datascroller für die Ergebnisse ====================== -->
-                                                    <t:aliasBean alias="#{mypage}"
-                                                                 value="#{DocketForm.page}">
-                                                        <ui:include src="/pages/inc/datascroller.xhtml"/>
-                                                    </t:aliasBean>
-                                                    <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
-                                                </td>
-                                            </tr>
-                                        </table>
                                     </td>
                                 </tr>
                             </table>
