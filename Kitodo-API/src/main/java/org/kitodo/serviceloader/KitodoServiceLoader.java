@@ -13,6 +13,8 @@ package org.kitodo.serviceloader;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -23,12 +25,12 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Random;
 import java.util.ServiceLoader;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -43,6 +45,14 @@ import org.apache.logging.log4j.Logger;
 public class KitodoServiceLoader<T> {
     private Class clazz;
     private String modulePath;
+
+    private static final String POM_PROPERTIES_FILE = "pom.properties";
+    private static final String ARTIFACT_ID_PROPERTY = "artifactId";
+    private static final String TEMP_DIR_PREFIX = "kitodo_";
+    private static final String META_INF_FOLDER = "META-INF";
+    private static final String RESOURCES_FOLDER = "resources";
+    private static final String PAGES_FOLDER = "pages";
+
     private static final Logger logger = LogManager.getLogger(KitodoServiceLoader.class);
 
     /**
@@ -103,9 +113,16 @@ public class KitodoServiceLoader<T> {
                     while (e.hasMoreElements()) {
                         JarEntry je = e.nextElement();
 
-                        // TODO: konvention: name der xhtml datei + Form, bspw.: sample.xhtml -> SampleForm.java
-                        // deshalb wird hier auf "Form.class" gesucht
-
+                        /*
+                         * IMPORTANT: Naming convention: the name of the java class has to be in upper
+                         * camel case or "pascal case" and must be equal to the file name of the
+                         * corresponding facelet file concatenated with the word "Form".
+                         *
+                         * Example: template filename "sample.xhtml" => "SampleForm.java"
+                         *
+                         * That is the reason for the following check (e.g. whether the JarEntry name
+                         * ends with "Form.class")
+                         */
                         if (je.isDirectory() || !je.getName().endsWith("Form.class")) {
                             continue;
                         }
@@ -134,7 +151,6 @@ public class KitodoServiceLoader<T> {
      * of the core module. Before copying, existing frontend files of the same module will be deleted from the
      * core module. Afterwards the created temporary folder will be deleted as well.
      */
-    // TODO: Relative Pfade müssen zu absoluten Pfaden angepasst werden
     private void loadFrontendFilesIntoCore() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
@@ -147,12 +163,26 @@ public class KitodoServiceLoader<T> {
                 JarFile jarFile = new JarFile(loc);
 
                 if (hasFrontendFiles(jarFile)) {
-                    String temporaryFolderName = generateRandomString(10);
+                    Path systemTempFolder = FileSystems.getDefault().getPath(System.getProperty("java.io.tmpdir"));
+                    Path temporaryFolder = Files.createTempDirectory(systemTempFolder, TEMP_DIR_PREFIX);
+                    String temporaryFolderName = Paths.get(temporaryFolder.toUri()).toAbsolutePath().toString();
+                    File tempFolderFile = new File(temporaryFolderName);
+                    tempFolderFile.deleteOnExit();
                     extractFrontEndFiles(loc.getAbsolutePath(), temporaryFolderName);
                     String moduleName = extractModuleName(temporaryFolderName);
-                    FileUtils.deleteDirectory(new File("Kitodo/src/main/webapp/pages/" + moduleName));
-                    copyFrontEndFiles(temporaryFolderName + "/META-INF/resources", "Kitodo/src/main/webapp/pages/" + moduleName);
-                    FileUtils.deleteDirectory(new File(temporaryFolderName));
+                    if (!moduleName.isEmpty()) {
+                        FacesContext facesContext = FacesContext.getCurrentInstance();
+                        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+                        String filePath = session.getServletContext().getRealPath(File.separator + PAGES_FOLDER)
+                                + File.separator + moduleName;
+                        FileUtils.deleteDirectory(new File(filePath));
+                        String resourceFolder = String.join(File.separator,
+                                Arrays.asList(temporaryFolderName, META_INF_FOLDER, RESOURCES_FOLDER));
+                        copyFrontEndFiles(resourceFolder, filePath);
+                        FileUtils.deleteDirectory(tempFolderFile);
+                    } else {
+                        logger.info("No module found in JarFile '" + jarFile.getName() + "'.");
+                    }
                 }
             }
         }
@@ -170,52 +200,17 @@ public class KitodoServiceLoader<T> {
      *
      * @return boolean
      */
-    protected String extractModuleName(String temporaryFolderName) throws IOException {
-        Properties prop = new Properties();
-        InputStream input = null;
+    private String extractModuleName(String temporaryFolderName) throws IOException {
         String moduleName = "";
-        File properties = findFile("pom.properties", temporaryFolderName);
-
-        try {
-            input = new FileInputStream(properties);
+        File properties = findFile(POM_PROPERTIES_FILE, temporaryFolderName);
+        try (InputStream input = new FileInputStream(properties)) {
+            Properties prop = new Properties();
             prop.load(input);
-            return moduleName = prop.getProperty("artifactId");
-
-        } catch (Exception e) {
-            throw e;
+            moduleName = prop.getProperty(ARTIFACT_ID_PROPERTY);
+        } catch (FileNotFoundException e) {
+            logger.error(e.getMessage());
         }
-    }
-
-    /**
-     * This method generates random string
-     *
-     * @return
-     */
-    private String generateRandomString(int randomStringLength){
-        final String charList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        StringBuffer randomString = new StringBuffer();
-        for(int i=0; i<randomStringLength; i++){
-            int number = getRandomNumber();
-            randomString.append(charList.charAt(number));
-        }
-        return randomString.toString();
-    }
-
-    /**
-     * This method generates random numbers
-     *
-     * @return int
-     */
-    private int getRandomNumber() {
-        final int lenght = 50;
-        int randomInt;
-        Random randomGenerator = new Random();
-        randomInt = randomGenerator.nextInt(lenght);
-        if (randomInt - 1 == -1) {
-            return randomInt;
-        } else {
-            return randomInt - 1;
-        }
+        return moduleName;
     }
 
     /**
@@ -243,30 +238,32 @@ public class KitodoServiceLoader<T> {
      */
     private void extractFrontEndFiles(String jarPath, String destinationPath) throws IOException {
         File destinationFolder = new File(destinationPath);
-        destinationFolder.mkdir();
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
 
-        java.util.jar.JarFile jar = new java.util.jar.JarFile(jarPath);
-        java.util.Enumeration enumEntries = jar.entries();
-        while (enumEntries.hasMoreElements()) {
-            java.util.jar.JarEntry file2 = (java.util.jar.JarEntry) enumEntries.nextElement();
+        JarFile jar = new JarFile(jarPath);
+        Enumeration jarEntries = jar.entries();
+        while (jarEntries.hasMoreElements()) {
+            JarEntry currentJarEntry = (JarEntry) jarEntries.nextElement();
 
-            if (file2.getName().contains("resources") || file2.getName().contains("pom.properties")) {
-                java.io.File f = new java.io.File(destinationPath + java.io.File.separator + file2.getName());
-                if (file2.isDirectory()) {
-                    f.mkdirs();
+            if (currentJarEntry.getName().contains(RESOURCES_FOLDER)
+                    || currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
+                File resourceFile = new File(destinationPath + File.separator + currentJarEntry.getName());
+                if (currentJarEntry.isDirectory()) {
+                    resourceFile.mkdirs();
                     continue;
                 }
-                if (file2.getName().contains("pom.properties")) {
-                    f.getParentFile().mkdirs();
+                if (currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
+                    resourceFile.getParentFile().mkdirs();
                 }
 
-                java.io.InputStream is = jar.getInputStream(file2);
-                java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
-                while (is.available() > 0) {
-                    fos.write(is.read());
+                try (InputStream is = jar.getInputStream(currentJarEntry);
+                        FileOutputStream fos = new FileOutputStream(resourceFile)) {
+                    while (is.available() > 0) {
+                        fos.write(is.read());
+                    }
                 }
-                fos.close();
-                is.close();
             }
         }
         jar.close();
@@ -285,7 +282,7 @@ public class KitodoServiceLoader<T> {
         Enumeration enums = jarFile.entries();
         while (enums.hasMoreElements()) {
             JarEntry jarEntry = (JarEntry)enums.nextElement();
-            if (jarEntry.getName().contains("resources") && jarEntry.isDirectory()) {
+            if (jarEntry.getName().contains(RESOURCES_FOLDER) && jarEntry.isDirectory()) {
                 return true;
             }
         }
@@ -302,16 +299,14 @@ public class KitodoServiceLoader<T> {
      *
      * @return File, null
      */
-    public File findFile(String name, String folderName)
+    private File findFile(String name, String folderName) throws FileNotFoundException
     {
         Collection<File> s = FileUtils.listFiles(new File(folderName), null, true);
-
-        for (File f:
-                s) {
+        for (File f : s) {
             if (f.getName().equals(name))
                 return f;
         }
-        return null;
+        throw new FileNotFoundException("ERROR: file '" + name + "' not found in folder '" + folderName + "'!");
     }
 
     /**
