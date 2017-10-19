@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 @FacesConverter("URIConverter")
 public class URIConverter implements Converter {
     public static final String CONVERTER_ID = "URIConverter";
-    private static final Logger logger = LogManager.getLogger(DocketConverter.class);
+    private static final Logger logger = LogManager.getLogger(URIConverter.class);
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
