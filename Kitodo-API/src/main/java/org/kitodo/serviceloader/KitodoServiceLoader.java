@@ -44,7 +44,7 @@ import org.apache.logging.log4j.Logger;
 
 public class KitodoServiceLoader<T> {
     private Class clazz;
-    private String modulePath;
+    private String modulePath = "";
 
     private static final String POM_PROPERTIES_FILE = "pom.properties";
     private static final String ARTIFACT_ID_PROPERTY = "artifactId";
@@ -52,6 +52,9 @@ public class KitodoServiceLoader<T> {
     private static final String META_INF_FOLDER = "META-INF";
     private static final String RESOURCES_FOLDER = "resources";
     private static final String PAGES_FOLDER = "pages";
+
+    private static final Path SYSTEM_TEMP_FOLDER = FileSystems.getDefault()
+            .getPath(System.getProperty("java.io.tmpdir"));
 
     private static final Logger logger = LogManager.getLogger(KitodoServiceLoader.class);
 
@@ -95,23 +98,21 @@ public class KitodoServiceLoader<T> {
      * frontend files
      */
     private void loadBeans() {
-        try {
-
-            Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
-            DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar");
+        Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar")) {
 
             for (Path f : stream) {
-                JarFile jarFile = new JarFile(f.toString());
+                try (JarFile jarFile = new JarFile(f.toString())) {
 
-                if (hasFrontendFiles(jarFile)) {
+                    if (hasFrontendFiles(jarFile)) {
 
-                    Enumeration<JarEntry> e = jarFile.entries();
+                        Enumeration<JarEntry> e = jarFile.entries();
 
-                    URL[] urls = {new URL("jar:file:" + f.toString() + "!/")};
-                    URLClassLoader cl = URLClassLoader.newInstance(urls);
+                        URL[] urls = {new URL("jar:file:" + f.toString() + "!/") };
+                        URLClassLoader cl = URLClassLoader.newInstance(urls);
 
-                    while (e.hasMoreElements()) {
-                        JarEntry je = e.nextElement();
+                        while (e.hasMoreElements()) {
+                            JarEntry je = e.nextElement();
 
                         /*
                          * IMPORTANT: Naming convention: the name of the java class has to be in upper
@@ -123,25 +124,25 @@ public class KitodoServiceLoader<T> {
                          * That is the reason for the following check (e.g. whether the JarEntry name
                          * ends with "Form.class")
                          */
-                        if (je.isDirectory() || !je.getName().endsWith("Form.class")) {
-                            continue;
+                            if (je.isDirectory() || !je.getName().endsWith("Form.class")) {
+                                continue;
+                            }
+
+                            String className = je.getName().substring(0, je.getName().length() - 6);
+                            className = className.replace('/', '.');
+                            Class c = cl.loadClass(className);
+
+                            String beanName = className.substring(className.lastIndexOf(".") + 1).trim();
+
+                            FacesContext facesContext = FacesContext.getCurrentInstance();
+                            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+
+                            session.getServletContext().setAttribute(beanName, c.newInstance());
                         }
-
-                        String className = je.getName().substring(0, je.getName().length() - 6);
-                        className = className.replace('/', '.');
-                        Class c = cl.loadClass(className);
-
-                        String beanName = className.substring(className.lastIndexOf(".") + 1).trim();
-
-                        FacesContext facesContext = FacesContext.getCurrentInstance();
-                        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
-
-                        session.getServletContext().setAttribute(beanName, c.newInstance());
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Classpath could not be accessed", e.getMessage());
         }
     }
@@ -152,57 +153,59 @@ public class KitodoServiceLoader<T> {
      * core module. Afterwards the created temporary folder will be deleted as well.
      */
     private void loadFrontendFilesIntoCore() {
+
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
-        try {
-            DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar");
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar")) {
 
             for (Path f : stream) {
-
                 File loc = new File(f.toString());
-                JarFile jarFile = new JarFile(loc);
+                try (JarFile jarFile = new JarFile(loc)) {
 
-                if (hasFrontendFiles(jarFile)) {
-                    Path systemTempFolder = FileSystems.getDefault().getPath(System.getProperty("java.io.tmpdir"));
-                    Path temporaryFolder = Files.createTempDirectory(systemTempFolder, TEMP_DIR_PREFIX);
-                    String temporaryFolderName = Paths.get(temporaryFolder.toUri()).toAbsolutePath().toString();
-                    File tempFolderFile = new File(temporaryFolderName);
-                    tempFolderFile.deleteOnExit();
-                    extractFrontEndFiles(loc.getAbsolutePath(), temporaryFolderName);
-                    String moduleName = extractModuleName(temporaryFolderName);
-                    if (!moduleName.isEmpty()) {
-                        FacesContext facesContext = FacesContext.getCurrentInstance();
-                        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
-                        String filePath = session.getServletContext().getRealPath(File.separator + PAGES_FOLDER)
-                                + File.separator + moduleName;
-                        FileUtils.deleteDirectory(new File(filePath));
-                        String resourceFolder = String.join(File.separator,
-                                Arrays.asList(temporaryFolderName, META_INF_FOLDER, RESOURCES_FOLDER));
-                        copyFrontEndFiles(resourceFolder, filePath);
-                        FileUtils.deleteDirectory(tempFolderFile);
-                    } else {
-                        logger.info("No module found in JarFile '" + jarFile.getName() + "'.");
+                    if (hasFrontendFiles(jarFile)) {
+
+                        Path temporaryFolder = Files.createTempDirectory(SYSTEM_TEMP_FOLDER, TEMP_DIR_PREFIX);
+
+                        File tempDir = new File(Paths.get(temporaryFolder.toUri()).toAbsolutePath().toString());
+
+                        extractFrontEndFiles(loc.getAbsolutePath(), tempDir);
+
+                        String moduleName = extractModuleName(tempDir);
+                        if (!moduleName.isEmpty()) {
+                            FacesContext facesContext = FacesContext.getCurrentInstance();
+                            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+
+                            String filePath = session.getServletContext().getRealPath(File.separator + PAGES_FOLDER)
+                                    + File.separator + moduleName;
+                            FileUtils.deleteDirectory(new File(filePath));
+
+                            String resourceFolder = String.join(File.separator,
+                                    Arrays.asList(tempDir.getAbsolutePath(), META_INF_FOLDER, RESOURCES_FOLDER));
+                            copyFrontEndFiles(resourceFolder, filePath);
+                        } else {
+                            logger.info("No module found in JarFile '" + jarFile.getName() + "'.");
+                        }
+                        FileUtils.deleteDirectory(tempDir);
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Classpath could not be accessed", e.getMessage());
         }
     }
 
     /**
      * Extracts the module name of the current module by finding the pom.properties
-     * in the folder given by the temporary folder name
+     * in the given temporary folder
      *
-     * @param temporaryFolderName
-     *            folder name in which the pom.properties file will be searched for
+     * @param temporaryFolder
+     *            folder in which the pom.properties file will be searched for
      *
      * @return boolean
      */
-    private String extractModuleName(String temporaryFolderName) throws IOException {
+    private String extractModuleName(File temporaryFolder) throws IOException {
         String moduleName = "";
-        File properties = findFile(POM_PROPERTIES_FILE, temporaryFolderName);
+        File properties = findFile(POM_PROPERTIES_FILE, temporaryFolder);
         try (InputStream input = new FileInputStream(properties)) {
             Properties prop = new Properties();
             prop.load(input);
@@ -227,46 +230,45 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Checks, whether a passed jarFile has frontend files or not. Returns true, when the jar contains
-     * a folder with the name "resources"
+     * Checks, whether a passed jarFile has frontend files or not. Returns true,
+     * when the jar contains a folder with the name "resources"
      *
      * @param jarPath
      *            jarFile that will be checked for frontend files
-     * @param destinationPath
+     * @param destinationFolder
      *            destination path, where the frontend files will be extracted to
      *
      */
-    private void extractFrontEndFiles(String jarPath, String destinationPath) throws IOException {
-        File destinationFolder = new File(destinationPath);
+    private void extractFrontEndFiles(String jarPath, File destinationFolder) throws IOException {
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
         }
 
-        JarFile jar = new JarFile(jarPath);
-        Enumeration jarEntries = jar.entries();
-        while (jarEntries.hasMoreElements()) {
-            JarEntry currentJarEntry = (JarEntry) jarEntries.nextElement();
+        try (JarFile jar = new JarFile(jarPath)) {
+            Enumeration jarEntries = jar.entries();
+            while (jarEntries.hasMoreElements()) {
+                JarEntry currentJarEntry = (JarEntry) jarEntries.nextElement();
 
-            if (currentJarEntry.getName().contains(RESOURCES_FOLDER)
-                    || currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
-                File resourceFile = new File(destinationPath + File.separator + currentJarEntry.getName());
-                if (currentJarEntry.isDirectory()) {
-                    resourceFile.mkdirs();
-                    continue;
-                }
-                if (currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
-                    resourceFile.getParentFile().mkdirs();
-                }
+                if (currentJarEntry.getName().contains(RESOURCES_FOLDER)
+                        || currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
+                    File resourceFile = new File(destinationFolder + File.separator + currentJarEntry.getName());
+                    if (currentJarEntry.isDirectory()) {
+                        resourceFile.mkdirs();
+                        continue;
+                    }
+                    if (currentJarEntry.getName().contains(POM_PROPERTIES_FILE)) {
+                        resourceFile.getParentFile().mkdirs();
+                    }
 
-                try (InputStream is = jar.getInputStream(currentJarEntry);
-                        FileOutputStream fos = new FileOutputStream(resourceFile)) {
-                    while (is.available() > 0) {
-                        fos.write(is.read());
+                    try (InputStream is = jar.getInputStream(currentJarEntry);
+                            FileOutputStream fos = new FileOutputStream(resourceFile)) {
+                        while (is.available() > 0) {
+                            fos.write(is.read());
+                        }
                     }
                 }
             }
         }
-        jar.close();
     }
 
     /**
@@ -294,19 +296,20 @@ public class KitodoServiceLoader<T> {
      *
      * @param name
      *            file name that will be searched for
-     * @param folderName
+     * @param folder
      *            folder that will be searched
      *
      * @return File, null
      */
-    private File findFile(String name, String folderName) throws FileNotFoundException
+    private File findFile(String name, File folder) throws FileNotFoundException
     {
-        Collection<File> s = FileUtils.listFiles(new File(folderName), null, true);
+        Collection<File> s = FileUtils.listFiles(folder, null, true);
         for (File f : s) {
             if (f.getName().equals(name))
                 return f;
         }
-        throw new FileNotFoundException("ERROR: file '" + name + "' not found in folder '" + folderName + "'!");
+        throw new FileNotFoundException(
+                "ERROR: file '" + name + "' not found in folder '" + folder.getAbsolutePath() + "'!");
     }
 
     /**
