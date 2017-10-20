@@ -21,7 +21,7 @@
         <p:panel id="listWrapper">
             <p:panel class="content-header">
                 <h3>#{msgs.prozessvorlagen}</h3>
-                <p:button value="#{msgs.eineNeueProzessvorlageAnlegen}" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" styleClass="button-filled-green"></p:button>
+                <p:button value="#{msgs.eineNeueProzessvorlageAnlegen}" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"></p:button>
                 <!-- filters -->
                 <h:form style="display: inline; float: right;">
                     <div class="ui-inputgroup">
@@ -90,19 +90,10 @@
                 <!-- 4th column -->
                 <p:column headerText="#{msgs.auswahl}" style="width: 150px;">
                     <h:outputText>
-                        <h:link outcome="/pages/ProzessverwaltungBearbeiten" title="#{msgs.prozessBearbeiten}" style="color: rgb(0,109,189); padding-right: 10px;">
-                            <i class="fa fa-pencil-square-o fa-lg"/>
-                            <f:param name="id" value="#{template.id}"/>
-                        </h:link>
-                        <h:link style="color: rgb(0,109,189); padding-right: 10px;">
-                            <i class="fa fa-clipboard fa-lg"/>
-                        </h:link>
-                        <h:link style="color: rgb(0,109,189); padding-right: 10px;">
-                            <i class="fa fa-inbox fa-lg"/>
-                        </h:link>
-                        <h:link style="color: rgb(0,109,189); padding-right: 10px;">
-                            <i class="fa fa-clone fa-lg"/>
-                        </h:link>
+                        <h:link outcome="/pages/ProzessverwaltungBearbeiten" title="#{msgs.prozessBearbeiten}" style="color: rgb(0,109,189); padding-right: 10px;"><i class="fa fa-pencil-square-o fa-lg"/><f:param name="id" value="#{template.id}"/></h:link>
+                        <h:link style="color: rgb(0,109,189); padding-right: 10px;"><i class="fa fa-clipboard fa-lg"/></h:link>
+                        <h:link style="color: rgb(0,109,189); padding-right: 10px;"><i class="fa fa-inbox fa-lg"/></h:link>
+                        <h:link style="color: rgb(0,109,189); padding-right: 10px;"><i class="fa fa-clone fa-lg"/></h:link>
                     </h:outputText>
                 </p:column>
 

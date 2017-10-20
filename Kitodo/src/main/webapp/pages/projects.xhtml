@@ -22,7 +22,7 @@
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>Projekte</h3>
-                <p:button outcome="projectEdit" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" styleClass="button-filled-green"/>
+                <p:button outcome="projectEdit" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
             </p:panel>
             <p:dataTable var="project" value="#{ProjekteForm.projects}">
                 <p:column style="width: 16px;">
@@ -34,20 +34,20 @@
                 <p:column headerText="aktiv">
                     <h:outputText>
                         <ui:fragment rendered="#{not project.projectIsArchived}">
-                            <i class="fa fa-check-square-o" style="color: limegreen;"/>
+                            <i class="fa fa-check-square-o fa-lg" style="color: limegreen;"/>
                         </ui:fragment>
                         <ui:fragment rendered="#{project.projectIsArchived}">
-                            <i class="fa fa-minus-square-o" style="color: darkred"/>
+                            <i class="fa fa-minus-square-o fa-lg" style="color: darkred"/>
                         </ui:fragment>
                     </h:outputText>
                 </p:column>
                 <p:column headerText="#{msgs.auswahl}">
                     <h:link outcome="projectEdit">
                         <f:param name="id" value="#{project.id}" />
-                        <i class="fa fa-pencil-square-o" style="color: #2B6FB6; margin-right: 10px;"/>
+                        <i class="fa fa-pencil-square-o fa-lg" style="color: #2B6FB6; margin-right: 10px;"/>
                     </h:link>
-                    <h:link><i class="fa fa-clone" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
-                    <h:link><i class="fa fa-bar-chart" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
+                    <h:link><i class="fa fa-clone fa-lg" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
+                    <h:link><i class="fa fa-bar-chart fa-lg" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
                 </p:column>
 
                 <p:rowExpansion>
