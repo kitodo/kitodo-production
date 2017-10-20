@@ -19,7 +19,6 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="/pages/inc/head.xhtml" />
         <h:body>
 
             <h:form id="formularOben">
@@ -47,13 +46,13 @@
                                     </td>
                                     <td valign="middle" align="right">
                                         <h:panelGrid id="grid1" columns="2" cellpadding="0" cellspacing="0">
-                                            <h:commandLink value="#{msgs.treelevel} " action="Metadaten3links"
+                                            <h:commandLink value="#{msgs.treelevel} " action="metadataStructureView"
                                                            target="links" styleClass="metadataHeaderLinks">
                                                 <t:updateActionListener
                                                         value="#{Metadaten.treeProperties.showtreelevel?false:true}"
                                                         property="#{Metadaten.treeProperties.showtreelevel}"/>
                                             </h:commandLink>
-                                            <h:commandLink value="#{msgs.treeTitle} " action="Metadaten3links"
+                                            <h:commandLink value="#{msgs.treeTitle} " action="metadataStructureView"
                                                            style="padding-left: 5px;"
                                                            target="links" styleClass="metadataHeaderLinks">
                                                 <t:updateActionListener
@@ -61,7 +60,7 @@
                                                         property="#{Metadaten.treeProperties.showtitle}"/>
                                             </h:commandLink>
                                             <h:commandLink value="#{msgs.treePageNumber} "
-                                                           action="Metadaten3links" target="links"
+                                                           action="metadataStructureView" target="links"
                                                            styleClass="metadataHeaderLinks">
                                                 <t:updateActionListener
                                                         value="#{Metadaten.treeProperties.showfirstpagenumber?false:true}"
@@ -75,7 +74,7 @@
                                                         property="#{Metadaten.treeProperties.fullexpanded}"/>
                                             </h:commandLink>
                                             <h:commandLink value="#{msgs.stickyImage} "
-                                                           action="Metadaten2rechts" target="rechts"
+                                                           action="Metadaten2rechtsOld" target="rechts"
                                                            styleClass="metadataHeaderLinks">
                                                 <t:updateActionListener
                                                         value="#{Metadaten.treeProperties.imageSticky?false:true}"

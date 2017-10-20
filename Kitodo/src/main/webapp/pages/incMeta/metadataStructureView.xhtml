@@ -17,12 +17,14 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
 
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="/pages/inc/head.xhtml" />
+        <!--<ui:include src="/pages/inc/head.xhtml" />-->
 
-        <h:body style="margin:2px 2px 2px 2px;background-color:#CBE5FC;" onload="reloadRightFrame();">
+        <h:body style="margin:2px 2px 2px 2px;background-color:#CBE5FC;">
+            <!--<p:remoteCommand oncomplete=" reloadRightFrame(); " autoRun="true"/>-->
 
             <!-- ========================  neuer Baum style="color: #434387; border-style: solid; border-width: 1px; border-color: #e3c240; background-color: #faf3da;width: 100%;height: 99%;" ============================== -->
             <h:outputText rendered="false" value="up"
@@ -187,7 +189,7 @@
                     return true;
                     //	}
                 } catch (err) {
-                    parent.rechts.location.href = "Metadaten2rechts.xhtml";
+                    parent.rechts.location.href = "../Metadaten2rechtsOld.xhtml";
                 }
             }
 

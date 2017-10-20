@@ -73,6 +73,11 @@
         <param-value>/WEB-INF/resources</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>primefaces.FONT_AWESOME</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- WelcomeFile Filter -->
     <!--
         <filter> <filter-name>WelcomeFile Filter</filter-name>

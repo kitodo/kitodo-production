@@ -177,7 +177,7 @@ public class FileManipulation {
             }
         }
         metadataBean.retrieveAllImages();
-        metadataBean.identifyImage(0);
+        metadataBean.identifyImage(1);
     }
 
     public String getUploadedFileName() {
@@ -443,14 +443,14 @@ public class FileManipulation {
         if (deleteFilesAfterMove) {
             String[] pagesArray = new String[selectedFiles.size()];
             selectedFiles.toArray(pagesArray);
-            metadataBean.setAlleSeitenAuswahl(pagesArray);
+            metadataBean.setAllPagesSelection(pagesArray);
             metadataBean.deleteSelectedPages();
             selectedFiles = new ArrayList<>();
             deleteFilesAfterMove = false;
         }
 
         metadataBean.retrieveAllImages();
-        metadataBean.identifyImage(0);
+        metadataBean.identifyImage(1);
     }
 
     public List<String> getSelectedFiles() {
@@ -598,7 +598,7 @@ public class FileManipulation {
             fileService.delete(importfolder.toURI());
         }
         metadataBean.retrieveAllImages();
-        metadataBean.identifyImage(0);
+        metadataBean.identifyImage(1);
     }
 
     public String getCurrentFolder() {
