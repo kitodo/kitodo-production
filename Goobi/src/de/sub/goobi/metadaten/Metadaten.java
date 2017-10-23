@@ -1408,6 +1408,9 @@ public class Metadaten {
             String initializer = type.format(mode, paginierungWert, fictitious, paginierungSeparators.getObject().getSeparatorString());
             paginator = new Paginator(initializer);
         } catch (NumberFormatException nfe) {
+            List<String> parameter = new ArrayList<>();
+            parameter.add(paginierungWert);
+            Helper.setFehlerMeldung(Helper.getTranslation("InvalidValueForPagination", parameter));
             return null;
         }
 
