@@ -11,6 +11,8 @@
 
 package org.kitodo.services.file;
 
+import de.sub.goobi.config.ConfigCore;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,11 +20,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.data.database.beans.Process;
 
 public class FileServiceTest {
@@ -46,8 +50,17 @@ public class FileServiceTest {
     @Test
     public void testCreateMetaDirectory() throws IOException {
         try {
+            File script = new File(ConfigCore.getParameter("script_createDirMeta"));
+            if (!SystemUtils.IS_OS_WINDOWS) {
+                ExecutionPermission.setExecutePermission(script);
+            }
+
             boolean result = fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
             File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
+
+            if (!SystemUtils.IS_OS_WINDOWS) {
+                ExecutionPermission.setNoExecutePermission(script);
+            }
 
             Assert.assertTrue(result);
             Assert.assertTrue(file.isDirectory());
