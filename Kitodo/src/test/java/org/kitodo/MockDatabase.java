@@ -97,25 +97,11 @@ public class MockDatabase {
 
     @SuppressWarnings("unchecked")
     public static void startNode() throws Exception {
-        String nodeName = randomString(6);
-        final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
-
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        indexRestClient = initializeIndexRestClient();
-
-        Map settingsMap = prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
-        Settings settings = Settings.builder().put(settingsMap).build();
-
-        removeOldDataDirectories("target/" + nodeName);
-
-        if (node != null) {
-            stopNode();
-        }
-        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
-        node.start();
+        startNodeWithoutMapping();
         indexRestClient.createIndex(readMapping());
     }
 
+    @SuppressWarnings("unchecked")
     public static void startNodeWithoutMapping() throws Exception {
         String nodeName = randomString(6);
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
