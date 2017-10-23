@@ -13,9 +13,9 @@ package org.kitodo.model;
 
 import java.util.List;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.dto.UserDTO;
@@ -24,16 +24,13 @@ import org.primefaces.model.SortOrder;
 
 public class LazyDTOModelIT {
 
-    private ServiceManager serviceManager = new ServiceManager();
-    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getUserService());
-
-    @Before
+    @BeforeClass
     public void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertUserGroupsFull();
     }
 
-    @After
+    @AfterClass
     public void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -41,9 +38,10 @@ public class LazyDTOModelIT {
 
     @Test
     public void shouldLoad() throws Exception {
+        ServiceManager serviceManager = new ServiceManager();
+        LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getUserService());
         List users = lazyDTOModel.load(0, 2, "login", SortOrder.ASCENDING, null);
         UserDTO user = (UserDTO) users.get(0);
         Assert.assertEquals(user.getLogin(), "dora");
     }
-
 }
