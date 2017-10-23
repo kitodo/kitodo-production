@@ -61,14 +61,9 @@ public class BenutzerverwaltungForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private int userId;
 
-    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getUserService());
-
-    public LazyDTOModel getLazyDTOModel() {
-        return this.lazyDTOModel;
-    }
-
-    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
-        this.lazyDTOModel = lazyDTOModel;
+    public BenutzerverwaltungForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserService()));
     }
 
     /**

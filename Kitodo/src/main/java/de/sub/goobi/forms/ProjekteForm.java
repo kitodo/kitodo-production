@@ -91,18 +91,9 @@ public class ProjekteForm extends BasisForm {
 
     private int itemId;
 
-    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getProjectService());
-
-    public LazyDTOModel getLazyDTOModel() {
-        return lazyDTOModel;
-    }
-
-    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
-        this.lazyDTOModel = lazyDTOModel;
-    }
-
     public ProjekteForm() {
         super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProjectService()));
     }
 
     // making sure its cleaned up

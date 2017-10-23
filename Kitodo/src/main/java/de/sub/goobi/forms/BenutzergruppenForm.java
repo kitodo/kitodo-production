@@ -41,14 +41,9 @@ public class BenutzergruppenForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
 
-    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getUserGroupService());
-
-    public LazyDTOModel getLazyDTOModel() {
-        return lazyDTOModel;
-    }
-
-    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
-        this.lazyDTOModel = lazyDTOModel;
+    public BenutzergruppenForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
     }
 
     /**

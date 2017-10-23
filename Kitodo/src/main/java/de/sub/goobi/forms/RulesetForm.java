@@ -42,14 +42,9 @@ public class RulesetForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
     private int rulesetId;
 
-    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getRulesetService());
-
-    public LazyDTOModel getLazyDTOModel() {
-        return lazyDTOModel;
-    }
-
-    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
-        this.lazyDTOModel = lazyDTOModel;
+    public RulesetForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRulesetService()));
     }
 
     /**

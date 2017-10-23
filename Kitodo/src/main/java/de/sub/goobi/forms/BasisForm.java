@@ -13,6 +13,7 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
+import de.sub.goobi.model.LazyDTOModel;
 
 import java.io.Serializable;
 import java.util.List;
@@ -31,6 +32,16 @@ public class BasisForm implements Serializable {
     protected String filter = "";
     protected User user;
     protected String sortierung = "prozessAsc";
+
+    private LazyDTOModel lazyDTOModel = null;
+
+    public LazyDTOModel getLazyDTOModel() {
+        return lazyDTOModel;
+    }
+
+    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDTOModel = lazyDTOModel;
+    }
 
     public Page getPage() {
         return this.page;

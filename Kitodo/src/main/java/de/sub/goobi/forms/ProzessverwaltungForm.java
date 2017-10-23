@@ -29,6 +29,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
+import de.sub.goobi.model.LazyDTOModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,17 +47,14 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
-
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import de.sub.goobi.model.LazyDTOModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -141,20 +139,12 @@ public class ProzessverwaltungForm extends BasisForm {
     private int processId;
     private int taskId;
 
-    private LazyDTOModel lazyDataModel = new LazyDTOModel(serviceManager.getProcessService());
-
-    public LazyDTOModel getLazyDataModel() {
-        return this.lazyDataModel;
-    }
-
-    public void setLazyDataModel(LazyDTOModel lazyDTOModel) {
-        this.lazyDataModel = lazyDTOModel;
-    }
-
     /**
      * Constructor.
      */
     public ProzessverwaltungForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProcessService()));
         this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);
         this.anzeigeAnpassen.put("swappedOut", false);

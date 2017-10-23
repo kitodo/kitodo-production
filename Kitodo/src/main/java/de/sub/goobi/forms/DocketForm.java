@@ -43,14 +43,9 @@ public class DocketForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
     private int docketId;
 
-    private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getDocketService());
-
-    public LazyDTOModel getLazyDTOModel() {
-        return this.lazyDTOModel;
-    }
-
-    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
-        this.lazyDTOModel = lazyDTOModel;
+    public DocketForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getDocketService()));
     }
 
     /**
