@@ -13,7 +13,6 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.model.LazyDTOModel;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
 public class BasisForm implements Serializable {

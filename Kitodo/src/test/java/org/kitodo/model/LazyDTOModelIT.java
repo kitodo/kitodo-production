@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.model;
+package org.kitodo.model;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
-public class LazyDTOModelTest {
+public class LazyDTOModelIT {
 
     private ServiceManager serviceManager = new ServiceManager();
     private LazyDTOModel lazyDTOModel = new LazyDTOModel(serviceManager.getUserService());

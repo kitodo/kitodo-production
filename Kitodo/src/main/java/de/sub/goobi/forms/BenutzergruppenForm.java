@@ -13,7 +13,6 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.model.LazyDTOModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzergruppenForm")
