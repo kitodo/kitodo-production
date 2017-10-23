@@ -1401,11 +1401,15 @@ public class Metadaten {
     public String Paginierung() {
         final int FROMFIRST = 1;
 
-        PaginatorMode mode = PaginatorMode.valueOf(paginierungSeitenProImage);
-        PaginatorType type = PaginatorType.valueOf(Integer.parseInt(paginierungArt));
-        String initializer = type.format(mode, paginierungWert, fictitious,
-                paginierungSeparators.getObject().getSeparatorString());
-        Paginator paginator = new Paginator(initializer);
+        Paginator paginator;
+        try {
+            PaginatorMode mode = PaginatorMode.valueOf(paginierungSeitenProImage);
+            PaginatorType type = PaginatorType.valueOf(Integer.parseInt(paginierungArt));
+            String initializer = type.format(mode, paginierungWert, fictitious, paginierungSeparators.getObject().getSeparatorString());
+            paginator = new Paginator(initializer);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
 
         // assert selection is not null
 
