@@ -722,84 +722,108 @@ public class IndexingForm {
      * Starts the process of indexing batches to the ElasticSearch index.
      */
     public void startBatchIndexing() {
-        startIndexing(ObjectType.BATCH, batchWorker);
+        if (getBatchCount() > 0) {
+            startIndexing(ObjectType.BATCH, batchWorker);
+        }
     }
 
     /**
      * Starts the process of indexing dockets to the ElasticSearch index.
      */
     public void startDocketIndexing() {
-        startIndexing(ObjectType.DOCKET, docketWorker);
+        if (getDocketCount() > 0) {
+            startIndexing(ObjectType.DOCKET, docketWorker);
+        }
     }
 
     /**
      * Starts the process of indexing processes to the ElasticSearch index.
      */
     public void startProcessIndexing() {
-        startIndexing(ObjectType.PROCESS, processWorker);
+        if (getProcessCount() > 0) {
+            startIndexing(ObjectType.PROCESS, processWorker);
+        }
     }
 
     /**
      * Starts the process of indexing projects to the ElasticSearch index.
      */
     public void startProjectIndexing() {
-        startIndexing(ObjectType.PROJECT, projectWorker);
+        if (getProjectCount() > 0) {
+            startIndexing(ObjectType.PROJECT, projectWorker);
+        }
     }
 
     /**
      * Starts the process of indexing properties to the ElasticSearch index.
      */
     public void startPropertyIndexing() {
-        startIndexing(ObjectType.PROPERTY, propertyWorker);
+        if (getPropertyCount() > 0) {
+            startIndexing(ObjectType.PROPERTY, propertyWorker);
+        }
     }
 
     /**
      * Starts the process of indexing rulesets to the ElasticSearch index.
      */
     public void startRulesetIndexing() {
-        startIndexing(ObjectType.RULESET, rulesetWorker);
+        if (getRulesetCount() > 0) {
+            startIndexing(ObjectType.RULESET, rulesetWorker);
+        }
     }
 
     /**
      * Starts the process of indexing tasks to the ElasticSearch index.
      */
     public void startTaskIndexing() {
-        startIndexing(ObjectType.TASK, taskWorker);
+        if (getTaskCount() > 0) {
+            startIndexing(ObjectType.TASK, taskWorker);
+        }
     }
 
     /**
      * Starts the process of indexing templates to the ElasticSearch index.
      */
     public void startTemplateIndexing() {
-        startIndexing(ObjectType.TEMPLATE, templateWorker);
+        if (getTemplateCount() > 0) {
+            startIndexing(ObjectType.TEMPLATE, templateWorker);
+        }
     }
 
     /**
      * Starts the process of indexing users to the ElasticSearch index.
      */
     public void startUserIndexing() {
-        startIndexing(ObjectType.USER, userWorker);
+        if (getUserCount() > 0) {
+            startIndexing(ObjectType.USER, userWorker);
+        }
     }
 
     /**
      * Starts the process of indexing user groups to the ElasticSearch index.
      */
     public void startUserGroupIndexing() {
-        startIndexing(ObjectType.USERGROUP, usergroupWorker);
+        if (getUserGroupCount() > 0) {
+            startIndexing(ObjectType.USERGROUP, usergroupWorker);
+        }
     }
 
     /**
      * Starts the process of indexing workpieces to the ElasticSearch index.
      */
     public void startWorkpieceIndexing() {
-        startIndexing(ObjectType.WORKPIECE, workpieceWorker);
+        if (getWorkpieceCount() > 0) {
+            startIndexing(ObjectType.WORKPIECE, workpieceWorker);
+        }
     }
 
     /**
      * Starts the process of indexing filters to the ElasticSearch index.
      */
     public void startFilterIndexing() {
-        startIndexing(ObjectType.FILTER, filterWorker);
+        if (getFilterCount() > 0) {
+            startIndexing(ObjectType.FILTER, filterWorker);
+        }
     }
 
     /**
