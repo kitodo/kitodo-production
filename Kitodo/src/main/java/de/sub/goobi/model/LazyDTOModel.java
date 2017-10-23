@@ -31,6 +31,15 @@ public class LazyDTOModel extends LazyDataModel {
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
 
+    /**
+     * Creates a LazyDTOModel instance that allows fetching data from the data
+     * source lazily, e.g. only the number of datasets that will be displayed in the
+     * frontend.
+     *
+     * @param searchService
+     *            the searchService which is used to retrieve data from the data
+     *            source
+     */
     public LazyDTOModel(SearchService searchService) {
         this.searchService = searchService;
 
