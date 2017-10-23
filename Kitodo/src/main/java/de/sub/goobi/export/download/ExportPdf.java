@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -108,7 +107,8 @@ public class ExportPdf extends ExportMets {
                  * using mets file
                  */
 
-                if (new MetadatenVerifizierung().validate(myProcess) && metsTempFile.toURL() != null) {
+                // TODO:second condition is always true if reached
+                if (serviceManager.getMetadataValidationService().validate(myProcess) && metsTempFile.toURL() != null) {
                     /*
                      * if no contentserverurl defined use internal
                      * goobiContentServerServlet

@@ -1970,8 +1970,7 @@ public class Metadaten {
      * Metadatenvalidierung.
      */
     public void validate() {
-        MetadatenVerifizierung mv = new MetadatenVerifizierung();
-        mv.validate(this.gdzfile, this.myPrefs, this.process);
+        serviceManager.getMetadataValidationService().validate(this.gdzfile, this.myPrefs, this.process);
         saveMetadataAsBean(this.docStruct);
     }
 
