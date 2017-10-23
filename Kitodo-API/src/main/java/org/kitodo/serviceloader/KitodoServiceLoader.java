@@ -69,7 +69,7 @@ public class KitodoServiceLoader<T> {
     public KitodoServiceLoader(Class clazz, String modulePath) {
         this.clazz = clazz;
         if (!new File(modulePath).exists()) {
-                logger.error("Specified module folder does not exist: " + modulePath);
+            logger.error("Specified module folder does not exist: " + modulePath);
         } else {
             this.modulePath = modulePath;
         }
@@ -114,16 +114,16 @@ public class KitodoServiceLoader<T> {
                         while (e.hasMoreElements()) {
                             JarEntry je = e.nextElement();
 
-                        /*
-                         * IMPORTANT: Naming convention: the name of the java class has to be in upper
-                         * camel case or "pascal case" and must be equal to the file name of the
-                         * corresponding facelet file concatenated with the word "Form".
-                         *
-                         * Example: template filename "sample.xhtml" => "SampleForm.java"
-                         *
-                         * That is the reason for the following check (e.g. whether the JarEntry name
-                         * ends with "Form.class")
-                         */
+                            /*
+                             * IMPORTANT: Naming convention: the name of the java class has to be in upper
+                             * camel case or "pascal case" and must be equal to the file name of the
+                             * corresponding facelet file concatenated with the word "Form".
+                             *
+                             * Example: template filename "sample.xhtml" => "SampleForm.java"
+                             *
+                             * That is the reason for the following check (e.g. whether the JarEntry name
+                             * ends with "Form.class")
+                             */
                             if (je.isDirectory() || !je.getName().endsWith("Form.class")) {
                                 continue;
                             }
@@ -217,8 +217,8 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Copies extracted frontend files by a given source folder name to the destination Folder
-     * given by a destination folder name
+     * Copies extracted frontend files by a given source folder name to the
+     * destination Folder given by a destination folder name.
      *
      * @param sourceFolder
      *            copies all extracted frontend files
@@ -231,7 +231,7 @@ public class KitodoServiceLoader<T> {
 
     /**
      * Checks, whether a passed jarFile has frontend files or not. Returns true,
-     * when the jar contains a folder with the name "resources"
+     * when the jar contains a folder with the name "resources".
      *
      * @param jarPath
      *            jarFile that will be checked for frontend files
@@ -292,7 +292,7 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Tries to find a file by a given file name in a folder by folder name
+     * Tries to find a file by a given file name in a folder by folder name.
      *
      * @param name
      *            file name that will be searched for
@@ -301,12 +301,12 @@ public class KitodoServiceLoader<T> {
      *
      * @return File, null
      */
-    private File findFile(String name, File folder) throws FileNotFoundException
-    {
+    private File findFile(String name, File folder) throws FileNotFoundException {
         Collection<File> s = FileUtils.listFiles(folder, null, true);
         for (File f : s) {
-            if (f.getName().equals(name))
+            if (f.getName().equals(name)) {
                 return f;
+            }
         }
         throw new FileNotFoundException(
                 "ERROR: file '" + name + "' not found in folder '" + folder.getAbsolutePath() + "'!");
