@@ -28,6 +28,9 @@ import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkpieceService;
 import org.kitodo.services.file.FileService;
+import org.kitodo.services.validation.FileStructureValidationService;
+import org.kitodo.services.validation.LongTimePreservationValidationService;
+import org.kitodo.services.validation.MetadataValidationService;
 
 public class ServiceManager {
 
@@ -48,6 +51,9 @@ public class ServiceManager {
     private WorkpieceService workpieceService;
     private FileService fileService;
     private CommandService commandService;
+    private FileStructureValidationService fileStructureValidationService;
+    private LongTimePreservationValidationService longTimePreservationValidationService;
+    private MetadataValidationService metadataValidationService;
 
     private void initializeBatchService() {
         if (batchService == null) {
@@ -148,6 +154,24 @@ public class ServiceManager {
     private void initializeCommandService() {
         if (commandService == null) {
             commandService = new CommandService();
+        }
+    }
+
+    private void initializeFileStructureValidationService() {
+        if (fileStructureValidationService == null) {
+            fileStructureValidationService = new FileStructureValidationService();
+        }
+    }
+
+    private void initializeLongTimePreservationValidationService() {
+        if (longTimePreservationValidationService == null) {
+            longTimePreservationValidationService = new LongTimePreservationValidationService();
+        }
+    }
+
+    private void initializeMetadataValidationService() {
+        if (metadataValidationService == null) {
+            metadataValidationService = new MetadataValidationService();
         }
     }
 
@@ -331,4 +355,33 @@ public class ServiceManager {
         return commandService;
     }
 
+    /**
+     * Initialize FileStructureValidationService if it is not yet initialized and next return it.
+     *
+     * @return FileStructureValidationService object
+     */
+    public FileStructureValidationService getFileStructureValidationService() {
+        initializeFileStructureValidationService();
+        return fileStructureValidationService;
+    }
+
+    /**
+     * Initialize LongTimePreservationValidationService if it is not yet initialized and next return it.
+     *
+     * @return LongTimePreservationValidationService object
+     */
+    public LongTimePreservationValidationService getLongTimePreservationValidationService() {
+        initializeLongTimePreservationValidationService();
+        return longTimePreservationValidationService;
+    }
+
+    /**
+     * Initialize MetadataValidationService if it is not yet initialized and next return it.
+     *
+     * @return MetadataValidationService object
+     */
+    public MetadataValidationService getMetadataValidationService() {
+        initializeMetadataValidationService();
+        return metadataValidationService;
+    }
 }
