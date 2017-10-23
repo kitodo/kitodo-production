@@ -87,7 +87,7 @@ public class User extends BaseIndexedBean {
     @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST)
     private List<Task> processingTasks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)

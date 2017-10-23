@@ -601,7 +601,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 29);
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        fourthTask.setProcessingUser(serviceManager.getUserService().getById(2));
+        fourthTask.setProcessingUser(secondUser);
         fourthTask.setProcess(secondProcess);
         fourthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fourthTask);
@@ -611,6 +611,7 @@ public class MockDatabase {
         secondProcess.getTasks().add(fourthTask);
         serviceManager.getProcessService().save(secondProcess);
 
+        secondUser.getProcessingTasks().add(fourthTask);
         blockedUser.getProcessingTasks().add(secondTask);
         blockedUser.getTasks().add(secondTask);
         secondUser.getTasks().add(secondTask);
@@ -632,7 +633,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 6, 27);
         fifthTask.setProcessingBegin(localDate.toDate());
         fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
-        fifthTask.setProcessingUser(serviceManager.getUserService().getById(2));
+        fifthTask.setProcessingUser(secondUser);
         fifthTask.setProcess(fifthProcess);
         fifthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fifthTask);
@@ -645,7 +646,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 7, 27);
         sixthTask.setProcessingBegin(localDate.toDate());
         sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        sixthTask.setProcessingUser(serviceManager.getUserService().getById(2));
+        sixthTask.setProcessingUser(secondUser);
         sixthTask.setProcess(fifthProcess);
         sixthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(sixthTask);
@@ -653,6 +654,10 @@ public class MockDatabase {
         fifthProcess.getTasks().add(fifthTask);
         fifthProcess.getTasks().add(sixthTask);
         serviceManager.getProcessService().save(fifthProcess);
+
+        secondUser.getProcessingTasks().add(fifthTask);
+        secondUser.getProcessingTasks().add(sixthTask);
+        serviceManager.getUserService().save(secondUser);
     }
 
     private static void insertTemplates() throws DAOException, DataException {

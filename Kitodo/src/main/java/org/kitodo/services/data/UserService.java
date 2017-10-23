@@ -370,6 +370,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
     }
 
     /**
+     * Find users by processing tasks.
+     *
+     * @param id
+     *            of filter
+     * @return list of JSON objects with users for specific filter
+     */
+    List<UserDTO> findByProcessingTask(Integer id, boolean related) throws DataException {
+        List<JSONObject> jsonObjects = searcher.findDocuments(createSimpleQuery("processingTasks.id", id, true).toString());
+        return convertJSONObjectsToDTOs(jsonObjects, related);
+    }
+
+    /**
      * Find all visible users.
      *
      * @return a list of all visible users as UserDTO
