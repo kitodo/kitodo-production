@@ -12,15 +12,9 @@
 package org.kitodo.api.validation.longtimepreservation;
 
 /**
- * Determines the File Types supported by the module. Must be implemented by an
- * Enum.
+ * Determines the File Types supported by the module.
  */
-public interface FileType {
+public enum FileType {
 
-    /**
-     * returns the enum values, is overwritten by enums default 'values()'
-     * method
-     */
-    FileType[] values();
 
 }
