@@ -71,7 +71,6 @@ public enum TaskStatus {
      */
     public String getTitle() {
         return this.title;
-        // return Helper.getTranslation(this.title);
     }
 
     /**

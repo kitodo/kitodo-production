@@ -26,7 +26,9 @@ public class TaskDTO extends BaseDTO {
     private Integer priority;
     private Integer ordering;
     private TaskStatus processingStatus;
+    private String processingStatusTitle;
     private TaskEditType editType;
+    private String editTypeTitle;
     private UserDTO processingUser;
     private String processingTime;
     private String processingBegin;
@@ -142,6 +144,24 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
+     * Get processing status title as String.
+     *
+     * @return processing status title as String
+     */
+    public String getProcessingStatusTitle() {
+        return processingStatusTitle;
+    }
+
+    /**
+     * Set processing status title as String.
+     *
+     * @param processingStatusTitle  as String
+     */
+    public void setProcessingStatusTitle(String processingStatusTitle) {
+        this.processingStatusTitle = processingStatusTitle;
+    }
+
+    /**
      * Get editType as {@link TaskEditType}.
      *
      * @return current edit type
@@ -158,6 +178,24 @@ public class TaskDTO extends BaseDTO {
      */
     public void setEditType(TaskEditType editType) {
         this.editType = editType;
+    }
+
+    /**
+     * Get edit type title as String.
+     *
+     * @return current edit type title as String
+     */
+    public String getEditTypeTitle() {
+        return editTypeTitle;
+    }
+
+    /**
+     * Set edit type title as String.
+     *
+     * @param editTypeTitle as String
+     */
+    public void setEditTypeTitle(String editTypeTitle) {
+        this.editTypeTitle = editTypeTitle;
     }
 
     /**
