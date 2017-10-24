@@ -883,13 +883,4 @@ public class MockDatabase {
         transaction.commit();
         session.clear();
     }
-
-    /**
-     * Clean index after tests.
-     */
-    public static void cleanIndex() throws IOException {
-        IndexRestClient restClient = new IndexRestClient();
-        restClient.initiateClient();
-        restClient.deleteIndex();
-    }
 }
