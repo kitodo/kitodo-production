@@ -385,7 +385,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Count all SortHelperImages fields for project id. It is used for statistical
      * purpose.
-     * 
+     *
      * @param projectId
      *            as Integer
      * @return amount of SortHelperImages fields for project id as Long
@@ -397,7 +397,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Sum all values in SortHelperImages fields for project id. It is used for
      * statistical purpose.
-     * 
+     *
      * @param projectId
      *            as Integer
      * @return sum of all values in SortHelperImages fields for project id as Double
@@ -410,6 +410,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return createSimpleQuery("project.id", id, true);
     }
 
+    /**
+     * Get query for find process by project title.
+     *
+     * @param title
+     *            as String
+     * @return QueryBuilder object
+     */
     public QueryBuilder getQueryProjectTitle(String title) {
         return createSimpleQuery("project.title", title, true, Operator.AND);
     }
@@ -556,7 +563,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Get query for template.
-     * 
+     *
      * @param template
      *            true or false
      * @return query as QueryBuilder
@@ -593,7 +600,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Sort results by creation date.
-     * 
+     *
      * @param sortOrder
      *            ASC or DESC as SortOrder
      * @return sort
@@ -604,7 +611,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Convert DTO to bean object.
-     * 
+     *
      * @param processDTO
      *            DTO object
      * @return bean object
@@ -615,7 +622,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Convert list of DTOs to list of beans.
-     * 
+     *
      * @param dtos
      *            list of DTO objects
      * @return list of beans
@@ -1379,7 +1386,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check whether the operation contains tasks that are not assigned to a
      * user or user group.
-     * 
+     *
      * @param process
      *            bean object
      * @return true or false
@@ -1400,7 +1407,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check whether the operation contains tasks that are not assigned to a
      * user or user group.
-     * 
+     *
      * @param process
      *            DTO object
      * @return true or false
@@ -1420,7 +1427,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check if there is one task in edit mode, where the user has the rights to
      * write to image folder.
-     * 
+     *
      * @param process
      *            bean object
      * @return true or false
@@ -1437,7 +1444,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check if there is one task in edit mode, where the user has the rights to
      * write to image folder.
-     * 
+     *
      * @param process
      *            DTO object
      * @return true or false
@@ -2269,7 +2276,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Creates a List of Docket data for the given processes.
-     * 
+     *
      * @param processes
      *            the process to create the docket data for.
      * @return A List of docketdata
@@ -2284,7 +2291,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Creates the DocketData for a given Process.
-     * 
+     *
      * @param process
      *            The process to create the docket data for.
      * @return The DocketData for the process.
@@ -2328,7 +2335,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find all processes sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2350,7 +2357,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find not closed processes sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      *
@@ -2362,7 +2369,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find not closed and not archived processes sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2373,7 +2380,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find not archived templates sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2384,7 +2391,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find all templates sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2395,7 +2402,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find all processes, which are not a template sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2407,7 +2414,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Find all not archived processes which are not a template sorted according to
      * sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objectss
@@ -2419,7 +2426,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Find all not closed and not archived templates sorted according to sort
      * query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
