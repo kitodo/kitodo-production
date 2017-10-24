@@ -21,8 +21,7 @@ services:
   - mysql
 
 script:
-  - mvn clean install -Pall-tests,flyway,checkstyle-findbugs,!development
-  - mvn clean install -Pselenium,!development
+  - mvn clean install -Pall-tests,flyway,checkstyle-findbugs,!development && mvn clean install -Pselenium,!development
 
 # install: true is deactivating the separate install-step, which runs before the script
 install: true
