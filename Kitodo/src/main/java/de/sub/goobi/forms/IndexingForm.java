@@ -109,7 +109,7 @@ public class IndexingForm {
 
     private boolean indexingAll = false;
 
-    private enum indexStates {
+    private enum IndexStates {
         NO_STATE,
         DELETE_ERROR,
         DELETE_SUCCESS,
@@ -117,18 +117,18 @@ public class IndexingForm {
         MAPPING_SUCCESS,
     }
 
-    private enum indexingStates {
+    private enum IndexingStates {
         NO_STATE,
         INDEXING_STARTED,
         INDEXING_SUCCESSFUL,
         INDEXING_FAILED,
     }
 
-    private indexStates currentState = indexStates.NO_STATE;
+    private IndexStates currentState = IndexStates.NO_STATE;
 
     private Map<ObjectType, LocalDateTime> lastIndexed = new EnumMap<>(ObjectType.class);
 
-    private Map<ObjectType, indexingStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
+    private Map<ObjectType, IndexingStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
 
     private LocalDateTime indexingStartedTime;
 
@@ -194,7 +194,7 @@ public class IndexingForm {
         }
 
         for (ObjectType objectType : ObjectType.values()) {
-            objectIndexingStates.put(objectType, indexingStates.NO_STATE);
+            objectIndexingStates.put(objectType, IndexingStates.NO_STATE);
         }
 
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
@@ -692,14 +692,14 @@ public class IndexingForm {
     }
 
     private void startIndexing(ObjectType type, IndexWorker worker) {
-        currentState = indexStates.NO_STATE;
+        currentState = IndexStates.NO_STATE;
         int attempts = 0;
         while (attempts < 10) {
             try {
                 if (Objects.equals(currentIndexState, ObjectType.NONE)) {
                     indexingStartedTime = LocalDateTime.now();
                     currentIndexState = type;
-                    objectIndexingStates.put(type, indexingStates.INDEXING_STARTED);
+                    objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
                     pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
                     indexerThread = new Thread((worker));
                     indexerThread.setDaemon(true);
@@ -870,18 +870,18 @@ public class IndexingForm {
             String mappingStateMessage;
             if (readMapping().equals("")) {
                 if (indexRestClient.createIndex()) {
-                    currentState = indexStates.MAPPING_SUCCESS;
+                    currentState = IndexStates.MAPPING_SUCCESS;
                     mappingStateMessage = MAPPING_FINISHED_MESSAGE;
                 } else {
-                    currentState = indexStates.MAPPING_ERROR;
+                    currentState = IndexStates.MAPPING_ERROR;
                     mappingStateMessage = MAPPING_FAILED_MESSAGE;
                 }
             } else {
                 if (indexRestClient.createIndex(readMapping())) {
-                    currentState = indexStates.MAPPING_SUCCESS;
+                    currentState = IndexStates.MAPPING_SUCCESS;
                     mappingStateMessage = MAPPING_FINISHED_MESSAGE;
                 } else {
-                    currentState = indexStates.MAPPING_ERROR;
+                    currentState = IndexStates.MAPPING_ERROR;
                     mappingStateMessage = MAPPING_FAILED_MESSAGE;
                 }
             }
@@ -889,7 +889,7 @@ public class IndexingForm {
                 pollingChannel.send(mappingStateMessage);
             }
         } catch (CustomResponseException | IOException | ParseException e) {
-            currentState = indexStates.MAPPING_ERROR;
+            currentState = IndexStates.MAPPING_ERROR;
             if (updatePollingChannel) {
                 pollingChannel.send(MAPPING_FAILED_MESSAGE);
             }
@@ -908,11 +908,11 @@ public class IndexingForm {
         try {
             indexRestClient.deleteIndex();
             resetGlobalProgress();
-            currentState = indexStates.DELETE_SUCCESS;
+            currentState = IndexStates.DELETE_SUCCESS;
             updateMessage = DELETION_FINISHED_MESSAGE;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            currentState = indexStates.DELETE_ERROR;
+            currentState = IndexStates.DELETE_ERROR;
             updateMessage = DELETION_FAILED_MESSAGE;
         }
         if (updatePollingChannel) {
@@ -952,9 +952,9 @@ public class IndexingForm {
                 lastIndexed.put(currentIndexState, LocalDateTime.now());
                 currentIndexState = ObjectType.NONE;
                 if (numberOfObjects == 0) {
-                    objectIndexingStates.put(currentType, indexingStates.NO_STATE);
+                    objectIndexingStates.put(currentType, IndexingStates.NO_STATE);
                 } else {
-                    objectIndexingStates.put(currentType, indexingStates.INDEXING_SUCCESSFUL);
+                    objectIndexingStates.put(currentType, IndexingStates.INDEXING_SUCCESSFUL);
                 }
                 indexerThread.interrupt();
                 pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
@@ -1012,7 +1012,7 @@ public class IndexingForm {
      *
      * @return state of ES index
      */
-    public indexStates getIndexState() {
+    public IndexStates getIndexState() {
         return currentState;
     }
 
@@ -1020,9 +1020,9 @@ public class IndexingForm {
      *
      * @param objectType
      *
-     * @return indexing state of the given object type
+     * @return indexing state of the given object type.
      */
-    public indexingStates getObjectIndexState(ObjectType objectType) {
+    public IndexingStates getObjectIndexState(ObjectType objectType) {
         return objectIndexingStates.get(objectType);
     }
 
@@ -1031,8 +1031,8 @@ public class IndexingForm {
      *
      * @return 'indexing failed' state variable
      */
-    public indexingStates getIndexingFailedState() {
-        return indexingStates.INDEXING_FAILED;
+    public IndexingStates getIndexingFailedState() {
+        return IndexingStates.INDEXING_FAILED;
     }
 
     /**
@@ -1040,8 +1040,8 @@ public class IndexingForm {
      *
      * @return 'indexing successful' state variable
      */
-    public indexingStates getIndexingSuccessfulState() {
-        return indexingStates.INDEXING_SUCCESSFUL;
+    public IndexingStates getIndexingSuccessfulState() {
+        return IndexingStates.INDEXING_SUCCESSFUL;
     }
 
     /**
@@ -1049,8 +1049,8 @@ public class IndexingForm {
      *
      * @return 'indexing started' state variable
      */
-    public indexingStates getIndexingStartedState() {
-        return indexingStates.INDEXING_STARTED;
+    public IndexingStates getIndexingStartedState() {
+        return IndexingStates.INDEXING_STARTED;
     }
 
     /**
@@ -1061,16 +1061,16 @@ public class IndexingForm {
      *
      * @return static variable for global indexing state
      */
-    public indexingStates getAllObjectsIndexingState() {
+    public IndexingStates getAllObjectsIndexingState() {
         for (ObjectType objectType : ObjectType.values()) {
-            if (Objects.equals(objectIndexingStates.get(objectType), indexingStates.INDEXING_FAILED)) {
-                return indexingStates.INDEXING_FAILED;
+            if (Objects.equals(objectIndexingStates.get(objectType), IndexingStates.INDEXING_FAILED)) {
+                return IndexingStates.INDEXING_FAILED;
             }
-            if (Objects.equals(objectIndexingStates.get(objectType), indexingStates.NO_STATE)) {
-                return indexingStates.NO_STATE;
+            if (Objects.equals(objectIndexingStates.get(objectType), IndexingStates.NO_STATE)) {
+                return IndexingStates.NO_STATE;
             }
         }
-        return indexingStates.INDEXING_SUCCESSFUL;
+        return IndexingStates.INDEXING_SUCCESSFUL;
     }
 
 }

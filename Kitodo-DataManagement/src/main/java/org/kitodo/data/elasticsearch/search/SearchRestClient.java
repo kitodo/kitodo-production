@@ -46,7 +46,7 @@ public class SearchRestClient extends KitodoRestClient {
      */
     public static SearchRestClient getInstance() {
         if (Objects.equals(instance, null)) {
-            synchronized (SearchRestClient.class){
+            synchronized (SearchRestClient.class) {
                 if (Objects.equals(instance, null)) {
                     instance = new SearchRestClient();
                     instance.initiateClient();
