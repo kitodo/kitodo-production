@@ -116,15 +116,22 @@ Example content:
 
 Configure Eclipse
 -----------------
-In Eclipse, select *File*, *Import*, *Maven*, *Existing Maven project*. Point the *root directory* to your project directory.
+Eclipse’s Maven import will create a lot of projects in your workspace which all need a bit of configuration, as listed below. You can simplify this by creating a new workspace and only configure the workspace settings once accordingly.
 
-For any further steps and thoughout all development, make sure Elasticsearch is running. You start it by running `elasticsearch.bat` in the bin folder of the unzipped installation.
+Add projects: In Eclipse, select *File*, *Import*, *Maven*, *Existing Maven project*. Point the *root directory* to your project directory and import all projects.
 
-You have to increase the Tomcat startup time-out. You can do so from the server in the *Servers* view. If the Tomcat is not yet listed, select *Window*, *Preferences*, *Server*, *Runtime Environments* and add it there. Double-click the server, extend the time-out on the appearing page under *Timeouts*. You have to click save for the changes to take effect. I also recommend to open the *launch configuration* (from the same page), *Arguments*, and add `-Xmx3g` to *VM arguments*.
+**Tomcat:** You have to increase the Tomcat startup time-out. You can do so from the server in the *Servers* view. If the Tomcat is not yet listed, select *Window*, *Preferences*, *Server*, *Runtime Environments* and add it there. Double-click the server in the *Servers* view, extend the time-out on the appearing page under *Timeouts*. You have to click *save* for the changes to take effect. I also recommend to open the *launch configuration* (from the same page), *Arguments*, and add `-Xmx3g` to *VM arguments*.
 
+**Code formatter:** Import `config\Kitodo-IDE-formatting-Eclipse.xml` and set the code formatter to use the imported *Kitodo-Java Formatter Settings*.
+
+**Imports:** The project has decided not to import packages, but only to explicitly import used classes, and to sort them alphabetically. Go to the Organize Imports page, remove all packages to be handled specially from the list, and set the both *Number of inputs needed* values to something like `2147483647`.
+
+**Checkstyle:** Get the Checkstyle plug-in and configure it to use the config file `config\checkstyle.xml`.
 
 Prepare the web application
 ---------------------------
+For any further steps and thoughout all development, make sure Elasticsearch is running. You start it by running `elasticsearch.bat` in the bin folder of the unzipped installation.
+
 In Eclipse, right-click on the kitodo project, select run as, run on server, to launch Kitodo.Production in your Tomcat.
 
 Access the web application under *http://<i></i>localhost:8080/kitodo* and log in as user `testadmin` with password `test`.
