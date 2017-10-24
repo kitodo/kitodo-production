@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.TreeNode;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
@@ -62,6 +61,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.primefaces.model.DefaultTreeNode;
+
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -206,17 +207,12 @@ public class Metadaten {
 
     /**
      * Add.
-     *
-     * @return String
      */
-    public String add() {
+    public void add() {
         this.modeAdd = true;
+//        myMetadaten.add(new MetadatumImpl(,0,this.myPrefs,this.process));
         Modes.setBindState(BindState.create);
         getMetadatum().setValue("");
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -273,7 +269,7 @@ public class Metadaten {
      *
      * @return String
      */
-    public String copy() {
+    public void copy() {
         Metadata md;
         try {
             md = new Metadata(this.curMetadatum.getMd().getType());
@@ -284,10 +280,6 @@ public class Metadaten {
             logger.error("Fehler beim copy von Metadaten (MetadataTypeNotAllowedException): " + e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -356,7 +348,7 @@ public class Metadaten {
      *
      * @return String
      */
-    public String save() {
+    public void save() {
         try {
             Metadata md = new Metadata(this.myPrefs.getMetadataTypeByName(this.tempTyp));
             md.setValue(this.selectedMetadatum.getValue());
@@ -385,10 +377,6 @@ public class Metadaten {
         this.selectedMetadatum.setValue("");
         this.tempValue = "";
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -472,15 +460,10 @@ public class Metadaten {
     /**
      * Delete.
      *
-     * @return String
      */
-    public String delete() {
+    public void delete() {
         this.docStruct.removeMetadata(this.curMetadatum.getMd());
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -944,6 +927,7 @@ public class Metadaten {
         TreeNodeStruct3 nodes;
         List<DocStruct> status = new ArrayList<>();
 
+
         /*
          * den Ausklapp-Zustand aller Knoten erfassen
          */
@@ -968,6 +952,7 @@ public class Metadaten {
         if (label == null) {
             label = this.logicalTopstruct.getType().getName();
         }
+
 
         this.treeNodeStruct = new TreeNodeStruct3(label, this.logicalTopstruct);
         readMetadataAsSecondTree(this.logicalTopstruct, this.treeNodeStruct);
@@ -2620,6 +2605,55 @@ public class Metadaten {
         }
     }
 
+    private org.primefaces.model.TreeNode selectedTreeNote;
+
+    public org.primefaces.model.TreeNode getSelectedTreeNote() {
+        return selectedTreeNote;
+    }
+
+    public void setSelectedTreeNote(org.primefaces.model.TreeNode selectedTreeNote) {
+        this.selectedTreeNote = selectedTreeNote;
+    }
+
+    public org.primefaces.model.TreeNode getBasicTreeNote() {
+
+        String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
+
+        org.primefaces.model.TreeNode root = new DefaultTreeNode("root", null);
+
+        List<DocStruct> children = logicalTopstruct.getAllChildren();
+
+        org.primefaces.model.TreeNode visibleRoot = new DefaultTreeNode(logicalTopstruct.getType().getNameByLanguage(language), root);
+        if (children != null) {
+            visibleRoot = convertDocstructToPFTreeNote(children,visibleRoot,language);
+        }
+        org.primefaces.model.TreeNode expandedTreeNode = setExpandingAll(root,true);
+
+        return expandedTreeNode;
+    }
+
+    private org.primefaces.model.TreeNode convertDocstructToPFTreeNote(List<DocStruct> elements, org.primefaces.model.TreeNode parentTreeNode, String language) {
+        org.primefaces.model.TreeNode treeNote = null;
+
+        for (DocStruct element : elements) {
+            List<DocStruct> childs = element.getAllChildren();
+            treeNote = new DefaultTreeNode(element.getType().getNameByLanguage(language), parentTreeNode);
+            if (childs != null) {
+                convertDocstructToPFTreeNote(childs,treeNote,language);
+            }
+        }
+        return treeNote;
+    }
+
+    private org.primefaces.model.TreeNode setExpandingAll(org.primefaces.model.TreeNode node, boolean expanded) {
+        for (org.primefaces.model.TreeNode child : node.getChildren()) {
+            setExpandingAll(child, expanded);
+        }
+        node.setExpanded(expanded);
+
+        return node;
+    }
+
     /**
      * Get all structure trees 3.
      *
@@ -2671,7 +2705,7 @@ public class Metadaten {
             }
         }
 
-        for (TreeNode treeNode : inTreeStruct.getChildren()) {
+        for (de.sub.goobi.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
             TreeNodeStruct3 kind = (TreeNodeStruct3) treeNode;
             runThroughTree(kind);
         }

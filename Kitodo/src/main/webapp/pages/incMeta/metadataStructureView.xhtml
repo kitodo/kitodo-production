@@ -21,12 +21,17 @@
     >
 
     <f:view locale="#{SpracheForm.locale}">
-        <!--<ui:include src="/pages/inc/head.xhtml" />-->
 
         <h:body style="margin:2px 2px 2px 2px;background-color:#CBE5FC;">
-            <!--<p:remoteCommand oncomplete=" reloadRightFrame(); " autoRun="true"/>-->
 
-            <!-- ========================  neuer Baum style="color: #434387; border-style: solid; border-width: 1px; border-color: #e3c240; background-color: #faf3da;width: 100%;height: 99%;" ============================== -->
+            <p:tree value="#{Metadaten.basicTreeNote}" var="doc"
+                    selectionMode="single">
+                    <!--selection="#{Metadaten.selectedTreeNote}">-->
+                <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
+                    <h:outputText value="#{doc}"/>
+                </p:treeNode>
+            </p:tree>
+
             <h:outputText rendered="false" value="up"
                           style="position: fixed;top: 20px;left: 170px" onclick="move(-50)"
                           onmousemove="move(-2)"/>
