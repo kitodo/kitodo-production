@@ -56,9 +56,9 @@
         <t:inputText style="width:20%" forceId="true" id="filterfield" value="#{Form.filter}"
                      onkeypress="return submitEnter('FilterAlle',event)"/>
         <t:commandButton type="submit" id="FilterAlle" forceId="true" style="display:none"
-                         action="#{Form.filterAlleStart}"/>
+                         action="#{Form.filterAll}"/>
 
-        <h:commandLink id="aslsid9" action="#{Form.filterAlleStart}" title="#{msgs.filterAnwenden}"
+        <h:commandLink id="aslsid9" action="#{Form.filterAll}" title="#{msgs.filterAnwenden}"
                        style="margin-left:5px">
             <h:graphicImage id="aslsid10" alt="reload" value="/pages/images/buttons/reload.gif"/>
         </h:commandLink>
