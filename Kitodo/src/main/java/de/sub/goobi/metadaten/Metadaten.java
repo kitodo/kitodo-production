@@ -689,7 +689,7 @@ public class Metadaten {
      * Metadaten Einlesen.
      */
 
-    public String readXmlStart() throws ReadException, IOException, PreferencesException {
+    public void readXmlStart() throws ReadException, IOException, PreferencesException {
         currentRepresentativePage = "";
         this.myPrefs = serviceManager.getRulesetService().getPreferences(this.process.getRuleset());
         this.modeView = "Metadaten";
@@ -756,11 +756,6 @@ public class Metadaten {
         saveMetadataAsBean(this.logicalTopstruct);
         readMetadataAsFirstTree();
 
-        if (!this.modeOnlyRead) {
-            // inserted to make Paginierung the starting view
-            this.modeView = "Paginierung";
-        }
-        return "Metadaten";
     }
 
     private void createDefaultValues(DocStruct element) {
