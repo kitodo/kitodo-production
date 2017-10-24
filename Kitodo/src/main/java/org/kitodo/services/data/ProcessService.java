@@ -671,7 +671,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(processJSONObject, "sortHelperDocstructs"));
         processDTO.setSortHelperImages(getIntegerPropertyForDTO(processJSONObject, "sortHelperImages"));
         processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(processJSONObject, "sortHelperMetadata"));
-        processDTO.setTifDirectoryExists(checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
+        processDTO.setTifDirectoryExists(checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(),
+                processDTO.getProcessBaseUri()));
+        ProjectDTO projectDTO = new ProjectDTO();
+        projectDTO.setId(getIntegerPropertyForDTO(processJSONObject, "project.id"));
+        projectDTO.setTitle(getStringPropertyForDTO(processJSONObject, "project.title"));
+        projectDTO.setProjectIsArchived(getBooleanPropertyForDTO(processJSONObject, "project.archived"));
+        processDTO.setProject(projectDTO);
         if (!related) {
             processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         }
