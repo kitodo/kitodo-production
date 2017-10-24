@@ -2613,7 +2613,7 @@ public class Metadaten {
     }
 
     public void onNodeSelect(NodeSelectEvent event) {
-        System.out.println(event.getTreeNode().toString());
+        setMyStrukturelement((DocStruct) event.getTreeNode().getData());
     }
 
     public org.primefaces.model.TreeNode getBasicTreeNote() {
@@ -2624,23 +2624,23 @@ public class Metadaten {
 
         List<DocStruct> children = logicalTopstruct.getAllChildren();
 
-        org.primefaces.model.TreeNode visibleRoot = new DefaultTreeNode(logicalTopstruct.getType().getNameByLanguage(language), root);
-        if (children != null) {
-            visibleRoot = convertDocstructToPFTreeNote(children,visibleRoot,language);
+        org.primefaces.model.TreeNode visibleRoot = new DefaultTreeNode(logicalTopstruct, root);
+            if (children != null) {
+            visibleRoot = convertDocstructToPFTreeNote(children,visibleRoot);
         }
         org.primefaces.model.TreeNode expandedTreeNode = setExpandingAll(root,true);
 
         return expandedTreeNode;
     }
 
-    private org.primefaces.model.TreeNode convertDocstructToPFTreeNote(List<DocStruct> elements, org.primefaces.model.TreeNode parentTreeNode, String language) {
+    private org.primefaces.model.TreeNode convertDocstructToPFTreeNote(List<DocStruct> elements, org.primefaces.model.TreeNode parentTreeNode) {
         org.primefaces.model.TreeNode treeNote = null;
 
         for (DocStruct element : elements) {
             List<DocStruct> childs = element.getAllChildren();
-            treeNote = new DefaultTreeNode(element.getType().getNameByLanguage(language), parentTreeNode);
+            treeNote = new DefaultTreeNode(element, parentTreeNode);
             if (childs != null) {
-                convertDocstructToPFTreeNote(childs,treeNote,language);
+                convertDocstructToPFTreeNote(childs,treeNote);
             }
         }
         return treeNote;

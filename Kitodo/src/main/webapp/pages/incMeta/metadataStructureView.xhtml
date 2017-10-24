@@ -27,10 +27,11 @@
             <p:tree value="#{Metadaten.basicTreeNote}" var="doc"
                     selectionMode="single"
                     selection="#{Metadaten.selectedTreeNote}">
-                <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"/>
+                <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
+                        update="tabView:metadata"/>
 
                 <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
-                    <h:outputText value="#{doc}"/>
+                    <h:outputText value="#{doc.type}"/>
                 </p:treeNode>
             </p:tree>
 
