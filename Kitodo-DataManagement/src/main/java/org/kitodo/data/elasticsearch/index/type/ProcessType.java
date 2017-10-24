@@ -40,6 +40,8 @@ public class ProcessType extends BaseType<Process> {
         processObject.put("project.id", projectId);
         String projectTitle = process.getProject() != null ? process.getProject().getTitle() : null;
         processObject.put("project.title", projectTitle);
+        boolean projectArchived = process.getProject() != null ? process.getProject().getProjectIsArchived() : false;
+        processObject.put("project.archived", projectArchived);
         Integer ruleset = process.getRuleset() != null ? process.getRuleset().getId() : null;
         processObject.put("ruleset", ruleset);
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : null;

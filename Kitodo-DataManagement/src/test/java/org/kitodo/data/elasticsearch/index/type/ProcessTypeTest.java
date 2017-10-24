@@ -120,7 +120,7 @@ public class ProcessTypeTest {
         Process process = prepareData().get(0);
         HttpEntity document = processType.createDocument(process);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\",\"project.archived\":false,"
                 + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project.id\":1,\"sortHelperStatus\":null,"
                 + "\"creationDate\":\"2017-01-01\",\"processBaseUri\":null,\"template\":false,\"sortHelperImages\":20,"
                 + "\"batches\":[{\"id\":1,\"title\":\"First\"}]\"workpieces\":[],\"tasks\":[{\"id\":1,\"title\":"
@@ -134,7 +134,7 @@ public class ProcessTypeTest {
                 + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project.id\":1,\"template\":false,"
                 + "\"project.title\":\"Project\",\"sortHelperStatus\":null,\"processBaseUri\":null,\"creationDate\":\""
                 + dateFormat.format(process.getCreationDate()) + "\",\"sortHelperImages\":30,\"workpieces\":[],"
-                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}]}");
+                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}],\"project.archived\":false}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
@@ -143,7 +143,7 @@ public class ProcessTypeTest {
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
                 + "\"docket\":null,\"ruleset\":null,\"project.id\":null,\"project.title\":null,\"template\":false,"
                 + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"tasks\":[],\"properties\":[],\"batches\":[],"
+                + "\",\"tasks\":[],\"properties\":[],\"batches\":[],\"project.archived\":false,"
                 + "\"workpieces\":[],\"sortHelperImages\":0,\"sortHelperStatus\":null,\"processBaseUri\":null}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
