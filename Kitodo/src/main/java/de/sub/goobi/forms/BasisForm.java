@@ -35,10 +35,21 @@ public class BasisForm implements Serializable {
 
     private LazyDTOModel lazyDTOModel = null;
 
+    /**
+     * Getter: return lazyDTOModel.
+     *
+     * @return LazyDTOModel
+     */
     public LazyDTOModel getLazyDTOModel() {
         return lazyDTOModel;
     }
 
+    /**
+     * Setter: set lazyDTOModel.
+     *
+     * @param lazyDTOModel
+     *            LazyDTOModel to set for this class
+     */
     public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
         this.lazyDTOModel = lazyDTOModel;
     }
