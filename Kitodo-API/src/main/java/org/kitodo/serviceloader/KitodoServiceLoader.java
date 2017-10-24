@@ -201,7 +201,7 @@ public class KitodoServiceLoader<T> {
      * @param temporaryFolder
      *            folder in which the pom.properties file will be searched for
      *
-     * @return boolean
+     * @return String
      */
     private String extractModuleName(File temporaryFolder) throws IOException {
         String moduleName = "";
@@ -299,7 +299,11 @@ public class KitodoServiceLoader<T> {
      * @param folder
      *            folder that will be searched
      *
-     * @return File, null
+     * @return File
+     *
+     * @throws FileNotFoundException
+     *             when File with given name could not be found in given folder
+     *
      */
     private File findFile(String name, File folder) throws FileNotFoundException {
         Collection<File> s = FileUtils.listFiles(folder, null, true);
