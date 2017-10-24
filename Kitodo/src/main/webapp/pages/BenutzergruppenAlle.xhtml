@@ -62,7 +62,7 @@
                                         </h3>
 
                                         <!-- newUser-Schaltknopf -->
-                                        <h:commandLink id="id5" action="#{BenutzergruppenForm.Neu}"
+                                        <h:commandLink id="id5" action="#{BenutzergruppenForm.newUserGroup}"
                                                        immediate="true"
                                                        rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                             <h:outputText id="id6"
@@ -111,7 +111,7 @@
                                         </p:dataTable>
 
                                         <!-- newUser-Schaltknopf -->
-                                        <h:commandLink id="id52" action="#{BenutzergruppenForm.Neu}"
+                                        <h:commandLink id="id52" action="#{BenutzergruppenForm.newUserGroup}"
                                                        immediate="true"
                                                        rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (BenutzergruppenForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
 

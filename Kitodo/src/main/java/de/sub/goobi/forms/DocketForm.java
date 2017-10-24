@@ -43,6 +43,10 @@ public class DocketForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
     private int docketId;
 
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
     public DocketForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getDocketService()));
@@ -53,7 +57,7 @@ public class DocketForm extends BasisForm {
      *
      * @return the navigation String
      */
-    public String Neu() {
+    public String newDocket() {
         this.myDocket = new Docket();
         this.docketId = 0;
         return "/pages/DocketEdit?faces-redirect=true";

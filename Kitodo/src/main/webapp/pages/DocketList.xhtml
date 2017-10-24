@@ -62,7 +62,7 @@
                                         </h3>
 
                                         <!-- newUser-Schaltknopf -->
-                                        <h:commandLink id="id5" action="#{DocketForm.Neu}"
+                                        <h:commandLink id="id5" action="#{DocketForm.newDocket}"
                                                        immediate="true"
                                                        rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                             <h:outputText id="id6" value="#{msgs.createNewDocket}"/>
@@ -100,7 +100,7 @@
                                             </p:column>
 
                                         </p:dataTable>
-                                        <h:commandLink id="id52" action="#{DocketForm.Neu}"
+                                        <h:commandLink id="id52" action="#{DocketForm.newDocket}"
                                                        immediate="true"
                                                        rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (DocketForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
                                             <h:outputText id="id62" value="#{msgs.createNewDocket}"/>

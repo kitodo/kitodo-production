@@ -91,6 +91,10 @@ public class ProjekteForm extends BasisForm {
 
     private int itemId;
 
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
     public ProjekteForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProjectService()));
@@ -183,7 +187,7 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Saves current project if title is not empty
+     * Saves current project if title is not empty.
      *
      * @return String
      */

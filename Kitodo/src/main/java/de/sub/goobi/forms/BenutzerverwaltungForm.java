@@ -61,6 +61,10 @@ public class BenutzerverwaltungForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private int userId;
 
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
     public BenutzerverwaltungForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserService()));

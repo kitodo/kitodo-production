@@ -42,6 +42,10 @@ public class RulesetForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
     private int rulesetId;
 
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
     public RulesetForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRulesetService()));
