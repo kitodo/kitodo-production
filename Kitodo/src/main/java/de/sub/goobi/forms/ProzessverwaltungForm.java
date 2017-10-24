@@ -2223,20 +2223,23 @@ public class ProzessverwaltungForm extends BasisForm {
                     Property processProperty = new Property();
                     processProperty.getProcesses().add(this.process);
                     p.setProzesseigenschaft(processProperty);
-                    serviceManager.getProcessService().getPropertiesInitialized(this.process).add(processProperty);
+                    this.process.getProperties().add(processProperty);
                 }
                 p.transfer();
-                if (!serviceManager.getProcessService().getPropertiesInitialized(this.process)
-                        .contains(p.getProzesseigenschaft())) {
-                    serviceManager.getProcessService().getPropertiesInitialized(this.process)
-                            .add(p.getProzesseigenschaft());
+                if (!this.process.getProperties().contains(p.getProzesseigenschaft())) {
+                    try {
+                        serviceManager.getPropertyService().save(p.getProzesseigenschaft());
+                        this.process.getProperties().add(p.getProzesseigenschaft());
+                    } catch (DataException e) {
+                        logger.error("New property couldn't be saved: " + e.getMessage());
+                    }
                 }
             }
 
-            List<Property> props = this.process.getProperties();
-            for (Property processProperty : props) {
+            List<Property> properties = this.process.getProperties();
+            for (Property processProperty : properties) {
                 if (processProperty.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(this.process).remove(processProperty);
+                    this.process.getProperties().remove(processProperty);
                 }
             }
 
