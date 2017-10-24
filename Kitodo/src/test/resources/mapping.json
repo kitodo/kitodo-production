@@ -269,6 +269,9 @@
                         "id": {
                             "type": "long"
                         },
+                        "archived": {
+                            "type": "boolean"
+                        },
                         "title": {
                             "type": "text",
                             "fields": {
