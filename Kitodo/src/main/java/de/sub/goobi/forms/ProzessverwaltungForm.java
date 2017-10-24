@@ -609,20 +609,6 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Remove process property.
-     */
-    public String ProzessEigenschaftLoeschen() {
-        try {
-            serviceManager.getProcessService().getPropertiesInitialized(process).remove(myProzessEigenschaft);
-            serviceManager.getProcessService().save(process);
-        } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-            logger.error(e);
-        }
-        return null;
-    }
-
-    /**
      * Remove properties.
      */
     public String VorlageEigenschaftLoeschen() {
@@ -665,18 +651,6 @@ public class ProzessverwaltungForm extends BasisForm {
 
     public String WerkstueckEigenschaftNeu() {
         workpieceProperty = new Property();
-        return null;
-    }
-
-    /**
-     * Take process property.
-     *
-     * @return empty String
-     */
-    public String ProzessEigenschaftUebernehmen() {
-        serviceManager.getProcessService().getPropertiesInitialized(process).add(myProzessEigenschaft);
-        myProzessEigenschaft.getProcesses().add(process);
-        save();
         return null;
     }
 
@@ -2288,25 +2262,24 @@ public class ProzessverwaltungForm extends BasisForm {
                     Property processProperty = new Property();
                     processProperty.getProcesses().add(this.process);
                     this.processProperty.setProzesseigenschaft(processProperty);
-                    serviceManager.getProcessService().getPropertiesInitialized(this.process).add(processProperty);
+                    this.process.getProperties().add(processProperty);
                 }
                 this.processProperty.transfer();
                 List<Property> props = this.process.getProperties();
                 for (Property processProperty : props) {
                     if (processProperty.getTitle() == null) {
-                        serviceManager.getProcessService().getPropertiesInitialized(this.process)
-                                .remove(processProperty);
+                        this.process.getProperties().remove(processProperty);
                     }
                 }
-                this.process.getProperties().add(this.processProperty.getProzesseigenschaft());
                 this.processProperty.getProzesseigenschaft().getProcesses().add(this.process);
             } else {
                 return;
             }
 
             try {
-                serviceManager.getProcessService().save(this.process);
                 serviceManager.getPropertyService().save(this.processProperty.getProzesseigenschaft());
+                this.process.getProperties().add(this.processProperty.getProzesseigenschaft());
+                serviceManager.getProcessService().save(this.process);
                 Helper.setMeldung("propertiesSaved");
             } catch (DataException e) {
                 logger.error(e);
