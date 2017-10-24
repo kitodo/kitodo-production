@@ -19,6 +19,8 @@
 
     <h:form id="metadata">
 
+        <p:messages id="messagesMetadata" closable="true"/>
+
         <h:panelGroup id="metadataTable" rendered="#{!empty Metadaten.myMetadaten}">
 
             <p:dataTable value="#{Metadaten.myMetadaten}" var="item">
@@ -33,12 +35,12 @@
 
                 <p:column style="width:64px;text-align: center">
 
-                    <p:commandButton update="tabView:metadata:metadataTable" icon="ui-icon-copy" immediate="true"
+                    <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata" icon="ui-icon-copy" immediate="true"
                                      title="#{msgs.metadatenKopieren}" action="#{Metadaten.copy}">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                     </p:commandButton>
 
-                    <p:commandButton update="tabView:metadata:metadataTable" icon="ui-icon-trash" immediate="true"
+                    <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata" icon="ui-icon-trash" immediate="true"
                                      title="#{msgs.metadatenLoeschen}" action="#{Metadaten.delete}">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                     </p:commandButton>

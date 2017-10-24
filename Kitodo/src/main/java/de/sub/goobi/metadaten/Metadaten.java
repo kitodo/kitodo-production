@@ -277,9 +277,10 @@ public class Metadaten {
             md.setValue(this.curMetadatum.getMd().getValue());
             this.docStruct.addMetadata(md);
         } catch (MetadataTypeNotAllowedException e) {
-            logger.error("Fehler beim copy von Metadaten (MetadataTypeNotAllowedException): " + e.getMessage());
+            Helper.setFehlerMeldung(e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
+
     }
 
     /**
