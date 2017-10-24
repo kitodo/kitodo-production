@@ -74,21 +74,6 @@ public class FileMapper {
     }
 
     /**
-     * Map relative URI to absolute kitodo config directory URI.
-     *
-     * @param uri
-     *            relative path
-     * @return absolute URI path
-     */
-    private URI mapUriToKitodoConfigDirectoryUri(URI uri) {
-        String kitodoConfigDirectory = Config.getKitodoConfigDirectory();
-        if (!uri.isAbsolute() && !uri.toString().contains(kitodoConfigDirectory)) {
-            return Paths.get(Config.getKitodoConfigDirectory(), uri.toString()).toUri();
-        }
-        return uri;
-    }
-
-    /**
      * Map relative URI to absolute kitodo data directory URI.
      *
      * @param uri
@@ -117,10 +102,6 @@ public class FileMapper {
             directory = session.getServletContext().getRealPath(uri.toString());
         }
         return unmapDirectory(uri, directory);
-    }
-
-    private URI unmapUriFromKitodoConfigDirectoryUri(URI uri) {
-        return unmapDirectory(uri, Config.getKitodoConfigDirectory());
     }
 
     private URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
