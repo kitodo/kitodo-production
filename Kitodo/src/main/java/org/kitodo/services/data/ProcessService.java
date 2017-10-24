@@ -848,12 +848,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
         if (tifDirectory == null) {
-            tifDirectory = URI.create(result.toString() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
+            tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
         }
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            fileService.createMetaDirectory(result, tifDirectory.toString());
+            fileService.createDirectory(result, tifDirectory.getRawPath());
         }
 
         return tifDirectory;
@@ -906,12 +906,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 null);
 
         if (tifDirectory == null) {
-            tifDirectory = URI.create(result.toString() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
+            tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
         }
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            fileService.createMetaDirectory(result, tifDirectory.toString());
+            fileService.createDirectory(result, tifDirectory.getRawPath());
         }
 
         return tifDirectory;
@@ -986,10 +986,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus() != null) {
                 if (process.getSortHelperStatus().equals("100000000")) {
-                    fileService.createMetaDirectory(result, origDirectory.toString());
+                    fileService.createDirectory(result, origDirectory.getRawPath());
                 }
             }
-
             return origDirectory;
         } else {
             return getImagesTifDirectory(useFallBack, process);
@@ -1698,7 +1697,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            fileService.createMetaDirectory(this.getProcessDataDirectory(process),
+            fileService.createDirectory(this.getProcessDataDirectory(process),
                     processDir.replace("(processtitle)", process.getTitle()));
         }
     }

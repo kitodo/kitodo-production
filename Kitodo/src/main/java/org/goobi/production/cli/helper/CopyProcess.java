@@ -625,7 +625,14 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
-        serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+        boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+        if (!successful) {
+            String message = "Metadata directory: " + baseProcessDirectory + "in path:"
+                    +  ConfigCore.getKitodoDataDirectory() + " was not created!";
+            logger.error(message);
+            Helper.setFehlerMeldung(message);
+            return null;
+        }
 
         /*
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage

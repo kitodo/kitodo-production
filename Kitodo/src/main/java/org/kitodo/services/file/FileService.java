@@ -64,6 +64,7 @@ public class FileService {
      *            The URI, where the
      * @param directoryName
      *            the name of the directory
+     * @return true or false
      * @throws IOException
      *             an IOException
      */
@@ -79,8 +80,10 @@ public class FileService {
             File script = new File(ConfigCore.getParameter("script_createDirMeta"));
             CommandResult commandResult = commandService.runCommand(script, commandParameter);
             return commandResult.isSuccessful();
+        } else {
+            logger.info("Metadata directory: " + directoryName + " already existed! No new directory was created");
+            return true;
         }
-        return false;
     }
 
     /**
