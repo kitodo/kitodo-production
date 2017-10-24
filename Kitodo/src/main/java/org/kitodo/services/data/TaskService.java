@@ -335,8 +335,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setOrdering(getIntegerPropertyForDTO(taskJSONObject, "ordering"));
         Integer taskStatus = getIntegerPropertyForDTO(taskJSONObject, "processingStatus");
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
+        taskDTO.setProcessingStatusTitle(Helper.getTranslation(taskDTO.getProcessingStatus().getTitle()));
         Integer editType = getIntegerPropertyForDTO(taskJSONObject, "processingStatus");
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
+        taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
         taskDTO.setProcessingTime(getStringPropertyForDTO(taskJSONObject, "processingTime"));
         taskDTO.setProcessingBegin(getStringPropertyForDTO(taskJSONObject, "processingBegin"));
         taskDTO.setProcessingEnd(getStringPropertyForDTO(taskJSONObject, "processingEnd"));

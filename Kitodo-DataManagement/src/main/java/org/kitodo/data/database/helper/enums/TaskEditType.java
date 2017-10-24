@@ -72,7 +72,6 @@ public enum TaskEditType {
      */
     public String getTitle() {
         return this.title;
-        // return Helper.getTranslation(this.title);
     }
 
     /**
