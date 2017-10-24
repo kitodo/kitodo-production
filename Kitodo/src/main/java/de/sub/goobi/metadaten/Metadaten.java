@@ -61,6 +61,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 
 
@@ -2609,6 +2610,10 @@ public class Metadaten {
 
     public void setSelectedTreeNote(org.primefaces.model.TreeNode selectedTreeNote) {
         this.selectedTreeNote = selectedTreeNote;
+    }
+
+    public void onNodeSelect(NodeSelectEvent event) {
+        System.out.println(event.getTreeNode().toString());
     }
 
     public org.primefaces.model.TreeNode getBasicTreeNote() {

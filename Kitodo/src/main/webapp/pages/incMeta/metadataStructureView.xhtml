@@ -25,8 +25,10 @@
         <h:body style="margin:2px 2px 2px 2px;background-color:#CBE5FC;">
 
             <p:tree value="#{Metadaten.basicTreeNote}" var="doc"
-                    selectionMode="single">
-                    <!--selection="#{Metadaten.selectedTreeNote}">-->
+                    selectionMode="single"
+                    selection="#{Metadaten.selectedTreeNote}">
+                <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"/>
+
                 <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
                     <h:outputText value="#{doc}"/>
                 </p:treeNode>
