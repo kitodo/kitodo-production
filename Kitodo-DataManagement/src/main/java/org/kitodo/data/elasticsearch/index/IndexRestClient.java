@@ -37,6 +37,9 @@ public class IndexRestClient extends KitodoRestClient {
 
     private static final Logger logger = LogManager.getLogger(IndexRestClient.class);
 
+    /**
+     * IndexRestClient singleton.
+     */
     private static IndexRestClient instance = null;
 
     private IndexRestClient() {}

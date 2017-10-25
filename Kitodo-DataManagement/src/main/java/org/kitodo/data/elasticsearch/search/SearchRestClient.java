@@ -35,6 +35,9 @@ public class SearchRestClient extends KitodoRestClient {
 
     private static final Logger logger = LogManager.getLogger(SearchRestClient.class);
 
+    /**
+     * SearchRestClient singleton.
+     */
     private static SearchRestClient instance = null;
 
     private SearchRestClient() {}
