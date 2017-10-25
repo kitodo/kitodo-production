@@ -21,6 +21,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
 
     <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
@@ -316,11 +317,9 @@
 
                                     <!--  Date  -->
                                     <h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
-                                        <!-- TODO: use PrimeFaces calendar tag as replacement for RichFaces calendar tag! -->
-                                        <!--<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px"-->
-                                                       <!--datePattern="dd.MM.yyyy" value="#{myprocess_item.dateValue}"-->
-                                                       <!--enableManualInput="true">-->
-                                        <!--</rich:calendar>-->
+                                        <p:calendar id="prpvw15_5_1" value="#{myprocess_item.dateValue}"
+                                                    locale="#{SpracheForm.locale}" navigator="true"
+                                                    pattern="dd.MM.yyyy" style="width: 500px;margin-right:15px" />
                                     </h:panelGroup>
                                 </td>
                             </tr>
