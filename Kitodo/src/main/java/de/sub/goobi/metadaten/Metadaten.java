@@ -65,6 +65,7 @@ import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 
 
+import org.primefaces.model.TreeNode;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -211,7 +212,6 @@ public class Metadaten {
      */
     public void add() {
         this.modeAdd = true;
-//        myMetadaten.add(new MetadatumImpl(,0,this.myPrefs,this.process));
         Modes.setBindState(BindState.create);
         getMetadatum().setValue("");
     }
@@ -268,7 +268,6 @@ public class Metadaten {
     /**
      * Copy.
      *
-     * @return String
      */
     public void copy() {
         Metadata md;
@@ -281,7 +280,6 @@ public class Metadaten {
             Helper.setFehlerMeldung(e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
-
     }
 
     /**
@@ -924,7 +922,6 @@ public class Metadaten {
         TreeNodeStruct3 nodes;
         List<DocStruct> status = new ArrayList<>();
 
-
         /*
          * den Ausklapp-Zustand aller Knoten erfassen
          */
@@ -949,7 +946,6 @@ public class Metadaten {
         if (label == null) {
             label = this.logicalTopstruct.getType().getName();
         }
-
 
         this.treeNodeStruct = new TreeNodeStruct3(label, this.logicalTopstruct);
         readMetadataAsSecondTree(this.logicalTopstruct, this.treeNodeStruct);
@@ -2602,39 +2598,57 @@ public class Metadaten {
         }
     }
 
-    private org.primefaces.model.TreeNode selectedTreeNote;
+    private TreeNode selectedTreeNote;
 
-    public org.primefaces.model.TreeNode getSelectedTreeNote() {
+    /**
+     * Returns the current selected TreeNote.
+     *
+     * @return The TreeNote.
+     */
+    public TreeNode getSelectedTreeNote() {
         return selectedTreeNote;
     }
 
-    public void setSelectedTreeNote(org.primefaces.model.TreeNode selectedTreeNote) {
+    /**
+     * Sets the selecetd TreeNote.
+     *
+     * @param selectedTreeNote
+     *          The TreeNote.
+     */
+    public void setSelectedTreeNote(TreeNode selectedTreeNote) {
         this.selectedTreeNote = selectedTreeNote;
     }
 
+    /**
+     * Sets MyStrukturelement on selection of TreeNode.
+     *
+     * @param event
+     *          The NoteSelectEvent.
+     */
     public void onNodeSelect(NodeSelectEvent event) {
         setMyStrukturelement((DocStruct) event.getTreeNode().getData());
     }
 
-    public org.primefaces.model.TreeNode getBasicTreeNote() {
-
-        String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
-
-        org.primefaces.model.TreeNode root = new DefaultTreeNode("root", null);
-
-        List<DocStruct> children = logicalTopstruct.getAllChildren();
-
-        org.primefaces.model.TreeNode visibleRoot = new DefaultTreeNode(logicalTopstruct, root);
-            if (children != null) {
+    /**
+     * Gets logicalTopstruct of digital document as TreeNode structure.
+     *
+     * @return
+     *          The TreeNote.
+     */
+    public TreeNode getTreeNotes() {
+        TreeNode root = new DefaultTreeNode("root", null);
+        List<DocStruct> children = this.logicalTopstruct.getAllChildren();
+        TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
+        if (children != null) {
             visibleRoot = convertDocstructToPFTreeNote(children,visibleRoot);
         }
-        org.primefaces.model.TreeNode expandedTreeNode = setExpandingAll(root,true);
+        TreeNode expandedTreeNode = setExpandingAll(root,true);
 
         return expandedTreeNode;
     }
 
-    private org.primefaces.model.TreeNode convertDocstructToPFTreeNote(List<DocStruct> elements, org.primefaces.model.TreeNode parentTreeNode) {
-        org.primefaces.model.TreeNode treeNote = null;
+    private TreeNode convertDocstructToPFTreeNote(List<DocStruct> elements, TreeNode parentTreeNode) {
+        TreeNode treeNote = null;
 
         for (DocStruct element : elements) {
             List<DocStruct> childs = element.getAllChildren();
@@ -2646,8 +2660,8 @@ public class Metadaten {
         return treeNote;
     }
 
-    private org.primefaces.model.TreeNode setExpandingAll(org.primefaces.model.TreeNode node, boolean expanded) {
-        for (org.primefaces.model.TreeNode child : node.getChildren()) {
+    private TreeNode setExpandingAll(TreeNode node, boolean expanded) {
+        for (TreeNode child : node.getChildren()) {
             setExpandingAll(child, expanded);
         }
         node.setExpanded(expanded);
