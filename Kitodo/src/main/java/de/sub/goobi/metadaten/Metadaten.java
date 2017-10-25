@@ -251,18 +251,12 @@ public class Metadaten {
     /**
      * Reload.
      *
-     * @return String
      */
-    public String reload() {
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        } else {
-            calculateMetadataAndImages();
-            cleanupMetadata();
-            // ignoring result of store operation
-            storeMetadata();
-            return "";
-        }
+    public void reload() {
+        calculateMetadataAndImages();
+        cleanupMetadata();
+        // ignoring result of store operation
+        storeMetadata();
     }
 
     /**

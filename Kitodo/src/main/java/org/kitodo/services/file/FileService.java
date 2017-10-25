@@ -492,7 +492,7 @@ public class FileService {
                         temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
                 temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
                         temporaryAnchorFileName);
-                renameFile(URI.create(anchorFileName), temporaryAnchorFileName);
+                renameFile(Paths.get(temporaryAnchorFileName).toUri(), new File(anchorFileName).toURI().getRawPath());
             }
         }
     }

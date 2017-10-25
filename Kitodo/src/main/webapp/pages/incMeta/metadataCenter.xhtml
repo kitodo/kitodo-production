@@ -23,7 +23,7 @@
     <div align="right">
         <p:button value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" disabled="true"/>
         <p:button value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle" icon="ui-icon-close"/>
-        <p:button value="#{msgs.speichern}" icon="ui-icon-disk" disabled="true"/>
+        <p:commandButton value="#{msgs.speichern}" action="#{Metadaten.reload}" icon="ui-icon-disk" />
         <p:button value="#{msgs.speichernZurueck}" icon="ui-icon-extlink" disabled="true"/>
     </div>
 
