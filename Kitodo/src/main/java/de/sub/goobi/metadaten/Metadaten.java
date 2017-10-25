@@ -346,7 +346,6 @@ public class Metadaten {
     /**
      * Save.
      *
-     * @return String
      */
     public void save() {
         try {
@@ -377,18 +376,6 @@ public class Metadaten {
         this.selectedMetadatum.setValue("");
         this.tempValue = "";
         saveMetadataAsBean(this.docStruct);
-    }
-
-    /**
-     * Load right frame.
-     *
-     * @return String
-     */
-    public String loadRightFrame() {
-        this.modeAdd = false;
-        this.modeAddPerson = false;
-        Modes.setBindState(BindState.edit);
-        return "Metadaten2rechts";
     }
 
     /**
