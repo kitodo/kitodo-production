@@ -20,7 +20,7 @@ public class FileStructureValidation implements FileStructureValidationInterface
 
     @Override
     public ValidationResult validate(URI xmlFileUri, URI xsdFileUri) {
-        return null;
+        throw new RuntimeException("Not implemented yet!");
     }
 
 }

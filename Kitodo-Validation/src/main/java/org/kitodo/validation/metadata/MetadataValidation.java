@@ -20,6 +20,6 @@ public class MetadataValidation implements MetadataValidationInterface {
 
     @Override
     public ValidationResult validate(URI metsFileUri, URI rulesetFileUri) {
-        return null;
+        throw new RuntimeException("Not implemented yet!");
     }
 }

@@ -21,6 +21,6 @@ public class LongTimePreservationValidation implements LongTimePreservationValid
 
     @Override
     public ValidationResult validate(URI fileUri, FileType fileType) {
-        return null;
+        throw new RuntimeException("Not implemented yet!");
     }
 }
