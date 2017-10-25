@@ -398,13 +398,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of ProcessDTO objects with processes for specific process id
      */
     public List<ProcessDTO> findByProjectId(Integer id, boolean related) throws DataException {
-        return convertJSONObjectsToDTOs(searcher.findDocuments(getQueryProjectId(id).toString()), related);
+        List<JSONObject> processes = searcher.findDocuments(getQueryProjectId(id).toString());
+        return convertJSONObjectsToDTOs(processes, related);
     }
 
     /**
      * Count all SortHelperImages fields for project id. It is used for statistical
      * purpose.
-     * 
+     *
      * @param projectId
      *            as Integer
      * @return amount of SortHelperImages fields for project id as Long
@@ -416,7 +417,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Sum all values in SortHelperImages fields for project id. It is used for
      * statistical purpose.
-     * 
+     *
      * @param projectId
      *            as Integer
      * @return sum of all values in SortHelperImages fields for project id as Double
@@ -426,7 +427,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {
-        return createSimpleQuery("project", id, true);
+        return createSimpleQuery("project.id", id, true);
+    }
+
+    /**
+     * Get query for find process by project title.
+     *
+     * @param title
+     *            as String
+     * @return QueryBuilder object
+     */
+    public QueryBuilder getQueryProjectTitle(String title) {
+        return createSimpleQuery("project.title", title, true, Operator.AND);
     }
 
     /**
@@ -437,7 +449,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific docket
      */
     public List<JSONObject> findByDocket(Docket docket) throws DataException {
-        QueryBuilder query = createSimpleQuery("docket_id", docket.getId(), true);
+        QueryBuilder query = createSimpleQuery("docket", docket.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -461,13 +473,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific process id
      */
     List<JSONObject> findByProjectTitle(String title) throws DataException {
-        Set<Integer> projectIds = new HashSet<>();
-
-        List<JSONObject> projects = serviceManager.getProjectService().findByTitle(title, true);
-        for (JSONObject project : projects) {
-            projectIds.add(getIdFromJSONObject(project));
-        }
-        return searcher.findDocuments(createSetQuery("project", projectIds, true).toString());
+        return searcher.findDocuments(getQueryProjectTitle(title).toString());
     }
 
     /**
@@ -490,13 +496,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific batch title
      */
     List<JSONObject> findByBatchTitle(String title) throws DataException {
-        Set<Integer> batchIds = new HashSet<>();
-
-        List<JSONObject> batches = serviceManager.getBatchService().findByTitle(title, true);
-        for (JSONObject batch : batches) {
-            batchIds.add(getIdFromJSONObject(batch));
-        }
-        return searcher.findDocuments(createSetQuery("batches.id", batchIds, true).toString());
+        QueryBuilder query = createSimpleQuery("batches.title", title, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
     }
 
     /**
@@ -582,7 +583,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Get query for template.
-     * 
+     *
      * @param template
      *            true or false
      * @return query as QueryBuilder
@@ -614,12 +615,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
         List<ProjectDTO> projects = serviceManager.getProjectService().findByArchived(archived, true);
-        return createSetQuery("project", serviceManager.getFilterService().collectIds(projects), true);
+        return createSetQuery("project.id", serviceManager.getFilterService().collectIds(projects), true);
     }
 
     /**
      * Sort results by creation date.
-     * 
+     *
      * @param sortOrder
      *            ASC or DESC as SortOrder
      * @return sort
@@ -630,7 +631,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Convert DTO to bean object.
-     * 
+     *
      * @param processDTO
      *            DTO object
      * @return bean object
@@ -641,7 +642,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Convert list of DTOs to list of beans.
-     * 
+     *
      * @param dtos
      *            list of DTO objects
      * @return list of beans
@@ -679,7 +680,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = getIntegerPropertyForDTO(jsonObject, "project");
+        Integer project = getIntegerPropertyForDTO(jsonObject, "project.id");
         processDTO.setProject(serviceManager.getProjectService().findById(project));
         processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
@@ -1405,7 +1406,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check whether the operation contains tasks that are not assigned to a
      * user or user group.
-     * 
+     *
      * @param process
      *            bean object
      * @return true or false
@@ -1426,7 +1427,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check whether the operation contains tasks that are not assigned to a
      * user or user group.
-     * 
+     *
      * @param process
      *            DTO object
      * @return true or false
@@ -1446,7 +1447,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check if there is one task in edit mode, where the user has the rights to
      * write to image folder.
-     * 
+     *
      * @param process
      *            bean object
      * @return true or false
@@ -1463,7 +1464,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Check if there is one task in edit mode, where the user has the rights to
      * write to image folder.
-     * 
+     *
      * @param process
      *            DTO object
      * @return true or false
@@ -2295,7 +2296,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Creates a List of Docket data for the given processes.
-     * 
+     *
      * @param processes
      *            the process to create the docket data for.
      * @return A List of docketdata
@@ -2310,7 +2311,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Creates the DocketData for a given Process.
-     * 
+     *
      * @param process
      *            The process to create the docket data for.
      * @return The DocketData for the process.
@@ -2354,7 +2355,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find all processes sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2376,7 +2377,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find not closed processes sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      *
@@ -2388,7 +2389,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find not closed and not archived processes sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2399,7 +2400,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find not archived templates sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2410,7 +2411,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find all templates sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2421,7 +2422,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find all processes, which are not a template sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
@@ -2433,7 +2434,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Find all not archived processes which are not a template sorted according to
      * sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objectss
@@ -2445,7 +2446,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Find all not closed and not archived templates sorted according to sort
      * query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects

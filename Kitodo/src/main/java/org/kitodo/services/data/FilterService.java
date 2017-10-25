@@ -224,7 +224,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             } else {
                 processDTOS = serviceManager.getProcessService().findAllTemplates(null);
             }
-            taskQuery.must(createSetQuery("process", collectIds(processDTOS), true));
+            taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
         }
         return taskQuery;
     }
@@ -466,7 +466,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         try {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService()
                     .findNotTemplateByProjectIds(collectIds(assignedProjects), true);
-            taskQuery.must(createSetQuery("process", collectIds(processDTOS), true));
+            taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
         } catch (DataException e) {
             logger.error(e);
         }
@@ -518,7 +518,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return createSetQuery("_id", filterValuesAsStrings(filter, FilterString.ID), true);
         } else if (objectType == ObjectType.TASK) {
-            return createSetQuery("process", filterValuesAsIntegers(filter, FilterString.ID), true);
+            return createSetQuery("processForTask.id", filterValuesAsIntegers(filter, FilterString.ID), true);
         }
         return new BoolQueryBuilder();
     }
@@ -528,10 +528,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return serviceManager.getProcessService().getQueryTitle(processTitle, true);
         } else if (objectType == ObjectType.TASK) {
-            List<JSONObject> jsonObjects = serviceManager.getProcessService().findByTitle(processTitle, true);
-            List<ProcessDTO> processDTOS = serviceManager.getProcessService().convertJSONObjectsToDTOs(jsonObjects,
-                    true);
-            return createSetQuery("process", collectIds(processDTOS), true);
+            return createSimpleQuery("processForTask.title", processTitle, true, Operator.AND);
         }
         return new BoolQueryBuilder();
     }
@@ -542,7 +539,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         } else if (objectType == ObjectType.TASK) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(
                     createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
-            return createSetQuery("process", collectIds(processDTOS), true);
+            return createSetQuery("processForTask.id", collectIds(processDTOS), true);
         }
         return new BoolQueryBuilder();
     }
@@ -924,10 +921,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<JSONObject> jsonObjects;
         List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
         if (titleValue.size() > 1) {
-            jsonObjects = serviceManager.getPropertyService().findByTitleAndValue(titleValue.get(0), titleValue.get(1),
-                    "process", !negate);
+            jsonObjects = serviceManager.getProcessService().findByProperty(titleValue.get(0), titleValue.get(1),
+                    !negate);
         } else {
-            jsonObjects = serviceManager.getPropertyService().findByValue(titleValue.get(0), "process", !negate);
+            jsonObjects = serviceManager.getProcessService().findByProperty(null, titleValue.get(0), !negate);
         }
         List<PropertyDTO> propertyDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
                 true);
@@ -949,10 +946,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterProject(String filter, boolean negate, ObjectType objectType) throws DataException {
         /* filter according to linked project */
         String projectTitle = getFilterValueFromFilterString(filter, FilterString.PROJECT);
-        List<JSONObject> jsonObjects = serviceManager.getProjectService().findByTitle(projectTitle, !negate);
-        List<ProjectDTO> projectDTOS = serviceManager.getProjectService().convertJSONObjectsToDTOs(jsonObjects, true);
-
-        QueryBuilder projectQuery = createSetQuery("project", collectIds(projectDTOS), true);
+        QueryBuilder projectQuery = serviceManager.getProcessService().getQueryProjectTitle(projectTitle);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
     }
 
@@ -1043,7 +1037,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             return query;
         } else if (objectType == ObjectType.TASK) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(query, true);
-            return createSetQuery("process", collectIds(processDTOS), true);
+            return createSetQuery("processForTask.id", collectIds(processDTOS), true);
         }
         return new BoolQueryBuilder();
     }

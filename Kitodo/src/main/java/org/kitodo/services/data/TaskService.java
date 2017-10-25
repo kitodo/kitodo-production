@@ -204,7 +204,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 templates.add(getIdFromJSONObject(jsonObject));
             }
 
-            boolQuery.mustNot(createSetQuery("process", templates, true));
+            boolQuery.mustNot(createSetQuery("processForTask.id", templates, true));
         }
 
         return count(boolQuery.toString());

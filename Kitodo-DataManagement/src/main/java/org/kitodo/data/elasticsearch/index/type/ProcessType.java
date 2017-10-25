@@ -36,15 +36,17 @@ public class ProcessType extends BaseType<Process> {
         processObject.put("sortHelperImages", process.getSortHelperImages());
         processObject.put("processBaseUri", process.getProcessBaseUri());
         processObject.put("template", process.isTemplate());
-        Integer project = process.getProject() != null ? process.getProject().getId() : null;
-        processObject.put("project", project);
+        Integer projectId = process.getProject() != null ? process.getProject().getId() : null;
+        processObject.put("project.id", projectId);
+        String projectTitle = process.getProject() != null ? process.getProject().getTitle() : null;
+        processObject.put("project.title", projectTitle);
         Integer ruleset = process.getRuleset() != null ? process.getRuleset().getId() : null;
         processObject.put("ruleset", ruleset);
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : null;
         processObject.put("docket", docket);
-        processObject.put("batches", addObjectRelation(process.getBatches()));
+        processObject.put("batches", addObjectRelation(process.getBatches(), true));
         processObject.put("workpieces", addObjectRelation(process.getWorkpieces()));
-        processObject.put("tasks", addObjectRelation(process.getTasks()));
+        processObject.put("tasks", addObjectRelation(process.getTasks(), true));
         processObject.put("properties", addObjectRelation(process.getProperties()));
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);

@@ -52,8 +52,10 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("batchStep", task.isBatchStep());
         Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : null;
         taskObject.put("processingUser", processingUser);
-        Integer process = task.getProcess() != null ? task.getProcess().getId() : null;
-        taskObject.put("process", process);
+        Integer processId = task.getProcess() != null ? task.getProcess().getId() : null;
+        taskObject.put("processForTask.id", processId);
+        String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : null;
+        taskObject.put("processForTask.title", processTitle);
         taskObject.put("users", addObjectRelation(task.getUsers()));
         taskObject.put("userGroups", addObjectRelation(task.getUserGroups()));
 

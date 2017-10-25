@@ -21,8 +21,11 @@ import org.apache.http.HttpEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseIndexedBean;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
@@ -61,7 +64,11 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id", property.getId());
                 if (title) {
-                    if (property instanceof Project) {
+                    if (property instanceof Batch) {
+                        jsonObject.put("title", ((Batch) property).getTitle());
+                    } else if (property instanceof Process) {
+                        jsonObject.put("title", ((Process) property).getTitle());
+                    } else if (property instanceof Project) {
                         jsonObject.put("title", ((Project) property).getTitle());
                     } else if (property instanceof User) {
                         jsonObject.put("login", ((User) property).getLogin());
@@ -69,6 +76,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
                         jsonObject.put("surname", ((User) property).getSurname());
                     } else if (property instanceof UserGroup) {
                         jsonObject.put("title", ((UserGroup) property).getTitle());
+                    } else if (property instanceof Task) {
+                        jsonObject.put("title", ((Task) property).getTitle());
                     } else if (property instanceof Filter) {
                         jsonObject.put("value", ((Filter) property).getValue());
                     }

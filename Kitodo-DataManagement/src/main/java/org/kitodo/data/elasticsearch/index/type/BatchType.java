@@ -30,7 +30,7 @@ public class BatchType extends BaseType<Batch> {
         batchObject.put("title", batch.getTitle());
         String type = batch.getType() != null ? batch.getType().toString() : null;
         batchObject.put("type", type);
-        batchObject.put("processes", addObjectRelation(batch.getProcesses()));
+        batchObject.put("processes", addObjectRelation(batch.getProcesses(), true));
 
         return new NStringEntity(batchObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
