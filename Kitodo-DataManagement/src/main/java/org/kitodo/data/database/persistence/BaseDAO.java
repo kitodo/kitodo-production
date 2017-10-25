@@ -296,11 +296,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
             session.flush();
             transaction.commit();
-        } catch (HibernateException he) {
+        } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new DAOException(he);
+            throw new DAOException(e);
         }
     }
 
@@ -320,11 +320,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
             session.flush();
             transaction.commit();
-        } catch (HibernateException he) {
+        } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new DAOException(he);
+            throw new DAOException(e);
         }
     }
 
