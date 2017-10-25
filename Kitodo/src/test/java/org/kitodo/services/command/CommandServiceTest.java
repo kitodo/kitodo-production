@@ -15,18 +15,15 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.api.command.CommandResult;
 
 public class CommandServiceTest {
@@ -50,10 +47,10 @@ public class CommandServiceTest {
         } else {
             scriptExtension = ".sh";
 
-            setFileExecuteable(workingScript);
-            setFileExecuteable(workingScriptWithParameters);
-            setFileExecuteable(longWorkingScript2s);
-            setFileExecuteable(longWorkingScript1s);
+            ExecutionPermission.setExecutePermission(workingScript);
+            ExecutionPermission.setExecutePermission(workingScriptWithParameters);
+            ExecutionPermission.setExecutePermission(longWorkingScript2s);
+            ExecutionPermission.setExecutePermission(longWorkingScript1s);
         }
 
     }
@@ -61,10 +58,10 @@ public class CommandServiceTest {
     @AfterClass
     public static void tearDown() throws IOException {
         if (!windows) {
-            setFileNotExecuteable(workingScript);
-            setFileNotExecuteable(workingScriptWithParameters);
-            setFileNotExecuteable(longWorkingScript2s);
-            setFileNotExecuteable(longWorkingScript1s);
+            ExecutionPermission.setNoExecutePermission(workingScript);
+            ExecutionPermission.setNoExecutePermission(workingScriptWithParameters);
+            ExecutionPermission.setNoExecutePermission(longWorkingScript2s);
+            ExecutionPermission.setNoExecutePermission(longWorkingScript1s);
         }
     }
 
@@ -197,38 +194,5 @@ public class CommandServiceTest {
             return null;
 
         return commandResults.get(commandResults.size() - 1);
-    }
-
-    public static void setFileExecuteable(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-        perms.add(PosixFilePermission.OTHERS_EXECUTE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-        perms.add(PosixFilePermission.GROUP_EXECUTE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
-    }
-
-    public static void setFileNotExecuteable(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
     }
 }

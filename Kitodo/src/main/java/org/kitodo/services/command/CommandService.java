@@ -51,8 +51,11 @@ public class CommandService {
         CommandInterface commandInterface = serviceLoader.loadModule();
 
         CommandResult commandResult = commandInterface.runCommand(generateId(), script);
-        if (commandResult.getMessages().get(0).contains("IOException")) {
-            throw new IOException(commandResult.getMessages().get(1));
+        List<String> commandResultMessages = commandResult.getMessages();
+        if (commandResultMessages.size() > 0) {
+            if (commandResultMessages.get(0).contains("IOException")) {
+                throw new IOException(commandResultMessages.get(1));
+            }
         }
         return commandResult;
     }

@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -790,6 +791,16 @@ public class ProzesskopieForm implements Serializable {
         } catch (DataException e) {
             logger.error(e);
             logger.error("error on save: ", e);
+            return null;
+        }
+
+        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
+        boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+        if (!successful) {
+            String message = "Metadata directory: " + baseProcessDirectory + "in path:"
+                    +  ConfigCore.getKitodoDataDirectory() + " was not created!";
+            logger.error(message);
+            Helper.setFehlerMeldung(message);
             return null;
         }
 

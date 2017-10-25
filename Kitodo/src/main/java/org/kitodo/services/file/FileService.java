@@ -27,13 +27,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
-import org.hibernate.Hibernate;
+import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
@@ -62,14 +64,25 @@ public class FileService {
      *            The URI, where the
      * @param directoryName
      *            the name of the directory
+     * @return true or false
      * @throws IOException
      *             an IOException
      */
-    public void createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
+    public boolean createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!fileExist(parentFolderUri.resolve(directoryName))) {
             CommandService commandService = serviceManager.getCommandService();
-            List<String> commandParameter = Collections.singletonList(parentFolderUri + directoryName);
-            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirMeta")),commandParameter);
+            String path = ConfigCore.getKitodoDataDirectory() + parentFolderUri + "/" + directoryName + "/";
+            path = path.replace("//", "/");
+            if (SystemUtils.IS_OS_WINDOWS) {
+                path = path.replace("/", "\\");
+            }
+            List<String> commandParameter = Collections.singletonList(path);
+            File script = new File(ConfigCore.getParameter("script_createDirMeta"));
+            CommandResult commandResult = commandService.runCommand(script, commandParameter);
+            return commandResult.isSuccessful();
+        } else {
+            logger.info("Metadata directory: " + directoryName + " already existed! No new directory was created");
+            return true;
         }
     }
 
@@ -437,26 +450,23 @@ public class FileService {
      */
     public void writeMetadataFile(Fileformat gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
-        createDirectory(URI.create(""), serviceManager.getProcessService().getProcessDataDirectory(process).toString());
-
         RulesetService rulesetService = new RulesetService();
         Fileformat ff;
-        URI metadataFileUri;
 
-        Hibernate.initialize(process.getRuleset());
+        Ruleset ruleset = process.getRuleset();
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
             case METS:
-                ff = new MetsMods(rulesetService.getPreferences(process.getRuleset()));
+                ff = new MetsMods(rulesetService.getPreferences(ruleset));
                 break;
             case RDF:
-                ff = new RDFFile(rulesetService.getPreferences(process.getRuleset()));
+                ff = new RDFFile(rulesetService.getPreferences(ruleset));
                 break;
             default:
-                ff = new XStream(rulesetService.getPreferences(process.getRuleset()));
+                ff = new XStream(rulesetService.getPreferences(ruleset));
                 break;
         }
         // createBackupFile();
-        metadataFileUri = getMetadataFilePath(process);
+        URI metadataFileUri = getMetadataFilePath(process);
         String temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileUri);
 
         ff.setDigitalDocument(gdzfile.getDigitalDocument());

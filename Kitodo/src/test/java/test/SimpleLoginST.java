@@ -18,14 +18,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -50,6 +46,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -239,23 +236,6 @@ public class SimpleLoginST {
         return screenshotFile;
     }
 
-    private static void setExecutePermission(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-        perms.add(PosixFilePermission.OTHERS_EXECUTE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-        perms.add(PosixFilePermission.GROUP_EXECUTE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
-    }
-
     private static void extractZipFileToFolder(File zipFile, File destinationFolder) {
         try {
             ZipFile zip = new ZipFile(zipFile);
@@ -381,7 +361,7 @@ public class SimpleLoginST {
 
         if (geckoDriverFile.exists()) {
             if (!SystemUtils.IS_OS_WINDOWS) {
-                setExecutePermission(geckoDriverFile);
+                ExecutionPermission.setExecutePermission(geckoDriverFile);
             }
 
             if (geckoDriverFile.canExecute()) {
