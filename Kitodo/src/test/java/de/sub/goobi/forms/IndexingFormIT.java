@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 
-public class IndexingFormTest {
+public class IndexingFormIT {
 
     private IndexingForm indexingForm = new IndexingForm();
 
