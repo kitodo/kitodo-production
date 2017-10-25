@@ -30,6 +30,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.RulesetDTO;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
 @Named("RulesetForm")
@@ -40,6 +41,15 @@ public class RulesetForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
     private int rulesetId;
+
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
+    public RulesetForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRulesetService()));
+    }
 
     /**
      * Initialize new Ruleset.

@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
 public class BasisForm implements Serializable {
@@ -31,6 +32,27 @@ public class BasisForm implements Serializable {
     protected String filter = "";
     protected User user;
     protected String sortierung = "prozessAsc";
+
+    private LazyDTOModel lazyDTOModel = null;
+
+    /**
+     * Getter: return lazyDTOModel.
+     *
+     * @return LazyDTOModel
+     */
+    public LazyDTOModel getLazyDTOModel() {
+        return lazyDTOModel;
+    }
+
+    /**
+     * Setter: set lazyDTOModel.
+     *
+     * @param lazyDTOModel
+     *            LazyDTOModel to set for this class
+     */
+    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
+        this.lazyDTOModel = lazyDTOModel;
+    }
 
     public Page getPage() {
         return this.page;

@@ -34,7 +34,8 @@
                                     tooltip="true"/>
 
                         <!-- Data table for projects -->
-                        <p:dataTable var="project" value="#{BenutzerverwaltungForm.projects}" rows="10" paginator="true">
+                        <p:dataTable var="project" value="#{ProjekteForm.lazyDTOModel}"
+                                     lazy="true" rows="#{LoginForm.myBenutzer.tableSize}" paginator="true">
                             <p:column headerText="#{msgs.projekt}">
                                 <h:outputText value="#{project.title}"/>
                             </p:column>

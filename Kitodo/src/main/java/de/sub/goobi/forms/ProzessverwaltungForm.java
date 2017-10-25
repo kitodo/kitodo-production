@@ -46,11 +46,9 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
-
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -94,6 +92,7 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -144,6 +143,8 @@ public class ProzessverwaltungForm extends BasisForm {
      * Constructor.
      */
     public ProzessverwaltungForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProcessService()));
         this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);
         this.anzeigeAnpassen.put("swappedOut", false);

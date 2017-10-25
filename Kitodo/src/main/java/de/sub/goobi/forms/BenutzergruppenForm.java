@@ -15,7 +15,6 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +29,7 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzergruppenForm")
@@ -42,11 +42,20 @@ public class BenutzergruppenForm extends BasisForm {
     private int userGroupId;
 
     /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
+    public BenutzergruppenForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
+    }
+
+    /**
      * Create new user group.
      *
      * @return page address
      */
-    public String Neu() {
+    public String newUserGroup() {
         this.myBenutzergruppe = new UserGroup();
         this.userGroupId = 0;
         return "/pages/BenutzergruppenBearbeiten?faces-redirect=true";
@@ -57,7 +66,7 @@ public class BenutzergruppenForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Speichern() {
+    public String save() {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
             return filterKein();
@@ -72,7 +81,7 @@ public class BenutzergruppenForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Loeschen() {
+    public String delete() {
         try {
             this.serviceManager.getUserGroupService().refresh(this.myBenutzergruppe);
             if (this.myBenutzergruppe.getUsers().size() > 0) {

@@ -24,6 +24,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -110,35 +111,24 @@
                                         <!-- +++++++++++++++++  // Anzeigefilter ++++++++++++++++++++++++ -->
 
 
-                                        <!-- Datentabelle -->
-                                        <t:dataTable id="id14" styleClass="standardTable" width="100%"
-                                                     cellspacing="1px" cellpadding="1px"
-                                                     headerClass="standardTable_Header"
-                                                     rowClasses="standardTable_Row1,standardTable_Row2"
-                                                     columnClasses="standardTable_Column,standardTable_Column,standardTable_Column,standardTable_Column, standardTable_ColumnCentered"
-                                                     var="item" value="#{BenutzerverwaltungForm.page.listReload}">
+                                        <!-- List of users -->
+                                        <p:dataTable id="id14" tableStyleClass="standardTable" width="100%"
+                                                     var="item" value="#{BenutzerverwaltungForm.lazyDTOModel}"
+                                                     rows="#{LoginForm.myBenutzer.tableSize}" lazy="true"
+                                                     paginator="true">
 
-                                            <h:column id="id15">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id16" value="#{msgs.benutzer}"/>
-                                                </f:facet>
+                                            <p:column id="id15" headerText="#{msgs.benutzer}">
                                                 <h:outputText id="id17"
                                                               value="#{item.surname}, #{item.name}"
                                                               styleClass="#{not item.active?'text_light':''}"/>
-                                            </h:column>
+                                            </p:column>
 
-                                            <h:column id="id18">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id19" value="#{msgs.standort}"/>
-                                                </f:facet>
+                                            <p:column id="id18" headerText="#{msgs.standort}">
                                                 <h:outputText id="id20" value="#{item.location}"
                                                               styleClass="#{not item.active?'text_light':''}"/>
-                                            </h:column>
+                                            </p:column>
 
-                                            <h:column id="id21">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id22" value="#{msgs.benutzergruppen}"/>
-                                                </f:facet>
+                                            <p:column id="id21" headerText="#{msgs.benutzergruppen}">
                                                 <t:dataList id="id23" var="intern"
                                                             styleClass="#{not item.active?'text_light':''}"
                                                             rendered="#{item.userGroupSize != 0}"
@@ -148,12 +138,9 @@
                                                     <h:outputText id="id25" value=","
                                                                   rendered="#{rowIndex + 1 lt rowCount}"/>
                                                 </t:dataList>
-                                            </h:column>
+                                            </p:column>
 
-                                            <h:column id="id26">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id27" value="#{msgs.projekte}"/>
-                                                </f:facet>
+                                            <p:column id="id26" headerText="#{msgs.projekte}">
                                                 <t:dataList id="id28" var="intern"
                                                             styleClass="#{not item.active?'text_light':''}"
                                                             rendered="#{item.projectsSize != 0}"
@@ -163,13 +150,11 @@
                                                     <h:outputText id="id30" value=","
                                                                   rendered="#{rowIndex + 1 lt rowCount}"/>
                                                 </t:dataList>
-                                            </h:column>
+                                            </p:column>
 
-                                            <h:column
-                                                    rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id31" value="#{msgs.auswahl}"/>
-                                                </f:facet>
+                                            <p:column
+                                                    rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                                                    headerText="#{msgs.auswahl}">
                                                 <!-- Bearbeiten-Schaltknopf -->
                                                 <h:link id="id32" outcome="/pages/BenutzerBearbeiten"
                                                                title="#{msgs.benutzerBearbeiten}">
@@ -178,14 +163,6 @@
                                                                     value="/pages/images/buttons/edit.gif"/>
                                                 </h:link>
 
-                                                <!-- LdapKonfiguration schreiben-Schaltknopf -->
-                                                <!-- 										<h:commandLink id="id34" title="#{msgs.ldapKonfigurationSchreiben}"
-                                                                                                           action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}">
-                                                <h:graphicImage id="id35" value="/pages/images/buttons/key3.gif" />
-                                                <x:updateActionListener
-                                                        property="#{BenutzerverwaltungForm.myClass}" value="#{item}" />
-                                            </h:commandLink>
-                                                -->
                                                 <!-- Benutzerprofil laden-Schaltknopf -->
                                                 <h:commandLink id="id36" title="#{msgs.benutzerprofilLaden}"
                                                                action="#{LoginForm.EinloggenAls}" style="margin-left:15px">
@@ -194,35 +171,15 @@
                                                     <f:param id="id37" name="ID" value="#{item.id}"/>
                                                 </h:commandLink>
 
-                                            </h:column>
+                                            </p:column>
 
-                                        </t:dataTable>
+                                        </p:dataTable>
                                         <h:commandLink id="id52" action="#{BenutzerverwaltungForm.newUser}"
                                                        immediate="true"
                                                        rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (BenutzerverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
                                         >
                                             <h:outputText id="id62" value="#{msgs.neuenBenutzerAnlegen}"/>
                                         </h:commandLink>
-                                        <table width="100%" border="0">
-                                            <tr valign="top">
-                                                <td align="left">
-                                                    <!-- newUser-Schaltknopf -->
-                                                    <!-- 				<h:commandLink id="id38" action="#{BenutzerverwaltungForm.newUser}"
-                                                                                       immediate="true"
-                                                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                                    <h:outputText id="id39" value="#{msgs.neuenBenutzerAnlegen}" />
-                                                </h:commandLink> -->
-                                                </td>
-                                                <td align="center">
-                                                    <!-- ===================== Datascroller für die Ergebnisse ====================== -->
-                                                    <t:aliasBean alias="#{mypage}"
-                                                                 value="#{BenutzerverwaltungForm.page}">
-                                                        <ui:include src="/pages/inc/datascroller.xhtml"/>
-                                                    </t:aliasBean>
-                                                    <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
-                                                </td>
-                                            </tr>
-                                        </table>
                                     </td>
                                 </tr>
                             </table>

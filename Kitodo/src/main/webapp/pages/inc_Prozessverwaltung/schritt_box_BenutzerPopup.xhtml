@@ -34,7 +34,8 @@
                                     tooltip="true"/>
 
                         <!-- Data table for user groups -->
-                        <p:dataTable var="user" value="#{ProzessverwaltungForm.activeUsers}" rows="10" paginator="true">
+                        <p:dataTable var="user" value="#{BenutzerverwaltungForm.lazyDTOModel}"
+                                     lazy="true" rows="#{LoginForm.myBenutzer.tableSize}" paginator="true">
                             <p:column headerText="#{msgs.benutzergruppe}">
                                 <h:outputText value="#{user.surname}, #{user.name}"/>
                             </p:column>

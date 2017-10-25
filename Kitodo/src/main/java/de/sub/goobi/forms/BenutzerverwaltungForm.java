@@ -48,6 +48,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzerverwaltungForm")
@@ -59,6 +60,15 @@ public class BenutzerverwaltungForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private int userId;
+
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
+    public BenutzerverwaltungForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserService()));
+    }
 
     /**
      * New user.

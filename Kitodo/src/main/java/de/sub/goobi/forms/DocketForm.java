@@ -30,6 +30,7 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.DocketDTO;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 
@@ -43,11 +44,20 @@ public class DocketForm extends BasisForm {
     private int docketId;
 
     /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
+    public DocketForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getDocketService()));
+    }
+
+    /**
      * Creates a new Docket.
-     * 
+     *
      * @return the navigation String
      */
-    public String Neu() {
+    public String newDocket() {
         this.myDocket = new Docket();
         this.docketId = 0;
         return "/pages/DocketEdit?faces-redirect=true";

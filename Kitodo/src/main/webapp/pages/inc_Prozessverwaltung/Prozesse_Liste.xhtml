@@ -56,19 +56,16 @@
         </f:subview>
     </t:aliasBeansScope>
 
-    <!-- Datentabelle -->
-    <t:dataTable id="auflistung" styleClass="standardTable" width="100%" cellspacing="1px" cellpadding="1px"
-                 headerClass="standardTable_Header"
-                 rowClasses="standardTable_Row1,standardTable_Row2,standardTable_Row1,standardTable_Row2" var="item"
-                 value="#{ProzessverwaltungForm.page.listReload}">
+    <!-- List of processes -->
+    <p:dataTable id="auflistung" tableStyleClass="standardTable" width="100%" cellspacing="1px" cellpadding="1px"
+                 var="item" value="#{ProzessverwaltungForm.lazyDTOModel}" rows="#{LoginForm.myBenutzer.tableSize}"
+                 lazy="true" paginator="true">
 
         <!-- +++++++++++++++++  SelectionBoxes ++++++++++++++++++++++++ -->
-        <t:column style="text-align:center"
+        <p:column style="text-align:center" headerText="#{msgs.auswahl2}"
                   rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}">
             <f:facet name="header">
                 <t:div>
-                    <!-- Header -->
-                    <h:outputText value="#{msgs.auswahl2}"/>
                     <h:commandLink action="#{ProzessverwaltungForm.selectAll}" id="selectall"
                                    title="#{msgs.alleAuswaehlen}" style="margin-left:10px">
                         <h:graphicImage value="/pages/images/check_true.gif" alt="select all"/>
@@ -87,50 +84,20 @@
                 <t:updateActionListener value="#{item.selected?false:true}" property="#{item.selected}"/>
                 <f:ajax render="myself1"/>
             </h:commandLink>
-        </t:column>
+        </p:column>
 
         <!-- +++++++++++++++++  ProzessID ++++++++++++++++++++++++ -->
-        <t:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['processId']}">
-            <f:facet name="header">
-                <h:outputText value="#{msgs.id}"/>
-            </f:facet>
+        <p:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['processId']}" headerText="#{msgs.id}">
             <h:outputText value="#{item.id}"/>
-        </t:column>
+        </p:column>
 
         <!-- +++++++++++++++++  BatchID ++++++++++++++++++++++++ -->
-        <t:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['batchId']}">
-            <f:facet name="header">
-                <t:div>
-                    <!-- Header -->
-                    <h:outputText value="#{msgs.batch}"/>
-                    <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort13a"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='batchAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchDesc"/>
-                    </h:commandLink>
-                    <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort14a"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='batchDesc'}">
-                        <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchAsc"/>
-                    </h:commandLink>
-                    <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort15a"
-                                   rendered="#{ProzessverwaltungForm.sortierung!='batchDesc' and ProzessverwaltungForm.sortierung!='batchAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchAsc"/>
-                    </h:commandLink>
-                </t:div>
-            </f:facet>
+        <p:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['batchId']}" headerText="#{msgs.batch}">
             <h:outputText value="#{item.batchID}" rendered="#{item.batchID != null}"/>
-        </t:column>
+        </p:column>
 
         <!-- +++++++++++++++++  alle Schritte auflisten mit Ajax ++++++++++++++++++++++++ -->
-        <t:column rendered="true" id="ajaxcolumn" style="text-align:left">
+        <p:column rendered="true" id="ajaxcolumn" style="text-align:left" sortBy="#{item.title}">
             <f:facet name="header">
                 <t:div>
                     <!-- Header -->
@@ -140,28 +107,6 @@
                         <h:outputText value="#{msgs.prozessTitel}"
                                       rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}"/>
                     </h:panelGroup>
-
-                    <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort1"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='titelAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="titelDesc"/>
-                    </h:commandLink>
-                    <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort2"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='titelDesc'}">
-                        <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="titelAsc"/>
-                    </h:commandLink>
-                    <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort3"
-                                   rendered="#{ProzessverwaltungForm.sortierung!='titelDesc' and ProzessverwaltungForm.sortierung!='titelAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="titelAsc"/>
-                    </h:commandLink>
                 </t:div>
             </f:facet>
 
@@ -213,74 +158,16 @@
 
                 </p:dataTable>
             </h:panelGroup>
-        </t:column>
+        </p:column>
         <!-- +++++++++++++++++  // alle Schritte auflisten mit Ajax ++++++++++++++++++++++++ -->
 
         <!-- +++++++++++++++++  Vorgangsdatum ++++++++++++++++++++++++ -->
-        <t:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['processDate']}">
-            <f:facet name="header">
-                <t:div>
-                    <!-- Header -->
-                    <h:outputText value="#{msgs.vorgangsdatum}"/>
-                    <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort4"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='vorgangsdatumAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}"
-                                                value="vorgangsdatumDesc"/>
-                    </h:commandLink>
-                    <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort5"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='vorgangsdatumDesc'}">
-                        <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}"
-                                                value="vorgangsdatumAsc"/>
-                    </h:commandLink>
-                    <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort6"
-                                   rendered="#{ProzessverwaltungForm.sortierung!='vorgangsdatumDesc' and ProzessverwaltungForm.sortierung!='vorgangsdatumAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}"
-                                                value="vorgangsdatumAsc"/>
-                    </h:commandLink>
-                </t:div>
-
-            </f:facet>
+        <p:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['processDate']}" headerText="#{msgs.vorgangsdatum}">
             <h:outputText value="#{item.creationDate}"/>
-        </t:column>
+        </p:column>
 
         <!-- +++++++++++++++++  Status ++++++++++++++++++++++++ -->
-        <t:column style="text-align:center; width:120px">
-            <f:facet name="header">
-                <t:div>
-                    <!-- Header -->
-                    <h:outputText value="#{msgs.status}"/>
-                    <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort7"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='fortschrittAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="fortschrittDesc"/>
-                    </h:commandLink>
-                    <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort8"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='fortschrittDesc'}">
-                        <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="fortschrittAsc"/>
-                    </h:commandLink>
-                    <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort9"
-                                   rendered="#{ProzessverwaltungForm.sortierung!='fortschrittDesc' and ProzessverwaltungForm.sortierung!='fortschrittAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="fortschrittAsc"/>
-                    </h:commandLink>
-                </t:div>
-            </f:facet>
+        <p:column style="text-align:center; width:120px" headerText="#{msgs.status}">
             <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
             <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
                             style="width:#{item.progressClosed * 0.8}px;height:10px"/>
@@ -291,75 +178,18 @@
             <h:graphicImage value="/pages/images/fortschritt/rt.gif" alt="locked"
                             style="width:#{item.progressLocked * 0.8}px;height:10px"/>
             <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
-        </t:column>
+        </p:column>
 
-        <t:column style="text-align:center; width:20%">
-            <f:facet name="header">
-                <t:div>
-                    <!-- Header -->
-                    <h:outputText value="#{msgs.projekt}"/>
-                    <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort10"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='projektAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="projektDesc"/>
-                    </h:commandLink>
-                    <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort11"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='projektDesc'}">
-                        <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="projektAsc"/>
-                    </h:commandLink>
-                    <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort12"
-                                   rendered="#{ProzessverwaltungForm.sortierung!='projektDesc' and ProzessverwaltungForm.sortierung!='projektAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="projektAsc"/>
-                    </h:commandLink>
-                </t:div>
-            </f:facet>
+        <p:column style="text-align:center; width:20%" headerText="#{msgs.projekt}">
             <h:outputText value="#{item.project.title}"/>
-        </t:column>
+        </p:column>
 
-        <t:column style="text-align:center"
+        <p:column style="text-align:center" headerText="#{msgs.sperrungen}"
                   rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and ProzessverwaltungForm.anzeigeAnpassen['lockings']}">
-            <f:facet name="header">
-                <t:div>
-                    <!-- Header -->
-                    <h:outputText value="#{msgs.sperrungen}"/>
-                    <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort13"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='sperrungenAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/asc.gif" alt="sort ascending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="sperrungenDesc"/>
-                    </h:commandLink>
-                    <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort14"
-                                   rendered="#{ProzessverwaltungForm.sortierung=='sperrungenDesc'}">
-                        <h:graphicImage value="/pages/images/sorting/desc.gif" alt="sort descending"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="sperrungenAsc"/>
-                    </h:commandLink>
-                    <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.filterAll}" id="sort15"
-                                   rendered="#{ProzessverwaltungForm.sortierung!='sperrungenDesc' and ProzessverwaltungForm.sortierung!='sperrungenAsc'}">
-                        <h:graphicImage value="/pages/images/sorting/none.gif" alt="no sorting"
-                                        style="vertical-align:middle;margin-left:5px"/>
-                        <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="sperrungenAsc"/>
-                    </h:commandLink>
-                </t:div>
-            </f:facet>
             <h:outputText value="#{item.blockedUsers.fullName}" rendered="#{item.blockedUsers != null}"/>
-        </t:column>
+        </p:column>
 
-        <t:column style="text-align:center" width="223px" styleClass="action">
-            <f:facet name="header">
-                <h:outputText value="#{msgs.auswahl}" styleClass="action"/>
-            </f:facet>
+        <p:column style="text-align:center" width="223px" styleClass="action" headerText="#{msgs.auswahl}">
 
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
             <h:link outcome="/pages/ProzessverwaltungBearbeiten"
@@ -524,9 +354,9 @@
                 </h:commandLink>
 
             </h:panelGroup>
-        </t:column>
+        </p:column>
 
-    </t:dataTable>
+    </p:dataTable>
 
     <!-- new process -->
     <h:link outcome="/pages/ProzessverwaltungBearbeiten"
@@ -540,17 +370,4 @@
         <h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"/>
     </h:commandLink>
 
-    <table width="100%" border="0">
-        <tr valign="top">
-
-            <td align="center">
-                <!-- ===================== Datascroller für die Ergebnisse ====================== -->
-                <t:aliasBean alias="#{mypage}" value="#{ProzessverwaltungForm.page}">
-                    <ui:include src="/pages/inc/datascroller.xhtml"/>
-                </t:aliasBean>
-                <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
-
-            </td>
-        </tr>
-    </table>
 </ui:composition>

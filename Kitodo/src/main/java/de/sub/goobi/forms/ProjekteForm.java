@@ -59,6 +59,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
 @Named("ProjekteForm")
@@ -90,8 +91,13 @@ public class ProjekteForm extends BasisForm {
 
     private int itemId;
 
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this
+     * bean.
+     */
     public ProjekteForm() {
         super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProjectService()));
     }
 
     // making sure its cleaned up
@@ -181,7 +187,7 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Saves current project if title is not empty
+     * Saves current project if title is not empty.
      *
      * @return String
      */
