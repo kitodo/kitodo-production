@@ -476,8 +476,17 @@ main {
     width:100%;
 }
 
-.input-with-button {
+.input.ui-calendar {
+    display: block;
+}
+
+.input.ui-calendar > input {
     width:90%;
+}
+
+.input.ui-calendar > button {
+    margin: 0;
+    height: 28px;
 }
 
 .filter-input {
@@ -524,6 +533,45 @@ main {
     vertical-align: middle;
 }
 
+.ui-tabs .ui-tabs-panel > div.mets-file-groups,
+.ui-tabs .ui-tabs-panel > div.mets-file-groups > div {
+    padding: 0;
+}
+
+.mets-file-groups .ui-datatable table {
+    border-top: solid 1px #d8d8d8;
+}
+
+.mets-file-groups .ui-datatable.ui-widget tr th,
+.mets-file-groups .ui-datatable.ui-widget tr td {
+    padding: .75em 1.5em;
+}
+
+.mets-file-groups .ui-datatable.ui-widget tr th:last-child,
+.mets-file-groups .ui-datatable.ui-widget tr td:last-child {
+    width: 100px;
+    text-align: right;
+}
+
+.mets-file-groups .ui-datatable.ui-widget tr th {
+    background: transparent;
+}
+
+
+
+.mets-file-groups > div > button {
+    margin: 1.5em;
+}
+
+
+/*.input {
+    width:100%;
+}
+
+.input-with-button {
+    width:90%;
+}*/
+
 /*----------------------------------------------------------------------
 Footer
 ----------------------------------------------------------------------*/
@@ -557,6 +605,10 @@ footer {
 
 .ui-widget {
     font-size: 100%;
+}
+
+.right {
+    float: right;
 }
 
 .ui-datatable table {
@@ -646,6 +698,10 @@ th.ui-state-default {
 }
 
 .ui-tabs .ui-tabs-panel {
+    padding: 0;
+}
+
+.ui-tabs .ui-tabs-panel > div {
     padding: 1.3em 1.5em;
 }
 
@@ -698,7 +754,12 @@ th.ui-state-default {
     background: #00C62F;
 }
 
+.buttonset {
+    padding-right: 10px;
+}
+
 .ui-inputfield.ui-inputtext,
+.ui-inputfield.hasDatepicker,
 .ui-widget.ui-selectonemenu {
     border: solid 1px #006DBD;
     background: #fff;
@@ -763,6 +824,39 @@ th.ui-state-default {
 
 .ui-selectonemenu-panel .ui-selectonemenu-list-item.ui-state-highlight {
     background: #006DBD;
+}
+
+.ui-chkbox .ui-chkbox-box {
+    width: 40px;
+    height: 40px;
+    border: 0;
+}
+
+.ui-chkbox .ui-chkbox-box .ui-chkbox-icon {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.ui-chkbox .ui-chkbox-box .ui-chkbox-icon::before {
+    width: 100%;
+    line-height: 40px;
+    position: absolute;
+    left: 0;
+    text-align: center;
+    font-family: 'FontAwesome';
+    font-size: 20px;
+    color: white;
+    border-radius: 3px;
+    text-indent: 0;
+    text-shadow: none;
+    content: "\f204";
+    background: #999;
+}
+
+.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon::before {
+    content: "\f205";
+    background: #00C62F;
 }
 
 /*----------------------------------------------------------------------

@@ -13,60 +13,121 @@
 
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwner" value="#{msgs.metsRightsOwner}" />
-                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwner}"/>
+                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwner}"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerUrl" value="#{msgs.metsRightsOwnerSite}" />
-                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}"/>
+                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReference" value="#{msgs.metsDigiprovReference}" />
-                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovReference}"/>
+                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovReference}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReferenceAnchor" value="#{msgs.metsDigiprovReferenceAnchor}" />
-                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}"/>
+                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPointerPath" value="#{msgs.metsPointerPath}" />
-                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" class="input" value="#{ProjekteForm.myProjekt.metsPointerPath}"/>
+                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input" value="#{ProjekteForm.myProjekt.metsPointerPath}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPurl" value="#{msgs.metsPurl}" />
-                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" class="input" value="#{ProjekteForm.myProjekt.metsPurl}"/>
+                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" styleClass="input" value="#{ProjekteForm.myProjekt.metsPurl}"/>
             </div>
         </p:row>
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwnerLogo" value="#{msgs.metsRightsOwnerLogo}" />
-                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}"/>
+                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerContact" value="#{msgs.metsRightsOwnerMail}" />
-                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" class="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}"/>
+                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovPresentation" value="#{msgs.metsDigiprovPresentation}" />
-                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}"/>
+                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPresentationAnchor" value="#{msgs.metsDigiprovPresentationAnchor}" />
-                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" class="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}"/>
+                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPointerPathAnchor" value="#{msgs.metsPointerPathAnchor}" />
-                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" class="input" value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}"/>
+                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input" value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}"/>
             </div>
             <div>
                 <p:outputLabel for="metsContentId" value="#{msgs.metsContentIDs}" />
-                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" class="input" value="#{ProjekteForm.myProjekt.metsContentIDs}"/>
+                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" styleClass="input" value="#{ProjekteForm.myProjekt.metsContentIDs}"/>
             </div>
         </p:row>
-        <p:button outcome="projectEditMets" value="#{msgs.filegroupHinzufuegen}" style="left: 5px; bottom: 5px; position: absolute;" icon="fa fa-plus-circle fa-lg"/>
     </p:panelGrid>
+    <!-- mets file groups -->
+    <p:panel styleClass="mets-file-groups">
+        <p:dataTable var="filegroup" value="#{ProjekteForm.fileGroupList}">
+            <p:column headerText="#{msgs.metsfilegroups}">
+                <h:outputText value="#{filegroup.name}"/>
+            </p:column>
+            <p:column>
+                <!-- edit button -->
+                <p:commandLink actionListener="#{ProjekteForm.fileGroupEdit()}"
+                               oncomplete="PF('editFileGroupDialog').show()"
+                               styleClass="buttonset button-blue">
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                    <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
+                                                 value="#{filegroup}"/>
+                </p:commandLink>
+                <!-- delete button -->
+                <p:commandLink action="#{ProjekteForm.filegroupDelete()}"
+                               title="#{msgs.filegroupLoeschen}"
+                               onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')) return"
+                               styleClass="buttonset button-blue"><i class="fa fa-trash fa-lg"/>
+                    <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
+                                                 value="#{filegroup}"/>
+                </p:commandLink>
+            </p:column>
+        </p:dataTable>
+        <!-- add button -->
+        <p:commandButton actionListener="#{ProjekteForm.filegroupAdd()}"
+                         oncomplete="PF('addFileGroupDialog').show()"
+                         value="#{msgs.filegroupHinzufuegen}"
+                         styleClass="button-filled-green"
+                         icon="fa fa-plus-circle fa-lg"
+                         iconPos="right">
+            <f:setPropertyActionListener target="#{ProjekteForm.zurueck}"
+                                         value="/pages/projectEditMetsPopup"/>
+        </p:commandButton>
+        <!-- add dialog -->
+        <!-- TODO fix modal z-index -->
+        <p:dialog widgetVar="addFileGroupDialog"
+                  header="#{msgs.filegroupHinzufuegen}"
+                  width="700px"
+                  modal="false"
+                  dynamic="true"
+                  onHide="#{NavigationForm.Reload()}">
+            <ui:include src="projectEditMetsPopup.xhtml">
+                <ui:param name="dialog" value="addFileGroupDialog"/>
+            </ui:include>
+        </p:dialog>
+        <!-- edit dialog -->
+        <!-- TODO fix modal z-index -->
+        <p:dialog widgetVar="editFileGroupDialog"
+                  header="#{msgs.filegroupBearbeiten}"
+                  width="700px"
+                  modal="false"
+                  dynamic="true"
+                  onHide="#{NavigationForm.Reload()}">
+            <ui:include src="projectEditMetsPopup.xhtml">
+                <ui:param name="dialog" value="editFileGroupDialog"/>
+            </ui:include>
+        </p:dialog>
+    </p:panel>
 </ui:composition>

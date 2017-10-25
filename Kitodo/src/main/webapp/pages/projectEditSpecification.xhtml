@@ -18,21 +18,21 @@
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="internalFormat" value="#{msgs.internesSpeicherformat}:" />
+                <p:outputLabel for="internalFormat" value="#{msgs.internesSpeicherformat}" />
                 <p:selectOneMenu id="internalFormat" value="#{ProjekteForm.myProjekt.fileFormatInternal}">
                     <f:selectItems value="#{HelperForm.fileFormatsInternalOnly}" />
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportImagesPfad}:" />
+                <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportImagesPfad}" />
                 <p:inputText id="dmsExportImageDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportImagesPath}"/>
             </div>
             <div>
-                <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPfad}:" />
+                <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPfad}" />
                 <p:inputText id="dmsExportErrorDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportErrorPath}"/>
             </div>
             <div>
-                <p:outputLabel for="automaticExport" value="#{msgs.automatischerDmsImport}:" />
+                <p:outputLabel for="automaticExport" value="#{msgs.automatischerDmsImport}" />
                 <p:selectBooleanCheckbox id="automaticExport" value="#{ProjekteForm.myProjekt.useDmsImport}" class="input" />
             </div>
             <div>
@@ -48,11 +48,11 @@
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="dmsExportDir" value="#{msgs.dmsImportPfadXmlDatei}:" />
+                <p:outputLabel for="dmsExportDir" value="#{msgs.dmsImportPfadXmlDatei}" />
                 <p:inputText id="dmsExportDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportRootPath}"/>
             </div>
             <div>
-                <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPfad}:" />
+                <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPfad}" />
                 <p:inputText id="dmsExportSuccessDir" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.dmsImportSuccessPath}"/>
             </div>
             <div>
