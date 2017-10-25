@@ -257,8 +257,7 @@ public class SearcherIT {
     }
 
     private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = new IndexRestClient();
-        restClient.initiateClient();
+        IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(testIndexName);
         restClient.setType("testsearch");
         return restClient;

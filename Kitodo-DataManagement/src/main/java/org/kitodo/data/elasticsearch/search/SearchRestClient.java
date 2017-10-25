@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -33,6 +34,30 @@ import org.kitodo.data.exceptions.DataException;
 public class SearchRestClient extends KitodoRestClient {
 
     private static final Logger logger = LogManager.getLogger(SearchRestClient.class);
+
+    /**
+     * SearchRestClient singleton.
+     */
+    private static SearchRestClient instance = null;
+
+    private SearchRestClient() {}
+
+    /**
+     * Return singleton variable of type SearchRestClient.
+     *
+     * @return unique instance of SearchRestClient
+     */
+    public static SearchRestClient getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (SearchRestClient.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new SearchRestClient();
+                    instance.initiateClient();
+                }
+            }
+        }
+        return instance;
+    }
 
     /**
      * Count amount of documents responding to given query.

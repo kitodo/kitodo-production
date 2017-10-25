@@ -114,8 +114,7 @@ public class IndexRestClientIT {
     }
 
     private static IndexRestClient initializeRestClient() {
-        IndexRestClient restClient = new IndexRestClient();
-        restClient.initiateClient();
+        IndexRestClient restClient = IndexRestClient.getInstance();
         restClient.setIndex(testIndexName);
         restClient.setType("indexer");
         return restClient;
