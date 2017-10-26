@@ -248,15 +248,27 @@ public class Metadaten {
     }
 
     /**
-     * Reload.
-     *
+     * Save metadata to Xml file.
      */
-    public void reload() {
+    public void saveMetadataToXml() {
         calculateMetadataAndImages();
         cleanupMetadata();
-        // ignoring result of store operation
-        if(storeMetadata()) {
+        if (storeMetadata()) {
+            Helper.setMeldung("XML saved");
+        }
+    }
 
+    /**
+     * Save metadata to Xml file.
+     */
+    public String saveMetadataToXmlAndGoToProcessPage() {
+        calculateMetadataAndImages();
+        cleanupMetadata();
+        if (storeMetadata()) {
+            return "/pages/ProzessverwaltungAlle?faces-redirect=true";
+        } else {
+            Helper.setMeldung("XML could not be saved");
+            return "";
         }
     }
 

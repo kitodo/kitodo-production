@@ -19,12 +19,15 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:p="http://primefaces.org/ui">
 
+    <p:growl id="growl" showDetail="true"/>
 
     <div align="right">
         <p:button value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" disabled="true"/>
         <p:button value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle" icon="ui-icon-close"/>
-        <p:commandButton value="#{msgs.speichern}" action="#{Metadaten.reload}" icon="ui-icon-disk" />
-        <p:button value="#{msgs.speichernZurueck}" icon="ui-icon-extlink" disabled="true"/>
+        <p:commandButton value="#{msgs.speichern}" action="#{Metadaten.saveMetadataToXml}" icon="ui-icon-disk"
+                         update="growl"/>
+        <p:commandButton value="#{msgs.speichernZurueck}" action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
+                         icon="ui-icon-extlink" update="growl"/>
     </div>
 
     <p:tabView id="tabView">
