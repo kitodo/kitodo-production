@@ -63,9 +63,8 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
-
-
 import org.primefaces.model.TreeNode;
+
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -256,7 +255,9 @@ public class Metadaten {
         calculateMetadataAndImages();
         cleanupMetadata();
         // ignoring result of store operation
-        storeMetadata();
+        if(storeMetadata()) {
+
+        }
     }
 
     /**
@@ -272,6 +273,7 @@ public class Metadaten {
             this.docStruct.addMetadata(md);
         } catch (MetadataTypeNotAllowedException e) {
             Helper.setFehlerMeldung(e.getMessage());
+            logger.error("Error at Metadata copy (MetadataTypeNotAllowedException): " + e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
     }
@@ -829,9 +831,8 @@ public class Metadaten {
 
         cleanupMetadata();
 
-        if (!storeMetadata()) {
-            return "Metadaten";
-        }
+        storeMetadata() ;
+
 
         disableReturn();
         return this.result;
@@ -2579,25 +2580,25 @@ public class Metadaten {
         }
     }
 
-    private TreeNode selectedTreeNote;
+    private TreeNode selectedTreeNode;
 
     /**
-     * Returns the current selected TreeNote.
+     * Returns the current selected TreeNode.
      *
-     * @return The TreeNote.
+     * @return The TreeNode.
      */
-    public TreeNode getSelectedTreeNote() {
-        return selectedTreeNote;
+    public TreeNode getSelectedTreeNode() {
+        return selectedTreeNode;
     }
 
     /**
-     * Sets the selecetd TreeNote.
+     * Sets the selecetd TreeNode.
      *
-     * @param selectedTreeNote
-     *          The TreeNote.
+     * @param selectedTreeNode
+     *          The TreeNode.
      */
-    public void setSelectedTreeNote(TreeNode selectedTreeNote) {
-        this.selectedTreeNote = selectedTreeNote;
+    public void setSelectedTreeNode(TreeNode selectedTreeNode) {
+        this.selectedTreeNode = selectedTreeNode;
     }
 
     /**
@@ -2616,29 +2617,29 @@ public class Metadaten {
      * @return
      *          The TreeNote.
      */
-    public TreeNode getTreeNotes() {
+    public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
         List<DocStruct> children = this.logicalTopstruct.getAllChildren();
         TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
         if (children != null) {
-            visibleRoot = convertDocstructToPFTreeNote(children,visibleRoot);
+            visibleRoot = convertDocstructToPrimeFacesTreeNode(children,visibleRoot);
         }
         TreeNode expandedTreeNode = setExpandingAll(root,true);
 
         return expandedTreeNode;
     }
 
-    private TreeNode convertDocstructToPFTreeNote(List<DocStruct> elements, TreeNode parentTreeNode) {
-        TreeNode treeNote = null;
+    private TreeNode convertDocstructToPrimeFacesTreeNode(List<DocStruct> elements, TreeNode parentTreeNode) {
+        TreeNode treeNode = null;
 
         for (DocStruct element : elements) {
             List<DocStruct> childs = element.getAllChildren();
-            treeNote = new DefaultTreeNode(element, parentTreeNode);
+            treeNode = new DefaultTreeNode(element, parentTreeNode);
             if (childs != null) {
-                convertDocstructToPFTreeNote(childs,treeNote);
+                convertDocstructToPrimeFacesTreeNode(childs,treeNode);
             }
         }
-        return treeNote;
+        return treeNode;
     }
 
     private TreeNode setExpandingAll(TreeNode node, boolean expanded) {
