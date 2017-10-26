@@ -21,7 +21,7 @@
         <p:panel id="listWrapper">
             <p:panel class="content-header">
                 <h3>#{msgs.prozessvorlagen}</h3>
-                <p:button value="#{msgs.eineNeueProzessvorlageAnlegen}" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"></p:button>
+                <p:button value="#{msgs.eineNeueProzessvorlageAnlegen}" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
                 <!-- filters -->
                 <h:form style="display: inline; float: right;">
                     <div class="ui-inputgroup">
@@ -50,7 +50,8 @@
                 </h:form>
             </p:panel>
             <!-- content -->
-            <p:dataTable var="template" value="#{ProzessverwaltungForm.page.listReload}">
+            <p:dataTable id="template-list" var="template" value="#{ProzessverwaltungForm.lazyDTOModel}"
+                         rows="#{LoginForm.myBenutzer.tableSize}" lazy="true" paginator="true">
 
                 <!-- 1st column -->
                 <p:column style="width: 50px; text-align: center; color: black;">

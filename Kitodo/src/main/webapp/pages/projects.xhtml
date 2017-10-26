@@ -24,7 +24,8 @@
                 <h3>Projekte</h3>
                 <p:button outcome="projectEdit" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
             </p:panel>
-            <p:dataTable var="project" value="#{ProjekteForm.projects}">
+            <p:dataTable id="project-list" var="project" value="#{ProjekteForm.lazyDTOModel}"
+                         rows="#{LoginForm.myBenutzer.tableSize}" lazy="true" paginator="true">
                 <p:column style="width: 16px;">
                     <p:rowToggler/>
                 </p:column>
