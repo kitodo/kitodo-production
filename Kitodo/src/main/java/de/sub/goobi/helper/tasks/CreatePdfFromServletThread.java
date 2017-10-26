@@ -14,7 +14,6 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -102,7 +101,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             /*
              * using mets file
              */
-            if (new MetadatenVerifizierung().validate(this.getProcess()) && (this.metsURL != null)) {
+            if (serviceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {
                 /*
                  * if no contentserverurl defined use internal
                  * goobiContentServerServlet

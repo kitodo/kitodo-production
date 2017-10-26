@@ -18,7 +18,6 @@ import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 import de.sub.goobi.persistence.apache.FolderInformation;
@@ -1876,8 +1875,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
 
         if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-            MetadatenVerifizierung mv = new MetadatenVerifizierung();
-            if (!mv.validate(gdzfile, preferences, process)) {
+            if (!serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
                 return false;
 
             }

@@ -13,10 +13,11 @@ package org.kitodo.api.validation.filestructure;
 
 import java.net.URI;
 
+import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
 
 /** Validates a given xml file against a given xsd schema. */
-public interface FileStructureValidationInterface {
+public interface FileStructureValidationInterface extends ValidationInterface {
 
     /**
      * validates a xml file at a given uri against a xsd at a given location.

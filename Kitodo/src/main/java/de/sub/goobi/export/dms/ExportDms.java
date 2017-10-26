@@ -19,7 +19,6 @@ import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.ExportDmsTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.helper.tasks.TaskSitter;
-import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
@@ -206,8 +205,7 @@ public class ExportDms extends ExportMets {
          */
 
         if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-            MetadatenVerifizierung mv = new MetadatenVerifizierung();
-            if (!mv.validate(gdzfile, this.myPrefs, process)) {
+            if (!serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
                 return false;
             }
         }

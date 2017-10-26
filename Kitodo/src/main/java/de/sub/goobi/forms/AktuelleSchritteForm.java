@@ -21,7 +21,6 @@ import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
 import java.io.File;
@@ -489,9 +488,8 @@ public class AktuelleSchritteForm extends BasisForm {
         if (this.mySchritt.isTypeCloseVerify()) {
             /* Metadatenvalidierung */
             if (this.mySchritt.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-                MetadatenVerifizierung mv = new MetadatenVerifizierung();
-                mv.setAutoSave(true);
-                if (!mv.validate(this.mySchritt.getProcess())) {
+                serviceManager.getMetadataValidationService().setAutoSave(true);
+                if (!serviceManager.getMetadataValidationService().validate(this.mySchritt.getProcess())) {
                     return null;
                 }
             }
