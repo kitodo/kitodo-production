@@ -85,8 +85,8 @@ public class FileMapper {
         if (uri == null) {
             return Paths.get(Config.getKitodoDataDirectory()).toUri();
         } else {
-            if (!uri.isAbsolute() && !uri.toString().contains(kitodoDataDirectory)) {
-                return Paths.get(Config.getKitodoDataDirectory(), uri.toString()).toUri();
+            if (!uri.isAbsolute() && !uri.getRawPath().contains(kitodoDataDirectory)) {
+                return Paths.get(Config.getKitodoDataDirectory(), uri.getRawPath()).toUri();
             }
         }
         return uri;
