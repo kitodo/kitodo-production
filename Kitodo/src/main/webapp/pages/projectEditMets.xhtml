@@ -78,9 +78,9 @@
             </p:column>
             <p:column>
                 <!-- edit button -->
-                <p:commandLink actionListener="#{ProjekteForm.fileGroupEdit()}"
-                               oncomplete="PF('editFileGroupDialog').show()"
-                               styleClass="buttonset button-blue">
+                <p:commandLink oncomplete="PF('editFileGroupDialog').show()"
+                               styleClass="buttonset button-blue"
+                               update="@(.editDialog)">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
                                                  value="#{filegroup}"/>
@@ -97,7 +97,8 @@
         </p:dataTable>
         <!-- add button -->
         <p:commandButton actionListener="#{ProjekteForm.filegroupAdd()}"
-                         oncomplete="PF('addFileGroupDialog').show()"
+                         update="@(.editDialog)"
+                         oncomplete="PF('editFileGroupDialog').show()"
                          value="#{msgs.filegroupHinzufuegen}"
                          styleClass="button-filled-green"
                          icon="fa fa-plus-circle fa-lg"
@@ -105,29 +106,5 @@
             <f:setPropertyActionListener target="#{ProjekteForm.zurueck}"
                                          value="/pages/projectEditMetsPopup"/>
         </p:commandButton>
-        <!-- add dialog -->
-        <!-- TODO fix modal z-index -->
-        <p:dialog widgetVar="addFileGroupDialog"
-                  header="#{msgs.filegroupHinzufuegen}"
-                  width="700px"
-                  modal="false"
-                  dynamic="true"
-                  onHide="#{NavigationForm.Reload()}">
-            <ui:include src="projectEditMetsPopup.xhtml">
-                <ui:param name="dialog" value="addFileGroupDialog"/>
-            </ui:include>
-        </p:dialog>
-        <!-- edit dialog -->
-        <!-- TODO fix modal z-index -->
-        <p:dialog widgetVar="editFileGroupDialog"
-                  header="#{msgs.filegroupBearbeiten}"
-                  width="700px"
-                  modal="false"
-                  dynamic="true"
-                  onHide="#{NavigationForm.Reload()}">
-            <ui:include src="projectEditMetsPopup.xhtml">
-                <ui:param name="dialog" value="editFileGroupDialog"/>
-            </ui:include>
-        </p:dialog>
     </p:panel>
 </ui:composition>
