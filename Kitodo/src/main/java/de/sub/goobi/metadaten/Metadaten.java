@@ -178,6 +178,7 @@ public class Metadaten {
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
     private Paginator paginator = new Paginator();
+    private TreeNode selectedTreeNode;
 
     /**
      * Konstruktor.
@@ -2592,8 +2593,6 @@ public class Metadaten {
         }
     }
 
-    private TreeNode selectedTreeNode;
-
     /**
      * Returns the current selected TreeNode.
      *
@@ -2634,21 +2633,19 @@ public class Metadaten {
         List<DocStruct> children = this.logicalTopstruct.getAllChildren();
         TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
         if (children != null) {
-            visibleRoot = convertDocstructToPrimeFacesTreeNode(children,visibleRoot);
+            visibleRoot.getChildren().add(convertDocstructToPrimeFacesTreeNode(children, visibleRoot));
         }
-        TreeNode expandedTreeNode = setExpandingAll(root,true);
-
-        return expandedTreeNode;
+        return setExpandingAll(root,true);
     }
 
     private TreeNode convertDocstructToPrimeFacesTreeNode(List<DocStruct> elements, TreeNode parentTreeNode) {
         TreeNode treeNode = null;
 
         for (DocStruct element : elements) {
-            List<DocStruct> childs = element.getAllChildren();
+            List<DocStruct> children = element.getAllChildren();
             treeNode = new DefaultTreeNode(element, parentTreeNode);
-            if (childs != null) {
-                convertDocstructToPrimeFacesTreeNode(childs,treeNode);
+            if (children != null) {
+                convertDocstructToPrimeFacesTreeNode(children, treeNode);
             }
         }
         return treeNode;
