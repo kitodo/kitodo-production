@@ -243,6 +243,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String delete() {
         deleteMetadataDirectory();
+        this.process.getProject().getProcesses().remove(this.process);
         try {
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException e) {
