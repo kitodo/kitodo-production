@@ -24,11 +24,11 @@ public class SchemaConverter implements SchemaConverterInterface {
     @Override
     public URI convert(URI inputFileUri, SchemaFormat baseFormat, SchemaFormat resultFormat) {
         if (resultFormat == SchemaFormat.DMS) {
-            return null;
+            throw new RuntimeException("Not implemented yet!");
         } else if (resultFormat == SchemaFormat.DMSRUSDML) {
-            return null;
+            throw new RuntimeException("Not implemented yet!");
         } else {
-            return null;
+            throw new RuntimeException("Not implemented yet!");
         }
     }
 }
