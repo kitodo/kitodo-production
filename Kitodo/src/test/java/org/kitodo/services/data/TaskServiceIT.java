@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -25,8 +26,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.dto.TaskDTO;
 
 /**
  * Tests for TaskService class.
@@ -91,13 +94,30 @@ public class TaskServiceIT {
     public void shouldFindTask() throws Exception {
         TaskService taskService = new TaskService();
 
+        TaskDTO task = taskService.findById(1);
+        boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
+        assertTrue("Task was not found in index!", condition);
+    }
+
+    @Test
+    public void shouldFindAllTasks() throws Exception {
+        TaskService taskService = new TaskService();
+
+        List<TaskDTO> tasks = taskService.findAll();
+        assertEquals("Not all tasks were found in index!", 6, tasks.size());
+    }
+
+    @Test
+    public void shouldGetTask() throws Exception {
+        TaskService taskService = new TaskService();
+
         Task task = taskService.getById(1);
         boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
         assertTrue("Task was not found in database!", condition);
     }
 
     @Test
-    public void shouldFindAllTasks() {
+    public void shouldGetAllTasks() {
         TaskService taskService = new TaskService();
 
         List<Task> tasks = taskService.getAll();
@@ -122,6 +142,53 @@ public class TaskServiceIT {
         tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null);
         assertEquals("Not all tasks were found in database!", 2, tasks.size());
 
+    }
+
+    @Test
+    public void shouldReplaceProcessingUser() throws Exception {
+        UserService userService = new UserService();
+        TaskService taskService = new TaskService();
+
+        int size = userService.findByProcessingTask(6, false).size();
+        assertEquals("Incorrect amount of processing users!", 1, size);
+
+        Task task = taskService.getById(6);
+        User user = task.getProcessingUser();
+        user.getProcessingTasks().remove(task);
+        task.setProcessingUser(null);
+        taskService.save(task);
+        TaskDTO taskDTO = taskService.findById(6, false);
+        size = userService.findByProcessingTask(6, false).size();
+        assertNull("Processing user is not null!", taskDTO.getProcessingUser());
+        assertEquals("Incorrect amount of processing users!", 0, size);
+
+        task = taskService.getById(6);
+        user = userService.getById(1);
+        User oldUser = task.getProcessingUser();
+        if(oldUser != null) {
+            oldUser.getProcessingTasks().remove(task);
+        }
+        user.getProcessingTasks().add(task);
+        task.setProcessingUser(user);
+        taskService.save(task);
+        taskDTO = taskService.findById(6, false);
+        size = userService.findByProcessingTask(6, false).size();
+        assertEquals("Incorrect id of processing user!", Integer.valueOf(1), taskDTO.getProcessingUser().getId());
+        assertEquals("Incorrect amount of processing users!", 1, size);
+
+        task = taskService.getById(6);
+        user = userService.getById(2);
+        oldUser = task.getProcessingUser();
+        if(oldUser != null) {
+            oldUser.getProcessingTasks().remove(task);
+        }
+        user.getProcessingTasks().add(task);
+        task.setProcessingUser(user);
+        taskService.save(task);
+        taskDTO = taskService.findById(6, false);
+        size = userService.findByProcessingTask(6, false).size();
+        assertEquals("Incorrect id of processing user!", Integer.valueOf(2), taskDTO.getProcessingUser().getId());
+        assertEquals("Incorrect amount of processing users!", 1, size);
     }
 
     @Test

@@ -54,6 +54,7 @@ import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
@@ -88,7 +89,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Task task)
+            throws CustomResponseException, DAOException, DataException, IOException {
         manageProcessDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
         manageUsersDependenciesForIndex(task);
@@ -108,7 +110,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageProcessingUserDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    private void manageProcessingUserDependenciesForIndex(Task task)
+            throws CustomResponseException, DAOException, DataException, IOException {
         if (task.getIndexAction() == IndexAction.DELETE) {
             User user = task.getProcessingUser();
             if (user != null) {
@@ -117,7 +120,18 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             }
         } else {
             User user = task.getProcessingUser();
-            serviceManager.getUserService().saveToIndex(user);
+            if (user != null) {
+                serviceManager.getUserService().saveToIndex(user);
+            }
+            reIndexUserAfterRemoveFromProcessing(task);
+        }
+    }
+
+    private void reIndexUserAfterRemoveFromProcessing(Task task)
+            throws CustomResponseException, DAOException, DataException, IOException {
+        List<UserDTO> userDTOS = serviceManager.getUserService().findByProcessingTask(task.getId(), true);
+        for (UserDTO userDTO : userDTOS) {
+            serviceManager.getUserService().saveToIndex(serviceManager.getUserService().getById(userDTO.getId()));
         }
     }
 
@@ -360,7 +374,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         Integer process = getIntegerPropertyForDTO(jsonObject, "process");
         taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
         Integer processingUser = getIntegerPropertyForDTO(jsonObject, "processingUser");
-        taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
+        if (processingUser != 0) {
+            taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
+        }
         taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
         taskDTO.setUserGroups(
                 convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
@@ -669,10 +685,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Close task.
      *
-     * @param task as Task object
-     * @param requestFromGUI true or false
+     * @param task
+     *            as Task object
+     * @param requestFromGUI
+     *            true or false
      */
-    //TODO: check why requestFromGUI is never used
+    // TODO: check why requestFromGUI is never used
     public void close(Task task, boolean requestFromGUI) throws DataException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
@@ -737,8 +755,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-    * If no open parallel tasks are available, activate the next tasks.
-    */
+     * If no open parallel tasks are available, activate the next tasks.
+     */
     private void activateNextTask(List<Task> allHigherTasks) throws DataException {
         if (openTasksWithTheSameOrdering == 0) {
             int ordering = 0;
@@ -802,7 +820,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public void executeDmsExport(Task step, boolean automatic) throws DataException, ConfigurationException {
         ConfigCore.getBooleanParameter("automaticExportWithImages", true);
         if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
-            //TODO: check why this if is empty
+            // TODO: check why this if is empty
         }
         Process po = step.getProcess();
         try {
