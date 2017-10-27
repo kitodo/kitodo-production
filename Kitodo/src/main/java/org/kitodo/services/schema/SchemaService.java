@@ -57,6 +57,7 @@ public class SchemaService {
 
     private static final Logger logger = LogManager.getLogger(SchemaService.class);
     private final ServiceManager serviceManager = new ServiceManager();
+    private List<DocStruct> docStructsWithoutPages = new ArrayList<>();
 
     /**
      * Temporal method for separate file conversion from ExportMets class
@@ -245,8 +246,6 @@ public class SchemaService {
 
         return virtualFileGroup;
     }
-
-    private List<DocStruct> docStructsWithoutPages = new ArrayList<>();
 
     /**
      * Conversion for RUSDML.
