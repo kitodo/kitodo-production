@@ -56,6 +56,11 @@
             <version>2.3</version>
         </dependency>
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.6</version>
@@ -80,6 +85,12 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>.</artifactId>
+                    <groupId>.</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
