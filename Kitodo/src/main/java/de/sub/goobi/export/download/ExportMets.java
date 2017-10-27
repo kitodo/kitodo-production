@@ -140,6 +140,9 @@ public class ExportMets {
      *            the meta file which should be written
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
+     * @param writeLocalFileGroup
+     *            true or false
+     * @return true or false
      */
     protected boolean writeMetsFile(Process process, URI metaFile, Fileformat gdzfile, boolean writeLocalFileGroup)
             throws PreferencesException, WriteException, IOException, TypeNotAllowedForParentException {

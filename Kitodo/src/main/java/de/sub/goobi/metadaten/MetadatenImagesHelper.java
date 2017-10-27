@@ -39,7 +39,6 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -571,7 +570,7 @@ public class MetadatenImagesHelper {
      *
      * @param process
      *            Process object
-     * @return list of Strings
+     * @return list of URIs
      */
     public List<URI> getDataFiles(Process process) throws InvalidImagesException {
         URI dir;

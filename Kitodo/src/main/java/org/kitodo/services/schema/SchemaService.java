@@ -257,6 +257,7 @@ public class SchemaService {
      *            object
      * @param process
      *            object
+     * @param atsPpnBand as String
      */
     public void tempConvertRusdml(DigitalDocument digitalDocument, Prefs prefs, Process process, String atsPpnBand)
             throws ExportFileException, MetadataTypeNotAllowedException {
@@ -276,6 +277,8 @@ public class SchemaService {
      *
      * @param inStruct
      *            DocStruct object
+     * @param prefs
+     *            object
      */
     private void evaluateDocStructPages(DocStruct inStruct, Prefs prefs)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
@@ -302,8 +305,9 @@ public class SchemaService {
      *
      * @param inStruct
      *            DocStruct
+     * @param prefs
+     *            object
      */
-
     private void dropRusdmlMetadata(DocStruct inStruct, Prefs prefs)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
         String titleRu = "";
@@ -419,6 +423,8 @@ public class SchemaService {
      *
      * @param inStruct
      *            DocStruct object
+     * @param prefs
+     *            object
      */
     private void checkMetadata(DocStruct inStruct, Prefs prefs) {
         if (inStruct.getType().getName().equals("Illustration")) {
@@ -444,6 +450,8 @@ public class SchemaService {
      *
      * @param topStruct
      *            DocStruct object
+     * @param prefs
+     *            object
      * @param process
      *            Process object
      */
@@ -460,6 +468,8 @@ public class SchemaService {
      *
      * @param inTopStruct
      *            DocStruct object
+     * @param prefs
+     *            object
      * @param process
      *            Process object
      * @param ppn
@@ -546,7 +556,6 @@ public class SchemaService {
      * @param inStruct
      *            DocStruct object
      */
-
     private void maskUmlauts(DocStruct inStruct) {
         List<Metadata> copy = inStruct.getAllMetadata();
         if (copy != null) {
