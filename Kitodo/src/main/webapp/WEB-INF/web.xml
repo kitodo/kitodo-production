@@ -12,9 +12,9 @@
     permissions and * limitations under the License.
 -->
 
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd">
 
     <display-name>Kitodo</display-name>
 
@@ -338,11 +338,11 @@
     <!-- Error pages -->
     <error-page>
         <error-code>500</error-code>
-        <location>/pages/error.jsf</location>
+        <location>/pages/error.xhtml</location>
     </error-page>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/pages/error.jsf</location>
+        <location>/pages/error.xhtml</location>
     </error-page>
 
     <servlet>
