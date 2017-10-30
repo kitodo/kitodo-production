@@ -21,7 +21,7 @@
     <ui:define name="content">
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
-                <h3>Projekte</h3>
+                <h3>#{msgs.projekte}</h3>
                 <p:button outcome="projectEdit" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
             </p:panel>
             <p:dataTable id="project-list" var="project" value="#{ProjekteForm.lazyDTOModel}"
@@ -29,7 +29,7 @@
                 <p:column style="width: 16px;">
                     <p:rowToggler/>
                 </p:column>
-                <p:column headerText="Projekttitel">
+                <p:column headerText="#{msgs.titel}">
                     <h:outputText value="#{project.title}"/>
                 </p:column>
                 <p:column headerText="aktiv">
@@ -65,5 +65,9 @@
                 </p:rowExpansion>
             </p:dataTable>
         </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.projekte}</a></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
     </ui:define>
 </ui:composition>

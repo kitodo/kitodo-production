@@ -25,7 +25,7 @@
         <p:panel id="listWrapper">
             <h:form id="projectEditForm">
                 <p:panel styleClass="content-header">
-                    <h3>Projekt bearbeiten</h3>
+                    <h3>#{msgs.projektBearbeiten}</h3>
                     <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" styleClass="button-filled-blue"/>
                 </p:panel>
                 <p:tabView>
@@ -41,6 +41,11 @@
                 </p:tabView>
             </h:form>
         </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.projektBearbeiten}</a></li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
     </ui:define>
     <ui:define name="dialog">
         <ui:include src="/pages/projectEditMetsPopup.xhtml"/>

@@ -32,6 +32,11 @@
                         <ui:include src="/WEB-INF/templates/includes/header.xhtml" />
                     </ui:insert>
                 </header>
+                <ul id="breadcrumb">
+                    <ui:insert name="breadcrumbs">
+                        <ui:include src="/WEB-INF/templates/includes/breadcrumbs.xhtml" />
+                    </ui:insert>
+                </ul>
                 <main class="flex-item" role="main">
                     <ui:insert name="content">
                         <ui:include src="/WEB-INF/templates/includes/content.xhtml" />
