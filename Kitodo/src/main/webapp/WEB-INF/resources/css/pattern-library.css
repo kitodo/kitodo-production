@@ -1,0 +1,328 @@
+/**
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+body {
+    color: #1b2b36;
+}
+
+a {
+    color: #0971b8;
+}
+
+a:hover {
+    color: #004f81;
+    text-decoration: underline;
+}
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover,
+.ui-state-focus,
+.ui-widget-content .ui-state-focus,
+.ui-widget-header .ui-state-focus {
+    background: #f0faff;
+    border: 0px;
+    box-shadow: 0 0 0;
+}
+
+.ui-button,
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger,
+.ui-widget-content button.ui-state-default,
+.timeline-content .ui-state-default {
+    background: #0971b8;
+    color: #fff;
+}
+
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+    border: 0px none;
+    text-shadow: 0 0 0 transparent;
+    box-shadow: 0 0 0 transparent;
+}
+
+.ui-state-default a,
+.ui-state-default a:link,
+.ui-state-default a:visited {
+    text-shadow: 0 0 0 transparent;
+    color: #0971b8;
+}
+
+button .ui-icon {
+    color: #fff;
+}
+
+.ui-button-text-icon-left .ui-button-text {
+    padding: .7em .7em .7em 2.1em;
+}
+
+.ui-button-icon-only .ui-button-text,
+.ui-button-text-only .ui-button-text,
+.ui-datepicker-trigger.ui-button-icon-only .ui-button-text {
+    padding: .7em;
+}
+
+.ui-menu, .ui-menu .ui-menu-child {
+    background: #d8d8d8;
+}
+
+.ui-state-hover:hover,
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-label:hover,
+.ui-paginator .ui-state-default:hover,
+.ui-widget-content button.ui-state-default:hover,
+.ui-widget-content .ui-inputfield:hover,
+.timeline-content .ui-state-default:hover {
+    background: #004f81;
+    color: #fff;
+}
+
+.ui-state-hover:hover a {
+    color: #fff;
+}
+
+.ui-inputfield,
+.ui-selectcheckboxmenu-multiple-container.ui-inputfield,
+.ui-widget-content .ui-inputfield {
+    border: 1px solid #004f81;
+    padding: .7em;
+    color: #0971b8;
+    box-shadow: 0 0 0 transparent;
+}
+
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-label,
+.ui-selectonemenu .ui-selectonemenu-label {
+    border: 1px solid #004f81;
+    padding: .7em;
+    background: #fff;
+}
+
+.ui-inputfield.ui-state-focus, .ui-widget-content .ui-inputfield.ui-state-focus, .ui-widget-header .ui-inputfield.ui-state-focus {
+    box-shadow: 0 0 0 transparent;
+}
+
+.ui-datepicker .ui-datepicker-header {
+    background: #d8d8d8;
+}
+
+.ui-widget-header {
+    text-shadow: 0 0 0 transparent;
+}
+
+.ui-selectcheckboxmenu {
+    display: grid;
+}
+
+.ui-spinner-input {
+    text-align: left;
+}
+
+.ui-slider {
+    background: #d8d8d8;
+    box-shadow: 0 0 0 transparent;
+    border: 0px none;
+}
+
+.ui-slider .ui-slider-handle {
+    background: #0971b8;
+}
+
+.ui-datatable thead th,
+.ui-datatable tbody td,
+.ui-datatable tfoot td,
+.ui-datatable tfoot th,
+.ui-treetable head th,
+.ui-treetable tfoot th,
+.ui-treetable tbody td,
+.ui-treetable tfoot td,
+.ui-panelgrid .ui-panelgrid-cell {
+    border: 0px;
+    padding: 8px 10px;
+}
+
+tr.ui-widget-content {
+    border: 0px;
+}
+
+tbody.ui-widget-content {
+    border: 0px;
+}
+
+.ui-widget-content {
+    color: #1b2b36;
+}
+
+.ui-datatable th.ui-state-default,
+.ui-treetable th.ui-state-default,
+.ui-treenode .ui-state-default {
+    color: #1b2b36;
+    background: #d8d8d8;
+    text-align: left !important;
+    border: 0px;
+}
+
+.ui-datatable tr.ui-widget-content:hover,
+.ui-treetable tr.ui-widget-content:hover {
+    background: #f0faff;
+    color: #1b2b36 !important;
+}
+
+.ui-widget-header {
+    background: #999;
+    color: #fff;
+    border: 0px;
+}
+
+.ui-datatable .ui-corner-top,
+.ui-datatable .ui-corner-bottom,
+.ui-treetable .ui-corner-top,
+.ui-treetable .ui-corner-bottom,
+.ui-tabs-nav .ui-corner-top,
+.ui-tabmenu .ui-corner-all {
+    border-radius: 0px;
+}
+
+.ui-datatable-odd,
+.ui-datatable-even,
+tfoot td.ui-state-default,
+tr.ui-widget-header,
+tr.ui-widget-content,
+.ui-panelgrid .ui-widget-content {
+    background: #fff;
+    border-top: 1px solid #d8d8d8 !important;
+    color: #1b2b36;
+}
+
+.ui-datatable tfoot td {
+    text-align: left;
+}
+
+.ui-paginator {
+    padding: 6px 0 !important;
+}
+
+.ui-paginator .ui-state-default {
+    color: #1b2b36;
+    background: #fff;
+    min-width: 20px;
+}
+
+.ui-paginator .ui-state-active {
+    background: #0971b8;
+    color: #fff;
+}
+
+.ui-widget-header .ui-state-default,
+.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
+    background: #fff;
+    color: #1b2b36;
+}
+
+tr.ui-expanded-row-content,
+tr.ui-expanded-row-content tr.ui-widget-header,
+.ui-dialog-content tr.ui-widget-header,
+.ui-panelgrid .ui-widget-header {
+    border-top: 0px none !important;
+    background: transparent;
+}
+
+tr.ui-expanded-row-content .ui-panelgrid {
+    width: 70%;
+    margin-left: 35px;
+}
+
+tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
+.ui-dialog-content .ui-panelgrid .ui-panelgrid-cell {
+    border: 0px;
+    padding: 8px 10px;
+}
+
+.ui-accordion .ui-state-default,
+.ui-fieldset .ui-state-default {
+    background: #d8d8d8;
+}
+
+.ui-tabs.ui-widget-content,
+.ui-tabmenu.ui-widget-content {
+    border: 0;
+}
+
+.ui-tabs,
+.ui-tabs.ui-tabs-top>.ui-tabs-nav,
+.ui-tabmenu .ui-tabmenu-nav {
+    padding: 0;
+}
+
+.ui-tabs.ui-tabs-top>.ui-tabs-nav li,
+.ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
+    top: 0px;
+}
+
+.ui-tabs .ui-tabs-nav,
+.ui-tabmenu .ui-widget-header {
+    border-top: 3px solid #999;
+    background: #d8d8d8;
+}
+
+.ui-tabs .ui-tabs-nav li,
+.ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
+    margin: -3px .2em 1px 0;
+}
+
+.ui-tabs .ui-tabs-nav li a,
+.ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
+    padding: .7em 1.2em;
+}
+
+.ui-tabs-nav .ui-state-default a,
+.ui-tabs-nav .ui-state-default a:link,
+.ui-tabs-nav .ui-state-default a:visited,
+.ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
+    color: #999;
+}
+
+.ui-tabs-nav .ui-state-default a:hover,
+.ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a:hover {
+    color: #004f81;
+}
+
+.ui-tabs .ui-tabs-nav li,
+.ui-tabmenu .ui-widget-header .ui-state-default {
+    border: 0px;
+    border-top: 3px solid #999;
+    background: transparent;
+    margin-bottom: -1px;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected,
+.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
+    border: 0px;
+    border-top: 3px solid #f94a15;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active a {
+    color: #0971b8;
+}
+
+.ui-breadcrumb.ui-widget-header {
+    background: transparent;
+}
+
+.ui-stack .openStack li span {
+    background: #0971b8;
+    text-shadow: 0 0 0;
+    padding: 5px 10px;
+}
+
+.ui-growl-item {
+    background: #004f81;
+    text-shadow: 0 0 0 transparent;
+}

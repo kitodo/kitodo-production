@@ -581,13 +581,13 @@ footer {
     bottom: 0px;
     width: 100%;
     z-index: 1;
-    }
+    background: url("#{resource['/images/background-bottom.svg']}") no-repeat transparent center bottom;
+    background-size: 100% auto;
+}
 
 #footer-content {
     width: 100%;
-    background: url("#{resource['/images/background-bottom.svg']}") no-repeat transparent center bottom;
     /*background: #f94a15;*/
-    background-size: 100% auto;
     padding: 60px 0px 30px 0px;
     display: block;
     text-align: center;
@@ -751,7 +751,7 @@ th.ui-state-default {
 
 .ui-commandlink.button-filled-green,
 .ui-button.button-filled-green {
-    background: #00C62F;
+    background: #00C62F !important;
 }
 
 .buttonset {
