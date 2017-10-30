@@ -16,6 +16,27 @@ import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
+import javax.inject.Named;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -41,25 +62,6 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.imageio.ImageIO;
-import javax.inject.Named;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 
 @Named("ProjekteForm")
 @SessionScoped
@@ -700,7 +702,6 @@ public class ProjekteForm extends BasisForm {
     }
 
     private synchronized void calcProjectStats(String inName, Boolean countImages) throws IOException {
-        int width = 750;
         Date start = this.myProjekt.getStartDate();
         Date end = this.myProjekt.getEndDate();
 
@@ -722,12 +723,13 @@ public class ProjekteForm extends BasisForm {
 
         // Determine height of the image
         int height = ProjectStatusDraw.getImageHeight(pData.getNumberOfTasks());
+        int width = 750;
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
 
-        ProjectStatusDraw projectStatusDraw = new ProjectStatusDraw(pData, g2d, width, height);
+        ProjectStatusDraw projectStatusDraw = new ProjectStatusDraw(pData, graphics, width, height);
         projectStatusDraw.paint();
 
         // write image to temporary file
@@ -816,7 +818,7 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Return list of projects
+     * Return list of projects.
      *
      * @return list of projects
      */
