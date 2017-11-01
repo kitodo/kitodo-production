@@ -278,6 +278,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setEndDate(getStringPropertyForDTO(projectJSONObject, "endDate"));
         projectDTO.setFileFormatDmsExport(getStringPropertyForDTO(projectJSONObject, "fileFormatDmsExport"));
         projectDTO.setFileFormatInternal(getStringPropertyForDTO(projectJSONObject, "fileFormatInternal"));
+        projectDTO.setMetsRightsOwner(getStringPropertyForDTO(projectJSONObject, "metsRightsOwner"));
         projectDTO.setNumberOfPages(getIntegerPropertyForDTO(projectJSONObject, "numberOfPages"));
         projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(projectJSONObject, "numberOfVolumes"));
         projectDTO.setProjectIsArchived(getBooleanPropertyForDTO(projectJSONObject, "archived"));
