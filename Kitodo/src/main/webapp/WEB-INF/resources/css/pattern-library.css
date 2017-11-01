@@ -109,6 +109,13 @@ button .ui-icon {
     background: #fff;
 }
 
+.ui-selectonemenu .ui-selectonemenu-trigger {
+    border: 1px solid #004f81;
+    padding: .7em;
+    width: auto;
+    box-sizing: border-box;
+}
+
 .ui-inputfield.ui-state-focus, .ui-widget-content .ui-inputfield.ui-state-focus, .ui-widget-header .ui-inputfield.ui-state-focus {
     box-shadow: 0 0 0 transparent;
 }
