@@ -153,7 +153,7 @@ public class ProjectTypeTest {
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"archived\":false,"
                 + "\"processes\":[{\"id\":1,\"title\":\"First\"},{\"id\":2,\"title\":\"Second\"}],\"numberOfPages\":100,"
-                + "\"endDate\":\"2017-03-01\","
+                + "\"endDate\":\"2017-03-01\",\"metsRightsOwner\":\"\","
                 + "\"numberOfVolumes\":10,\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
                 + "(meta.CatalogIDDigital)\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":"
                 + "\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
@@ -174,7 +174,7 @@ public class ProjectTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"archived\":false,\"processes\":"
                 + "[{\"id\":1,\"title\":\"First\"},{\"id\":2,\"title\":\"Second\"}],\"numberOfPages\":2000,"
-                + "\"endDate\":\"2017-09-10\",\"numberOfVolumes\":20,"
+                + "\"endDate\":\"2017-09-10\",\"numberOfVolumes\":20,\"metsRightsOwner\":\"\","
                 + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital"
                 + ")\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":\"image\\/jpeg\",\"suffix\":"
                 + "\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"
@@ -194,7 +194,7 @@ public class ProjectTypeTest {
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"archived\":false,\"processes\":[],"
-                + "\"numberOfPages\":0,\"endDate\":\"" + dateFormat.format(project.getEndDate())
+                + "\"numberOfPages\":0,\"metsRightsOwner\":\"\",\"endDate\":\"" + dateFormat.format(project.getEndDate())
                 + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
                 + dateFormat.format(project.getEndDate()) + "\",\"fileFormatInternal\":\"XStream\","
                 + "\"fileFormatDmsExport\":\"XStream\",\"users\":[]}");

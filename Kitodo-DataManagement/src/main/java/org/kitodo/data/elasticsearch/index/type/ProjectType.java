@@ -40,6 +40,7 @@ public class ProjectType extends BaseType<Project> {
         projectObject.put("numberOfVolumes", project.getNumberOfVolumes());
         projectObject.put("fileFormatDmsExport", project.getFileFormatDmsExport());
         projectObject.put("fileFormatInternal", project.getFileFormatInternal());
+        projectObject.put("metsRightsOwner", project.getMetsRightsOwner());
         projectObject.put("archived", project.getProjectIsArchived());
         projectObject.put("processes", addObjectRelation(project.getProcesses(), true));
         projectObject.put("users", addObjectRelation(project.getUsers(), true));
