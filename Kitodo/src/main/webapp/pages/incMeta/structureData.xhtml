@@ -74,20 +74,23 @@
     </h:form>
 
     <p:dialog id="dialogEditDocStrucTypeId" header="#{msgs.docstructTypeAendern}" resizable="false"
-              widgetVar="dialogEditDocStrucType" minHeight="40" width="300" height="100">
+              widgetVar="dialogEditDocStrucType" minHeight="40" width="300" height="100" modal="true"
+              appendTo="@(body)">
         <h:form id="dialogEditDocStrucTypeForm">
             <p:selectOneMenu id="docStructTypeSelection" value="#{Metadaten.tempTyp}">
                 <!--TODO check addable types-->
                 <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
             </p:selectOneMenu>
             <p:commandButton value="#{msgs.uebernehmen}" action="#{Metadaten.changeCurrentDocstructType}"
-                             update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData">
+                             update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData"
+                             oncomplete="PF('dialogEditDocStrucType').hide();">
             </p:commandButton>
         </h:form>
     </p:dialog>
 
     <p:dialog id="dialogAddDocStrucTypeId" header="#{msgs.neuesStrukturelement}" resizable="false"
-              widgetVar="dialogAddDocStrucType" minHeight="40" width="400" height="100">
+              widgetVar="dialogAddDocStrucType" minHeight="40" width="400" height="100" modal="true"
+              appendTo="@(body)">
         <h:form id="dialogAddDocStrucTypeForm">
             <p:selectOneMenu id="docStructPositionSelection" value="#{Metadaten.positionOfNewDocStrucElement}">
                 <!--TODO check addable types-->
@@ -100,7 +103,8 @@
                 <f:selectItems value="#{Metadaten.addableDocStructTypes}"/>
             </p:selectOneMenu>
             <p:commandButton value="#{msgs.uebernehmen}" action="#{Metadaten.addNode}"
-                             update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData">
+                             update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData"
+                             oncomplete="PF('dialogAddDocStrucType').hide();">
             </p:commandButton>
         </h:form>
     </p:dialog>
@@ -123,7 +127,8 @@
                     <h:panelGrid columns="1">
                         <p:commandButton id="addPageBtn" action="#{Metadaten.addPages}" icon="ui-icon-arrowthick-1-e"
                                          update="paginationSubSelection,tabView:structureData:structureDataTable"/>
-                        <p:commandButton id="removePageBtn" action="#{Metadaten.removePages}" icon="ui-icon-arrowthick-1-w"
+                        <p:commandButton id="removePageBtn" action="#{Metadaten.removePages}"
+                                         icon="ui-icon-arrowthick-1-w"
                                          update="paginationSubSelection,tabView:structureData:structureDataTable"/>
                     </h:panelGrid>
                 </h:panelGroup>
