@@ -322,11 +322,11 @@ public class Metadaten {
      *
      * @return String
      */
-    public String changeCurrentDocstructType() {
+    public void changeCurrentDocstructType() {
 
-        if (this.docStruct != null && this.tempValue != null) {
+        if (this.docStruct != null && this.tempTyp != null) {
             try {
-                DocStruct result = this.metaHelper.changeCurrentDocstructType(this.docStruct, this.tempValue);
+                DocStruct result = this.metaHelper.changeCurrentDocstructType(this.docStruct, this.tempTyp);
                 saveMetadataAsBean(result);
                 readMetadataAsFirstTree();
             } catch (DocStructHasNoTypeException e) {
@@ -349,7 +349,6 @@ public class Metadaten {
                         "Error while changing DocStructTypes (TypeNotAllowedForParentException): " + e.getMessage());
             }
         }
-        return "Metadaten3links";
     }
 
     /**
@@ -912,7 +911,7 @@ public class Metadaten {
      */
 
     @SuppressWarnings("rawtypes")
-    private String readMetadataAsFirstTree() {
+    private void readMetadataAsFirstTree() {
         HashMap map;
         TreeNodeStruct3 nodes;
         List<DocStruct> status = new ArrayList<>();
@@ -931,7 +930,7 @@ public class Metadaten {
         }
 
         if (this.logicalTopstruct == null) {
-            return "Metadaten3links";
+
         }
         /*
          * Die Struktur als Tree3 aufbereiten
@@ -961,10 +960,6 @@ public class Metadaten {
             }
         }
 
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "Metadaten3links";
     }
 
     /**
@@ -1034,6 +1029,26 @@ public class Metadaten {
         return rueckgabe.trim();
     }
 
+    public String getMetadataByElementAndType(DocStruct inStrukturelement, String inTyp) {
+        String result = "";
+        List<Metadata> allMDs = inStrukturelement.getAllMetadata();
+        if (allMDs != null) {
+            for (Metadata md : allMDs) {
+                if (md.getType().getName().equals(inTyp)) {
+                    result += (md.getValue() == null ? "" : md.getValue()) + " ";
+                }
+            }
+        }
+        return result.trim();
+    }
+
+    public String getImageRangeByElement(DocStruct inStrukturelement) {
+        String firstImage = this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst());
+        String lastImage = this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast());
+
+        return firstImage + " - " + lastImage;
+    }
+
     /**
      * Set my structure element.
      *
@@ -1066,7 +1081,7 @@ public class Metadaten {
     /**
      * Knoten nach oben schieben.
      */
-    public String nodeUp() {
+    public void nodeUp() {
         try {
             this.metaHelper.knotUp(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
@@ -1074,13 +1089,13 @@ public class Metadaten {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
             }
         }
-        return readMetadataAsFirstTree();
+        readMetadataAsFirstTree();
     }
 
     /**
      * Knoten nach unten schieben.
      */
-    public String nodeDown() {
+    public void nodeDown() {
         try {
             this.metaHelper.setNodeDown(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
@@ -1088,7 +1103,7 @@ public class Metadaten {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
             }
         }
-        return readMetadataAsFirstTree();
+        readMetadataAsFirstTree();
     }
 
     /**
@@ -1106,20 +1121,20 @@ public class Metadaten {
     /**
      * Knoten nach oben schieben.
      */
-    public String deleteNode() {
+    public void deleteNode() {
         if (this.docStruct != null && this.docStruct.getParent() != null) {
             DocStruct tempParent = this.docStruct.getParent();
             this.docStruct.getParent().removeChild(this.docStruct);
             this.docStruct = tempParent;
         }
         // den Tree neu einlesen
-        return readMetadataAsFirstTree();
+        readMetadataAsFirstTree();
     }
 
     /**
      * Knoten hinzufügen.=
      */
-    public String addNode() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
+    public void addNode() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
 
         /*
          * prüfen, wohin das Strukturelement gepackt werden soll, anschliessend
@@ -1133,17 +1148,16 @@ public class Metadaten {
          */
         if (this.neuesElementWohin.equals("1")) {
             if (this.addFirstDocStructType == null || this.addFirstDocStructType.equals("")) {
-                return "Metadaten3links";
+                return;
             }
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addFirstDocStructType);
             ds = this.digitalDocument.createDocStruct(dst);
             if (this.docStruct == null) {
-                return "Metadaten3links";
+                return;
             }
             DocStruct parent = this.docStruct.getParent();
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
             }
             List<DocStruct> alleDS = new ArrayList<>();
 
@@ -1176,7 +1190,7 @@ public class Metadaten {
             DocStruct parent = this.docStruct.getParent();
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
+                return;
             }
             List<DocStruct> alleDS = new ArrayList<>();
 
@@ -1209,7 +1223,7 @@ public class Metadaten {
             DocStruct parent = this.docStruct;
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
+                return;
             }
             List<DocStruct> alleDS = new ArrayList<>();
             alleDS.add(ds);
@@ -1243,7 +1257,7 @@ public class Metadaten {
             this.docStruct = temp;
         }
 
-        return readMetadataAsFirstTree();
+        readMetadataAsFirstTree();
     }
 
     /**
@@ -1392,6 +1406,12 @@ public class Metadaten {
         if (this.imageToStructuralElement) {
             identifyImage(imageNr - this.imageNumber);
         }
+    }
+
+    public void getfirstPageOfElement(DocStruct structureElement) {
+//        structureElement.getAllMetadata().get(0).
+//        MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+//        System.out.println(mdt.getNum());
     }
 
     /**
@@ -2159,7 +2179,7 @@ public class Metadaten {
     public String addPages() {
         /* alle markierten Seiten durchlaufen */
         for (String page : this.allPagesSelection) {
-            int aktuelleID = Integer.parseInt(page);
+            int aktuelleID = Integer.parseInt(page.split(":")[0]);
             boolean schonEnthalten = false;
 
             /*
@@ -2168,7 +2188,7 @@ public class Metadaten {
              */
             if (this.docStruct.getAllToReferences("logical_physical") != null) {
                 for (Reference reference : this.docStruct.getAllToReferences("logical_physical")) {
-                    if (reference.getTarget() == this.allPagesNew[aktuelleID].getMd().getDocStruct()) {
+                    if (reference.getTarget() == this.allPagesNew[aktuelleID - 1].getMd().getDocStruct()) {
                         schonEnthalten = true;
                         break;
                     }
@@ -2176,7 +2196,7 @@ public class Metadaten {
             }
 
             if (!schonEnthalten) {
-                this.docStruct.addReferenceTo(this.allPagesNew[aktuelleID].getMd().getDocStruct(),
+                this.docStruct.addReferenceTo(this.allPagesNew[aktuelleID - 1].getMd().getDocStruct(),
                         "logical_physical");
             }
         }
@@ -2319,15 +2339,16 @@ public class Metadaten {
      *            String
      */
     public void setTempTyp(String tempTyp) {
-        MetadataType mdt = this.myPrefs.getMetadataTypeByName(tempTyp);
-        try {
-            Metadata md = new Metadata(mdt);
-            this.selectedMetadatum = new MetadatumImpl(md, this.myMetadaten.size() + 1, this.myPrefs, this.process);
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e.getMessage());
-        }
+//        DocStructType mdt = this.myPrefs.getDocStrctTypeByName(tempTyp);
+//        try {
+//            Metadata md = new Metadata(mdt);
+//            this.selectedMetadatum = new MetadatumImpl(md, this.myMetadaten.size() + 1, this.myPrefs, this.process);
+//        } catch (MetadataTypeNotAllowedException e) {
+//            logger.error(e.getMessage());
+//        }
         this.tempTyp = tempTyp;
     }
+
 
     /**
      * Get metadata.

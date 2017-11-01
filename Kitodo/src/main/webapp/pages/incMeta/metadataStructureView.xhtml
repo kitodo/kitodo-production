@@ -18,15 +18,22 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui"
 >
+    <p:commandButton update="docStruc" icon="ui-icon-arrowthick-1-n" immediate="true"
+                     title="#{msgs.docstructNachObenSchieben}" action="#{Metadaten.nodeUp}"/>
+
+    <p:commandButton update="docStruc" icon="ui-icon-arrowthick-1-s" immediate="true"
+                     title="#{msgs.docstructNachUntenSchieben}" action="#{Metadaten.nodeDown}"/>
+
     <p:tree value="#{Metadaten.treeNodes}" var="element"
-            selectionMode="single"
+            selectionMode="single" id="docStruc"
             selection="#{Metadaten.selectedTreeNode}"
-            style="width:99%;height:100%;">
+            style="width:99%;">
         <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
-                update="tabView:metadata"/>
+                update="tabView:metadata,tabView:structureData"/>
         <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
             <h:outputText value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
         </p:treeNode>
         <!--TODO think about to use diffent Icons according to element types-->
     </p:tree>
+
 </ui:composition>
