@@ -13,13 +13,12 @@
 
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.titel}" />
-                <p:inputText id="title" placeholder="Titel" class="input" value="#{ProjekteForm.myProjekt.title}"/>
+                <p:inputText id="title" placeholder="#{msgs.titel}" class="input" value="#{ProjekteForm.myProjekt.title}"/>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />

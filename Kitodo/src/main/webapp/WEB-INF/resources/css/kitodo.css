@@ -476,6 +476,14 @@ main {
     width:100%;
 }
 
+.input-with-button {
+    width: 90%; !important;
+}
+
+.input-with-button + .ui-button {
+    margin-left: 5px;
+}
+
 .input.ui-calendar {
     display: block;
 }

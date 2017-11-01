@@ -58,6 +58,7 @@ a:hover {
 
 button .ui-icon {
     color: #fff;
+    border-radius: 0;
 }
 
 .ui-button-text-icon-left .ui-button-text {
