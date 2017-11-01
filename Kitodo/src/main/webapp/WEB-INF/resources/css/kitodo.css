@@ -17,7 +17,6 @@ body {
     margin: 0;
     border: 0 none;
     padding: 0;
-    color: #1b2b36;
     font-family: 'Raleway', sans-serif;
     font-weight: 400;
     font-size: 16px;
@@ -45,24 +44,6 @@ input, textarea, button, select {
 
 textarea {
     overflow: auto;
-    }
-
-a:link {
-    color: #00ffff;
-    }
-
-a:visited {
-    color: #0000ff;
-    }
-
-a:hover, a:focus {
-    color: #ff0000;
-    outline-width: 0;
-    }
-
-a:active {
-    color: #00ff00;
-    outline-width: 0;
     }
 
 mark {
@@ -619,38 +600,12 @@ footer {
     float: right;
 }
 
-.ui-datatable table {
-    border-top: 3px solid #999;
-}
-
-th.ui-state-default {
-    background: #d8d8d8;
-    color: #192B36;
-    font-weight: bold;
-}
-
 .ui-widget-content {
-    background: #fff;
     border: 0 none !important;
-    color: #192B36;
-}
-
-.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td, .ui-datatable tfoot th {
-    border-bottom: 1px solid #D8D8D8 !important;
-    border-left-width: 0;
-    border-right-width: 0;
-    border-top-width: 0;
-    padding: 8px 10px;
-    text-align: left;
 }
 
 .ui-datatable tbody tr:last-child td {
     border-bottom: none !important;
-}
-
-.ui-datatable.ui-widget tr th {
-    background: #d8d8d8;
-    border: 0;
 }
 
 .ui-datatable tr th:nth-child(2) {
@@ -672,37 +627,8 @@ th.ui-state-default {
     content: "\f13a";
 }
 
-.ui-tabs.ui-tabs-top {
-    padding: 0;
-}
-
-.ui-tabs.ui-tabs-top > .ui-tabs-nav {
-    padding: 0 1.5em;
-    background: #d8d8d8;
-    border-top: solid 3px #999;
-}
-
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
-    border: 0;
-    border-top: solid 3px #999;
-    background: transparent;
     color: #999;
-    box-shadow: none;
-    border-radius: 0;
-    margin: -3px 0 0 0;
-    padding: 0 10px;
-    top: 0;
-}
-
-.ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-selected {
-    background: #fff;
-    color: #006DBD;
-    border-color: #f94a15;
-}
-
-.ui-tabs.ui-tabs-top > .ui-tabs-nav li a {
-    color: inherit;
-    text-shadow: none;
 }
 
 .ui-tabs .ui-tabs-panel {
@@ -711,14 +637,6 @@ th.ui-state-default {
 
 .ui-tabs .ui-tabs-panel > div {
     padding: 1.3em 1.5em;
-}
-
-.ui-grid-col-6:first-child {
-    padding: 0 .75em 0 0;
-}
-
-.ui-grid-col-6:nth-child(2) {
-    padding: 0 0 0 .75em;
 }
 
 .ui-panelgrid-cell > div {
@@ -730,31 +648,11 @@ th.ui-state-default {
     box-sizing: border-box;
 }
 
-.ui-widget.ui-button, .ui-widget.ui-inputfield {
-    box-shadow: none;
-    text-shadow: none;
-}
-
 .ui-commandlink.button-blue,
-.ui-button.button-blue,
 .button-blue .ui-icon {
     color: #006DBD;
     background: transparent;
     border: none;
-}
-
-.ui-commandlink.button-filled-blue,
-.ui-button.button-filled-blue,
-.ui-commandlink.button-filled-green,
-.ui-button.button-filled-green {
-    color: #fff;
-    font-weight: lighter;
-    border: 0;
-}
-
-.ui-commandlink.button-filled-blue,
-.ui-button.button-filled-blue {
-    background: #006DBD;
 }
 
 .ui-commandlink.button-filled-green,
@@ -764,15 +662,6 @@ th.ui-state-default {
 
 .buttonset {
     padding-right: 10px;
-}
-
-.ui-inputfield.ui-inputtext,
-.ui-inputfield.hasDatepicker,
-.ui-widget.ui-selectonemenu {
-    border: solid 1px #006DBD;
-    background: #fff;
-    color: #006DBD;
-    border-radius: 3px;
 }
 
 .ui-inputfield.ui-inputtext::-webkit-input-placeholder { /* Webkit, Blink */
@@ -807,16 +696,9 @@ th.ui-state-default {
     color: #d8d8d8;
 }
 
-.ui-selectonemenu .ui-selectonemenu-label {
-    color: #006DBD;
-    box-shadow: none;
-}
-
 .ui-selectonemenu .ui-selectonemenu-trigger {
-    border: none;
     background: #fff;
     color: #006DBD;
-    box-shadow: none;
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list {
@@ -837,7 +719,6 @@ th.ui-state-default {
 .ui-chkbox .ui-chkbox-box {
     width: 40px;
     height: 40px;
-    border: 0;
 }
 
 .ui-chkbox .ui-chkbox-box .ui-chkbox-icon {
