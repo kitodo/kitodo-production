@@ -65,6 +65,10 @@ button .ui-icon {
     padding: .7em .7em .7em 2.1em;
 }
 
+.ui-button-text-icon-right .ui-button-text {
+    padding: .7em 2.1em .7em .7em;
+}
+
 .ui-button-icon-only .ui-button-text,
 .ui-button-text-only .ui-button-text,
 .ui-datepicker-trigger.ui-button-icon-only .ui-button-text {
