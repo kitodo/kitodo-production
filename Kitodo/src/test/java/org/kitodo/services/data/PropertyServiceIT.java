@@ -27,11 +27,14 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Tests for PropertyService class.
  */
 public class PropertyServiceIT {
+
+    private static final PropertyService propertyService = new ServiceManager().getPropertyService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -55,16 +58,12 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldCountAllProperties() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         Long amount = propertyService.count();
         assertEquals("Properties were not counted correctly!", Long.valueOf(8), amount);
     }
 
     @Test
     public void shouldCountAllPropertiesAccordingToQuery() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         String query = matchQuery("type", "process").operator(Operator.AND).toString();
         Long amount = propertyService.count(query);
         assertEquals("Properties were not counted correctly!", Long.valueOf(4), amount);
@@ -72,17 +71,13 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForProperties() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         Long amount = propertyService.countDatabaseRows();
         assertEquals("Properties were not counted correctly!", Long.valueOf(8), amount);
     }
 
     @Test
     public void shouldFindProcessProperty() throws Exception {
-        PropertyService processPropertyService = new PropertyService();
-
-        Property processProperty = processPropertyService.getById(1);
+        Property processProperty = propertyService.getById(1);
         String actual = processProperty.getTitle();
         String expected = "Process Property";
         assertEquals("Process property was not found in database - title doesn't match!", expected, actual);
@@ -94,8 +89,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindTemplateProperty() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         Property templateProperty = propertyService.getById(7);
         String actual = templateProperty.getTitle();
         String expected = "firstTemplate title";
@@ -108,8 +101,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindWorkpieceProperty() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         Property workpieceProperty = propertyService.getById(5);
         String actual = workpieceProperty.getTitle();
         String expected = "FirstWorkpiece Property";
@@ -122,8 +113,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindDistinctTitles() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         List<String> processPropertiesTitlesDistinct = propertyService.findProcessPropertiesTitlesDistinct();
         int size = processPropertiesTitlesDistinct.size();
         assertEquals("Incorrect size of distinct titles for process properties!", 2, size);
@@ -137,24 +126,18 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindAllProperties() {
-        PropertyService propertyService = new PropertyService();
-
         List<Property> properties = propertyService.getAll();
         assertEquals("Not all properties were found in database!", 8, properties.size());
     }
 
     @Test
     public void shouldGetAllPropertiesInGivenRange() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         List<Property> properties = propertyService.getAll(2,6);
         assertEquals("Not all properties were found in database!", 6, properties.size());
     }
 
     @Test
     public void shouldRemoveProperty() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.save(property);
@@ -178,8 +161,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindById() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         Integer actual = propertyService.findById(1).getId();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
@@ -187,8 +168,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByValue() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         List<JSONObject> properties = propertyService.findByValue("second", null, true);
         Integer actual = properties.size();
         Integer expected = 3;
@@ -202,8 +181,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByValueForExactType() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         List<JSONObject> properties = propertyService.findByValue("second", "process", true);
         Integer actual = properties.size();
         Integer expected = 1;
@@ -222,8 +199,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByTitleAndValue() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", null, true);
         Integer actual = properties.size();
         Integer expected = 1;
@@ -237,8 +212,6 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByTitleAndValueForExactType() throws Exception {
-        PropertyService propertyService = new PropertyService();
-
         List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", "process", true);
         Integer actual = properties.size();
         Integer expected = 1;
@@ -257,21 +230,17 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldGetNormalizedTitle() throws Exception {
-        PropertyService processPropertyService = new PropertyService();
-
-        Property processProperty = processPropertyService.getById(1);
+        Property processProperty = propertyService.getById(1);
         String expected = "Process_Property";
-        String actual = processPropertyService.getNormalizedTitle(processProperty);
+        String actual = propertyService.getNormalizedTitle(processProperty);
         assertEquals("Normalized title doesn't match to given plain text!", expected, actual);
     }
 
     @Test
     public void shouldGetNormalizedValue() throws Exception {
-        PropertyService processPropertyService = new PropertyService();
-
-        Property processProperty = processPropertyService.getById(1);
+        Property processProperty = propertyService.getById(1);
         String expected = "first_value";
-        String actual = processPropertyService.getNormalizedValue(processProperty);
+        String actual = propertyService.getNormalizedValue(processProperty);
         assertEquals("Normalized value doesn't match to given plain text!", expected, actual);
     }
 }

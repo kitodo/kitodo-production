@@ -21,6 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProjectService;
 
 public class ProjekteFormIT {
@@ -46,7 +47,7 @@ public class ProjekteFormIT {
     @Test
     public void shouldGenerateValuesForStatistics() throws Exception {
         ProjekteForm projekteForm = new ProjekteForm();
-        ProjectService projectService = new ProjectService();
+        ProjectService projectService = new ServiceManager().getProjectService();
 
         Project initialProject = projectService.getById(1);
 
@@ -62,7 +63,7 @@ public class ProjekteFormIT {
     @Test
     public void shouldGetStatisticsManager() throws Exception {
         ProjekteForm projekteForm = new ProjekteForm();
-        ProjectService projectService = new ProjectService();
+        ProjectService projectService = new ServiceManager().getProjectService();
 
         Project initialProject = projectService.getById(1);
 

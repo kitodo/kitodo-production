@@ -28,6 +28,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DocStructType;
 
@@ -35,6 +36,8 @@ import ugh.dl.DocStructType;
  * Tests for RulesetService class.
  */
 public class RulesetServiceIT {
+
+    private static final RulesetService rulesetService = new ServiceManager().getRulesetService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -58,16 +61,12 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldCountAllRulesets() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         Long amount = rulesetService.count();
         assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldCountAllRulesetsAccordingToQuery() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         String query = matchQuery("title", "SLUBDD").operator(Operator.AND).toString();
         Long amount = rulesetService.count(query);
         assertEquals("Rulesets were not counted correctly!", Long.valueOf(1), amount);
@@ -75,16 +74,12 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForRulesets() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         Long amount = rulesetService.countDatabaseRows();
         assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldFindRuleset() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         Ruleset ruleset = rulesetService.getById(1);
         boolean condition = ruleset.getTitle().equals("SLUBDD") && ruleset.getFile().equals("ruleset_test.xml");
         assertTrue("Ruleset was not found in database!", condition);
@@ -92,24 +87,18 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindAllRulesets() {
-        RulesetService rulesetService = new RulesetService();
-
         List<Ruleset> rulesets = rulesetService.getAll();
         assertEquals("Not all rulesets were found in database!", 2, rulesets.size());
     }
 
     @Test
     public void shouldGetAllRulesetsInGivenRange() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         List<Ruleset> rulesets = rulesetService.getAll(1,10);
         assertEquals("Not all rulesets were found in database!", 1, rulesets.size());
     }
 
     @Test
     public void shouldFindById() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         String actual = rulesetService.findById(1).getTitle();
         String expected = "SLUBDD";
         assertEquals("Ruleset was not found in index!", expected, actual);
@@ -117,8 +106,6 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         List<JSONObject> rulesets = rulesetService.findByTitle("SLUBDD", true);
         Integer actual = rulesets.size();
         Integer expected = 1;
@@ -127,8 +114,6 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByFile() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         JSONObject ruleset = rulesetService.findByFile("ruleset_test.xml");
         JSONObject jsonObject = (JSONObject) ruleset.get("_source");
         String actual = (String) jsonObject.get("file");
@@ -138,8 +123,6 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByTitleAndFile() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         JSONObject ruleset = rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml");
         Integer actual = rulesetService.getIdFromJSONObject(ruleset);
         Integer expected = 2;
@@ -153,8 +136,6 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByTitleOrFile() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         List<JSONObject> ruleset = rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml");
         Integer actual = ruleset.size();
         Integer expected = 2;
@@ -173,16 +154,12 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindAllRulesetsDocuments() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         List<JSONObject> rulesets = rulesetService.findAllDocuments();
         assertEquals("Not all rulesets were found in index!", 2, rulesets.size());
     }
 
     @Test
     public void shouldRemoveRuleset() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("To Remove");
         rulesetService.save(ruleset);
@@ -206,8 +183,6 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldGetPreferences() throws Exception {
-        RulesetService rulesetService = new RulesetService();
-
         Ruleset ruleset = rulesetService.getById(1);
         List<DocStructType> docStructTypes = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
 
