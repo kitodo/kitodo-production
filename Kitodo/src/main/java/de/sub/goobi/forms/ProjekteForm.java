@@ -281,18 +281,14 @@ public class ProjekteForm extends BasisForm {
 
     /**
      * Save file group.
-     *
-     * @return page
      */
-    public String filegroupSave() {
+    public void filegroupSave() {
         if (this.myProjekt.getProjectFileGroups() == null) {
             this.myProjekt.setProjectFileGroups(new ArrayList<>());
         }
         if (!this.myProjekt.getProjectFileGroups().contains(this.myFilegroup)) {
             this.myProjekt.getProjectFileGroups().add(this.myFilegroup);
         }
-
-        return "jeniaClosePopupFrameWithAction";
     }
 
     public String filegroupEdit() {
