@@ -59,6 +59,7 @@ import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.primefaces.event.NodeSelectEvent;
@@ -179,6 +180,8 @@ public class Metadaten {
     private final FileService fileService = serviceManager.getFileService();
     private Paginator paginator = new Paginator();
     private TreeNode selectedTreeNode;
+    private PositionOfNewDocStrucElement positionOfNewDocStrucElement = PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT;
+
 
     /**
      * Konstruktor.
@@ -929,9 +932,6 @@ public class Metadaten {
             }
         }
 
-        if (this.logicalTopstruct == null) {
-
-        }
         /*
          * Die Struktur als Tree3 aufbereiten
          */
@@ -1131,6 +1131,23 @@ public class Metadaten {
         readMetadataAsFirstTree();
     }
 
+    public PositionOfNewDocStrucElement getPositionOfNewDocStrucElement () {
+        return this.positionOfNewDocStrucElement;
+    }
+
+    public void setPositionOfNewDocStrucElement(PositionOfNewDocStrucElement positionOfNewDocStrucElement) {
+        this.positionOfNewDocStrucElement = positionOfNewDocStrucElement;
+    }
+
+    /**
+     * Gets all positions of new DocStruc elements.
+     *
+     * @return The positions of new DocStruc elements.
+     */
+    public PositionOfNewDocStrucElement[] getPositionsOfNewDocStrucElement() {
+        return this.positionOfNewDocStrucElement.values();
+    }
+
     /**
      * Knoten hinzufügen.=
      */
@@ -1146,11 +1163,11 @@ public class Metadaten {
         /*
          * vor das aktuelle Element
          */
-        if (this.neuesElementWohin.equals("1")) {
-            if (this.addFirstDocStructType == null || this.addFirstDocStructType.equals("")) {
+        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT) {
+            if (this.tempTyp == null || this.tempTyp.equals("")) {
                 return;
             }
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addFirstDocStructType);
+            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
             ds = this.digitalDocument.createDocStruct(dst);
             if (this.docStruct == null) {
                 return;
@@ -1184,8 +1201,8 @@ public class Metadaten {
         /*
          * hinter das aktuelle Element
          */
-        if (this.neuesElementWohin.equals("2")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addFirstDocStructType);
+        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT) {
+            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
             ds = this.digitalDocument.createDocStruct(dst);
             DocStruct parent = this.docStruct.getParent();
             if (parent == null) {
@@ -1217,8 +1234,8 @@ public class Metadaten {
         /*
          * als erstes Child
          */
-        if (this.neuesElementWohin.equals("3")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addSecondDocStructType);
+        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT) {
+            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
             ds = this.digitalDocument.createDocStruct(dst);
             DocStruct parent = this.docStruct;
             if (parent == null) {
@@ -1242,8 +1259,8 @@ public class Metadaten {
         /*
          * als letztes Child
          */
-        if (this.neuesElementWohin.equals("4")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addSecondDocStructType);
+        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT) {
+            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
             ds = this.digitalDocument.createDocStruct(dst);
             this.docStruct.addChild(ds);
         }
@@ -1272,6 +1289,22 @@ public class Metadaten {
      */
     public SelectItem[] getAddableDocStructTypenAlsNachbar() {
         return this.metaHelper.getAddableDocStructTypen(this.docStruct, true);
+    }
+
+    public SelectItem[] getAddableDocStructTypes() {
+        switch (positionOfNewDocStrucElement) {
+            case BEFOR_CURRENT_ELEMENT:
+            case AFTER_CURRENT_ELEMENT:
+                return this.metaHelper.getAddableDocStructTypen(this.docStruct, true);
+
+            case FIRST_CHILD_OF_CURRENT_ELEMENT:
+            case LAST_CHILD_OF_CURRENT_ELEMENT:
+                return this.metaHelper.getAddableDocStructTypen(this.docStruct, false);
+
+            default:
+                logger.error("Invalid positionOfNewDocStrucElement");
+                return null;
+        }
     }
 
     /*
