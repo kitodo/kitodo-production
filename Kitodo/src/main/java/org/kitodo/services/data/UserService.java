@@ -316,18 +316,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
     }
 
     /**
-     * Find users with exact metadata language.
-     *
-     * @param metadataLanguage
-     *            of the searched user
-     * @return list of JSON objects
-     */
-    List<JSONObject> findByMetadataLanguage(String metadataLanguage) throws DataException {
-        QueryBuilder query = createSimpleQuery("metadataLanguage", metadataLanguage, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
      * Find users by id of user group.
      *
      * @param id
