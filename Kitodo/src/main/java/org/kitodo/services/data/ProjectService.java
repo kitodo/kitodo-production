@@ -280,7 +280,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setFileFormatInternal(getStringPropertyForDTO(projectJSONObject, "fileFormatInternal"));
         projectDTO.setNumberOfPages(getIntegerPropertyForDTO(projectJSONObject, "numberOfPages"));
         projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(projectJSONObject, "numberOfVolumes"));
-        projectDTO.setProjectIsArchived(getBooleanPropertyForDTO(jsonObject, "archived"));
+        projectDTO.setProjectIsArchived(getBooleanPropertyForDTO(projectJSONObject, "archived"));
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }
