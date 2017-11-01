@@ -59,25 +59,25 @@ public class ServiceManager {
 
     private void initializeBatchService() {
         if (batchService == null) {
-            batchService = new BatchService();
+            batchService = BatchService.getInstance();
         }
     }
 
     private void initializeDocketService() {
         if (docketService == null) {
-            docketService = new DocketService();
+            docketService = DocketService.getInstance();
         }
     }
 
     private void initializeFilterService() {
         if (filterService == null) {
-            filterService = new FilterService();
+            filterService = FilterService.getInstance();
         }
     }
 
     private void initializeHistoryService() {
         if (historyService == null) {
-            historyService = new HistoryService();
+            historyService = HistoryService.getInstance();
         }
     }
 
@@ -89,13 +89,13 @@ public class ServiceManager {
 
     private void initializePropertyService() {
         if (propertyService == null) {
-            propertyService = new PropertyService();
+            propertyService = PropertyService.getInstance();
         }
     }
 
     private void initializeProcessService() {
         if (processService == null) {
-            processService = new ProcessService();
+            processService = ProcessService.getInstance();
         }
     }
 
@@ -107,43 +107,43 @@ public class ServiceManager {
 
     private void initializeProjectService() {
         if (projectService == null) {
-            projectService = new ProjectService();
+            projectService = ProjectService.getInstance();
         }
     }
 
     private void initializeRulesetService() {
         if (rulesetService == null) {
-            rulesetService = new RulesetService();
+            rulesetService = RulesetService.getInstance();
         }
     }
 
     private void initializeTaskService() {
         if (taskService == null) {
-            taskService = new TaskService();
+            taskService = TaskService.getInstance();
         }
     }
 
     private void initializeTemplateService() {
         if (templateService == null) {
-            templateService = new TemplateService();
+            templateService = TemplateService.getInstance();
         }
     }
 
     private void initializeUserGroupService() {
         if (userGroupService == null) {
-            userGroupService = new UserGroupService();
+            userGroupService = UserGroupService.getInstance();
         }
     }
 
     private void initializeUserService() {
         if (userService == null) {
-            userService = new UserService();
+            userService = UserService.getInstance();
         }
     }
 
     private void initializeWorkpieceService() {
         if (workpieceService == null) {
-            workpieceService = new WorkpieceService();
+            workpieceService = WorkpieceService.getInstance();
         }
     }
 
