@@ -13,32 +13,38 @@
 -->
 
 <ui:composition
-        xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:p="http://primefaces.org/ui">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
 
-    <h:form>
+    <p:growl id="growl" showDetail="true"/>
+
+    <h:form id="buttons">
+        <p:blockUI block="buttons,tabView" trigger="saveBtn,saveAndBackBtn"/>
         <div align="right">
-            <p:button value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" />
-            <p:button value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle" icon="ui-icon-close" />
-            <p:button value="#{msgs.speichern}" icon="ui-icon-disk" />
-            <p:button value="#{msgs.speichernZurueck}" icon="ui-icon-extlink" />
+            <p:button value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" disabled="true"/>
+            <p:button id="backBtn" value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle" icon="ui-icon-close"/>
+            <p:commandButton id="saveBtn" value="#{msgs.speichern}" action="#{Metadaten.saveMetadataToXml}"
+                             icon="ui-icon-disk"
+                             update="growl"/>
+            <p:commandButton id="saveAndBackBtn" value="#{msgs.speichernZurueck}"
+                             action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
+                             icon="ui-icon-extlink" update="growl"/>
         </div>
-
-        <p:tabView style = "height: 100%">
-            <p:tab title="#{msgs.paginierung}">
-                <ui:include src="pagination.xhtml" />
-            </p:tab>
-            <p:tab title="#{msgs.strukturdaten}">
-                <ui:include src="structureData.xhtml" />
-            </p:tab>
-            <p:tab title="#{msgs.metadata}">
-                <ui:include src="metadata.xhtml" />
-            </p:tab>
-        </p:tabView>
-
     </h:form>
+
+    <p:tabView id="tabView">
+        <p:tab title="#{msgs.paginierung}">
+            <ui:include src="pagination.xhtml"/>
+        </p:tab>
+        <p:tab title="#{msgs.strukturdaten}">
+            <ui:include src="structureData.xhtml"/>
+        </p:tab>
+        <p:tab title="#{msgs.metadata}">
+            <ui:include src="metadata.xhtml"/>
+        </p:tab>
+    </p:tabView>
 
 </ui:composition>

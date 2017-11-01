@@ -118,7 +118,7 @@
                                     <h:outputText value=" | " style="font-size: 11px;"
                                                   rendered="#{not Metadaten.modeOnlyRead}"/>
                                     <!-- Metadaten schreiben -->
-                                    <h:commandLink style="font-size:11px" action="#{Metadaten.reload}"
+                                    <h:commandLink style="font-size:11px" action="#{Metadaten.saveMetadataToXml}"
                                                    value="#{msgs.speichern}" rendered="#{not Metadaten.modeOnlyRead}"
                                                    immediate="false"/>
                                     <h:outputText value=" | " style="font-size: 11px;"
@@ -225,7 +225,7 @@
                                     <h:outputText value=" | " style="font-size: 11px;"
                                                   rendered="#{not Metadaten.modeOnlyRead}"/>
                                     <!-- Metadaten schreiben -->
-                                    <h:commandLink style="font-size:11px" action="#{Metadaten.reload}"
+                                    <h:commandLink style="font-size:11px" action="#{Metadaten.saveMetadataToXml}"
                                                    value="#{msgs.speichern}" rendered="#{not Metadaten.modeOnlyRead}"
                                                    immediate="false"/>
                                     <h:outputText value=" | " style="font-size: 11px;"

@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.TreeNode;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
@@ -62,6 +61,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -176,6 +178,7 @@ public class Metadaten {
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
     private Paginator paginator = new Paginator();
+    private TreeNode selectedTreeNode;
 
     /**
      * Konstruktor.
@@ -206,17 +209,11 @@ public class Metadaten {
 
     /**
      * Add.
-     *
-     * @return String
      */
-    public String add() {
+    public void add() {
         this.modeAdd = true;
         Modes.setBindState(BindState.create);
         getMetadatum().setValue("");
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -252,18 +249,26 @@ public class Metadaten {
     }
 
     /**
-     * Reload.
-     *
-     * @return String
+     * Save metadata to Xml file.
      */
-    public String reload() {
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+    public void saveMetadataToXml() {
+        calculateMetadataAndImages();
+        cleanupMetadata();
+        if (storeMetadata()) {
+            Helper.setMeldung("XML saved");
+        }
+    }
+
+    /**
+     * Save metadata to Xml file.
+     */
+    public String saveMetadataToXmlAndGoToProcessPage() {
+        calculateMetadataAndImages();
+        cleanupMetadata();
+        if (storeMetadata()) {
+            return "/pages/ProzessverwaltungAlle?faces-redirect=true";
         } else {
-            calculateMetadataAndImages();
-            cleanupMetadata();
-            // ignoring result of store operation
-            storeMetadata();
+            Helper.setMeldung("XML could not be saved");
             return "";
         }
     }
@@ -271,9 +276,8 @@ public class Metadaten {
     /**
      * Copy.
      *
-     * @return String
      */
-    public String copy() {
+    public void copy() {
         Metadata md;
         try {
             md = new Metadata(this.curMetadatum.getMd().getType());
@@ -281,13 +285,10 @@ public class Metadaten {
             md.setValue(this.curMetadatum.getMd().getValue());
             this.docStruct.addMetadata(md);
         } catch (MetadataTypeNotAllowedException e) {
-            logger.error("Fehler beim copy von Metadaten (MetadataTypeNotAllowedException): " + e.getMessage());
+            Helper.setFehlerMeldung(e.getMessage());
+            logger.error("Error at Metadata copy (MetadataTypeNotAllowedException): " + e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -354,9 +355,8 @@ public class Metadaten {
     /**
      * Save.
      *
-     * @return String
      */
-    public String save() {
+    public void save() {
         try {
             Metadata md = new Metadata(this.myPrefs.getMetadataTypeByName(this.tempTyp));
             md.setValue(this.selectedMetadatum.getValue());
@@ -385,22 +385,6 @@ public class Metadaten {
         this.selectedMetadatum.setValue("");
         this.tempValue = "";
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
-    }
-
-    /**
-     * Load right frame.
-     *
-     * @return String
-     */
-    public String loadRightFrame() {
-        this.modeAdd = false;
-        this.modeAddPerson = false;
-        Modes.setBindState(BindState.edit);
-        return "Metadaten2rechts";
     }
 
     /**
@@ -472,15 +456,10 @@ public class Metadaten {
     /**
      * Delete.
      *
-     * @return String
      */
-    public String delete() {
+    public void delete() {
         this.docStruct.removeMetadata(this.curMetadatum.getMd());
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -705,7 +684,7 @@ public class Metadaten {
      * Metadaten Einlesen.
      */
 
-    public String readXmlStart() throws ReadException, IOException, PreferencesException {
+    public void readXmlStart() throws ReadException, IOException, PreferencesException {
         currentRepresentativePage = "";
         this.myPrefs = serviceManager.getRulesetService().getPreferences(this.process.getRuleset());
         this.modeView = "Metadaten";
@@ -772,11 +751,6 @@ public class Metadaten {
         saveMetadataAsBean(this.logicalTopstruct);
         readMetadataAsFirstTree();
 
-        if (!this.modeOnlyRead) {
-            // inserted to make Paginierung the starting view
-            this.modeView = "Paginierung";
-        }
-        return "Metadaten";
     }
 
     private void createDefaultValues(DocStruct element) {
@@ -870,9 +844,8 @@ public class Metadaten {
 
         cleanupMetadata();
 
-        if (!storeMetadata()) {
-            return "Metadaten";
-        }
+        storeMetadata() ;
+
 
         disableReturn();
         return this.result;
@@ -2620,6 +2593,73 @@ public class Metadaten {
     }
 
     /**
+     * Returns the current selected TreeNode.
+     *
+     * @return The TreeNode.
+     */
+    public TreeNode getSelectedTreeNode() {
+        return selectedTreeNode;
+    }
+
+    /**
+     * Sets the selecetd TreeNode.
+     *
+     * @param selectedTreeNode
+     *          The TreeNode.
+     */
+    public void setSelectedTreeNode(TreeNode selectedTreeNode) {
+        this.selectedTreeNode = selectedTreeNode;
+    }
+
+    /**
+     * Sets MyStrukturelement on selection of TreeNode.
+     *
+     * @param event
+     *          The NoteSelectEvent.
+     */
+    public void onNodeSelect(NodeSelectEvent event) {
+        setMyStrukturelement((DocStruct) event.getTreeNode().getData());
+    }
+
+    /**
+     * Gets logicalTopstruct of digital document as TreeNode structure.
+     *
+     * @return
+     *          The TreeNote.
+     */
+    public TreeNode getTreeNodes() {
+        TreeNode root = new DefaultTreeNode("root", null);
+        List<DocStruct> children = this.logicalTopstruct.getAllChildren();
+        TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
+        if (children != null) {
+            visibleRoot.getChildren().add(convertDocstructToPrimeFacesTreeNode(children, visibleRoot));
+        }
+        return setExpandingAll(root,true);
+    }
+
+    private TreeNode convertDocstructToPrimeFacesTreeNode(List<DocStruct> elements, TreeNode parentTreeNode) {
+        TreeNode treeNode = null;
+
+        for (DocStruct element : elements) {
+            List<DocStruct> children = element.getAllChildren();
+            treeNode = new DefaultTreeNode(element, parentTreeNode);
+            if (children != null) {
+                convertDocstructToPrimeFacesTreeNode(children, treeNode);
+            }
+        }
+        return treeNode;
+    }
+
+    private TreeNode setExpandingAll(TreeNode node, boolean expanded) {
+        for (TreeNode child : node.getChildren()) {
+            setExpandingAll(child, expanded);
+        }
+        node.setExpanded(expanded);
+
+        return node;
+    }
+
+    /**
      * Get all structure trees 3.
      *
      * @return list of HashMaps
@@ -2670,7 +2710,7 @@ public class Metadaten {
             }
         }
 
-        for (TreeNode treeNode : inTreeStruct.getChildren()) {
+        for (de.sub.goobi.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
             TreeNodeStruct3 kind = (TreeNodeStruct3) treeNode;
             runThroughTree(kind);
         }

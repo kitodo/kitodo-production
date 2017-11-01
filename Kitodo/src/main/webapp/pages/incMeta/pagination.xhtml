@@ -18,7 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
-
+    <h:form id="pagination">
     <p:commandLink action="#{Metadaten.createPagination}" value="#{msgs.paginierungEinlesen}" update="paginationTab">
     </p:commandLink>
 
@@ -97,5 +97,5 @@
     <!--</h:selectOneMenu>-->
     <!--</div>-->
     <!--</ui:fragment>-->
-
+    </h:form>
 </ui:composition>
