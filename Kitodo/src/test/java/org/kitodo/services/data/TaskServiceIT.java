@@ -325,6 +325,106 @@ public class TaskServiceIT {
     }
 
     @Test
+    public void shouldGetTasksForProjectHelper() {
+        TaskService taskService = new TaskService();
+
+        List<Task> tasks = taskService.getTasksForProjectHelper(1);
+        int actual = tasks.size();
+        int expected = 3;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+
+        for (int i = 0; i < tasks.size(); i++) {
+            if (i < tasks.size() - 1) {
+                boolean condition = tasks.get(i).getOrdering() <= tasks.get(i+1).getOrdering();
+                assertTrue("Ordering of tasks is incorrect!", condition);
+            } else {
+                boolean condition = tasks.get(i-1).getOrdering() <= tasks.get(i).getOrdering();
+                assertTrue("Ordering of tasks is incorrect!", condition);
+            }
+        }
+
+        tasks = taskService.getTasksForProjectHelper(2);
+        actual = tasks.size();
+        expected = 0;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetSizeOfTasksForProjectHelper() {
+        TaskService taskService = new TaskService();
+
+        List<Long> tasksSize = taskService.getSizeOfTasksForProjectHelper(1);
+        int actual = tasksSize.size();
+        int expected = 3;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+
+        tasksSize = taskService.getSizeOfTasksForProjectHelper(2);
+        actual = tasksSize.size();
+        expected = 0;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetAverageOrderingOfTasksForProjectHelper() {
+        TaskService taskService = new TaskService();
+
+        List<Double> tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(1);
+        int actual = tasksSize.size();
+        int expected = 3;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+
+        tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(2);
+        actual = tasksSize.size();
+        expected = 0;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetTasksWithProcessingStatusForProjectHelper() {
+        TaskService taskService = new TaskService();
+
+        List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1,1);
+        int actual = tasks.size();
+        int expected = 1;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+
+        tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1, 2);
+        actual = tasks.size();
+        expected = 0;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetSizeOfTasksWithProcessingStatusForProjectHelper() {
+        TaskService taskService = new TaskService();
+
+        List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,1);
+        int actual = tasksSize.size();
+        int expected = 1;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+
+        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,2);
+        actual = tasksSize.size();
+        expected = 0;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetAmountOfImagesForTasksWithProcessingStatusForProjectHelper() {
+        TaskService taskService = new TaskService();
+
+        List<Long> amountOfImages = taskService.getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(1, 1);
+        int actual = amountOfImages.size();
+        int expected = 1;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+
+        amountOfImages = taskService.getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(1, 2);
+        actual = amountOfImages.size();
+        expected = 0;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+    }
+
+    @Test
     public void shouldFindDistinctTitles() throws Exception {
         TaskService taskService = new TaskService();
 
