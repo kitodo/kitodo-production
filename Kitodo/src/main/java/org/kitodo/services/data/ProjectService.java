@@ -22,14 +22,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.statistics.StepInformation;
-import org.goobi.webapi.beans.Field;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -299,7 +296,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @return a list with information for each step on workflow
      */
-
     public List<StepInformation> getWorkFlow(Project project) {
         if (this.commonWorkFlow == null) {
             if (project.getId() != null) {
@@ -309,11 +305,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
             }
         }
         return this.commonWorkFlow;
-    }
-
-    @XmlElement(name = "field")
-    public List<Field> getFieldConfig(Project project) throws IOException {
-        return Field.getFieldConfigForProject(project);
     }
 
     /**
