@@ -33,6 +33,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
+import org.kitodo.dto.ProjectDTO;
 
 /**
  * Tests for ProjectService class.
@@ -88,13 +89,34 @@ public class ProjectServiceIT {
     public void shouldFindProject() throws Exception {
         ProjectService projectService = new ProjectService();
 
+        ProjectDTO project = projectService.findById(1);
+        boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
+        assertTrue("Project was not found in index!", condition);
+        assertTrue("Project was not found in index!", project.getProjectIsArchived().equals(false));
+
+        project = projectService.findById(3);
+        assertTrue("Project was not found in index!", project.getProjectIsArchived().equals(true));
+    }
+
+    @Test
+    public void shouldFindAllProjects() throws Exception {
+        ProjectService projectService = new ProjectService();
+
+        List<ProjectDTO> projects = projectService.findAll();
+        assertEquals("Not all projects were found in index!", 3, projects.size());
+    }
+
+    @Test
+    public void shouldGetProject() throws Exception {
+        ProjectService projectService = new ProjectService();
+
         Project project = projectService.getById(1);
         boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in database!", condition);
     }
 
     @Test
-    public void shouldFindAllProjects() {
+    public void shouldGetAllProjects() {
         ProjectService projectService = new ProjectService();
 
         List<Project> projects = projectService.getAll();
