@@ -87,6 +87,7 @@
                 </p:commandLink>
                 <!-- delete button -->
                 <p:commandLink action="#{ProjekteForm.filegroupDelete()}"
+                               update="projectEditForm"
                                title="#{msgs.filegroupLoeschen}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')) return"
                                styleClass="buttonset button-blue"><i class="fa fa-trash fa-lg"/>

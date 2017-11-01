@@ -22,7 +22,7 @@
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>#{msgs.projekte}</h3>
-                <p:button outcome="projectEdit" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
+                <p:commandButton action="#{ProjekteForm.newProject}" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
             </p:panel>
             <p:dataTable id="project-list" var="project" value="#{ProjekteForm.lazyDTOModel}"
                          rows="#{LoginForm.myBenutzer.tableSize}" lazy="true" paginator="true">

@@ -150,7 +150,7 @@ public class ProjekteForm extends BasisForm {
         this.projectProgressImage = null;
         this.projectStatImages = null;
         this.projectStatVolumes = null;
-        return "/pages/ProjekteAlle";
+        return redirectToList("");
     }
 
     /**
@@ -161,7 +161,7 @@ public class ProjekteForm extends BasisForm {
     public String newProject() {
         this.myProjekt = new Project();
         this.itemId = 0;
-        return "/pages/ProjekteBearbeiten?faces-redirect=true";
+        return redirectToEdit("?faces-redirect=true");
     }
 
     /**
@@ -245,7 +245,7 @@ public class ProjekteForm extends BasisForm {
             logger.error(e);
         }
         this.page = new Page<>(0, projects);
-        return "/pages/ProjekteAlle?faces-redirect=true";
+        return redirectToList("?faces-redirect=true");
     }
 
     /**
@@ -308,7 +308,7 @@ public class ProjekteForm extends BasisForm {
         // to be deleted fileGroups ids are listed
         // and deleted after a commit
         this.deletedFileGroups.add(this.myFilegroup.getId());
-        return "/pages/ProjekteBearbeiten";
+        return redirectToEdit("");
     }
 
     /*
@@ -828,6 +828,48 @@ public class ProjekteForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e.getMessage());
             return new LinkedList<>();
+        }
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/projectEdit" once we have
+    // completely switched to the new frontend pages
+    private String redirectToEdit(String urlSuffix) {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
+                return "/pages/projectEdit" + urlSuffix;
+            } else {
+                return "/pages/ProjekteBearbeiten" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
+            // used from it's integration test
+            // class "ProjekteFormIT", where no "FacesContext" is available!
+            return "/pages/ProjekteBearbeiten" + urlSuffix;
+        }
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/projects" once we have completely
+    // switched to the new frontend pages
+    private String redirectToList(String urlSuffix) {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("projectEdit.jsf")) {
+                return "/pages/projects" + urlSuffix;
+            } else {
+                return "/pages/ProjekteAlle" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
+            // used from it's integration test
+            // class "ProjekteFormIT", where no "FacesContext" is available!
+            return "/pages/ProjekteAlle" + urlSuffix;
         }
     }
 }
