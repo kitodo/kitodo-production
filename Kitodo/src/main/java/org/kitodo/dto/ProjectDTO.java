@@ -23,6 +23,7 @@ public class ProjectDTO extends BaseDTO {
     private String endDate;
     private String fileFormatDmsExport;
     private String fileFormatInternal;
+    private String metsRightsOwner = "";
     private Integer numberOfPages;
     private Integer numberOfVolumes;
     private Boolean projectIsArchived = false;
@@ -122,6 +123,25 @@ public class ProjectDTO extends BaseDTO {
      */
     public void setFileFormatInternal(String fileFormatInternal) {
         this.fileFormatInternal = fileFormatInternal;
+    }
+
+    /**
+     * Get mets rights owner.
+     * 
+     * @return metsRightsOwner as String
+     */
+    public String getMetsRightsOwner() {
+        return metsRightsOwner;
+    }
+
+    /**
+     * Set mets right owner.
+     * 
+     * @param metsRightsOwner
+     *            as String
+     */
+    public void setMetsRightsOwner(String metsRightsOwner) {
+        this.metsRightsOwner = metsRightsOwner;
     }
 
     /**
