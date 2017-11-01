@@ -123,6 +123,24 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         return (List<T>) session.createQuery(query).list();
     }
 
+    @SuppressWarnings("unchecked")
+    List<Double> getAverage(String field, String query) {
+        Session session = HibernateHelper.getHibernateSession();
+        return (List<Double>) session.createQuery("SELECT AVG(" + field + ") " + query).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    List<Long> getCount(String field, String query) {
+        Session session = HibernateHelper.getHibernateSession();
+        return (List<Long>) session.createQuery("SELECT COUNT(" + field + ") " + query).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    List<Long> getSum(String field, String query) {
+        Session session = HibernateHelper.getHibernateSession();
+        return (List<Long>) session.createQuery("SELECT SUM(" + field + ") " + query).list();
+    }
+
     /**
      * Count all rows in database.
      *
