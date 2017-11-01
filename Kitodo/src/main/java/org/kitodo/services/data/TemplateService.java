@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,12 +41,29 @@ public class TemplateService extends SearchService<Template, TemplateDTO, Templa
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
+    private static TemplateService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public TemplateService() {
+    private TemplateService() {
         super(new TemplateDAO(), new TemplateType(), new Indexer<>(Template.class), new Searcher(Template.class));
+    }
+
+    /**
+     * Return singleton variable of type TemplateService.
+     *
+     * @return unique instance of TemplateService
+     */
+    public static TemplateService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (TemplateService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new TemplateService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**

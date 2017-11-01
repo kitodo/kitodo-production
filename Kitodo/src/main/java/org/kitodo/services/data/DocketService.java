@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,12 +33,29 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketDAO> {
 
     private static final Logger logger = LogManager.getLogger(DocketService.class);
+    private static DocketService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public DocketService() {
+    private DocketService() {
         super(new DocketDAO(), new DocketType(), new Indexer<>(Docket.class), new Searcher(Docket.class));
+    }
+
+    /**
+     * Return singleton variable of type DocketService.
+     *
+     * @return unique instance of DocketService
+     */
+    public static DocketService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (DocketService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new DocketService();
+                }
+            }
+        }
+        return instance;
     }
 
     @Override

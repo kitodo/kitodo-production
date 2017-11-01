@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,12 +40,29 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(PropertyService.class);
+    private static PropertyService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public PropertyService() {
+    private PropertyService() {
         super(new PropertyDAO(), new PropertyType(), new Indexer<>(Property.class), new Searcher(Property.class));
+    }
+
+    /**
+     * Return singleton variable of type PropertyService.
+     *
+     * @return unique instance of PropertyService
+     */
+    public static PropertyService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (PropertyService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new PropertyService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**

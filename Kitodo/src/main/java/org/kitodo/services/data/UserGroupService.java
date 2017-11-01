@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,13 +41,30 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserGroupService.class);
+    private static UserGroupService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public UserGroupService() {
+    private UserGroupService() {
         super(new UserGroupDAO(), new UserGroupType(), new Indexer<>(UserGroup.class), new Searcher(UserGroup.class));
         this.indexer = new Indexer<>(UserGroup.class);
+    }
+
+    /**
+     * Return singleton variable of type UserGroupService.
+     *
+     * @return unique instance of UserGroupService
+     */
+    public static UserGroupService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (UserGroupService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new UserGroupService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**

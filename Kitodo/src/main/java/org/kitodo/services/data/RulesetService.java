@@ -11,12 +11,10 @@
 
 package org.kitodo.services.data;
 
-import com.sun.research.ws.wadl.HTTPMethods;
-
 import de.sub.goobi.config.ConfigCore;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +25,6 @@ import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -41,12 +38,29 @@ import ugh.exceptions.PreferencesException;
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
+    private static RulesetService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public RulesetService() {
+    private RulesetService() {
         super(new RulesetDAO(), new RulesetType(), new Indexer<>(Ruleset.class), new Searcher(Ruleset.class));
+    }
+
+    /**
+     * Return singleton variable of type RulesetService.
+     *
+     * @return unique instance of RulesetService
+     */
+    public static RulesetService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (RulesetService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new RulesetService();
+                }
+            }
+        }
+        return instance;
     }
 
     @Override

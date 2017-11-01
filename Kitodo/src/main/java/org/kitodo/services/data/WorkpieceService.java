@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,13 +41,31 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO, Wor
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(WorkpieceService.class);
+    private static WorkpieceService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public WorkpieceService() {
+    private WorkpieceService() {
         super(new WorkpieceDAO(), new WorkpieceType(), new Indexer<>(Workpiece.class), new Searcher(Workpiece.class));
     }
+
+    /**
+     * Return singleton variable of type WorkpieceService.
+     *
+     * @return unique instance of WorkpieceService
+     */
+    public static WorkpieceService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (WorkpieceService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new WorkpieceService();
+                }
+            }
+        }
+        return instance;
+    }
+
 
     /**
      * Method manages process and properties related to modified workpiece.

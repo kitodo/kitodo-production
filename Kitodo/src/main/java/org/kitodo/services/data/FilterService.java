@@ -18,6 +18,7 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -58,12 +59,29 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private final ServiceManager serviceManager = new ServiceManager();
+    private static FilterService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public FilterService() {
+    private FilterService() {
         super(new FilterDAO(), new FilterType(), new Indexer<>(Filter.class), new Searcher(Filter.class));
+    }
+
+    /**
+     * Return singleton variable of type FilterService.
+     *
+     * @return unique instance of FilterService
+     */
+    public static FilterService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (FilterService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new FilterService();
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
