@@ -140,7 +140,7 @@ public class JobCreation {
      */
     private static boolean testTitle(String title) throws DataException {
         if (title != null) {
-            Long amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
+            Long amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
             if (amount > 0) {
                 Helper.setFehlerMeldung("processTitleAlreadyInUse");
                 return false;

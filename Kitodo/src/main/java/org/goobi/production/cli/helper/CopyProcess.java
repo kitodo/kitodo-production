@@ -535,7 +535,7 @@ public class CopyProcess extends ProzesskopieForm {
     private boolean isProcessTitleAvailable(String title) {
         long amount;
         try {
-            amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
+            amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
             Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
             return false;

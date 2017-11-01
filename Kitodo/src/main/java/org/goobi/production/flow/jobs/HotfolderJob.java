@@ -396,7 +396,7 @@ public class HotfolderJob extends AbstractGoobiJob {
         if (title != null) {
             long amount = 0;
             try {
-                amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
+                amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
             } catch (DataException e) {
                 return false;
             }
