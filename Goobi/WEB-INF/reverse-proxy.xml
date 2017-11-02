@@ -12,7 +12,7 @@
  *
 -->
 <config>
-    <server className="net.sf.j2ep.servers.BaseServer" domainName="d-nb.info">
+    <server className="net.sf.j2ep.servers.BaseServer" domainName="d-nb.info" scheme="https">
         <rule className="net.sf.j2ep.rules.AcceptEverythingRule"/>
     </server>
 </config>
