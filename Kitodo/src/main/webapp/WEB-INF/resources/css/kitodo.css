@@ -458,11 +458,12 @@ main {
 }
 
 .input-with-button {
-    width: 90%; !important;
+    width: calc(100% - 44px); !important;
 }
 
 .input-with-button + .ui-button {
     margin-left: 5px;
+    margin-right: 0;
 }
 
 .input.ui-calendar {
