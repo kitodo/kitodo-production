@@ -83,7 +83,7 @@ public class CopyProcess extends ProzesskopieForm {
     private HashMap<String, Boolean> standardFields;
     private List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
-    private String tifHeaderImageDescription = "";
+    private StringBuilder tifHeaderImageDescription = new StringBuilder("");
     private String tifHeaderDocumentName = "";
     private String naviFirstPage;
     private Integer auswahl;
@@ -364,7 +364,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.standardFields.put("regelsatz", true);
         this.additionalFields = new ArrayList<>();
         this.tifHeaderDocumentName = "";
-        this.tifHeaderImageDescription = "";
+        this.tifHeaderImageDescription = new StringBuilder("");
     }
 
     /**
@@ -774,12 +774,12 @@ public class CopyProcess extends ProzesskopieForm {
             /* Doctype */
             BeanHelper.addProperty(werk, "DocType", this.docType);
             /* Tiffheader */
-            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
             BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addProperty(werk, "DocType", this.docType);
             /* Tiffheader */
-            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
             BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (Property processProperty : io.getProcessProperties()) {
@@ -979,12 +979,12 @@ public class CopyProcess extends ProzesskopieForm {
 
     @Override
     public String getTifHeaderImageDescription() {
-        return this.tifHeaderImageDescription;
+        return this.tifHeaderImageDescription.toString();
     }
 
     @Override
     public void setTifHeaderImageDescription(String tifHeaderImageDescription) {
-        this.tifHeaderImageDescription = tifHeaderImageDescription;
+        this.tifHeaderImageDescription = new StringBuilder(tifHeaderImageDescription);
     }
 
     @Override
@@ -1174,22 +1174,22 @@ public class CopyProcess extends ProzesskopieForm {
          * Documentname ist im allgemeinen = Prozesstitel
          */
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
-        this.tifHeaderImageDescription = "";
+        this.tifHeaderImageDescription = new StringBuilder("");
         /*
          * Imagedescription
          */
         StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
         /* jetzt den Tiffheader parsen */
         while (tokenizer.hasMoreTokens()) {
-            String myString = tokenizer.nextToken();
+            String string = tokenizer.nextToken();
             /*
              * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
              */
-            if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
-                this.tifHeaderImageDescription += myString.substring(1, myString.length() - 1);
-            } else if (myString.equals("$Doctype")) {
+            if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
+                this.tifHeaderImageDescription.append(string.substring(1, string.length() - 1));
+            } else if (string.equals("$Doctype")) {
 
-                this.tifHeaderImageDescription += this.docType;
+                this.tifHeaderImageDescription.append(this.docType);
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (AdditionalField additionalField : this.additionalFields) {
@@ -1204,13 +1204,13 @@ public class CopyProcess extends ProzesskopieForm {
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                    if (additionalField.getTitle().equals(string) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeaderImageDescription += calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue());
+                        this.tifHeaderImageDescription.append(
+                                calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }
-            // }
         }
     }
 
