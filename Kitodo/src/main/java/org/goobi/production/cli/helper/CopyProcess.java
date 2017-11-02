@@ -1129,26 +1129,26 @@ public class CopyProcess extends ProzesskopieForm {
         calculateTiffHeader();
     }
 
-    private String calcProcessTitleCheck(String inFeldName, String inFeldWert) {
-        String rueckgabe = inFeldWert;
+    private String calcProcessTitleCheck(String fieldName, String fieldvalue) {
+        String result = fieldvalue;
 
         /*
          * Bandnummer
          */
-        if (inFeldName.equals("Bandnummer")) {
+        if (fieldName.equals("Bandnummer")) {
             try {
-                int bandint = Integer.parseInt(inFeldWert);
+                int bandInt = Integer.parseInt(fieldvalue);
                 java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
-                rueckgabe = df.format(bandint);
+                result = df.format(bandInt);
             } catch (NumberFormatException e) {
                 Helper.setFehlerMeldung("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl");
             }
-            if (rueckgabe != null && rueckgabe.length() < 4) {
-                rueckgabe = "0000".substring(rueckgabe.length()) + rueckgabe;
+            if (result != null && result.length() < 4) {
+                result = "0000".substring(result.length()) + result;
             }
         }
 
-        return rueckgabe;
+        return result;
     }
 
     @Override
