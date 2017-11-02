@@ -1049,42 +1049,36 @@ public class CopyProcess extends ProzesskopieForm {
 
         int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
         for (int i = 0; i < count; i++) {
-            String titel = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")");
-            String isdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isdoctype]");
-            String isnotdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isnotdoctype]");
+            String title = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")");
+            String isDocType = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isdoctype]");
+            String isNotDocType = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isnotdoctype]");
 
-            if (titel == null) {
-                titel = "";
-            }
-            if (isdoctype == null) {
-                isdoctype = "";
-            }
-            if (isnotdoctype == null) {
-                isnotdoctype = "";
-            }
+            title = processNullValues(title);
+            isDocType = processNullValues(isDocType);
+            isNotDocType = processNullValues(isNotDocType);
 
             /* wenn nix angegeben wurde, dann anzeigen */
-            if (isdoctype.equals("") && isnotdoctype.equals("")) {
-                titeldefinition = titel;
+            if (isDocType.equals("") && isNotDocType.equals("")) {
+                titeldefinition = title;
                 break;
             }
 
             /* wenn beides angegeben wurde */
-            if (!isdoctype.equals("") && !isnotdoctype.equals("")
-                    && StringUtils.containsIgnoreCase(isdoctype, this.docType)
-                    && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
-                titeldefinition = titel;
+            if (!isDocType.equals("") && !isNotDocType.equals("")
+                    && StringUtils.containsIgnoreCase(isDocType, this.docType)
+                    && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
+                titeldefinition = title;
                 break;
             }
 
             /* wenn nur pflicht angegeben wurde */
-            if (isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType)) {
-                titeldefinition = titel;
+            if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, this.docType)) {
+                titeldefinition = title;
                 break;
             }
             /* wenn nur "darf nicht" angegeben wurde */
-            if (isdoctype.equals("") && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
-                titeldefinition = titel;
+            if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
+                titeldefinition = title;
                 break;
             }
         }
@@ -1129,6 +1123,13 @@ public class CopyProcess extends ProzesskopieForm {
         calculateTiffHeader();
     }
 
+    private String processNullValues(String value) {
+        if (value == null) {
+            value = "";
+        }
+        return value;
+    }
+
     private String calcProcessTitleCheck(String fieldName, String fieldvalue) {
         String result = fieldvalue;
 
@@ -1147,7 +1148,6 @@ public class CopyProcess extends ProzesskopieForm {
                 result = "0000".substring(result.length()) + result;
             }
         }
-
         return result;
     }
 
