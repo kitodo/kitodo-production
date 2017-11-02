@@ -1,0 +1,44 @@
+@startuml
+
+abstract class BaseBean {
++Integer id
++getId():Integer
++setId(Integer id):void
+}
+
+abstract class BaseIndexedBean {
++IndexAction indexAction
++getIndexAction():IndexAction
++setIndexAction(IndexAction indexAction):void
+}
+
+class LdapGroup {
++String title
+...
++getTitle():String
++setTitle(String title):void
++get...()
++set...()
+}
+
+class Process {
++String title
+...
++getTitle():String
++setTitle(String title):void
++get...()
++set...()
+}
+
+enum IndexAction {
+    INDEX
+    DELETE
+    DONE
+}
+
+BaseBean <-- BaseIndexedBean : extends
+BaseBean <-- LdapGroup : extends
+BaseIndexedBean <-- Process : extends
+IndexAction <-- BaseIndexedBean : use
+
+@enduml

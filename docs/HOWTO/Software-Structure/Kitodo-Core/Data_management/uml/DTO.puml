@@ -1,0 +1,18 @@
+@startuml
+abstract class BaseDTO {
++Integer id
++getId():Integer
++setId(Integer id):void
+}
+
+class ProcessDTO {
++String title
+...
++getTitle():String
++setTitle(String title):void
++get...()
++set...()
+}
+
+BaseDTO <-- ProcessDTO : extends
+@enduml

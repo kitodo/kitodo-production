@@ -1,0 +1,23 @@
+@startuml
+
+interface TypeInterface<T> {
++HttpEntity createDocument(T baseIndexedBean)
++HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans)
+}
+
+abstract class BaseType<T extends BaseIndexedBean> {
++ {abstract} HttpEntity createDocument(T baseIndexedBean)
++HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans)
+~<F extends BaseIndexedBean> JSONArray addObjectRelation(List<F> objects, boolean title)
+~<F extends BaseIndexedBean> JSONArray addObjectRelation(List<F> objects)
+~String formatDate(Date date)
+}
+
+class ProcessType {
++ HttpEntity createDocument(Process baseIndexedBean)
+}
+
+BaseType <-- ProcessType : extends
+TypeInterface <-- BaseType : implements
+
+@enduml
