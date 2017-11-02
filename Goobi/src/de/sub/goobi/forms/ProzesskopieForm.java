@@ -1890,7 +1890,10 @@ public class ProzesskopieForm {
             } else if (myString.equals("$Doctype")) {
                 /* wenn der Doctype angegeben werden soll */
                 try {
-                    this.tifHeader_imagedescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
+                    ConfigOpacDoctype cod = ConfigOpac.getDoctypeByName(this.docType);
+                    if (! Objects.equals(cod, null)) {
+                        this.tifHeader_imagedescription += cod.getTifHeaderType();
+                    }
                 } catch (Throwable t) {
                     logger.error("Error while reading von opac-config", t);
                     Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
