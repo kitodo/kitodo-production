@@ -78,7 +78,7 @@ public class SessionForm {
         map.put("id", insession.getId());
         map.put("created", this.formatter.format(new Date()));
         map.put("last", this.formatter.format(new Date()));
-        map.put("last2", Long.valueOf(System.currentTimeMillis()));
+        map.put("last2", System.currentTimeMillis());
         map.put("user", " - ");
         map.put("userid", 0);
         map.put("session", insession);
@@ -143,7 +143,7 @@ public class SessionForm {
         for (HashMap session : (List<HashMap>) this.alleSessions) {
             if (session.get("id").equals(insession.getId())) {
                 session.put("last", this.formatter.format(new Date()));
-                session.put("last2", Long.valueOf(System.currentTimeMillis()));
+                session.put("last2", System.currentTimeMillis());
                 gefunden = true;
                 break;
             }

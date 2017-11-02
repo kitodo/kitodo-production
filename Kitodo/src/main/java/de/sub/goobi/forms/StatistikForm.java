@@ -149,7 +149,7 @@ public class StatistikForm {
     }
 
     private int getAmountOfCurrentTasks(boolean open, boolean inProcessing) {
-        Long amount = Long.valueOf(0);
+        Long amount = 0L;
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 
         if (login == null) {

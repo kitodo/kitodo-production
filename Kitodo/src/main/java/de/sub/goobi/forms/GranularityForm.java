@@ -265,7 +265,7 @@ public class GranularityForm {
         if (course.countIndividualIssues() != 0) {
             return numberOfPages != null ? numberOfPages / course.countIndividualIssues() : null;
         } else {
-            return new Long(0);
+            return 0L;
         }
     }
 

@@ -498,7 +498,7 @@ public class Ldap {
                 }
 
                 BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
-                        String.valueOf(System.currentTimeMillis() / 1000l));
+                        String.valueOf(System.currentTimeMillis() / 1000L));
 
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userpassword);
                 mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
