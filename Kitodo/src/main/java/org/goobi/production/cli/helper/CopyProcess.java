@@ -254,35 +254,6 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * OPAC evaluation.
-     *
-     * @param io
-     *            import object
-     * @return empty String
-     */
-    public String evaluateOpac(ImportObject io) {
-        clearValues();
-        readProjectConfigs();
-        try {
-            Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
-            /* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile.getPath());
-
-            this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
-
-            fillFieldsFromMetadataFile(this.myRdf);
-
-            fillFieldsFromConfig();
-
-        } catch (Exception e) {
-            Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    /**
      * OpacAnfrage.
      */
     @Override
@@ -587,33 +558,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setId(null);
 
         addProperties(null);
-
-        for (Task step : this.prozessKopie.getTasks()) {
-            /*
-             * always save date and user for each step
-             */
-            step.setProcessingTime(this.prozessKopie.getCreationDate());
-            step.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            if (loginForm != null) {
-                step.setProcessingUser(loginForm.getMyBenutzer());
-            }
-
-            /*
-             * only if its done, set edit start and end date
-             */
-            if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
-                step.setProcessingBegin(this.prozessKopie.getCreationDate());
-                // this concerns steps, which are set as done right on creation
-                // bearbeitungsbeginn is
-                // set to creation timestamp of process because the creation of
-                // it is basically begin
-                // of work
-                Date myDate = new Date();
-                step.setProcessingTime(myDate);
-                step.setProcessingEnd(myDate);
-            }
-        }
+        prepareTasksForProcess();
 
         try {
             serviceManager.getProcessService().save(this.prozessKopie);
@@ -644,17 +589,8 @@ public class CopyProcess extends ProzesskopieForm {
 
         serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
-        // Adding process to history
-        if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
-            Helper.setFehlerMeldung("historyNotUpdated");
-        } else {
-            try {
-                serviceManager.getProcessService().save(this.prozessKopie);
-            } catch (DataException e) {
-                e.printStackTrace();
-                logger.error("error on save: ", e);
-                return this.prozessKopie;
-            }
+        if (!addProcessToHistory()) {
+            return this.prozessKopie;
         }
 
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
@@ -678,31 +614,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         this.prozessKopie.setId(null);
         addProperties(io);
-
-        for (Task step : this.prozessKopie.getTasks()) {
-            /*
-             * always save date and user for each step
-             */
-            step.setProcessingTime(this.prozessKopie.getCreationDate());
-            step.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            if (loginForm != null) {
-                step.setProcessingUser(loginForm.getMyBenutzer());
-            }
-
-            /*
-             * only if its done, set edit start and end date
-             */
-            if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
-                step.setProcessingBegin(this.prozessKopie.getCreationDate());
-                // this concerns steps, which are set as done right on creation
-                // bearbeitungsbeginn is set to creation timestamp of process
-                // because the creation of it is basically begin of work
-                Date myDate = new Date();
-                step.setProcessingTime(myDate);
-                step.setProcessingEnd(myDate);
-            }
-        }
+        prepareTasksForProcess();
 
         if (!io.getBatches().isEmpty()) {
             serviceManager.getProcessService().getBatchesInitialized(this.prozessKopie).addAll(io.getBatches());
@@ -726,9 +638,45 @@ public class CopyProcess extends ProzesskopieForm {
 
         serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
-        // }
+        if (!addProcessToHistory()) {
+            return this.prozessKopie;
+        }
 
-        // Adding process to history
+        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
+
+        /* damit die Sortierung stimmt nochmal einlesen */
+        Helper.getHibernateSession().refresh(this.prozessKopie);
+        return this.prozessKopie;
+    }
+
+    private void prepareTasksForProcess() {
+        for (Task task : this.prozessKopie.getTasks()) {
+            /*
+             * always save date and user for each task
+             */
+            task.setProcessingTime(this.prozessKopie.getCreationDate());
+            task.setEditTypeEnum(TaskEditType.AUTOMATIC);
+            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+            if (loginForm != null) {
+                task.setProcessingUser(loginForm.getMyBenutzer());
+            }
+
+            /*
+             * only if its done, set edit start and end date
+             */
+            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
+                task.setProcessingBegin(this.prozessKopie.getCreationDate());
+                // this concerns steps, which are set as done right on creation
+                // bearbeitungsbeginn is set to creation timestamp of process
+                // because the creation of it is basically begin of work
+                Date date = new Date();
+                task.setProcessingTime(date);
+                task.setProcessingEnd(date);
+            }
+        }
+    }
+
+    private boolean addProcessToHistory() {
         if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
             Helper.setFehlerMeldung("historyNotUpdated");
         } else {
@@ -737,16 +685,10 @@ public class CopyProcess extends ProzesskopieForm {
             } catch (DataException e) {
                 e.printStackTrace();
                 logger.error("error on save: ", e);
-                return this.prozessKopie;
+                return false;
             }
         }
-
-        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
-
-        /* damit die Sortierung stimmt nochmal einlesen */
-        Helper.getHibernateSession().refresh(this.prozessKopie);
-        return this.prozessKopie;
-
+        return true;
     }
 
     /**
@@ -1272,55 +1214,55 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    private void addProperty(Template inVorlage, Property property) {
-        if (property.getContainer() == 0) {
-            for (Property templateProperty : inVorlage.getProperties()) {
-                if (templateProperty.getTitle().equals(property.getTitle()) && templateProperty.getContainer() > 0) {
-                    templateProperty.setValue(property.getValue());
-                    return;
-                }
-            }
+    private void addProperty(Template template, Property property) {
+        if (!verifyProperty(template.getProperties(), property)) {
+            return;
         }
+
         Property templateProperty = insertDataToProperty(property);
-        templateProperty.getTemplates().add(inVorlage);
-        List<Property> properties = inVorlage.getProperties();
+        templateProperty.getTemplates().add(template);
+        List<Property> properties = template.getProperties();
         if (properties != null) {
             properties.add(templateProperty);
         }
     }
 
-    private void addProperty(Process inProcess, Property property) {
-        if (property.getContainer() == 0) {
-            for (Property processProperty : inProcess.getProperties()) {
-                if (processProperty.getTitle().equals(property.getTitle()) && processProperty.getContainer() > 0) {
-                    processProperty.setValue(property.getValue());
-                    return;
-                }
-            }
+    private void addProperty(Process process, Property property) {
+        if (!verifyProperty(process.getProperties(), property)) {
+            return;
         }
+
         Property processProperty = insertDataToProperty(property);
-        processProperty.getProcesses().add(inProcess);
-        List<Property> properties = serviceManager.getProcessService().getPropertiesInitialized(inProcess);
+        processProperty.getProcesses().add(process);
+        List<Property> properties = serviceManager.getProcessService().getPropertiesInitialized(process);
         if (properties != null) {
             properties.add(processProperty);
         }
     }
 
-    private void addProperty(Workpiece inWerk, Property property) {
-        if (property.getContainer() == 0) {
-            for (Property workpieceProperty : inWerk.getProperties()) {
-                if (workpieceProperty.getTitle().equals(property.getTitle()) && workpieceProperty.getContainer() > 0) {
-                    workpieceProperty.setValue(property.getValue());
-                    return;
-                }
-            }
+    private void addProperty(Workpiece workpiece, Property property) {
+        if (!verifyProperty(workpiece.getProperties(), property)) {
+            return;
         }
+
         Property workpieceProperty = insertDataToProperty(property);
-        workpieceProperty.getWorkpieces().add(inWerk);
-        List<Property> properties = inWerk.getProperties();
+        workpieceProperty.getWorkpieces().add(workpiece);
+        List<Property> properties = workpiece.getProperties();
         if (properties != null) {
             properties.add(workpieceProperty);
         }
+    }
+
+    private boolean verifyProperty(List<Property> properties, Property property) {
+        if (property.getContainer() == 0) {
+            for (Property tempProperty : properties) {
+                if (tempProperty.getTitle().equals(property.getTitle()) && tempProperty.getContainer() > 0) {
+                    tempProperty.setValue(property.getValue());
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private Property insertDataToProperty(Property property) {
