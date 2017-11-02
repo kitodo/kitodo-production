@@ -39,7 +39,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * Create REST client.
      *
      */
-    public void initiateClient() {
+    protected void initiateClient() {
         String host = ConfigMain.getParameter("elasticsearch.host", "localhost");
         int port = ConfigMain.getIntParameter("elasticsearch.port", 9200);
         String protocol = ConfigMain.getParameter("elasticsearch.protocol", "http");
@@ -112,16 +112,6 @@ public abstract class KitodoRestClient implements RestClientInterface {
      */
     public void deleteIndex() throws IOException {
         restClient.performRequest("DELETE", "/" + index);
-    }
-
-    /**
-     * Close REST Client.
-     *
-     * @throws IOException
-     *             add description
-     */
-    public void closeClient() throws IOException {
-        restClient.close();
     }
 
     /**
