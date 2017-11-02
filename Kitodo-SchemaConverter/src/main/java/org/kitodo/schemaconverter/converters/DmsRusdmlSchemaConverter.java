@@ -9,15 +9,10 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.schemaconverter;
+package org.kitodo.schemaconverter.converters;
 
 /**
- * Determines the Schema Formats supported by the module.
+ * Converter which actually corrects DMS conversion.
  */
-public enum SchemaFormat {
-
-    METS,
-    MODS,
-    DMS,
-    DMSRUSDML
+public class DmsRusdmlSchemaConverter {
 }

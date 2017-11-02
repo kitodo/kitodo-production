@@ -39,7 +39,6 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -566,16 +565,17 @@ public class MetadatenImagesHelper {
     }
 
     /**
-     * Get data files.
+     * Get data files. First read them all and next if their size is bigger than
+     * zero sort them with use of GoobiImageFileComparator.
      *
-     * @param myProcess
+     * @param process
      *            Process object
-     * @return list of Strings
+     * @return list of URIs
      */
-    public List<URI> getDataFiles(Process myProcess) throws InvalidImagesException {
+    public List<URI> getDataFiles(Process process) throws InvalidImagesException {
         URI dir;
         try {
-            dir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
+            dir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }

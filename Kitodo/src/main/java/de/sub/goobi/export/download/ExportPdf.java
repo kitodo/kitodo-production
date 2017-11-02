@@ -57,7 +57,7 @@ public class ExportPdf extends ExportMets {
          * Read Document
          */
         Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
-        URI zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
+        prepareUserDirectory(inZielVerzeichnis);
         this.myPrefs = serviceManager.getRulesetService().getPreferences(myProcess.getRuleset());
 
         /*
@@ -84,10 +84,10 @@ public class ExportPdf extends ExportMets {
              */
             CreatePdfFromServletThread pdf = new CreatePdfFromServletThread();
             pdf.setMetsURL(metsTempFile.toURL());
-            pdf.setTargetFolder(zielVerzeichnis);
+            pdf.setTargetFolder(inZielVerzeichnis);
             pdf.setInternalServletPath(myBasisUrl);
             if (logger.isDebugEnabled()) {
-                logger.debug("Taget directory: " + zielVerzeichnis);
+                logger.debug("Taget directory: " + inZielVerzeichnis);
                 logger.debug("Using ContentServer2 base URL: " + myBasisUrl);
             }
             pdf.initialize(myProcess);
@@ -180,7 +180,7 @@ public class ExportPdf extends ExportMets {
                  * report Error to User as Error-Log
                  */
                 String text = "error while pdf creation: " + e.getMessage();
-                URI uri = zielVerzeichnis.resolve(myProcess.getTitle() + ".PDF-ERROR.log");
+                URI uri = inZielVerzeichnis.resolve(myProcess.getTitle() + ".PDF-ERROR.log");
                 try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {
                     output.write(text);
                 } catch (IOException e1) {

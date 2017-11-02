@@ -99,6 +99,7 @@
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>
         <module>Kitodo-Command</module>
+        <module>Kitodo-SchemaConverter</module>
         <module>Kitodo-Validation</module>
         <module>Kitodo</module>
     </modules>
