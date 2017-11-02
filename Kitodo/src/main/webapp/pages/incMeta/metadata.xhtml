@@ -33,7 +33,7 @@
 
                 <p:column>
                     <p:inputTextarea value="#{item.value}" rows="2" style="width:98%;">
-                        <p:ajax event="blur" />
+                        <p:ajax event="blur" update="tabView:structureData:structureDataTable"/>
                     </p:inputTextarea>
                 </p:column>
 

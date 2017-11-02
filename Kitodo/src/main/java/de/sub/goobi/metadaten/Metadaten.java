@@ -181,6 +181,9 @@ public class Metadaten {
     private Paginator paginator = new Paginator();
     private TreeNode selectedTreeNode;
     private PositionOfNewDocStrucElement positionOfNewDocStrucElement = PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT;
+    private int MetadataElementsToAdd = 1;
+    private String addMetaDataType;
+    private String addMetaDataValue;
 
 
     /**
@@ -519,31 +522,31 @@ public class Metadaten {
         // do nothing, needed for jsp only
     }
 
-    /**
-     * die noch erlaubten Metadaten zurückgeben.
-     */
     public ArrayList<SelectItem> getAddableMetadataTypes() {
-        ArrayList<SelectItem> selectItems = new ArrayList<>();
+        return getAddableMetadataTypes(docStruct, tempMetadatumList);
+    }
+
+    private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
+        ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
         /*
-         * zuerst mal alle addierbaren Metadatentypen ermitteln
+         * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
          */
-        List<MetadataType> types = this.docStruct.getAddableMetadataTypes();
+        List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
         if (types == null) {
-            return selectItems;
+            return myList;
         }
 
         /*
-         * alle Metadatentypen, die keine Person sind, oder mit einem
-         * Unterstrich anfangen rausnehmen
+         * --------------------- alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen -------------------
          */
-        for (MetadataType mdt : new ArrayList<>(types)) {
+        for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
             if (mdt.getIsPerson()) {
                 types.remove(mdt);
             }
         }
 
         /*
-         * die Metadatentypen sortieren
+         * -------------------------------- die Metadatentypen sortieren --------------------------------
          */
         HelperComparator c = new HelperComparator();
         c.setSortType("MetadatenTypen");
@@ -552,18 +555,20 @@ public class Metadaten {
         int counter = types.size();
 
         for (MetadataType mdt : types) {
-            selectItems.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
+            myList.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
             try {
                 Metadata md = new Metadata(mdt);
                 MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.process);
                 counter++;
-                this.tempMetadatumList.add(mdum);
+                if (tempMetadatumList != null) {
+                    tempMetadatumList.add(mdum);
+                }
 
             } catch (MetadataTypeNotAllowedException e) {
                 logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
             }
         }
-        return selectItems;
+        return myList;
     }
 
     public ArrayList<MetadatumImpl> getTempMetadatumList() {
@@ -1140,7 +1145,7 @@ public class Metadaten {
     }
 
     /**
-     * Gets all positions of new DocStruc elements.
+     * Gets all possible positions of new DocStruc elements.
      *
      * @return The positions of new DocStruc elements.
      */
@@ -2121,26 +2126,27 @@ public class Metadaten {
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
      */
-    public String setPageStartAndEnd() {
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        int anzahlAuswahl = Integer.parseInt(this.allPagesSelectionLastPage)
-                - Integer.parseInt(this.allPagesSelectionFirstPage) + 1;
-        if (anzahlAuswahl > 0) {
+    public void setPageStartAndEnd() {
+        int startPage = Integer.parseInt(this.allPagesSelectionFirstPage.split(":")[0]) - 1;
+        int lastPage = Integer.parseInt(this.allPagesSelectionLastPage.split(":")[0]) - 1;
+
+        int selectionCount = lastPage - startPage + 1;
+        if (selectionCount > 0) {
             /* alle bisher zugewiesenen Seiten entfernen */
             this.docStruct.getAllToReferences().clear();
             int zaehler = 0;
-            while (zaehler < anzahlAuswahl) {
+            while (zaehler < selectionCount) {
                 this.docStruct.addReferenceTo(
-                        this.allPagesNew[Integer.parseInt(this.allPagesSelectionFirstPage) + zaehler].getMd()
+                        this.allPagesNew[startPage + zaehler].getMd()
                                 .getDocStruct(),
                         "logical_physical");
                 zaehler++;
             }
+        } else {
+            Helper.setFehlerMeldung("Last page before first page is not allowed");
         }
         determinePagesStructure(this.docStruct);
-        return null;
+
     }
 
     /**
@@ -2619,7 +2625,7 @@ public class Metadaten {
         return this.allPagesSelectionFirstPage;
     }
 
-    public void setAllPagesSelectionFirstPagee(String allPagesSelectionFirstPage) {
+    public void setAllPagesSelectionFirstPage(String allPagesSelectionFirstPage) {
         this.allPagesSelectionFirstPage = allPagesSelectionFirstPage;
     }
 
@@ -3399,5 +3405,29 @@ public class Metadaten {
      */
     public Collection<Separator> getPaginationSeparators() {
         return paginationSeparators.getItems();
+    }
+
+    public int getMetadataElementsToAdd() {
+        return MetadataElementsToAdd;
+    }
+
+    public void setMetadataElementsToAdd(int metadataElementsToAdd) {
+        this.MetadataElementsToAdd = metadataElementsToAdd;
+    }
+
+    public String getAddMetaDataType() {
+        return addMetaDataType;
+    }
+
+    public void setAddMetaDataType(String addMetaDataType) {
+        this.addMetaDataType = addMetaDataType;
+    }
+
+    public String getAddMetaDataValue() {
+        return addMetaDataValue;
+    }
+
+    public void setAddMetaDataValue(String addMetaDataValue) {
+        this.addMetaDataValue = addMetaDataValue;
     }
 }
