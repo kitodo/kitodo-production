@@ -706,6 +706,18 @@ footer {
 .ui-selectonemenu .ui-selectonemenu-trigger {
     background: #fff;
     color: #006DBD;
+    border-left: none !important;
+}
+
+.ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
+    background: transparent;
+}
+
+.ui-selectonemenu .ui-selectonemenu-trigger::before {
+    content: '\f0dc';
+    font-family: 'FontAwesome';
+    display: block;
+    text-align: center;
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list {
