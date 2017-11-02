@@ -457,26 +457,32 @@ main {
     width:100%;
 }
 
-.input-with-button {
+.input-with-button,
+.input-with-button > input {
     width: calc(100% - 44px); !important;
 }
 
-.input-with-button + .ui-button {
+.input-with-button + .ui-button,
+.input-with-button > input + .ui-button {
     margin-left: 5px;
     margin-right: 0;
 }
 
-.input.ui-calendar {
-    display: block;
+.input-with-button.ui-calendar > button {
+    position: relative;
 }
 
-.input.ui-calendar > input {
-    width:90%;
+.input-with-button.ui-calendar > button > .ui-icon-calendar {
+    background: transparent;
 }
 
-.input.ui-calendar > button {
-    margin: 0;
-    height: 28px;
+.input-with-button.ui-calendar > button::before {
+    content: '\f073';
+    font-family: 'FontAwesome';
+    font-weight: lighter;
+    position: absolute;
+    left: 0;
+    padding: .7em;
 }
 
 .filter-input {
