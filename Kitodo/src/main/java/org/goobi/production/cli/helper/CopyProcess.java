@@ -184,7 +184,7 @@ public class CopyProcess extends ProzesskopieForm {
         /*
          * projektabhängig die richtigen Felder in der Gui anzeigen
          */
-        ConfigProjects cp = null;
+        ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
@@ -533,7 +533,7 @@ public class CopyProcess extends ProzesskopieForm {
      * @return boolean
      */
     private boolean isProcessTitleAvailable(String title) {
-        long amount = 0;
+        long amount;
         try {
             amount = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
@@ -1039,7 +1039,7 @@ public class CopyProcess extends ProzesskopieForm {
     public void calculateProcessTitle() {
         StringBuilder newTitle = new StringBuilder();
         String titeldefinition = "";
-        ConfigProjects cp = null;
+        ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
@@ -1153,8 +1153,8 @@ public class CopyProcess extends ProzesskopieForm {
 
     @Override
     public void calculateTiffHeader() {
-        String tifDefinition = "";
-        ConfigProjects cp = null;
+        String tifDefinition;
+        ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
