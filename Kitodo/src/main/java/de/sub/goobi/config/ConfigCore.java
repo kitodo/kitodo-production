@@ -73,24 +73,6 @@ public class ConfigCore extends ConfigMain {
     }
 
     /**
-     * Request boolean parameter from configuration, default if missing: false.
-     *
-     * @return Parameter as String
-     */
-    public static boolean getBooleanParameter(String inParameter) {
-        return getBooleanParameter(inParameter, false);
-    }
-
-    /**
-     * Request boolean parameter from configuration.
-     *
-     * @return Parameter as String
-     */
-    public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
-        return getConfig().getBoolean(inParameter, inDefault);
-    }
-
-    /**
      * Request long parameter from configuration.
      *
      * @return Parameter as Long
