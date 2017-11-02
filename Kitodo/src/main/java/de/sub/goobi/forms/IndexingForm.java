@@ -176,28 +176,33 @@ public class IndexingForm {
         this.usergroupWorker = new IndexWorker(serviceManager.getUserGroupService());
         this.workpieceWorker = new IndexWorker(serviceManager.getWorkpieceService());
         this.filterWorker = new IndexWorker(serviceManager.getFilterService());
-        try {
-            indexedBatches = toIntExact(serviceManager.getBatchService().count());
-            indexedDockets = toIntExact(serviceManager.getDocketService().count());
-            indexedProcesses = toIntExact(serviceManager.getProcessService().count());
-            indexedProjects = toIntExact(serviceManager.getProjectService().count());
-            indexedProperties = toIntExact(serviceManager.getPropertyService().count());
-            indexedRulesetes = toIntExact(serviceManager.getRulesetService().count());
-            indexedTasks = toIntExact(serviceManager.getTaskService().count());
-            indexedTemplates = toIntExact(serviceManager.getTemplateService().count());
-            indexedUsers = toIntExact(serviceManager.getUserService().count());
-            indexedUsergroups = toIntExact(serviceManager.getUserGroupService().count());
-            indexedWorkpieces = toIntExact(serviceManager.getWorkpieceService().count());
-            indexedFilter = toIntExact(serviceManager.getFilterService().count());
-        } catch (DataException e) {
-            logger.error(e.getMessage());
-        }
 
         for (ObjectType objectType : ObjectType.values()) {
             objectIndexingStates.put(objectType, IndexingStates.NO_STATE);
         }
 
         indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
+
+        if (indexExists()) {
+            try {
+                indexedBatches = toIntExact(serviceManager.getBatchService().count());
+                indexedDockets = toIntExact(serviceManager.getDocketService().count());
+                indexedProcesses = toIntExact(serviceManager.getProcessService().count());
+                indexedProjects = toIntExact(serviceManager.getProjectService().count());
+                indexedProperties = toIntExact(serviceManager.getPropertyService().count());
+                indexedRulesetes = toIntExact(serviceManager.getRulesetService().count());
+                indexedTasks = toIntExact(serviceManager.getTaskService().count());
+                indexedTemplates = toIntExact(serviceManager.getTemplateService().count());
+                indexedUsers = toIntExact(serviceManager.getUserService().count());
+                indexedUsergroups = toIntExact(serviceManager.getUserGroupService().count());
+                indexedWorkpieces = toIntExact(serviceManager.getWorkpieceService().count());
+                indexedFilter = toIntExact(serviceManager.getFilterService().count());
+            } catch (DataException e) {
+                logger.error(e.getMessage());
+            }
+        } else {
+            resetGlobalProgress();
+        }
     }
 
     private long getCount(SearchService searchService) {
@@ -1000,7 +1005,7 @@ public class IndexingForm {
     public boolean indexExists() {
         try {
             return indexRestClient.indexExists();
-        } catch (IOException | CustomResponseException e) {
+        } catch (IOException | CustomResponseException ignored) {
             return false;
         }
     }
@@ -1017,8 +1022,10 @@ public class IndexingForm {
     }
 
     /**
+     * Return the index state of the given objectType.
      *
      * @param objectType
+     *            the objectType for which the IndexState should be returned
      *
      * @return indexing state of the given object type.
      */
