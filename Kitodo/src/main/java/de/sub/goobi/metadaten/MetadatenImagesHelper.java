@@ -431,13 +431,12 @@ public class MetadatenImagesHelper {
 
             this.myLastImage = files.size();
             if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-                List<URI> filesDirs = files;
-                Collections.sort(filesDirs);
+                Collections.sort(files);
                 int counter = 1;
                 int myDiff = 0;
                 String currentFileName = null;
                 try {
-                    for (Iterator<URI> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
+                    for (Iterator<URI> iterator = files.iterator(); iterator.hasNext(); counter++) {
                         currentFileName = fileService.getFileName(iterator.next());
                         int curFileNumber = Integer
                                     .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
