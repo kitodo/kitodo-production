@@ -1161,7 +1161,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
-    private void setTaskStatusUp(Process process) throws DAOException, DataException {
+    private void setTaskStatusUp(Process process) throws DataException {
         List<Task> tasks = process.getTasks();
 
         for (Task task : tasks) {
@@ -1191,7 +1191,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
-    private void setTaskStatusDown(Process process) throws DataException {
+    private void setTaskStatusDown(Process process) {
         List<Task> tempList = new ArrayList<>(process.getTasks());
         debug("templist: ", tempList);
 
@@ -1217,7 +1217,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForPage() throws DAOException, DataException {
+    public void setTaskStatusDownForPage() throws DAOException {
         List<ProcessDTO> processes = this.page.getListReload();
         for (ProcessDTO process : processes) {
             setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
@@ -1228,7 +1228,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForSelection() throws DAOException, DataException {
+    public void setTaskStatusDownForSelection() throws DAOException {
         List<ProcessDTO> processes = this.page.getListReload();
         for (ProcessDTO process : processes) {
             if (process.isSelected()) {
@@ -1241,7 +1241,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForHits() throws DAOException, DataException {
+    public void setTaskStatusDownForHits() throws DAOException {
         List<ProcessDTO> processes = this.page.getCompleteList();
         for (ProcessDTO process : processes) {
             setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));

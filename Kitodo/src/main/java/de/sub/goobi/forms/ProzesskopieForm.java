@@ -773,7 +773,7 @@ public class ProzesskopieForm implements Serializable {
      * Anlegen des Prozesses und save der Metadaten.
      */
     public String createNewProcess()
-            throws ReadException, IOException, PreferencesException, DAOException, WriteException {
+            throws ReadException, IOException, PreferencesException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
