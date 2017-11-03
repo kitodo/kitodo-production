@@ -52,8 +52,8 @@ public class ProjectHelper {
 
     @SuppressWarnings("unchecked")
     public static synchronized List<StepInformation> getProjectWorkFlowOverview(Project project) {
-        Long totalNumberOfProc = 0l;
-        Long totalNumberOfImages = 0l;
+        Long totalNumberOfProc = 0L;
+        Long totalNumberOfImages = 0L;
 
         Session session = Helper.getHibernateSession();
 

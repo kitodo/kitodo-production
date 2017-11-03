@@ -427,7 +427,7 @@ public class ProjekteForm extends BasisForm {
      */
     public void generateValuesForStatistics() {
         Double sumSortHelperImages = 0.0;
-        Long countSortHelperImages = Long.valueOf(0);
+        Long countSortHelperImages = 0L;
         try {
             sumSortHelperImages = serviceManager.getProcessService().findSumForSortHelperImages(this.myProjekt.getId());
             countSortHelperImages = serviceManager.getProcessService()

@@ -113,7 +113,7 @@ public class LdapUser implements DirContext {
                     ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
             this.myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
             this.myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
-            this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000l));
+            this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
 
             this.myAttrs.put("uidNumber", inUidNumber);
             this.myAttrs.put("gidNumber", ReplaceVariables(lp.getGidNumber(), inUser, inUidNumber));
