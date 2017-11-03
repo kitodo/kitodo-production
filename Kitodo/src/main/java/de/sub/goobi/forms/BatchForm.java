@@ -357,10 +357,8 @@ public class BatchForm extends BasisForm {
     public void renameBatch() {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
-            return;
         } else if (this.selectedBatches.size() > 1) {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
-            return;
         } else {
             try {
                 Integer selected = selectedBatches.get(0);

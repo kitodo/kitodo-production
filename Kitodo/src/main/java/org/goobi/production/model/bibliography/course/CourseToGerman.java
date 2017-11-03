@@ -264,6 +264,5 @@ public class CourseToGerman {
         buffer.append(MONTH_NAMES[date.getMonthOfYear()]);
         buffer.append(' ');
         buffer.append(date.getYear());
-        return;
     }
 }

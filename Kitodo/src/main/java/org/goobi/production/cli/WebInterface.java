@@ -133,8 +133,6 @@ public class WebInterface extends HttpServlet {
             }
             cr = myCommandPlugin.execute();
             generateAnswer(resp, cr.getStatus(), cr.getTitle(), cr.getMessage());
-            return;
-
         } else {
             generateAnswer(resp, 404, "web api deactivated", "web api not configured");
         }

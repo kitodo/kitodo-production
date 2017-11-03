@@ -834,7 +834,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } catch (PreferencesException | WriteException | IOException e) {
             logger.error(e);
             abortTask(step);
-            return;
         }
     }
 
