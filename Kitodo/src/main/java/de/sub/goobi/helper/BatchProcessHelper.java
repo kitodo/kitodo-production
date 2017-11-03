@@ -105,18 +105,8 @@ public class BatchProcessHelper {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
-            if (!this.processProperty.isValid()) {
-                List<String> param = new ArrayList<>();
-                param.add(processProperty.getName());
-                String value = Helper.getTranslation("propertyNotValid", param);
-                Helper.setFehlerMeldung(value);
+            if (!prepareProcessPropertyForTransfer()) {
                 return;
-            }
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.currentProcess);
-                this.processProperty.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(this.currentProcess).add(processProperty);
             }
             this.processProperty.transfer();
 
@@ -152,18 +142,8 @@ public class BatchProcessHelper {
         boolean error = false;
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
-            if (!this.processProperty.isValid()) {
-                List<String> param = new ArrayList<>();
-                param.add(processProperty.getName());
-                String value = Helper.getTranslation("propertyNotValid", param);
-                Helper.setFehlerMeldung(value);
+            if (!prepareProcessPropertyForTransfer()) {
                 return;
-            }
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.currentProcess);
-                this.processProperty.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(this.currentProcess).add(processProperty);
             }
             this.processProperty.transfer();
 
@@ -229,6 +209,23 @@ public class BatchProcessHelper {
         if (!error) {
             Helper.setMeldung("propertiesSaved");
         }
+    }
+
+    private boolean prepareProcessPropertyForTransfer() {
+        if (!this.processProperty.isValid()) {
+            List<String> param = new ArrayList<>();
+            param.add(processProperty.getName());
+            String value = Helper.getTranslation("propertyNotValid", param);
+            Helper.setFehlerMeldung(value);
+            return false;
+        }
+        if (this.processProperty.getProzesseigenschaft() == null) {
+            Property processProperty = new Property();
+            processProperty.getProcesses().add(this.currentProcess);
+            this.processProperty.setProzesseigenschaft(processProperty);
+            serviceManager.getProcessService().getPropertiesInitialized(this.currentProcess).add(processProperty);
+        }
+        return true;
     }
 
     private void loadProcessProperties(Process process) {

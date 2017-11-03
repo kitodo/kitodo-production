@@ -162,16 +162,8 @@ public class BatchStepHelper {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
-            if (!this.processProperty.isValid()) {
-                Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+            if (!prepareProcessPropertyForTransfer()) {
                 return;
-            }
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.currentStep.getProcess());
-                this.processProperty.setProzesseigenschaft(processProperty);
-                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess())
-                        .add(processProperty);
             }
             this.processProperty.transfer();
 
@@ -207,16 +199,8 @@ public class BatchStepHelper {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
-            if (!this.processProperty.isValid()) {
-                Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+            if (!prepareProcessPropertyForTransfer()) {
                 return;
-            }
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.currentStep.getProcess());
-                this.processProperty.setProzesseigenschaft(processProperty);
-                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess())
-                        .add(processProperty);
             }
             this.processProperty.transfer();
 
@@ -278,6 +262,21 @@ public class BatchStepHelper {
         if (!error) {
             Helper.setMeldung("Properties saved");
         }
+    }
+
+    private boolean prepareProcessPropertyForTransfer() {
+        if (!this.processProperty.isValid()) {
+            Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+            return false;
+        }
+        if (this.processProperty.getProzesseigenschaft() == null) {
+            Property processProperty = new Property();
+            processProperty.getProcesses().add(this.currentStep.getProcess());
+            this.processProperty.setProzesseigenschaft(processProperty);
+            this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess())
+                    .add(processProperty);
+        }
+        return true;
     }
 
     private void loadProcessProperties(Task s) {
