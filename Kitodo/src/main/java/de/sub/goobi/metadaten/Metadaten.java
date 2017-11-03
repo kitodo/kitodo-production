@@ -2051,11 +2051,11 @@ public class Metadaten {
         for (String selectItem : this.allPages) {
             if (selectItem.equals(this.ajaxPageStart)) {
                 startseiteOk = true;
-                this.allPagesSelectionFirstPage = (String) selectItem;
+                this.allPagesSelectionFirstPage = selectItem;
             }
             if (selectItem.equals(this.ajaxPageEnd)) {
                 endseiteOk = true;
-                this.allPagesSelectionLastPage = (String) selectItem;
+                this.allPagesSelectionLastPage = selectItem;
             }
         }
 
