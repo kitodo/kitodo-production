@@ -18,10 +18,10 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui"
 >
-    <p:commandButton update="docStruc" icon="ui-icon-arrowthick-1-n" immediate="true"
+    <p:commandButton update="docStruc,tabView:structureData" icon="ui-icon-arrowthick-1-n" immediate="true"
                      title="#{msgs.docstructNachObenSchieben}" action="#{Metadaten.nodeUp}"/>
 
-    <p:commandButton update="docStruc" icon="ui-icon-arrowthick-1-s" immediate="true"
+    <p:commandButton update="docStruc,tabView:structureData" icon="ui-icon-arrowthick-1-s" immediate="true"
                      title="#{msgs.docstructNachUntenSchieben}" action="#{Metadaten.nodeDown}"/>
 
     <p:tree value="#{Metadaten.treeNodes}" var="element"

@@ -84,6 +84,7 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.UGHException;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -184,6 +185,7 @@ public class Metadaten {
     private int MetadataElementsToAdd = 1;
     private String addMetaDataType;
     private String addMetaDataValue;
+    private boolean addServeralStructuralElementsMode = false;
 
 
     /**
@@ -524,6 +526,19 @@ public class Metadaten {
 
     public ArrayList<SelectItem> getAddableMetadataTypes() {
         return getAddableMetadataTypes(docStruct, tempMetadatumList);
+    }
+
+    public ArrayList<SelectItem> getAddableMetadataTypesFromTempType() {
+        DocStruct ds = null;
+        DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        try {
+            ds = this.digitalDocument.createDocStruct(dst);
+        } catch (TypeNotAllowedForParentException e) {
+            logger.error(e.getMessage());
+        }
+
+
+        return getAddableMetadataTypes(ds, tempMetadatumList);
     }
 
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
@@ -1088,7 +1103,7 @@ public class Metadaten {
      */
     public void nodeUp() {
         try {
-            this.metaHelper.knotUp(this.docStruct);
+            this.metaHelper.moveNodeUp(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
@@ -1102,7 +1117,7 @@ public class Metadaten {
      */
     public void nodeDown() {
         try {
-            this.metaHelper.setNodeDown(this.docStruct);
+            this.metaHelper.moveNodeDown(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
@@ -1152,6 +1167,7 @@ public class Metadaten {
     public PositionOfNewDocStrucElement[] getPositionsOfNewDocStrucElement() {
         return this.positionOfNewDocStrucElement.values();
     }
+
 
     /**
      * Knoten hinzufügen.=
@@ -1296,6 +1312,11 @@ public class Metadaten {
         return this.metaHelper.getAddableDocStructTypen(this.docStruct, true);
     }
 
+    /**
+     * Returns possible DocStruct types which can be added to current DocStruct.
+     *
+     * @return The DocStruct types.
+     */
     public SelectItem[] getAddableDocStructTypes() {
         switch (positionOfNewDocStrucElement) {
             case BEFOR_CURRENT_ELEMENT:
@@ -3429,5 +3450,13 @@ public class Metadaten {
 
     public void setAddMetaDataValue(String addMetaDataValue) {
         this.addMetaDataValue = addMetaDataValue;
+    }
+
+    public boolean isAddServeralStructuralElementsMode() {
+        return addServeralStructuralElementsMode;
+    }
+
+    public void setAddServeralStructuralElementsMode(boolean addServeralStructuralElementsMode) {
+        this.addServeralStructuralElementsMode = addServeralStructuralElementsMode;
     }
 }

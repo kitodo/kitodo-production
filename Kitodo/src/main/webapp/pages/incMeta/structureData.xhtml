@@ -44,20 +44,32 @@
                 </p:column>
 
                 <p:column headerText="#{msgs.imageNumber}" style="width:20%">
-                    <h:outputText value="#{Metadaten.getImageRangeByElement(item)}"/>
-                    <!--TODO Buttons should to bee aligned right-->
-                    <p:commandButton icon="ui-icon-pencil"
-                                     update="tabView:dialogEditPagesForm:paginationSubSelection"
-                                     title="#{msgs.docstructTypeAendern}"
-                                     onclick="PF('dialogEditPages').show();">
-                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
-                    </p:commandButton>
+
+                    <p:panelGrid style="width:100%;margin:0" styleClass="ui-noborder">
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="#{Metadaten.getImageRangeByElement(item)}"/>
+                            </p:column>
+
+                            <p:column style="width:32px;text-align: right">
+                                <p:commandButton icon="ui-icon-pencil"
+                                                 update="tabView:dialogEditPagesForm:paginationSubSelection"
+                                                 title="#{msgs.docstructTypeAendern}"
+                                                 onclick="PF('dialogEditPages').show();">
+                                    <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
                 </p:column>
 
                 <p:column headerText="#{msgs.auswahl}" style="width:64px;text-align: center">
 
+                    <!--TODO set selected type on click-->
+
                     <p:commandButton icon="ui-icon-plus"
-                                     update="tabView:dialogAddDocStrucTypeForm:docStructAddTypeSelection"
+                                     update="tabView:dialogAddDocStrucTypeForm:docStructAddTypeSelection,tabView:dialogAddDocStrucTypeForm:selectAddableMetadataTypes"
                                      title="#{msgs.strukturelementHinzufuegen}"
                                      onclick="PF('dialogAddDocStrucType').show();">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
@@ -89,13 +101,13 @@
     </p:dialog>
 
     <p:dialog id="dialogAddDocStrucTypeId" header="#{msgs.neuesStrukturelement}" resizable="false"
-              widgetVar="dialogAddDocStrucType" width="400" height="400" modal="true"
+              widgetVar="dialogAddDocStrucType" height="400" modal="true"
               appendTo="@(body)">
         <h:form id="dialogAddDocStrucTypeForm">
 
             <h:panelGrid columns="2">
                 <h:outputLabel value="#{msgs.position}:" for="docStructPositionSelection"/>
-                <p:selectOneMenu id="docStructPositionSelection" value="#{Metadaten.positionOfNewDocStrucElement}">
+                <p:selectOneMenu id="docStructPositionSelection" value="#{Metadaten.positionOfNewDocStrucElement}" style="width: 180px">
                     <!--TODO check addable types-->
                     <f:selectItems value="#{Metadaten.positionsOfNewDocStrucElement}" var="positionSelection"
                                    itemValue="#{positionSelection}" itemLabel="#{positionSelection.label}"/>
@@ -103,18 +115,29 @@
                 </p:selectOneMenu>
 
                 <h:outputLabel value="#{msgs.typ}:" for="docStructAddTypeSelection"/>
-                <p:selectOneMenu id="docStructAddTypeSelection" value="#{Metadaten.tempTyp}">
+                <p:selectOneMenu id="docStructAddTypeSelection" value="#{Metadaten.tempTyp}" style="width: 180px">
                     <!--TODO check addable types-->
                     <f:selectItems value="#{Metadaten.addableDocStructTypes}"/>
+                    <p:ajax update="selectAddableMetadataTypes"/>
                 </p:selectOneMenu>
             </h:panelGrid>
 
             <br/>
 
-            <h:outputText value="#{msgs.vorgaben}:"/>
+            <h:panelGrid columns="2" columnClasses="top,top">
+                <h:outputText value="#{msgs.vorgaben}:"/>
 
-            <p:tabView>
-                <p:tab title="#{msgs.seitenzuordnung}">
+                <h:panelGroup>
+                    <p:selectOneRadio layout="grid" columns="1" value="#{Metadaten.addServeralStructuralElementsMode}">
+                        <f:selectItem itemLabel="#{msgs.seitenzuordnung}" itemValue="#{false}" />
+                        <f:selectItem itemLabel="#{msgs.metadaten}" itemValue="#{true}" />
+                        <p:ajax event="click" update="AddDocStrucTypeSpecs" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+            </h:panelGrid>
+
+            <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
+                <h:panelGroup rendered="#{!Metadaten.addServeralStructuralElementsMode}">
                     <h:panelGrid columns="2">
                         <h:outputText value="#{msgs.ersteSeite}:"/>
                         <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
@@ -131,16 +154,24 @@
                         <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addNode}"
                                          update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStruc"
                                          oncomplete="PF('dialogAddDocStrucType').hide();"/>
-
                     </h:panelGrid>
-                </p:tab>
-                <p:tab title="#{msgs.metadaten}">
+                </h:panelGroup>
 
+                <h:panelGroup rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{msgs.count}:" />
+                        <p:spinner value="#{Metadaten.metadataElementsToAdd}" id="elementsToAddSpinner" size="5" min="1"/>
 
-                </p:tab>
-            </p:tabView>
+                        <h:outputLabel value="#{msgs.typ}:" />
+                        <p:selectOneMenu id="selectAddableMetadataTypes" value="#{Metadaten.addMetaDataType}" style="width: 180px">
+                            <f:selectItems value="#{Metadaten.addableMetadataTypesFromTempType}" />
+                        </p:selectOneMenu>
 
-
+                        <h:outputLabel value="#{msgs.wert}:" />
+                        <h:inputTextarea value="#{Metadaten.addMetaDataValue}"/>
+                    </h:panelGrid>
+                </h:panelGroup>
+            </h:panelGrid>
         </h:form>
     </p:dialog>
 
