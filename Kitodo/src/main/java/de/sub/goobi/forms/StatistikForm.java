@@ -14,8 +14,6 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
@@ -29,17 +27,6 @@ import org.kitodo.services.ServiceManager;
 public class StatistikForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(StatistikForm.class);
-    Calendar cal = new GregorianCalendar();
-    int n = 200;
-
-    /**
-     * Get amount list literature together.
-     *
-     * @return Anzahl aller Literatureinträge Integer
-     */
-    public Integer getAnzahlLiteraturGesamt() {
-        return 0;
-    }
 
     /**
      * The function getAmountUsers() counts the number of user accounts in
@@ -149,7 +136,7 @@ public class StatistikForm {
     }
 
     private int getAmountOfCurrentTasks(boolean open, boolean inProcessing) {
-        Long amount = Long.valueOf(0);
+        Long amount = 0L;
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 
         if (login == null) {
