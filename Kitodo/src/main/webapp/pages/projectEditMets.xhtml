@@ -20,53 +20,65 @@
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwner" value="#{msgs.metsRightsOwner}" />
-                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwner}"/>
+                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwner}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwner')"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerUrl" value="#{msgs.metsRightsOwnerSite}" />
-                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}"/>
+                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerUrl')"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReference" value="#{msgs.metsDigiprovReference}" />
-                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovReference}"/>
+                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovReference}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovReference')"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReferenceAnchor" value="#{msgs.metsDigiprovReferenceAnchor}" />
-                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}"/>
+                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovReferenceAnchor')"/>
             </div>
             <div>
                 <p:outputLabel for="metsPointerPath" value="#{msgs.metsPointerPath}" />
-                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input" value="#{ProjekteForm.myProjekt.metsPointerPath}"/>
+                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPointerPath}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPointerPath')"/>
             </div>
             <div>
                 <p:outputLabel for="metsPurl" value="#{msgs.metsPurl}" />
-                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" styleClass="input" value="#{ProjekteForm.myProjekt.metsPurl}"/>
+                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPurl}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPurl')"/>
             </div>
         </p:row>
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwnerLogo" value="#{msgs.metsRightsOwnerLogo}" />
-                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}"/>
+                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerLogo')"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerContact" value="#{msgs.metsRightsOwnerMail}" />
-                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" styleClass="input" value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}"/>
+                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerContact')"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovPresentation" value="#{msgs.metsDigiprovPresentation}" />
-                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}"/>
+                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovPresentation')"/>
             </div>
             <div>
                 <p:outputLabel for="metsPresentationAnchor" value="#{msgs.metsDigiprovPresentationAnchor}" />
-                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input" value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}"/>
+                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPresentationAnchor')"/>
             </div>
             <div>
                 <p:outputLabel for="metsPointerPathAnchor" value="#{msgs.metsPointerPathAnchor}" />
-                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input" value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}"/>
+                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPointerPathAnchor')"/>
             </div>
             <div>
                 <p:outputLabel for="metsContentId" value="#{msgs.metsContentIDs}" />
-                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" styleClass="input" value="#{ProjekteForm.myProjekt.metsContentIDs}"/>
+                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsContentIDs}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsContentId')"/>
             </div>
         </p:row>
     </p:panelGrid>
