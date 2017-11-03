@@ -11,7 +11,6 @@
 
 package org.kitodo.helper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RelatedProperty {
