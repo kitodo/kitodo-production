@@ -302,9 +302,8 @@ public class Metadaten {
     /**
      * Copy person.
      *
-     * @return String
      */
-    public String copyPerson() {
+    public void copyPerson() {
         Person per;
         try {
             per = new Person(this.myPrefs.getMetadataTypeByName(this.curPerson.getP().getRole()));
@@ -319,16 +318,11 @@ public class Metadaten {
             logger.error("Fehler beim copy von Personen (MetadataTypeNotAllowedException): " + e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
      * Change current document structure.
      *
-     * @return String
      */
     public void changeCurrentDocstructType() {
 
@@ -472,15 +466,10 @@ public class Metadaten {
     /**
      * Delete person.
      *
-     * @return String
      */
-    public String deletePerson() {
+    public void deletePerson() {
         this.docStruct.removePerson(this.curPerson.getP());
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**

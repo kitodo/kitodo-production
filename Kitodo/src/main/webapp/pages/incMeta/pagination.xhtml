@@ -20,7 +20,7 @@
     xmlns:p="http://primefaces.org/ui">
     <h:form id="pagination">
         <p:commandLink action="#{Metadaten.createPagination}" value="#{msgs.paginierungEinlesen}"
-                       update="paginationTab">
+                       update="paginationTab" immediate="true">
         </p:commandLink>
 
         <h:panelGrid id="paginationTab" columns="2" layout="grid" rendered="#{Metadaten.allPages !=null}"

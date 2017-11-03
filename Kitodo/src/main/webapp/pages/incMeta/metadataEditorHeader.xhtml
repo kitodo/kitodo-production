@@ -17,19 +17,20 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
-    >
+    xmlns:p="http://primefaces.org/ui"
+>
     <f:view locale="#{SpracheForm.locale}">
         <h:body>
 
             <h:form id="formularOben">
                 <table width="100%" style="margin-top:3px" align="center"
-                           border="0px">
+                       border="0px">
 
                     <tr valign="top">
                         <td colspan="2">
                             <table width="100%" class="layoutKopf"
-                                       style="#{HelperForm.applicationHeaderBackground}" cellpadding="0"
-                                       cellspacing="0" border="0">
+                                   style="#{HelperForm.applicationHeaderBackground}" cellpadding="0"
+                                   cellspacing="0" border="0">
                                 <tr valign="top">
                                     <td width="20%" height="48">
                                         <h:commandLink action="#{Metadaten.goMain}" target="_parent">
@@ -44,51 +45,31 @@
                                                           value="#{msgs.keinJavascript}"/>
                                         </noscript>
                                     </td>
-                                    <td valign="middle" align="right">
-                                        <h:panelGrid id="grid1" columns="2" cellpadding="0" cellspacing="0">
-                                            <h:commandLink value="#{msgs.treelevel} " action="metadataStructureView"
-                                                           target="links" styleClass="metadataHeaderLinks">
-                                                <t:updateActionListener
-                                                        value="#{Metadaten.treeProperties.showtreelevel?false:true}"
-                                                        property="#{Metadaten.treeProperties.showtreelevel}"/>
-                                            </h:commandLink>
-                                            <h:commandLink value="#{msgs.treeTitle} " action="metadataStructureView"
-                                                           style="padding-left: 5px;"
-                                                           target="links" styleClass="metadataHeaderLinks">
-                                                <t:updateActionListener
-                                                        value="#{Metadaten.treeProperties.showtitle?false:true}"
-                                                        property="#{Metadaten.treeProperties.showtitle}"/>
-                                            </h:commandLink>
-                                            <h:commandLink value="#{msgs.treePageNumber} "
-                                                           action="metadataStructureView" target="links"
-                                                           styleClass="metadataHeaderLinks">
-                                                <t:updateActionListener
-                                                        value="#{Metadaten.treeProperties.showfirstpagenumber?false:true}"
-                                                        property="#{Metadaten.treeProperties.showfirstpagenumber}"/>
-                                            </h:commandLink>
-                                            <h:commandLink value="#{msgs.treeExpand} " style="padding-left: 5px;"
-                                                           action="#{Metadaten.expandTree}" target="links"
-                                                           styleClass="metadataHeaderLinks">
-                                                <t:updateActionListener
-                                                        value="#{Metadaten.treeProperties.fullexpanded?false:true}"
-                                                        property="#{Metadaten.treeProperties.fullexpanded}"/>
-                                            </h:commandLink>
-                                            <h:commandLink value="#{msgs.stickyImage} "
-                                                           action="Metadaten2rechtsOld" target="rechts"
-                                                           styleClass="metadataHeaderLinks">
-                                                <t:updateActionListener
-                                                        value="#{Metadaten.treeProperties.imageSticky?false:true}"
-                                                        property="#{Metadaten.treeProperties.imageSticky}"/>
-                                            </h:commandLink>
-                                            <h:outputText/>
-                                        </h:panelGrid>
-                                    </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
                 </table>
+            </h:form>
+
+            <h:form id="buttons">
+                <p:blockUI block="tabView" trigger="saveBtn,saveAndBackBtn">
+                    Saving <br/>
+                    <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px;"/>
+
+                </p:blockUI>
+                <div align="right">
+                    <p:button value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" disabled="true"/>
+                    <p:button id="backBtn" value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle"
+                              icon="ui-icon-close"/>
+                    <p:commandButton id="saveBtn" value="#{msgs.speichern}" action="#{Metadaten.saveMetadataToXml}"
+                                     icon="ui-icon-disk"
+                                     update="growl"/>
+                    <p:commandButton id="saveAndBackBtn" value="#{msgs.speichernZurueck}"
+                                     action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
+                                     icon="ui-icon-extlink" update="growl"/>
+                </div>
             </h:form>
 
         </h:body>

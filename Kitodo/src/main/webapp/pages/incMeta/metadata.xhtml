@@ -21,39 +21,92 @@
 
         <p:messages id="messagesMetadata" closable="true"/>
 
-        <h:panelGroup id="metadataTable" rendered="#{!empty Metadaten.myMetadaten}">
-
-            <p:dataTable value="#{Metadaten.myMetadaten}" var="item">
+        <h:panelGroup id="personTable" rendered="#{!empty Metadaten.metaPersonList}">
+            <p:dataTable value="#{Metadaten.metaPersonList}" var="person" style="margin-bottom:30px">
                 <f:facet name="header">
-                    #{msgs.metadaten}
+                    #{msgs.personen}
                 </f:facet>
-                <p:column style="width:20%;">
-                    <h:outputText value="#{item.typ}"/>
-                </p:column>
 
                 <p:column>
-                    <p:inputTextarea value="#{item.value}" rows="2" style="width:98%;">
-                        <p:ajax event="blur" update="tabView:structureData:structureDataTable"/>
-                    </p:inputTextarea>
+                    <p:panelGrid columns="2" styleClass="ui-noborder">
+
+                        <h:outputText value="#{msgs.rolle}:"/>
+                        <p:selectOneMenu value="#{person.rolle}" style="width: 350px;">
+                            <f:selectItems value="#{person.addableRollen}"/>
+                            <f:ajax event="mouseup"/>
+                        </p:selectOneMenu>
+
+                        <h:outputText value="#{msgs.normDataRecord}:"/>
+                        <h:inputText value="#{person.record}"
+                                     style="width: 350px;"
+                                     id="record"/>
+
+                        <h:outputText value="#{msgs.vorname}:"/>
+                        <h:inputText value="#{person.vorname}"
+                                     style="width: 350px;"
+                                     id="firstname"/>
+
+                        <h:outputText value="#{msgs.surname}:"/>
+                        <h:inputText value="#{person.nachname}"
+                                     style="width: 350px;"
+                                     id="lastname"/>
+
+
+                    </p:panelGrid>
+
                 </p:column>
 
                 <p:column style="width:64px;text-align: center">
-
-                    <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata" icon="ui-icon-copy" immediate="true"
-                                     title="#{msgs.metadatenKopieren}" action="#{Metadaten.copy}">
-                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
+                    <p:commandButton update="tabView:metadata:personTable,tabView:metadata:messagesMetadata"
+                                     icon="ui-icon-copy" immediate="true"
+                                     title="#{msgs.personendatenKopieren}" action="#{Metadaten.copyPerson}">
+                        <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
                     </p:commandButton>
 
-                    <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata" icon="ui-icon-trash" immediate="true"
-                                     title="#{msgs.metadatenLoeschen}" action="#{Metadaten.delete}">
-                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
+                    <p:commandButton update="tabView:metadata:personTable,tabView:metadata:messagesMetadata"
+                                     icon="ui-icon-trash" immediate="true"
+                                     title="#{msgs.personendatenLoeschen}" action="#{Metadaten.deletePerson}">
+                        <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
                     </p:commandButton>
                 </p:column>
+
             </p:dataTable>
         </h:panelGroup>
 
+        <p:dataTable id="metadataTable" rendered="#{!empty Metadaten.myMetadaten}" value="#{Metadaten.myMetadaten}"
+                     var="item">
+            <f:facet name="header">
+                #{msgs.metadaten}
+            </f:facet>
+
+            <p:column style="width:20%;">
+                <h:outputText value="#{item.typ}"/>
+            </p:column>
+
+            <p:column>
+                <p:inputTextarea value="#{item.value}" rows="2" style="width:98%;">
+                    <p:ajax event="blur" update="tabView:structureData:structureDataTable"/>
+                </p:inputTextarea>
+            </p:column>
+
+            <p:column style="width:64px;text-align: center">
+
+                <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata"
+                                 icon="ui-icon-copy" immediate="true"
+                                 title="#{msgs.metadatenKopieren}" action="#{Metadaten.copy}">
+                    <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
+                </p:commandButton>
+
+                <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata"
+                                 icon="ui-icon-trash" immediate="true"
+                                 title="#{msgs.metadatenLoeschen}" action="#{Metadaten.delete}">
+                    <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+
         <div style="margin-top:30px">
-        <h:outputText value="#{msgs.neueMetadatenHinzufuegen}:" />
+            <h:outputText value="#{msgs.neueMetadatenHinzufuegen}:"/>
         </div>
 
         <p:panelGrid style="width:100%;margin-top:10px" styleClass="ui-noborder">
@@ -63,6 +116,7 @@
                         <f:selectItems value="#{Metadaten.addableMetadataTypes}"/>
                     </p:selectOneMenu>
                 </p:column>
+
                 <p:column>
                     <p:inputTextarea value="#{Metadaten.metadatum.value}" rows="2" style="width:98%;"/>
                 </p:column>
