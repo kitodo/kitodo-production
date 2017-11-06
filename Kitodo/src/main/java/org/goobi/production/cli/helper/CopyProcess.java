@@ -617,7 +617,7 @@ public class CopyProcess extends ProzesskopieForm {
         prepareTasksForProcess();
 
         if (!io.getBatches().isEmpty()) {
-            serviceManager.getProcessService().getBatchesInitialized(this.prozessKopie).addAll(io.getBatches());
+            this.prozessKopie.getBatches().addAll(io.getBatches());
         }
         try {
             serviceManager.getProcessService().save(this.prozessKopie);
@@ -1234,7 +1234,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         Property processProperty = insertDataToProperty(property);
         processProperty.getProcesses().add(process);
-        List<Property> properties = serviceManager.getProcessService().getPropertiesInitialized(process);
+        List<Property> properties = process.getProperties();
         if (properties != null) {
             properties.add(processProperty);
         }

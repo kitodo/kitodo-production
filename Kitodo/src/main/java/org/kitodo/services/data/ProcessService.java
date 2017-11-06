@@ -56,9 +56,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.json.simple.JSONObject;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
@@ -68,7 +65,6 @@ import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilt
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -719,7 +715,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return all batches of the desired type
      */
     public List<Batch> getBatchesByType(Process process, Type type) {
-        List<Batch> batches = getBatchesInitialized(process);
+        List<Batch> batches = process.getBatches();
         if (type != null) {
             List<Batch> result = new ArrayList<>(batches);
             Iterator<Batch> indicator = result.iterator();
@@ -731,61 +727,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return result;
         }
         return batches;
-    }
-
-    /**
-     * The function getBatchesInitialized() returns the batches for a process
-     * and takes care that the object is initialized from Hibernate already and
-     * will not be bothered if the Hibernate session ends. TODO: check if it is
-     * necessary!!
-     *
-     * @return the batches field of the process which is loaded
-     */
-    public List<Batch> getBatchesInitialized(Process process) {
-        if (process.getId() != null) {
-            Hibernate.initialize(process.getBatches());
-        }
-        return process.getBatches();
-    }
-
-    /**
-     * The function getHistoryInitialized() returns the history events for a
-     * process and takes care that the object is initialized from Hibernate
-     * already and will not be bothered if the Hibernate session ends. TODO:
-     * check if it is necessary!!
-     *
-     * @return the history field of the process which is loaded
-     */
-    public List<History> getHistoryInitialized(Process process) {
-        try {
-            @SuppressWarnings("unused")
-            Session s = Helper.getHibernateSession();
-            Hibernate.initialize(process.getHistory());
-        } catch (HibernateException e) {
-            logger.debug("Hibernate exception: ", e);
-        }
-        if (process.getHistory() == null) {
-            process.setHistory(new ArrayList<>());
-        }
-        return process.getHistory();
-    }
-
-    /**
-     * The function getPropertiesInitialized() returns the descriptive fields
-     * (“properties”) for a process and takes care that the object is
-     * initialized from Hibernate already and will not be bothered if the
-     * Hibernate session ends. TODO: check if it is necessary!! <- e.g.
-     * BeanHelper uses it
-     *
-     * @return the properties field of the process which is loaded
-     */
-    public List<Property> getPropertiesInitialized(Process process) {
-        try {
-            Hibernate.initialize(process.getProperties());
-        } catch (HibernateException e) {
-            logger.debug("Hibernate exception: ", e);
-        }
-        return process.getProperties();
     }
 
     /**
@@ -1260,7 +1201,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         int inProcessing = 0;
         int closed = 0;
         int locked = 0;
-        Hibernate.initialize(process.getTasks());
+
         for (Task task : process.getTasks()) {
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
                 closed++;
@@ -1338,7 +1279,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (!checkForMetadataFile(process)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
         }
-        Hibernate.initialize(process.getRuleset());
+
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadatenHelper.getMetaFileType(metadataFileUri);
         if (logger.isDebugEnabled()) {
@@ -1393,7 +1334,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public Fileformat readMetadataAsTemplateFile(Process process)
             throws ReadException, IOException, PreferencesException {
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
-        Hibernate.initialize(process.getRuleset());
         if (fileService.fileExist(processSubTypeURI)) {
             String type = MetadatenHelper.getMetaFileType(processSubTypeURI);
             if (logger.isDebugEnabled()) {

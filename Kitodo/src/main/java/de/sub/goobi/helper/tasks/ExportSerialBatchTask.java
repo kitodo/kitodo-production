@@ -23,7 +23,6 @@ import java.util.Iterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
-import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
@@ -97,7 +96,6 @@ public class ExportSerialBatchTask extends EmptyTask {
         stepcounter = 0;
         processesIterator = null;
         maxsize = batchSize + 1;
-        initialiseRuleSets(batch.getProcesses());
     }
 
     /**
@@ -108,20 +106,6 @@ public class ExportSerialBatchTask extends EmptyTask {
     @Override
     public String getDisplayName() {
         return Helper.getTranslation("ExportSerialBatchTask");
-    }
-
-    /**
-     * Initialises the the rule sets of the processes to export that export
-     * depends on. This cannot be done later because the therad doesn’t have
-     * access to the hibernate session any more.
-     *
-     * @param processes
-     *            collection of processes whose rulesets are to be initialised
-     */
-    private static final void initialiseRuleSets(Iterable<Process> processes) {
-        for (Process process : processes) {
-            Hibernate.initialize(process.getRuleset());
-        }
     }
 
     /**

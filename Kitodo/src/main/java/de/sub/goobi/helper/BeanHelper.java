@@ -42,7 +42,7 @@ public class BeanHelper {
         property.setTitle(title);
         property.setValue(value);
         property.getProcesses().add(process);
-        List<Property> properties = serviceManager.getProcessService().getPropertiesInitialized(process);
+        List<Property> properties = process.getProperties();
         if (properties == null) {
             properties = new ArrayList<>();
         }

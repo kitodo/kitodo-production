@@ -647,7 +647,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         if (serviceManager.getProcessService().getPropertiesSize(tempProzess) > 0) {
-            for (Property processProperty : serviceManager.getProcessService().getPropertiesInitialized(tempProzess)) {
+            for (Property processProperty : tempProzess.getProperties()) {
                 if (processProperty.getTitle().equals("digitalCollection")) {
                     digitalCollections.add(processProperty.getValue());
                 }

@@ -114,14 +114,12 @@ public class BatchProcessHelper {
             List<Property> propertyList = p.getProperties();
             for (Property processProperty : propertyList) {
                 if (processProperty.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
+                    p.getProperties().remove(processProperty);
                 }
             }
             for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
-                if (!serviceManager.getProcessService().getPropertiesInitialized(process)
-                        .contains(this.processProperty.getProzesseigenschaft())) {
-                    serviceManager.getProcessService().getPropertiesInitialized(process)
-                            .add(this.processProperty.getProzesseigenschaft());
+                if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
+                    process.getProperties().add(this.processProperty.getProzesseigenschaft());
                 }
             }
             try {
@@ -174,23 +172,19 @@ public class BatchProcessHelper {
                             newProcessProperty.setContainer(processProperty.getContainer());
                             newProcessProperty.setType(processProperty.getType());
                             newProcessProperty.getProcesses().add(process);
-                            serviceManager.getProcessService().getPropertiesInitialized(process)
-                                    .add(newProcessProperty);
+                            process.getProperties().add(newProcessProperty);
                         }
                     }
                 } else {
-                    if (!serviceManager.getProcessService().getPropertiesInitialized(process)
-                            .contains(this.processProperty.getProzesseigenschaft())) {
-                        serviceManager.getProcessService().getPropertiesInitialized(process)
-                                .add(this.processProperty.getProzesseigenschaft());
+                    if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
+                        process.getProperties().add(this.processProperty.getProzesseigenschaft());
                     }
                 }
 
                 List<Property> propertyList = process.getProperties();
                 for (Property nextProcessProperty : propertyList) {
                     if (nextProcessProperty.getTitle() == null) {
-                        serviceManager.getProcessService().getPropertiesInitialized(process)
-                                .remove(nextProcessProperty);
+                        process.getProperties().remove(nextProcessProperty);
                     }
                 }
 
@@ -223,7 +217,7 @@ public class BatchProcessHelper {
             Property processProperty = new Property();
             processProperty.getProcesses().add(this.currentProcess);
             this.processProperty.setProzesseigenschaft(processProperty);
-            serviceManager.getProcessService().getPropertiesInitialized(this.currentProcess).add(processProperty);
+            this.currentProcess.getProperties().add(processProperty);
         }
         return true;
     }
@@ -238,7 +232,7 @@ public class BatchProcessHelper {
                 Property processProperty = new Property();
                 processProperty.getProcesses().add(process);
                 pt.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(process).add(processProperty);
+                process.getProperties().add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {

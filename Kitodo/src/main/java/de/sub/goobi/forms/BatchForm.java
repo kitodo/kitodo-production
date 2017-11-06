@@ -35,7 +35,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.constants.Parameters;
-import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -84,7 +83,7 @@ public class BatchForm extends BasisForm {
             selectedBatches = new ArrayList<>();
             List<Batch> batchesToSelect = new ArrayList<>();
             for (Process process : selectedProcesses) {
-                batchesToSelect.addAll(serviceManager.getProcessService().getBatchesInitialized(process));
+                batchesToSelect.addAll(process.getBatches());
             }
             for (Batch batch : batchesToSelect) {
                 selectedBatches.add(Integer.valueOf(serviceManager.getBatchService().getIdString(batch)));
@@ -477,13 +476,10 @@ public class BatchForm extends BasisForm {
                 Batch batch = serviceManager.getBatchService().getById(batchID);
                 switch (batch.getType()) {
                     case LOGISTIC:
-                        for (Process prozess : batch.getProcesses()) {
-                            Hibernate.initialize(prozess.getProject());
-                            Hibernate.initialize(prozess.getProject().getProjectFileGroups());
-                            Hibernate.initialize(prozess.getRuleset());
+                        for (Process process : batch.getProcesses()) {
                             ExportDms dms = new ExportDms(
                                     ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
-                            dms.startExport(prozess);
+                            dms.startExport(process);
                         }
                         return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
                     case NEWSPAPER:

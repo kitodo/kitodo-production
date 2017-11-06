@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
@@ -87,11 +86,8 @@ public class ExportDms extends ExportMets {
     @Override
     public boolean startExport(Process process, URI inZielVerzeichnis)
             throws IOException, WriteException, PreferencesException, TypeNotAllowedForParentException {
-
-        Hibernate.initialize(process.getProject().getProjectFileGroups());
         if (process.getProject().isUseDmsImport()
                 && ConfigCore.getBooleanParameter("asynchronousAutomaticExport", false)) {
-            Hibernate.initialize(process.getRuleset());
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
             Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                     process.getTitle());

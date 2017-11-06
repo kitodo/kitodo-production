@@ -21,7 +21,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -37,8 +36,6 @@ public class PropertyParser {
      * @return list of ProcessProperty objects
      */
     public static ArrayList<ProcessProperty> getPropertiesForStep(Task mySchritt) {
-        Hibernate.initialize(mySchritt.getProcess());
-        Hibernate.initialize(mySchritt.getProcess().getProject());
         String stepTitle = mySchritt.getTitle();
         String projectTitle = mySchritt.getProcess().getProject().getTitle();
         ArrayList<ProcessProperty> properties = new ArrayList<>();
@@ -162,7 +159,6 @@ public class PropertyParser {
      * @return ProcessProperty object
      */
     public static ArrayList<ProcessProperty> getPropertiesForProcess(Process process) {
-        Hibernate.initialize(process.getProject());
         String projectTitle = process.getProject().getTitle();
         ArrayList<ProcessProperty> properties = new ArrayList<>();
         if (process.isTemplate()) {
