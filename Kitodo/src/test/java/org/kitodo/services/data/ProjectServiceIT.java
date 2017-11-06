@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
 import org.goobi.production.flow.statistics.StepInformation;
-import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -32,7 +31,6 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.dto.ProjectDTO;
 
 /**
@@ -172,98 +170,6 @@ public class ProjectServiceIT {
         List<JSONObject> projects = projectService.findByTitle("First project", true);
         Integer actual = projects.size();
         Integer expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-    }
-
-    @Test
-    public void shouldFindByStartDate() throws Exception {
-        ProjectService projectService = new ProjectService();
-
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        List<JSONObject> projects = projectService.findByStartDate(localDate.toDate(), SearchCondition.EQUAL);
-        Integer actual = projects.size();
-        Integer expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByStartDate(localDate.toDate(), SearchCondition.EQUAL_OR_BIGGER);
-        actual = projects.size();
-        expected = 2;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByStartDate(localDate.toDate(), SearchCondition.BIGGER);
-        actual = projects.size();
-        expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-    }
-
-    @Test
-    public void shouldFindByEndDate() throws Exception {
-        ProjectService projectService = new ProjectService();
-
-        LocalDate localDate = new LocalDate(2017, 9, 15);
-        List<JSONObject> projects = projectService.findByEndDate(localDate.toDate(), SearchCondition.EQUAL);
-        Integer actual = projects.size();
-        Integer expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByEndDate(localDate.toDate(), SearchCondition.EQUAL_OR_BIGGER);
-        actual = projects.size();
-        expected = 2;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByEndDate(localDate.toDate(), SearchCondition.BIGGER);
-        actual = projects.size();
-        expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-    }
-
-    @Test
-    public void shouldFindByNumberOfPages() throws Exception {
-        ProjectService projectService = new ProjectService();
-
-        List<JSONObject> projects = projectService.findByNumberOfPages(30, SearchCondition.EQUAL);
-        Integer actual = projects.size();
-        Integer expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByNumberOfPages(40, SearchCondition.EQUAL);
-        actual = projects.size();
-        expected = 0;
-        assertEquals("Project was found in index!", expected, actual);
-
-        projects = projectService.findByNumberOfPages(80, SearchCondition.EQUAL_OR_BIGGER);
-        actual = projects.size();
-        expected = 2;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByNumberOfPages(80, SearchCondition.BIGGER);
-        actual = projects.size();
-        expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-    }
-
-    @Test
-    public void shouldFindByNumberOfVolumes() throws Exception {
-        ProjectService projectService = new ProjectService();
-
-        List<JSONObject> projects = projectService.findByNumberOfVolumes(2, SearchCondition.EQUAL);
-        Integer actual = projects.size();
-        Integer expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByNumberOfVolumes(3, SearchCondition.EQUAL);
-        actual = projects.size();
-        expected = 0;
-        assertEquals("Project was found in index!", expected, actual);
-
-        projects = projectService.findByNumberOfVolumes(4, SearchCondition.EQUAL_OR_BIGGER);
-        actual = projects.size();
-        expected = 2;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByNumberOfVolumes(4, SearchCondition.BIGGER);
-        actual = projects.size();
-        expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
     }
 

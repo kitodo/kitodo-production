@@ -113,63 +113,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Find projects for exact start date.
-     *
-     * @param startDate
-     *            of the searched projects as Date
-     * @param searchCondition
-     *            as SearchCondition - bigger, smaller and so on
-     * @return list of JSON objects
-     */
-    List<JSONObject> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
-        QueryBuilder query = createSimpleCompareDateQuery("startDate", startDate, searchCondition);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find projects for exact end date.
-     *
-     * @param endDate
-     *            of the searched projects as Date
-     * @param searchCondition
-     *            as SearchCondition - bigger, smaller and so on
-     * @return list of JSON objects
-     */
-    List<JSONObject> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
-        QueryBuilder query = createSimpleCompareDateQuery("endDate", endDate, searchCondition);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find projects for exact amount of pages.
-     * 
-     * @param numberOfPages
-     *            as Integer
-     * @param searchCondition
-     *            as SearchCondition - bigger, smaller and so on
-     * @return list of JSON objects
-     */
-    List<JSONObject> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition) throws DataException {
-        QueryBuilder query = createSimpleCompareQuery("numberOfPages", numberOfPages, searchCondition);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find projects for exact amount of volumes.
-     *
-     * @param numberOfVolumes
-     *            as Integer
-     * @param searchCondition
-     *            as SearchCondition - bigger, smaller and so on
-     * @return list of JSON objects
-     */
-    List<JSONObject> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
-            throws DataException {
-        QueryBuilder query = createSimpleCompareQuery("numberOfVolumes", numberOfVolumes, searchCondition);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
      * Find archived or not archived projects.
      * 
      * @param archived

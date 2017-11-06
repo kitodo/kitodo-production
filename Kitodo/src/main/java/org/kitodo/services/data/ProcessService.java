@@ -33,7 +33,6 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -84,7 +83,6 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
 import org.kitodo.dto.ProcessDTO;
@@ -344,45 +342,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     public void refresh(Process process) {
         dao.refresh(process);
-    }
-
-    /**
-     * Find processes by output name.
-     *
-     * @param outputName
-     *            as String
-     * @return list of JSON objects
-     */
-    public List<JSONObject> findByOutputName(String outputName) throws DataException {
-        QueryBuilder query = createSimpleQuery("outputName", outputName, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find processes for exact creation date.
-     *
-     * @param creationDate
-     *            of the searched processes as Date
-     * @param searchCondition
-     *            as SearchCondition - bigger, smaller and so on
-     * @return list of JSON objects
-     */
-    public List<JSONObject> findByCreationDate(Date creationDate, SearchCondition searchCondition)
-            throws DataException {
-        QueryBuilder query = createSimpleCompareDateQuery("creationDate", creationDate, searchCondition);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Find processes by wiki field.
-     *
-     * @param wikiField
-     *            as String
-     * @return list of JSON objects
-     */
-    public List<JSONObject> findByWikiField(String wikiField) throws DataException {
-        QueryBuilder query = createSimpleQuery("wikiField", wikiField, true, Operator.AND);
-        return searcher.findDocuments(query.toString());
     }
 
     /**

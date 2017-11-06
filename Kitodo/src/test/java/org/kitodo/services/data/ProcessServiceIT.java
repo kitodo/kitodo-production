@@ -168,26 +168,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByOutputName() throws Exception {
-        ProcessService processService = new ProcessService();
-
-        List<JSONObject> process = processService.findByOutputName("Test");
-        Integer actual = process.size();
-        Integer expected = 1;
-        assertEquals("Process was not found in index!", expected, actual);
-    }
-
-    @Test
-    public void shouldFindByWikiField() throws Exception {
-        ProcessService processService = new ProcessService();
-
-        List<JSONObject> process = processService.findByWikiField("wiki");
-        Integer actual = process.size();
-        Integer expected = 1;
-        assertEquals("Process was not found in index!", expected, actual);
-    }
-
-    @Test
     public void shouldFindByBatchId() throws Exception {
         ProcessService processService = new ProcessService();
 
