@@ -85,7 +85,7 @@ public class ProcessServiceIT {
         Long amount = processService.count(query);
         assertEquals("Process was not found!", Long.valueOf(1), amount);
 
-        amount = processService.getNumberOfProcessesWithTitle("First Process");
+        amount = processService.findNumberOfProcessesWithTitle("First Process");
         assertEquals("Process was not found!", Long.valueOf(1), amount);
     }
 

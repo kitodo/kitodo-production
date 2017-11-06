@@ -14,8 +14,11 @@ package org.goobi.production.chart;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -26,16 +29,21 @@ import org.kitodo.services.ServiceManager;
  */
 public class WorkflowProjectTaskList implements IProvideProjectTaskList {
     private static final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(WorkflowProjectTaskList.class);
 
     @Override
     public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
         List<IProjectTask> myTaskList = new ArrayList<>();
-        calculate(inProject, myTaskList, countImages, inMax);
+        try {
+            calculate(inProject, myTaskList, countImages, inMax);
+        } catch (DataException e) {
+            logger.error(e);
+        }
         return myTaskList;
     }
 
     private static synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages,
-            Integer inMax) {
+            Integer inMax) throws DataException {
         List<StepInformation> workFlow = serviceManager.getProjectService().getWorkFlow(inProject);
         Integer usedMax = 0;
 

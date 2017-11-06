@@ -183,8 +183,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Remove properties if process is removed, add properties if process is
-     * marked as indexed.
+     * Remove properties if process is removed, add properties if process is marked
+     * as indexed.
      *
      * @param process
      *            object
@@ -202,8 +202,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks
-     * from index, if other call saveOrRemoveTaskInIndex() method.
+     * Check IndexAction flag in for process object. If DELETE remove all tasks from
+     * index, if other call saveOrRemoveTaskInIndex() method.
      *
      * @param process
      *            object
@@ -220,8 +220,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Compare index and database, according to comparisons results save or
-     * remove tasks.
+     * Compare index and database, according to comparisons results save or remove
+     * tasks.
      *
      * @param process
      *            object
@@ -259,8 +259,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Remove template if process is removed, add template if process is marked
-     * as template.
+     * Remove template if process is removed, add template if process is marked as
+     * template.
      *
      * @param process
      *            object
@@ -279,8 +279,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Remove workpiece if process is removed, add workpiece if process is
-     * marked as workpiece.
+     * Remove workpiece if process is removed, add workpiece if process is marked as
+     * workpiece.
      *
      * @param process
      *            object
@@ -535,6 +535,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
+    QueryBuilder getQueryTemplateAndProjectId(Integer projectId) {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("project", projectId, true));
+        query.must(getQueryTemplate(false));
+        return query;
+    }
+
     /**
      * Get query for template.
      *
@@ -755,7 +762,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
         if (tifDirectory == null) {
-            tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
+            tifDirectory = URI
+                    .create(result.getRawPath() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
         }
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
@@ -943,8 +951,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated
-     * with as readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated with as
+     * readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -1308,8 +1316,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Check whether the operation contains tasks that are not assigned to a
-     * user or user group.
+     * Check whether the operation contains tasks that are not assigned to a user or
+     * user group.
      *
      * @param process
      *            bean object
@@ -1329,8 +1337,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Check whether the operation contains tasks that are not assigned to a
-     * user or user group.
+     * Check whether the operation contains tasks that are not assigned to a user or
+     * user group.
      *
      * @param process
      *            DTO object
@@ -1582,8 +1590,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The method addToWikiField() adds a message signed by the given user to
-     * the wiki field of the process.
+     * The method addToWikiField() adds a message signed by the given user to the
+     * wiki field of the process.
      *
      * @param user
      *            to sign the message with
@@ -1596,8 +1604,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The method createProcessDirs() starts creation of directories configured
-     * by parameter processDirs within kitodo_config.properties
+     * The method createProcessDirs() starts creation of directories configured by
+     * parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
@@ -1613,13 +1621,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @return the digital act of this process
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set configured
+     *             if the no node corresponding to the file format is available in
+     *             the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws IOException
-     *             if creating the process directory or reading the meta data
-     *             file fails
+     *             if creating the process directory or reading the meta data file
+     *             fails
      */
     public DigitalDocument getDigitalDocument(Process process) throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
@@ -1680,8 +1688,39 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return new ArrayList<>(filteredList);
     }
 
-    public Long getNumberOfProcessesWithTitle(String title) throws DataException {
+    /**
+     * Find amount of processes for given title.
+     * 
+     * @param title
+     *            as String
+     * @return amount as Long
+     */
+    public Long findNumberOfProcessesWithTitle(String title) throws DataException {
         return count(createSimpleQuery("title", title, true, Operator.AND).toString());
+    }
+
+    /**
+     * Find amount of not template processes for given project id.
+     * 
+     * @param projectId
+     *            as Integer
+     * @return amount as Long
+     */
+    public Long findNumberOfNotTemplateProcessesForProjectId(Integer projectId) throws DataException {
+        String query = getQueryTemplateAndProjectId(projectId).toString();
+        return count(query);
+    }
+
+    /**
+     * Find amount of images for not templates processes and for given project id.
+     * 
+     * @param projectId
+     *            as Integer
+     * @return amount of images as Double
+     */
+    public Double findAmountOfImagesForNotTemplatesAndProjectId(Integer projectId) throws DataException {
+        String query = getQueryTemplateAndProjectId(projectId).toString();
+        return findSumAggregation(query, "sortHelperImages");
     }
 
     /**
@@ -2078,8 +2117,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         mm.setDigitalDocument(dd);
 
         /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die
-         * Metsstruktur übernommen
+         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur
+         * übernommen
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
@@ -2381,7 +2420,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * Get all process templates for given title.
      *
      * @param title
-     *           of Process
+     *            of Process
      * @return list of all process templates as Process objects
      */
     public List<Process> getProcessTemplatesWithTitle(String title) {

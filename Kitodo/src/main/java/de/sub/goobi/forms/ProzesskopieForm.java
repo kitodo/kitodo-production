@@ -713,7 +713,7 @@ public class ProzesskopieForm implements Serializable {
                 long amount = 0;
                 try {
                     amount = serviceManager.getProcessService()
-                            .getNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
+                            .findNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
                 } catch (DataException e) {
                     Helper.setFehlerMeldung("Error on reading process information", e.getMessage());
                     valide = false;

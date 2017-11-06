@@ -817,6 +817,10 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return distinctValues;
     }
 
+    private String createAvgAggregation(String field) {
+        return XContentHelper.toString(AggregationBuilders.avg(field).field(field));
+    }
+
     private String createCountAggregation(String field) {
         return XContentHelper.toString(AggregationBuilders.count(field).field(field));
     }
