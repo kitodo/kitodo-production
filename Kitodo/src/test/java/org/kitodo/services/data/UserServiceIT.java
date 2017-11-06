@@ -18,8 +18,13 @@ import static org.junit.Assert.assertTrue;
 import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
+import org.apache.commons.lang.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
@@ -27,6 +32,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -38,6 +44,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class UserServiceIT {
 
+    private static final Logger logger = LogManager.getLogger(UserServiceIT.class);
     private static final UserService userService = new ServiceManager().getUserService();
 
     @BeforeClass
@@ -416,23 +423,31 @@ public class UserServiceIT {
         assertTrue("Full name of user is incorrect!", condition);
     }
 
-    @Ignore
     @Test
     public void shouldGetHomeDirectory() throws Exception {
         User user = userService.getById(1);
         String homeDirectory = ConfigCore.getParameter("dir_Users");
-        boolean condition = userService.getHomeDirectory(user).getRawPath().equals(homeDirectory + "kowal/");
-        System.out.println("1. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
-        assertTrue("Home directory of user is incorrect!", condition);
+        try {
+            File script = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            if (!SystemUtils.IS_OS_WINDOWS) {
+                ExecutionPermission.setExecutePermission(script);
+            }
 
-        // probably here home directory should look differently (depending on
-        // LDAP group)
-        // but not sure how to test because it depends on config.properties
-        // ldap_use
-        user = userService.getById(2);
-        condition = userService.getHomeDirectory(user).getRawPath().contains("nowak");
-        System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
-        assertTrue("Home directory of user is incorrect!", condition);
+            URI homeDirectoryForUser = userService.getHomeDirectory(user);
+            boolean condition = homeDirectoryForUser.getRawPath().contains(homeDirectory + user.getLogin());
+            assertTrue("Home directory of user is incorrect!", condition);
+
+            user = userService.getById(2);
+            homeDirectoryForUser = userService.getHomeDirectory(user);
+            condition = homeDirectoryForUser.getRawPath().contains(user.getLogin());
+            assertTrue("Home directory of user is incorrect!", condition);
+
+            if (!SystemUtils.IS_OS_WINDOWS) {
+                ExecutionPermission.setNoExecutePermission(script);
+            }
+        } catch (IOException e) {
+            logger.error("Probably you run this test on Windows: " + e.getMessage());
+        }
     }
 
     @Test
