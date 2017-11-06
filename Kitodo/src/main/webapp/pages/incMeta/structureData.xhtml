@@ -152,7 +152,7 @@
                             <f:selectItems value="#{Metadaten.allPages}"/>
                         </p:selectOneMenu>
 
-                        <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addNode}"
+                        <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSingleNodeWithPages}"
                                          update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStruc"
                                          oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGrid>
@@ -160,16 +160,20 @@
 
                 <h:panelGroup rendered="#{Metadaten.addServeralStructuralElementsMode}">
                     <h:panelGrid columns="2">
-                        <h:outputLabel value="#{msgs.count}:" />
+                        <h:outputLabel value="#{msgs.count}:" for="elementsToAddSpinner"/>
                         <p:spinner value="#{Metadaten.metadataElementsToAdd}" id="elementsToAddSpinner" size="5" min="1"/>
 
-                        <h:outputLabel value="#{msgs.typ}:" />
+                        <h:outputLabel value="#{msgs.typ}:" for="selectAddableMetadataTypes" />
                         <p:selectOneMenu id="selectAddableMetadataTypes" value="#{Metadaten.addMetaDataType}" style="width: 180px">
                             <f:selectItems value="#{Metadaten.addableMetadataTypesFromTempType}" />
                         </p:selectOneMenu>
 
-                        <h:outputLabel value="#{msgs.wert}:" />
-                        <h:inputTextarea value="#{Metadaten.addMetaDataValue}"/>
+                        <h:outputLabel value="#{msgs.wert}:" for="inputMetaDataValue"/>
+                        <h:inputTextarea id="inputMetaDataValue" value="#{Metadaten.addMetaDataValue}"/>
+
+                        <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSeveralNodesWithMetadata}"
+                                         update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStruc"
+                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGrid>
                 </h:panelGroup>
             </h:panelGrid>
@@ -180,7 +184,6 @@
               widgetVar="dialogEditPages" width="400">
         <h:form id="dialogEditPagesForm">
 
-            <p:fieldset legend="#{msgs.seitenzuordnung}">
                 <p:messages id="messagesSetFirstAndLastPage" closable="true"/>
                 <h:panelGrid columns="2">
 
@@ -202,10 +205,8 @@
                     <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.seitenZuweisen}"
                                      action="#{Metadaten.setPageStartAndEnd}"
                                      update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
-
                 </h:panelGrid>
 
-            </p:fieldset>
 
             <h:panelGrid id="mygrid7" columns="3" columnClasses="top,centered,top">
                 <!-- alle Seiten -->

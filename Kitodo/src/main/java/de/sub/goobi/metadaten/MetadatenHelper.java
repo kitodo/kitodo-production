@@ -238,7 +238,7 @@ public class MetadatenHelper implements Comparator<Object> {
                 if (parent.getNextChild(tempDS) == inStruct) {
                     alleDS = new ArrayList<>();
                 }
-            } catch (Exception e) {
+            } catch (IndexOutOfBoundsException e) {
                 logger.error(e);
             }
 
@@ -279,7 +279,6 @@ public class MetadatenHelper implements Comparator<Object> {
         List<DocStruct> alleDS = new ArrayList<>();
 
         /* alle Elemente des Parents durchlaufen */
-        // TODO: get rid of Iterators, use a for Loop instead
         for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
             DocStruct tempDS = iter.next();
 
