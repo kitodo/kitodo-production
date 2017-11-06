@@ -27,7 +27,8 @@
                      style="height: 100%" cellpadding="10">
 
             <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}" style="height: 100%"
-                              required="true" requiredMessage="#{msgs.paginationNoPagesSelected}">
+                              required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
+                              filter="true" filterMatchMode="contains">
                 <f:selectItems value="#{Metadaten.allPages}"/>
                 <p:ajax update="paginationSelection"/>
 
