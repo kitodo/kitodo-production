@@ -421,7 +421,7 @@ public class UserServiceIT {
     public void shouldGetHomeDirectory() throws Exception {
         User user = userService.getById(1);
         String homeDirectory = ConfigCore.getParameter("dir_Users");
-        boolean condition = userService.getHomeDirectory(user).equals(homeDirectory + "kowal" + File.separator);
+        boolean condition = userService.getHomeDirectory(user).getRawPath().equals(homeDirectory + "kowal/");
         System.out.println("1. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
 
@@ -430,7 +430,7 @@ public class UserServiceIT {
         // but not sure how to test because it depends on config.properties
         // ldap_use
         user = userService.getById(2);
-        condition = userService.getHomeDirectory(user).toString().contains("nowak");
+        condition = userService.getHomeDirectory(user).getRawPath().contains("nowak");
         System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
     }

@@ -3006,7 +3006,7 @@ public class Metadaten {
     public void reOrderPagination() throws IOException {
         URI imageDirectory;
         imageDirectory = fileService.getImagesDirectory(process);
-        if (imageDirectory.equals("")) {
+        if (imageDirectory.getRawPath().equals("")) {
             Helper.setFehlerMeldung("ErrorMetsEditorImageRenaming");
             return;
         }
