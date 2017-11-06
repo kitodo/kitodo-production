@@ -39,31 +39,35 @@
                         <h:outputText value="#{msgs.normDataRecord}:"/>
                         <h:inputText value="#{person.record}"
                                      style="width: 350px;"
-                                     id="record"/>
+                                     id="record">
+                            <p:ajax event="blur"/>
+                        </h:inputText>
 
                         <h:outputText value="#{msgs.vorname}:"/>
                         <h:inputText value="#{person.vorname}"
                                      style="width: 350px;"
-                                     id="firstname"/>
+                                     id="firstname">
+                            <p:ajax event="blur"/>
+                        </h:inputText>
 
                         <h:outputText value="#{msgs.surname}:"/>
                         <h:inputText value="#{person.nachname}"
                                      style="width: 350px;"
-                                     id="lastname"/>
-
-
+                                     id="lastname">
+                            <p:ajax event="blur"/>
+                        </h:inputText>
                     </p:panelGrid>
 
                 </p:column>
 
                 <p:column style="width:64px;text-align: center">
                     <p:commandButton update="tabView:metadata:personTable,tabView:metadata:messagesMetadata"
-                                     icon="ui-icon-copy" immediate="true"
+                                     icon="ui-icon-copy" immediate="true" id="copyPersonBtn"
                                      title="#{msgs.personendatenKopieren}" action="#{Metadaten.copyPerson}">
                         <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
                     </p:commandButton>
 
-                    <p:commandButton update="tabView:metadata:personTable,tabView:metadata:messagesMetadata"
+                    <p:commandButton update="tabView:metadata" id="deletePersonBtn"
                                      icon="ui-icon-trash" immediate="true"
                                      title="#{msgs.personendatenLoeschen}" action="#{Metadaten.deletePerson}">
                         <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
@@ -85,7 +89,7 @@
 
             <p:column>
                 <p:inputTextarea value="#{item.value}" rows="2" style="width:98%;">
-                    <p:ajax event="blur" update="tabView:structureData:structureDataTable"/>
+                    <p:ajax event="blur"/>
                 </p:inputTextarea>
             </p:column>
 
@@ -128,5 +132,48 @@
                 </p:column>
             </p:row>
         </p:panelGrid>
+
+        <p:commandButton icon="ui-icon-plus" value="#{msgs.neuePersonAnlegen}"
+                         update="tabView:dialogAddPersonForm:selectTempPersonRoll, tabView:dialogAddPersonForm:addPersonRecord"
+                         title="#{msgs.docstructTypeAendern}"
+                         action="#{Metadaten.addPerson}"
+                         onclick="PF('dialogAddPerson').show();">
+        </p:commandButton>
     </h:form>
+
+    <p:dialog id="dialogAddPersonId" header="#{msgs.neuePersonAnlegen}" resizable="false"
+              widgetVar="dialogAddPerson" modal="true"
+              appendTo="@(body)">
+        <h:form id="dialogAddPersonForm">
+
+            <p:panelGrid columns="2" styleClass="ui-noborder">
+
+                <h:outputText value="#{msgs.rolle}:"/>
+                <p:selectOneMenu value="#{Metadaten.tempPersonRolle}" style="width: 350px;"
+                                 id="selectTempPersonRoll">
+                    <f:selectItems value="#{Metadaten.addableRollen}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="#{msgs.normDataRecord}:"/>
+                <h:inputText value="#{Metadaten.tempPersonRecord}"
+                             style="width: 350px;"
+                             id="addPersonRecord"/>
+
+                <h:outputText value="#{msgs.vorname}:"/>
+                <h:inputText value="#{Metadaten.tempPersonVorname}"
+                             style="width: 350px;"
+                             id="addPersonFirstname"/>
+
+                <h:outputText value="#{msgs.surname}:"/>
+                <h:inputText value="#{Metadaten.tempPersonNachname}"
+                             style="width: 350px;"
+                             id="addPersonLastname"/>
+            </p:panelGrid>
+
+            <p:commandButton value="#{msgs.uebernehmen}" action="#{Metadaten.savePerson}"
+                             update="tabView:metadata"
+                             oncomplete="PF('dialogAddPerson').hide();">
+            </p:commandButton>
+        </h:form>
+    </p:dialog>
 </ui:composition>

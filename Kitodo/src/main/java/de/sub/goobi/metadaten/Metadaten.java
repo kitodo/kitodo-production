@@ -229,15 +229,11 @@ public class Metadaten {
      *
      * @return String
      */
-    public String addPerson() {
+    public void addPerson() {
         this.modeAddPerson = true;
         this.tempPersonNachname = "";
         this.tempPersonRecord = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
         this.tempPersonVorname = "";
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -391,9 +387,8 @@ public class Metadaten {
     /**
      * Save person.
      *
-     * @return String
      */
-    public String savePerson() {
+    public void savePerson() {
         try {
             Person per = new Person(this.myPrefs.getMetadataTypeByName(this.tempPersonRolle));
             per.setFirstname(this.tempPersonVorname);
@@ -405,17 +400,11 @@ public class Metadaten {
         } catch (IncompletePersonObjectException e) {
             Helper.setFehlerMeldung("Incomplete data for person", "");
 
-            return "";
         } catch (MetadataTypeNotAllowedException e) {
             Helper.setFehlerMeldung("Person is for this structure not allowed", "");
-            return "";
         }
         this.modeAddPerson = false;
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
