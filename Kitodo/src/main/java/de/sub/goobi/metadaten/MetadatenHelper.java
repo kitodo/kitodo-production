@@ -524,15 +524,16 @@ public class MetadatenHelper implements Comparator<Object> {
         types.put("rdf", "<RDF:RDF ".toLowerCase());
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-        InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
+        try (InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
                 StandardCharsets.UTF_8);
-        BufferedReader bufRead = new BufferedReader(input);
-        char[] buffer = new char[200];
-        while ((bufRead.read(buffer)) >= 0) {
-            String temp = new String(buffer).toLowerCase();
-            for (Entry<String, String> entry : types.entrySet()) {
-                if (temp.contains(entry.getValue())) {
-                    return entry.getKey();
+             BufferedReader bufRead = new BufferedReader(input)) {
+            char[] buffer = new char[200];
+            while (bufRead.read(buffer) >= 0) {
+                String temp = new String(buffer).toLowerCase();
+                for (Entry<String, String> entry : types.entrySet()) {
+                    if (temp.contains(entry.getValue())) {
+                        return entry.getKey();
+                    }
                 }
             }
         }
