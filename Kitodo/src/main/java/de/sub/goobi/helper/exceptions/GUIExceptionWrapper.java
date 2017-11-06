@@ -184,9 +184,10 @@ public class GUIExceptionWrapper extends Exception {
      *         href="mailto:"&gt;
      */
     private String getAddresses() {
-        StringBuffer addresses = new StringBuffer();
+        StringBuilder addresses = new StringBuilder();
         for (String emailAddy : this.emailAddresses) {
-            addresses = addresses.append(emailAddy).append(",%20");
+            addresses.append(emailAddy);
+            addresses.append(",%20");
         }
         return addresses.toString();
     }
