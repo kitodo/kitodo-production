@@ -28,11 +28,14 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Tests for DocketService class.
  */
 public class DocketServiceIT {
+
+    private static final DocketService docketService = new ServiceManager().getDocketService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -56,16 +59,12 @@ public class DocketServiceIT {
 
     @Test
     public void shouldCountAllDockets() throws Exception {
-        DocketService docketService = new DocketService();
-
         Long amount = docketService.count();
         assertEquals("Dockets were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldCountAllDocketsAccordingToQuery() throws Exception {
-        DocketService docketService = new DocketService();
-
         String query = matchQuery("title", "default").operator(Operator.AND).toString();
         Long amount = docketService.count(query);
         assertEquals("Dockets were not counted correctly!", Long.valueOf(1), amount);
@@ -73,16 +72,12 @@ public class DocketServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForDockets() throws Exception {
-        DocketService docketService = new DocketService();
-
         Long amount = docketService.countDatabaseRows();
         assertEquals("Dockets were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldFindDocket() throws Exception {
-        DocketService docketService = new DocketService();
-
         Docket docket = docketService.getById(1);
         boolean condition = docket.getTitle().equals("default") && docket.getFile().equals("docket.xsl");
         assertTrue("Docket was not found in database!", condition);
@@ -90,24 +85,18 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindAllDockets() {
-        DocketService docketService = new DocketService();
-
         List<Docket> dockets = docketService.getAll();
         assertEquals("Not all dockets were found in database!", 2, dockets.size());
     }
 
     @Test
     public void shouldGetAllDocketsInGivenRange() throws Exception {
-        DocketService docketService = new DocketService();
-
         List<Docket> dockets = docketService.getAll(1,10);
         assertEquals("Not all dockets were found in database!", 1, dockets.size());
     }
 
     @Test
     public void shouldFindById() throws Exception {
-        DocketService docketService = new DocketService();
-
         String actual = docketService.findById(1).getTitle();
         String expected = "default";
         assertEquals("Docket was not found in index!", expected, actual);
@@ -115,8 +104,6 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        DocketService docketService = new DocketService();
-
         List<JSONObject> dockets = docketService.findByTitle("default", true);
         Integer actual = dockets.size();
         Integer expected = 1;
@@ -125,8 +112,6 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByFile() throws Exception {
-        DocketService docketService = new DocketService();
-
         JSONObject docket = docketService.findByFile("docket.xsl");
         JSONObject jsonObject = (JSONObject) docket.get("_source");
         String actual = (String) jsonObject.get("file");
@@ -136,8 +121,6 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByTitleAndFile() throws Exception {
-        DocketService docketService = new DocketService();
-
         JSONObject docket = docketService.findByTitleAndFile("default", "docket.xsl");
         Integer actual = docketService.getIdFromJSONObject(docket);
         Integer expected = 1;
@@ -151,8 +134,6 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByTitleOrFile() throws Exception {
-        DocketService docketService = new DocketService();
-
         List<JSONObject> docket = docketService.findByTitleOrFile("default", "docket.xsl");
         Integer actual = docket.size();
         Integer expected = 2;
@@ -171,16 +152,12 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindAllDocketsDocuments() throws Exception {
-        DocketService docketService = new DocketService();
-
         List<JSONObject> dockets = docketService.findAllDocuments();
         assertEquals("Not all dockets were found in index!", 2, dockets.size());
     }
 
     @Test
     public void shouldRemoveDocket() throws Exception {
-        DocketService docketService = new DocketService();
-
         Docket docket = new Docket();
         docket.setTitle("To Remove");
         docketService.save(docket);

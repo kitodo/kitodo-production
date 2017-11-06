@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.PropertyDTO;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
@@ -46,6 +47,7 @@ import ugh.dl.DigitalDocument;
 public class ProcessServiceIT {
 
     private static FileService fileService = new FileService();
+    private static final ProcessService processService = new ServiceManager().getProcessService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -71,16 +73,12 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCountAllProcesses() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Long amount = processService.count();
         assertEquals("Processes were not counted correctly!", Long.valueOf(5), amount);
     }
 
     @Test
     public void shouldCountProcessesAccordingToQuery() throws Exception {
-        ProcessService processService = new ProcessService();
-
         String query = matchQuery("title", "First Process").operator(Operator.AND).toString();
         Long amount = processService.count(query);
         assertEquals("Process was not found!", Long.valueOf(1), amount);
@@ -91,16 +89,12 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Long amount = processService.countDatabaseRows();
         assertEquals("Processes were not counted correctly!", Long.valueOf(5), amount);
     }
 
     @Test
     public void shouldFindProcess() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         boolean condition = process.getTitle().equals("First process") && process.getOutputName().equals("Test");
         assertTrue("Process was not found in database!", condition);
@@ -108,24 +102,18 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindAllProcesses() {
-        ProcessService processService = new ProcessService();
-
         List<Process> processes = processService.getAll();
         assertEquals("Not all processes were found in database!", 5, processes.size());
     }
 
     @Test
     public void shouldGetAllProcessesInGivenRange() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<Process> processes = processService.getAll(3,10);
         assertEquals("Not all processes were found in database!", 2, processes.size());
     }
 
     @Test
     public void shouldRemoveProcess() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
@@ -149,8 +137,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindById() throws Exception {
-        ProcessService processService = new ProcessService();
-
         ProcessDTO process = processService.findById(1);
         Integer actual = process.getId();
         Integer expected = 1;
@@ -159,8 +145,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<JSONObject> process = processService.findByTitle("First process", true);
         Integer actual = process.size();
         Integer expected = 1;
@@ -169,8 +153,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByBatchId() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<JSONObject> processes = processService.findByBatchId(1);
         Integer actual = processes.size();
         Integer expected = 1;
@@ -184,8 +166,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByBatchTitle() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<JSONObject> processes = processService.findByBatchTitle("First batch");
         Integer actual = processes.size();
         Integer expected = 1;
@@ -199,8 +179,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProjectId() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> processes = processService.findByProjectId(1, true);
         Integer actual = processes.size();
         Integer expected = 3;
@@ -214,8 +192,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProjectTitle() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<JSONObject> processes = processService.findByProjectTitle("First project");
         Integer actual = processes.size();
         Integer expected = 3;
@@ -229,8 +205,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProperty() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<JSONObject> processes = processService.findByProperty("Korrektur notwendig", null, true);
         Integer actual = processes.size();
         Integer expected = 2;
@@ -249,8 +223,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetBatchesByType() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         boolean condition = processService.getBatchesByType(process, LOGISTIC).size() == 1;
         assertTrue("Table size is incorrect!", condition);
@@ -259,8 +231,7 @@ public class ProcessServiceIT {
     @Ignore("for second process is attached task which is processed by blocked user")
     @Test
     public void shouldGetBlockedUser() throws Exception {
-        ProcessService processService = new ProcessService();
-        UserService userService = new UserService();
+        UserService userService = new ServiceManager().getUserService();
 
         ProcessDTO process = processService.findById(1);
         boolean condition = processService.getBlockedUser(process) == null;
@@ -273,8 +244,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetImagesTifDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = processService.getImagesTifDirectory(true, process);
         boolean condition = directory.getRawPath().contains("First__process_tif");
@@ -289,8 +258,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCheckIfTifDirectoryExists() throws Exception {
-        ProcessService processService = new ProcessService();
-
         fileService.createDirectory(URI.create("1"), "images");
         URI directory = fileService.createDirectory(URI.create("1/images"), "First__process_tif");
         fileService.createResource(directory, "test.jpg");
@@ -303,8 +270,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetImagesOrigDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = processService.getImagesOrigDirectory(false, process);
         boolean condition = directory.getRawPath().contains("orig_First__process_tif");
@@ -313,8 +278,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetImagesDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getImagesDirectory(process);
         boolean condition = directory.getRawPath().contains("1/images");
@@ -323,8 +286,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetSourceDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getSourceDirectory(process);
         boolean condition = directory.getRawPath().contains("1/images/First__process_source");
@@ -333,8 +294,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetProcessDataDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = processService.getProcessDataDirectory(process);
         boolean condition = directory.getRawPath().contains("1");
@@ -343,8 +302,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetOcrDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getOcrDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr");
@@ -353,8 +310,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetTxtDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getTxtDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_txt");
@@ -363,8 +318,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetWordDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getWordDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_wc");
@@ -373,8 +326,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetPdfDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getPdfDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_pdf");
@@ -383,8 +334,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetAltoDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getAltoDirectory(process);
         boolean condition = directory.getRawPath().contains("1/ocr/First__process_alto");
@@ -393,8 +342,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetImportDirectory() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getImportDirectory(process);
         boolean condition = directory.getRawPath().contains("1/import");
@@ -403,8 +350,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetBatchId() throws Exception {
-        ProcessService processService = new ProcessService();
-
         ProcessDTO process = processService.findById(1);
         String batchId = processService.getBatchID(process);
         boolean condition = batchId.equals("First batch, Third batch");
@@ -413,8 +358,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetTasksSize() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         int actual = processService.getTasksSize(process);
         assertEquals("Tasks' size is incorrect!", 1, actual);
@@ -426,8 +369,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetHistorySize() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         int actual = processService.getHistorySize(process);
         assertEquals("History's size is incorrect!", 1, actual);
@@ -435,8 +376,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetPropertiesSize() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         int actual = processService.getPropertiesSize(process);
         assertEquals("Properties' size is incorrect!", 3, actual);
@@ -444,8 +383,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetWorkpiecesSize() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         int actual = processService.getWorkpiecesSize(process);
         assertEquals("Workpieces' size is incorrect!", 2, actual);
@@ -453,8 +390,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetTemplatesSize() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         int actual = processService.getTemplatesSize(process);
         assertEquals("Templates' size is incorrect!", 2, actual);
@@ -462,8 +397,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetCurrentTask() throws Exception {
-        ProcessService processService = new ProcessService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         Process process = processService.getById(2);
         Task actual = processService.getCurrentTask(process);
@@ -473,8 +407,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetCreationDateAsString() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         String expected = "2017-01-20 00:00:00";
         String actual = processService.getCreationDateAsString(process);
@@ -483,8 +415,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetProgress() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         String progress = processService.getProgress(process, null);
         assertEquals("Progress doesn't match given plain text!", "000033033033", progress);
@@ -492,8 +422,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetProgressClosed() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         int condition = processService.getProgressClosed(process, null);
         assertEquals("Progress doesn't match given plain text!", 0, condition);
@@ -501,8 +429,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetProgressInProcessing() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         int condition = processService.getProgressInProcessing(process, null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
@@ -510,8 +436,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetProgressOpen() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         int condition = processService.getProgressOpen(process, null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
@@ -519,8 +443,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetProgressLocked() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         int condition = processService.getProgressLocked(process, null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
@@ -528,9 +450,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetMetadataFilePath() throws Exception {
-        ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getMetadataFilePath(process);
         boolean condition = directory.getRawPath().contains("1/meta.xml");
@@ -539,9 +458,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetTemplateFilePath() throws Exception {
-        ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
-
         Process process = processService.getById(1);
         URI directory = fileService.getTemplateFile(process);
         boolean condition = directory.getRawPath().contains("1/template.xml");
@@ -550,8 +466,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetFulltextFilePath() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         String directory = processService.getFulltextFilePath(process);
         boolean condition = directory.contains("1/fulltext.xml");
@@ -561,8 +475,6 @@ public class ProcessServiceIT {
     @Ignore("no idea how check if it is correct - Fileformat class")
     @Test
     public void shouldReadMetadataFile() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         System.out.println(processService.readMetadataFile(process));
         boolean condition = processService.readMetadataFile(process).equals("");
@@ -572,8 +484,6 @@ public class ProcessServiceIT {
     @Ignore("no idea how check if it is correct - Fileformat class")
     @Test
     public void shouldWriteMetadataFile() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         // boolean condition =
         // processService.writeMetadataFile(process).equals("");
@@ -583,8 +493,6 @@ public class ProcessServiceIT {
     @Ignore("no idea how check if it is correct - Fileformat class")
     @Test
     public void shouldReadMetadataAsTemplateFile() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         System.out.println(processService.readMetadataAsTemplateFile(process));
         boolean condition = processService.readMetadataAsTemplateFile(process).equals("");
@@ -594,9 +502,6 @@ public class ProcessServiceIT {
     @Ignore("no idea how check if it is correct - Fileformat class")
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
-        ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
-
         Process process = processService.getById(1);
         // should return true or false
         fileService.writeMetadataAsTemplateFile(null, process);
@@ -606,8 +511,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetContainsUnreachableSteps() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(3);
         boolean condition = processService.getContainsUnreachableSteps(process);
         assertTrue("Process doesn't contain unreachable tasks!", condition);
@@ -619,8 +522,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCheckIfIsImageFolderInUse() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(1);
         boolean condition = !processService.isImageFolderInUse(process);
         assertTrue("Image folder is in use but it shouldn't be!", condition);
@@ -632,8 +533,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetImageFolderInUseUser() throws Exception {
-        ProcessService processService = new ProcessService();
-        UserService userService = new UserService();
+        UserService userService = new ServiceManager().getUserService();
 
         Process process = processService.getById(2);
         System.out.println(process.getTasks().get(2).getProcessingStatusEnum().getTitle());
@@ -644,8 +544,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetFirstOpenStep() throws Exception {
-        ProcessService processService = new ProcessService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         Process process = processService.getById(2);
         Task expected = taskService.getById(2);
@@ -656,8 +555,6 @@ public class ProcessServiceIT {
     @Ignore("Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1")
     @Test
     public void shouldAddToWikiField() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         process.setWikiField(process.getWikiField() + "<p>test</p>");
         Process actual = processService.addToWikiField("test", process);
@@ -667,8 +564,6 @@ public class ProcessServiceIT {
     @Ignore("find out what exactly was created")
     @Test
     public void shouldCreateProcessDirs() throws Exception {
-        ProcessService processService = new ProcessService();
-
         Process process = processService.getById(2);
         processService.createProcessDirs(process);
         // assertEquals("Process directories are not created!", expected,
@@ -678,8 +573,6 @@ public class ProcessServiceIT {
     @Ignore("not sure how it should look")
     @Test
     public void shouldGetDigitalDocument() throws Exception {
-        ProcessService processService = new ProcessService();
-
         DigitalDocument expected = new DigitalDocument();
         DigitalDocument actual = processService.getDigitalDocument(processService.getById(2));
         // assertEquals("Digital documents are not equal!", expected, actual);
@@ -687,8 +580,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFilterForCorrectionSolutionMessages() throws Exception {
-        ProcessService processService = new ProcessService();
-
         ProcessDTO process = processService.findById(1);
         List<PropertyDTO> properties = processService.filterForCorrectionSolutionMessages(process.getProperties());
 
@@ -703,8 +594,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetSortedCorrectionSolutionMessages() throws Exception {
-        ProcessService processService = new ProcessService();
-
         ProcessDTO process = processService.findById(1);
         Integer expected = 2;
         Integer actual = processService.getSortedCorrectionSolutionMessages(process).size();
@@ -713,27 +602,19 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindNotArchivedProcesses() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> notArchivedProcesses = processService.findNotArchivedProcesses(null);
-
         assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 3",
                 notArchivedProcesses.size() == 3);
     }
 
     @Test
     public void shouldFindNotClosedProcesses() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> notClosedProcesses = processService.findNotClosedProcesses(null);
-
         assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 5", notClosedProcesses.size() == 5);
     }
 
     @Test
     public void shouldFindNotClosedAndNotArchivedProcesses() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> notClosedAndNotArchivedProcesses = processService.findNotClosedAndNotArchivedProcesses(null);
         assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 3",
                 notClosedAndNotArchivedProcesses.size() == 3);
@@ -741,8 +622,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindNotArchivedTemplates() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> notArchivedTemplates = processService.findNotArchivedTemplates(null);
         assertTrue("Found " + notArchivedTemplates.size() + " processes, instead of 1",
                 notArchivedTemplates.size() == 1);
@@ -750,24 +629,18 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindAllTemplates() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> allTemplates = processService.findAllTemplates(null);
         assertTrue("Found " + allTemplates.size() + " processes, instead of 2", allTemplates.size() == 2);
     }
 
     @Test
     public void shouldFindAllWithoutTemplates() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> allWithoutTemplates = processService.findAllWithoutTemplates(null);
         assertTrue("Found " + allWithoutTemplates.size() + " processes, instead of 3", allWithoutTemplates.size() == 3);
     }
 
     @Test
-    public void shouldFindAllNotArchivedWithoutTemplates() throws Exception{
-        ProcessService processService = new ProcessService();
-
+    public void shouldFindAllNotArchivedWithoutTemplates() throws Exception {
         List<ProcessDTO> notArchivedProcessesWithoutTemplates = processService.findAllNotArchivedWithoutTemplates(null);
         assertTrue("Found " + notArchivedProcessesWithoutTemplates.size() + " processes, instead of 2",
                 notArchivedProcessesWithoutTemplates.size() == 2);
@@ -775,8 +648,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindAllNotClosedAndNotArchivedTemplates() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> notClosedAndNotArchivedTemplates = processService.findAllNotClosedAndNotArchivedTemplates(null);
         assertTrue("Found " + notClosedAndNotArchivedTemplates.size() + " processes, instead of 1",
                 notClosedAndNotArchivedTemplates.size() == 1);
@@ -784,24 +655,18 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindAllNotClosedTemplates() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<ProcessDTO> notClosedTemplates = processService.findAllNotClosedTemplates(null);
         assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 2", notClosedTemplates.size() == 2);
     }
 
     @Test
     public void shouldGetTemplates() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<Process> templates = processService.getProcessTemplates();
         assertTrue("Found " + templates.size() + " processes, instead of 2", templates.size() == 2);
     }
 
     @Test
     public void shouldGetTemplatesWithTitle() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<Process> templates = processService.getProcessTemplatesWithTitle("First process");
         assertTrue("Found " + templates.size() + " processes, instead of 1", templates.size() == 1);
     }
@@ -809,8 +674,6 @@ public class ProcessServiceIT {
     @Ignore("IN clause doesn't work correctly here - to deeper check out")
     @Test
     public void shouldGetTemplatesForUser() throws Exception {
-        ProcessService processService = new ProcessService();
-
         List<Integer> projects = new ArrayList<>();
         projects.add(1);
         List<Process> templates = processService.getProcessTemplatesForUser(projects);

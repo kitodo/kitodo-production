@@ -27,11 +27,14 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Tests for WorkpieceService class.
  */
 public class WorkpieceServiceIT {
+
+    private static final WorkpieceService workpieceService = new ServiceManager().getWorkpieceService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -55,24 +58,18 @@ public class WorkpieceServiceIT {
 
     @Test
     public void shouldCountAllWorkpieces() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         Long amount = workpieceService.count();
         assertEquals("Workpieces were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForWorkpieces() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         Long amount = workpieceService.countDatabaseRows();
         assertEquals("Workpieces were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldFindWorkpiece() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         Workpiece workpiece = workpieceService.getById(1);
         boolean condition = workpiece.getProperties().size() == 2;
         assertTrue("Workpiece was not found in database!", condition);
@@ -80,16 +77,13 @@ public class WorkpieceServiceIT {
 
     @Test
     public void shouldGetAllWorkpiecesInGivenRange() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         List<Workpiece> workpieces = workpieceService.getAll(2,10);
         assertEquals("Not all workpieces were found in database!", 0, workpieces.size());
     }
 
     @Test
     public void shouldRemoveWorkpiece() throws Exception {
-        ProcessService processService = new ProcessService();
-        WorkpieceService workpieceService = new WorkpieceService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         Process process = processService.getById(1);
 
@@ -118,8 +112,6 @@ public class WorkpieceServiceIT {
 
     @Test
     public void shouldFindById() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         Integer actual = workpieceService.findById(1).getId();
         Integer expected = 1;
         assertEquals("Workpiece was not found in index!", expected, actual);
@@ -127,8 +119,6 @@ public class WorkpieceServiceIT {
 
     @Test
     public void shouldFindByProcessId() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         List<JSONObject> workpieces = workpieceService.findByProcessId(1);
         Integer actual = workpieces.size();
         Integer expected = 2;
@@ -142,8 +132,6 @@ public class WorkpieceServiceIT {
 
     @Test
     public void shouldFindByProcessTitle() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         List<JSONObject> workpieces = workpieceService.findByProcessTitle("First process");
         Integer actual = workpieces.size();
         Integer expected = 2;
@@ -157,8 +145,6 @@ public class WorkpieceServiceIT {
 
     @Test
     public void shouldFindByProperty() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         List<JSONObject> workpieces = workpieceService.findByProperty("FirstWorkpiece Property", "first value", true);
         Integer actual = workpieces.size();
         Integer expected = 1;
@@ -172,8 +158,6 @@ public class WorkpieceServiceIT {
 
     @Test
     public void shouldGetPropertiesSize() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
-
         Workpiece workpiece = workpieceService.getById(1);
         int actual = workpieceService.getPropertiesSize(workpiece);
         assertEquals("Workpiece's properties size is not equal to given value!", 2, actual);

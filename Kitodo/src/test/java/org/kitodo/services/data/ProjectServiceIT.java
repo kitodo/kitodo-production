@@ -32,11 +32,14 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Tests for ProjectService class.
  */
 public class ProjectServiceIT {
+
+    private static final ProjectService projectService = new ServiceManager().getProjectService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -60,16 +63,12 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldCountAllProjects() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         Long amount = projectService.count();
         assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
     public void shouldCountAllProjectsAccordingToQuery() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         String query = matchQuery("title", "First project").operator(Operator.AND).toString();
         Long amount = projectService.count(query);
         assertEquals("Projects were not counted correctly!", Long.valueOf(1), amount);
@@ -77,16 +76,12 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForProjects() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         Long amount = projectService.countDatabaseRows();
         assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
     public void shouldFindProject() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         ProjectDTO project = projectService.findById(1);
         boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in index!", condition);
@@ -98,16 +93,12 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindAllProjects() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         List<ProjectDTO> projects = projectService.findAll();
         assertEquals("Not all projects were found in index!", 3, projects.size());
     }
 
     @Test
     public void shouldGetProject() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         Project project = projectService.getById(1);
         boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in database!", condition);
@@ -115,24 +106,18 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldGetAllProjects() {
-        ProjectService projectService = new ProjectService();
-
         List<Project> projects = projectService.getAll();
         assertEquals("Not all projects were found in database!", 3, projects.size());
     }
 
     @Test
     public void shouldGetAllProjectsInGivenRange() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         List<Project> projects = projectService.getAll(2, 10);
         assertEquals("Not all projects were found in database!", 1, projects.size());
     }
 
     @Test
     public void shouldRemoveProject() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         Project project = new Project();
         project.setTitle("To Remove");
         projectService.save(project);
@@ -156,8 +141,6 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindById() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         String actual = projectService.findById(1).getTitle();
         String expected = "First project";
         assertEquals("Project was not found in index!", expected, actual);
@@ -165,8 +148,6 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         List<JSONObject> projects = projectService.findByTitle("First project", true);
         Integer actual = projects.size();
         Integer expected = 1;
@@ -176,8 +157,6 @@ public class ProjectServiceIT {
     @Ignore("save dependencies in Process Service is called but it doesn't update project document")
     @Test
     public void shouldFindByProcessId() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         JSONObject project = projectService.findByProcessId(1);
         Integer actual = projectService.getIdFromJSONObject(project);
         Integer expected = 1;
@@ -192,8 +171,6 @@ public class ProjectServiceIT {
     @Ignore("save dependencies in Process Service is called but it doesn't update project document")
     @Test
     public void shouldFindByProcessTitle() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         List<JSONObject> projects = projectService.findByProcessTitle("First process");
         Integer actual = projects.size();
         Integer expected = 1;
@@ -207,8 +184,6 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindByUserId() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         List<JSONObject> projects = projectService.findByUserId(1);
         Integer actual = projects.size();
         Integer expected = 2;
@@ -227,8 +202,6 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindByUserLogin() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         List<JSONObject> projects = projectService.findByUserLogin("kowal");
         Integer actual = projects.size();
         Integer expected = 2;
@@ -247,8 +220,6 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldGetWorkFlow() throws Exception {
-        ProjectService projectService = new ProjectService();
-
         // test passes... but it can mean that something is wrong...
         Project project = projectService.getById(1);
         List<StepInformation> expected = new ArrayList<>();

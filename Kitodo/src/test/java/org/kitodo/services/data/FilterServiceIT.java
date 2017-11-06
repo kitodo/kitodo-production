@@ -27,11 +27,14 @@ import org.kitodo.data.database.beans.Filter;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Integration tests for FilterService.
  */
 public class FilterServiceIT {
+
+    private static final FilterService filterService = new ServiceManager().getFilterService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -52,16 +55,12 @@ public class FilterServiceIT {
 
     @Test
     public void shouldCountAllFilters() throws Exception {
-        FilterService filterService = new FilterService();
-
         Long amount = filterService.count();
         assertEquals("Filters were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldCountAllFiltersAccordingToQuery() throws Exception {
-        FilterService filterService = new FilterService();
-
         String query = matchQuery("value", "\"id:1\"").operator(Operator.AND).toString();
         Long amount = filterService.count(query);
         assertEquals("Filters were not counted correctly!", Long.valueOf(1), amount);
@@ -69,16 +68,12 @@ public class FilterServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForFilters() throws Exception {
-        FilterService filterService = new FilterService();
-
         Long amount = filterService.countDatabaseRows();
         assertEquals("Filters were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldFindFilter() throws Exception {
-        FilterService filterService = new FilterService();
-
         Filter filter = filterService.getById(1);
         String actual = filter.getValue();
         String expected = "\"id:1\"";
@@ -87,24 +82,19 @@ public class FilterServiceIT {
 
     @Test
     public void shouldFindAllFilters() throws Exception {
-        FilterService filterService = new FilterService();
-
         List<Filter> filters = filterService.getAll();
         assertEquals("Not all filters were found in database!", 2, filters.size());
     }
 
     @Test
     public void shouldGetAllFiltersInGivenRange() throws Exception {
-        FilterService filterService = new FilterService();
-
         List<Filter> filters = filterService.getAll(1,10);
         assertEquals("Not all filters were found in database!", 1, filters.size());
     }
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProcessId() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         QueryBuilder query = filterService.queryBuilder("\"id:2\"", ObjectType.PROCESS, false, false, false);
         List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
@@ -131,8 +121,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProjectTitle() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         QueryBuilder query = filterService.queryBuilder("\"project:First\"", ObjectType.PROCESS, false, false, false);
         List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
@@ -165,8 +154,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProcessTitle() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         QueryBuilder query = filterService.queryBuilder("\"process:process\"", ObjectType.PROCESS, false, false, false);
         List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
@@ -179,8 +167,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByTaskTitle() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         QueryBuilder query = filterService.queryBuilder("\"step:Testing\"", ObjectType.PROCESS, false, false, false);
         List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
@@ -194,8 +181,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByBatchId() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         QueryBuilder query = filterService.queryBuilder("\"batch:1\"", ObjectType.PROCESS, false, false, false);
         List<ProcessDTO> processDTOS = processService.findByQuery(query, true);
@@ -221,8 +207,7 @@ public class FilterServiceIT {
     // TODO: filters are not working for search only by title
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByProperty() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         QueryBuilder query = filterService.queryBuilder("\"processproperty:fix\"", ObjectType.PROCESS, true, false,
                 false);
@@ -257,8 +242,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByProcessServiceByMultipleConditions() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         QueryBuilder query = filterService.queryBuilder("\"project:First\" \"processproperty:fix\"", ObjectType.PROCESS,
                 true, false, false);
@@ -284,8 +268,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProcessId() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"id:1\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -306,8 +289,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProjectTitle() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"project:First\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -330,8 +312,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProcessTitle() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"process:First\"", ObjectType.TASK, true, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -350,8 +331,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByTaskTitle() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         // TODO: why "step" creates something called historical filter?
         QueryBuilder query = filterService.queryBuilder("\"step:Testing\"", ObjectType.TASK, false, false, false);
@@ -366,8 +346,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByProperty() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"processproperty:fix\"", ObjectType.TASK, true, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -400,8 +379,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByClosedTasks() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"stepdone:1\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -426,8 +404,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByOpenTasks() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"stepopen:1\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -448,8 +425,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByInProgressTasks() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"stepinwork:3\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -466,8 +442,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByLockedTasks() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"steplocked:2\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -484,8 +459,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryAndFindByTaskServiceByMultipleConditions() throws Exception {
-        FilterService filterService = new FilterService();
-        TaskService taskService = new TaskService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"id:2\" \"steplocked:2\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -506,9 +480,8 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryForDefaultConditions() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
-        TaskService taskService = new TaskService();
+        ProcessService processService = new ServiceManager().getProcessService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         QueryBuilder query = filterService.queryBuilder("\"Second\"", ObjectType.TASK, false, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
@@ -522,9 +495,8 @@ public class FilterServiceIT {
 
     @Test
     public void shouldBuildQueryForEmptyConditions() throws Exception {
-        FilterService filterService = new FilterService();
-        ProcessService processService = new ProcessService();
-        TaskService taskService = new TaskService();
+        ProcessService processService = new ServiceManager().getProcessService();
+        TaskService taskService = new ServiceManager().getTaskService();
 
         // empty condition is not allowed and returns no results
         QueryBuilder query = filterService.queryBuilder("\"steplocked:\"", ObjectType.TASK, false, false, false);

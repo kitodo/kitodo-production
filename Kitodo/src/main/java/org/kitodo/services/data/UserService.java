@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -58,12 +59,29 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserService.class);
+    private static UserService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public UserService() {
+    private UserService() {
         super(new UserDAO(), new UserType(), new Indexer<>(User.class), new Searcher(User.class));
+    }
+
+    /**
+     * Return singleton variable of type UserService.
+     *
+     * @return unique instance of UserService
+     */
+    public static UserService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (UserService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new UserService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**

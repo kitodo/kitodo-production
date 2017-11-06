@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
@@ -116,15 +117,31 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private final FileService fileService = serviceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-
+    private static ProcessService instance = null;
     private static String DIRECTORY_PREFIX = "orig";
     private static String DIRECTORY_SUFFIX = "images";
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public ProcessService() {
+    private ProcessService() {
         super(new ProcessDAO(), new ProcessType(), new Indexer<>(Process.class), new Searcher(Process.class));
+    }
+
+    /**
+     * Return singleton variable of type ProcessService.
+     *
+     * @return unique instance of ProcessService
+     */
+    public static ProcessService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (ProcessService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new ProcessService();
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
@@ -961,7 +978,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return null;
         }
         StringBuilder result = new StringBuilder();
-        BatchService batchService = new BatchService();
+        BatchService batchService = serviceManager.getBatchService();
         for (BatchDTO batch : process.getBatches()) {
             if (result.length() > 0) {
                 result.append(", ");
@@ -1269,7 +1286,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     private Fileformat determineFileFormat(String type, Process process) throws PreferencesException {
         Fileformat fileFormat = null;
-        RulesetService rulesetService = new RulesetService();
+        RulesetService rulesetService = serviceManager.getRulesetService();
 
         switch (type) {
             case "metsmods":

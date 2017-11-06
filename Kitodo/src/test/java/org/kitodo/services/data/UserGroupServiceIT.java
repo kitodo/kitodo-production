@@ -28,11 +28,14 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Tests for UserGroupService class.
  */
 public class UserGroupServiceIT {
+
+    private static final UserGroupService userGroupService = new ServiceManager().getUserGroupService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -56,32 +59,24 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldCountAllUserGroups() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         Long amount = userGroupService.count();
         assertEquals("User groups were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         Long amount = userGroupService.countDatabaseRows();
         assertEquals("User groups were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
     public void shouldFindAllUserGroups() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         List<UserGroupDTO> userGroups = userGroupService.findAll();
         assertEquals("Not all user's groups were found in database!", 3, userGroups.size());
     }
 
     @Test
     public void shouldGetUserGroup() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         UserGroup userGroup = userGroupService.getById(1);
         boolean condition = userGroup.getTitle().equals("Admin") && userGroup.getPermission().equals(1);
         assertTrue("User group was not found in database!", condition);
@@ -89,16 +84,12 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAllUserGroupsInGivenRange() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         List<UserGroup> userGroups = userGroupService.getAll(1,10);
         assertEquals("Not all user's groups were found in database!", 2, userGroups.size());
     }
 
     @Test
     public void shouldRemoveUserGroup() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("To Remove");
         userGroupService.save(userGroup);
@@ -126,8 +117,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldRemoveUserGroupButNotUser() throws Exception {
-        UserService userService = new UserService();
-        UserGroupService userGroupService = new UserGroupService();
+        UserService userService = new ServiceManager().getUserService();
 
         User user = new User();
         user.setLogin("Cascados");
@@ -153,8 +143,6 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindById() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         UserGroupDTO userGroup = userGroupService.findById(1);
         String actual = userGroup.getTitle();
         String expected = "Admin";
@@ -166,8 +154,6 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         List<JSONObject> userGroups = userGroupService.findByTitle("Admin", true);
         Integer actual = userGroups.size();
         Integer expected = 1;
@@ -181,8 +167,6 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByPermission() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         List<JSONObject> userGroups = userGroupService.findByPermission(1);
         Integer actual = userGroups.size();
         Integer expected = 1;
@@ -201,8 +185,6 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByUserId() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         List<JSONObject> userGroups = userGroupService.findByUserId(1);
         Integer actual = userGroups.size();
         Integer expected = 1;
@@ -216,8 +198,6 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByUserLogin() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         List<JSONObject> userGroups = userGroupService.findByUserLogin("kowal");
         Integer actual = userGroups.size();
         Integer expected = 1;
@@ -231,8 +211,6 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetPermissionAsString() throws Exception {
-        UserGroupService userGroupService = new UserGroupService();
-
         UserGroup userGroup = userGroupService.getById(1);
         String actual = userGroupService.getPermissionAsString(userGroup);
         assertEquals("Permission string doesn't match to given plain text!", "1", actual);

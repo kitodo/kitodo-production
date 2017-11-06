@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -49,12 +50,29 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     private List<StepInformation> commonWorkFlow = null;
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ProjectService.class);
+    private static ProjectService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public ProjectService() {
+    private ProjectService() {
         super(new ProjectDAO(), new ProjectType(), new Indexer<>(Project.class), new Searcher(Project.class));
+    }
+
+    /**
+     * Return singleton variable of type ProjectService.
+     *
+     * @return unique instance of ProcessService
+     */
+    public static ProjectService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (ProjectService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new ProjectService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**

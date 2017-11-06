@@ -28,11 +28,14 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.dto.TemplateDTO;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Tests for TemplateService class.
  */
 public class TemplateServiceIT {
+
+    private static final TemplateService templateService = new ServiceManager().getTemplateService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -56,40 +59,31 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldCountAllTemplates() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         Long amount = templateService.count();
         assertEquals("Templates were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForTemplates() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         Long amount = templateService.countDatabaseRows();
         assertEquals("Templates were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldFindTemplate() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         Template template = templateService.getById(1);
         assertTrue("Template was not found in database!", template.getOrigin().equals("test"));
     }
 
     @Test
     public void shouldGetAllTemplatesInGivenRange() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         List<Template> templates = templateService.getAll(0,10);
         assertEquals("Not all templates were found in database!", 2, templates.size());
     }
 
     @Test
     public void shouldRemoveTemplate() throws Exception {
-        ProcessService processService = new ProcessService();
-        TemplateService templateService = new TemplateService();
+        ProcessService processService = new ServiceManager().getProcessService();
 
         Process process = processService.getById(1);
 
@@ -118,8 +112,6 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindById() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         Integer actual = templateService.findById(1).getId();
         Integer expected = 1;
         assertEquals("Template was not found in index!", expected, actual);
@@ -127,8 +119,6 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindByOrigin() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         List<JSONObject> templates = templateService.findByOrigin("test");
         Integer actual = templates.size();
         Integer expected = 1;
@@ -142,8 +132,6 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindByProcessId() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         List<JSONObject> templates = templateService.findByProcessId(1);
         Integer actual = templates.size();
         Integer expected = 2;
@@ -157,8 +145,6 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindByProcessTitle() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         List<JSONObject> templates = templateService.findByProcessTitle("First process");
         Integer actual = templates.size();
         Integer expected = 2;
@@ -172,8 +158,6 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindByProperty() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         List<JSONObject> templates = templateService.findByProperty("firstTemplate title", "first value", true);
         Integer actual = templates.size();
         Integer expected = 1;
@@ -187,8 +171,6 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldGetPropertiesSize() throws Exception {
-        TemplateService templateService = new TemplateService();
-
         TemplateDTO template = templateService.findById(1);
         int actual = template.getPropertiesSize();
         assertEquals("Template's properties size is not equal to given value!", 2, actual);

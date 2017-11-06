@@ -26,13 +26,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.file.FileService;
 
 public class BackupFileRotationTest {
 
     private static final String BACKUP_FILE_NAME = "testMeta.xml";
-    private static ProcessService processService = new ProcessService();
+    private static ProcessService processService = new ServiceManager().getProcessService();
     private static FileService fileService = new FileService();
 
     @Before

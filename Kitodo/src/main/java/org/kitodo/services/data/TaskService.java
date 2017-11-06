@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -73,12 +74,29 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private List<Task> tasksToFinish;
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
+    private static TaskService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public TaskService() {
+    private TaskService() {
         super(new TaskDAO(), new TaskType(), new Indexer<>(Task.class), new Searcher(Task.class));
+    }
+
+    /**
+     * Return singleton variable of type TaskService.
+     *
+     * @return unique instance of TaskService
+     */
+    public static TaskService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (TaskService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new TaskService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**
@@ -528,7 +546,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public String getTitleWithUserName(Task task) {
         String result = task.getTitle();
-        UserService userService = new UserService();
+        UserService userService = serviceManager.getUserService();
         if (task.getProcessingUser() != null && task.getProcessingUser().getId() != null
                 && task.getProcessingUser().getId() != 0) {
             result += " (" + userService.getFullName(task.getProcessingUser()) + ")";

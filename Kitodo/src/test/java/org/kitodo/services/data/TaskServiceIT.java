@@ -30,11 +30,14 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.dto.TaskDTO;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Tests for TaskService class.
  */
 public class TaskServiceIT {
+
+    private static final TaskService taskService = new ServiceManager().getTaskService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -58,16 +61,13 @@ public class TaskServiceIT {
 
     @Test
     public void shouldCountAllTasks() throws Exception {
-        TaskService taskService = new TaskService();
-
         Long amount = taskService.count();
         assertEquals("Tasks were not counted correctly!", Long.valueOf(6), amount);
     }
 
     @Test
     public void shouldCountTasksAccordingToQuery() throws Exception {
-        TaskService taskService = new TaskService();
-        UserService userService = new UserService();
+        UserService userService = new ServiceManager().getUserService();
 
         Long amount = taskService.getAmountOfCurrentTasks(true, true, userService.getById(1));
         assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
@@ -84,16 +84,12 @@ public class TaskServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForTasks() throws Exception {
-        TaskService taskService = new TaskService();
-
         Long amount = taskService.countDatabaseRows();
         assertEquals("Tasks were not counted correctly!", Long.valueOf(6), amount);
     }
 
     @Test
     public void shouldFindTask() throws Exception {
-        TaskService taskService = new TaskService();
-
         TaskDTO task = taskService.findById(1);
         boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
         assertTrue("Task was not found in index!", condition);
@@ -101,16 +97,12 @@ public class TaskServiceIT {
 
     @Test
     public void shouldFindAllTasks() throws Exception {
-        TaskService taskService = new TaskService();
-
         List<TaskDTO> tasks = taskService.findAll();
         assertEquals("Not all tasks were found in index!", 6, tasks.size());
     }
 
     @Test
     public void shouldGetTask() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = taskService.getById(1);
         boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
         assertTrue("Task was not found in database!", condition);
@@ -118,24 +110,18 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetAllTasks() {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getAll();
         assertEquals("Not all tasks were found in database!", 6, tasks.size());
     }
 
     @Test
     public void shouldGetAllTasksInGivenRange() throws Exception {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getAll(1,3);
         assertEquals("Not all tasks were found in database!", 3, tasks.size());
     }
 
     @Test
     public void shouldFindByProcessingStatusAndUser() throws Exception {
-        TaskService taskService = new TaskService();
-
         List<JSONObject> tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null);
         assertEquals("Some tasks were found in database!", 0, tasks.size());
 
@@ -146,8 +132,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldReplaceProcessingUser() throws Exception {
-        UserService userService = new UserService();
-        TaskService taskService = new TaskService();
+        UserService userService = new ServiceManager().getUserService();
 
         int size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
@@ -193,8 +178,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldRemoveTask() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = new Task();
         task.setTitle("To Remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
@@ -220,8 +203,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetProcessingBeginAsFormattedString() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = taskService.getById(1);
         String expected = "2016-10-20 00:00:00";
         String actual = taskService.getProcessingBeginAsFormattedString(task);
@@ -230,8 +211,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetProcessingTimeAsFormattedString() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = taskService.getById(1);
         String expected = "2016-12-24 00:00:00";
         String actual = taskService.getProcessingTimeAsFormattedString(task);
@@ -245,8 +224,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetProcessingEndAsFormattedString() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = taskService.getById(1);
         String expected = "2016-12-24 00:00:00";
         String actual = taskService.getProcessingEndAsFormattedString(task);
@@ -255,16 +232,12 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetCorrectionStep() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = taskService.getById(2);
         assertTrue("Task is not correction task!", taskService.isCorrectionStep(task));
     }
 
     @Test
     public void shouldGetNormalizedTitle() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = taskService.getById(3);
         String expected = "Testing_and_Blocking";
         String actual = taskService.getNormalizedTitle(task.getTitle());
@@ -273,8 +246,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetTitleWithUserName() throws Exception {
-        TaskService taskService = new TaskService();
-
         Task task = taskService.getById(1);
         String expected = "Testing (Kowalski, Jan)";
         String actual = taskService.getTitleWithUserName(task);
@@ -288,16 +259,12 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetCurrentTasksOfBatch() {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getCurrentTasksOfBatch("Task", 1);
         System.out.println("shouldGetByTitleAndBatches: " + tasks.size());
     }
 
     @Test
     public void shouldGetAllTasksInBetween() {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getAllTasksInBetween(2, 3, 2);
         int actual = tasks.size();
         int expected = 2;
@@ -306,8 +273,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetNextTasksForProblemSolution() {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getNextTasksForProblemSolution(2, 2);
         int actual = tasks.size();
         int expected = 1;
@@ -316,8 +281,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetPreviousTaskForProblemReporting() {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getPreviousTasksForProblemReporting(2, 2);
         int actual = tasks.size();
         int expected = 1;
@@ -426,8 +389,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldFindDistinctTitles() throws Exception {
-        TaskService taskService = new TaskService();
-
         List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();
         int size = taskTitlesDistinct.size();
         assertEquals("Incorrect size of distinct titles for tasks!", 5, size);

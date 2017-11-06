@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,12 +42,29 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BatchService.class);
+    private static BatchService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public BatchService() {
+    private BatchService() {
         super(new BatchDAO(), new BatchType(), new Indexer<>(Batch.class), new Searcher(Batch.class));
+    }
+
+    /**
+     * Return singleton variable of type BatchService.
+     *
+     * @return unique instance of BatchService
+     */
+    public static BatchService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (BatchService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new BatchService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**

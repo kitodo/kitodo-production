@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,15 +41,31 @@ import org.kitodo.services.data.base.SearchService;
  */
 public class HistoryService extends SearchService<History, HistoryDTO, HistoryDAO> {
 
-    private HistoryType historyType = new HistoryType();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(HistoryService.class);
+    private static HistoryService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    public HistoryService() {
+    private HistoryService() {
         super(new HistoryDAO(), new HistoryType(), new Indexer<>(History.class), new Searcher(History.class));
+    }
+
+    /**
+     * Return singleton variable of type HistoryService.
+     *
+     * @return unique instance of HistoryService
+     */
+    public static HistoryService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (HistoryService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new HistoryService();
+                }
+            }
+        }
+        return instance;
     }
 
     /**
