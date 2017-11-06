@@ -364,6 +364,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setTypeImagesRead(getBooleanPropertyForDTO(taskJSONObject, "typeImagesRead"));
         taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "users"));
         taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "userGroups"));
+        Integer process = getIntegerPropertyForDTO(taskJSONObject, "processForTask.id");
+        taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
         if (!related) {
             taskDTO = convertRelatedJSONObjects(taskJSONObject, taskDTO);
         }
@@ -371,8 +373,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     private TaskDTO convertRelatedJSONObjects(JSONObject jsonObject, TaskDTO taskDTO) throws DataException {
-        Integer process = getIntegerPropertyForDTO(jsonObject, "process");
-        taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
         Integer processingUser = getIntegerPropertyForDTO(jsonObject, "processingUser");
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
