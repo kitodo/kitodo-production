@@ -317,8 +317,8 @@ public class FileManipulation {
         DocStruct page = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
-        URI processSubTypeURI = serviceManager.getFileService()
-                    .getProcessSubTypeURI(metadataBean.getProcess(), ProcessSubType.IMAGE, currentFolder);
+        URI processSubTypeURI = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
+                ProcessSubType.IMAGE, currentFolder);
         ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
         for (URI currentFile : filesInFolder) {
             String currentFileName = fileService.getFileName(currentFile);
@@ -517,62 +517,28 @@ public class FileManipulation {
             masterPrefix = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         }
         Process currentProcess = metadataBean.getProcess();
-        List<URI> importedFilenames = new ArrayList<>();
+        List<URI> importedFileNames = new ArrayList<>();
         for (String importName : selectedFiles) {
-            URI importFolderUri = fileService
-                    .createResource(tempDirectory + "fileupload" + File.separator + importName);
-            ArrayList<URI> subfolderList = fileService.getSubUris(importFolderUri);
-            for (URI subfolder : subfolderList) {
-
+            URI importFolderUri = fileService.createResource(tempDirectory + "fileupload/" + importName);
+            ArrayList<URI> subFolderList = fileService.getSubUris(importFolderUri);
+            for (URI subFolder : subFolderList) {
                 if (useMasterFolder) {
                     // check if current import folder is master folder
-                    if (fileService.getFileName(subfolder).startsWith(masterPrefix)) {
+                    if (fileService.getFileName(subFolder).startsWith(masterPrefix)) {
                         URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
-                                    currentProcess);
-                        ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
+                                currentProcess);
+                        ArrayList<URI> objectInFolder = fileService.getSubUris(subFolder);
                         Collections.sort(objectInFolder);
                         for (URI file : objectInFolder) {
                             fileService.copyFileToDirectory(file, masterDirectory);
                         }
                     } else {
-                        if (fileService.getFileName(subfolder).contains("_")) {
-                            String folderSuffix = fileService.getFileName(subfolder)
-                                    .substring(fileService.getFileName(subfolder).lastIndexOf("_") + 1);
-                            URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
-                                    currentProcess);
-                            if (folderName != null) {
-                                ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                                Collections.sort(objectInFolder);
-                                for (URI file : objectInFolder) {
-                                    if (serviceManager.getProcessService()
-                                                .getImagesTifDirectory(false, currentProcess)
-                                                .equals(folderName + File.separator)) {
-                                        importedFilenames.add(file);
-                                    }
-                                    fileService.copyFileToDirectory(file, folderName);
-                                }
-                            }
-                        }
+                        importedFileNames = copyFileToDirectoryForNamesWithUnderscore(subFolder, currentProcess,
+                                importedFileNames);
                     }
-
                 } else {
-                    if (fileService.getFileName(subfolder).contains("_")) {
-                        String folderSuffix = fileService.getFileName(subfolder)
-                                .substring(fileService.getFileName(subfolder).lastIndexOf("_") + 1);
-                        URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
-                                currentProcess);
-                        if (folderName != null) {
-                            ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                            Collections.sort(objectInFolder);
-                            for (URI file : objectInFolder) {
-                                if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
-                                            .equals(folderName + File.separator)) {
-                                    importedFilenames.add(file);
-                                }
-                                fileService.copyFileToDirectory(file, folderName);
-                            }
-                        }
-                    }
+                    importedFileNames = copyFileToDirectoryForNamesWithUnderscore(subFolder, currentProcess,
+                            importedFileNames);
                 }
             }
         }
@@ -582,7 +548,7 @@ public class FileManipulation {
                 metadataBean.createPagination();
             } else {
                 int indexToImport = Integer.parseInt(insertPage);
-                for (URI filename : importedFilenames) {
+                for (URI filename : importedFileNames) {
                     updatePagination(filename);
                     insertPage = String.valueOf(++indexToImport);
                 }
@@ -594,11 +560,32 @@ public class FileManipulation {
         // delete folder
 
         for (String importName : selectedFiles) {
-            File importfolder = new File(tempDirectory + "fileupload" + File.separator + importName);
-            fileService.delete(importfolder.toURI());
+            File importFolder = new File(tempDirectory + "fileupload" + File.separator + importName);
+            fileService.delete(importFolder.toURI());
         }
         metadataBean.retrieveAllImages();
         metadataBean.identifyImage(1);
+    }
+
+    private List<URI> copyFileToDirectoryForNamesWithUnderscore(URI subFolder, Process currentProcess,
+            List<URI> importedFileNames) throws IOException {
+        if (fileService.getFileName(subFolder).contains("_")) {
+            String folderSuffix = fileService.getFileName(subFolder)
+                    .substring(fileService.getFileName(subFolder).lastIndexOf("_") + 1);
+            URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix, currentProcess);
+            if (folderName != null) {
+                ArrayList<URI> objectInFolder = fileService.getSubUris(subFolder);
+                Collections.sort(objectInFolder);
+                for (URI file : objectInFolder) {
+                    if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess).getRawPath()
+                            .equals(folderName + "/")) {
+                        importedFileNames.add(file);
+                    }
+                    fileService.copyFileToDirectory(file, folderName);
+                }
+            }
+        }
+        return importedFileNames;
     }
 
     public String getCurrentFolder() {
@@ -618,7 +605,6 @@ public class FileManipulation {
 
         String afterLastSlash = fileName.substring(fileName.lastIndexOf('/') + 1);
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
-
         String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
 
         return afterLastBackslash.matches(prefix + "\\..+");
