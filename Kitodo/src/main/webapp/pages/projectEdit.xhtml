@@ -29,7 +29,7 @@
                         <h:outputText value="#{msgs.projektBearbeiten}" rendered="#{ProjekteForm.itemId ne 0}"/>
                         <h:outputText value="#{msgs.newProject}" rendered="#{ProjekteForm.itemId eq 0}"/>
                     </h3>
-                    <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" styleClass="button-filled-blue"/>
+                    <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" iconPos="right" styleClass="button-filled-blue"/>
                 </p:panel>
                 <p:tabView id="tabs">
                     <p:tab title="#{msgs.details}">
