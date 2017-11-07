@@ -266,17 +266,17 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public void save(T baseIndexedBean) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.INDEX);
-            saveToDatabase(baseIndexedBean);
-            saveToIndex(baseIndexedBean);
-            manageDependenciesForIndex(baseIndexedBean);
+            T savedBean = saveToDatabase(baseIndexedBean);
+            saveToIndex(savedBean);
+            manageDependenciesForIndex(savedBean);
             // TODO: search for some more elegant way
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 logger.error(e);
             }
-            baseIndexedBean.setIndexAction(IndexAction.DONE);
-            saveToDatabase(baseIndexedBean);
+            savedBean.setIndexAction(IndexAction.DONE);
+            saveToDatabase(savedBean);
         } catch (DAOException e) {
             logger.debug(e);
             throw new DataException(e);
