@@ -508,14 +508,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(query.toString(), sort);
     }
 
-    private List<JSONObject> findBySortHelperStatusAndProjectArchived(boolean closed, boolean archived, String sort)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectArchived(archived));
-        return searcher.findDocuments(query.toString(), sort);
-    }
-
     private List<JSONObject> findBySortHelperStatusAndTemplate(boolean closed, boolean template, String sort)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
@@ -534,10 +526,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     private List<JSONObject> findByArchived(boolean archived, String sort) throws DataException {
         return searcher.findDocuments(getQueryProjectArchived(archived).toString(), sort);
-    }
-
-    private List<JSONObject> findBySortHelperStatus(boolean closed, String sort) throws DataException {
-        return searcher.findDocuments(getQuerySortHelperStatus(closed).toString(), sort);
     }
 
     List<JSONObject> findByTemplate(boolean template, String sort) throws DataException {
@@ -2339,8 +2327,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<ProcessDTO> findNotClosedProcesses(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatus(false, sort), false);
+    public List<ProcessDTO> findNotClosedProcessesWithoutTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatusAndTemplate(false, false, sort), false);
     }
 
     /**
@@ -2350,8 +2338,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<ProcessDTO> findNotClosedAndNotArchivedProcesses(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusAndProjectArchived(false, false, sort), false);
+    public List<ProcessDTO> findNotClosedAndNotArchivedProcessesWithoutTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, false, sort), false);
     }
 
     /**
