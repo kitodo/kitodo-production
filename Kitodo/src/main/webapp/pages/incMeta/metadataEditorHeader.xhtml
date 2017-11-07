@@ -55,12 +55,14 @@
             <h:form id="buttons">
                 <p:blockUI block="tabView" trigger="saveBtn,saveAndBackBtn">
                     Saving <br/>
-                    <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px;"/>
+                    <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif"
+                                    style="max-height: 20px;"/>
 
                 </p:blockUI>
                 <div align="right">
-                    <p:commandButton value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" action="#{Metadaten.validate}"
-                    updade="tabView:metadata"/>
+                    <p:commandButton value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w"
+                                     action="#{Metadaten.validate}"
+                                     update="tabView:metadata"/>
                     <p:button id="backBtn" value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle"
                               icon="ui-icon-close"/>
                     <p:commandButton id="saveBtn" value="#{msgs.speichern}" action="#{Metadaten.saveMetadataToXml}"
