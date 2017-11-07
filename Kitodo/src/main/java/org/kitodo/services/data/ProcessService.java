@@ -75,7 +75,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.MetadataHelper;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -1752,7 +1751,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
             throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-        String type = MetadataHelper.getMetaFileType(metadataFile);
+        String type = MetadatenHelper.getMetaFileType(metadataFile);
         Fileformat ff;
         switch (type) {
             case "metsmods":
