@@ -104,16 +104,16 @@
                             </h:link>
 
                             <!-- Prozessübersicht -->
-                            <h:link styleClass="mlink" id="allProcesses"
+
+                            <h:commandLink styleClass="mlink" id="allProcesses"
                                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                           outcome="/pages/ProzessverwaltungAlle"
-                                           style="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <f:param name="linkId" value="allProcesses"/>
-                                <h:panelGroup rendered="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml'}">
+                                           action="#{ProzessverwaltungForm.filterCurrentProcesses}"
+                                           style="#{NavigationForm.aktuell == '22' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{NavigationForm.aktuell == '22'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
-                                <h:outputText value="#{msgs.aktuelleProzesse}"/>
-                            </h:link>
+                                <h:outputText value="#{msgs.aktuelleProzesse}" />
+                            </h:commandLink>
 
                             <!-- batches -->
                             <h:link styleClass="mlink"
@@ -139,16 +139,15 @@
                             </h:link>
 
                             <!-- Prozessvorlagen -->
-                            <h:link styleClass="mlink" id="templates"
+                            <h:commandLink styleClass="mlink" id="templates"
                                            rendered="#{LoginForm.maximaleBerechtigung == 1}"
-                                           outcome="/pages/ProzessverwaltungAlle"
-                                           style="#{request.getParameter('linkId') == 'templates' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <f:param name="linkId" value="templates"/>
-                                <h:panelGroup rendered="#{request.getParameter('linkId') == 'templates' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml'}">
+                                           action="#{ProzessverwaltungForm.filterTemplates}"
+                                           style="#{NavigationForm.aktuell == '24' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{NavigationForm.aktuell == '24'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
-                                <h:outputText value="#{msgs.prozessvorlagen}"/>
-                            </h:link>
+                                <h:outputText value="#{msgs.prozessvorlagen}" />
+                            </h:commandLink>
 
                         </h:panelGroup>
 
