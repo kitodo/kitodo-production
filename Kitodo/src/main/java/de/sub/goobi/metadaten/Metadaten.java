@@ -400,9 +400,11 @@ public class Metadaten {
             this.docStruct.addPerson(per);
         } catch (IncompletePersonObjectException e) {
             Helper.setFehlerMeldung("Incomplete data for person", "");
+            return;
 
         } catch (MetadataTypeNotAllowedException e) {
             Helper.setFehlerMeldung("Person is for this structure not allowed", "");
+            return;
         }
         this.modeAddPerson = false;
         saveMetadataAsBean(this.docStruct);
@@ -521,27 +523,24 @@ public class Metadaten {
     }
 
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
-        ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
-        /*
-         * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
-         */
+        ArrayList<SelectItem> selectItems = new ArrayList<SelectItem>();
+
+        // zuerst mal alle addierbaren Metadatentypen ermitteln
+
         List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
         if (types == null) {
-            return myList;
+            return selectItems;
         }
 
-        /*
-         * --------------------- alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen -------------------
-         */
+        //alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
+
         for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
             if (mdt.getIsPerson()) {
                 types.remove(mdt);
             }
         }
 
-        /*
-         * -------------------------------- die Metadatentypen sortieren --------------------------------
-         */
+        //die Metadatentypen sortieren
         HelperComparator c = new HelperComparator();
         c.setSortType("MetadatenTypen");
         Collections.sort(types, c);
@@ -549,7 +548,7 @@ public class Metadaten {
         int counter = types.size();
 
         for (MetadataType mdt : types) {
-            myList.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
+            selectItems.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
             try {
                 Metadata md = new Metadata(mdt);
                 MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.process);
@@ -562,7 +561,7 @@ public class Metadaten {
                 logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
             }
         }
-        return myList;
+        return selectItems;
     }
 
     public ArrayList<MetadatumImpl> getTempMetadatumList() {
@@ -617,10 +616,6 @@ public class Metadaten {
         }
         return typesWithoutUnderscore;
     }
-
-    /*
-     * Metadaten lesen und schreiben
-     */
 
     /**
      * Metadaten Einlesen.
