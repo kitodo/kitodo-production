@@ -133,7 +133,7 @@ public class HelperForm implements Serializable {
      * 
      * @return list of rulesets as SelectItems
      */
-    public List<SelectItem> getRegelsaetze() throws DAOException {
+    public List<SelectItem> getRegelsaetze() {
         List<SelectItem> myPrefs = new ArrayList<>();
         List<Ruleset> temp = serviceManager.getRulesetService().getByQuery("from Ruleset ORDER BY title");
         for (Ruleset ruleset : temp) {

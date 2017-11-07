@@ -1351,18 +1351,16 @@ public class Metadaten {
             Collections.sort(listReferenzen, new Comparator<Reference>() {
                 @Override
                 public int compare(final Reference firstObject, final Reference secondObject) {
-                    final Reference firstReference = firstObject;
-                    final Reference secondReference = secondObject;
                     Integer firstPage = 0;
                     Integer secondPage = 0;
 
                     MetadataType mdt = Metadaten.this.myPrefs.getMetadataTypeByName("physPageNumber");
-                    List<? extends Metadata> listMetadaten = firstReference.getTarget().getAllMetadataByType(mdt);
+                    List<? extends Metadata> listMetadaten = firstObject.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
                         Metadata meineSeite = listMetadaten.get(0);
                         firstPage = Integer.parseInt(meineSeite.getValue());
                     }
-                    listMetadaten = secondReference.getTarget().getAllMetadataByType(mdt);
+                    listMetadaten = secondObject.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
                         Metadata meineSeite = listMetadaten.get(0);
                         secondPage = Integer.parseInt(meineSeite.getValue());
@@ -2051,11 +2049,11 @@ public class Metadaten {
         for (String selectItem : this.allPages) {
             if (selectItem.equals(this.ajaxPageStart)) {
                 startseiteOk = true;
-                this.allPagesSelectionFirstPage = (String) selectItem;
+                this.allPagesSelectionFirstPage = selectItem;
             }
             if (selectItem.equals(this.ajaxPageEnd)) {
                 endseiteOk = true;
-                this.allPagesSelectionLastPage = (String) selectItem;
+                this.allPagesSelectionLastPage = selectItem;
             }
         }
 

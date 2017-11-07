@@ -20,7 +20,7 @@ public enum ImportType {
     private String id;
     private String title;
 
-    private ImportType(String id, String title) {
+    ImportType(String id, String title) {
         this.id = id;
         this.title = title;
     }

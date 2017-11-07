@@ -541,7 +541,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return new BoolQueryBuilder();
     }
 
-    private QueryBuilder createProcessTitleFilter(String filter, ObjectType objectType) throws DataException {
+    private QueryBuilder createProcessTitleFilter(String filter, ObjectType objectType) {
         String processTitle = getFilterValueFromFilterString(filter, FilterString.PROCESS);
         if (objectType == ObjectType.PROCESS) {
             return serviceManager.getProcessService().getQueryTitle(processTitle, true);
