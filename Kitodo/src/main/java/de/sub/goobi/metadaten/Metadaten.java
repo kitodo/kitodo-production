@@ -1130,10 +1130,21 @@ public class Metadaten {
         readMetadataAsFirstTree();
     }
 
+    /**
+     * Gets position of new inserted DocStruc elements.
+     * @return
+     *      The position of new inserted DocStruc elements.
+     */
     public PositionOfNewDocStrucElement getPositionOfNewDocStrucElement () {
         return this.positionOfNewDocStrucElement;
     }
 
+    /**
+     * Sets position of new inserted DocStruc elements.
+     *
+     * @param positionOfNewDocStrucElement
+     *      The position of new inserted DocStruc elements.
+     */
     public void setPositionOfNewDocStrucElement(PositionOfNewDocStrucElement positionOfNewDocStrucElement) {
         this.positionOfNewDocStrucElement = positionOfNewDocStrucElement;
     }
@@ -1141,7 +1152,8 @@ public class Metadaten {
     /**
      * Gets all possible positions of new DocStruct elements.
      *
-     * @return The positions of new DocStruct elements.
+     * @return
+     *      The positions of new DocStruct elements.
      */
     public PositionOfNewDocStrucElement[] getPositionsOfNewDocStrucElement() {
         return this.positionOfNewDocStrucElement.values();
@@ -1205,21 +1217,15 @@ public class Metadaten {
 
     private void addNewDocStructToExistingDocStruct(DocStruct existingDocStruct,
                                                     DocStruct newDocStruct,
-                                                    DigitalDocument digitalDocument,
                                                     int index)
-        //TODO think about resource handling
+        throws TypeNotAllowedAsChildException {
 
-        throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
-
-        DocStruct createdElement = digitalDocument.createDocStruct(newDocStruct.getType());
-        List<Metadata> allMetadata = newDocStruct.getAllMetadata();
-
-        for (Metadata metadata :allMetadata) {
-            createdElement.addMetadata(metadata.getType().getName(),metadata.getValue());
+        if (existingDocStruct.isDocStructTypeAllowedAsChild(newDocStruct.getType())) {
+            existingDocStruct.addChild(index,newDocStruct);
+        } else {
+            throw new TypeNotAllowedAsChildException(newDocStruct.getType() + " ot allowed as child of " + existingDocStruct.getType());
         }
-        existingDocStruct.addChild(index,newDocStruct);
     }
-
 
     private DocStruct addNode(DocStruct docStruct,
                              DigitalDocument digitalDocument,
@@ -1292,139 +1298,6 @@ public class Metadaten {
         }
 
         return createdElements.iterator().next();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        DocStruct ds = null;
-//        /*
-//         * vor das aktuelle Element
-//         */
-//        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT) {
-//            if (this.tempTyp == null || this.tempTyp.equals("")) {
-//                return;
-//            }
-////            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-////            ds = this.digitalDocument.createDocStruct(dst);
-//            if (this.docStruct == null) {
-//                return;
-//            }
-//            DocStruct parent = this.docStruct.getParent();
-//            if (parent == null) {
-//                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-//            }
-//            List<DocStruct> alleDS = new ArrayList<>();
-//
-//            /* alle Elemente des Parents durchlaufen */
-//            for (DocStruct docStruct : parent.getAllChildren()) {
-//                /* wenn das aktuelle Element das gesuchte ist */
-//                if (docStruct == this.docStruct) {
-//                    alleDS.add(ds);
-//                }
-//                alleDS.add(docStruct);
-//            }
-//
-//            /* anschliessend alle Childs entfernen */
-//            for (DocStruct docStruct : alleDS) {
-//                parent.removeChild(docStruct);
-//            }
-//
-//            /* anschliessend die neue Childliste anlegen */
-//            for (DocStruct docStruct : alleDS) {
-//                parent.addChild(docStruct);
-//            }
-//        }
-//
-//        /*
-//         * hinter das aktuelle Element
-//         */
-//        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT) {
-////            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-////            ds = this.digitalDocument.createDocStruct(dst);
-//            DocStruct parent = this.docStruct.getParent();
-//            if (parent == null) {
-//                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-//                return;
-//            }
-//            List<DocStruct> alleDS = new ArrayList<>();
-//
-//            /* alle Elemente des Parents durchlaufen */
-//            for (DocStruct docStruct : parent.getAllChildren()) {
-//                alleDS.add(docStruct);
-//                /* wenn das aktuelle Element das gesuchte ist */
-//                if (docStruct == this.docStruct) {
-//                    alleDS.add(ds);
-//                }
-//            }
-//
-//            /* anschliessend alle Childs entfernen */
-//            for (DocStruct docStruct : alleDS) {
-//                parent.removeChild(docStruct);
-//            }
-//
-//            /* anschliessend die neue Childliste anlegen */
-//            for (DocStruct docStruct : alleDS) {
-//                parent.addChild(docStruct);
-//            }
-//        }
-//
-//        /*
-//         * als erstes Child
-//         */
-//        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT) {
-////            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-////            ds = this.digitalDocument.createDocStruct(dst);
-//            DocStruct parent = this.docStruct;
-//            if (parent == null) {
-//                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-//                return;
-//            }
-//            List<DocStruct> alleDS = new ArrayList<>();
-//            alleDS.add(ds);
-//
-//            if (parent.getAllChildren() != null && parent.getAllChildren().size() != 0) {
-//                alleDS.addAll(parent.getAllChildren());
-//                parent.getAllChildren().retainAll(new ArrayList<>());
-//            }
-//
-//            /* anschliessend die neue Childliste anlegen */
-//            for (DocStruct docStruct : alleDS) {
-//                parent.addChild(docStruct);
-//            }
-//        }
-//
-//        /*
-//         * als letztes Child
-//         */
-//        if (this.positionOfNewDocStrucElement == PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT) {
-////            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-////            ds = this.digitalDocument.createDocStruct(dst);
-//            for (DocStruct element : createdElements) {
-//                this.docStruct.addChild(element);
-//            }
-//        }
-//
-//        if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
-//            DocStruct temp = this.docStruct;
-//            this.docStruct = ds;
-//            this.ajaxPageStart = this.pagesStart;
-//            this.ajaxPageEnd = this.pagesEnd;
-//            ajaxSeitenStartUndEndeSetzen();
-//            this.docStruct = temp;
-//        }
-
-//        readMetadataAsFirstTree();
     }
 
     /**
@@ -2889,16 +2762,21 @@ public class Metadaten {
         if (event.getDropNode().getParent().getData().equals("root")) {
             Helper.setFehlerMeldung("Only one root element allowed");
         } else {
-            this.docStruct = dragDocStruct;
-            this.docStruct.getParent().removeChild(dragDocStruct);
 
-            try {
-                addNewDocStructToExistingDocStruct(dropDocStruct,dragDocStruct,this.digitalDocument,dropIndex);
-            } catch (UGHException e) {
-                logger.error(e.getMessage());
+            if (dropDocStruct.isDocStructTypeAllowedAsChild(dragDocStruct.getType())) {
+                this.docStruct = dragDocStruct;
+                this.docStruct.getParent().removeChild(dragDocStruct);
+
+                try {
+                    addNewDocStructToExistingDocStruct(dropDocStruct,dragDocStruct,dropIndex);
+                } catch (TypeNotAllowedAsChildException e) {
+                    //should never happen
+                    Helper.setFehlerMeldung(e.getMessage());
+                }
+            } else {
+                Helper.setFehlerMeldung(dragDocStruct.getType() + " ot allowed as child of " + dropDocStruct.getType());
             }
         }
-
     }
 
     /**
