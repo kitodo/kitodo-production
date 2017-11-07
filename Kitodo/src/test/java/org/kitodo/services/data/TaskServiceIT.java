@@ -289,8 +289,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetTasksForProjectHelper() {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getTasksForProjectHelper(1);
         int actual = tasks.size();
         int expected = 3;
@@ -314,8 +312,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetSizeOfTasksForProjectHelper() {
-        TaskService taskService = new TaskService();
-
         List<Long> tasksSize = taskService.getSizeOfTasksForProjectHelper(1);
         int actual = tasksSize.size();
         int expected = 3;
@@ -329,8 +325,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetAverageOrderingOfTasksForProjectHelper() {
-        TaskService taskService = new TaskService();
-
         List<Double> tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(1);
         int actual = tasksSize.size();
         int expected = 3;
@@ -344,8 +338,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetTasksWithProcessingStatusForProjectHelper() {
-        TaskService taskService = new TaskService();
-
         List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1,1);
         int actual = tasks.size();
         int expected = 1;
@@ -359,8 +351,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetSizeOfTasksWithProcessingStatusForProjectHelper() {
-        TaskService taskService = new TaskService();
-
         List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,1);
         int actual = tasksSize.size();
         int expected = 1;
@@ -374,8 +364,6 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetAmountOfImagesForTasksWithProcessingStatusForProjectHelper() {
-        TaskService taskService = new TaskService();
-
         List<Long> amountOfImages = taskService.getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(1, 1);
         int actual = amountOfImages.size();
         int expected = 1;
