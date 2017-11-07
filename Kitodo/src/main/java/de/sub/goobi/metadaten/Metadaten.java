@@ -1469,12 +1469,6 @@ public class Metadaten {
         }
     }
 
-    public void getfirstPageOfElement(DocStruct structureElement) {
-//        structureElement.getAllMetadata().get(0).
-//        MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-//        System.out.println(mdt.getNum());
-    }
-
     /**
      * alle Seiten des aktuellen Strukturelements ermitteln 2.
      */
@@ -2401,13 +2395,6 @@ public class Metadaten {
      *            String
      */
     public void setTempTyp(String tempTyp) {
-//        DocStructType mdt = this.myPrefs.getDocStrctTypeByName(tempTyp);
-//        try {
-//            Metadata md = new Metadata(mdt);
-//            this.selectedMetadatum = new MetadatumImpl(md, this.myMetadaten.size() + 1, this.myPrefs, this.process);
-//        } catch (MetadataTypeNotAllowedException e) {
-//            logger.error(e.getMessage());
-//        }
         this.tempTyp = tempTyp;
     }
 
@@ -3469,34 +3456,82 @@ public class Metadaten {
         return paginationSeparators.getItems();
     }
 
+    /**
+     * Gets all metadata elements which are added to new Docstruc elements.
+     *
+     * @return
+     *      The all metadata elements which are added to new Docstruc elements.
+     */
     public int getMetadataElementsToAdd() {
         return metadataElementsToAdd;
     }
 
+    /**
+     * Sets all metadata elements which are added to new Docstruc elements.
+     *
+     * @param metadataElementsToAdd
+     *      The all metadata elements which are added to new Docstruc elements.
+     */
     public void setMetadataElementsToAdd(int metadataElementsToAdd) {
         this.metadataElementsToAdd = metadataElementsToAdd;
     }
 
+    /**
+     * Gets the metadata typ which is added to new Docstruc elements.
+     *
+     * @return
+     *      The metadata typ which is added to new Docstruc elements.
+     */
     public String getAddMetaDataType() {
         return addMetaDataType;
     }
 
+    /**
+     * Sets the metadata typ which is added to new Docstruc elements.
+     *
+     * @param addMetaDataType
+     *      The metadata typ which is added to new Docstruc elements.
+     */
     public void setAddMetaDataType(String addMetaDataType) {
         this.addMetaDataType = addMetaDataType;
     }
 
+    /**
+     * Sets the metadata value which is added to new Docstruc elements.
+     *
+     * @return
+     *      The metadata value which is added to new Docstruc elements.
+     */
     public String getAddMetaDataValue() {
         return addMetaDataValue;
     }
 
+    /**
+     * Gets the metadata value which is added to new Docstruc elements.
+     *
+     * @param addMetaDataValue
+     *      The metadata value which is added to new Docstruc elements.
+     */
     public void setAddMetaDataValue(String addMetaDataValue) {
         this.addMetaDataValue = addMetaDataValue;
     }
 
+    /**
+     * Returns <code>true</code> if adding-serveral-DocStruc-elements-mode is active.
+     *
+     * @return
+     *      <code>true</code> if adding-serveral-DocStruc-elements-mode is active.
+     */
     public boolean isAddServeralStructuralElementsMode() {
         return addServeralStructuralElementsMode;
     }
 
+    /**
+     * Sets the adding-serveral-DocStruc-elements-mode.
+     *
+     * @param addServeralStructuralElementsMode
+     *      <code>true</code> if adding-serveral-DocStruc-elements-mode should be active.
+     */
     public void setAddServeralStructuralElementsMode(boolean addServeralStructuralElementsMode) {
         this.addServeralStructuralElementsMode = addServeralStructuralElementsMode;
     }
