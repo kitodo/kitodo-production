@@ -379,7 +379,6 @@ public class Metadaten {
 
     /**
      * Save person.
-     *
      */
     public void savePerson() {
         try {
@@ -390,16 +389,15 @@ public class Metadaten {
             String[] authorityFile = parseAuthorityFileArgs(tempPersonRecord);
             per.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
             this.docStruct.addPerson(per);
+            this.modeAddPerson = false;
+            saveMetadataAsBean(this.docStruct);
         } catch (IncompletePersonObjectException e) {
             Helper.setFehlerMeldung("Incomplete data for person", "");
-            return;
 
         } catch (MetadataTypeNotAllowedException e) {
             Helper.setFehlerMeldung("Person is for this structure not allowed", "");
-            return;
         }
-        this.modeAddPerson = false;
-        saveMetadataAsBean(this.docStruct);
+
     }
 
     /**
