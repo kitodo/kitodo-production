@@ -101,7 +101,7 @@
                 <p:commandLink action="#{ProjekteForm.filegroupDelete()}"
                                update="projectEditForm"
                                title="#{msgs.filegroupLoeschen}"
-                               onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')) return"
+                               onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
                                styleClass="buttonset button-blue"><i class="fa fa-trash fa-lg"/>
                     <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
                                                  value="#{filegroup}"/>
