@@ -227,8 +227,6 @@ public class Metadaten {
 
     /**
      * Add person.
-     *
-     * @return String
      */
     public void addPerson() {
         this.modeAddPerson = true;
@@ -239,18 +237,12 @@ public class Metadaten {
 
     /**
      * cancel.
-     *
-     * @return String
      */
-    public String cancel() {
+    public void cancel() {
         this.modeAdd = false;
         this.modeAddPerson = false;
         Modes.setBindState(BindState.edit);
         getMetadatum().setValue("");
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -509,6 +501,12 @@ public class Metadaten {
         return getAddableMetadataTypes(docStruct, tempMetadatumList);
     }
 
+    /**
+     * Gets addable metadatatypes from tempTyp.
+     *
+     * @return
+     *      The addable metadatatypes from tempTyp.
+     */
     public ArrayList<SelectItem> getAddableMetadataTypesFromTempType() {
         DocStruct ds = null;
         DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
@@ -517,7 +515,6 @@ public class Metadaten {
         } catch (TypeNotAllowedForParentException e) {
             logger.error(e.getMessage());
         }
-
 
         return getAddableMetadataTypes(ds, tempMetadatumList);
     }
@@ -1023,6 +1020,16 @@ public class Metadaten {
         return rueckgabe.trim();
     }
 
+    /**
+     * Gets metadata value of specific type of an DocStruct element.
+     * @param inStrukturelement
+     *      The DocStruct element.
+     *
+     * @param inTyp
+     *      The metadata typ.
+     * @return
+     *      The metadata value.
+     */
     public String getMetadataByElementAndType(DocStruct inStrukturelement, String inTyp) {
         String result = "";
         List<Metadata> allMDs = inStrukturelement.getAllMetadata();
@@ -1036,6 +1043,14 @@ public class Metadaten {
         return result.trim();
     }
 
+    /**
+     * Gets the image range of a specific DocStruct element.
+     *
+     * @param inStrukturelement
+     *      The DocStruct element.
+     * @return
+     *      The image range (image number - page namber)
+     */
     public String getImageRangeByElement(DocStruct inStrukturelement) {
         String firstImage = this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst());
         String lastImage = this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast());
@@ -2734,6 +2749,12 @@ public class Metadaten {
         return node;
     }
 
+    /**
+     * Handles the TreeDragDropEvent of DocStruct tree.
+     *
+     * @param event
+     *      The TreeDragDropEvent.
+     */
     public void onNodeDragDrop(TreeDragDropEvent event) {
 
         int dropIndex = event.getDropIndex();
@@ -3328,7 +3349,7 @@ public class Metadaten {
      * Returns a backing bean object to display the form to create a new
      * metadata group.
      *
-     * @return a bean to create a new metadata group
+     * @return a bean to create a new metadata group.
      */
     public RenderableMetadataGroup getNewMetadataGroup() {
         String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
