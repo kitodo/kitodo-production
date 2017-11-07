@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -460,7 +461,9 @@ public class MetadatenImagesHelper {
         return false;
     }
 
-    public static class GoobiImageFileComparator implements Comparator<URI> {
+    public static class GoobiImageFileComparator implements Comparator<URI>, Serializable {
+
+        private static final long serialVersionUID = -5972458403679726498L;
 
         @Override
         public int compare(URI firstUri, URI secondUri) {
@@ -484,7 +487,6 @@ public class MetadatenImagesHelper {
                 return firstString.compareToIgnoreCase(secondString);
             }
         }
-
     }
 
     /**
