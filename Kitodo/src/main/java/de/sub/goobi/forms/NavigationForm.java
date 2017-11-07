@@ -36,18 +36,13 @@ public class NavigationForm implements Serializable {
         return null;
     }
 
-    public String JeniaPopupCloseAction() {
-        return "jeniaClosePopupFrameWithAction";
-    }
-
     public String BenutzerBearbeiten() {
         return "/pages/BenutzerBearbeiten";
     }
 
     /**
-     * 
-     * @return true if show_taskmanager in file kitodo_config.properties is
-     *         =true
+     *
+     * @return true if show_taskmanager in file kitodo_config.properties is =true
      */
     public Boolean getShowTaskManager() {
         return ConfigCore.getBooleanParameter("taskManager.showInSidebar", true);

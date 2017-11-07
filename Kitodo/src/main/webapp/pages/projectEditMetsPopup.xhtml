@@ -1,0 +1,66 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view locale="#{SpracheForm.locale}">
+        <h:body>
+            <!-- edit dialog -->
+            <p:dialog widgetVar="editFileGroupDialog"
+                      header="#{msgs.filegroupBearbeiten}"
+                      width="700px"
+                      modal="true"
+                      dynamic="true">
+                <h:form>
+                    <p:panelGrid columns="1" layout="grid">
+                        <p:row>
+                        <div>
+                            <p:outputLabel for="metsName" value="#{msgs.name}"/>
+                            <p:inputText id="metsName" value="#{ProjekteForm.myFilegroup.name}" styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="metsPath" value="#{msgs.path}"/>
+                            <p:inputText id="metsPath" value="#{ProjekteForm.myFilegroup.path}" styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="metsMimetype" value="#{msgs.mimetype}"/>
+                            <p:inputText id="metsMimetype" value="#{ProjekteForm.myFilegroup.mimeType}" styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="metsSuffix" value="#{msgs.suffix}"/>
+                            <p:inputText id="metsSuffix" value="#{ProjekteForm.myFilegroup.suffix}" styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="metsFolder" value="#{msgs.folder}"/>
+                            <p:inputText id="metsFolder" value="#{ProjekteForm.myFilegroup.folder}" styleClass="input editDialog"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="metsPreviewImage" value="#{msgs.useForPreviewImage}"/>
+                            <p:selectBooleanCheckbox id="metsPreviewImage" value="#{ProjekteForm.myFilegroup.previewImage}" styleClass="input editDialog"/>
+                        </div>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:commandButton action="#{ProjekteForm.filegroupSave()}"
+                                     update="projectEditForm"
+                                     oncomplete="PF('editFileGroupDialog').hide()"
+                                     value="#{msgs.uebernehmen}"
+                                     styleClass="button-filled-blue right"/>
+                </h:form>
+            </p:dialog>
+        </h:body>
+    </f:view>
+</ui:composition>

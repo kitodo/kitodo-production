@@ -1,0 +1,56 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id" value="#{ProjekteForm.itemId}"/>
+        <f:viewAction action="#{ProjekteForm.loadProject}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="projectEditForm">
+                <p:panel styleClass="content-header">
+                    <h3>
+                        <h:outputText value="#{msgs.projektBearbeiten}" rendered="#{ProjekteForm.itemId ne 0}"/>
+                        <h:outputText value="#{msgs.newProject}" rendered="#{ProjekteForm.itemId eq 0}"/>
+                    </h3>
+                    <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" styleClass="button-filled-blue"/>
+                </p:panel>
+                <p:tabView id="tabs">
+                    <p:tab title="#{msgs.details}">
+                        <ui:include src="projectEditDetail.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.technischeDaten}">
+                        <ui:include src="projectEditSpecification.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.metsParamater}">
+                        <ui:include src="projectEditMets.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.projektBearbeiten}</a></li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
+    <ui:define name="dialog">
+        <ui:include src="/pages/projectEditMetsPopup.xhtml"/>
+    </ui:define>
+</ui:composition>

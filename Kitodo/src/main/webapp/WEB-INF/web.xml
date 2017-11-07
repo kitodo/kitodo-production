@@ -78,6 +78,12 @@
         <param-value>true</param-value>
     </context-param>
 
+    <!-- TODO: include the following context-param and change the param value to 'kitodo' once we have a complete Kitodo Primefaces theme -->
+    <!--<context-param>-->
+        <!--<param-name>primefaces.THEME</param-name>-->
+        <!--<param-value>none</param-value>-->
+    <!--</context-param>-->
+
     <!-- WelcomeFile Filter -->
     <!--
         <filter> <filter-name>WelcomeFile Filter</filter-name>
