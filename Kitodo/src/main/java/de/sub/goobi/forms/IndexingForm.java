@@ -227,7 +227,7 @@ public class IndexingForm {
     }
 
     /**
-     * Start indexing of objects of given type 'objectType'.
+     * Index all objects of given type 'objectType'.
      *
      * @param type
      *            type objects that get indexed
