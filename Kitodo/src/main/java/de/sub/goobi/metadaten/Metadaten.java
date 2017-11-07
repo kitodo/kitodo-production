@@ -495,6 +495,12 @@ public class Metadaten {
         // do nothing, needed for jsp only
     }
 
+    /**
+     * Gets addeble metadata types.
+     *
+     * @return
+     *      The metadata types.
+     */
     public ArrayList<SelectItem> getAddableMetadataTypes() {
         return getAddableMetadataTypes(docStruct, tempMetadatumList);
     }
@@ -1020,7 +1026,7 @@ public class Metadaten {
 
     /**
      * Gets metadata value of specific type of an DocStruct element.
-     * @param inStrukturelement
+     * @param docStructElement
      *      The DocStruct element.
      *
      * @param inTyp
@@ -1028,9 +1034,9 @@ public class Metadaten {
      * @return
      *      The metadata value.
      */
-    public String getMetadataByElementAndType(DocStruct inStrukturelement, String inTyp) {
+    public String getMetadataByElementAndType(DocStruct docStructElement, String inTyp) {
         String result = "";
-        List<Metadata> allMDs = inStrukturelement.getAllMetadata();
+        List<Metadata> allMDs = docStructElement.getAllMetadata();
         if (allMDs != null) {
             for (Metadata md : allMDs) {
                 if (md.getType().getName().equals(inTyp)) {
@@ -1044,14 +1050,14 @@ public class Metadaten {
     /**
      * Gets the image range of a specific DocStruct element.
      *
-     * @param inStrukturelement
+     * @param docStructElement
      *      The DocStruct element.
      * @return
      *      The image range (image number - page namber)
      */
-    public String getImageRangeByElement(DocStruct inStrukturelement) {
-        String firstImage = this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst());
-        String lastImage = this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast());
+    public String getImageRangeByElement(DocStruct docStructElement) {
+        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberFirst());
+        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberLast());
 
         return firstImage + " - " + lastImage;
     }
@@ -1140,6 +1146,7 @@ public class Metadaten {
 
     /**
      * Gets position of new inserted DocStruc elements.
+     *
      * @return
      *      The position of new inserted DocStruc elements.
      */
@@ -1339,13 +1346,9 @@ public class Metadaten {
 
             default:
                 logger.error("Invalid positionOfNewDocStrucElement");
-                return null;
+                return new SelectItem[0];
         }
     }
-
-    /*
-     * Strukturdaten: Seiten
-     */
 
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
