@@ -22,6 +22,11 @@ public class ConfigMain {
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
 
+    /**
+     * Get properties from configuration file.
+     * 
+     * @return PropertiesConfiguration object
+     */
     public static PropertiesConfiguration getConfig() {
         if (config == null) {
             synchronized (ConfigMain.class) {
@@ -72,6 +77,24 @@ public class ConfigMain {
         } catch (RuntimeException e) {
             return inDefaultIfNull;
         }
+    }
+
+    /**
+     * Request boolean parameter from configuration, default if missing: false.
+     *
+     * @return Parameter as String
+     */
+    public static boolean getBooleanParameter(String inParameter) {
+        return getBooleanParameter(inParameter, false);
+    }
+
+    /**
+     * Request boolean parameter from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
+        return getConfig().getBoolean(inParameter, inDefault);
     }
 
     /**
