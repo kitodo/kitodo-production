@@ -24,6 +24,8 @@
 
             <p:treeTable value="#{Metadaten.treeNodes}" var="item" selectionMode="single"
                          selection="#{Metadaten.selectedTreeNode}">
+                <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
+                        update="tabView:metadata,docStrucForm:docStruc"/>
                 <f:facet name="header">
                     #{msgs.strukturdaten}
                 </f:facet>
@@ -77,7 +79,7 @@
                     </p:commandButton>
 
                     <p:commandButton icon="ui-icon-trash"
-                                     update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStruc"
+                                     update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
                                      title="#{msgs.strukturelementLoeschen}" action="#{Metadaten.deleteNode}">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
                     </p:commandButton>
@@ -86,157 +88,10 @@
         </h:panelGroup>
     </h:form>
 
-    <p:dialog id="dialogEditDocStrucTypeId" header="#{msgs.docstructTypeAendern}" resizable="false"
-              widgetVar="dialogEditDocStrucType" minHeight="40" width="300" height="100" modal="true"
-              appendTo="@(body)">
-        <h:form id="dialogEditDocStrucTypeForm">
-            <p:selectOneMenu id="docStructTypeSelection" value="#{Metadaten.tempTyp}">
-                <!--TODO check addable types-->
-                <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
-            </p:selectOneMenu>
-            <p:commandButton value="#{msgs.uebernehmen}" action="#{Metadaten.changeCurrentDocstructType}"
-                             update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData"
-                             oncomplete="PF('dialogEditDocStrucType').hide();">
-            </p:commandButton>
-        </h:form>
-    </p:dialog>
+    <ui:include src="dialogs/dialogEditDocStrucType.xhtml"/>
 
-    <p:dialog id="dialogAddDocStrucTypeId" header="#{msgs.neuesStrukturelement}" resizable="false"
-              widgetVar="dialogAddDocStrucType" height="400" modal="true"
-              appendTo="@(body)">
-        <h:form id="dialogAddDocStrucTypeForm">
+    <ui:include src="dialogs/dialogAddDocStrucType.xhtml"/>
 
-            <h:panelGrid columns="2">
-                <h:outputLabel value="#{msgs.position}:" for="docStructPositionSelection"/>
-                <p:selectOneMenu id="docStructPositionSelection" value="#{Metadaten.positionOfNewDocStrucElement}" style="width: 180px">
-                    <!--TODO check addable types-->
-                    <f:selectItems value="#{Metadaten.positionsOfNewDocStrucElement}" var="positionSelection"
-                                   itemValue="#{positionSelection}" itemLabel="#{positionSelection.label}"/>
-                    <p:ajax update="docStructAddTypeSelection"/>
-                </p:selectOneMenu>
+    <ui:include src="dialogs/dialogEditPages.xhtml"/>
 
-                <h:outputLabel value="#{msgs.typ}:" for="docStructAddTypeSelection"/>
-                <p:selectOneMenu id="docStructAddTypeSelection" value="#{Metadaten.tempTyp}" style="width: 180px">
-                    <!--TODO check addable types-->
-                    <f:selectItems value="#{Metadaten.addableDocStructTypes}"/>
-                    <p:ajax update="selectAddableMetadataTypes"/>
-                </p:selectOneMenu>
-            </h:panelGrid>
-
-            <br/>
-
-            <h:panelGrid columns="2" columnClasses="top,top">
-                <h:outputText value="#{msgs.vorgaben}:"/>
-
-                <h:panelGroup>
-                    <p:selectOneRadio layout="grid" columns="1" value="#{Metadaten.addServeralStructuralElementsMode}">
-                        <f:selectItem itemLabel="#{msgs.seitenzuordnung}" itemValue="#{false}" />
-                        <f:selectItem itemLabel="#{msgs.metadaten}" itemValue="#{true}" />
-                        <p:ajax event="click" update="AddDocStrucTypeSpecs" />
-                    </p:selectOneRadio>
-                </h:panelGroup>
-            </h:panelGrid>
-
-            <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
-                <h:panelGroup rendered="#{!Metadaten.addServeralStructuralElementsMode}">
-                    <h:panelGrid columns="2">
-                        <h:outputText value="#{msgs.ersteSeite}:"/>
-                        <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
-                                         filterMatchMode="startsWith">
-                            <f:selectItems value="#{Metadaten.allPages}"/>
-                        </p:selectOneMenu>
-
-                        <h:outputText value="#{msgs.letzteSeite}:"/>
-                        <p:selectOneMenu id="selectLastPageOnAddNode" value="#{Metadaten.pagesEnd}" filter="true"
-                                         filterMatchMode="startsWith">
-                            <f:selectItems value="#{Metadaten.allPages}"/>
-                        </p:selectOneMenu>
-
-                        <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSingleNodeWithPages}"
-                                         update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStruc"
-                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
-                    </h:panelGrid>
-                </h:panelGroup>
-
-                <h:panelGroup rendered="#{Metadaten.addServeralStructuralElementsMode}">
-                    <h:panelGrid columns="2">
-                        <h:outputLabel value="#{msgs.count}:" for="elementsToAddSpinner"/>
-                        <p:spinner value="#{Metadaten.metadataElementsToAdd}" id="elementsToAddSpinner" size="5" min="1"/>
-
-                        <h:outputLabel value="#{msgs.typ}:" for="selectAddableMetadataTypes" />
-                        <p:selectOneMenu id="selectAddableMetadataTypes" value="#{Metadaten.addMetaDataType}" style="width: 180px">
-                            <f:selectItems value="#{Metadaten.addableMetadataTypesFromTempType}" />
-                        </p:selectOneMenu>
-
-                        <h:outputLabel value="#{msgs.wert}:" for="inputMetaDataValue"/>
-                        <h:inputTextarea id="inputMetaDataValue" value="#{Metadaten.addMetaDataValue}"/>
-
-                        <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSeveralNodesWithMetadata}"
-                                         update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStruc"
-                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
-                    </h:panelGrid>
-                </h:panelGroup>
-            </h:panelGrid>
-        </h:form>
-    </p:dialog>
-
-    <p:dialog id="dialogEditPagesId" header="#{msgs.seitenzuordnung}" resizable="false"
-              widgetVar="dialogEditPages" width="400">
-        <h:form id="dialogEditPagesForm">
-
-                <p:messages id="messagesSetFirstAndLastPage" closable="true"/>
-                <h:panelGrid columns="2">
-
-                    <h:outputText value="#{msgs.ersteSeite}:"/>
-                    <p:selectOneMenu id="selectFirstPage" value="#{Metadaten.allPagesSelectionFirstPage}" filter="true"
-                                     filterMatchMode="startsWith">
-                        <f:selectItems value="#{Metadaten.allPages}"/>
-                    </p:selectOneMenu>
-
-                    <h:outputText value="#{msgs.letzteSeite}:"/>
-                    <p:selectOneMenu id="selectLastPage" value="#{Metadaten.allPagesSelectionLastPage}" filter="true"
-                                     filterMatchMode="startsWith">
-                        <f:selectItems value="#{Metadaten.allPages}"/>
-                    </p:selectOneMenu>
-
-                    <p:commandButton id="takePagesFromChildrenBtn" value="#{msgs.seitenVonUnterelementenZuweisen}"
-                                     action="#{Metadaten.takePagesFromChildren}"
-                                     update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
-                    <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.seitenZuweisen}"
-                                     action="#{Metadaten.setPageStartAndEnd}"
-                                     update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
-                </h:panelGrid>
-
-
-            <h:panelGrid id="mygrid7" columns="3" columnClasses="top,centered,top">
-                <!-- alle Seiten -->
-                <h:panelGroup style="margin-left:0px">
-                    <h:outputText value="#{msgs.alleSeiten}"/>
-                    <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}"
-                                      style="height:200px">
-                        <f:selectItems value="#{Metadaten.allPages}"/>
-                    </p:selectManyMenu>
-                </h:panelGroup>
-
-                <h:panelGroup>
-                    <h:panelGrid columns="1">
-                        <p:commandButton id="addPageBtn" action="#{Metadaten.addPages}" icon="ui-icon-arrowthick-1-e"
-                                         update="paginationSubSelection,tabView:structureData:structureDataTable"/>
-                        <p:commandButton id="removePageBtn" action="#{Metadaten.removePages}"
-                                         icon="ui-icon-arrowthick-1-w"
-                                         update="paginationSubSelection,tabView:structureData:structureDataTable"/>
-                    </h:panelGrid>
-                </h:panelGroup>
-
-                <h:panelGroup>
-                    <h:outputText value="#{msgs.zugehoerigeSeiten}"/>
-                    <p:selectManyMenu id="paginationSubSelection" value="#{Metadaten.structSeitenAuswahl}"
-                                      style="height:200px">
-                        <f:selectItems value="#{Metadaten.structSeiten}"/>
-                        <p:ajax update="paginationSubSelection"/>
-                    </p:selectManyMenu>
-                </h:panelGroup>
-            </h:panelGrid>
-        </h:form>
-    </p:dialog>
 </ui:composition>

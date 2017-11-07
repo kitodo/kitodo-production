@@ -63,6 +63,7 @@ import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -1164,11 +1165,7 @@ public class Metadaten {
                 null,
                 null);
 
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e.getMessage());
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e.getMessage());
-        } catch (TypeNotAllowedAsChildException e) {
+        } catch (UGHException e) {
             logger.error(e.getMessage());
         }
 
@@ -1200,14 +1197,27 @@ public class Metadaten {
                 this.addMetaDataType,
                 this.addMetaDataValue);
 
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e.getMessage());
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e.getMessage());
-        } catch (TypeNotAllowedAsChildException e) {
+        } catch (UGHException e) {
             logger.error(e.getMessage());
         }
         readMetadataAsFirstTree();
+    }
+
+    private void addNewDocStructToExistingDocStruct(DocStruct existingDocStruct,
+                                                    DocStruct newDocStruct,
+                                                    DigitalDocument digitalDocument,
+                                                    int index)
+        //TODO think about resource handling
+
+        throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+
+        DocStruct createdElement = digitalDocument.createDocStruct(newDocStruct.getType());
+        List<Metadata> allMetadata = newDocStruct.getAllMetadata();
+
+        for (Metadata metadata :allMetadata) {
+            createdElement.addMetadata(metadata.getType().getName(),metadata.getValue());
+        }
+        existingDocStruct.addChild(index,newDocStruct);
     }
 
 
@@ -1217,7 +1227,8 @@ public class Metadaten {
                              PositionOfNewDocStrucElement positionOfNewDocStrucElement,
                              int quantity,
                              String metadataType,
-                             String value) throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+                             String value)
+        throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         ArrayList<DocStruct> createdElements = new ArrayList<>(quantity);
 
@@ -2819,7 +2830,7 @@ public class Metadaten {
     }
 
     /**
-     * Gets logicalTopstruct of digital document as TreeNode structure.
+     * Gets logicalTopstruct of digital document as full expanded TreeNode structure.
      *
      * @return
      *          The TreeNote.
@@ -2828,6 +2839,14 @@ public class Metadaten {
         TreeNode root = new DefaultTreeNode("root", null);
         List<DocStruct> children = this.logicalTopstruct.getAllChildren();
         TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
+        if (this.selectedTreeNode == null) {
+            visibleRoot.setSelected(true);
+        } else {
+            if (this.selectedTreeNode.equals(visibleRoot)) {
+                visibleRoot.setSelected(true);
+            }
+        }
+
         if (children != null) {
             visibleRoot.getChildren().add(convertDocstructToPrimeFacesTreeNode(children, visibleRoot));
         }
@@ -2838,8 +2857,12 @@ public class Metadaten {
         TreeNode treeNode = null;
 
         for (DocStruct element : elements) {
-            List<DocStruct> children = element.getAllChildren();
+
             treeNode = new DefaultTreeNode(element, parentTreeNode);
+            if (this.selectedTreeNode != null && this.selectedTreeNode.getData().equals(element)) {
+                treeNode.setSelected(true);
+            }
+            List<DocStruct> children = element.getAllChildren();
             if (children != null) {
                 convertDocstructToPrimeFacesTreeNode(children, treeNode);
             }
@@ -2854,6 +2877,28 @@ public class Metadaten {
         node.setExpanded(expanded);
 
         return node;
+    }
+
+    public void onNodeDragDrop(TreeDragDropEvent event) {
+
+        int dropIndex = event.getDropIndex();
+
+        DocStruct dropDocStruct = (DocStruct) event.getDropNode().getData();
+        DocStruct dragDocStruct = (DocStruct) event.getDragNode().getData();
+
+        if (event.getDropNode().getParent().getData().equals("root")) {
+            Helper.setFehlerMeldung("Only one root element allowed");
+        } else {
+            this.docStruct = dragDocStruct;
+            this.docStruct.getParent().removeChild(dragDocStruct);
+
+            try {
+                addNewDocStructToExistingDocStruct(dropDocStruct,dragDocStruct,this.digitalDocument,dropIndex);
+            } catch (UGHException e) {
+                logger.error(e.getMessage());
+            }
+        }
+
     }
 
     /**

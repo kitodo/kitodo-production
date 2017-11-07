@@ -59,7 +59,8 @@
 
                 </p:blockUI>
                 <div align="right">
-                    <p:button value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" disabled="true"/>
+                    <p:commandButton value="#{msgs.validieren}" icon="ui-icon-arrowrefresh-1-w" action="#{Metadaten.validate}"
+                    updade="tabView:metadata"/>
                     <p:button id="backBtn" value="#{msgs.zurueck}" outcome="/pages/ProzessverwaltungAlle"
                               icon="ui-icon-close"/>
                     <p:commandButton id="saveBtn" value="#{msgs.speichern}" action="#{Metadaten.saveMetadataToXml}"

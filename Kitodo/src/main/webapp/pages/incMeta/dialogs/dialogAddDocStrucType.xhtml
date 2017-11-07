@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+>
+
+    <p:dialog id="dialogAddDocStrucTypeId" header="#{msgs.neuesStrukturelement}" resizable="false"
+              widgetVar="dialogAddDocStrucType" height="400" modal="true"
+              appendTo="@(body)">
+        <h:form id="dialogAddDocStrucTypeForm">
+
+            <h:panelGrid columns="2">
+                <h:outputLabel value="#{msgs.position}:" for="docStructPositionSelection"/>
+                <p:selectOneMenu id="docStructPositionSelection" value="#{Metadaten.positionOfNewDocStrucElement}" style="width: 180px">
+                    <!--TODO check addable types-->
+                    <f:selectItems value="#{Metadaten.positionsOfNewDocStrucElement}" var="positionSelection"
+                                   itemValue="#{positionSelection}" itemLabel="#{positionSelection.label}"/>
+                    <p:ajax update="docStructAddTypeSelection"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel value="#{msgs.typ}:" for="docStructAddTypeSelection"/>
+                <p:selectOneMenu id="docStructAddTypeSelection" value="#{Metadaten.tempTyp}" style="width: 180px">
+                    <!--TODO check addable types-->
+                    <f:selectItems value="#{Metadaten.addableDocStructTypes}"/>
+                    <p:ajax update="selectAddableMetadataTypes"/>
+                </p:selectOneMenu>
+            </h:panelGrid>
+
+            <br/>
+
+            <h:panelGrid columns="2" columnClasses="top,top">
+                <h:outputText value="#{msgs.vorgaben}:"/>
+
+                <h:panelGroup>
+                    <p:selectOneRadio layout="grid" columns="1" value="#{Metadaten.addServeralStructuralElementsMode}">
+                        <f:selectItem itemLabel="#{msgs.seitenzuordnung}" itemValue="#{false}" />
+                        <f:selectItem itemLabel="#{msgs.metadaten}" itemValue="#{true}" />
+                        <p:ajax event="click" update="AddDocStrucTypeSpecs" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+            </h:panelGrid>
+
+            <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
+                <h:panelGroup rendered="#{!Metadaten.addServeralStructuralElementsMode}">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{msgs.ersteSeite}:"/>
+                        <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
+                                         filterMatchMode="startsWith">
+                            <f:selectItems value="#{Metadaten.allPages}"/>
+                        </p:selectOneMenu>
+
+                        <h:outputText value="#{msgs.letzteSeite}:"/>
+                        <p:selectOneMenu id="selectLastPageOnAddNode" value="#{Metadaten.pagesEnd}" filter="true"
+                                         filterMatchMode="startsWith">
+                            <f:selectItems value="#{Metadaten.allPages}"/>
+                        </p:selectOneMenu>
+
+                        <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSingleNodeWithPages}"
+                                         update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
+                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{msgs.count}:" for="elementsToAddSpinner"/>
+                        <p:spinner value="#{Metadaten.metadataElementsToAdd}" id="elementsToAddSpinner" size="5" min="1"/>
+
+                        <h:outputLabel value="#{msgs.typ}:" for="selectAddableMetadataTypes" />
+                        <p:selectOneMenu id="selectAddableMetadataTypes" value="#{Metadaten.addMetaDataType}" style="width: 180px">
+                            <f:selectItems value="#{Metadaten.addableMetadataTypesFromTempType}" />
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="#{msgs.wert}:" for="inputMetaDataValue"/>
+                        <h:inputTextarea id="inputMetaDataValue" value="#{Metadaten.addMetaDataValue}"/>
+
+                        <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSeveralNodesWithMetadata}"
+                                         update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
+                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
+                    </h:panelGrid>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>
