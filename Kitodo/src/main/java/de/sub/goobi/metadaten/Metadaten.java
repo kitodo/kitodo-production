@@ -518,9 +518,10 @@ public class Metadaten {
             ds = this.digitalDocument.createDocStruct(dst);
         } catch (TypeNotAllowedForParentException e) {
             logger.error(e.getMessage());
+            return new ArrayList<>();
         }
 
-        return getAddableMetadataTypes(ds, tempMetadatumList);
+        return getAddableMetadataTypes(ds, this.tempMetadatumList);
     }
 
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
