@@ -608,16 +608,16 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindNotClosedProcesses() throws Exception {
-        List<ProcessDTO> notClosedProcesses = processService.findNotClosedProcesses(null);
-        assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 5", notClosedProcesses.size() == 5);
+    public void shouldFindNotClosedProcessesWithoutTemplates() throws Exception {
+        List<ProcessDTO> notClosedProcesses = processService.findNotClosedProcessesWithoutTemplates(null);
+        assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 3", notClosedProcesses.size() == 3);
     }
 
     @Test
-    public void shouldFindNotClosedAndNotArchivedProcesses() throws Exception {
-        List<ProcessDTO> notClosedAndNotArchivedProcesses = processService.findNotClosedAndNotArchivedProcesses(null);
-        assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 3",
-                notClosedAndNotArchivedProcesses.size() == 3);
+    public void shouldFindNotClosedAndNotArchivedProcessesWithoutTemplates() throws Exception {
+        List<ProcessDTO> notClosedAndNotArchivedProcesses = processService.findNotClosedAndNotArchivedProcessesWithoutTemplates(null);
+        assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 2",
+                notClosedAndNotArchivedProcesses.size() == 2);
     }
 
     @Test

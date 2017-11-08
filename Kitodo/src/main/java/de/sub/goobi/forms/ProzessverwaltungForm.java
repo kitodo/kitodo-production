@@ -535,9 +535,9 @@ public class ProzessverwaltungForm extends BasisForm {
     private void filterProcessesWithoutFilter() throws DataException {
         if (!this.showClosedProcesses) {
             if (!this.showArchivedProjects) {
-                processDTOS = serviceManager.getProcessService().findNotClosedAndNotArchivedProcesses(sortList());
+                processDTOS = serviceManager.getProcessService().findNotClosedAndNotArchivedProcessesWithoutTemplates(sortList());
             } else {
-                processDTOS = serviceManager.getProcessService().findNotClosedProcesses(sortList());
+                processDTOS = serviceManager.getProcessService().findNotClosedProcessesWithoutTemplates(sortList());
             }
         } else {
             if (!this.showArchivedProjects) {

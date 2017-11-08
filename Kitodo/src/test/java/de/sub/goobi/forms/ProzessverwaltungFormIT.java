@@ -58,7 +58,7 @@ public class ProzessverwaltungFormIT {
 
         prozessverwaltungForm.filterAll();
         processDTOS = prozessverwaltungForm.getProcessDTOS();
-        assertEquals("Amount of found processes is incorrect!", 3, processDTOS.size());
+        assertEquals("Amount of found processes is incorrect!", 2, processDTOS.size());
 
         prozessverwaltungForm.setModusAnzeige("vorlagen");
 
