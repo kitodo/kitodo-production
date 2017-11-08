@@ -293,18 +293,6 @@
         </servlet-class>
     </servlet>
 
-
-    <servlet>
-        <description></description>
-        <display-name>WebInterface</display-name>
-        <servlet-name>WebInterface</servlet-name>
-        <servlet-class>org.goobi.production.cli.WebInterface</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>WebInterface</servlet-name>
-        <url-pattern>/wi</url-pattern>
-    </servlet-mapping>
-
     <!-- Faces Servlet Mapping -->
 
     <!-- extension mapping -->
