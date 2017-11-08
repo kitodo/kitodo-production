@@ -23,6 +23,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.logging.log4j.LogManager;
@@ -52,6 +53,7 @@ import org.goobi.mq.processors.FinaliseStepProcessor;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
+@WebListener
 public class ActiveMQDirector implements ServletContextListener, ExceptionListener {
     private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 

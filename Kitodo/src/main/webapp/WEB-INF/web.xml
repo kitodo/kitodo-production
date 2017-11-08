@@ -170,15 +170,6 @@
         <url-pattern>/gnd/*</url-pattern>
     </filter-mapping>
 
-    <!-- Listener for ImageIO initialization (Tomcat workaround) -->
-    <listener>
-        <listener-class>org.goobi.production.ImageIOInitializer</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>org.goobi.mq.ActiveMQDirector</listener-class>
-    </listener>
-
     <!--
         xml-Rpc-Server starten <listener> <listener-class>
         de.sub.goobi.XmlRpc.Listener </listener-class> </listener>
@@ -199,14 +190,6 @@
             org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
     </listener>
 -->
-
-    <listener>
-        <listener-class>de.sub.goobi.helper.tasks.TaskSitter</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>org.goobi.production.GoobiVersionListener</listener-class>
-    </listener>
 
     <!-- Faces Servlet -->
     <servlet>
