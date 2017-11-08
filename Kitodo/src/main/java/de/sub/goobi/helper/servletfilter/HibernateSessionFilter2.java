@@ -21,6 +21,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
@@ -30,6 +31,7 @@ import org.kitodo.data.database.persistence.HibernateSessionLong;
 // old version, reactivated, because
 // de.sub.goobi.Persistence.HibernateSessionConversationFilter does not work
 // like it should
+@WebFilter(filterName = "HibernateFilter", urlPatterns = "*.jsf")
 public class HibernateSessionFilter2 implements Filter {
 
     @Override

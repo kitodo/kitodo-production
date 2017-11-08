@@ -24,6 +24,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -59,6 +61,8 @@ import org.hibernate.LazyInitializationException;
  * 
  * @author Kevin Chipalowsky and Ivelin Ivanov
  */
+@WebFilter(filterName = "RequestControlFilter", urlPatterns = "*.jsf", initParams = {
+        @WebInitParam(name = "excludePattern", value = ".*\\.(js|css)\\.jsf") })
 public class RequestControlFilter implements Filter {
 
     /**
