@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+>
+
+    <p:dialog id="dialogEditDocStrucTypeId" header="#{msgs.docstructTypeAendern}" resizable="false"
+              widgetVar="dialogEditDocStrucType" minHeight="40" width="300" height="100" modal="true"
+              appendTo="@(body)">
+        <h:form id="dialogEditDocStrucTypeForm">
+            <p:selectOneMenu id="docStructTypeSelection" value="#{Metadaten.tempTyp}">
+                <!--TODO check addable types-->
+                <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
+            </p:selectOneMenu>
+            <p:commandButton value="#{msgs.uebernehmen}" action="#{Metadaten.changeCurrentDocstructType}"
+                             update="tabView:structureData,docStrucForm:docStruc"
+                             oncomplete="PF('dialogEditDocStrucType').hide();">
+            </p:commandButton>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

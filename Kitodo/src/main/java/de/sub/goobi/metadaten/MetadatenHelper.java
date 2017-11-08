@@ -200,7 +200,7 @@ public class MetadatenHelper implements Comparator<Object> {
             }
         }
         for (int j = newDocstruct.getParent().getAllChildren().size() - i; j > 0; j--) {
-            knotUp(newDocstruct);
+            moveNodeUp(newDocstruct);
         }
 
         /*
@@ -216,7 +216,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @param inStruct
      *            DocStruct object
      */
-    public void knotUp(DocStruct inStruct) throws TypeNotAllowedAsChildException {
+    public void moveNodeUp(DocStruct inStruct) throws TypeNotAllowedAsChildException {
         DocStruct parent = inStruct.getParent();
         if (parent == null) {
             return;
@@ -238,7 +238,7 @@ public class MetadatenHelper implements Comparator<Object> {
                 if (parent.getNextChild(tempDS) == inStruct) {
                     alleDS = new ArrayList<>();
                 }
-            } catch (Exception e) {
+            } catch (IndexOutOfBoundsException e) {
                 logger.error(e);
             }
 
@@ -271,7 +271,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @param inStruct
      *            DocStruct object
      */
-    public void setNodeDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
+    public void moveNodeDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
         DocStruct parent = inStruct.getParent();
         if (parent == null) {
             return;
@@ -279,11 +279,16 @@ public class MetadatenHelper implements Comparator<Object> {
         List<DocStruct> alleDS = new ArrayList<>();
 
         /* alle Elemente des Parents durchlaufen */
-        for (DocStruct child : parent.getAllChildren()) {
+        for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
+            DocStruct tempDS = iter.next();
+
             /* wenn das aktuelle Element das zu verschiebende ist */
-            if (child != inStruct) {
-                alleDS.add(child);
+            if (tempDS != inStruct) {
+                alleDS.add(tempDS);
             } else {
+                if (iter.hasNext()) {
+                    alleDS.add(iter.next());
+                }
                 alleDS.add(inStruct);
             }
         }

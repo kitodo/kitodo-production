@@ -59,9 +59,11 @@ import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -83,6 +85,7 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.UGHException;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -179,6 +182,12 @@ public class Metadaten {
     private final FileService fileService = serviceManager.getFileService();
     private Paginator paginator = new Paginator();
     private TreeNode selectedTreeNode;
+    private PositionOfNewDocStrucElement positionOfNewDocStrucElement = PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT;
+    private int metadataElementsToAdd = 1;
+    private String addMetaDataType;
+    private String addMetaDataValue;
+    private boolean addServeralStructuralElementsMode = false;
+
 
     /**
      * Konstruktor.
@@ -218,34 +227,22 @@ public class Metadaten {
 
     /**
      * Add person.
-     *
-     * @return String
      */
-    public String addPerson() {
+    public void addPerson() {
         this.modeAddPerson = true;
         this.tempPersonNachname = "";
         this.tempPersonRecord = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
         this.tempPersonVorname = "";
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
      * cancel.
-     *
-     * @return String
      */
-    public String cancel() {
+    public void cancel() {
         this.modeAdd = false;
         this.modeAddPerson = false;
         Modes.setBindState(BindState.edit);
         getMetadatum().setValue("");
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -294,9 +291,8 @@ public class Metadaten {
     /**
      * Copy person.
      *
-     * @return String
      */
-    public String copyPerson() {
+    public void copyPerson() {
         Person per;
         try {
             per = new Person(this.myPrefs.getMetadataTypeByName(this.curPerson.getP().getRole()));
@@ -311,22 +307,17 @@ public class Metadaten {
             logger.error("Fehler beim copy von Personen (MetadataTypeNotAllowedException): " + e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
      * Change current document structure.
      *
-     * @return String
      */
-    public String changeCurrentDocstructType() {
+    public void changeCurrentDocstructType() {
 
-        if (this.docStruct != null && this.tempValue != null) {
+        if (this.docStruct != null && this.tempTyp != null) {
             try {
-                DocStruct result = this.metaHelper.changeCurrentDocstructType(this.docStruct, this.tempValue);
+                DocStruct result = this.metaHelper.changeCurrentDocstructType(this.docStruct, this.tempTyp);
                 saveMetadataAsBean(result);
                 readMetadataAsFirstTree();
             } catch (DocStructHasNoTypeException e) {
@@ -349,7 +340,6 @@ public class Metadaten {
                         "Error while changing DocStructTypes (TypeNotAllowedForParentException): " + e.getMessage());
             }
         }
-        return "Metadaten3links";
     }
 
     /**
@@ -389,10 +379,8 @@ public class Metadaten {
 
     /**
      * Save person.
-     *
-     * @return String
      */
-    public String savePerson() {
+    public void savePerson() {
         try {
             Person per = new Person(this.myPrefs.getMetadataTypeByName(this.tempPersonRolle));
             per.setFirstname(this.tempPersonVorname);
@@ -401,20 +389,15 @@ public class Metadaten {
             String[] authorityFile = parseAuthorityFileArgs(tempPersonRecord);
             per.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
             this.docStruct.addPerson(per);
+            this.modeAddPerson = false;
+            saveMetadataAsBean(this.docStruct);
         } catch (IncompletePersonObjectException e) {
             Helper.setFehlerMeldung("Incomplete data for person", "");
 
-            return "";
         } catch (MetadataTypeNotAllowedException e) {
             Helper.setFehlerMeldung("Person is for this structure not allowed", "");
-            return "";
         }
-        this.modeAddPerson = false;
-        saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
+
     }
 
     /**
@@ -465,15 +448,10 @@ public class Metadaten {
     /**
      * Delete person.
      *
-     * @return String
      */
-    public String deletePerson() {
+    public void deletePerson() {
         this.docStruct.removePerson(this.curPerson.getP());
         saveMetadataAsBean(this.docStruct);
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "";
     }
 
     /**
@@ -518,31 +496,53 @@ public class Metadaten {
     }
 
     /**
-     * die noch erlaubten Metadaten zurückgeben.
+     * Gets addeble metadata types.
+     *
+     * @return
+     *      The metadata types.
      */
     public ArrayList<SelectItem> getAddableMetadataTypes() {
-        ArrayList<SelectItem> selectItems = new ArrayList<>();
-        /*
-         * zuerst mal alle addierbaren Metadatentypen ermitteln
-         */
-        List<MetadataType> types = this.docStruct.getAddableMetadataTypes();
+        return getAddableMetadataTypes(docStruct, tempMetadatumList);
+    }
+
+    /**
+     * Gets addable metadatatypes from tempTyp.
+     *
+     * @return
+     *      The addable metadatatypes from tempTyp.
+     */
+    public ArrayList<SelectItem> getAddableMetadataTypesFromTempType() {
+        DocStruct ds = null;
+        DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        try {
+            ds = this.digitalDocument.createDocStruct(dst);
+        } catch (TypeNotAllowedForParentException e) {
+            logger.error(e.getMessage());
+            return new ArrayList<>();
+        }
+
+        return getAddableMetadataTypes(ds, this.tempMetadatumList);
+    }
+
+    private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
+        ArrayList<SelectItem> selectItems = new ArrayList<SelectItem>();
+
+        // zuerst mal alle addierbaren Metadatentypen ermitteln
+
+        List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
         if (types == null) {
             return selectItems;
         }
 
-        /*
-         * alle Metadatentypen, die keine Person sind, oder mit einem
-         * Unterstrich anfangen rausnehmen
-         */
-        for (MetadataType mdt : new ArrayList<>(types)) {
+        //alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
+
+        for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
             if (mdt.getIsPerson()) {
                 types.remove(mdt);
             }
         }
 
-        /*
-         * die Metadatentypen sortieren
-         */
+        //die Metadatentypen sortieren
         HelperComparator c = new HelperComparator();
         c.setSortType("MetadatenTypen");
         Collections.sort(types, c);
@@ -555,7 +555,9 @@ public class Metadaten {
                 Metadata md = new Metadata(mdt);
                 MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.process);
                 counter++;
-                this.tempMetadatumList.add(mdum);
+                if (tempMetadatumList != null) {
+                    tempMetadatumList.add(mdum);
+                }
 
             } catch (MetadataTypeNotAllowedException e) {
                 logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
@@ -616,10 +618,6 @@ public class Metadaten {
         }
         return typesWithoutUnderscore;
     }
-
-    /*
-     * Metadaten lesen und schreiben
-     */
 
     /**
      * Metadaten Einlesen.
@@ -912,7 +910,7 @@ public class Metadaten {
      */
 
     @SuppressWarnings("rawtypes")
-    private String readMetadataAsFirstTree() {
+    private void readMetadataAsFirstTree() {
         HashMap map;
         TreeNodeStruct3 nodes;
         List<DocStruct> status = new ArrayList<>();
@@ -930,9 +928,6 @@ public class Metadaten {
             }
         }
 
-        if (this.logicalTopstruct == null) {
-            return "Metadaten3links";
-        }
         /*
          * Die Struktur als Tree3 aufbereiten
          */
@@ -961,10 +956,6 @@ public class Metadaten {
             }
         }
 
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        return "Metadaten3links";
     }
 
     /**
@@ -1035,6 +1026,44 @@ public class Metadaten {
     }
 
     /**
+     * Gets metadata value of specific type of an DocStruct element.
+     * @param docStructElement
+     *      The DocStruct element.
+     *
+     * @param inTyp
+     *      The metadata typ.
+     * @return
+     *      The metadata value.
+     */
+    public String getMetadataByElementAndType(DocStruct docStructElement, String inTyp) {
+        String result = "";
+        List<Metadata> allMDs = docStructElement.getAllMetadata();
+        if (allMDs != null) {
+            for (Metadata md : allMDs) {
+                if (md.getType().getName().equals(inTyp)) {
+                    result += (md.getValue() == null ? "" : md.getValue()) + " ";
+                }
+            }
+        }
+        return result.trim();
+    }
+
+    /**
+     * Gets the image range of a specific DocStruct element.
+     *
+     * @param docStructElement
+     *      The DocStruct element.
+     * @return
+     *      The image range (image number - page namber)
+     */
+    public String getImageRangeByElement(DocStruct docStructElement) {
+        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberFirst());
+        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberLast());
+
+        return firstImage + " - " + lastImage;
+    }
+
+    /**
      * Set my structure element.
      *
      * @param inStruct
@@ -1066,29 +1095,29 @@ public class Metadaten {
     /**
      * Knoten nach oben schieben.
      */
-    public String nodeUp() {
+    public void nodeUp() {
         try {
-            this.metaHelper.knotUp(this.docStruct);
+            this.metaHelper.moveNodeUp(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
             }
         }
-        return readMetadataAsFirstTree();
+        readMetadataAsFirstTree();
     }
 
     /**
      * Knoten nach unten schieben.
      */
-    public String nodeDown() {
+    public void nodeDown() {
         try {
-            this.metaHelper.setNodeDown(this.docStruct);
+            this.metaHelper.moveNodeDown(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
             }
         }
-        return readMetadataAsFirstTree();
+        readMetadataAsFirstTree();
     }
 
     /**
@@ -1106,132 +1135,66 @@ public class Metadaten {
     /**
      * Knoten nach oben schieben.
      */
-    public String deleteNode() {
+    public void deleteNode() {
         if (this.docStruct != null && this.docStruct.getParent() != null) {
             DocStruct tempParent = this.docStruct.getParent();
             this.docStruct.getParent().removeChild(this.docStruct);
             this.docStruct = tempParent;
         }
         // den Tree neu einlesen
-        return readMetadataAsFirstTree();
+        readMetadataAsFirstTree();
     }
 
     /**
-     * Knoten hinzufügen.=
+     * Gets position of new inserted DocStruc elements.
+     *
+     * @return
+     *      The position of new inserted DocStruc elements.
      */
-    public String addNode() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
+    public PositionOfNewDocStrucElement getPositionOfNewDocStrucElement () {
+        return this.positionOfNewDocStrucElement;
+    }
 
-        /*
-         * prüfen, wohin das Strukturelement gepackt werden soll, anschliessend
-         * entscheiden, welches Strukturelement gewählt wird und abschliessend
-         * richtig einfügen
-         */
+    /**
+     * Sets position of new inserted DocStruc elements.
+     *
+     * @param positionOfNewDocStrucElement
+     *      The position of new inserted DocStruc elements.
+     */
+    public void setPositionOfNewDocStrucElement(PositionOfNewDocStrucElement positionOfNewDocStrucElement) {
+        this.positionOfNewDocStrucElement = positionOfNewDocStrucElement;
+    }
+
+    /**
+     * Gets all possible positions of new DocStruct elements.
+     *
+     * @return
+     *      The positions of new DocStruct elements.
+     */
+    public PositionOfNewDocStrucElement[] getPositionsOfNewDocStrucElement() {
+        return this.positionOfNewDocStrucElement.values();
+    }
+
+    /**
+     * Adds a single new DocStruct element to the current DocStruct tree and sets the specified pages.
+     */
+    public void addSingleNodeWithPages() {
 
         DocStruct ds = null;
-        /*
-         * vor das aktuelle Element
-         */
-        if (this.neuesElementWohin.equals("1")) {
-            if (this.addFirstDocStructType == null || this.addFirstDocStructType.equals("")) {
-                return "Metadaten3links";
-            }
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addFirstDocStructType);
-            ds = this.digitalDocument.createDocStruct(dst);
-            if (this.docStruct == null) {
-                return "Metadaten3links";
-            }
-            DocStruct parent = this.docStruct.getParent();
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
-            }
-            List<DocStruct> alleDS = new ArrayList<>();
+        DocStructType docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
 
-            /* alle Elemente des Parents durchlaufen */
-            for (DocStruct docStruct : parent.getAllChildren()) {
-                /* wenn das aktuelle Element das gesuchte ist */
-                if (docStruct == this.docStruct) {
-                    alleDS.add(ds);
-                }
-                alleDS.add(docStruct);
-            }
+        try {
+            ds = addNode(
+                this.docStruct,
+                this.digitalDocument,
+                docStructType,
+                this.positionOfNewDocStrucElement,
+                1,
+                null,
+                null);
 
-            /* anschliessend alle Childs entfernen */
-            for (DocStruct docStruct : alleDS) {
-                parent.removeChild(docStruct);
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (DocStruct docStruct : alleDS) {
-                parent.addChild(docStruct);
-            }
-        }
-
-        /*
-         * hinter das aktuelle Element
-         */
-        if (this.neuesElementWohin.equals("2")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addFirstDocStructType);
-            ds = this.digitalDocument.createDocStruct(dst);
-            DocStruct parent = this.docStruct.getParent();
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
-            }
-            List<DocStruct> alleDS = new ArrayList<>();
-
-            /* alle Elemente des Parents durchlaufen */
-            for (DocStruct docStruct : parent.getAllChildren()) {
-                alleDS.add(docStruct);
-                /* wenn das aktuelle Element das gesuchte ist */
-                if (docStruct == this.docStruct) {
-                    alleDS.add(ds);
-                }
-            }
-
-            /* anschliessend alle Childs entfernen */
-            for (DocStruct docStruct : alleDS) {
-                parent.removeChild(docStruct);
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (DocStruct docStruct : alleDS) {
-                parent.addChild(docStruct);
-            }
-        }
-
-        /*
-         * als erstes Child
-         */
-        if (this.neuesElementWohin.equals("3")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addSecondDocStructType);
-            ds = this.digitalDocument.createDocStruct(dst);
-            DocStruct parent = this.docStruct;
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
-            }
-            List<DocStruct> alleDS = new ArrayList<>();
-            alleDS.add(ds);
-
-            if (parent.getAllChildren() != null && parent.getAllChildren().size() != 0) {
-                alleDS.addAll(parent.getAllChildren());
-                parent.getAllChildren().retainAll(new ArrayList<>());
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (DocStruct docStruct : alleDS) {
-                parent.addChild(docStruct);
-            }
-        }
-
-        /*
-         * als letztes Child
-         */
-        if (this.neuesElementWohin.equals("4")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addSecondDocStructType);
-            ds = this.digitalDocument.createDocStruct(dst);
-            this.docStruct.addChild(ds);
+        } catch (UGHException e) {
+            logger.error(e.getMessage());
         }
 
         if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
@@ -1242,8 +1205,115 @@ public class Metadaten {
             ajaxSeitenStartUndEndeSetzen();
             this.docStruct = temp;
         }
+        readMetadataAsFirstTree();
+    }
 
-        return readMetadataAsFirstTree();
+    /**
+     * Adds a serveral new DocStruct elements to the current DocStruct tree and sets specified metadata.
+     */
+    public void addSeveralNodesWithMetadata() {
+        DocStruct ds = null;
+
+        DocStructType docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        try {
+            ds = addNode(
+                this.docStruct,
+                this.digitalDocument,
+                docStructType,
+                this.positionOfNewDocStrucElement,
+                this.metadataElementsToAdd,
+                this.addMetaDataType,
+                this.addMetaDataValue);
+
+        } catch (UGHException e) {
+            logger.error(e.getMessage());
+        }
+        readMetadataAsFirstTree();
+    }
+
+    private void addNewDocStructToExistingDocStruct(DocStruct existingDocStruct,
+                                                    DocStruct newDocStruct,
+                                                    int index)
+        throws TypeNotAllowedAsChildException {
+
+        if (existingDocStruct.isDocStructTypeAllowedAsChild(newDocStruct.getType())) {
+            existingDocStruct.addChild(index,newDocStruct);
+        } else {
+            throw new TypeNotAllowedAsChildException(newDocStruct.getType() + " ot allowed as child of " + existingDocStruct.getType());
+        }
+    }
+
+    private DocStruct addNode(DocStruct docStruct,
+                             DigitalDocument digitalDocument,
+                             DocStructType docStructType,
+                             PositionOfNewDocStrucElement positionOfNewDocStrucElement,
+                             int quantity,
+                             String metadataType,
+                             String value)
+        throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+
+        ArrayList<DocStruct> createdElements = new ArrayList<>(quantity);
+
+        for (int i = 0; i < quantity; i++) {
+
+            DocStruct createdElement = digitalDocument.createDocStruct(docStructType);
+            if (docStructType != null && value != null && metadataType != null) {
+                createdElement.addMetadata(metadataType,value);
+            }
+            createdElements.add(createdElement);
+        }
+
+        if (positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.LAST_CHILD_OF_CURRENT_ELEMENT)) {
+            for (DocStruct element : createdElements) {
+                docStruct.addChild(element);
+            }
+        } else {
+            DocStruct edited = positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT) ? docStruct
+                : docStruct.getParent();
+            if (edited == null) {
+                logger.debug("The selected element cannot investigate the father.");
+            }
+
+            List<DocStruct> childrenBefore = edited.getAllChildren();
+            if (childrenBefore == null) {
+                for (DocStruct element : createdElements) {
+                    edited.addChild(element);
+                }
+            } else {
+                // Build a new list of children for the edited element
+                List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
+                if (positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)) {
+                    for (DocStruct createdElement : createdElements) {
+                        newChildren.add(createdElement);
+                    }
+                }
+                for (DocStruct child : childrenBefore) {
+                    if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT)) {
+                        for (DocStruct element : createdElements) {
+                            newChildren.add(element);
+                        }
+                    }
+                    newChildren.add(child);
+                    if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT)) {
+                        for (DocStruct element : createdElements) {
+                            newChildren.add(element);
+                        }
+                    }
+                }
+
+                // Remove the existing children
+                for (DocStruct child : newChildren) {
+                    edited.removeChild(child);
+                }
+
+                // Set the new children on the edited element
+                for (DocStruct child : newChildren) {
+                    edited.addChild(child);
+                }
+            }
+        }
+
+        return createdElements.iterator().next();
     }
 
     /**
@@ -1260,9 +1330,26 @@ public class Metadaten {
         return this.metaHelper.getAddableDocStructTypen(this.docStruct, true);
     }
 
-    /*
-     * Strukturdaten: Seiten
+    /**
+     * Returns possible DocStruct types which can be added to current DocStruct.
+     *
+     * @return The DocStruct types.
      */
+    public SelectItem[] getAddableDocStructTypes() {
+        switch (positionOfNewDocStrucElement) {
+            case BEFOR_CURRENT_ELEMENT:
+            case AFTER_CURRENT_ELEMENT:
+                return this.metaHelper.getAddableDocStructTypen(this.docStruct, true);
+
+            case FIRST_CHILD_OF_CURRENT_ELEMENT:
+            case LAST_CHILD_OF_CURRENT_ELEMENT:
+                return this.metaHelper.getAddableDocStructTypen(this.docStruct, false);
+
+            default:
+                logger.error("Invalid positionOfNewDocStrucElement");
+                return new SelectItem[0];
+        }
+    }
 
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
@@ -2068,26 +2155,27 @@ public class Metadaten {
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
      */
-    public String setPageStartAndEnd() {
-        if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
-        }
-        int anzahlAuswahl = Integer.parseInt(this.allPagesSelectionLastPage)
-                - Integer.parseInt(this.allPagesSelectionFirstPage) + 1;
-        if (anzahlAuswahl > 0) {
+    public void setPageStartAndEnd() {
+        int startPage = Integer.parseInt(this.allPagesSelectionFirstPage.split(":")[0]) - 1;
+        int lastPage = Integer.parseInt(this.allPagesSelectionLastPage.split(":")[0]) - 1;
+
+        int selectionCount = lastPage - startPage + 1;
+        if (selectionCount > 0) {
             /* alle bisher zugewiesenen Seiten entfernen */
             this.docStruct.getAllToReferences().clear();
             int zaehler = 0;
-            while (zaehler < anzahlAuswahl) {
+            while (zaehler < selectionCount) {
                 this.docStruct.addReferenceTo(
-                        this.allPagesNew[Integer.parseInt(this.allPagesSelectionFirstPage) + zaehler].getMd()
+                        this.allPagesNew[startPage + zaehler].getMd()
                                 .getDocStruct(),
                         "logical_physical");
                 zaehler++;
             }
+        } else {
+            Helper.setFehlerMeldung("Last page before first page is not allowed");
         }
         determinePagesStructure(this.docStruct);
-        return null;
+
     }
 
     /**
@@ -2159,7 +2247,7 @@ public class Metadaten {
     public String addPages() {
         /* alle markierten Seiten durchlaufen */
         for (String page : this.allPagesSelection) {
-            int aktuelleID = Integer.parseInt(page);
+            int aktuelleID = Integer.parseInt(page.split(":")[0]);
             boolean schonEnthalten = false;
 
             /*
@@ -2168,7 +2256,7 @@ public class Metadaten {
              */
             if (this.docStruct.getAllToReferences("logical_physical") != null) {
                 for (Reference reference : this.docStruct.getAllToReferences("logical_physical")) {
-                    if (reference.getTarget() == this.allPagesNew[aktuelleID].getMd().getDocStruct()) {
+                    if (reference.getTarget() == this.allPagesNew[aktuelleID - 1].getMd().getDocStruct()) {
                         schonEnthalten = true;
                         break;
                     }
@@ -2176,7 +2264,7 @@ public class Metadaten {
             }
 
             if (!schonEnthalten) {
-                this.docStruct.addReferenceTo(this.allPagesNew[aktuelleID].getMd().getDocStruct(),
+                this.docStruct.addReferenceTo(this.allPagesNew[aktuelleID - 1].getMd().getDocStruct(),
                         "logical_physical");
             }
         }
@@ -2319,15 +2407,9 @@ public class Metadaten {
      *            String
      */
     public void setTempTyp(String tempTyp) {
-        MetadataType mdt = this.myPrefs.getMetadataTypeByName(tempTyp);
-        try {
-            Metadata md = new Metadata(mdt);
-            this.selectedMetadatum = new MetadatumImpl(md, this.myMetadaten.size() + 1, this.myPrefs, this.process);
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e.getMessage());
-        }
         this.tempTyp = tempTyp;
     }
+
 
     /**
      * Get metadata.
@@ -2565,7 +2647,7 @@ public class Metadaten {
         return this.allPagesSelectionFirstPage;
     }
 
-    public void setAllPagesSelectionFirstPagee(String allPagesSelectionFirstPage) {
+    public void setAllPagesSelectionFirstPage(String allPagesSelectionFirstPage) {
         this.allPagesSelectionFirstPage = allPagesSelectionFirstPage;
     }
 
@@ -2620,7 +2702,7 @@ public class Metadaten {
     }
 
     /**
-     * Gets logicalTopstruct of digital document as TreeNode structure.
+     * Gets logicalTopstruct of digital document as full expanded TreeNode structure.
      *
      * @return
      *          The TreeNote.
@@ -2629,6 +2711,14 @@ public class Metadaten {
         TreeNode root = new DefaultTreeNode("root", null);
         List<DocStruct> children = this.logicalTopstruct.getAllChildren();
         TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
+        if (this.selectedTreeNode == null) {
+            visibleRoot.setSelected(true);
+        } else {
+            if (this.selectedTreeNode.equals(visibleRoot)) {
+                visibleRoot.setSelected(true);
+            }
+        }
+
         if (children != null) {
             visibleRoot.getChildren().add(convertDocstructToPrimeFacesTreeNode(children, visibleRoot));
         }
@@ -2639,8 +2729,12 @@ public class Metadaten {
         TreeNode treeNode = null;
 
         for (DocStruct element : elements) {
-            List<DocStruct> children = element.getAllChildren();
+
             treeNode = new DefaultTreeNode(element, parentTreeNode);
+            if (this.selectedTreeNode != null && this.selectedTreeNode.getData().equals(element)) {
+                treeNode.setSelected(true);
+            }
+            List<DocStruct> children = element.getAllChildren();
             if (children != null) {
                 convertDocstructToPrimeFacesTreeNode(children, treeNode);
             }
@@ -2655,6 +2749,39 @@ public class Metadaten {
         node.setExpanded(expanded);
 
         return node;
+    }
+
+    /**
+     * Handles the TreeDragDropEvent of DocStruct tree.
+     *
+     * @param event
+     *      The TreeDragDropEvent.
+     */
+    public void onNodeDragDrop(TreeDragDropEvent event) {
+
+        int dropIndex = event.getDropIndex();
+
+        DocStruct dropDocStruct = (DocStruct) event.getDropNode().getData();
+        DocStruct dragDocStruct = (DocStruct) event.getDragNode().getData();
+
+        if (event.getDropNode().getParent().getData().equals("root")) {
+            Helper.setFehlerMeldung("Only one root element allowed");
+        } else {
+
+            if (dropDocStruct.isDocStructTypeAllowedAsChild(dragDocStruct.getType())) {
+                this.docStruct = dragDocStruct;
+                this.docStruct.getParent().removeChild(dragDocStruct);
+
+                try {
+                    addNewDocStructToExistingDocStruct(dropDocStruct,dragDocStruct,dropIndex);
+                } catch (TypeNotAllowedAsChildException e) {
+                    //should never happen
+                    Helper.setFehlerMeldung(e.getMessage());
+                }
+            } else {
+                Helper.setFehlerMeldung(dragDocStruct.getType() + " ot allowed as child of " + dropDocStruct.getType());
+            }
+        }
     }
 
     /**
@@ -3224,7 +3351,7 @@ public class Metadaten {
      * Returns a backing bean object to display the form to create a new
      * metadata group.
      *
-     * @return a bean to create a new metadata group
+     * @return a bean to create a new metadata group.
      */
     public RenderableMetadataGroup getNewMetadataGroup() {
         String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
@@ -3345,5 +3472,85 @@ public class Metadaten {
      */
     public Collection<Separator> getPaginationSeparators() {
         return paginationSeparators.getItems();
+    }
+
+    /**
+     * Gets all metadata elements which are added to new Docstruc elements.
+     *
+     * @return
+     *      The all metadata elements which are added to new Docstruc elements.
+     */
+    public int getMetadataElementsToAdd() {
+        return metadataElementsToAdd;
+    }
+
+    /**
+     * Sets all metadata elements which are added to new Docstruc elements.
+     *
+     * @param metadataElementsToAdd
+     *      The all metadata elements which are added to new Docstruc elements.
+     */
+    public void setMetadataElementsToAdd(int metadataElementsToAdd) {
+        this.metadataElementsToAdd = metadataElementsToAdd;
+    }
+
+    /**
+     * Gets the metadata typ which is added to new Docstruc elements.
+     *
+     * @return
+     *      The metadata typ which is added to new Docstruc elements.
+     */
+    public String getAddMetaDataType() {
+        return addMetaDataType;
+    }
+
+    /**
+     * Sets the metadata typ which is added to new Docstruc elements.
+     *
+     * @param addMetaDataType
+     *      The metadata typ which is added to new Docstruc elements.
+     */
+    public void setAddMetaDataType(String addMetaDataType) {
+        this.addMetaDataType = addMetaDataType;
+    }
+
+    /**
+     * Sets the metadata value which is added to new Docstruc elements.
+     *
+     * @return
+     *      The metadata value which is added to new Docstruc elements.
+     */
+    public String getAddMetaDataValue() {
+        return addMetaDataValue;
+    }
+
+    /**
+     * Gets the metadata value which is added to new Docstruc elements.
+     *
+     * @param addMetaDataValue
+     *      The metadata value which is added to new Docstruc elements.
+     */
+    public void setAddMetaDataValue(String addMetaDataValue) {
+        this.addMetaDataValue = addMetaDataValue;
+    }
+
+    /**
+     * Returns <code>true</code> if adding-serveral-DocStruc-elements-mode is active.
+     *
+     * @return
+     *      <code>true</code> if adding-serveral-DocStruc-elements-mode is active.
+     */
+    public boolean isAddServeralStructuralElementsMode() {
+        return addServeralStructuralElementsMode;
+    }
+
+    /**
+     * Sets the adding-serveral-DocStruc-elements-mode.
+     *
+     * @param addServeralStructuralElementsMode
+     *      <code>true</code> if adding-serveral-DocStruc-elements-mode should be active.
+     */
+    public void setAddServeralStructuralElementsMode(boolean addServeralStructuralElementsMode) {
+        this.addServeralStructuralElementsMode = addServeralStructuralElementsMode;
     }
 }

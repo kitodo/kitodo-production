@@ -11,15 +11,87 @@
   -->
 
 <ui:composition
-        xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:t="http://myfaces.apache.org/tomahawk"
-        xmlns:p="http://primefaces.org/ui">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
     <h:form id="structureData">
-    <f:view>
-        <h:outputLabel value="not implemented"/>
-    </f:view>
+
+        <p:messages id="messagesStructureData" closable="true"/>
+
+        <h:panelGroup id="structureDataTable" rendered="#{!empty Metadaten.myMetadaten}">
+
+            <p:treeTable value="#{Metadaten.treeNodes}" var="item" selectionMode="single"
+                         selection="#{Metadaten.selectedTreeNode}">
+                <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
+                        update="tabView:metadata,docStrucForm:docStruc"/>
+                <f:facet name="header">
+                    #{msgs.strukturdaten}
+                </f:facet>
+
+                <p:column headerText="#{msgs.typ}" style="width:20%">
+                    <h:outputText value="#{item.type.getNameByLanguage(SpracheForm.locale)}"/>
+                    <!--TODO Buttons should to bee aligned right-->
+                    <p:commandButton icon="ui-icon-pencil"
+                                     style="float: right"
+                                     update="tabView:dialogEditDocStrucTypeForm:docStructTypeSelection"
+                                     title="#{msgs.docstructTypeAendern}"
+                                     onclick="PF('dialogEditDocStrucType').show();">
+                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
+                    </p:commandButton>
+                </p:column>
+
+                <p:column headerText="#{msgs.haupttitel}">
+                    <h:outputText value="#{Metadaten.getMetadataByElementAndType(item,'TitleDocMain')}"/>
+                </p:column>
+
+                <p:column headerText="#{msgs.imageNumber}" style="width:20%">
+
+                    <p:panelGrid style="width:100%;margin:0" styleClass="ui-noborder">
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="#{Metadaten.getImageRangeByElement(item)}"/>
+                            </p:column>
+
+                            <p:column style="width:32px;text-align: right">
+                                <p:commandButton icon="ui-icon-pencil"
+                                                 update="tabView:dialogEditPagesForm:paginationSubSelection"
+                                                 title="#{msgs.docstructTypeAendern}"
+                                                 onclick="PF('dialogEditPages').show();">
+                                    <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                </p:column>
+
+                <p:column headerText="#{msgs.auswahl}" style="width:64px;text-align: center">
+
+                    <!--TODO set selected type on click-->
+
+                    <p:commandButton icon="ui-icon-plus"
+                                     update="tabView:dialogAddDocStrucTypeForm:docStructAddTypeSelection,tabView:dialogAddDocStrucTypeForm:selectAddableMetadataTypes"
+                                     title="#{msgs.strukturelementHinzufuegen}"
+                                     onclick="PF('dialogAddDocStrucType').show();">
+                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
+                    </p:commandButton>
+
+                    <p:commandButton icon="ui-icon-trash"
+                                     update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
+                                     title="#{msgs.strukturelementLoeschen}" action="#{Metadaten.deleteNode}">
+                        <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
+                    </p:commandButton>
+                </p:column>
+            </p:treeTable>
+        </h:panelGroup>
     </h:form>
+
+    <ui:include src="dialogs/dialogEditDocStrucType.xhtml"/>
+
+    <ui:include src="dialogs/dialogAddDocStrucType.xhtml"/>
+
+    <ui:include src="dialogs/dialogEditPages.xhtml"/>
+
 </ui:composition>

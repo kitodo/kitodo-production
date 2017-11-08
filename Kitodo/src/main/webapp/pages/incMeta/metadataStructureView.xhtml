@@ -18,15 +18,26 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui"
 >
-    <p:tree value="#{Metadaten.treeNodes}" var="element"
-            selectionMode="single"
-            selection="#{Metadaten.selectedTreeNode}"
-            style="width:99%;height:100%;">
-        <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
-                update="tabView:metadata"/>
-        <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
-            <h:outputText value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
-        </p:treeNode>
-        <!--TODO think about to use diffent Icons according to element types-->
-    </p:tree>
+    <h:form id="docStrucForm">
+        <p:commandButton update="docStruc,tabView:structureData" icon="ui-icon-arrowthick-1-n" immediate="true"
+                         title="#{msgs.docstructNachObenSchieben}" action="#{Metadaten.nodeUp}"/>
+
+        <p:commandButton update="docStruc,tabView:structureData" icon="ui-icon-arrowthick-1-s" immediate="true"
+                         title="#{msgs.docstructNachUntenSchieben}" action="#{Metadaten.nodeDown}"/>
+
+        <p:tree value="#{Metadaten.treeNodes}" var="element"
+                selectionMode="single" id="docStruc"
+                selection="#{Metadaten.selectedTreeNode}"
+                draggable="true" droppable="true" dragdropScope="DocStructTree"
+                style="width:99%;">
+            <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
+                    update="tabView:metadata,tabView:structureData"/>
+            <p:ajax event="dragdrop" listener="#{Metadaten.onNodeDragDrop}"
+                    update="docStruc,tabView:metadata,tabView:structureData"/>
+            <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
+                <h:outputText value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
+            </p:treeNode>
+            <!--TODO think about to use diffent Icons according to element types-->
+        </p:tree>
+    </h:form>
 </ui:composition>

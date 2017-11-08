@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+>
+
+    <p:dialog id="dialogEditPagesId" header="#{msgs.seitenzuordnung}" resizable="false"
+              widgetVar="dialogEditPages" width="400">
+        <h:form id="dialogEditPagesForm">
+
+            <p:messages id="messagesSetFirstAndLastPage" closable="true"/>
+            <h:panelGrid columns="2">
+
+                <h:outputText value="#{msgs.ersteSeite}:"/>
+                <p:selectOneMenu id="selectFirstPage" value="#{Metadaten.allPagesSelectionFirstPage}" filter="true"
+                                 filterMatchMode="startsWith">
+                    <f:selectItems value="#{Metadaten.allPages}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="#{msgs.letzteSeite}:"/>
+                <p:selectOneMenu id="selectLastPage" value="#{Metadaten.allPagesSelectionLastPage}" filter="true"
+                                 filterMatchMode="startsWith">
+                    <f:selectItems value="#{Metadaten.allPages}"/>
+                </p:selectOneMenu>
+
+                <p:commandButton id="takePagesFromChildrenBtn" value="#{msgs.seitenVonUnterelementenZuweisen}"
+                                 action="#{Metadaten.takePagesFromChildren}"
+                                 update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
+                <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.seitenZuweisen}"
+                                 action="#{Metadaten.setPageStartAndEnd}"
+                                 update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
+            </h:panelGrid>
+
+
+            <h:panelGrid columns="3" columnClasses="top,centered,top">
+                <h:panelGroup style="margin-left:0px">
+                    <h:outputText value="#{msgs.alleSeiten}"/>
+                    <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}"
+                                      style="height:200px">
+                        <f:selectItems value="#{Metadaten.allPages}"/>
+                    </p:selectManyMenu>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <h:panelGrid columns="1">
+                        <p:commandButton id="addPageBtn" action="#{Metadaten.addPages}" icon="ui-icon-arrowthick-1-e"
+                                         update="paginationSubSelection,tabView:structureData:structureDataTable"/>
+                        <p:commandButton id="removePageBtn" action="#{Metadaten.removePages}"
+                                         icon="ui-icon-arrowthick-1-w"
+                                         update="paginationSubSelection,tabView:structureData:structureDataTable"/>
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <h:outputText value="#{msgs.zugehoerigeSeiten}"/>
+                    <p:selectManyMenu id="paginationSubSelection" value="#{Metadaten.structSeitenAuswahl}"
+                                      style="height:200px">
+                        <f:selectItems value="#{Metadaten.structSeiten}"/>
+                        <p:ajax update="paginationSubSelection"/>
+                    </p:selectManyMenu>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>
