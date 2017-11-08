@@ -51,7 +51,7 @@ public class HelperForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(HelperForm.class);
     static final String MAIN_JSF_PATH = "/pages";
     private static final String IMAGE_PATH = "/pages/images";
-    private static final String CSS_PATH = "/css";
+    private static final String CSS_PATH = "";
 
     public String getVersion() {
         return GoobiVersion.getBuildversion();
@@ -239,7 +239,7 @@ public class HelperForm implements Serializable {
 
     /**
      * Method returns a valid css file, which is the suggestion unless suggestion is
-     * not available if not available default.css is returned.
+     * not available if not available defaultOld.css is returned.
      * 
      * @param cssFileName
      *            suggested css file
@@ -254,7 +254,7 @@ public class HelperForm implements Serializable {
                 return cssFileName;
             }
         }
-        return CSS_PATH + "/default.css";
+        return CSS_PATH + "/defaultOld.css";
     }
 
     public String getLogoUrl() {

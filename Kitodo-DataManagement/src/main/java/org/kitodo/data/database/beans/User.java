@@ -268,7 +268,7 @@ public class User extends BaseIndexedBean {
 
     public String getCss() {
         if (this.css == null || this.css.length() == 0) {
-            this.css = "/css/default.css";
+            this.css = "defaultOld.css";
         }
         return this.css;
     }
