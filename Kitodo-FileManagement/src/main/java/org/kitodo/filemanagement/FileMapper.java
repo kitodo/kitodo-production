@@ -50,7 +50,7 @@ public class FileMapper {
      */
     URI unmapAccordingToMappingType(URI uri) {
         if (uri.toString().contains(".css")) {
-            return unmapUriFromKitodoRootFolderUri(uri,"WEB-INF/resources/css/");
+            return unmapUriFromKitodoRootFolderUri(uri, "WEB-INF/resources/css/");
         } else {
             return unmapUriFromKitodoDataDirectoryUri(uri);
         }
@@ -68,7 +68,7 @@ public class FileMapper {
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         if (uri == null) {
             return Paths.get(session.getServletContext().getContextPath()).toUri();
-        } else  {
+        } else {
             return Paths.get(session.getServletContext().getRealPath(uri.getPath())).toUri();
         }
     }
@@ -92,7 +92,7 @@ public class FileMapper {
         return uri;
     }
 
-    private URI unmapUriFromKitodoRootFolderUri(URI uri,String unmapFolderName) {
+    private URI unmapUriFromKitodoRootFolderUri(URI uri, String unmapFolderName) {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         String directory;
