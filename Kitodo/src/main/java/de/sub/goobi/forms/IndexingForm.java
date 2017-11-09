@@ -561,6 +561,11 @@ public class IndexingForm {
         return searchServices.get(objectType);
     }
 
+    /**
+     * Return NONE object type.
+     *
+     * @return ObjectType NONE object type
+     */
     public ObjectType getNoneType() {
         return ObjectType.NONE;
     }

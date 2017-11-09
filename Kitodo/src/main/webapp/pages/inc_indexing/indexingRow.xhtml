@@ -17,7 +17,7 @@
                 xmlns:p="http://primefaces.org/ui">
     <h:panelGroup rendered="#{objectType ne indexingForm.noneType}">
         <tr>
-            <td>#{objectType}</td>
+            <td>#{objectType.translation}</td>
             <td>
                 <p:commandButton widgetVar="startIndexing#{objectType}"
                                  onclick="PF(objectType+'Progress').start();toggleButtons(false);"
