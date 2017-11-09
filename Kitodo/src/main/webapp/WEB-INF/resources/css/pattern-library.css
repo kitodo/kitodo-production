@@ -237,6 +237,12 @@ tr.ui-widget-content,
     text-align: left;
 }
 
+.ui-widget-header .ui-state-default,
+.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
+    background: #fff;
+    color: #1b2b36;
+}
+
 .ui-paginator {
     padding: 6px 0 !important;
 }
@@ -250,12 +256,6 @@ tr.ui-widget-content,
 .ui-paginator .ui-state-active {
     background: #0971b8;
     color: #fff;
-}
-
-.ui-widget-header .ui-state-default,
-.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
-    background: #fff;
-    color: #1b2b36;
 }
 
 tr.ui-expanded-row-content,
