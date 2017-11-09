@@ -36,7 +36,6 @@
                     }
 
                     function toggleProgressPolling(message) {
-                        console.log("Received web socket message '" + message + "'");
                         if (message.includes("indexing_started")) {
                             PF('progressPoll').start();
                         } else if (message.includes("indexing_finished")) {
@@ -76,8 +75,7 @@
                             PF('createMapping').enable();
                             PF('deleteIndex').enable();
                             for (var i = 0; i &lt; objectTypes.length; i++) {
-                                if (objectTypes[i] !== noneType)
-                                {
+                                if (objectTypes[i] !== noneType) {
                                     PF('startIndexing' + objectTypes[i]).enable();
                                 }
                             }
@@ -86,8 +84,7 @@
                             PF('createMapping').disable();
                             PF('deleteIndex').disable();
                             for (var i = 0; i &lt; objectTypes.length; i++) {
-                                if (objectTypes[i] !== noneType)
-                                {
+                                if (objectTypes[i] !== noneType) {
                                     PF('startIndexing' + objectTypes[i]).disable();
                                 }
                             }

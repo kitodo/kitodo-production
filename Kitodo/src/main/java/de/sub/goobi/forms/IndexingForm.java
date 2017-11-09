@@ -244,7 +244,7 @@ public class IndexingForm {
                         currentIndexState = type;
                         objectIndexingStates.put(type, IndexingStates.INDEXING_STARTED);
                         pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
-                        indexerThread = new Thread((worker));
+                        indexerThread = new Thread(worker);
                         indexerThread.setDaemon(true);
                         indexerThread.start();
                         indexerThread.join();
@@ -257,7 +257,6 @@ public class IndexingForm {
                     }
                 } catch (InterruptedException e) {
                     logger.error(e.getMessage());
-                    e.printStackTrace();
                 }
             }
         }
