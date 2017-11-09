@@ -1,4 +1,4 @@
-/**
+/*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
  * This file is part of the Kitodo project.
@@ -11,7 +11,7 @@
 
 /* ######################################## 
 
-					CSS-Datei für die Formatierung der Webseiten
+					CSS-Datei fuer die Formatierung der Webseiten
 
 ######################################### */
 h1 {
@@ -74,15 +74,15 @@ table {
     color: #434387;
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
-    background-color: #faf3da;
+    border-color: #0083e2;
+    background-color: #B3D4EF;
 }
 
 .layoutFuss {
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
-    background-color: #faf3da;
+    border-color: #0083e2;
+    background-color: #cbe5fc;
     height: 25px;
 }
 
@@ -90,8 +90,8 @@ table {
     color: #434387;
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
-    background-color: #faf3da;
+    border-color: #0083e2;
+    background-color: #cbe5fc;
     width: 180px;
 }
 
@@ -99,15 +99,15 @@ table {
     color: #434387;
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
-    background-color: #faf3da;
+    border-color: #0083e2;
+    background-color: #cbe5fc;
     width: 180px;
 }
 
 .layoutInhalt {
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
+    border-color: #0083e2;
     background-color: #fafcfe;
     padding-bottom: 15px;
 }
@@ -116,9 +116,9 @@ table {
     font-size: 11px;
     width: 100%;
     height: 20px;
-    background-color: #faf3da;
+    background-color: #cbe5fc;
     border-bottom-width: 1px;
-    border-bottom-color: #e3c240;
+    border-bottom-color: #0083e2;
     border-bottom-style: solid;
 }
 
@@ -127,13 +127,13 @@ table {
     height: 20px;
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
+    border-color: #0083e2;
 }
 
 .main_statistikboxen_row1 {
-    background-color: #faf3da;
+    background-color: #cbe5fc;
     border-bottom-width: 1px;
-    border-bottom-color: #e3c240;
+    border-bottom-color: #0083e2;
     border-bottom-style: solid;
 }
 
@@ -142,9 +142,9 @@ table {
 }
 
 .main_statistikboxen_row3 {
-    background-color: #faf3da;
+    background-color: #cbe5fc;
     border-top-width: 1px;
-    border-top-color: #e3c240;
+    border-top-color: #0083e2;
     border-top-style: solid;
 }
 
@@ -166,12 +166,12 @@ table {
 
 /** standard link styles **/
 a {
-    color: #50519e;
+    color: #063555;
     text-decoration: none;
 }
 
 a:hover {
-    color: #261ed7;
+    color: #0086dc;
     text-decoration: underline;
 }
 
@@ -183,7 +183,7 @@ a:active {
 /**-- standard link styles **/
 #hov a:hover {
     color: black;
-    border-bottom: #a24033 dashed 1px;
+    border-bottom: #6d321f dashed 1px;
 
 }
 
@@ -196,13 +196,13 @@ a.mlink {
 }
 
 a.mlink:hover {
-    background-color: #f8eccb;
+    background-color: #B3D4EF;
 }
 
 /**-- menu links **/
 .th_menu {
-    background-color: #f4e8b5;
-    color: #50519e;
+    background-color: #a2c2d8;
+    color: #063555;
     display: block;
     width: 98%;
     padding: 4px 2px 4px 2px;
@@ -211,7 +211,7 @@ a.mlink:hover {
 }
 
 .bg1 {
-    background-color: #faf3da;
+    background-color: #cbe5fc;
 }
 
 .LoginFormular {
@@ -219,25 +219,25 @@ a.mlink:hover {
     padding: 5px;
     border-style: dashed;
     border-width: 1px;
-    border-color: #e3c240;
+    border-color: #0083e2;
 }
 
 .StammdatenFormular {
     width: 300px;
     padding: 10px;
-    background-color: #faf3da;
+    background-color: #cbe5fc;
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
+    border-color: #0083e2;
 }
 
 .WizardLiteraturFormular {
     width: 500px;
     padding: 10px;
-    background-color: #faf3da;
+    background-color: #cbe5fc;
     border-style: solid;
     border-width: 1px;
-    border-color: #e3c240;
+    border-color: #0083e2;
 }
 
 .randInhalt {
@@ -250,35 +250,35 @@ a.mlink:hover {
     height: 20px;
     border-style: solid;
     border-width: 1px;
-    border-color: #a24033;
+    border-color: #6d321f;
 }
 
 .eingabeBoxen_row1 {
-    background-color: #ebdad8;
+    background-color: #da7856;
     border-bottom-width: 1px;
-    border-bottom-color: #a24033;
+    border-bottom-color: #6d321f;
     border-bottom-style: solid;
 }
 
 .eingabeBoxen_row2 {
-    background-color: #f3ebeb;
+    background-color: #ecc6bb;
     /*height: 60px;*/
 }
 
 .eingabeBoxen_row3 {
-    background-color: #e7d0cd;
+    background-color: #df9e8d;
     border-top-width: 1px;
-    border-top-color: #a24033;
+    border-top-color: #6d321f;
     border-top-style: solid;
 }
 
 .standardTable {
     font-family: verdana, geneva, arial, helvetica, sans-serif;
     font-size: 11px;
-    background-color: #f4e8b5;
+    background-color: #99C0DF;
     padding: 0;
     border-style: solid;
-    border-color: #e3c240;
+    border-color: #0083e2;
     border-width: 1px;
     margin-bottom: 7px;
 }
@@ -291,10 +291,10 @@ a.mlink:hover {
     font-size: 11px;
     height: 25px;
     text-align: center;
-    color: #50519e;
-    background: #faf3da;
+    color: #063555;
+    background: #cbe5fc;
     border-bottom-style: solid;
-    border-bottom-color: #e3c240;
+    border-bottom-color: #0083e2;
     border-bottom-width: 1px;
 }
 
@@ -308,9 +308,9 @@ a.mlink:hover {
     text-align: left;
     color: #000000;
     font-weight: normal;
-    background: #faf3da;
+    background: #cbe5fc;
     border-bottom-style: solid;
-    border-bottom-color: #e3c240;
+    border-bottom-color: #0083e2;
     border-bottom-width: 1px;
 }
 
@@ -344,7 +344,7 @@ a.mlink:hover {
     background-color: #dfeaff;
     padding: 0;
     border-style: solid;
-    border-color: #a24033;
+    border-color: #6d321f;
     border-width: 1px;
     margin-bottom: 7px;
 }
@@ -357,14 +357,14 @@ a.mlink:hover {
     font-size: 11px;
     height: 25px;
     text-align: center;
-    background: #e7d0cd;
+    background: #df9e8d;
     border-bottom-style: solid;
-    border-bottom-color: #a24033;
+    border-bottom-color: #6d321f;
     border-bottom-width: 1px;
 }
 
 .eingabeTable_valign_top {
-    background-color: #f3ebeb;
+    background-color: #ecc6bb;
     vertical-align: top;
 }
 
@@ -549,7 +549,7 @@ a.text_head:hover {
 .popup {
     background-color: white;
     color: #000000;
-    border: 1px solid #e3c240;
+    border: 1px solid #0083e2;
     font-size: smaller;
 }
 
@@ -713,7 +713,7 @@ table.tableCalcStat .left {
 
 .jscalendar-DB-title-background-style {
     /*background-color:  #F4BBA5;*/
-    background-image: url('gradient.php_30px_.png');
+    background-image: url('../../../../../css/gradient.php_30px_.png');
 }
 
 span.jscalendar-DB-title-control-normal-style:hover {
@@ -759,21 +759,21 @@ span.jscalendar-DB-title-control-normal-style:hover {
    ------------------------------------------------------------
 */
 .saturday {
-    background-color: #D7D7D7;
+    background-color: #B0E0E6;
 }
 
 .sunday {
-    background-color: #B6B6B6;
+    background-color: #FA8072;
 }
 
 .weekdayNoBlock {
-    background-color: #C2C2C2;
+    background-color: #C0C0C0;
 }
 
 .saturdayNoBlock {
-    background-color: #A4A4A4;
+    background-color: #778899;
 }
 
 .sundayNoBlock {
-    background-color: #8B8B8B;
+    background-color: #BC8F8F;
 }

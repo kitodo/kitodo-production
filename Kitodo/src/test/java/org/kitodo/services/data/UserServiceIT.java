@@ -347,7 +347,7 @@ public class UserServiceIT {
         assertTrue("Css file is incorrect!", condition);
 
         user = userService.getById(2);
-        condition = userService.getCss(user).equals("defaultOld.css");
+        condition = userService.getCss(user).equals("old/userStyles/default.css");
         assertTrue("Css file is incorrect!", condition);
     }
 

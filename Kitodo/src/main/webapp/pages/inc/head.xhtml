@@ -32,10 +32,10 @@
 
         <link rel="shortcut icon" href="favicon.ico"/>
 
-        <h:outputStylesheet library="css" name="kitodoOld.css" media="all"/>
-        <h:outputStylesheet library="css" name="#{LoginForm.myBenutzer == null?'defaultOld.css':LoginForm.myBenutzer.css}" media="screen"/>
-        <h:outputStylesheet library="css" name="printOld.css" media="print"/>
-        <h:outputStylesheet library="css" name="toggleOld.js.css" media="all"/>
+        <h:outputStylesheet library="css" name="old/kitodo.css" media="all"/>
+        <h:outputStylesheet library="css" name="#{LoginForm.myBenutzer == null?'old/userStyles/default.css':LoginForm.myBenutzer.css}" media="screen"/>
+        <h:outputStylesheet library="css" name="old/print.css" media="print"/>
+        <h:outputStylesheet library="css" name="old/toggle.js.css" media="all"/>
 
         <!--Styles für panelTabbedPane unter Menü Administration- Projekte -->
         <title><h:outputText value="#{HelperForm.applicationHeaderTitle} - #{HelperForm.version}"/></title>

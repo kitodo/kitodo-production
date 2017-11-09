@@ -238,6 +238,7 @@ public class LoginForm implements Serializable {
             temp.setTableSize(this.myBenutzer.getTableSize());
             temp.setMetadataLanguage(this.myBenutzer.getMetadataLanguage());
             temp.setConfigProductionDateShow(this.myBenutzer.isConfigProductionDateShow());
+            temp.setCss(this.myBenutzer.getCss());
             serviceManager.getUserService().save(temp);
             this.myBenutzer = temp;
             Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));

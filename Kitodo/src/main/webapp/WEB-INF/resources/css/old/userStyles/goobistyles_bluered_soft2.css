@@ -1,4 +1,4 @@
-/**
+/*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
  * This file is part of the Kitodo project.
@@ -254,19 +254,19 @@ a.mlink:hover {
 }
 
 .eingabeBoxen_row1 {
-    background-color: #da7856;
+    background-color: #F4BBA5;
     border-bottom-width: 1px;
     border-bottom-color: #6d321f;
     border-bottom-style: solid;
 }
 
 .eingabeBoxen_row2 {
-    background-color: #ecc6bb;
+    background-color: #FFEEE7;
     /*height: 60px;*/
 }
 
 .eingabeBoxen_row3 {
-    background-color: #df9e8d;
+    background-color: #F4BBA5;
     border-top-width: 1px;
     border-top-color: #6d321f;
     border-top-style: solid;
@@ -357,14 +357,14 @@ a.mlink:hover {
     font-size: 11px;
     height: 25px;
     text-align: center;
-    background: #df9e8d;
+    background: #F4BBA5;
     border-bottom-style: solid;
     border-bottom-color: #6d321f;
     border-bottom-width: 1px;
 }
 
 .eingabeTable_valign_top {
-    background-color: #ecc6bb;
+    background-color: #FFEEE7;
     vertical-align: top;
 }
 
@@ -713,7 +713,7 @@ table.tableCalcStat .left {
 
 .jscalendar-DB-title-background-style {
     /*background-color:  #F4BBA5;*/
-    background-image: url('gradient.php_30px_.png');
+    background-image: url('../../../../../css/gradient.php_30px_.png');
 }
 
 span.jscalendar-DB-title-control-normal-style:hover {
@@ -759,21 +759,21 @@ span.jscalendar-DB-title-control-normal-style:hover {
    ------------------------------------------------------------
 */
 .saturday {
-    background-color: #B0E0E6;
+    background-color: #ACD1E3;
 }
 
 .sunday {
-    background-color: #FA8072;
+    background-color: #E3ACAC;
 }
 
 .weekdayNoBlock {
-    background-color: #C0C0C0;
+    background-color: #C9CACC;
 }
 
 .saturdayNoBlock {
-    background-color: #778899;
+    background-color: #8AA8B6;
 }
 
 .sundayNoBlock {
-    background-color: #BC8F8F;
+    background-color: #B68A8A;
 }
