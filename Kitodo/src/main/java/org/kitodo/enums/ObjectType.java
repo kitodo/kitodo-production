@@ -30,6 +30,13 @@ public enum ObjectType {
 
     private String messageKey;
 
+    /**
+     * Constructor setting the message key of the object type, used to retrieve it's
+     * translation from the messages ressource bundle.
+     *
+     * @param messageKey
+     *            used for translating the object types name
+     */
     ObjectType(String messageKey) {
         this.messageKey = messageKey;
     }

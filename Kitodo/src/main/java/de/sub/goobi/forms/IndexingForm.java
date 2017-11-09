@@ -497,6 +497,11 @@ public class IndexingForm {
         return IndexingStates.INDEXING_SUCCESSFUL;
     }
 
+    /**
+     * Return the array of object type values defined in the ObjectType enum.
+     *
+     * @return array of object type values
+     */
     public ObjectType[] getObjectTypes() {
         return ObjectType.values();
     }
