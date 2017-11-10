@@ -218,6 +218,7 @@ public class ModsPlugin implements Plugin {
     private static final String CONF_RECORD_ELEMENT = "recordElement";
     private static final String CONF_ID_ELEMENT = "identifierElement";
     private static final String CONF_CATALOGUE = "catalogue";
+    private static final String CONF_MAXIMUMCHILDRECORDS = "maximumChildRecords";
 
     /**
      * Human-readable description of the plug-in’s functionality in English.
@@ -1145,6 +1146,7 @@ public class ModsPlugin implements Plugin {
     private List<Element> retrieveChildDocuments(String documentId, long timeout) throws JDOMException {
         List<Element> childDocuments = new LinkedList<Element>();
         Query childrenQuery = new Query("context.ead.id:" + documentId);
+        childrenQuery.setMaximumRecords(getMaximumChildRecordsParameter(configuration.getTitle()));
         String allChildren = client.retrieveModsRecord(childrenQuery.getQueryUrl(), timeout);
 
         sb = new SAXBuilder();
@@ -1464,6 +1466,20 @@ public class ModsPlugin implements Plugin {
         return parameterName;
     }
 
+    private String getConfigurationValue(String catalogueName, String subConfigurationPath) {
+        String configValue = "";
+
+        SubnodeConfiguration catalogueConfiguration = getCatalogueConfiguration(catalogueName);
+        if (!Objects.equals(catalogueConfiguration, null)) {
+            for (Object fieldObject : catalogueConfiguration.configurationsAt(subConfigurationPath)) {
+                SubnodeConfiguration conf = (SubnodeConfiguration) fieldObject;
+                configValue = conf.getRoot().getValue().toString();
+            }
+        }
+
+        return configValue;
+    }
+
     /**
      * The function getParentElementXPath(String catalogueName) returns the
      * XPath pointing to the parent element ID in a document.
@@ -1580,5 +1596,31 @@ public class ModsPlugin implements Plugin {
      */
     public String getIdentifierParameter(String catalogueName) {
         return getConfigurationAttributeValue(catalogueName, CONF_ID_PARAMETER, CONF_VALUE);
+    }
+
+    /**
+     * Methods returns the amount of how many child records should be retrieved.
+     * A value of 0 is returned if no entry is defined or a non numeric value is set.
+     *
+     * @param catalogueName
+     *            the name of the catalogue for which the ID parameter is
+     *            returned
+     * @return value of maximum records
+     */
+    public int getMaximumChildRecordsParameter(String catalogueName) {
+        int maximumRecords = 0;
+
+        String configurationValue = getConfigurationValue(catalogueName, CONF_MAXIMUMCHILDRECORDS);
+
+        if ((!Objects.equals(configurationValue, null))
+                && (!configurationValue.isEmpty())) {
+            try {
+                maximumRecords = Integer.valueOf(configurationValue);
+            } catch (NumberFormatException nfe) {
+                logger.warn(CONF_MAXIMUMCHILDRECORDS + " entry contain a non numeric value!");
+            }
+        }
+
+        return maximumRecords;
     }
 }
