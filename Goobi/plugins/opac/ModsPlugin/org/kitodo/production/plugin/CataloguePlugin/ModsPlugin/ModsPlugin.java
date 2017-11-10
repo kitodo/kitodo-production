@@ -569,6 +569,8 @@ public class ModsPlugin implements Plugin {
 
                         // TODO: create new structure div and add it to anchor structmap
                         //  - create structure div and add it to the anchor structmap
+                        anchorStructureMapDiv = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
+                        anchorStructureMap.addContent(anchorStructureMapDiv);
 
                         // save new mets document to current anchor file
                         xmlOutputter.output(anchorMetsDocument, new FileWriter(anchorFile.getAbsoluteFile()));
