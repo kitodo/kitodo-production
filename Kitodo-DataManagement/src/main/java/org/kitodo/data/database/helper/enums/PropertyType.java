@@ -71,9 +71,7 @@ public enum PropertyType {
 
     CommandLink(18, "CommandLink", true, false),
 
-    NoEdit(19, "NoEdit", true, false),
-
-    Filter(20, "Filter", false, false);
+    NoEdit(19, "NoEdit", true, false);
 
     private int id;
     private String name;
