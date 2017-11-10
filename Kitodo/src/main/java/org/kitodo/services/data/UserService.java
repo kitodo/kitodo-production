@@ -599,7 +599,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
      */
     public String getCss(User user) {
         if (user.getCss() == null || user.getCss().length() == 0) {
-            user.setCss("/css/default.css");
+            user.setCss("old/userStyles/default.css");
         }
         return user.getCss();
     }

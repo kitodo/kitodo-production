@@ -16,7 +16,6 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:t="http://myfaces.apache.org/tomahawk"
     >
 
     <h:head>
@@ -33,13 +32,11 @@
 
         <link rel="shortcut icon" href="favicon.ico"/>
 
-        <!--<h:outputStylesheet name="css/system/kitodo.css" media="all"/>-->
-        <!--<h:outputStylesheet name="#{LoginForm.myBenutzer == null?'css/default.css':LoginForm.myBenutzer.css}" media="screen"/>-->
-        <!--<h:outputStylesheet name="css/system/print.css" media="print"/>-->
-        <t:stylesheet media="all" path="/css/system/kitodo.css"/>
-        <t:stylesheet media="screen" path="#{LoginForm.myBenutzer == null?'/css/default.css':LoginForm.myBenutzer.css}"/>
-        <t:stylesheet media="print" path="/css/system/print.css"/>
-        <t:stylesheet media="all" path="/css/toggle.js.css"/>
+        <h:outputStylesheet library="css" name="old/kitodo.css" media="all"/>
+        <h:outputStylesheet library="css" name="#{LoginForm.myBenutzer == null?'old/userStyles/default.css':LoginForm.myBenutzer.css}" media="screen"/>
+        <h:outputStylesheet library="css" name="old/print.css" media="print"/>
+        <h:outputStylesheet library="css" name="old/toggle.js.css" media="all"/>
+
         <!--Styles für panelTabbedPane unter Menü Administration- Projekte -->
         <title><h:outputText value="#{HelperForm.applicationHeaderTitle} - #{HelperForm.version}"/></title>
         <!-- <h:outputText value="internal version number: #{HelperForm.buildVersion}"/> -->

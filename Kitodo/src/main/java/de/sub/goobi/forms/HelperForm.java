@@ -51,7 +51,8 @@ public class HelperForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(HelperForm.class);
     static final String MAIN_JSF_PATH = "/pages";
     private static final String IMAGE_PATH = "/pages/images";
-    private static final String CSS_PATH = "/css";
+    private static final String CSS_BASE_PATH = "/WEB-INF/resources/css";
+    private static final String CSS_PATH = "/old/userStyles";
 
     public String getVersion() {
         return GoobiVersion.getBuildversion();
@@ -230,9 +231,9 @@ public class HelperForm implements Serializable {
     public List<SelectItem> getCssFiles() {
         List<SelectItem> list = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
+        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_BASE_PATH + CSS_PATH));
         for (URI uri : uris) {
-            list.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
+            list.add(new SelectItem(uri.toString(), uri.toString()));
         }
         return list;
     }
@@ -248,9 +249,9 @@ public class HelperForm implements Serializable {
      */
     public String getCssLinkIfExists(String cssFileName) {
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_PATH));
+        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_BASE_PATH + CSS_PATH));
         for (URI uri : uris) {
-            if ((CSS_PATH + uri).equals(cssFileName)) {
+            if (uri.toString().equals(cssFileName)) {
                 return cssFileName;
             }
         }
