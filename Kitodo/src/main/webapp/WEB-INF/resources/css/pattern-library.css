@@ -293,9 +293,15 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
     padding: 0;
 }
 
+.ui-tabs.ui-tabs-top > .ui-tabs-nav {
+    padding: 0 .7em;
+}
+
 .ui-tabs.ui-tabs-top>.ui-tabs-nav li,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
     top: 0px;
+    margin-left: .7em;
+    margin-right: .7em;
 }
 
 .ui-tabs .ui-tabs-nav,

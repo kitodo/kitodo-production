@@ -557,8 +557,6 @@ main {
     background: transparent;
 }
 
-
-
 .mets-file-groups > div > button {
     margin: 1.5em;
 }
@@ -611,9 +609,21 @@ footer {
     border-bottom: none !important;
 }
 
-.ui-datatable tr th:nth-child(2) {
-    width: 70%;
+.ui-datatable tr th.actionsColumn,
+.ui-datatable tr td.actionsColumn {
+    width: 150px;
 }
+
+.ui-datatable tr td.actionsColumn > a {
+    color: #2B6FB6;
+    margin-right: 10px;
+}
+
+.ui-datatable tr th.checkboxColumn,
+.ui-datatable tr td.checkboxColumn {
+    width: 100px;
+}
+
 
 .ui-row-toggler {
     width: 16px;
@@ -729,6 +739,14 @@ footer {
 .ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon::before {
     content: "\f205";
     background: #00C62F;
+}
+
+.checkbox-checked {
+    color: limegreen;
+}
+
+.checkbox-unchecked {
+    color: darkred;
 }
 
 /*----------------------------------------------------------------------

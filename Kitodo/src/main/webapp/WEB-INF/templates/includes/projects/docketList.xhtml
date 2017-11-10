@@ -1,0 +1,44 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dataTable var="item"
+                 value="#{DocketForm.lazyDTOModel}"
+                 lazy="true"
+                 paginator="true"
+                 rows="#{LoginForm.myBenutzer.tableSize}">
+
+        <p:column headerText="#{msgs.titel}">
+            <h:outputText value="#{item.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.datei}">
+            <h:outputText value="#{item.file}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.auswahl}"
+                  rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                  styleClass="actionsColumn">
+            <h:link outcome="/pages/DocketEdit"
+                    title="#{msgs.editDocket}">
+                <f:param name="id" value="#{item.id}"/>
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+        </p:column>
+
+    </p:dataTable>
+</ui:composition>
