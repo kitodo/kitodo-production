@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,9 +44,11 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.filter.ElementFilter;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
@@ -469,6 +472,16 @@ public class ModsPlugin implements Plugin {
                 // reset variable to use it for ancestor elements as well
                 structureMapDivTemp = null;
 
+                File tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
+
+                List<File> anchorFiles = new LinkedList<File>();
+
+                // Anchor file mets document
+                Document anchorMetsDocument = null;
+                Element anchorRootElement = null;
+                Element anchorStructureMapDiv = null;
+                Element anchorStructureMap = null;
+
                 // *** ancestor elements
                 while (!Objects.equals(parentXML, null)) {
                     resultXML = parentXML;
@@ -488,6 +501,7 @@ public class ModsPlugin implements Plugin {
                     lastStructureType = getStructureType(modsElement);
 
                     doc = transformXML(doc, transformationScript, sb);
+
                     // 'doc' can become "null", when the last doc had a
                     // 'parentID', but trying to retrieve the element with this
                     // parentID yields an empty SRW container (e.g. not
@@ -498,12 +512,76 @@ public class ModsPlugin implements Plugin {
                     // before reaching this point!
                     modsElement = (Element) modsXPath.selectSingleNode(doc);
                     metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
-                    rootElement.addContent(metadataSection);
 
-                    // create structure map div for current ancestor
-                    structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
-                    structureMapDivTemp.addContent(structureMapDiv);
-                    structureMapDiv = structureMapDivTemp;
+                    // Check whether the current DocStructType has to be saved to separate anchor file or not
+                    DocStructType docStructType = preferences.getDocStrctTypeByName(lastStructureType);
+                    String anchorClass = docStructType.getAnchorClass();
+
+                    // Case 1: current docstruct has anchor class
+                    if (!Objects.equals(anchorClass, null) && !anchorClass.isEmpty()) {
+                        System.out.println("Create file for anchor class '" + anchorClass + "'");
+                        String anchorFilenameSuffix = anchorClass.equals("true") ? "anchor" : anchorClass;
+                        String anchorFilename = FilenameUtils.removeExtension(tempFile.getName()) + "_" + anchorFilenameSuffix;
+                        String anchorFileFullPath = tempFile.getParent() + File.separator + anchorFilename + ".xml";
+                        File anchorFile = new File(anchorFileFullPath);
+                        if (!anchorFile.exists()) {
+                            System.out.println("Create new anchor file!");
+                            anchorFile.createNewFile();
+                            anchorFiles.add(anchorFile);
+
+                            anchorMetsDocument = createMetsDocument();
+                            anchorRootElement = anchorMetsDocument.getRootElement();
+
+                            // create new structure map
+                            anchorStructureMap = createMETSStructureMap(METS_LOGICAL);
+                            // add structure map to anchor root element
+                            anchorRootElement.addContent(anchorStructureMap);
+                        }
+                        else {
+                            System.out.println("Re-use existing anchor file!");
+                            // read mets document from existing anchor file
+                            anchorMetsDocument = sb.build(anchorFile);
+                            anchorRootElement = anchorMetsDocument.getRootElement();
+
+                            // retrieve existing logical structure map from anchor mets document
+                            ElementFilter structMapFilter = new ElementFilter("structMap", METS_NAMESPACE);
+                            for (Iterator<Element> structMapElementIter = anchorRootElement.getDescendants(structMapFilter); structMapElementIter.hasNext();) {
+                                Element structMapElement = structMapElementIter.next();
+                                if (Objects.equals(structMapElement.getAttributeValue("TYPE"), "LOGICAL")) {
+                                    System.err.println("******");
+                                    System.out.println("Found logical struct map in anchor mets document!");
+                                    System.err.println("******");
+                                    anchorStructureMap = structMapElement;
+                                    break;
+                                }
+                            }
+                            if (Objects.equals(anchorStructureMap, null)) {
+                                System.err.println("******");
+                                System.err.println("ERROR: no logical structmap found in existing anchor mets document!");
+                                System.err.println("******");
+                            }
+                        }
+                        System.out.println("=> ensured file exists at " + anchorFileFullPath);
+
+                        // now save the mets metadata section to the anchor file
+                        anchorRootElement.addContent(metadataSection);
+                        anchorMetsDocument.setRootElement(anchorRootElement);
+
+                        // TODO: create new structure div and add it to anchor structmap
+                        //  - create structure div and add it to the anchor structmap
+
+                        // save new mets document to current anchor file
+                        xmlOutputter.output(anchorMetsDocument, new FileWriter(anchorFile.getAbsoluteFile()));
+                    }
+                    // Case 2: current docstruct has NO anchor class
+                    else {
+                        rootElement.addContent(metadataSection);
+
+                        // create structure map div for current ancestor
+                        structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
+                        structureMapDivTemp.addContent(structureMapDiv);
+                        structureMapDiv = structureMapDivTemp;
+                    }
                 }
 
                 // only add ancestors topmost structureMapDiv to structMap if
@@ -518,19 +596,20 @@ public class ModsPlugin implements Plugin {
                 rootElement.addContent(structureMap);
                 metsDocument.setRootElement(rootElement);
                 // reviewing the constructed XML mets document can be done via
-                // "xmlOutputter.output(rootElement, System.out);"
+                // "xmlOutputter.output(metsDocument, System.out);"
 
                 MetsMods mm = new MetsMods(preferences);
 
-                File tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
-
                 xmlOutputter.output(metsDocument, new FileWriter(tempFile.getAbsoluteFile()));
-
+                System.out.println("Read temp file " + tempFile.getAbsolutePath());
                 mm.read(tempFile.getAbsolutePath());
                 // reviewing the constructed DigitalDocument can be done via
                 // "System.out.println(mm.getDigitalDocument());"
 
-                deleteFile(tempFile.getAbsolutePath());
+                //deleteFile(tempFile.getAbsolutePath());
+                for(File f : anchorFiles) {
+                    //deleteFile(f.getAbsolutePath());
+                }
                 DigitalDocument dd = mm.getDigitalDocument();
                 ff = new XStream(preferences);
                 ff.setDigitalDocument(dd);
@@ -540,7 +619,8 @@ public class ModsPlugin implements Plugin {
                 dd.setPhysicalDocStruct(dsBoundBook);
 
                 if (!Objects.equals(result.get("shelfmarksource"), null)) {
-                    UGHUtils.replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String) result.get("shelfmarksource"));
+                    org.kitodo.production.plugin.CataloguePlugin.ModsPlugin.UGHUtils
+                            .replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String) result.get("shelfmarksource"));
                 }
 
                 result.put("fileformat", ff);
@@ -549,6 +629,7 @@ public class ModsPlugin implements Plugin {
             } catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException
                     | IOException e) {
                 logger.error("Error while retrieving document: " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return result;
