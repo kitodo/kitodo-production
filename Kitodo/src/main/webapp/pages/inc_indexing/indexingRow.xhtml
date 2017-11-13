@@ -1,0 +1,48 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <h:panelGroup rendered="#{objectType ne indexingForm.noneType}">
+        <tr>
+            <td>#{objectType.translation}</td>
+            <td>
+                <p:commandButton widgetVar="startIndexing#{objectType}"
+                                 onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false);"
+                                 value="#{msgs.startIndexing}"
+                                 action="#{indexingForm.startIndexing(objectType)}"
+                                 styleClass="indexing-button"
+                                 disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.getNumberOfDatabaseObjects(objectType) lt 1)}"/>
+            </td>
+            <td>
+                <p:progressBar widgetVar="#{objectType}Progress"
+                               ajax="true"
+                               value="#{indexingForm.getProgress(objectType)}"
+                               labelTemplate="{value}%"
+                               global="false"
+                               style="width: 100px;">
+                </p:progressBar>
+            </td>
+            <td style="text-align: right;">
+                <h:outputText value="#{indexingForm.getNumberOfIndexedObjects(objectType)} / #{indexingForm.getNumberOfDatabaseObjects(objectType)}"/>
+            </td>
+            <td>
+                <p:graphicImage alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState(objectType) == indexingForm.indexingStartedState}"/>
+                <p:graphicImage alt="failed" value="/pages/images/fail.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState(objectType) == indexingForm.indexingFailedState}"/>
+                <p:graphicImage alt="success" value="/pages/images/success.svg" style="max-height: 20px" rendered="#{indexingForm.getObjectIndexState(objectType) == indexingForm.indexingSuccessfulState}" />
+            </td>
+        </tr>
+    </h:panelGroup>
+</ui:composition>

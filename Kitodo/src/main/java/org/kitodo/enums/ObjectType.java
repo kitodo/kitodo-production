@@ -11,18 +11,42 @@
 
 package org.kitodo.enums;
 
+import de.sub.goobi.helper.Helper;
+
 public enum ObjectType {
-    BATCH,
-    DOCKET,
-    PROCESS,
-    PROJECT,
-    PROPERTY,
-    RULESET,
-    TASK,
-    TEMPLATE,
-    USER,
-    USERGROUP,
-    WORKPIECE,
-    FILTER,
-    NONE
+    BATCH("batches"),
+    DOCKET("dockets"),
+    PROCESS("prozesse"),
+    PROJECT("projekte"),
+    PROPERTY("eigenschaften"),
+    RULESET("regelsaetze"),
+    TASK("schritte"),
+    TEMPLATE("templateProperties"),
+    USER("users"),
+    USERGROUP("benutzergruppen"),
+    WORKPIECE("werkstuecke"),
+    FILTER("filter"),
+    NONE("");
+
+    private String messageKey;
+
+    /**
+     * Constructor setting the message key of the object type, used to retrieve it's
+     * translation from the messages ressource bundle.
+     *
+     * @param messageKey
+     *            used for translating the object types name
+     */
+    ObjectType(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
+    /**
+     * Retrieve and return the translation of the object type.
+     *
+     * @return translation of this object type
+     */
+    public String getTranslation() {
+        return Helper.getTranslation(messageKey);
+    }
 }
