@@ -470,8 +470,6 @@ public class MetadatenImagesHelper {
             String firstString = fileService.getFileName(firstUri);
             String secondString = fileService.getFileName(secondUri);
             String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
-            firstString = firstString.substring(0, firstString.lastIndexOf("."));
-            secondString = secondString.substring(0, secondString.lastIndexOf("."));
 
             if (imageSorting.equalsIgnoreCase("number")) {
                 try {
