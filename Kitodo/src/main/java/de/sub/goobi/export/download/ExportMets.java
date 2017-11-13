@@ -26,7 +26,6 @@ import java.net.URI;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
@@ -54,10 +53,10 @@ public class ExportMets {
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
      *
-     * @param myProcess
+     * @param process
      *            Process object
      */
-    public boolean startExport(Process myProcess)
+    public boolean startExport(Process process)
             throws IOException, DocStructHasNoTypeException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -65,32 +64,32 @@ public class ExportMets {
         if (login != null) {
             userHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
         }
-        return startExport(myProcess, userHome);
+        return startExport(process, userHome);
     }
 
     /**
      * DMS-Export an eine gewünschte Stelle.
      *
-     * @param myProcess
+     * @param process
      *            Process object
-     * @param inZielVerzeichnis
+     * @param userHome
      *            String
      */
-    public boolean startExport(Process myProcess, URI inZielVerzeichnis)
+    public boolean startExport(Process process, URI userHome)
             throws IOException, PreferencesException, WriteException, DocStructHasNoTypeException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
          */
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(myProcess.getRuleset());
-        String atsPpnBand = myProcess.getTitle();
-        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        String atsPpnBand = process.getTitle();
+        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(process);
 
         String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
-                new DataCopier(rules).process(new CopierData(gdzfile, myProcess));
+                new DataCopier(rules).process(new CopierData(gdzfile, process));
             } catch (ConfigurationException e) {
                 Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
                 return false;
@@ -101,17 +100,17 @@ public class ExportMets {
         }
 
         // only for the metadata of the RUSDML project
-        ConfigProjects cp = new ConfigProjects(myProcess.getProject().getTitle());
+        ConfigProjects cp = new ConfigProjects(process.getProject().getTitle());
         if (cp.getParamList("dmsImport.check").contains("rusdml")) {
-            ExportDms_CorrectRusdml exportCorrect = new ExportDms_CorrectRusdml(myProcess, this.myPrefs, gdzfile);
+            ExportDms_CorrectRusdml exportCorrect = new ExportDms_CorrectRusdml(process, this.myPrefs, gdzfile);
             atsPpnBand = exportCorrect.correctionStart();
         }
 
-        prepareUserDirectory(inZielVerzeichnis);
+        prepareUserDirectory(userHome);
 
-        String targetFileName = inZielVerzeichnis + atsPpnBand + "_mets.xml";
-        URI metaFile = fileService.getProcessSubTypeURI(myProcess, ProcessSubType.META_XML, targetFileName);
-        return writeMetsFile(myProcess, metaFile, gdzfile, false);
+        String targetFileName = atsPpnBand + "_mets.xml";
+        URI metaFile = userHome.resolve(targetFileName);
+        return writeMetsFile(process, metaFile, gdzfile, false);
     }
 
     /**
