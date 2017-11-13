@@ -22,7 +22,7 @@
         <showStep name="Step A" access="write"/>
         <showStep name="Step B" access="writeRequired"/>
         <showStep name="Step C" access="read"/>
-        <showProcessGroup access="read"/>"
+        <showProcessGroup access="read"/>
         <validation>\\w</validation>
         <!--
         Possible values for element type:
