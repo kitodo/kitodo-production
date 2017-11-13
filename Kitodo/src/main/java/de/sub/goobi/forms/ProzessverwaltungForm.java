@@ -908,6 +908,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public void exportMets() {
         ExportMets export = new ExportMets();
         try {
+            this.process = serviceManager.getProcessService().getById(this.processId);
             export.startExport(this.process);
         } catch (Exception e) {
             Helper.setFehlerMeldung(
@@ -922,6 +923,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public void exportPdf() {
         ExportPdf export = new ExportPdf();
         try {
+            this.process = serviceManager.getProcessService().getById(this.processId);
             export.startExport(this.process);
         } catch (Exception e) {
             Helper.setFehlerMeldung(
@@ -936,6 +938,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public void exportDMS() {
         ExportDms export = new ExportDms();
         try {
+            this.process = serviceManager.getProcessService().getById(this.processId);
             export.startExport(this.process);
         } catch (Exception e) {
             Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.process.getTitle(),

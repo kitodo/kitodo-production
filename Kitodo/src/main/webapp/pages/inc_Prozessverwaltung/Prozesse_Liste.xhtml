@@ -298,7 +298,7 @@
                                rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/mets.png" alt="mets export"
                                     style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.processId}" value="#{item.id}"/>
                 </h:commandLink>
 
                 <!-- Mets-Export-Schaltknopf greyed -->
@@ -312,7 +312,7 @@
                 <h:commandLink action="#{ProzessverwaltungForm.exportPdf}" id="action20" title="#{msgs.exportPdf}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/pdf.png" alt="pdf export" style="margin-right:2px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.processId}" value="#{item.id}"/>
                 </h:commandLink>
 
                 <!-- PDF-Export-Schaltknopf greyed -->
@@ -325,7 +325,7 @@
                 <h:commandLink action="#{ProzessverwaltungForm.exportDMS}" id="action21" title="#{msgs.importDms}"
                                rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/dms.png" alt="dms export" style="margin-right:0px"/>
-                    <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
+                    <t:updateActionListener property="#{ProzessverwaltungForm.processId}" value="#{item.id}"/>
                 </h:commandLink>
 
                 <!-- PDF-Export-Schaltknopf greyed -->
