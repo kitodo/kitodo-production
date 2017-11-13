@@ -108,14 +108,14 @@ public class VariableReplacer {
 
         // replace paths and files
         try {
-            String processpath = fileService
+            String processPath = fileService
                     .getFileName(serviceManager.getProcessService().getProcessDataDirectory(this.process))
                     .replace("\\", "/");
-            String tifpath = fileService
+            String tifPath = fileService
                     .getFileName(serviceManager.getProcessService().getImagesTifDirectory(false, this.process))
                     .replace("\\", "/");
-            String imagepath = fileService.getFileName(fileService.getImagesDirectory(this.process)).replace("\\", "/");
-            String origpath = fileService
+            String imagePath = fileService.getFileName(fileService.getImagesDirectory(this.process)).replace("\\", "/");
+            String origPath = fileService
                     .getFileName(serviceManager.getProcessService().getImagesOrigDirectory(false, this.process))
                     .replace("\\", "/");
             String metaFile = fileService.getFileName(fileService.getMetadataFilePath(this.process)).replace("\\", "/");
@@ -123,113 +123,45 @@ public class VariableReplacer {
             String ocrPlaintextPath = fileService.getFileName(fileService.getTxtDirectory(this.process)).replace("\\",
                     "/");
             // TODO name ändern?
-            String sourcePath = fileService.getFileName(fileService.getSourceDirectory(this.process)).replace("\\",
-                    "/");
+            String sourcePath = fileService.getFileName(fileService.getSourceDirectory(this.process))
+                    .replace("\\", "/");
             String importPath = fileService.getFileName(fileService.getImportDirectory(this.process)).replace("\\",
                     "/");
-            String myprefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
+            String prefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
 
             /*
-             * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben
-             * wollen, wird diese rausgenommen
+             * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird
+             * diese rausgenommen
              */
-            if (tifpath.endsWith(File.separator)) {
-                tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
-            }
-            if (imagepath.endsWith(File.separator)) {
-                imagepath = imagepath.substring(0, imagepath.length() - File.separator.length()).replace("\\", "/");
-            }
-            if (origpath.endsWith(File.separator)) {
-                origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
-            }
-            if (processpath.endsWith(File.separator)) {
-                processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\",
-                        "/");
-            }
-            if (importPath.endsWith(File.separator)) {
-                importPath = importPath.substring(0, importPath.length() - File.separator.length()).replace("\\", "/");
-            }
-            if (sourcePath.endsWith(File.separator)) {
-                sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
-            }
-            if (ocrBasisPath.endsWith(File.separator)) {
-                ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\",
-                        "/");
-            }
-            if (ocrPlaintextPath.endsWith(File.separator)) {
-                ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
-                        .replace("\\", "/");
-            }
-            if (inString.contains("(tifurl)")) {
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    inString = inString.replace("(tifurl)", "file:/" + tifpath);
-                } else {
-                    inString = inString.replace("(tifurl)", "file://" + tifpath);
-                }
-            }
-            if (inString.contains("(origurl)")) {
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    inString = inString.replace("(origurl)", "file:/" + origpath);
-                } else {
-                    inString = inString.replace("(origurl)", "file://" + origpath);
-                }
-            }
-            if (inString.contains("(imageurl)")) {
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    inString = inString.replace("(imageurl)", "file:/" + imagepath);
-                } else {
-                    inString = inString.replace("(imageurl)", "file://" + imagepath);
-                }
-            }
+            tifPath = replaceSeparator(tifPath);
+            imagePath = replaceSeparator(imagePath);
+            origPath = replaceSeparator(origPath);
+            processPath = replaceSeparator(processPath);
+            importPath = replaceSeparator(importPath);
+            sourcePath = replaceSeparator(sourcePath);
+            ocrBasisPath = replaceSeparator(ocrBasisPath);
+            ocrPlaintextPath = replaceSeparator(ocrPlaintextPath);
 
-            if (inString.contains("(tifpath)")) {
-                inString = inString.replace("(tifpath)", tifpath);
-            }
-            if (inString.contains("(origpath)")) {
-                inString = inString.replace("(origpath)", origpath);
-            }
-            if (inString.contains("(imagepath)")) {
-                inString = inString.replace("(imagepath)", imagepath);
-            }
-            if (inString.contains("(processpath)")) {
-                inString = inString.replace("(processpath)", processpath);
-            }
-            if (inString.contains("(importpath)")) {
-                inString = inString.replace("(importpath)", importPath);
-            }
-            if (inString.contains("(sourcepath)")) {
-                inString = inString.replace("(sourcepath)", sourcePath);
-            }
+            inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
+            inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);
+            inString = replaceStringAccordingToOS(inString, "(imageurl)", imagePath);
 
-            if (inString.contains("(ocrbasispath)")) {
-                inString = inString.replace("(ocrbasispath)", ocrBasisPath);
-            }
-            if (inString.contains("(ocrplaintextpath)")) {
-                inString = inString.replace("(ocrplaintextpath)", ocrPlaintextPath);
-            }
-            if (inString.contains("(processtitle)")) {
-                inString = inString.replace("(processtitle)", this.process.getTitle());
-            }
-            if (inString.contains("(processid)")) {
-                inString = inString.replace("(processid)", String.valueOf(this.process.getId().intValue()));
-            }
-            if (inString.contains("(metaFile)")) {
-                inString = inString.replace("(metaFile)", metaFile);
-            }
-            if (inString.contains("(prefs)")) {
-                inString = inString.replace("(prefs)", myprefs);
-            }
+            inString = replaceString(inString, "(tifpath)", tifPath);
+            inString = replaceString(inString, "(origpath)", origPath);
+            inString = replaceString(inString, "(imagepath)", imagePath);
+            inString = replaceString(inString, "(processpath)", processPath);
+            inString = replaceString(inString, "(importpath)", importPath);
+            inString = replaceString(inString, "(sourcepath)", sourcePath);
+            inString = replaceString(inString, "(ocrbasispath)", ocrBasisPath);
+            inString = replaceString(inString, "(ocrplaintextpath)", ocrPlaintextPath);
+            inString = replaceString(inString, "(processtitle)", this.process.getTitle());
+            inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
+            inString = replaceString(inString, "(metaFile)", metaFile);
+            inString = replaceString(inString, "(prefs)", prefs);
 
-            if (this.task != null) {
-                String stepId = String.valueOf(this.task.getId());
-                String stepname = this.task.getTitle();
-
-                inString = inString.replace("(stepid)", stepId);
-                inString = inString.replace("(stepname)", stepname);
-            }
+            inString = replaceStringForTask(inString);
 
             // replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE)
-
             for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
                 for (Workpiece ws : this.process.getWorkpieces()) {
@@ -243,7 +175,6 @@ public class VariableReplacer {
             }
 
             // replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE)
-
             for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
                 for (Template v : this.process.getTemplates()) {
@@ -257,7 +188,6 @@ public class VariableReplacer {
             }
 
             // replace Prozesseigenschaft, usage: (process.PROPERTYTITLE)
-
             for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
                 List<ProcessProperty> ppList = PropertyParser.getPropertiesForProcess(this.process);
@@ -275,6 +205,42 @@ public class VariableReplacer {
         }
 
         return inString;
+    }
+
+    private String replaceSeparator(String input) {
+        if (input.endsWith(File.separator)) {
+            input = input.substring(0, input.length() - File.separator.length()).replace("\\", "/");
+        }
+        return input;
+    }
+
+    private String replaceStringAccordingToOS(String input, String condition, String replacer) {
+        if (input.contains(condition)) {
+            if (SystemUtils.IS_OS_WINDOWS) {
+                input = input.replace(condition, "file:/" + replacer);
+            } else {
+                input = input.replace(condition, "file://" + replacer);
+            }
+        }
+        return input;
+    }
+
+    private String replaceString(String input, String condition, String replacer) {
+        if (input.contains(condition)) {
+            input = input.replace(condition, replacer);
+        }
+        return input;
+    }
+
+    private String replaceStringForTask(String input) {
+        if (this.task != null) {
+            String taskId = String.valueOf(this.task.getId());
+            String taskName = this.task.getTitle();
+
+            input = input.replace("(stepid)", taskId);
+            input = input.replace("(stepname)", taskName);
+        }
+        return input;
     }
 
     /**
@@ -309,8 +275,7 @@ public class VariableReplacer {
             switch (inLevel) {
                 case FIRSTCHILD:
                     /*
-                     * ohne vorhandenes FirstChild, kann dieses nicht
-                     * zurückgegeben werden
+                     * ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden
                      */
                     if (resultFirst == null) {
                         if (logger.isInfoEnabled()) {
