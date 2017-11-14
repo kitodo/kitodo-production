@@ -167,6 +167,23 @@ public class ModsPlugin implements Plugin {
     private GetOpac client;
 
     /**
+     * The SAXBuilder is used to transform XML documents using XSLT files.
+     */
+    private static SAXBuilder sb = new SAXBuilder();
+
+    private static String xsltFilepath = "";
+
+    private static File transformationScript = null;
+
+    private static File tempFile = null;
+
+    private static List<File> tempFiles = null;
+
+    private static XMLOutputter xmlOutputter = null;
+
+    private HashMap<String, Element> structureMaps = null;
+
+    /**
      * Namespace and tag name constants used to create METS documents
      * encapsulating MODS documents
      */
@@ -201,6 +218,11 @@ public class ModsPlugin implements Plugin {
     private static final String CONF_RECORD_ELEMENT = "recordElement";
     private static final String CONF_ID_ELEMENT = "identifierElement";
     private static final String CONF_CATALOGUE = "catalogue";
+
+    /**
+     * Human-readable description of the plug-in’s functionality in English.
+     */
+    private static final String PLUGIN_DESCRIPTION = "The MODS plugin can be used to access MODS library catalogue systems.";
 
     /**
      * Hashmaps with structureTypes (String) as keys and lists of XPath
@@ -328,7 +350,94 @@ public class ModsPlugin implements Plugin {
      * @see org.goobi.production.plugin.UnspecificPlugin#getDescription(Locale)
      */
     public static String getDescription(Locale language) {
-        return "The MODS plugin can be used to access MODS library catalogue systems.";
+        return PLUGIN_DESCRIPTION;
+    }
+
+
+    private String addDocumentToFile(Document importDoc, File metaFile, boolean addChildren, boolean isAncestor, long timeout) throws IOException, JDOMException {
+
+        Document metsDocument = null;
+        Element rootElement = null;
+        Element structureMap = null;
+
+        // create new file and mets structures, if it doesn't exist
+        if (!metaFile.exists() || metaFile.length() == 0) {
+            metaFile.createNewFile();
+            tempFiles.add(metaFile);
+
+            // Build the metsDocument directly
+            metsDocument = createMetsDocument();
+            rootElement = metsDocument.getRootElement();
+
+            // initialize Mets structMap
+            structureMap = createMETSStructureMap(METS_LOGICAL);
+
+            // add structure map to root element
+            rootElement.addContent(structureMap);
+        }
+        // read file and existing mets structures, if file already exists
+        else {
+            // read mets document from existing file
+            metsDocument = sb.build(metaFile);
+            rootElement = metsDocument.getRootElement();
+
+            // retrieve existing logical structure map from anchor mets document
+            ElementFilter structMapFilter = new ElementFilter("structMap", METS_NAMESPACE);
+            for (Iterator<Element> structMapElementIter = rootElement.getDescendants(structMapFilter); structMapElementIter.hasNext();) {
+                Element structMapElement = structMapElementIter.next();
+                if (Objects.equals(structMapElement.getAttributeValue(METS_TYPE), METS_LOGICAL)) {
+                    structureMap = structMapElement;
+                    break;
+                }
+            }
+            if (Objects.equals(structureMap, null)) {
+                throw new JDOMException("ERROR: no logical structmap found in existing mets document!");
+            }
+        }
+
+        String lastStructureType = getStructureType((Element) modsXPath.selectSingleNode(importDoc));
+
+        Document transformedDoc = transformXML(importDoc, transformationScript);
+
+        String documentID = ((Element) identifierXPath.selectSingleNode(transformedDoc)).getText();
+
+        // XML MODS data of document itself
+        Element modsElement = (Element) modsXPath.selectSingleNode(transformedDoc);
+
+        Element metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
+        rootElement.addContent(metadataSection);
+
+        // Create structure map including mets metadata sections
+        Element structureMapDiv = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
+        if (addChildren) {
+            structureMapDiv = addChildDocumentsToStructureDiv(metadataSection, structureMapDiv,
+                    retrieveChildDocuments(documentID, timeout), rootElement);
+        }
+
+        Element formerTopmostDiv = structureMap.getChild("div", METS_NAMESPACE);
+
+        if (formerTopmostDiv != null) {
+            Element childDiv = (Element) formerTopmostDiv.detach();
+            if (isAncestor) {
+                structureMapDiv.addContent(childDiv);
+                structureMap.addContent(structureMapDiv);
+            }
+            else {
+                childDiv.addContent(structureMapDiv);
+            }
+        }
+        else {
+            structureMap.addContent(structureMapDiv);
+        }
+
+        metsDocument.setRootElement(rootElement);
+        // reviewing the constructed XML mets document can be done via
+        //xmlOutputter.output(metsDocument, System.out);
+
+        // save updated file
+        xmlOutputter.output(metsDocument, new FileWriter(metaFile.getAbsoluteFile()));
+
+        return lastStructureType;
     }
 
     /**
@@ -357,7 +466,12 @@ public class ModsPlugin implements Plugin {
 
         loadMappingFile(configuration.getTitle());
 
-        String xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
+        xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
+        transformationScript = new File(xsltFilepath);
+
+        tempFiles = new LinkedList<File>();
+
+        structureMaps = new HashMap<>();
 
         Map<String, Object> result = new HashMap<String, Object>();
 
@@ -365,7 +479,7 @@ public class ModsPlugin implements Plugin {
 
         String resultXML = client.retrieveModsRecord(myQuery.getQueryUrl(), timeout);
 
-        XMLOutputter xmlOutputter = new XMLOutputter();
+        xmlOutputter = new XMLOutputter();
         xmlOutputter.setFormat(Format.getPrettyFormat());
 
         initializeXPath();
@@ -393,10 +507,16 @@ public class ModsPlugin implements Plugin {
         }
 
         else {
-            SAXBuilder sb = new SAXBuilder();
+            sb = new SAXBuilder();
             try {
+                tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
+
                 Document doc = sb.build(new StringReader(resultXML));
                 initializeStructureToDocTypeMapping();
+
+                // retrieve parent record before transforming requested document
+                // (since "localParentID" is lost during XSL transformation)
+                String parentXML = retrieveParentRecord(doc, timeout);
 
                 @SuppressWarnings("unchecked")
                 ArrayList<Element> recordNodes = (ArrayList<Element>) srwRecordXPath.selectNodes(doc);
@@ -408,86 +528,18 @@ public class ModsPlugin implements Plugin {
                     }
                 }
 
-                // Build the metsDocument directly
-                Document metsDocument = createMetsDocument();
-                Element rootElement = metsDocument.getRootElement();
+                // transform document manually here to access it's original document ID!
+                Document transformedDoc = transformXML(doc, transformationScript);
+                String documentID = ((Element) identifierXPath.selectSingleNode(transformedDoc)).getText();
 
-                // initialize Mets structMap
-                Element structureMap = createMETSStructureMap(METS_LOGICAL);
-                String lastStructureType = getStructureType((Element) modsXPath.selectSingleNode(doc));
-
-                // retrieve parent record before transforming requested document
-                // (since "localParentID" is lost during XSL transformation)
-                String parentXML = retrieveParentRecord(doc, timeout);
-
-                File transformationScript = new File(xsltFilepath);
-
-                doc = transformXML(doc, transformationScript, sb);
-
-                String documentID = ((Element) identifierXPath.selectSingleNode(doc)).getText();
-
-                // read "additionalDetails" from document via XPaths elements
-                // specified in plugin configuration file
-                for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
-                    XPath detailPath = XPath.newInstance(detailField.getValue());
-                    Element detailElement = (Element) detailPath.selectSingleNode(doc);
-                    if (!Objects.equals(detailElement, null)) {
-                        result.put(detailField.getKey(), detailElement.getText());
-                    }
-                }
-
-                // XML MODS data of document itself
-                Element modsElement = (Element) modsXPath.selectSingleNode(doc);
-
-                Element metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
-                rootElement.addContent(metadataSection);
-
-                Element structureMapDiv = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
-                Element structureMapDivTemp = null;
-
-                List<Element> childDocuments = retrieveChildDocuments(documentID, timeout);
-                Element childElement;
-                Document transformedChild;
-
-                // *** child elements
-                for (int i = 0; i < childDocuments.size(); i++) {
-                    childElement = childDocuments.get(i);
-
-                    // determine structType from original child doc
-                    String childStructureType = getStructureType(childElement);
-
-                    // transform child document with XSL
-                    transformedChild = transformXML(removeAllChildrenButOne(childElement.getDocument(), i), transformationScript, sb);
-                    Element childMods = (Element) modsXPath.selectSingleNode(transformedChild);
-
-                    // create metadata section from transformed child doc
-                    metadataSection = createMETSDescriptiveMetadata((Element) childMods.clone());
-                    rootElement.addContent(metadataSection);
-
-                    // create structure map div for current child
-                    structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), childStructureType);
-                    structureMapDiv.addContent(structureMapDivTemp);
-                }
-
-                // reset variable to use it for ancestor elements as well
-                structureMapDivTemp = null;
-
-                File tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
-
-                List<File> anchorFiles = new LinkedList<File>();
-
-                // Anchor file mets document
-                Document anchorMetsDocument = null;
-                Element anchorRootElement = null;
-                Element anchorStructureMapDiv = null;
-                Element anchorStructureMap = null;
+                String lastStructureType = addDocumentToFile(doc, tempFile, true, true, timeout);
 
                 // *** ancestor elements
                 while (!Objects.equals(parentXML, null)) {
                     resultXML = parentXML;
                     doc = sb.build(new StringReader(resultXML));
                     parentXML = retrieveParentRecord(doc, timeout);
-                    modsElement = (Element) modsXPath.selectSingleNode(doc);
+                    Element modsElement = (Element) modsXPath.selectSingleNode(doc);
                     // modsElement is 'null' if last structural element pointed
                     // to a "virtueller Bestand" as parent element;
                     // this is not allowed in Kitodo, therefore throw an
@@ -500,118 +552,34 @@ public class ModsPlugin implements Plugin {
                     // determine structType from untransformed xml document
                     lastStructureType = getStructureType(modsElement);
 
-                    doc = transformXML(doc, transformationScript, sb);
-
-                    // 'doc' can become "null", when the last doc had a
-                    // 'parentID', but trying to retrieve the element with this
-                    // parentID yields an empty SRW container (e.g. not
-                    // containing any MODS documents)
-                    // if 'doc' is null after the XSL transformation (e.g. just
-                    // an empty XML header), 'selectSingleNode' can't be called
-                    // on it anymore! Therefore the loop has to be terminated
-                    // before reaching this point!
-                    modsElement = (Element) modsXPath.selectSingleNode(doc);
-                    metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
-
                     // Check whether the current DocStructType has to be saved to separate anchor file or not
                     DocStructType docStructType = preferences.getDocStrctTypeByName(lastStructureType);
                     String anchorClass = docStructType.getAnchorClass();
 
                     // Case 1: current docstruct has anchor class
                     if (!Objects.equals(anchorClass, null) && !anchorClass.isEmpty()) {
-                        System.out.println("Create file for anchor class '" + anchorClass + "'");
                         String anchorFilenameSuffix = anchorClass.equals("true") ? "anchor" : anchorClass;
                         String anchorFilename = FilenameUtils.removeExtension(tempFile.getName()) + "_" + anchorFilenameSuffix;
                         String anchorFileFullPath = tempFile.getParent() + File.separator + anchorFilename + ".xml";
+
                         File anchorFile = new File(anchorFileFullPath);
-                        if (!anchorFile.exists()) {
-                            System.out.println("Create new anchor file!");
-                            anchorFile.createNewFile();
-                            anchorFiles.add(anchorFile);
 
-                            anchorMetsDocument = createMetsDocument();
-                            anchorRootElement = anchorMetsDocument.getRootElement();
-
-                            // create new structure map
-                            anchorStructureMap = createMETSStructureMap(METS_LOGICAL);
-                            // add structure map to anchor root element
-                            anchorRootElement.addContent(anchorStructureMap);
-                        }
-                        else {
-                            System.out.println("Re-use existing anchor file!");
-                            // read mets document from existing anchor file
-                            anchorMetsDocument = sb.build(anchorFile);
-                            anchorRootElement = anchorMetsDocument.getRootElement();
-
-                            // retrieve existing logical structure map from anchor mets document
-                            ElementFilter structMapFilter = new ElementFilter("structMap", METS_NAMESPACE);
-                            for (Iterator<Element> structMapElementIter = anchorRootElement.getDescendants(structMapFilter); structMapElementIter.hasNext();) {
-                                Element structMapElement = structMapElementIter.next();
-                                if (Objects.equals(structMapElement.getAttributeValue("TYPE"), "LOGICAL")) {
-                                    System.err.println("******");
-                                    System.out.println("Found logical struct map in anchor mets document!");
-                                    System.err.println("******");
-                                    anchorStructureMap = structMapElement;
-                                    break;
-                                }
-                            }
-                            if (Objects.equals(anchorStructureMap, null)) {
-                                System.err.println("******");
-                                System.err.println("ERROR: no logical structmap found in existing anchor mets document!");
-                                System.err.println("******");
-                            }
-                        }
-                        System.out.println("=> ensured file exists at " + anchorFileFullPath);
-
-                        // now save the mets metadata section to the anchor file
-                        anchorRootElement.addContent(metadataSection);
-                        anchorMetsDocument.setRootElement(anchorRootElement);
-
-                        // TODO: create new structure div and add it to anchor structmap
-                        //  - create structure div and add it to the anchor structmap
-                        anchorStructureMapDiv = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
-                        anchorStructureMap.addContent(anchorStructureMapDiv);
-
-                        // save new mets document to current anchor file
-                        xmlOutputter.output(anchorMetsDocument, new FileWriter(anchorFile.getAbsoluteFile()));
+                        addDocumentToFile(doc, anchorFile, false, true, timeout);
                     }
                     // Case 2: current docstruct has NO anchor class
                     else {
-                        rootElement.addContent(metadataSection);
-
-                        // create structure map div for current ancestor
-                        structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
-                        structureMapDivTemp.addContent(structureMapDiv);
-                        structureMapDiv = structureMapDivTemp;
+                        addDocumentToFile(doc, tempFile, false, true, timeout);
                     }
                 }
 
-                // only add ancestors topmost structureMapDiv to structMap if
-                // the div is not null (otherwise add documents own div as
-                // topmost div to structmap)
-                if (!Objects.equals(structureMapDivTemp, null)) {
-                    structureMap.addContent(structureMapDivTemp);
-                } else {
-                    structureMap.addContent(structureMapDiv);
-                }
-
-                rootElement.addContent(structureMap);
-                metsDocument.setRootElement(rootElement);
-                // reviewing the constructed XML mets document can be done via
-                // "xmlOutputter.output(metsDocument, System.out);"
-
                 MetsMods mm = new MetsMods(preferences);
 
-                xmlOutputter.output(metsDocument, new FileWriter(tempFile.getAbsoluteFile()));
-                System.out.println("Read temp file " + tempFile.getAbsolutePath());
                 mm.read(tempFile.getAbsolutePath());
                 // reviewing the constructed DigitalDocument can be done via
                 // "System.out.println(mm.getDigitalDocument());"
 
-                //deleteFile(tempFile.getAbsolutePath());
-                for(File f : anchorFiles) {
-                    //deleteFile(f.getAbsolutePath());
-                }
+                deleteTemporaryFiles();
+
                 DigitalDocument dd = mm.getDigitalDocument();
                 ff = new XStream(preferences);
                 ff.setDigitalDocument(dd);
@@ -635,6 +603,35 @@ public class ModsPlugin implements Plugin {
             }
         }
         return result;
+    }
+
+    private Element addChildDocumentsToStructureDiv(Element metadataSection, Element structureMapDiv, List<Element> childDocuments, Element rootEle) throws JDOMException {
+
+        Element childElement;
+        Document transformedChild;
+
+        // *** child elements
+        for (int i = 0; i < childDocuments.size(); i++) {
+            childElement = childDocuments.get(i);
+
+            // determine structType from original child doc
+            String childStructureType = getStructureType(childElement);
+
+            // transform child document with XSL
+            transformedChild = transformXML(removeAllChildrenButOne(childElement.getDocument(), i), transformationScript);
+            Element childMods = (Element) modsXPath.selectSingleNode(transformedChild);
+
+            // create metadata section from transformed child doc
+            rootEle.addContent(createMETSDescriptiveMetadata((Element) childMods.clone()));
+
+            // create structure map div for current child
+            structureMapDiv.addContent(createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), childStructureType));
+        }
+        return structureMapDiv;
+    }
+
+    private void addModsDocumentToFile(Document modsDocument, File metsFile) {
+
     }
 
     /**
@@ -784,12 +781,9 @@ public class ModsPlugin implements Plugin {
      *            The Document that will be transformed
      * @param stylesheetfile
      *            The XSLT file containing the transformation rules
-     * @param builder
-     *            The SAXBuilder used to create the Document element from the
-     *            transformed input document
      * @return the transformed JDOM document
      */
-    private Document transformXML(Document inputXML, File stylesheetfile, SAXBuilder builder) {
+    private Document transformXML(Document inputXML, File stylesheetFile) {
 
         XMLOutputter xmlOutputter = new XMLOutputter();
 
@@ -798,12 +792,12 @@ public class ModsPlugin implements Plugin {
         String outputXMLFilename = dmdSecCounter + "_xslTransformedSRU";
         dmdSecCounter++;
 
-        StreamSource transformSource = new StreamSource(stylesheetfile);
+        StreamSource transformSource = new StreamSource(stylesheetFile);
 
         TransformerFactoryImpl impl = new TransformerFactoryImpl();
 
         try {
-            File outputFile = File.createTempFile(outputXMLFilename, "xml");
+            File outputFile = File.createTempFile(outputXMLFilename, ".xml");
 
             FileOutputStream outputStream = new FileOutputStream(outputFile);
 
@@ -819,13 +813,14 @@ public class ModsPlugin implements Plugin {
 
             xslfoTransformer.transform(saxSource, saxResult);
 
-            Document resultDoc = builder.build(outputFile);
+            Document resultDoc = sb.build(outputFile);
             deleteFile(outputFile.getAbsolutePath());
 
             return resultDoc;
 
         } catch (TransformerException | IOException | JDOMException e) {
             logger.error("Error while transforming XML document: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -869,7 +864,7 @@ public class ModsPlugin implements Plugin {
         Query childrenQuery = new Query("context.ead.id:" + documentId);
         String allChildren = client.retrieveModsRecord(childrenQuery.getQueryUrl(), timeout);
 
-        SAXBuilder sb = new SAXBuilder();
+        sb = new SAXBuilder();
         try {
             Document childrenDoc = sb.build(new StringReader(allChildren));
             for (Object child : modsXPath.selectNodes(childrenDoc)) {
@@ -996,6 +991,16 @@ public class ModsPlugin implements Plugin {
         } catch (IOException x) {
             logger.error("Error while deleting file '" + path + "': " + x.getMessage());
         }
+    }
+
+    /**
+     * Removes all temporary files potentially saved during an import
+     */
+    private void deleteTemporaryFiles() {
+        for(File f : tempFiles) {
+            deleteFile(f.getAbsolutePath());
+        }
+        tempFiles = new LinkedList<File>();
     }
 
     /**
