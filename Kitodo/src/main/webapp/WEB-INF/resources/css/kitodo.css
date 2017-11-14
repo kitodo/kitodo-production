@@ -489,46 +489,72 @@ main {
     padding: .7em;
 }
 
-.filter-input {
+#filterMenu {
+    display: inline;
+    float: right;
+}
+
+#filterMenu > div > .ui-inputfield {
     width: 250px;
     border-radius: 3px 0 0 3px !important;
 }
 
-.filter-menu {
+#filterMenu > div > .ui-button:nth-child(2) {
+    margin-left: -40px;
+    background: transparent;
+}
+
+#filterMenu > div > .ui-button:nth-child(3) {
+    border-radius: 0 3px 3px 0;
+    margin-left: 3px;
+}
+
+#filterMenu .ui-overlaypanel {
     border-radius: 3px;
 }
 
-.filter-menu > div {
+#filterMenu .ui-overlaypanel > div {
     padding: 0;
     width: 250px;
     background: #f3f3f3;
     border-radius: 3px;
 }
 
-.filter-menu li {
+#filterMenu .ui-overlaypanel .ui-button {
+    width: 100%;
+    text-align: left;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#filterMenu .ui-overlaypanel li {
     list-style: none;
     border-top: solid 1px #d8d8d8;
 }
 
-.filter-menu li a {
+#filterMenu .ui-overlaypanel li:hover {
+    background: #f0faff;
+}
+
+#filterMenu .ui-overlaypanel li a {
     display: inline-block;
     padding: 10px;
     text-decoration: none;
     color: #006DBD;
 }
 
-.filter-menu li > a:first-child {
+#filterMenu .ui-overlaypanel li > a:first-child {
     width: 75%;
 }
 
-.filter-menu li:first-child a {
+#filterMenu .ui-overlaypanel li:first-child a {
     width: 100%;
     box-sizing: border-box;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
 }
 
-.filter-menu li .filter-delete {
+#filterMenu .ui-overlaypanel li .filter-delete {
     float: right;
     vertical-align: middle;
 }
