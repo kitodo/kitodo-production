@@ -138,6 +138,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private static String DONEDIRECTORYNAME = "fertig/";
     private int processId;
     private int taskId;
+    private List<ProcessDTO> selectedProcesses = new ArrayList<>();
 
     /**
      * Constructor.
@@ -1663,15 +1664,10 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void kitodoScriptSelection() {
-        ArrayList<ProcessDTO> selection = new ArrayList<>();
-        for (ProcessDTO p : (List<ProcessDTO>) this.page.getListReload()) {
-            if (p.isSelected()) {
-                selection.add(p);
-            }
-        }
+
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(selection), this.kitodoScript);
+            gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.selectedProcesses), this.kitodoScript);
         } catch (DAOException | DataException e) {
             logger.error(e);
         }
@@ -2608,5 +2604,24 @@ public class ProzessverwaltungForm extends BasisForm {
             logger.error("Unable to load user groups: " + e.getMessage());
             return new LinkedList<>();
         }
+    }
+
+    /**
+     * Returns selected processDTO.
+     *
+     * @return The list of processDTO.
+     */
+    public List<ProcessDTO> getSelectedProcesses() {
+        return selectedProcesses;
+    }
+
+    /**
+     * Sets selected processDTOs.
+     *
+     * @param selectedProcesses
+     *          The list of ProcessDTOs.
+     */
+    public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
+        this.selectedProcesses = selectedProcesses;
     }
 }

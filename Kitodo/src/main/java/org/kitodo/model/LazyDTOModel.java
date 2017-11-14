@@ -21,11 +21,12 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.BaseDTO;
 import org.kitodo.services.data.base.SearchService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-public class LazyDTOModel extends LazyDataModel {
+public class LazyDTOModel extends LazyDataModel<Object> {
 
     private static final long serialVersionUID = 8782111495680176505L;
     private SearchService searchService;
@@ -59,6 +60,12 @@ public class LazyDTOModel extends LazyDataModel {
             logger.error(e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public Object getRowKey(Object inObject) {
+        BaseDTO dto = (BaseDTO) inObject;
+        return dto.getId();
     }
 
     @Override

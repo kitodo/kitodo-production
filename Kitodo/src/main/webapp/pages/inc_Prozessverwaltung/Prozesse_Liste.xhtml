@@ -59,31 +59,11 @@
     <!-- List of processes -->
     <p:dataTable id="auflistung" tableStyleClass="standardTable" width="100%" cellspacing="1px" cellpadding="1px"
                  var="item" value="#{ProzessverwaltungForm.lazyDTOModel}" rows="#{LoginForm.myBenutzer.tableSize}"
-                 lazy="true" paginator="true">
+                 lazy="true" paginator="true" selection="#{ProzessverwaltungForm.selectedProcesses}">
 
         <!-- +++++++++++++++++  SelectionBoxes ++++++++++++++++++++++++ -->
-        <p:column style="text-align:center" headerText="#{msgs.auswahl2}"
+        <p:column selectionMode="multiple" style="width:16px;text-align:center"
                   rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}">
-            <f:facet name="header">
-                <t:div>
-                    <h:commandLink action="#{ProzessverwaltungForm.selectAll}" id="selectall"
-                                   title="#{msgs.alleAuswaehlen}" style="margin-left:10px">
-                        <h:graphicImage value="/pages/images/check_true.gif" alt="select all"/>
-                    </h:commandLink>
-                    <h:commandLink action="#{ProzessverwaltungForm.deselectAll}" id="selectnone"
-                                   title="#{msgs.auswahlEntfernen}" style="margin-left:5px">
-                        <h:graphicImage value="/pages/images/check_false.gif" alt="select none"/>
-                    </h:commandLink>
-                </t:div>
-            </f:facet>
-            <h:commandLink id="myself1">
-                <h:graphicImage value="/pages/images/check_true.gif" style="margin-right:4px"
-                                alt="select all" rendered="#{item.selected}"/>
-                <h:graphicImage value="/pages/images/check_false.gif" style="margin-right:4px"
-                                alt="select none" rendered="#{!item.selected}"/>
-                <t:updateActionListener value="#{item.selected?false:true}" property="#{item.selected}"/>
-                <f:ajax render="myself1"/>
-            </h:commandLink>
         </p:column>
 
         <!-- +++++++++++++++++  ProzessID ++++++++++++++++++++++++ -->
