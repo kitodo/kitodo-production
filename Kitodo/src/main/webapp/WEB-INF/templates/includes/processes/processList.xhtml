@@ -1,0 +1,57 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <h:form>
+        <p:dataTable var="item"
+                     value="#{ProzessverwaltungForm.lazyDTOModel}"
+                     lazy="true"
+                     paginator="true"
+                     rows="#{LoginForm.myBenutzer.tableSize}">
+
+            <p:column headerText="#{msgs.prozessTitel}">
+                <h:outputText value="#{item.title}"/>
+            </p:column>
+
+            <p:column style="width:120px;" headerText="#{msgs.status}">
+                <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
+                <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
+                                style="width:#{item.progressClosed * 0.8}px;height:10px"/>
+                <h:graphicImage value="/pages/images/fortschritt/ge.gif" alt="in process"
+                                style="width:#{item.progressInProcessing * 0.8}px;height:10px"/>
+                <h:graphicImage value="/pages/images/fortschritt/go.gif" alt="open"
+                                style="width:#{item.progressOpen * 0.8}px;height:10px"/>
+                <h:graphicImage value="/pages/images/fortschritt/rt.gif" alt="locked"
+                                style="width:#{item.progressLocked * 0.8}px;height:10px"/>
+                <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
+            </p:column>
+
+            <p:column headerText="#{msgs.projekt}">
+                <h:outputText value="#{item.project.title}"/>
+            </p:column>
+
+            <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
+                <h:link outcome="/pages/ProzessverwaltungBearbeiten"
+                        title="#{msgs.prozessBearbeiten}">
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                    <f:param name="id" value="#{item.id}" />
+                </h:link>
+            </p:column>
+
+        </p:dataTable>
+    </h:form>
+</ui:composition>
