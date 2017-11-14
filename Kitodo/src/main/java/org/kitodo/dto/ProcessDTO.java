@@ -45,7 +45,6 @@ public class ProcessDTO extends BaseDTO {
     private boolean imageFolderInUse = false;
     private boolean tifDirectoryExists = false;
     private boolean panelShown = false;
-    private boolean selected = false;
 
     /**
      * Get title.
@@ -558,24 +557,5 @@ public class ProcessDTO extends BaseDTO {
      */
     public void setPanelShown(boolean panelShown) {
         this.panelShown = panelShown;
-    }
-
-    /**
-     * Get information if task is selected.
-     * 
-     * @return true or false
-     */
-    public boolean isSelected() {
-        return this.selected;
-    }
-
-    /**
-     * Set information if task is selected.
-     * 
-     * @param selected
-     *            as boolean
-     */
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 }

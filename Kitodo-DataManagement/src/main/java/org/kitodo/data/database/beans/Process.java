@@ -118,9 +118,6 @@ public class Process extends BaseIndexedBean {
     @Transient
     private Boolean panelShown = false;
 
-    @Transient
-    private Boolean selected = false;
-
     public static String DIRECTORY_SUFFIX = "images";
 
     /**
@@ -371,14 +368,6 @@ public class Process extends BaseIndexedBean {
 
     public void setPanelShown(boolean panelShown) {
         this.panelShown = panelShown;
-    }
-
-    public boolean isSelected() {
-        return (this.selected == null ? false : this.selected);
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 
     // Here will be methods which should be in ProcessService but are used by

@@ -984,14 +984,12 @@ public class ProzessverwaltungForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void exportDMSSelection() {
         ExportDms export = new ExportDms();
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
-            if (proz.isSelected()) {
-                try {
-                    export.startExport(serviceManager.getProcessService().convertDtoToBean(proz));
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("ExportError", e.getMessage());
-                    logger.error(e);
-                }
+        for (ProcessDTO proz : this.getSelectedProcesses()) {
+            try {
+                export.startExport(serviceManager.getProcessService().convertDtoToBean(proz));
+            } catch (Exception e) {
+                Helper.setFehlerMeldung("ExportError", e.getMessage());
+                logger.error(e);
             }
         }
         Helper.setMeldung(null, "ExportFinished", "");
@@ -1080,10 +1078,8 @@ public class ProzessverwaltungForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void downloadToHomeSelection() {
         WebDav myDav = new WebDav();
-        for (ProcessDTO process : (List<ProcessDTO>) this.page.getListReload()) {
-            if (process.isSelected()) {
-                download(myDav, process);
-            }
+        for (ProcessDTO process : this.getSelectedProcesses()) {
+            download(myDav, process);
         }
         Helper.setMeldung(null, "createdInUserHomeAll", "");
     }
@@ -1143,11 +1139,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusUpForSelection() throws DAOException, DataException {
-        List<ProcessDTO> processes = this.page.getListReload();
+        List<ProcessDTO> processes = this.getSelectedProcesses();
         for (ProcessDTO process : processes) {
-            if (process.isSelected()) {
-                setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
-            }
+            setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -1230,11 +1224,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusDownForSelection() throws DAOException {
-        List<ProcessDTO> processes = this.page.getListReload();
+        List<ProcessDTO> processes = this.getSelectedProcesses();
         for (ProcessDTO process : processes) {
-            if (process.isSelected()) {
-                setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
-            }
+            setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -1287,26 +1279,6 @@ public class ProzessverwaltungForm extends BasisForm {
         save();
         deleteSymlinksFromUserHomes();
         return null;
-    }
-
-    /**
-     * Auswahl mittels Selectboxen.
-     */
-    @SuppressWarnings("unchecked")
-    public void selectAll() {
-        for (ProcessDTO process : (List<ProcessDTO>) this.page.getList()) {
-            process.setSelected(true);
-        }
-    }
-
-    /**
-     * Auswahl mittels Selectboxen.
-     */
-    @SuppressWarnings("unchecked")
-    public void deselectAll() {
-        for (ProcessDTO process : (List<ProcessDTO>) this.page.getList()) {
-            process.setSelected(false);
-        }
     }
 
     /**
@@ -1528,10 +1500,8 @@ public class ProzessverwaltungForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void calculateMetadataAndImagesSelection() {
         ArrayList<ProcessDTO> selection = new ArrayList<>();
-        for (ProcessDTO p : (List<ProcessDTO>) this.page.getListReload()) {
-            if (p.isSelected()) {
-                selection.add(p);
-            }
+        for (ProcessDTO process : this.getSelectedProcesses()) {
+            selection.add(process);
         }
         calculateMetadataAndImages(selection);
     }
