@@ -984,9 +984,9 @@ public class ProzessverwaltungForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void exportDMSSelection() {
         ExportDms export = new ExportDms();
-        for (ProcessDTO proz : this.getSelectedProcesses()) {
+        for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             try {
-                export.startExport(serviceManager.getProcessService().convertDtoToBean(proz));
+                export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
             } catch (Exception e) {
                 Helper.setFehlerMeldung("ExportError", e.getMessage());
                 logger.error(e);
@@ -1078,8 +1078,8 @@ public class ProzessverwaltungForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void downloadToHomeSelection() {
         WebDav myDav = new WebDav();
-        for (ProcessDTO process : this.getSelectedProcesses()) {
-            download(myDav, process);
+        for (ProcessDTO processDTO : this.getSelectedProcesses()) {
+            download(myDav, processDTO);
         }
         Helper.setMeldung(null, "createdInUserHomeAll", "");
     }
@@ -1139,9 +1139,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusUpForSelection() throws DAOException, DataException {
-        List<ProcessDTO> processes = this.getSelectedProcesses();
-        for (ProcessDTO process : processes) {
-            setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
+        List<ProcessDTO> processDTOS = this.getSelectedProcesses();
+        for (ProcessDTO processDTO : processDTOS) {
+            setTaskStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
@@ -1224,9 +1224,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusDownForSelection() throws DAOException {
-        List<ProcessDTO> processes = this.getSelectedProcesses();
-        for (ProcessDTO process : processes) {
-            setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
+        List<ProcessDTO> processDTOS = this.getSelectedProcesses();
+        for (ProcessDTO processDTO : processDTOS) {
+            setTaskStatusDown(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
