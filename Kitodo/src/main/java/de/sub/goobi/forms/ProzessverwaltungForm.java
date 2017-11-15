@@ -1499,11 +1499,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void calculateMetadataAndImagesSelection() {
-        ArrayList<ProcessDTO> selection = new ArrayList<>();
-        for (ProcessDTO process : this.getSelectedProcesses()) {
-            selection.add(process);
-        }
-        calculateMetadataAndImages(selection);
+        calculateMetadataAndImages(this.getSelectedProcesses());
     }
 
     /**
