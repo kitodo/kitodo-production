@@ -353,7 +353,30 @@ public class ModsPlugin implements Plugin {
         return PLUGIN_DESCRIPTION;
     }
 
-
+    /**
+     * Transforms the given XML Document 'importDoc' via the static XSL transformation
+     * script 'transformationScript' into the ModsGoobi format, wraps the resulting
+     * ModsGoobi document inside a Mets Descriptive Metadata Section and saves it to
+     * the given File 'metaFile'. If the file already exists and contains a Mets document,
+     * the new Metadata section will be added to it. Otherwise, the file will be created.
+     * The method returns the name of the DocStructType of 'importDoc'.
+     *
+     * @param importDoc
+     *          the document that is being added to the given metadata file.
+     * @param metaFile
+     *          the metadata file to which the given document will be added
+     * @param addChildren
+     *          flag indicating whether the child documents of the given
+     *          document should be added as well
+     * @param isAncestor
+     *          flag indicating whether the given document should be added
+     *          as the new root of the structure map or appended to the lowest level
+     * @param timeout
+     *          a timeout in milliseconds after which the operation shall return
+     * @return the name of the DocStructType of the given Docment 'importDoc'
+     * @throws IOException
+     * @throws JDOMException
+     */
     private String addDocumentToFile(Document importDoc, File metaFile, boolean addChildren, boolean isAncestor, long timeout) throws IOException, JDOMException {
 
         Document metsDocument = null;
@@ -410,7 +433,7 @@ public class ModsPlugin implements Plugin {
         // Create structure map including mets metadata sections
         Element structureMapDiv = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
         if (addChildren) {
-            structureMapDiv = addChildDocumentsToStructureDiv(metadataSection, structureMapDiv,
+            structureMapDiv = addChildDocumentsToStructureDiv(structureMapDiv,
                     retrieveChildDocuments(documentID, timeout), rootElement);
         }
 
@@ -599,13 +622,27 @@ public class ModsPlugin implements Plugin {
             } catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException
                     | IOException e) {
                 logger.error("Error while retrieving document: " + e.getMessage());
-                e.printStackTrace();
             }
         }
         return result;
     }
 
-    private Element addChildDocumentsToStructureDiv(Element metadataSection, Element structureMapDiv, List<Element> childDocuments, Element rootEle) throws JDOMException {
+    /**
+     * Creates descriptive metadata sections for all elements in the given list 'childDocuments',
+     * adds them to the given Element 'rootEle', adds corresponding structure map divs to the
+     * given Element 'structureMapDiv' and returns the augmented structure map div.
+     *
+     * @param structureMapDiv
+     *          Element to which new structure map divs for the child elements will be added
+     * @param childDocuments
+     *          List of documents that for which structure map divs are added to the given
+     *          structure map div
+     * @param rootEle
+     *          Element to which the created metadata sections are added.
+     * @return the augmented structureMapDiv Element
+     * @throws JDOMException
+     */
+    private Element addChildDocumentsToStructureDiv(Element structureMapDiv, List<Element> childDocuments, Element rootEle) throws JDOMException {
 
         Element childElement;
         Document transformedChild;
@@ -622,16 +659,13 @@ public class ModsPlugin implements Plugin {
             Element childMods = (Element) modsXPath.selectSingleNode(transformedChild);
 
             // create metadata section from transformed child doc
-            rootEle.addContent(createMETSDescriptiveMetadata((Element) childMods.clone()));
+            Element childMetadataSection = createMETSDescriptiveMetadata((Element) childMods.clone());
+            rootEle.addContent(childMetadataSection);
 
             // create structure map div for current child
-            structureMapDiv.addContent(createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), childStructureType));
+            structureMapDiv.addContent(createMETSStructureMapDiv(childMetadataSection.getAttributeValue(METS_ID), childStructureType));
         }
         return structureMapDiv;
-    }
-
-    private void addModsDocumentToFile(Document modsDocument, File metsFile) {
-
     }
 
     /**
@@ -820,7 +854,6 @@ public class ModsPlugin implements Plugin {
 
         } catch (TransformerException | IOException | JDOMException e) {
             logger.error("Error while transforming XML document: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
