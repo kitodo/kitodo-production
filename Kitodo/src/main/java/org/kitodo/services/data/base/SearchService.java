@@ -976,14 +976,4 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         Long longId = (Long) jsonObject.get("id");
         return longId.intValue();
     }
-
-    /**
-     * Return server information provided by the indexer and gathered by the rest
-     * client.
-     *
-     * @return String information about the server
-     */
-    public String getServerInformation() {
-        return indexer.getServerInformation();
-    }
 }

@@ -147,21 +147,4 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
     public void setMethod(HTTPMethods method) {
         this.method = method;
     }
-
-    /**
-     * Return server information provided and gathered by the rest client.
-     *
-     * @return String
-     *             information about the server
-     */
-    public String getServerInformation() {
-        IndexRestClient restClient = initiateRestClient();
-        String serverInformation = null;
-        try {
-            serverInformation = restClient.getServerInformation();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-        return serverInformation;
-    }
 }

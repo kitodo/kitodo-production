@@ -363,7 +363,12 @@ public class IndexingForm {
      * @return String information about the server
      */
     public String getServerInformation() {
-        return this.serviceManager.getBatchService().getServerInformation();
+        try {
+            return indexRestClient.getServerInformation();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return "";
+        }
     }
 
     /**
