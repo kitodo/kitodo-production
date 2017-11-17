@@ -687,10 +687,12 @@ public class ModsPlugin implements Plugin {
 
             metadatasection = addDocumentToFile(document, anchorFile, timeout);
 
+            metadataFile = anchorFile;
+
             // add CatalogueIDDigital of anchor metadatasection to last metadatasection _before_ anchor!
             // TODO: find better (e.g. more robust!) way to select metadatasections to which the anchor ID should be added!
             if (tempFiles.size() > 1) {
-                addAnchorIDToMetadatasections(tempFiles.get(tempFiles.size()-2), structureMap, metadatasection, anchorFilenameSuffix);
+                addAnchorIDToMetadatasections(tempFiles.get(tempFiles.size()-2), structureMap, metadatasection, anchorClass);
             }
         }
         // use metadata file if current docstruct has NO anchor class
