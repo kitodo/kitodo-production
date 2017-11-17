@@ -19,9 +19,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
@@ -69,6 +71,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Projekt;
@@ -95,6 +98,7 @@ import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.BatchDAO;
 import de.sub.goobi.persistence.ProjektDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
@@ -302,6 +306,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String Loeschen() {
         deleteMetadataDirectory();
         try {
+            cleanupBatchProcessesRelation(this.myProzess);
             this.dao.remove(this.myProzess);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not delete ", e);
@@ -312,6 +317,23 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             return FilterAlleStart();
         }
+    }
+
+    private void cleanupBatchProcessesRelation(Prozess process) throws DAOException {
+
+        for (Batch batch : process.getBatches()) {
+            HashSet<Prozess> newProcessList = new HashSet<>(0);
+            for (Prozess batchProcess : batch.getProcesses()) {
+                if (!Objects.equals(batchProcess.getId(), process.getId())) {
+                    newProcessList.add(batchProcess);
+                }
+            }
+            batch.setProcesses(newProcessList);
+            BatchDAO.save(batch);
+        }
+
+        process.setBatches(new HashSet<Batch>(0));
+        this.dao.save(process);
     }
 
     public String ContentLoeschen() {
