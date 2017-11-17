@@ -1,6 +1,7 @@
 {
     "mappings": {
         "batch": {
+            "dynamic": "strict",
             "properties": {
                 "processes": {
                     "properties": {
@@ -44,6 +45,7 @@
             }
         },
         "docket": {
+            "dynamic": "strict",
             "properties": {
                 "file": {
                     "type": "text",
@@ -71,6 +73,7 @@
             }
         },
         "filter": {
+            "dynamic": "strict",
             "properties": {
                 "user": {
                     "type": "long"
@@ -87,6 +90,7 @@
             }
         },
         "workpiece": {
+            "dynamic": "strict",
             "properties": {
                 "process": {
                     "type": "long"
@@ -101,9 +105,19 @@
             }
         },
         "template": {
+            "dynamic": "strict",
             "properties": {
                 "process": {
                     "type": "long"
+                },
+                "origin": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
                 },
                 "properties": {
                     "properties": {
@@ -115,6 +129,7 @@
             }
         },
         "project": {
+            "dynamic": "strict",
             "properties": {
                 "archived": {
                     "type": "boolean"
@@ -241,12 +256,40 @@
                     "properties": {
                         "id": {
                             "type": "long"
+                        },
+                        "login": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "surname": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
                         }
                     }
                 }
             }
         },
         "process": {
+            "dynamic": "strict",
             "properties": {
                 "batches": {
                     "properties": {
@@ -302,6 +345,18 @@
                 "ruleset": {
                     "type": "long"
                 },
+                "sortHelperArticles": {
+                    "type": "long"
+                },
+                "sortHelperDocstructs": {
+                    "type": "long"
+                },
+                "sortHelperImages": {
+                    "type": "long"
+                },
+                "sortHelperMetadata": {
+                    "type": "long"
+                },
                 "sortHelperStatus": {
                     "type": "text",
                     "fields": {
@@ -328,10 +383,31 @@
                         }
                     }
                 },
+                "workpieces": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
                 "template": {
                     "type": "boolean"
                 },
                 "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "outputName": {
                     "type": "text",
                     "fields": {
                         "keyword": {
@@ -357,6 +433,7 @@
             }
         },
         "task": {
+            "dynamic": "strict",
             "properties": {
                 "batchStep": {
                     "type": "boolean"
@@ -376,7 +453,7 @@
                 "priority": {
                     "type": "long"
                 },
-                "processInTask": {
+                "processForTask": {
                     "properties": {
                         "id": {
                             "type": "long"
@@ -399,6 +476,12 @@
                     "type": "long"
                 },
                 "processingTime": {
+                    "type": "date"
+                },
+                "processingBegin": {
+                    "type": "date"
+                },
+                "processingEnd": {
                     "type": "date"
                 },
                 "processingUser": {
@@ -440,6 +523,13 @@
                     "type": "text",
                     "fielddata": true
                 },
+                "users": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        }
+                    }
+                },
                 "userGroups": {
                     "properties": {
                         "id": {
@@ -450,6 +540,7 @@
             }
         },
         "userGroup": {
+            "dynamic": "strict",
             "properties": {
                 "permission": {
                     "type": "long"
@@ -505,6 +596,7 @@
             }
         },
         "property": {
+            "dynamic": "strict",
             "properties": {
                 "creationDate": {
                     "type": "date"
@@ -569,6 +661,7 @@
             }
         },
         "user": {
+            "dynamic": "strict",
             "properties": {
                 "active": {
                     "type": "boolean"
@@ -599,6 +692,16 @@
                     }
                 },
                 "login": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    },
+                    "fielddata": true
+                },
+                "ldapLogin": {
                     "type": "text",
                     "fields": {
                         "keyword": {
@@ -649,6 +752,22 @@
                         }
                     }
                 },
+                "tasks": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
                 "surname": {
                     "type": "text",
                     "fields": {
@@ -677,6 +796,7 @@
             }
         },
         "ruleset": {
+            "dynamic": "strict",
             "properties": {
                 "file": {
                     "type": "text",
