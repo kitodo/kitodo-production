@@ -510,11 +510,21 @@ public class ModsPlugin implements Plugin {
      * @param children
      * @return
      */
-    private HashMap<Element, String> saveChildMetadataSectionsToFile(File file,  List<Element> children) throws JDOMException, IOException {
+    private HashMap<Element, String> saveChildMetadataSectionsToFile(File file,  List<Element> children, Element structureMap) throws JDOMException, IOException {
 
-        Document metsDocument = sb.build(file);
+        Document metsDocument = null;
+        Element rootElement = null;
 
-        Element rootElement = metsDocument.getRootElement();
+        // ensure the file contains correct base mets structure!
+        if(file.length() > 0) {
+            metsDocument = sb.build(file);
+            rootElement = metsDocument.getRootElement();
+        }
+        else {
+            metsDocument = createMetsDocument();
+            rootElement = metsDocument.getRootElement();
+            rootElement.addContent(structureMap);
+        }
 
         Element childElement;
         Document transformedChild;
@@ -538,6 +548,10 @@ public class ModsPlugin implements Plugin {
 
             childMetadataSections.put(childMetadataSection, childStructureType);
         }
+
+
+        System.out.println("Save the following mets document to file " + file.getName() + ":");
+        xmlOutputter.output(metsDocument, System.out);
 
         xmlOutputter.output(metsDocument, new FileWriter(file.getAbsoluteFile()));
 
@@ -576,7 +590,7 @@ public class ModsPlugin implements Plugin {
 
     private Element addChildDocumentsToStructMap(List<Element> childDocuments, File file, Element structureMap) throws JDOMException, IOException {
         if (childDocuments.size() > 0) {
-            HashMap<Element, String> childMetadataSections = saveChildMetadataSectionsToFile(file, childDocuments);
+            HashMap<Element, String> childMetadataSections = saveChildMetadataSectionsToFile(file, childDocuments, structureMap);
             for (Element childStructureMapDiv : addChildDocumentsToStructureDiv(childMetadataSections)) {
                 structureMap.addContent(childStructureMapDiv);
             }
@@ -686,8 +700,7 @@ public class ModsPlugin implements Plugin {
             File anchorFile = new File(anchorFileFullPath);
 
             metadatasection = addDocumentToFile(document, anchorFile, timeout);
-
-            metadataFile = anchorFile;
+            structureMap = addMetadataSectionToStructureMap(structureMap, lastStructureType, metadatasection);
 
             // add CatalogueIDDigital of anchor metadatasection to last metadatasection _before_ anchor!
             // TODO: find better (e.g. more robust!) way to select metadatasections to which the anchor ID should be added!
@@ -698,14 +711,15 @@ public class ModsPlugin implements Plugin {
         // use metadata file if current docstruct has NO anchor class
         else {
             metadatasection = addDocumentToFile(document, metadataFile, timeout);
+            structureMap = addMetadataSectionToStructureMap(structureMap, lastStructureType, metadatasection);
         }
 
         if (addChildren) {
             structureMap = addChildDocumentsToStructMap(retrieveChildDocuments(documentID, timeout), metadataFile, structureMap);
         }
 
-        // add mets data of hit itself to global struct map return the updated map
-        return addMetadataSectionToStructureMap(structureMap, lastStructureType, metadatasection);
+        // return the updated map
+        return structureMap;
     }
 
 
