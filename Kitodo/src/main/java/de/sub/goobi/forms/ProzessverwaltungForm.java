@@ -138,6 +138,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private static String DONEDIRECTORYNAME = "fertig/";
     private int processId;
     private int taskId;
+    private List<ProcessDTO> selectedProcesses = new ArrayList<>();
 
     /**
      * Constructor.
@@ -986,14 +987,12 @@ public class ProzessverwaltungForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void exportDMSSelection() {
         ExportDms export = new ExportDms();
-        for (ProcessDTO proz : (List<ProcessDTO>) this.page.getListReload()) {
-            if (proz.isSelected()) {
-                try {
-                    export.startExport(serviceManager.getProcessService().convertDtoToBean(proz));
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("ExportError", e.getMessage());
-                    logger.error(e);
-                }
+        for (ProcessDTO processDTO : this.getSelectedProcesses()) {
+            try {
+                export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
+            } catch (Exception e) {
+                Helper.setFehlerMeldung("ExportError", e.getMessage());
+                logger.error(e);
             }
         }
         Helper.setMeldung(null, "ExportFinished", "");
@@ -1082,10 +1081,8 @@ public class ProzessverwaltungForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void downloadToHomeSelection() {
         WebDav myDav = new WebDav();
-        for (ProcessDTO process : (List<ProcessDTO>) this.page.getListReload()) {
-            if (process.isSelected()) {
-                download(myDav, process);
-            }
+        for (ProcessDTO processDTO : this.getSelectedProcesses()) {
+            download(myDav, processDTO);
         }
         Helper.setMeldung(null, "createdInUserHomeAll", "");
     }
@@ -1145,11 +1142,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusUpForSelection() throws DAOException, DataException {
-        List<ProcessDTO> processes = this.page.getListReload();
-        for (ProcessDTO process : processes) {
-            if (process.isSelected()) {
-                setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
-            }
+        List<ProcessDTO> processDTOS = this.getSelectedProcesses();
+        for (ProcessDTO processDTO : processDTOS) {
+            setTaskStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
@@ -1232,11 +1227,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusDownForSelection() throws DAOException {
-        List<ProcessDTO> processes = this.page.getListReload();
-        for (ProcessDTO process : processes) {
-            if (process.isSelected()) {
-                setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
-            }
+        List<ProcessDTO> processDTOS = this.getSelectedProcesses();
+        for (ProcessDTO processDTO : processDTOS) {
+            setTaskStatusDown(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
@@ -1289,26 +1282,6 @@ public class ProzessverwaltungForm extends BasisForm {
         save();
         deleteSymlinksFromUserHomes();
         return null;
-    }
-
-    /**
-     * Auswahl mittels Selectboxen.
-     */
-    @SuppressWarnings("unchecked")
-    public void selectAll() {
-        for (ProcessDTO process : (List<ProcessDTO>) this.page.getList()) {
-            process.setSelected(true);
-        }
-    }
-
-    /**
-     * Auswahl mittels Selectboxen.
-     */
-    @SuppressWarnings("unchecked")
-    public void deselectAll() {
-        for (ProcessDTO process : (List<ProcessDTO>) this.page.getList()) {
-            process.setSelected(false);
-        }
     }
 
     /**
@@ -1529,13 +1502,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void calculateMetadataAndImagesSelection() {
-        ArrayList<ProcessDTO> selection = new ArrayList<>();
-        for (ProcessDTO p : (List<ProcessDTO>) this.page.getListReload()) {
-            if (p.isSelected()) {
-                selection.add(p);
-            }
-        }
-        calculateMetadataAndImages(selection);
+        calculateMetadataAndImages(this.getSelectedProcesses());
     }
 
     /**
@@ -1666,15 +1633,10 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void kitodoScriptSelection() {
-        ArrayList<ProcessDTO> selection = new ArrayList<>();
-        for (ProcessDTO p : (List<ProcessDTO>) this.page.getListReload()) {
-            if (p.isSelected()) {
-                selection.add(p);
-            }
-        }
+
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(selection), this.kitodoScript);
+            gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.selectedProcesses), this.kitodoScript);
         } catch (DAOException | DataException e) {
             logger.error(e);
         }
@@ -2611,5 +2573,24 @@ public class ProzessverwaltungForm extends BasisForm {
             logger.error("Unable to load user groups: " + e.getMessage());
             return new LinkedList<>();
         }
+    }
+
+    /**
+     * Returns selected processDTO.
+     *
+     * @return The list of processDTO.
+     */
+    public List<ProcessDTO> getSelectedProcesses() {
+        return selectedProcesses;
+    }
+
+    /**
+     * Sets selected processDTOs.
+     *
+     * @param selectedProcesses
+     *          The list of ProcessDTOs.
+     */
+    public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
+        this.selectedProcesses = selectedProcesses;
     }
 }
