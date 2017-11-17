@@ -20,7 +20,8 @@
                  value="#{RulesetForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
-                 rows="#{LoginForm.myBenutzer.tableSize}">
+                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 paginatorPosition="bottom">
 
         <p:column headerText="#{msgs.titel}">
             <h:outputText value="#{item.title}"/>

@@ -229,7 +229,6 @@ tr.ui-widget-header,
 tr.ui-widget-content,
 .ui-panelgrid .ui-widget-content {
     background: #fff;
-    border-top: 1px solid #d8d8d8 !important;
     color: #1b2b36;
 }
 
@@ -285,6 +284,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-tabs.ui-widget-content,
 .ui-tabmenu.ui-widget-content {
     border: 0;
+    background: #d8d8d8;
 }
 
 .ui-tabs,
@@ -294,13 +294,12 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 }
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav {
-    padding: 0 .7em;
+    padding: 0 1.5em;
 }
 
 .ui-tabs.ui-tabs-top>.ui-tabs-nav li,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
     top: 0px;
-    margin-left: .7em;
     margin-right: .7em;
 }
 

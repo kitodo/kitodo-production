@@ -605,6 +605,10 @@ footer {
     border: 0 none !important;
 }
 
+.ui-datatable thead th.ui-state-default {
+    background: #fff;
+}
+
 .ui-datatable tbody tr:last-child td {
     border-bottom: none !important;
 }
@@ -644,12 +648,13 @@ footer {
     color: #999;
 }
 
-.ui-tabs .ui-tabs-panel {
-    padding: 0;
+.ui-tabs .ui-tabs-panels {
+    padding: 0 1.5em 1.3em 1.5em;
 }
 
-.ui-tabs .ui-tabs-panel > div {
-    padding: 1.3em 1.5em;
+.ui-tabs .ui-tabs-panel {
+    padding: 1.5em;
+    background: #fff;
 }
 
 .ui-panelgrid-cell > div {
