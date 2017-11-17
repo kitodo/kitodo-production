@@ -329,7 +329,7 @@ public class ModsPlugin implements Plugin {
             identifierXPath = XPath.newInstance(getIdentifierXPath(configuration.getTitle()));
             metsDivXPath = XPath.newInstance(".//mets:div");
             catalogIDDigitalXPath = XPath.newInstance(".//goobi:metadata[@name='CatalogIDDigital']");
-            goobiXpath = XPath.newInstance("//goobi:goobi");
+            goobiXpath = XPath.newInstance(".//goobi:goobi");
         } catch (JDOMException e) {
             logger.error("Error while initializing XPath variables: " + e.getMessage());
         }
@@ -500,8 +500,11 @@ public class ModsPlugin implements Plugin {
             }
         }
 
-        rootElement.addContent(customStructureMap);
-        xmlOutputter.output(metsDocument, new FileWriter(file.getAbsoluteFile()));
+        Element structureMapElement = (Element) rootElement.getChild("structMap", METS_NAMESPACE);
+        if (Objects.equals(structureMapElement, null) || !structureMapElement.getAttributeValue(METS_TYPE).equals(METS_LOGICAL)){
+            rootElement.addContent(customStructureMap);
+            xmlOutputter.output(metsDocument, new FileWriter(file.getAbsoluteFile()));
+        }
     }
 
     /**
@@ -518,13 +521,12 @@ public class ModsPlugin implements Plugin {
         // ensure the file contains correct base mets structure!
         if(file.length() > 0) {
             metsDocument = sb.build(file);
-            rootElement = metsDocument.getRootElement();
         }
         else {
             metsDocument = createMetsDocument();
-            rootElement = metsDocument.getRootElement();
-            rootElement.addContent(structureMap);
         }
+
+        rootElement = metsDocument.getRootElement();
 
         Element childElement;
         Document transformedChild;
@@ -548,10 +550,6 @@ public class ModsPlugin implements Plugin {
 
             childMetadataSections.put(childMetadataSection, childStructureType);
         }
-
-
-        System.out.println("Save the following mets document to file " + file.getName() + ":");
-        xmlOutputter.output(metsDocument, System.out);
 
         xmlOutputter.output(metsDocument, new FileWriter(file.getAbsoluteFile()));
 
@@ -623,37 +621,43 @@ public class ModsPlugin implements Plugin {
      * @throws IOException
      */
     private Element addAnchorIDToMetadatasections(File metadataFile, Element structureMap, Element anchorMetadataSection, String ancherClassName) throws JDOMException, IOException {
+        // anchor element that will be added to all corresponding dmd sections!
         Element anchorCatalogIDElement = (Element) catalogIDDigitalXPath.selectSingleNode(anchorMetadataSection);
         String anchorCatalogID = anchorCatalogIDElement.getText();
 
-        // get current topmost mets:div in given structureMap (holds reference to metadata sections in file to which the anchor ID should be added!)
-        XPath topMostDivXpath = XPath.newInstance("mets:div");
-        Element topmostMetsDiv = (Element) topMostDivXpath.selectSingleNode(structureMap);
+        Element anchorIDElement = new Element("metadata", GOOBI_NAMESPACE);
 
-        String metadatasectionID = topmostMetsDiv.getAttributeValue(METS_DMD_ID);
+        anchorIDElement.setAttribute("anchorId", ancherClassName);
+        anchorIDElement.setAttribute("name", "CatalogIDDigital");
+        anchorIDElement.setText(anchorCatalogID);
 
+        // retrieve all dmd sections from given metadata file
         Document childDoc = sb.build(metadataFile);
         Element childRoot = childDoc.getRootElement();
 
-        XPath dmdSecXPath = XPath.newInstance("mets:dmdSec[@ID='" + metadatasectionID + "']");
+        // get all topmost mets:div elements in given structureMap
+        // (hold DMDID references to metadata sections in file to which the anchor ID should be added!)
+        XPath topMostDivXpath = XPath.newInstance("mets:div");
 
-        Element childMetadataSection = (Element) dmdSecXPath.selectSingleNode(childRoot);
+        for (Object topmostDiv : topMostDivXpath.selectNodes(structureMap)) {
+            Element currentTopMostElement = (Element) topmostDiv;
 
-        if(!Objects.equals(childMetadataSection, null)) {
+            String metadatasectionID = currentTopMostElement.getAttributeValue(METS_DMD_ID);
 
-            Element goobiElement = (Element) goobiXpath.selectSingleNode(childMetadataSection);
+            XPath dmdSecXPath = XPath.newInstance("mets:dmdSec[@ID='" + metadatasectionID + "']");
 
-            Element anchorIDElement = new Element("metadata", GOOBI_NAMESPACE);
+            Element childMetadataSection = (Element) dmdSecXPath.selectSingleNode(childRoot);
 
-            anchorIDElement.setAttribute("anchorId", ancherClassName);
-            anchorIDElement.setAttribute("name", "CatalogIDDigital");
-            anchorIDElement.setText(anchorCatalogID);
+            if(!Objects.equals(childMetadataSection, null)) {
 
-            goobiElement.addContent(anchorIDElement);
+                Element goobiElement = (Element) goobiXpath.selectSingleNode(childMetadataSection);
 
-            // save updated file
-            xmlOutputter.output(childDoc, new FileWriter(metadataFile.getAbsoluteFile()));
+                goobiElement.addContent((Element) anchorIDElement.clone());
+            }
         }
+
+        // save updated file
+        xmlOutputter.output(childDoc, new FileWriter(metadataFile.getAbsoluteFile()));
 
         return structureMap;
     }
@@ -700,23 +704,33 @@ public class ModsPlugin implements Plugin {
             File anchorFile = new File(anchorFileFullPath);
 
             metadatasection = addDocumentToFile(document, anchorFile, timeout);
-            structureMap = addMetadataSectionToStructureMap(structureMap, lastStructureType, metadatasection);
-
-            // add CatalogueIDDigital of anchor metadatasection to last metadatasection _before_ anchor!
-            // TODO: find better (e.g. more robust!) way to select metadatasections to which the anchor ID should be added!
-            if (tempFiles.size() > 1) {
-                addAnchorIDToMetadatasections(tempFiles.get(tempFiles.size()-2), structureMap, metadatasection, anchorClass);
-            }
         }
         // use metadata file if current docstruct has NO anchor class
         else {
             metadatasection = addDocumentToFile(document, metadataFile, timeout);
-            structureMap = addMetadataSectionToStructureMap(structureMap, lastStructureType, metadatasection);
         }
 
         if (addChildren) {
             structureMap = addChildDocumentsToStructMap(retrieveChildDocuments(documentID, timeout), metadataFile, structureMap);
         }
+
+        if (!Objects.equals(anchorClass, null) && !anchorClass.isEmpty()) {
+            // add CatalogueIDDigital of anchor metadatasection to last metadatasection _before_ anchor!
+            // TODO: find better (e.g. more robust!) way to select metadata sections to which the anchor ID should be added!
+            if (tempFiles.size() > 0) {
+                // add anchor references to _last_ anchor file
+                if (tempFiles.size() > 1) {
+                    addAnchorIDToMetadatasections(tempFiles.get(tempFiles.size() - 2), structureMap, metadatasection,
+                            anchorClass);
+                }
+                // add anchor references to _base_ file (if the requested document itself has a docstruct type with "anchor=true" in the used ruleset!)
+                else {
+                    addAnchorIDToMetadatasections(metadataFile, structureMap, metadatasection, anchorClass);
+                }
+            }
+        }
+
+        structureMap = addMetadataSectionToStructureMap(structureMap, lastStructureType, metadatasection);
 
         // return the updated map
         return structureMap;
@@ -831,6 +845,8 @@ public class ModsPlugin implements Plugin {
                 for (File f : tempFiles) {
                     addStructureMapToFile(structMap, f);
                 }
+                // FIXME: this shouldn't be necessary (the structmap in "tempFile" should be correct to begin with!)
+                addStructureMapToFile(structMap, tempFile);
 
                 MetsMods mm = new MetsMods(preferences);
 
@@ -838,7 +854,7 @@ public class ModsPlugin implements Plugin {
                 // reviewing the constructed DigitalDocument can be done via
                 // "System.out.println(mm.getDigitalDocument());"
 
-                //deleteTemporaryFiles();
+                deleteTemporaryFiles();
 
                 DigitalDocument dd = mm.getDigitalDocument();
                 ff = new XStream(preferences);
