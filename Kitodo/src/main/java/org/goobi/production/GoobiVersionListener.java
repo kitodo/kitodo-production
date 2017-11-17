@@ -18,6 +18,7 @@ import java.util.jar.Manifest;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionEvent;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpSessionListener;
  * Listener to set up Goobi versioning information from Manifest on application
  * startup.
  */
+@WebListener
 public class GoobiVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
     public GoobiVersionListener() {

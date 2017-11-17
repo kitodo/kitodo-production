@@ -14,6 +14,7 @@ package org.goobi.production;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 /**
  * Listener to set up static ImageIO library with web application class loader.
@@ -28,6 +29,7 @@ import javax.servlet.ServletContextListener;
  * </p>
  *
  */
+@WebListener
 public class ImageIOInitializer implements ServletContextListener {
 
     static {

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
+@WebServlet(name = "WebInterface", urlPatterns = {"/wi"})
 public class WebInterface extends HttpServlet {
     private static final Logger logger = LogManager.getLogger(WebInterface.class);
     private static final long serialVersionUID = 6187229284187412768L;

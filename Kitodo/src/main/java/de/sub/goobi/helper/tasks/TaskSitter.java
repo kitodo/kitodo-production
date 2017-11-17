@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.joda.time.Duration;
 
@@ -42,6 +43,7 @@ import org.joda.time.Duration;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
+@WebListener
 public class TaskSitter implements Runnable, ServletContextListener {
     private static final int KEEP_FAILED = 10;
     private static final long KEEP_FAILED_MINS = 250;
