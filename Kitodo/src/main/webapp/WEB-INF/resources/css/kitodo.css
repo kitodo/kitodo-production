@@ -453,6 +453,10 @@ main {
     margin-left: 20px;
 }
 
+.content-wrapper {
+    padding: .7em;
+}
+
 .input {
     width:100%;
 }
