@@ -304,7 +304,7 @@ public class ProjekteForm extends BasisForm {
         // to be deleted fileGroups ids are listed
         // and deleted after a commit
         this.deletedFileGroups.add(this.myFilegroup.getId());
-        return redirectToEdit("");
+        return null;
     }
 
     /*

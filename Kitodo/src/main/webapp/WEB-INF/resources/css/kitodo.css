@@ -663,38 +663,6 @@ footer {
     padding-right: 10px;
 }
 
-.ui-inputfield.ui-inputtext::-webkit-input-placeholder { /* Webkit, Blink */
-    color: #006DBD;
-}
-.ui-inputfield.ui-inputtext:-moz-placeholder { /* Firefox 4-18 */
-    color: #006DBD;
-}
-.ui-inputfield.ui-inputtext::-moz-placeholder { /* Firefox 19+ */
-    color: #006DBD;
-}
-.ui-inputfield.ui-inputtext:-ms-input-placeholder { /* IE 10-11 */
-    color: #006DBD;
-}
-.ui-inputfield.ui-inputtext::-ms-input-placeholder { /* Edge */
-    color: #006DBD;
-}
-
-.ui-inputfield.ui-inputtext:disabled::-webkit-input-placeholder { /* Webkit, Blink */
-    color: #d8d8d8;
-}
-.ui-inputfield.ui-inputtext:disabled:-moz-placeholder { /* Firefox 4-18 */
-    color: #d8d8d8;
-}
-.ui-inputfield.ui-inputtext:disabled::-moz-placeholder { /* Firefox 19+ */
-    color: #d8d8d8;
-}
-.ui-inputfield.ui-inputtext:disabled:-ms-input-placeholder { /* IE 10-11 */
-    color: #d8d8d8;
-}
-.ui-inputfield.ui-inputtext:disabled::-ms-input-placeholder { /* Edge */
-    color: #d8d8d8;
-}
-
 .ui-selectonemenu .ui-selectonemenu-trigger {
     background: #fff;
     color: #006DBD;

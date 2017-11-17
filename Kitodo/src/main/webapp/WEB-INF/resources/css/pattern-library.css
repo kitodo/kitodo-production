@@ -61,6 +61,11 @@ button .ui-icon {
     border-radius: 0;
 }
 
+.ui-button-text-icon-left .ui-icon.fa,
+.ui-button-text-icon-right .ui-icon.fa {
+    overflow: visible;
+}
+
 .ui-button-text-icon-left .ui-button-text {
     padding: .7em .7em .7em 2.1em;
 }
@@ -100,6 +105,22 @@ button .ui-icon {
     padding: .7em;
     color: #0971b8;
     box-shadow: 0 0 0 transparent;
+}
+
+.ui-inputfield.ui-inputtext::-webkit-input-placeholder { /* Webkit, Blink */
+    color: #d8d8d8;
+}
+.ui-inputfield.ui-inputtext:-moz-placeholder { /* Firefox 4-18 */
+    color: #d8d8d8;
+}
+.ui-inputfield.ui-inputtext::-moz-placeholder { /* Firefox 19+ */
+    color: #d8d8d8;
+}
+.ui-inputfield.ui-inputtext:-ms-input-placeholder { /* IE 10-11 */
+    color: #d8d8d8;
+}
+.ui-inputfield.ui-inputtext::-ms-input-placeholder { /* Edge */
+    color: #d8d8d8;
 }
 
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label,
