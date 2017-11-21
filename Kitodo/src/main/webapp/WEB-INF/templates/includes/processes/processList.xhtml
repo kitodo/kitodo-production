@@ -24,7 +24,7 @@
                      rows="#{LoginForm.myBenutzer.tableSize}"
                      paginatorPosition="bottom">
 
-            <p:column headerText="#{msgs.prozessTitel}">
+            <p:column headerText="#{msgs.prozessTitel}" filterBy="#{item.title}">
                 <h:outputText value="#{item.title}"/>
             </p:column>
 

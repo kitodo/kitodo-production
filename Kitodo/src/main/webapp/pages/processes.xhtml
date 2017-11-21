@@ -25,8 +25,8 @@
                 <!-- filters -->
                 <h:form id="filterMenu">
                     <div class="ui-inputgroup">
-                        <p:inputText placeholder="#{msgs.filter}"/>
-                        <p:commandButton type="submit" action="#{ProzessverwaltungForm.filterAll}" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
+                        <p:inputText id="filterfield" placeholder="#{msgs.filter}"/>
+                        <p:commandButton onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
                         <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down" styleClass="button-filled-blue"/>
                         <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                             <ul>
@@ -35,7 +35,7 @@
                                 </li>
                                 <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
                                     <li>
-                                        <p:commandLink value="#{filter}"/>
+                                        <p:commandLink value="#{filter}" onclick="setFilter('#{filter}')"/>
                                         <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete button-blue">
                                             <i class="fa fa-trash-o fa-lg"/>
                                         </p:commandLink>
@@ -43,7 +43,26 @@
                                 </ui:repeat>
                             </ul>
                         </p:overlayPanel>
+                        <script type="text/javascript">
+                            //<![CDATA[
+                                function setFilter(filterString) {
+                                    document.getElementById('filterMenu:filterfield').value = filterString;
+                                    applyFilter(filterString);
+                                }
 
+                                function applyFilter(filterString) {
+                                    var invisibleFilter = document.getElementById('j_id_2s:j_id_2u:j_id_2v:j_id_2w:filter');
+                                    invisibleFilter.value = filterString;
+                                    invisibleFilter.dispatchEvent(new Event('keyup'));
+                                }
+
+                                window.onload = function () {
+                                    document.getElementById('filterMenu:filterfield').addEventListener('change', function () {
+                                        applyFilter(this.value);
+                                    });
+                                }
+                            //]]>
+                        </script>
                     </div>
                 </h:form>
             </p:panel>
