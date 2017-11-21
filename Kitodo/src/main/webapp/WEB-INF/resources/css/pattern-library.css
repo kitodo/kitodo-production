@@ -62,7 +62,8 @@ button .ui-icon {
 }
 
 .ui-button-text-icon-left .ui-icon.fa,
-.ui-button-text-icon-right .ui-icon.fa {
+.ui-button-text-icon-right .ui-icon.fa,
+.ui-button-icon-only .ui-icon.fa {
     overflow: visible;
 }
 
