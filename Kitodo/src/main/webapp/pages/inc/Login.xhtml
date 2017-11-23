@@ -108,5 +108,20 @@
                            action="#{LoginForm.NochmalEinloggen}"/>
 
         </h:panelGroup>
+        <h:panelGroup>
+            <h:outputText value="SpringSecurity Login"/><br/><br/>
+            <font color="red">
+                <h:outputLabel value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
+            </font>
+            <form action="${request.contextPath}/appLogin" method="POST">
+                <h:outputLabel value="UserName:" />
+                <input type="text" name="app_username"/><br/><br/>
+                <h:outputLabel value="Password:" />
+                <input type="password" name="app_password"/> <br/><br/>
+                <input type="submit" value="Login"/>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </form>
+
+        </h:panelGroup>
     </h:panelGrid>
 </ui:composition>
