@@ -798,7 +798,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                     serviceManager.getHistoryService().save(historyOpen);
 
                     /* wenn es ein automatischer Schritt mit Script ist */
-                    if (task.isTypeAutomatic()) {
+                    if (task.getEditTypeEnum() == TaskEditType.AUTOMATIC) {
                         automaticTasks.add(task);
                     } else if (task.isTypeAcceptClose()) {
                         tasksToFinish.add(task);

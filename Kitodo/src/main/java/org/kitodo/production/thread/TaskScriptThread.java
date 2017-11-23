@@ -21,6 +21,7 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
@@ -53,7 +54,7 @@ public class TaskScriptThread extends EmptyTask {
     @Override
     public void run() {
 
-        boolean automatic = this.task.isTypeAutomatic();
+        boolean automatic = this.task.getEditTypeEnum() == TaskEditType.AUTOMATIC;
         if (logger.isDebugEnabled()) {
             logger.debug("task is automatic: " + automatic);
         }

@@ -30,6 +30,7 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
@@ -280,9 +281,9 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                         fileService.delete(anchorUri);
                         List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
-                        for (Task t : tasks) {
-                            if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                                TaskScriptThread myThread = new TaskScriptThread(t);
+                        for (Task task : tasks) {
+                            if (task.getProcessingStatus() == 1 && task.getEditTypeEnum() == TaskEditType.AUTOMATIC) {
+                                TaskScriptThread myThread = new TaskScriptThread(task);
                                 myThread.start();
                             }
                         }
