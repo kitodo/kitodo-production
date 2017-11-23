@@ -83,14 +83,8 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeExportDms")
     private boolean typeExportDMS = false;
 
-    @Column(name = "typeAcceptModule")
-    private boolean typeAcceptModule = false;
-
     @Column(name = "typeAcceptClose")
     private boolean typeAcceptClose = false;
-
-    @Column(name = "typeAcceptModuleAndClose")
-    private boolean typeAcceptModuleAndClose = false;
 
     @Column(name = "typeScriptStep")
     private Boolean typeScriptStep = false;
@@ -100,9 +94,6 @@ public class Task extends BaseIndexedBean {
 
     @Column(name = "typeAutomaticScriptPath")
     private String typeAutomaticScriptPath;
-
-    @Column(name = "typeModuleName")
-    private String typeModuleName;
 
     @Column(name = "typeCloseVerify")
     private boolean typeCloseVerify = false;
@@ -404,22 +395,6 @@ public class Task extends BaseIndexedBean {
         this.typeAcceptClose = typeAcceptClose;
     }
 
-    public boolean isTypeAcceptModule() {
-        return this.typeAcceptModule;
-    }
-
-    public void setTypeAcceptModule(boolean typeAcceptModule) {
-        this.typeAcceptModule = typeAcceptModule;
-    }
-
-    public boolean isTypeAcceptModuleAndClose() {
-        return this.typeAcceptModuleAndClose;
-    }
-
-    public void setTypeAcceptModuleAndClose(boolean typeAcceptModuleAndClose) {
-        this.typeAcceptModuleAndClose = typeAcceptModuleAndClose;
-    }
-
     public boolean isTypeAutomatic() {
         return this.typeAutomatic;
     }
@@ -434,14 +409,6 @@ public class Task extends BaseIndexedBean {
 
     public void setTypeCloseVerify(boolean typeCloseVerify) {
         this.typeCloseVerify = typeCloseVerify;
-    }
-
-    public String getTypeModuleName() {
-        return this.typeModuleName;
-    }
-
-    public void setTypeModuleName(String typeModuleName) {
-        this.typeModuleName = typeModuleName;
     }
 
     public Boolean getTypeScriptStep() {
