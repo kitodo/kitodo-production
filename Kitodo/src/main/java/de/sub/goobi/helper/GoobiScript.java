@@ -528,7 +528,6 @@ public class GoobiScript {
             if (proz.getTasks() != null) {
                 for (Task task : proz.getTasks()) {
                     if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
-                        task.setTypeModuleName(this.myParameters.get("module"));
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DataException e) {

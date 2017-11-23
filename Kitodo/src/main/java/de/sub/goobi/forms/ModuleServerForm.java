@@ -38,7 +38,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
@@ -209,31 +208,6 @@ public class ModuleServerForm implements Serializable {
      */
     public String startShortSession(Task inSchritt) throws GoobiException, XmlRpcException {
         myModule = null;
-        if (inSchritt.getTypeModuleName() == null || inSchritt.getTypeModuleName().length() == 0) {
-            Helper.setFehlerMeldung("this step has no mudule");
-            return null;
-        }
-
-        /*
-         * zusätzliche Parameter neben dem Modulnamen
-         */
-        HashMap<String, Object> typeParameters = new HashMap<>();
-        String schrittModuleName = inSchritt.getTypeModuleName();
-        StrTokenizer tokenizer = new StrTokenizer(inSchritt.getTypeModuleName());
-        int counter = 0;
-        while (tokenizer.hasNext()) {
-            String tok = (String) tokenizer.next();
-            if (counter == 0) {
-                schrittModuleName = tok;
-            } else {
-                if (tok.contains(":")) {
-                    String key = tok.split(":")[0];
-                    String value = tok.split(":")[1];
-                    typeParameters.put(key, value);
-                }
-            }
-            counter++;
-        }
 
         /*
          * Modulserver läuft noch nicht
@@ -242,14 +216,6 @@ public class ModuleServerForm implements Serializable {
             throw new GoobiException(0, "Der Modulserver läuft nicht");
         }
 
-        /*
-         * ohne gewähltes Modul gleich wieder raus
-         */
-        for (ModuleDesc md : modulmanager) {
-            if (md.getName().equals(schrittModuleName)) {
-                myModule = md;
-            }
-        }
         if (myModule == null) {
             Helper.setFehlerMeldung("Module not found");
             return null;
@@ -263,7 +229,7 @@ public class ModuleServerForm implements Serializable {
         myRunningShortSessions.put(tempID, processId);
 
         GoobiModuleParameter gmp1 = new GoobiModuleParameter(processId, tempID,
-                myModule.getModuleClient().longsessionID, typeParameters);
+                myModule.getModuleClient().longsessionID, null);
         HttpSession insession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
         String applicationUrl = new HelperForm().getServletPathWithHostAsUrl();
