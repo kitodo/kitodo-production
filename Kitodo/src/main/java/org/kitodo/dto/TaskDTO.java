@@ -38,7 +38,6 @@ public class TaskDTO extends BaseDTO {
     private Integer usersSize;
     private List<UserGroupDTO> userGroups;
     private Integer userGroupsSize;
-    private boolean typeAutomatic;
     private boolean typeMetadata;
     private boolean typeImportFileUpload;
     private boolean typeExportRussian;
@@ -367,25 +366,6 @@ public class TaskDTO extends BaseDTO {
      */
     public void setUserGroupsSize(Integer userGroupsSize) {
         this.userGroupsSize = userGroupsSize;
-    }
-
-    /**
-     * Get information if task type is automatic.
-     *
-     * @return true or false
-     */
-    public boolean isTypeAutomatic() {
-        return typeAutomatic;
-    }
-
-    /**
-     * Set information if task type is automatic.
-     *
-     * @param typeAutomatic
-     *            as boolean
-     */
-    public void setTypeAutomatic(boolean typeAutomatic) {
-        this.typeAutomatic = typeAutomatic;
     }
 
     /**
