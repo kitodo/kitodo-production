@@ -141,17 +141,6 @@
                                             value="#{msgs.stepPlugin} (#{AktuelleSchritteForm.mySchritt.stepPlugin})"/>
                                 </h:commandLink>
 
-                                <!-- Modul-Schaltknopf -->
-                                <h:commandLink id="action2"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeModuleName != null and AktuelleSchritteForm.mySchritt.typeModuleName != ''}"
-                                               action="#{AktuelleSchritteForm.executeModule}"
-                                               title="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typeModuleName})">
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt=""
-                                                    style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText
-                                            value="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typeModuleName})"/>
-                                </h:commandLink>
-
                                 <!-- Script-Schaltknopf -->
                                 <h:commandLink id="action3"
                                                rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
