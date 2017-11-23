@@ -65,9 +65,6 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeMetadata")
     private boolean typeMetadata = false;
 
-    @Column(name = "typeAutomatic")
-    private boolean typeAutomatic = false;
-
     @Column(name = "typeImportFileUpload")
     private boolean typeImportFileUpload = false;
 
@@ -425,14 +422,6 @@ public class Task extends BaseIndexedBean {
 
     public void setTypeAcceptClose(boolean typeAcceptClose) {
         this.typeAcceptClose = typeAcceptClose;
-    }
-
-    public boolean isTypeAutomatic() {
-        return this.typeAutomatic;
-    }
-
-    public void setTypeAutomatic(boolean typeAutomatic) {
-        this.typeAutomatic = typeAutomatic;
     }
 
     public boolean isTypeCloseVerify() {

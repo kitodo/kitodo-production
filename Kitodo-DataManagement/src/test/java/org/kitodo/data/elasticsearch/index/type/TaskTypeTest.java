@@ -76,7 +76,6 @@ public class TaskTypeTest {
         firstTask.setProcessingEnd(localDate.toDate());
         firstTask.setHomeDirectory((short) 1);
         firstTask.setTypeMetadata(true);
-        firstTask.setTypeAutomatic(false);
         firstTask.setBatchStep(true);
         firstTask.setProcessingUser(users.get(0));
         firstTask.setProcess(process);
@@ -117,7 +116,7 @@ public class TaskTypeTest {
         HttpEntity document = taskType.createDocument(task);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"processForTask.id\":1,"
-                + "\"processForTask.title\":\"First\",\"homeDirectory\":\"1\",\"typeAutomatic\":false,"
+                + "\"processForTask.title\":\"First\",\"homeDirectory\":\"1\","
                 + "\"ordering\":1,\"typeMetadata\":true,\"priority\":1,\"typeImportFileUpload\":false,"
                 + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-01\",\"batchStep\":true,"
                 + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":1,\"processingStatus\":3,"
@@ -130,7 +129,7 @@ public class TaskTypeTest {
         document = taskType.createDocument(task);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"processForTask.id\":null,"
-                + "\"processForTask.title\":null,\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":2,"
+                + "\"processForTask.title\":null,\"homeDirectory\":\"0\",\"ordering\":2,"
                 + "\"typeMetadata\":false,\"title\":\"Rendering\",\"priority\":2,\"typeImportFileUpload\":false,"
                 + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-10\",\"batchStep\":false,"
                 + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":2,\"processingStatus\":2,\"editType\":0,"
@@ -142,7 +141,7 @@ public class TaskTypeTest {
         document = taskType.createDocument(task);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"processForTask.id\":null,"
-                + "\"processForTask.title\":null,\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":0,"
+                + "\"processForTask.title\":null,\"homeDirectory\":\"0\",\"ordering\":0,"
                 + "\"typeMetadata\":false,\"priority\":0,\"typeImportFileUpload\":false,"
                 + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":false,\"users\":[],"
                 + "\"processingUser\":null,\"processingStatus\":1,\"userGroups\":[],\"editType\":0,"

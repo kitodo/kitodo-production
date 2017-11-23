@@ -43,7 +43,6 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("processingEnd", processingEnd);
         taskObject.put("homeDirectory", String.valueOf(task.getHomeDirectory()));
         taskObject.put("typeMetadata", task.isTypeMetadata());
-        taskObject.put("typeAutomatic", task.isTypeAutomatic());
         taskObject.put("typeImportFileUpload", task.isTypeImportFileUpload());
         taskObject.put("typeExportRussian", task.isTypeExportRussian());
         taskObject.put("typeImagesRead", task.isTypeImagesRead());
