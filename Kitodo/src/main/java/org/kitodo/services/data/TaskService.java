@@ -329,7 +329,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
         query.must(createSimpleQuery("processingUser", processingUser, true));
-        query.must(createSimpleQuery("typeAutomatic", String.valueOf(typeAutomatic), true));
+        if (typeAutomatic) {
+            query.must(createSimpleQuery("editType", 4, true));
+        } else {
+            query.must(createSimpleQuery("editType", 4, false));
+        }
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -352,7 +356,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
         query.must(createSimpleQuery("processingUser", processingUser, true));
         query.must(createSimpleQuery("priority", priority, true));
-        query.must(createSimpleQuery("typeAutomatic", String.valueOf(typeAutomatic), true));
+        if (typeAutomatic) {
+            query.must(createSimpleQuery("editType", 4, true));
+        } else {
+            query.must(createSimpleQuery("editType", 4, false));
+        }
         return searcher.findDocuments(query.toString(), sort);
     }
 
