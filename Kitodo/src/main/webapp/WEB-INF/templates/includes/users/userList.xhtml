@@ -1,0 +1,55 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dataTable var="item"
+                 value="#{BenutzerverwaltungForm.lazyDTOModel}"
+                 lazy="true"
+                 paginator="true"
+                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 paginatorPosition="bottom">
+        <p:column headerText="#{msgs.benutzer}">
+            <h:outputText value="#{item.surname}, #{item.name}"/>
+        </p:column>
+        <p:column headerText="#{msgs.standort}">
+            <h:outputText value="#{item.location}"/>
+        </p:column>
+        <p:column headerText="#{msgs.benutzergruppen}">
+            <ui:repeat var="usergroup"
+                       value="#{item.userGroups}"
+                       varStatus="status">
+                <h:outputText value="#{usergroup.title}"/>
+                <h:outputText value=", " rendered="#{not status.last}"/>
+            </ui:repeat>
+        </p:column>
+        <p:column headerText="#{msgs.projekte}">
+            <ui:repeat var="project"
+                       value="#{item.projects}"
+                       varStatus="status">
+                <h:outputText value="#{project.title}"/>
+                <h:outputText value=", " rendered="#{not status.last}"/>
+            </ui:repeat>
+        </p:column>
+        <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+            <h:link outcome="userEdit" title="#{msgs.benutzerBearbeiten}">
+                <f:param name="id" value="#{item.id}"/>
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+            <p:commandLink action="#{LoginForm.EinloggenAls}" title="#{msgs.benutzerprofilLaden}"><i class="fa fa-user-plus fa-lg"/></p:commandLink>
+        </p:column>
+    </p:dataTable>
+</ui:composition>

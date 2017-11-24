@@ -1,0 +1,42 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <p:panel styleClass="content-header">
+                <h3>#{msgs.users}</h3>
+                <p:commandButton action="#{BenutzerverwaltungForm.newUser}"
+                                 value="#{msgs.neuenBenutzerAnlegen}"
+                                 icon="fa fa-plus-circle fa-lg"
+                                 iconPos="right"
+                                 styleClass="button-filled-green"/>
+            </p:panel>
+            <p:tabView>
+                <p:tab title="#{msgs.benutzerverwaltung}">
+                    <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.benutzergruppen}">
+                    <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.ldapgruppen}">
+                    <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
+                </p:tab>
+            </p:tabView>
+        </p:panel>
+    </ui:define>
+</ui:composition>
