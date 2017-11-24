@@ -17,9 +17,6 @@ import de.sub.goobi.helper.tasks.EmptyTask;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -52,7 +49,6 @@ public class TaskScriptThread extends EmptyTask {
 
     @Override
     public void run() {
-
         boolean automatic = this.task.isTypeAutomatic();
         if (logger.isDebugEnabled()) {
             logger.debug("task is automatic: " + automatic);
@@ -68,19 +64,9 @@ public class TaskScriptThread extends EmptyTask {
             try {
                 serviceManager.getTaskService().executeDmsExport(this.task, false);
             } catch (DataException e) {
-                logger.error("IO Exception occurred", e);
+                logger.error("Data Exception occurred", e);
             } catch (ConfigurationException e) {
                 logger.error("Configuration could not be read", e);
-            }
-        } else if ((this.task.getStepPlugin() != null) && (this.task.getStepPlugin().length() > 0)) {
-            IStepPlugin isp = (IStepPlugin) PluginLoader.getPluginByTitle(PluginType.Step, task.getStepPlugin());
-            isp.initialize(task, "");
-            if (isp.execute()) {
-                try {
-                    taskService.close(task, false);
-                } catch (DataException e) {
-                    logger.error("Index Error occurred", e);
-                }
             }
         }
     }

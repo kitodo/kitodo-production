@@ -880,18 +880,6 @@ public class BatchStepHelper {
         // }
         for (Task s : this.steps) {
             boolean error = false;
-            if (s.getValidationPlugin() != null && s.getValidationPlugin().length() > 0) {
-                IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
-                        s.getValidationPlugin());
-                if (ivp != null) {
-                    ivp.setStep(s);
-                    if (!ivp.validate()) {
-                        error = true;
-                    }
-                } else {
-                    Helper.setFehlerMeldung("ErrorLoadingValidationPlugin");
-                }
-            }
 
             if (s.isTypeImagesWrite()) {
                 try {

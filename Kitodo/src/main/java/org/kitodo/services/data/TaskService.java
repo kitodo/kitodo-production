@@ -33,9 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.json.simple.JSONObject;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.data.database.beans.History;
@@ -635,20 +632,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 if (commandResult.isSuccessful()) {
                     task.setEditType(TaskEditType.AUTOMATIC.getValue());
                     task.setProcessingStatus(TaskStatus.DONE.getValue());
-                    if (task.getValidationPlugin() != null && task.getValidationPlugin().length() > 0) {
-                        IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
-                                task.getValidationPlugin());
-                        ivp.setStep(task);
-                        if (!ivp.validate()) {
-                            task.setProcessingStatus(TaskStatus.OPEN.getValue());
-                            save(task);
-                        } else {
-                            close(task, false);
-                        }
-                    } else {
-                        close(task, false);
-                    }
-
                 } else {
                     task.setEditType(TaskEditType.AUTOMATIC.getValue());
                     task.setProcessingStatus(TaskStatus.OPEN.getValue());
