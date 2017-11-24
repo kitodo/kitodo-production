@@ -662,7 +662,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO));
-        processDTO.setBlockedUsers(getBlockedUser(processDTO));
+        processDTO.setBlockedUser(getBlockedUser(processDTO));
         processDTO.setContainsUnreachableSteps(getContainsUnreachableSteps(processDTO));
         return processDTO;
     }
