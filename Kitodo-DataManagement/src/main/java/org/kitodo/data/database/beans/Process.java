@@ -118,6 +118,15 @@ public class Process extends BaseIndexedBean {
     @Transient
     private Boolean panelShown = false;
 
+    @Transient
+    private User blockedUser;
+
+    @Transient
+    private long blockedMinutes;
+
+    @Transient
+    private long blockedSeconds;
+
     public static String DIRECTORY_SUFFIX = "images";
 
     /**
@@ -370,19 +379,32 @@ public class Process extends BaseIndexedBean {
         this.panelShown = panelShown;
     }
 
+    public User getBlockedUser() {
+        return blockedUser;
+    }
+
+    public void setBlockedUser(User blockedUser) {
+        this.blockedUser = blockedUser;
+    }
+
+    public long getBlockedMinutes() {
+        return blockedMinutes;
+    }
+
+    public void setBlockedMinutes(long blockedMinutes) {
+        this.blockedMinutes = blockedMinutes;
+    }
+
+    public long getBlockedSeconds() {
+        return blockedSeconds;
+    }
+
+    public void setBlockedSeconds(long blockedSeconds) {
+        this.blockedSeconds = blockedSeconds;
+    }
+
     // Here will be methods which should be in ProcessService but are used by
     // jsp files
-
-    /**
-     * TODO: find way to set up this value from service.
-     * 
-     * @return null
-     */
-    public User getBlockedUsers() {
-        User result = null;
-        // too much dependencies on kitodo core
-        return result;
-    }
 
     public int getPropertiesSize() {
         return this.getProperties().size();
