@@ -69,10 +69,10 @@
             </p:row>
         </ui:fragment>
 
-        <ui:fragment rendered="#{item.typeAutomaticScriptPath != null and item.typeAutomaticScriptPath != ''}">
+        <ui:fragment rendered="#{item.scriptPath != null and item.scriptPath != ''}">
             <p:row>
                 <p:column>#{msgs.automatischerSchritt}:</p:column>
-                <p:column>#{item.typeAutomaticScriptPath}</p:column>
+                <p:column>#{item.scriptPath}</p:column>
             </p:row>
         </ui:fragment>
 

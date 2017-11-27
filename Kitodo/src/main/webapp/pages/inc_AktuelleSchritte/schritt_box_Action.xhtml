@@ -132,12 +132,12 @@
 
                                 <!-- Script-Schaltknopf -->
                                 <h:commandLink id="action3"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.scriptPath != null and AktuelleSchritteForm.mySchritt.scriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
                                                title="#{AktuelleSchritteForm.mySchritt.scriptName}">
                                     <t:updateActionListener
                                             property="#{AktuelleSchritteForm.scriptPath}"
-                                            value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath}"/>
+                                            value="#{AktuelleSchritteForm.mySchritt.scriptPath}"/>
                                     <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText
