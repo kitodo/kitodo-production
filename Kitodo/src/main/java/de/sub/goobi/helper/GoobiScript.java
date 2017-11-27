@@ -479,21 +479,20 @@ public class GoobiScript {
         /*
          * Durchführung der Action
          */
-        for (Process proz : inProzesse) {
-            if (proz.getTasks() != null) {
-                for (Task task : proz.getTasks()) {
+        for (Process process : inProzesse) {
+            if (process.getTasks() != null) {
+                for (Task task : process.getTasks()) {
                     if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
                         task.setScriptPath(this.myParameters.get("script"));
                         task.setScriptName(this.myParameters.get("label"));
-                        task.setTypeScriptStep(true);
                         try {
-                            serviceManager.getProcessService().save(proz);
+                            serviceManager.getProcessService().save(process);
                         } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while saving process: " + proz.getTitle(), e);
-                            logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                                    "Error while saving process: " + process.getTitle(), e);
+                            logger.error("kitodoScriptfield" + "Error while saving process: " + process.getTitle(), e);
                         }
-                        Helper.setMeldung("kitodoScriptfield", "Added script to step: ", proz.getTitle());
+                        Helper.setMeldung("kitodoScriptfield", "Added script to step: ", process.getTitle());
                         break;
                     }
                 }

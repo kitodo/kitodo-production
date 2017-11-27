@@ -110,7 +110,6 @@ public class BeanHelper {
             taskNew.setScriptName(task.getScriptName());
             taskNew.setScriptPath(task.getScriptPath());
             taskNew.setBatchStep(task.isBatchStep());
-            taskNew.setTypeScriptStep(task.getTypeScriptStep());
             taskNew.setTypeAcceptClose(task.isTypeAcceptClose());
             taskNew.setTypeCloseVerify(task.isTypeCloseVerify());
             taskNew.setTypeExportDMS(task.isTypeExportDMS());
