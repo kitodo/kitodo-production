@@ -112,7 +112,8 @@
 
                                 <h:outputText
                                         value="#{msgs.typScriptStep}(#{ProzessverwaltungForm.task.scriptPath}),"
-                                        rendered="#{ProzessverwaltungForm.task.typeScriptStep}"/>
+                                        rendered="#{ProzessverwaltungForm.task.scriptPath!='' and
+                                                ProzessverwaltungForm.task.scriptPath!=null}"/>
 
                                 <h:outputText value="#{msgs.typAutomatisch}"
                                               rendered="#{ProzessverwaltungForm.task.typeAutomatic}"/>
@@ -122,8 +123,7 @@
                             </td>
                         </tr>
 
-                        <ui:fragment rendered="#{ProzessverwaltungForm.task.typeScriptStep and
-                                                ProzessverwaltungForm.task.scriptPath!='' and
+                        <ui:fragment rendered="#{ProzessverwaltungForm.task.scriptPath!='' and
                                                 ProzessverwaltungForm.task.scriptPath!=null}">
                             <tr>
                                 <td width="150">
