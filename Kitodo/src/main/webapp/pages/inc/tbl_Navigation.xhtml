@@ -241,17 +241,6 @@
                                 <h:outputText value="#{msgs.taskmanager}"/>
                             </h:link>
 
-                            <!-- aktive Module -->
-                            <h:link styleClass="mlink" outcome="/pages/modulemanager"
-                                           rendered="#{NavigationForm.showModuleManager}"
-                                           style="#{view.viewId == '/pages/modulemanager.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}"
-                                           id="modules">
-                                <h:panelGroup rendered="#{view.viewId == '/pages/modulemanager.xhtml'}">
-                                    <f:verbatim>&#8250; </f:verbatim>
-                                </h:panelGroup>
-                                <h:outputText value="#{msgs.modulemanager}"/>
-                            </h:link>
-
                             <!-- Indexing -->
                             <h:link  styleClass="mlink" outcome="/pages/Indexing"
                                      style="#{view.viewId == '/pages/Indexing.xhtml' ? 'font-weight: bold;':'font-weight:normal;'}"

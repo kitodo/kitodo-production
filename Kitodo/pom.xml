@@ -469,11 +469,6 @@
 
         <!-- Libraries from Slub-Nexus repository -->
         <dependency>
-            <groupId>de.unigoettingen.goobi</groupId>
-            <artifactId>goobi-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>de.intranda</groupId>
             <artifactId>intrandaChart</artifactId>
             <version>1.4</version>

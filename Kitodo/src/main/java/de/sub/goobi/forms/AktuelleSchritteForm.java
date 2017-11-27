@@ -21,7 +21,6 @@ import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,13 +40,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.xmlrpc.XmlRpcException;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -848,39 +844,6 @@ public class AktuelleSchritteForm extends BasisForm {
     public void executeScript() throws DAOException, DataException {
         Task task = serviceManager.getTaskService().getById(this.mySchritt.getId());
         serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
-    }
-
-    /**
-     * call module for this step.
-     */
-    @Deprecated
-    public void executeModule() {
-        Helper.setMeldung("call module");
-        ModuleServerForm msf = (ModuleServerForm) Helper.getManagedBeanValue("#{ModuleServerForm}");
-        String url = null;
-        try {
-            url = msf.startShortSession(mySchritt);
-            Helper.setMeldung(url);
-        } catch (GoobiException e) {
-            Helper.setFehlerMeldung("GoobiException: " + e.getMessage());
-            return;
-        } catch (XmlRpcException e) {
-            Helper.setMeldung("XmlRpcException: " + e.getMessage());
-            return;
-        }
-        Helper.setMeldung("module called");
-        if (url.length() > 0) {
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            if (!facesContext.getResponseComplete()) {
-                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-                try {
-                    response.sendRedirect(url);
-                } catch (IOException e) {
-                    Helper.setFehlerMeldung("IOException: " + e.getMessage());
-                }
-                facesContext.responseComplete();
-            }
-        }
     }
 
     @Deprecated

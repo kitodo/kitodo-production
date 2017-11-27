@@ -47,8 +47,4 @@ public class NavigationForm implements Serializable {
     public Boolean getShowTaskManager() {
         return ConfigCore.getBooleanParameter("taskManager.showInSidebar", true);
     }
-
-    public Boolean getShowModuleManager() {
-        return ConfigCore.getBooleanParameter("show_modulemanager", false);
-    }
 }
