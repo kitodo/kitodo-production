@@ -150,6 +150,9 @@ public class Task extends BaseIndexedBean {
     @Transient
     private boolean panelShown = false;
 
+    @Transient
+    private String localizedTitle;
+
     /**
      * Constructor.
      */
@@ -508,6 +511,14 @@ public class Task extends BaseIndexedBean {
         this.validationPlugin = validationPlugin;
     }
 
+    public String getLocalizedTitle() {
+        return this.localizedTitle;
+    }
+
+    public void setLocalizedTitle(String localizedTitle) {
+        this.localizedTitle = localizedTitle;
+    }
+
     // Here will be methods which should be in TaskService but are used by jsp
     // files
 
@@ -518,11 +529,6 @@ public class Task extends BaseIndexedBean {
             result += " (" + this.getProcessingUser().getFullName() + ")";
         }
         return result;
-    }
-
-    public String getLocalizedTitle() {
-        return this.title;
-        // return Helper.getTranslation(task.getTitle());
     }
 
     public String getProcessingStatusAsString() {
