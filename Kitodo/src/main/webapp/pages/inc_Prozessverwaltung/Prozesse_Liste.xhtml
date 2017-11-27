@@ -35,12 +35,7 @@
         <h:outputText value="#{msgs.aktuelleProzesse}" rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}"/>
     </h4>
 
-    <!-- new process -->
-    <h:link outcome="/pages/ProzessverwaltungBearbeiten"
-            value="#{msgs.einenNeuenProzessAnlegen}"
-            rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige!='vorlagen'}"/>
-
-    <!-- newUser-Schaltknopf -->
+    <!-- new template button -->
     <h:commandLink action="#{ProzessverwaltungForm.newTemplate}" immediate="true"
                    rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige=='vorlagen'}"
                    id="new2">
@@ -338,12 +333,7 @@
 
     </p:dataTable>
 
-    <!-- new process -->
-    <h:link outcome="/pages/ProzessverwaltungBearbeiten"
-            value="#{msgs.einenNeuenProzessAnlegen}"
-            rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige!='vorlagen' and (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"/>
-
-    <!-- newUser-Schaltknopf -->
+    <!-- new template button -->
     <h:commandLink action="#{ProzessverwaltungForm.newTemplate}" immediate="true"
                    rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige=='vorlagen' and (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
                    id="new4">
