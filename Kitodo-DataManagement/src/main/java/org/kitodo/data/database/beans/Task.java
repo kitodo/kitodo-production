@@ -92,8 +92,8 @@ public class Task extends BaseIndexedBean {
     @Column(name = "scriptName")
     private String scriptName;
 
-    @Column(name = "typeAutomaticScriptPath")
-    private String typeAutomaticScriptPath;
+    @Column(name = "scriptPath")
+    private String scriptPath;
 
     @Column(name = "typeCloseVerify")
     private boolean typeCloseVerify = false;
@@ -456,12 +456,12 @@ public class Task extends BaseIndexedBean {
         this.scriptName = scriptName;
     }
 
-    public String getTypeAutomaticScriptPath() {
-        return this.typeAutomaticScriptPath;
+    public String getScriptPath() {
+        return this.scriptPath;
     }
 
-    public void setTypeAutomaticScriptPath(String typeAutomaticScriptPath) {
-        this.typeAutomaticScriptPath = typeAutomaticScriptPath;
+    public void setScriptPath(String scriptPath) {
+        this.scriptPath = scriptPath;
     }
 
     public Boolean getBatchStep() {
