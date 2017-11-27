@@ -815,7 +815,7 @@ public class BatchStepHelper {
     public void executeScript() throws DataException {
         for (Task task : this.steps) {
             if (task.getScriptName().equals(this.script)) {
-                String scriptPath = task.getTypeAutomaticScriptPath();
+                String scriptPath = task.getScriptPath();
                 serviceManager.getTaskService().executeScript(task, scriptPath, false);
             }
         }

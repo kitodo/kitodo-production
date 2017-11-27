@@ -214,7 +214,7 @@ public class GoobiScript {
                 if (task.getTitle().equalsIgnoreCase(taskName)) {
                     if (scriptName != null) {
                         if (task.getScriptName().equals(scriptName)) {
-                            String path = task.getTypeAutomaticScriptPath();
+                            String path = task.getScriptPath();
                             serviceManager.getTaskService().executeScript(task, path, false);
                         }
                     } else {
@@ -483,7 +483,7 @@ public class GoobiScript {
             if (proz.getTasks() != null) {
                 for (Task task : proz.getTasks()) {
                     if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
-                        task.setTypeAutomaticScriptPath(this.myParameters.get("script"));
+                        task.setScriptPath(this.myParameters.get("script"));
                         task.setScriptName(this.myParameters.get("label"));
                         task.setTypeScriptStep(true);
                         try {

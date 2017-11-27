@@ -576,7 +576,7 @@ public class MockDatabase {
         secondTask.getUsers().add(secondUser);
         secondTask.getUserGroups().add(userGroup);
         secondTask.setScriptName("scriptName");
-        secondTask.setTypeAutomaticScriptPath("../type/automatic/script/path");
+        secondTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(secondTask);
 
         Task thirdTask = new Task();
