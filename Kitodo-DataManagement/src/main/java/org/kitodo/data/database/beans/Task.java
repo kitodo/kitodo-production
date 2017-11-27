@@ -86,9 +86,6 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeAcceptClose")
     private boolean typeAcceptClose = false;
 
-    @Column(name = "typeScriptStep")
-    private Boolean typeScriptStep = false;
-
     @Column(name = "scriptName")
     private String scriptName;
 
@@ -435,17 +432,6 @@ public class Task extends BaseIndexedBean {
 
     public void setTypeCloseVerify(boolean typeCloseVerify) {
         this.typeCloseVerify = typeCloseVerify;
-    }
-
-    public Boolean getTypeScriptStep() {
-        if (this.typeScriptStep == null) {
-            this.typeScriptStep = false;
-        }
-        return this.typeScriptStep;
-    }
-
-    public void setTypeScriptStep(Boolean typeScriptStep) {
-        this.typeScriptStep = typeScriptStep;
     }
 
     public String getScriptName() {
