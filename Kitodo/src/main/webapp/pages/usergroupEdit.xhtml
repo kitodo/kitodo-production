@@ -1,0 +1,74 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id" value="#{BenutzergruppenForm.userGroupId}"/>
+        <f:viewAction action="#{BenutzergruppenForm.loadUserGroup}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="usergroupEditForm">
+                <p:panel styleClass="content-header">
+                    <h3>
+                        <h:outputText value="#{msgs.benutzergruppeBearbeiten}"
+                                      rendered="#{BenutzergruppenForm.myBenutzergruppe.id ne null}"/>
+                        <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
+                                      rendered="#{BenutzergruppenForm.myBenutzergruppe.id eq null}"/>
+                    </h3>
+                    <p:commandButton value="#{msgs.speichern}"
+                                     action="#{BenutzergruppenForm.save}"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     styleClass="button-filled-blue"/>
+                </p:panel>
+                <!-- main form -->
+                <p:panel>
+                    <div>
+                        <p:outputLabel for="title" value="#{msgs.titel}"/>
+                        <p:inputText id="title"
+                                     value="#{BenutzergruppenForm.myBenutzergruppe.title}"
+                                     placeholder="#{msgs.titel}"
+                                     required="true"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="permission" value="#{msgs.berechtigung}"/>
+                        <p:selectOneMenu id="permission"
+                                         value="#{BenutzergruppenForm.myBenutzergruppe.permissionAsString}"
+                                         required="true">
+                            <f:selectItem itemValue="1" itemLabel="#{msgs.administration}"/>
+                            <f:selectItem itemValue="2" itemLabel="#{msgs.prozessverwaltung}"/>
+                            <f:selectItem itemValue="4" itemLabel="#{msgs.normaleNutzerBerechtigung}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="#{msgs.loeschen}"
+                                         onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
+                                         action="#{BenutzergruppenForm.delete}"
+                                         rendered="#{BenutzergruppenForm.myBenutzergruppe.id ne null}"
+                                         icon="fa fa-trash-o fa-lg"
+                                         iconPos="right"/>
+
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <!-- add user groups dialog -->
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
+    </ui:define>
+</ui:composition>
