@@ -34,7 +34,6 @@ import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 
