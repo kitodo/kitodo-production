@@ -118,6 +118,15 @@ public class Process extends BaseIndexedBean {
     @Transient
     private Boolean panelShown = false;
 
+    @Transient
+    private User blockedUser;
+
+    @Transient
+    private long blockedMinutes;
+
+    @Transient
+    private long blockedSeconds;
+
     public static String DIRECTORY_SUFFIX = "images";
 
     /**
@@ -150,6 +159,11 @@ public class Process extends BaseIndexedBean {
         this.outputName = outputName;
     }
 
+    /**
+     * Check if process is a template.
+     * 
+     * @return true or false, for null false
+     */
     public boolean isTemplate() {
         if (this.template == null) {
             this.template = Boolean.FALSE;
@@ -177,6 +191,11 @@ public class Process extends BaseIndexedBean {
         this.sortHelperStatus = sortHelperStatus;
     }
 
+    /**
+     * Get sorting helper for images.
+     * 
+     * @return sorting helper as Integer, in case of null it returns 0
+     */
     public Integer getSortHelperImages() {
         if (this.sortHelperImages == null) {
             this.sortHelperImages = 0;
@@ -188,6 +207,11 @@ public class Process extends BaseIndexedBean {
         this.sortHelperImages = sortHelperImages;
     }
 
+    /**
+     * Get sorting helper for articles.
+     * 
+     * @return sorting helper as Integer, in case of null it returns 0
+     */
     public Integer getSortHelperArticles() {
         if (this.sortHelperArticles == null) {
             this.sortHelperArticles = 0;
@@ -199,6 +223,11 @@ public class Process extends BaseIndexedBean {
         this.sortHelperArticles = sortHelperArticles;
     }
 
+    /**
+     * Get sorting helper for document structure.
+     * 
+     * @return sorting helper as Integer, in case of null it returns 0
+     */
     public Integer getSortHelperDocstructs() {
         if (this.sortHelperDocstructs == null) {
             this.sortHelperDocstructs = 0;
@@ -210,6 +239,11 @@ public class Process extends BaseIndexedBean {
         this.sortHelperDocstructs = sortHelperDocstructs;
     }
 
+    /**
+     * Get sorting helper for metadata.
+     * 
+     * @return sorting helper as Integer, in case of null it returns 0
+     */
     public Integer getSortHelperMetadata() {
         if (this.sortHelperMetadata == null) {
             this.sortHelperMetadata = 0;
@@ -278,6 +312,11 @@ public class Process extends BaseIndexedBean {
         this.docket = docket;
     }
 
+    /**
+     * Get list of task.
+     * 
+     * @return list of Task objects or empty list
+     */
     public List<Task> getTasks() {
         if (this.tasks == null) {
             this.tasks = new ArrayList<>();
@@ -289,6 +328,11 @@ public class Process extends BaseIndexedBean {
         this.tasks = tasks;
     }
 
+    /**
+     * Get list of histories.
+     * 
+     * @return list of History objects or empty list
+     */
     public List<History> getHistory() {
         if (this.history == null) {
             this.history = new ArrayList<>();
@@ -301,6 +345,11 @@ public class Process extends BaseIndexedBean {
         this.history = history;
     }
 
+    /**
+     * Get list of templates.
+     * 
+     * @return list of Template objects or empty list
+     */
     public List<Template> getTemplates() {
         if (this.templates == null) {
             this.templates = new ArrayList<>();
@@ -313,6 +362,11 @@ public class Process extends BaseIndexedBean {
         this.templates = templates;
     }
 
+    /**
+     * Get list of workpieces.
+     * 
+     * @return list of Workpiece objects or empty list
+     */
     public List<Workpiece> getWorkpieces() {
         if (this.workpieces == null) {
             this.workpieces = new ArrayList<>();
@@ -351,6 +405,11 @@ public class Process extends BaseIndexedBean {
         }
     }
 
+    /**
+     * Get list of properties.
+     * 
+     * @return list of Property objects or empty list
+     */
     public List<Property> getProperties() {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
@@ -370,19 +429,65 @@ public class Process extends BaseIndexedBean {
         this.panelShown = panelShown;
     }
 
-    // Here will be methods which should be in ProcessService but are used by
-    // jsp files
+    /**
+     * Get blocked user.
+     * 
+     * @return User object if this user is blocked
+     */
+    public User getBlockedUser() {
+        return blockedUser;
+    }
 
     /**
-     * TODO: find way to set up this value from service.
+     * Set blocked user.
      * 
-     * @return null
+     * @param blockedUser
+     *            User object
      */
-    public User getBlockedUsers() {
-        User result = null;
-        // too much dependencies on kitodo core
-        return result;
+    public void setBlockedUser(User blockedUser) {
+        this.blockedUser = blockedUser;
     }
+
+    /**
+     * Get blocked minutes.
+     * 
+     * @return blocked minutes as long
+     */
+    public long getBlockedMinutes() {
+        return blockedMinutes;
+    }
+
+    /**
+     * Set blocked minutes.
+     * 
+     * @param blockedMinutes
+     *            as long
+     */
+    public void setBlockedMinutes(long blockedMinutes) {
+        this.blockedMinutes = blockedMinutes;
+    }
+
+    /**
+     * Get blocked seconds.
+     * 
+     * @return blocked seconds as long
+     */
+    public long getBlockedSeconds() {
+        return blockedSeconds;
+    }
+
+    /**
+     * Set blocked seconds.
+     * 
+     * @param blockedSeconds
+     *            as long
+     */
+    public void setBlockedSeconds(long blockedSeconds) {
+        this.blockedSeconds = blockedSeconds;
+    }
+
+    // Here will be methods which should be in ProcessService but are used by
+    // jsp files
 
     public int getPropertiesSize() {
         return this.getProperties().size();

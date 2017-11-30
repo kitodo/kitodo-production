@@ -23,7 +23,7 @@
     rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
 
         <!-- ++++++++++++++++     Import      ++++++++++++++++ -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null and AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='' and AktuelleSchritteForm.mySchritt.process.blockedUser == null and AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
             <table cellpadding="3" cellspacing="0" width="100%"
                        class="eingabeBoxen" style="margin-top:20px">
                 <tr>
@@ -88,26 +88,26 @@
                                 <!-- Sperrung der Metadaten anzeigen -->
                                 <h:panelGroup
                                         style="color: red;margin-top:5px;margin-bottom:15px;display:block"
-                                        rendered="#{AktuelleSchritteForm.mySchritt.process.blockedUsers != null}">
+                                        rendered="#{AktuelleSchritteForm.mySchritt.process.blockedUser != null}">
                                     <h:outputText value="#{msgs.gesperrt}"/>
                                     <br/>
                                     <h:panelGrid columns="2" style="color: red;margin-left:30px"
                                                  cellpadding="3">
                                         <h:outputText value="#{msgs.benutzer}: "/>
                                         <h:outputText
-                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUsers.fullName}"/>
+                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUser.fullName}"/>
                                         <h:outputText value="#{msgs.standort}: "/>
                                         <h:outputText
-                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUsers.location}"/>
+                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUser.location}"/>
                                         <h:outputText value="#{msgs.lebenszeichen} "/>
                                         <h:outputText
-                                                value="#{AktuelleSchritteForm.mySchritt.process.minutenGesperrt} min #{AktuelleSchritteForm.mySchritt.process.sekundenGesperrt} sec"/>
+                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedMinutes} min #{AktuelleSchritteForm.mySchritt.process.blockedSeconds} sec"/>
                                     </h:panelGrid>
                                     <h:outputText value="#{msgs.spaeter}"/>
 
                                     <!-- Bei Sperrung durch eigenen Benutzer: Sperrung aufheben können -->
                                     <h:commandLink id="action1"
-                                                   rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUsers != null) and (AktuelleSchritteForm.mySchritt.process.blockedUsers.id == LoginForm.myBenutzer.id)}"
+                                                   rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUser != null) and (AktuelleSchritteForm.mySchritt.process.blockedUser.id == LoginForm.myBenutzer.id)}"
                                                    action="#{AktuelleSchritteForm.sperrungAufheben}"
                                                    title="#{msgs.oderSperrungAufheben}">
                                         <h:graphicImage value="/pages/images/buttons/key2a.gif" alt="release lock"
@@ -143,7 +143,7 @@
 
                                 <!-- Script-Schaltknopf -->
                                 <h:commandLink id="action3"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
                                                title="#{AktuelleSchritteForm.mySchritt.scriptName}">
                                     <t:updateActionListener
@@ -157,7 +157,7 @@
 
                                 <!-- tiffHeaderDownload-Schaltknopf -->
                                 <h:commandLink id="action8"
-                                               rendered="#{0==1 and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{0==1 and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.downloadTiffHeader}"
                                                title="#{msgs.dateiMitTiffHeaderSpeichern}">
                                     <h:graphicImage value="/pages/images/buttons/tif.gif" alt="download tiff header"
@@ -169,12 +169,12 @@
 
                                 <!-- TODO: delete this warning once the root cause of the timeout problem is solved  -->
                                 <h:outputText style="back-color:blue; color: red; font-weight: bold;"
-                                              rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                              rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
                                               value="#{msgs.timeoutWarningDMS}"/>
 
                                 <!-- Upload-Schaltknopf -->
                                 <h:commandLink id="action9"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.exportDMS}"
                                                title="#{msgs.importDms}">
                                     <h:graphicImage value="/pages/images/buttons/dms.png" alt="export to dms"
@@ -184,7 +184,7 @@
 
                                 <!-- Metadaten-Schaltknopf -->
                                 <h:commandLink id="action10"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
                                                action="#{Metadaten.readXml}"
                                                title="#{msgs.metadatenBearbeiten}">
                                     <h:graphicImage value="/pages/images/buttons/view1.gif" alt="read xml"
@@ -270,7 +270,7 @@
                                                              value="#{AktuelleSchritteForm.mySolutionID}">
                                                 <f:selectItems
                                                         value="#{AktuelleSchritteForm.nextStepsForProblemSolution}"
-                                                        var="step2" itemLabel="#{step2.titelMitBenutzername}"
+                                                        var="step2" itemLabel="#{step2.titleWithUserName}"
                                                         itemValue="#{step2.id}"/>
                                             </h:selectOneMenu>
                                             <h:outputText value="#{msgs.bemerkung}"/>

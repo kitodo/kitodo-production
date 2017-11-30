@@ -911,20 +911,27 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Set my task.
+     * Set my task with edit mode set to empty String.
      *
-     * @param mySchritt
-     *            task
+     * @param task
+     *            Object
      */
-    public void setMySchritt(Task mySchritt) {
+    public void setMySchritt(Task task) {
         this.modusBearbeiten = "";
-        this.mySchritt = mySchritt;
-        loadProcessProperties();
+        setStep(task);
     }
 
-    public void setStep(Task step) {
-        this.mySchritt = step;
+    /**
+     * Set my task.
+     *
+     * @param task
+     *            Object
+     */
+    public void setStep(Task task) {
+        this.mySchritt = task;
+        this.mySchritt.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
         loadProcessProperties();
+        setAttributesForProcess();
     }
 
     public Task getStep() {
@@ -969,6 +976,13 @@ public class AktuelleSchritteForm extends BasisForm {
 
     public void setSolutionMessage(String solutionMessage) {
         this.solutionMessage = solutionMessage;
+    }
+
+    private void setAttributesForProcess() {
+        Process process = this.mySchritt.getProcess();
+        process.setBlockedUser(serviceManager.getProcessService().getBlockedUser(process));
+        process.setBlockedMinutes(serviceManager.getProcessService().getBlockedMinutes(process));
+        process.setBlockedSeconds(serviceManager.getProcessService().getBlockedSeconds(process));
     }
 
     /*

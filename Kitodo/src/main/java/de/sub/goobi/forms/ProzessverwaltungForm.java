@@ -1319,6 +1319,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     public void setTask(Task task) {
         this.task = task;
+        this.task.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
     }
 
     //TODO: why second setter for task

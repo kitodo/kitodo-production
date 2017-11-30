@@ -141,6 +141,9 @@ public class Task extends BaseIndexedBean {
     @Transient
     private boolean panelShown = false;
 
+    @Transient
+    private String localizedTitle;
+
     /**
      * Constructor.
      */
@@ -314,6 +317,11 @@ public class Task extends BaseIndexedBean {
         this.panelShown = panelShown;
     }
 
+    /**
+     * Get list of users.
+     * 
+     * @return list of User objects or empty list
+     */
     public List<User> getUsers() {
         if (this.users == null) {
             this.users = new ArrayList<>();
@@ -321,10 +329,21 @@ public class Task extends BaseIndexedBean {
         return this.users;
     }
 
+    /**
+     * Set list of users.
+     * 
+     * @param users
+     *            as list
+     */
     public void setUsers(List<User> users) {
         this.users = users;
     }
 
+    /**
+     * Get list of user groups.
+     * 
+     * @return list of UserGroup objects or empty list
+     */
     public List<UserGroup> getUserGroups() {
         if (this.userGroups == null) {
             this.userGroups = new ArrayList<>();
@@ -332,6 +351,12 @@ public class Task extends BaseIndexedBean {
         return this.userGroups;
     }
 
+    /**
+     * Set list of user groups.
+     * 
+     * @param userGroups
+     *            as list
+     */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
     }
@@ -356,6 +381,13 @@ public class Task extends BaseIndexedBean {
         return this.typeImagesWrite;
     }
 
+    /**
+     * Set task type images. If types is true, it also sets type images read to
+     * true.
+     * 
+     * @param typeImagesWrite
+     *            true or false
+     */
     public void setTypeImagesWrite(boolean typeImagesWrite) {
         this.typeImagesWrite = typeImagesWrite;
         if (typeImagesWrite) {
@@ -475,9 +507,32 @@ public class Task extends BaseIndexedBean {
         this.validationPlugin = validationPlugin;
     }
 
+    /**
+     * Get localized title.
+     * 
+     * @return localized title as String
+     */
+    public String getLocalizedTitle() {
+        return this.localizedTitle;
+    }
+
+    /**
+     * Set localized titles as String.
+     * 
+     * @param localizedTitle
+     *            as String
+     */
+    public void setLocalizedTitle(String localizedTitle) {
+        this.localizedTitle = localizedTitle;
+    }
+
     // Here will be methods which should be in TaskService but are used by jsp
     // files
-
+    /**
+     * Get task title with user full name.
+     * 
+     * @return task title with user full name as String
+     */
     public String getTitleWithUserName() {
         String result = this.getTitle();
         if (this.getProcessingUser() != null && this.getProcessingUser().getId() != null
@@ -485,11 +540,6 @@ public class Task extends BaseIndexedBean {
             result += " (" + this.getProcessingUser().getFullName() + ")";
         }
         return result;
-    }
-
-    public String getLocalizedTitle() {
-        return this.title;
-        // return Helper.getTranslation(task.getTitle());
     }
 
     public String getProcessingStatusAsString() {

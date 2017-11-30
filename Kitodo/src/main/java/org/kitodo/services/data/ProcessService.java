@@ -662,7 +662,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO));
-        processDTO.setBlockedUsers(getBlockedUser(processDTO));
+        processDTO.setBlockedUser(getBlockedUser(processDTO));
         processDTO.setContainsUnreachableSteps(getContainsUnreachableSteps(processDTO));
         return processDTO;
     }
@@ -701,16 +701,34 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Get blocked user.
+     * Get blocked user for ProcessDTO.
      *
      * @return blocked metadata (user)
      */
-    public UserDTO getBlockedUser(ProcessDTO process) {
+    UserDTO getBlockedUser(ProcessDTO process) {
         UserDTO result = null;
         if (MetadatenSperrung.isLocked(process.getId())) {
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
                 result = serviceManager.getUserService().findById(Integer.valueOf(userID));
+            } catch (Exception e) {
+                Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get blocked user for Process.
+     *
+     * @return blocked metadata (user)
+     */
+    public User getBlockedUser(Process process) {
+        User result = null;
+        if (MetadatenSperrung.isLocked(process.getId())) {
+            String userID = this.msp.getLockBenutzer(process.getId());
+            try {
+                result = serviceManager.getUserService().getById(Integer.valueOf(userID));
             } catch (Exception e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
             }

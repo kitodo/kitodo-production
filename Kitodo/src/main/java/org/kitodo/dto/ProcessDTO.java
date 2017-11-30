@@ -30,7 +30,7 @@ public class ProcessDTO extends BaseDTO {
     private List<PropertyDTO> properties;
     private Integer propertiesSize;
     private List<PropertyDTO> sortedCorrectionSolutionMessages;
-    private UserDTO blockedUsers;
+    private UserDTO blockedUser;
     private Integer progressClosed;
     private Integer progressInProcessing;
     private Integer progressOpen;
@@ -260,18 +260,18 @@ public class ProcessDTO extends BaseDTO {
      * 
      * @return blocked user as UserDTO
      */
-    public UserDTO getBlockedUsers() {
-        return blockedUsers;
+    public UserDTO getBlockedUser() {
+        return blockedUser;
     }
 
     /**
      * Set blocked user.
      * 
-     * @param blockedUsers
+     * @param blockedUser
      *            as UserDTO
      */
-    public void setBlockedUsers(UserDTO blockedUsers) {
-        this.blockedUsers = blockedUsers;
+    public void setBlockedUser(UserDTO blockedUser) {
+        this.blockedUser = blockedUser;
     }
 
     /**
