@@ -113,8 +113,6 @@ public class GoobiScript {
             setStepStatus(inProzesse);
         } else if (this.myParameters.get("action").equals("addShellScriptToStep")) {
             addShellScriptToStep(inProzesse);
-        } else if (this.myParameters.get("action").equals("addModuleToStep")) {
-            addModuleToStep(inProzesse);
         } else if (this.myParameters.get("action").equals("updateImagePath")) {
             updateImagePath(inProzesse);
         } else if (this.myParameters.get("action").equals("updateContentFiles")) {
@@ -502,47 +500,6 @@ public class GoobiScript {
             }
         }
         Helper.setMeldung("kitodoScriptfield", "", "addShellScriptToStep finished: ");
-    }
-
-    /**
-     * ShellScript an Schritt hängen.
-     */
-    private void addModuleToStep(List<Process> inProzesse) {
-        /*
-         * Validierung der Actionparameter
-         */
-        if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
-            return;
-        }
-
-        if (this.myParameters.get("module") == null || this.myParameters.get("module").equals("")) {
-            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "module");
-            return;
-        }
-
-        /*
-         * Durchführung der Action
-         */
-        for (Process proz : inProzesse) {
-            if (proz.getTasks() != null) {
-                for (Task task : proz.getTasks()) {
-                    if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
-                        task.setTypeModuleName(this.myParameters.get("module"));
-                        try {
-                            serviceManager.getProcessService().save(proz);
-                        } catch (DataException e) {
-                            Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while saving process: " + proz.getTitle(), e);
-                            logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
-                        }
-                        Helper.setMeldung("kitodoScriptfield", "Added module to task: ", proz.getTitle());
-                        break;
-                    }
-                }
-            }
-        }
-        Helper.setMeldung("kitodoScriptfield", "", "addModuleToStep finished: ");
     }
 
     /**

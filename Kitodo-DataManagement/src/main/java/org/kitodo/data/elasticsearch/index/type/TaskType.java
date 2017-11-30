@@ -48,7 +48,6 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("typeExportRussian", task.isTypeExportRussian());
         taskObject.put("typeImagesRead", task.isTypeImagesRead());
         taskObject.put("typeImagesWrite", task.isTypeImagesWrite());
-        taskObject.put("typeModuleName", task.getTypeModuleName());
         taskObject.put("batchStep", task.isBatchStep());
         Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : null;
         taskObject.put("processingUser", processingUser);

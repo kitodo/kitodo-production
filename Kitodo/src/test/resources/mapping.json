@@ -519,10 +519,6 @@
                 "typeMetadata": {
                     "type": "boolean"
                 },
-                "typeModuleName": {
-                    "type": "text",
-                    "fielddata": true
-                },
                 "users": {
                     "properties": {
                         "id": {

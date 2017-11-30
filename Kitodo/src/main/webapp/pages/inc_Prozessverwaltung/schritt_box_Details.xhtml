@@ -94,12 +94,6 @@
 
                                 <h:outputText value="#{msgs.schrittBeimAnnehmenAbschliessen}, "
                                               rendered="#{ProzessverwaltungForm.task.typeAcceptClose}"/>
-
-                                <h:outputText value="#{msgs.beimAnnehmenModulStarten}, "
-                                              rendered="#{ProzessverwaltungForm.task.typeAcceptModule}"/>
-
-                                <h:outputText value="#{msgs.beimAnnehmenModulStartenUndSchrittAbschliessen}, "
-                                              rendered="#{ProzessverwaltungForm.task.typeAcceptModuleAndClose}"/>
                                 <!--
                                 <h:outputText value="#{msgs.exportRus}, "
                                               rendered="#{ProzessverwaltungForm.task.typExportRus}" />
@@ -120,8 +114,6 @@
                                         value="#{msgs.typScriptStep}(#{ProzessverwaltungForm.task.typeAutomaticScriptPath}),"
                                         rendered="#{ProzessverwaltungForm.task.typeScriptStep}"/>
 
-                                <h:outputText value="#{msgs.modulSchritt}, "
-                                              rendered="#{ProzessverwaltungForm.task.typeModuleName!=null and ProzessverwaltungForm.task.typeModuleName!=''}"/>
                                 <h:outputText value="#{msgs.typAutomatisch}"
                                               rendered="#{ProzessverwaltungForm.task.typeAutomatic}"/>
                                 <h:outputText value="#{msgs.batchStep}"
@@ -225,17 +217,6 @@
                         <t:selectBooleanCheckbox forceId="true" id="chkmanuell1" onclick="chkManuellAutomatischSetzen(this)"
                                                  value="#{ProzessverwaltungForm.task.typeAcceptClose}"/>
 
-                        <h:outputText value="#{msgs.beimAnnehmenModulStarten}" rendered="#{NavigationForm.showModuleManager}"/>
-                        <t:selectBooleanCheckbox forceId="true" id="chkmanuell2" onclick="chkManuellAutomatischSetzen(this)"
-                                                 value="#{ProzessverwaltungForm.task.typeAcceptModule}"
-                                                 rendered="#{NavigationForm.showModuleManager}"/>
-
-                        <h:outputText value="#{msgs.beimAnnehmenModulStartenUndSchrittAbschliessen}"
-                                      rendered="#{NavigationForm.showModuleManager}"/>
-                        <t:selectBooleanCheckbox forceId="true" id="chkmanuell3" onclick="chkManuellAutomatischSetzen(this)"
-                                                 value="#{ProzessverwaltungForm.task.typeAcceptModuleAndClose}"
-                                                 rendered="#{NavigationForm.showModuleManager}"/>
-
 
                         <h:outputText value="#{msgs.automatischerSchritt}"/>
                         <t:selectBooleanCheckbox forceId="true" id="chkmanuell4" onclick="chkManuellAutomatischSetzen(this)"
@@ -260,10 +241,6 @@
                             </t:panelGrid>
                             <t:message for="chkautomatisch" style="color: red" replaceIdWithLabel="true"/>
                         </h:panelGroup>
-
-                        <h:outputText value="#{msgs.modul}" rendered="#{NavigationForm.showModuleManager}"/>
-                        <h:inputText value="#{ProzessverwaltungForm.task.typeModuleName}"
-                                     rendered="#{NavigationForm.showModuleManager}"/>
 
                         <h:outputLabel for="status" value="#{msgs.status}"/>
                         <h:panelGroup>

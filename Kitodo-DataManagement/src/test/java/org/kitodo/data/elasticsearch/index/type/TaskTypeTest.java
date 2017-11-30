@@ -122,8 +122,7 @@ public class TaskTypeTest {
                 + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-01\",\"batchStep\":true,"
                 + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":1,\"processingStatus\":3,"
                 + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"editType\":1,\"typeImagesWrite\":false,"
-                + "\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":false,\"typeExportRussian\":false,"
-                + "\"typeModuleName\":null}");
+                + "\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":false,\"typeExportRussian\":false}");
 
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
@@ -136,7 +135,7 @@ public class TaskTypeTest {
                 + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-10\",\"batchStep\":false,"
                 + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":2,\"processingStatus\":2,\"editType\":0,"
                 + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"typeImagesWrite\":false,\"processingEnd\":null,"
-                + "\"typeImagesRead\":false,\"typeExportRussian\":false,\"typeModuleName\":null}");
+                + "\"typeImagesRead\":false,\"typeExportRussian\":false}");
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(2);
@@ -148,7 +147,7 @@ public class TaskTypeTest {
                 + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":false,\"users\":[],"
                 + "\"processingUser\":null,\"processingStatus\":1,\"userGroups\":[],\"editType\":0,"
                 + "\"typeImagesWrite\":false,\"processingEnd\":null,\"typeImagesRead\":false,"
-                + "\"typeExportRussian\":false,\"typeModuleName\":null}");
+                + "\"typeExportRussian\":false}");
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

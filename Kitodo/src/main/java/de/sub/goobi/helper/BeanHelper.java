@@ -112,10 +112,7 @@ public class BeanHelper {
             taskNew.setBatchStep(task.isBatchStep());
             taskNew.setTypeScriptStep(task.getTypeScriptStep());
             taskNew.setTypeAcceptClose(task.isTypeAcceptClose());
-            taskNew.setTypeAcceptModule(task.isTypeAcceptModule());
-            taskNew.setTypeAcceptModuleAndClose(task.isTypeAcceptModuleAndClose());
             taskNew.setTypeCloseVerify(task.isTypeCloseVerify());
-            taskNew.setTypeModuleName(task.getTypeModuleName());
             taskNew.setTypeExportDMS(task.isTypeExportDMS());
             taskNew.setTypeExportRussian(task.isTypeExportRussian());
             taskNew.setTypeImagesRead(task.isTypeImagesRead());
