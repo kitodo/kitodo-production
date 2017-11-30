@@ -17,8 +17,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.dto.BaseDTO;
 
 /**
@@ -29,13 +27,13 @@ import org.kitodo.dto.BaseDTO;
  * @author Gavin King
  * @author Eric Broyles
  */
+@Deprecated
 public class Page<T extends BaseDTO> implements Serializable { // implements Iterator
     private static final long serialVersionUID = -290320409344472392L;
     private List<T> results;
     private int pageSize = 0;
     private int page = 0;
     private int totalResults = 0;
-    private static final Logger logger = LogManager.getLogger(Page.class);
 
     /**
      * Construct a new Page with a Criteria. Page numbers are zero-based, so the
@@ -54,23 +52,6 @@ public class Page<T extends BaseDTO> implements Serializable { // implements Ite
             this.pageSize = login.getMyBenutzer().getTableSize();
         }
         this.totalResults = results.size();
-    }
-
-    /**
-     * Get last page number.
-     *
-     * @return int
-     */
-    public int getLastPageNumber() {
-        /*
-         * We use the Math.floor() method because page numbers are zero-based (i.e. the
-         * first page is page 0).
-         */
-        int rueckgabe = Double.valueOf(Math.floor(this.totalResults / this.pageSize)).intValue();
-        if (this.totalResults % this.pageSize == 0) {
-            rueckgabe--;
-        }
-        return rueckgabe;
     }
 
     /**
@@ -99,20 +80,12 @@ public class Page<T extends BaseDTO> implements Serializable { // implements Ite
         return this.totalResults;
     }
 
-    public int getFirstResultNumber() {
-        return this.page * this.pageSize + 1;
-    }
-
-    public int getLastResultNumber() {
-        int fullPage = getFirstResultNumber() + this.pageSize - 1;
-        return getTotalResults() < fullPage ? getTotalResults() : fullPage;
-    }
-
     /**
      * Get reloaded list of DTO objects.
      *
      * @return List of DTO objects
      */
+    @Deprecated
     public List<T> getListReload() {
         /*
          * Since we retrieved one more than the specified pageSize when the class was
@@ -125,87 +98,8 @@ public class Page<T extends BaseDTO> implements Serializable { // implements Ite
         }
     }
 
-    /*
-     * einfache Navigationsaufgaben
-     */
-
-    public boolean isFirstPage() {
-        return this.page == 0;
-    }
-
-    public boolean isLastPage() {
-        return this.page >= getLastPageNumber();
-    }
-
     public boolean hasNextPage() {
         return this.results.size() > this.pageSize;
-    }
-
-    public boolean hasPreviousPage() {
-        return this.page > 0;
-    }
-
-    public Long getPageNumberCurrent() {
-        return Long.valueOf(this.page + 1);
-    }
-
-    public Long getPageNumberLast() {
-        return Long.valueOf(getLastPageNumber() + 1);
-    }
-
-    public String cmdMoveFirst() {
-        this.page = 0;
-        return "";
-    }
-
-    /**
-     * Cmd move previous.
-     *
-     * @return empty String
-     */
-    public String cmdMovePrevious() {
-        if (!isFirstPage()) {
-            this.page--;
-        }
-        return "";
-    }
-
-    /**
-     * Cmd move next.
-     *
-     * @return empty String
-     */
-    public String cmdMoveNext() {
-        if (!isLastPage()) {
-            this.page++;
-        }
-        return "";
-    }
-
-    /**
-     * Cmd move last.
-     *
-     * @return empty String
-     */
-    public String cmdMoveLast() {
-        this.page = getLastPageNumber();
-        return "";
-    }
-
-    /**
-     * Set txt move to.
-     *
-     * @param neueSeite
-     *            int
-     */
-    public void setTxtMoveTo(int neueSeite) {
-        if (neueSeite > 0 && neueSeite <= getLastPageNumber() + 1) {
-            this.page = neueSeite - 1;
-        }
-    }
-
-    public int getTxtMoveTo() {
-        return this.page + 1;
     }
 
 }
