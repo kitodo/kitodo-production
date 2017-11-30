@@ -16,6 +16,7 @@ import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -312,9 +313,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         String filterValue = filter.substring(filter.indexOf(filterName));
         filterValue = filterValue.substring(filterName.lastIndexOf(":") + 1, filterValue.length());
         if (filterValue.matches("^[\\s\\d]+$")) {
-            for (String singleValue : filterValue.split(" ")) {
-                filterValues.add(singleValue);
-            }
+            filterValues.addAll(Arrays.asList(filterValue.split("\\s+")));
         } else {
             filterValues.add(filterValue);
         }

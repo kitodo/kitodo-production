@@ -1283,21 +1283,15 @@ public class Metadaten {
                 // Build a new list of children for the edited element
                 List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
                 if (positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)) {
-                    for (DocStruct createdElement : createdElements) {
-                        newChildren.add(createdElement);
-                    }
+                    newChildren.addAll(createdElements);
                 }
                 for (DocStruct child : childrenBefore) {
                     if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT)) {
-                        for (DocStruct element : createdElements) {
-                            newChildren.add(element);
-                        }
+                        newChildren.addAll(createdElements);
                     }
                     newChildren.add(child);
                     if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT)) {
-                        for (DocStruct element : createdElements) {
-                            newChildren.add(element);
-                        }
+                        newChildren.addAll(createdElements);
                     }
                 }
 
@@ -2944,9 +2938,7 @@ public class Metadaten {
         String pref = (String) suggest;
         ArrayList<String> result = new ArrayList<>();
         ArrayList<String> all = new ArrayList<>();
-        for (String si : this.allPages) {
-            all.add(si);
-        }
+        all.addAll(Arrays.asList(this.allPages));
 
         for (String element : all) {
             if (element != null && element.contains(pref) || "".equals(pref)) {

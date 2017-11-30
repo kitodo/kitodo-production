@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -340,9 +341,7 @@ public class ProcessProperty implements IProperty, Serializable {
     public List<String> getValueList() {
         String[] values = this.value.split("; ");
         List<String> answer = new ArrayList<>();
-        for (String val : values) {
-            answer.add(val);
-        }
+        answer.addAll(Arrays.asList(values));
         return answer;
     }
 

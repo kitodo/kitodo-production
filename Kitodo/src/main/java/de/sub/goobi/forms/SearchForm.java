@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -130,9 +131,7 @@ public class SearchForm {
      * Initialise drop down list of step status.
      */
     protected void initStepStatus() {
-        for (TaskStatus s : TaskStatus.values()) {
-            this.stepstatus.add(s);
-        }
+        this.stepstatus.addAll(Arrays.asList(TaskStatus.values()));
     }
 
     /**
