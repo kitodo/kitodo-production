@@ -109,6 +109,33 @@ public class User extends BaseIndexedBean {
         this.filters = new ArrayList<>();
     }
 
+    /**
+     * Copy Constructor
+     * @param user
+     */
+    public User(User user) {
+        this.active = user.active;
+        this.configProductionDateShow = user.configProductionDateShow;
+        this.css = user.css;
+        this.deleted = user.deleted;
+        this.filters = user.filters;
+        this.ldapGroup = user.ldapGroup;
+        this.ldapLogin = user.ldapLogin;
+        this.location = user.location;
+        this.login = user.login;
+        this.metadataLanguage = user.metadataLanguage;
+        this.name = user.name;
+        this.password = user.password;
+        this.processingTasks = user.processingTasks;
+        this.projects = user.projects;
+        this.sessionTimeout = user.sessionTimeout;
+        this.surname = user.surname;
+        this.tableSize = user.tableSize;
+        this.tasks = user.tasks;
+        this.userGroups = user.userGroups;
+        this.withMassDownload = user.withMassDownload;
+    }
+
     public String getLogin() {
         return this.login;
     }

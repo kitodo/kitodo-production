@@ -22,6 +22,14 @@
 
     <sec:authorize access="isAuthenticated()">
         <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
+            <h:panelGroup>
+                <sec:authorize access="hasAuthority('ADMIN')">
+                    <h:outputText value="role: admin"/>
+                </sec:authorize>
+                <sec:authorize access="hasAuthority('USER')">
+                    <h:outputText value="role: user"/>
+                </sec:authorize>
+            </h:panelGroup>
             <h:outputText value="#{request.remoteUser}"/>
             <h:panelGroup>
                 <form action="${request.contextPath}/logout" method="POST">
@@ -38,7 +46,7 @@
             <h:panelGroup id="logintable"
                           rendered="#{LoginForm.myBenutzer == null and !LoginForm.schonEingeloggt}">
 
-                <form action="${request.contextPath}/appLogin" method="POST">
+                <form action="${request.contextPath}/login" method="POST">
                     <font color="red">
                         <h:outputText value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
                     </font>
