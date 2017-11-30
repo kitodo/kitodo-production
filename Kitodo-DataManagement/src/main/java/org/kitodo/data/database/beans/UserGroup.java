@@ -38,18 +38,19 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     @Column(name = "title")
     private String title;
 
-    @Column(name = "permission")
-    private Integer permission;
-
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<User> users;
 
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
+    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
+    private List<Authorization> authorizations;
+
     public UserGroup() {
         this.tasks = new ArrayList<>();
         this.users = new ArrayList<>();
+        this.authorizations = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -64,17 +65,12 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         this.title = title;
     }
 
-    public Integer getPermission() {
-        if (this.permission == null) {
-            this.permission = 4;
-        } else if (this.permission == 3) {
-            this.permission = 4;
-        }
-        return this.permission;
+    public List<Authorization> getAuthorizations() {
+        return authorizations;
     }
 
-    public void setPermission(int permission) {
-        this.permission = permission;
+    public void setAuthorizations(List<Authorization> authorizations) {
+        this.authorizations = authorizations;
     }
 
     public List<User> getUsers() {
@@ -112,19 +108,4 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         return this.getTitle().hashCode();
     }
 
-    // Here will be methods which should be in UserService but are used by jsp
-    // files
-
-    public String getPermissionAsString() {
-        if (this.getPermission() == null) {
-            this.setPermission(4);
-        } else if (this.getPermission() == 3) {
-            this.setPermission(4);
-        }
-        return String.valueOf(this.getPermission().intValue());
-    }
-
-    public void setPermissionAsString(String permission) {
-        this.setPermission(Integer.parseInt(permission));
-    }
 }
