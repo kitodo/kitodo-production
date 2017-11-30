@@ -140,11 +140,6 @@ public class DocketForm extends BasisForm {
         filterKein();
     }
 
-    public String filterKeinMitZurueck() {
-        filterKein();
-        return this.zurueck;
-    }
-
     /**
      * Method being used as viewAction for docket edit form. If 'docketId' is
      * '0', the form for creating a new docket will be displayed.

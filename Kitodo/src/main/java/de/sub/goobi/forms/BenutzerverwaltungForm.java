@@ -112,11 +112,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         filterKein();
     }
 
-    public String filterKeinMitZurueck() {
-        filterKein();
-        return this.zurueck;
-    }
-
     /**
      * Anzeige der gefilterten Nutzer.
      */
