@@ -21,11 +21,8 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.services.ServiceManager;
 
 public class BeanHelper {
-
-    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Add property for process.
@@ -106,7 +103,7 @@ public class BeanHelper {
         for (Task task : processTemplate.getTasks()) {
 
             Task taskNew = new Task();
-            taskNew.setTypeAutomatic(task.isTypeAutomatic());
+            taskNew.setEditTypeEnum(task.getEditTypeEnum());
             taskNew.setScriptName(task.getScriptName());
             taskNew.setTypeAutomaticScriptPath(task.getTypeAutomaticScriptPath());
             taskNew.setBatchStep(task.isBatchStep());

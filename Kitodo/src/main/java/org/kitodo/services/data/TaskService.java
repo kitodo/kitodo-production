@@ -329,7 +329,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
         query.must(createSimpleQuery("processingUser", processingUser, true));
-        query.must(createSimpleQuery("typeAutomatic", String.valueOf(typeAutomatic), true));
+        if (typeAutomatic) {
+            query.must(createSimpleQuery("editType", 4, true));
+        } else {
+            query.must(createSimpleQuery("editType", 4, false));
+        }
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -352,7 +356,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
         query.must(createSimpleQuery("processingUser", processingUser, true));
         query.must(createSimpleQuery("priority", priority, true));
-        query.must(createSimpleQuery("typeAutomatic", String.valueOf(typeAutomatic), true));
+        if (typeAutomatic) {
+            query.must(createSimpleQuery("editType", 4, true));
+        } else {
+            query.must(createSimpleQuery("editType", 4, false));
+        }
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -374,7 +382,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setProcessingTime(getStringPropertyForDTO(taskJSONObject, "processingTime"));
         taskDTO.setProcessingBegin(getStringPropertyForDTO(taskJSONObject, "processingBegin"));
         taskDTO.setProcessingEnd(getStringPropertyForDTO(taskJSONObject, "processingEnd"));
-        taskDTO.setTypeAutomatic(getBooleanPropertyForDTO(taskJSONObject, "typeAutomatic"));
         taskDTO.setTypeMetadata(getBooleanPropertyForDTO(taskJSONObject, "typeMetadata"));
         taskDTO.setTypeImportFileUpload(getBooleanPropertyForDTO(taskJSONObject, "typeImportFileUpload"));
         taskDTO.setTypeExportRussian(getBooleanPropertyForDTO(taskJSONObject, "typeExportRussian"));
@@ -798,7 +805,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                     serviceManager.getHistoryService().save(historyOpen);
 
                     /* wenn es ein automatischer Schritt mit Script ist */
-                    if (task.isTypeAutomatic()) {
+                    if (task.getEditTypeEnum() == TaskEditType.AUTOMATIC) {
                         automaticTasks.add(task);
                     } else if (task.isTypeAcceptClose()) {
                         tasksToFinish.add(task);

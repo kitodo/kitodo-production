@@ -27,6 +27,7 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
@@ -108,9 +109,9 @@ public class JobCreation {
                 if (p != null && p.getId() != null) {
                     moveFiles(metsfile, basepath, p);
                     List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
-                    for (Task t : tasks) {
-                        if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                            Thread myThread = new TaskScriptThread(t);
+                    for (Task task : tasks) {
+                        if (task.getProcessingStatus() == 1 && task.getEditTypeEnum() == TaskEditType.AUTOMATIC) {
+                            Thread myThread = new TaskScriptThread(task);
                             myThread.start();
                         }
                     }

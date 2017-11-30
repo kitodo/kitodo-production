@@ -553,7 +553,9 @@ public class GoobiScript {
                             task.setTypeMetadata(Boolean.parseBoolean(value));
                         }
                         if (property.equals("automatic")) {
-                            task.setTypeAutomatic(Boolean.parseBoolean(value));
+                            if (Boolean.parseBoolean(value)) {
+                                task.setEditType(4);
+                            }
                         }
                         if (property.equals("batch")) {
                             task.setBatchStep(Boolean.parseBoolean(value));

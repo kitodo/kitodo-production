@@ -1083,7 +1083,7 @@ public class ProzesskopieForm implements Serializable {
 
         List<Task> tasks = this.prozessKopie.getTasks();
         for (Task task : tasks) {
-            if (task.getProcessingStatus() == 1 && task.isTypeAutomatic()) {
+            if (task.getProcessingStatus() == 1 && task.getEditTypeEnum() == TaskEditType.AUTOMATIC) {
                 TaskScriptThread thread = new TaskScriptThread(task);
                 thread.start();
             }

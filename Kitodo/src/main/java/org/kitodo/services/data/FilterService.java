@@ -875,9 +875,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         String value = getFilterValueFromFilterString(filter, FilterString.TASKAUTOMATIC);
         if (value != null) {
             if (value.equalsIgnoreCase("true")) {
-                typeAutomatic.must(createSimpleQuery("typeAutomatic", true, true));
+                typeAutomatic.must(createSimpleQuery("editType", 4, true));
             } else {
-                typeAutomatic.must(createSimpleQuery("typeAutomatic", false, true));
+                typeAutomatic.must(createSimpleQuery("editType", 4, false));
             }
         }
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, typeAutomatic);
