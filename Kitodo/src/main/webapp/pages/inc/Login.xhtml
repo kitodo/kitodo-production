@@ -16,112 +16,65 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:t="http://myfaces.apache.org/tomahawk"
-    >
+    xmlns:sec="http://www.springframework.org/security/tags"
+>
 
-    <h:panelGrid columns="1" width="100%"
-                 rendered="#{LoginForm.myBenutzer != null}" style="margin-bottom:0px;">
 
-        <h:commandLink action="#{LoginForm.Ausloggen}" styleClass="th_menu" id="logout">
-            <h:outputText style="text-align:right" value="#{msgs.logout}:"/>
-            <br/>
+    <sec:authorize access="isAuthenticated()">
+        <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
+            <h:outputText value="#{request.remoteUser}"/>
+            <h:panelGroup>
+                <form action="${request.contextPath}/logout" method="POST">
+                    <input type="submit" value="#{msgs.logout}"/>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                </form>
+            </h:panelGroup>
+        </h:panelGrid>
+    </sec:authorize>
 
-            <!-- Mouse-Over für Benutzergruppenmitgliedschaft -->
-            <t:popup
-                    styleClass="popup"
-                    closePopupOnExitingElement="true" closePopupOnExitingPopup="true"
-                    displayAtDistanceX="10" displayAtDistanceY="-10">
+    <sec:authorize access="isAnonymous()">
+        <h:panelGrid rendered="#{LoginForm.myBenutzer == null}" columns="1" width="90%"
+                     styleClass="loginBorder">
+            <h:panelGroup id="logintable"
+                          rendered="#{LoginForm.myBenutzer == null and !LoginForm.schonEingeloggt}">
 
-                <h:outputText rendered="#{LoginForm.myBenutzer != null}"
-                              style="font-weight: normal"
-                              value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}"/>
+                <form action="${request.contextPath}/appLogin" method="POST">
+                    <font color="red">
+                        <h:outputText value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
+                    </font>
+                    <h:panelGrid columns="2" style="font-size: 9px">
+                        <h:outputText value="#{msgs.login}"/>
+                        <h:panelGroup>
+                            <input id="login" type="text" name="username"/>
+                        </h:panelGroup>
 
-                <f:facet name="popup">
-                    <h:panelGroup>
-                        <h:panelGrid columns="1" width="200">
-                            <h:outputText style="font-weight:bold"
-                                          value="#{msgs.benutzergruppen}"/>
+                        <h:outputText value="#{msgs.password}"/>
+                        <h:panelGroup>
+                            <input id="password" type="password" name="password"/>
+                        </h:panelGroup>
 
-                            <t:dataList var="intern" style="font-weight: normal"
-                                        rendered="#{LoginForm.myBenutzer.userGroupSize != 0}"
-                                        value="#{LoginForm.myBenutzer.userGroups}"
-                                        layout="ordered list" rowCountVar="rowCount"
-                                        rowIndexVar="rowIndex">
-                                <h:outputText value="#{intern.title}"/>
-                                <h:outputText value=";" rendered="#{rowIndex + 1 lt rowCount}"/>
-                            </t:dataList>
+                    </h:panelGrid>
+                    <input type="submit" value="Login"/>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                </form>
+            </h:panelGroup>
 
-                        </h:panelGrid>
-                    </h:panelGroup>
-                </f:facet>
-            </t:popup>
 
-        </h:commandLink>
-    </h:panelGrid>
-
-    <h:panelGrid rendered="#{LoginForm.myBenutzer == null}" columns="1" width="90%"
-                 styleClass="loginBorder">
-        <h:panelGroup id="logintable"
-                      rendered="#{LoginForm.myBenutzer == null and !LoginForm.schonEingeloggt}">
-            <h:panelGrid columns="2" style="font-size: 9px">
-
-                <h:outputText value="#{msgs.login}"/>
-                <h:panelGroup>
-                    <h:message id="messlogin" for="login" style="color: red"/>
-                    <t:inputText id="login" forceId="true" style="width: 80px"
-                                 value="#{LoginForm.login}"/>
-                </h:panelGroup>
-
-                <h:outputText value="#{msgs.password}"/>
-                <h:panelGroup>
-                    <h:message id="messpasswort" for="passwort" style="color: red"/>
-                    <t:inputSecret id="passwort" forceId="true" style="width: 80px"
-                                   value="#{LoginForm.password}"
-                                   onkeypress="return submitEnter('LoginAbsenden2',event)"/>
-                </h:panelGroup>
-
-            </h:panelGrid>
-            <h:commandLink action="#{LoginForm.Einloggen}">
-                <h:outputText value="#{msgs.einloggen}"
-                              rendered="#{!LoginForm.schonEingeloggt}"/>
-                <h:outputText value="#{msgs.dennochEinloggen}"
-                              rendered="#{LoginForm.schonEingeloggt}"/>
-            </h:commandLink>
-            <t:commandButton id="LoginAbsenden2" forceId="true"
-                             style="display:none" type="submit" action="#{LoginForm.Einloggen}"
-                             value="#{msgs.einloggen}"/>
-        </h:panelGroup>
-
-        <h:panelGroup
+            <h:panelGroup
                 rendered="#{LoginForm.myBenutzer == null and LoginForm.schonEingeloggt}">
 
-            <h:outputText value="#{msgs.sieSindBereitsEingeloggt}"/>
-            <br/>
-            <br/>
-            <h:commandLink value="#{msgs.abbrechen}" id="login-cancel"
-                           action="#{LoginForm.Ausloggen}"/>
-            <br/>
-            <h:commandLink value="#{msgs.alteSessionsAufraeumen}" id="login-clean"
-                           action="#{LoginForm.EigeneAlteSessionsAufraeumen}"/>
-            <br/>
-            <h:commandLink value="#{msgs.dennochEinloggen}" id="login-go"
-                           action="#{LoginForm.NochmalEinloggen}"/>
-
-        </h:panelGroup>
-        <h:panelGroup>
-            <h:outputText value="SpringSecurity Login"/><br/><br/>
-            <font color="red">
-                <h:outputLabel value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
-            </font>
-            <form action="${request.contextPath}/appLogin" method="POST">
-                <h:outputLabel value="UserName:" />
-                <input type="text" name="app_username"/><br/><br/>
-                <h:outputLabel value="Password:" />
-                <input type="password" name="app_password"/> <br/><br/>
-                <input type="submit" value="Login"/>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            </form>
-
-        </h:panelGroup>
-    </h:panelGrid>
+                <h:outputText value="#{msgs.sieSindBereitsEingeloggt}"/>
+                <br/>
+                <br/>
+                <h:commandLink value="#{msgs.abbrechen}" id="login-cancel"
+                               action="#{LoginForm.Ausloggen}"/>
+                <br/>
+                <h:commandLink value="#{msgs.alteSessionsAufraeumen}" id="login-clean"
+                               action="#{LoginForm.EigeneAlteSessionsAufraeumen}"/>
+                <br/>
+                <h:commandLink value="#{msgs.dennochEinloggen}" id="login-go"
+                               action="#{LoginForm.NochmalEinloggen}"/>
+            </h:panelGroup>
+        </h:panelGrid>
+    </sec:authorize>
 </ui:composition>
