@@ -1009,43 +1009,35 @@ public class Metadaten {
      *
      * @param inStrukturelement
      *            DocStruct object
-     * @param inTyp
+     * @param type
      *            String
      */
-    private String determineMetadata(DocStruct inStrukturelement, String inTyp) {
-        String rueckgabe = "";
+    private String determineMetadata(DocStruct inStrukturelement, String type) {
+        StringBuilder result = new StringBuilder();
         List<Metadata> allMDs = inStrukturelement.getAllMetadata();
         if (allMDs != null) {
             for (Metadata md : allMDs) {
-                if (md.getType().getName().equals(inTyp)) {
-                    rueckgabe += (md.getValue() == null ? "" : md.getValue()) + " ";
+                if (md.getType().getName().equals(type)) {
+                    result.append(md.getValue() == null ? "" : md.getValue());
+                    result.append(" ");
                 }
             }
         }
-        return rueckgabe.trim();
+        return result.toString().trim();
     }
 
     /**
      * Gets metadata value of specific type of an DocStruct element.
+     *
      * @param docStructElement
      *      The DocStruct element.
-     *
-     * @param inTyp
+     * @param type
      *      The metadata typ.
      * @return
      *      The metadata value.
      */
-    public String getMetadataByElementAndType(DocStruct docStructElement, String inTyp) {
-        String result = "";
-        List<Metadata> allMDs = docStructElement.getAllMetadata();
-        if (allMDs != null) {
-            for (Metadata md : allMDs) {
-                if (md.getType().getName().equals(inTyp)) {
-                    result += (md.getValue() == null ? "" : md.getValue()) + " ";
-                }
-            }
-        }
-        return result.trim();
+    public String getMetadataByElementAndType(DocStruct docStructElement, String type) {
+        return determineMetadata(docStructElement, type);
     }
 
     /**
@@ -1487,7 +1479,7 @@ public class Metadaten {
         for (Metadata meineSeite : listMetadaten) {
             this.structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, this.myPrefs, this.process);
             this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler),
-                    determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
+                    determineMetadata(meineSeite.getDocStruct(), "physPageNumber") + ": "
                             + meineSeite.getValue());
         }
     }
