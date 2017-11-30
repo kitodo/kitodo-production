@@ -453,6 +453,10 @@ main {
     margin-left: 20px;
 }
 
+.content-wrapper {
+    padding: .7em;
+}
+
 .input {
     width:100%;
 }
@@ -485,46 +489,72 @@ main {
     padding: .7em;
 }
 
-.filter-input {
+#filterMenu {
+    display: inline;
+    float: right;
+}
+
+#filterMenu > div > .ui-inputfield {
     width: 250px;
     border-radius: 3px 0 0 3px !important;
 }
 
-.filter-menu {
+#filterMenu > div > .ui-button:nth-child(2) {
+    margin-left: -40px;
+    background: transparent;
+}
+
+#filterMenu > div > .ui-button:nth-child(3) {
+    border-radius: 0 3px 3px 0;
+    margin-left: 3px;
+}
+
+#filterMenu .ui-overlaypanel {
     border-radius: 3px;
 }
 
-.filter-menu > div {
+#filterMenu .ui-overlaypanel > div {
     padding: 0;
     width: 250px;
     background: #f3f3f3;
     border-radius: 3px;
 }
 
-.filter-menu li {
+#filterMenu .ui-overlaypanel .ui-button {
+    width: 100%;
+    text-align: left;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#filterMenu .ui-overlaypanel li {
     list-style: none;
     border-top: solid 1px #d8d8d8;
 }
 
-.filter-menu li a {
+#filterMenu .ui-overlaypanel li:hover {
+    background: #f0faff;
+}
+
+#filterMenu .ui-overlaypanel li a {
     display: inline-block;
     padding: 10px;
     text-decoration: none;
     color: #006DBD;
 }
 
-.filter-menu li > a:first-child {
+#filterMenu .ui-overlaypanel li > a:first-child {
     width: 75%;
 }
 
-.filter-menu li:first-child a {
+#filterMenu .ui-overlaypanel li:first-child a {
     width: 100%;
     box-sizing: border-box;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
 }
 
-.filter-menu li .filter-delete {
+#filterMenu .ui-overlaypanel li .filter-delete {
     float: right;
     vertical-align: middle;
 }
@@ -552,8 +582,6 @@ main {
 .mets-file-groups .ui-datatable.ui-widget tr th {
     background: transparent;
 }
-
-
 
 .mets-file-groups > div > button {
     margin: 1.5em;
@@ -603,13 +631,29 @@ footer {
     border: 0 none !important;
 }
 
+.ui-datatable thead th.ui-state-default {
+    background: #fff;
+}
+
 .ui-datatable tbody tr:last-child td {
     border-bottom: none !important;
 }
 
-.ui-datatable tr th:nth-child(2) {
-    width: 70%;
+.ui-datatable tr th.actionsColumn,
+.ui-datatable tr td.actionsColumn {
+    width: 150px;
 }
+
+.ui-datatable tr td.actionsColumn > a {
+    color: #2B6FB6;
+    margin-right: 10px;
+}
+
+.ui-datatable tr th.checkboxColumn,
+.ui-datatable tr td.checkboxColumn {
+    width: 100px;
+}
+
 
 .ui-row-toggler {
     width: 16px;
@@ -630,12 +674,13 @@ footer {
     color: #999;
 }
 
-.ui-tabs .ui-tabs-panel {
-    padding: 0;
+.ui-tabs .ui-tabs-panels {
+    padding: 0 1.5em 1.3em 1.5em;
 }
 
-.ui-tabs .ui-tabs-panel > div {
-    padding: 1.3em 1.5em;
+.ui-tabs .ui-tabs-panel {
+    padding: 1.5em;
+    background: #fff;
 }
 
 .ui-panelgrid-cell > div {
@@ -725,6 +770,14 @@ footer {
 .ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon::before {
     content: "\f205";
     background: #00C62F;
+}
+
+.checkbox-checked {
+    color: limegreen;
+}
+
+.checkbox-unchecked {
+    color: darkred;
 }
 
 /*----------------------------------------------------------------------

@@ -1,0 +1,55 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <p:panel styleClass="content-header">
+                <h3>#{msgs.aktuelleSchritte}</h3>
+            </p:panel>
+            <h:form>
+                <p:panel styleClass="content-wrapper">
+                    <p:dataTable var="item"
+                                 value="#{AktuelleSchritteForm.page.listReload}"
+                                 lazy="true"
+                                 paginator="true"
+                                 rows="#{LoginForm.myBenutzer.tableSize}"
+                                 paginatorPosition="bottom">
+                        <p:column headerText="#{msgs.arbeitsschritt}">
+                            <h:outputText value="#{item.title}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs.prozess}">
+                            <h:outputText value="#{item.process.title}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs.projekt}">
+                            <h:outputText value="#{item.process.project.title}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs.status}">
+                            <h:outputText value="!" rendered="#{item.priority == 1}"/>
+                            <h:outputText value="!!" rendered="#{item.priority == 2}"/>
+                            <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs.auswahl}">
+                            <!-- TODO add actions -->
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

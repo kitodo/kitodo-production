@@ -14,7 +14,6 @@
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         >
@@ -24,46 +23,20 @@
                 <h3>#{msgs.projekte}</h3>
                 <p:commandButton action="#{ProjekteForm.newProject}" value="#{msgs.newProject}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
             </p:panel>
-            <p:dataTable id="project-list" var="project" value="#{ProjekteForm.lazyDTOModel}"
-                         rows="#{LoginForm.myBenutzer.tableSize}" lazy="true" paginator="true">
-                <p:column style="width: 16px;">
-                    <p:rowToggler/>
-                </p:column>
-                <p:column headerText="#{msgs.titel}">
-                    <h:outputText value="#{project.title}"/>
-                </p:column>
-                <p:column headerText="aktiv">
-                    <h:outputText>
-                        <ui:fragment rendered="#{not project.projectIsArchived}">
-                            <i class="fa fa-check-square-o fa-lg" style="color: limegreen;"/>
-                        </ui:fragment>
-                        <ui:fragment rendered="#{project.projectIsArchived}">
-                            <i class="fa fa-minus-square-o fa-lg" style="color: darkred"/>
-                        </ui:fragment>
-                    </h:outputText>
-                </p:column>
-                <p:column headerText="#{msgs.auswahl}">
-                    <h:link outcome="projectEdit">
-                        <f:param name="id" value="#{project.id}" />
-                        <i class="fa fa-pencil-square-o fa-lg" style="color: #2B6FB6; margin-right: 10px;"/>
-                    </h:link>
-                    <h:link><i class="fa fa-clone fa-lg" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
-                    <h:link><i class="fa fa-bar-chart fa-lg" style="color: #2B6FB6; margin-right: 10px;"/></h:link>
-                </p:column>
-
-                <p:rowExpansion>
-                    <p:panelGrid columns="2" columnClasses="label,value">
-                        <h:outputText value="#{msgs.internesSpeicherformat}:"/>
-                        <h:outputText value="#{project.fileFormatInternal}"/>
-
-                        <h:outputText value="#{msgs.dmsExportformat}:"/>
-                        <h:outputText value="#{project.fileFormatDmsExport}"/>
-
-                        <h:outputText value="#{msgs.metsRightsOwner}:"/>
-                        <h:outputText value="Uni Hamburg"/>
-                    </p:panelGrid>
-                </p:rowExpansion>
-            </p:dataTable>
+            <p:tabView>
+                <p:tab title="#{msgs.uebersicht}">
+                    <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.prozessvorlagen}">
+                    <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.docket}">
+                    <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.regelsaetze}">
+                    <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
+                </p:tab>
+            </p:tabView>
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">

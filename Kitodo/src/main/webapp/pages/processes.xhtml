@@ -1,0 +1,66 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <p:panel styleClass="content-header">
+                <h3>#{msgs.prozessverwaltung}</h3>
+                <p:button value="#{msgs.einenNeuenProzessAnlegen}" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
+                <!-- filters -->
+                <h:form id="filterMenu">
+                    <div class="ui-inputgroup">
+                        <p:inputText placeholder="#{msgs.filter}"/>
+                        <p:commandButton type="submit" action="#{ProzessverwaltungForm.filterAll}" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
+                        <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down" styleClass="button-filled-blue"/>
+                        <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
+                            <ul>
+                                <li>
+                                    <p:commandButton action="#{ProzessverwaltungForm.addFilterToUser}" icon="fa fa-floppy-o fa-lg" value="#{msgs.addFilter}"/>
+                                </li>
+                                <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
+                                    <li>
+                                        <p:commandLink value="#{filter}"/>
+                                        <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete button-blue">
+                                            <i class="fa fa-trash-o fa-lg"/>
+                                        </p:commandLink>
+                                    </li>
+                                </ui:repeat>
+                            </ul>
+                        </p:overlayPanel>
+
+                    </div>
+                </h:form>
+            </p:panel>
+
+            <p:tabView>
+                <p:tab title="#{msgs.uebersicht}">
+                    <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.batches}">
+                    <ui:include src="/WEB-INF/templates/includes/processes/batchList.xhtml"/>
+                </p:tab>
+            </p:tabView>
+
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.projekte}</a></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
+</ui:composition>

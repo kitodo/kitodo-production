@@ -62,7 +62,8 @@ button .ui-icon {
 }
 
 .ui-button-text-icon-left .ui-icon.fa,
-.ui-button-text-icon-right .ui-icon.fa {
+.ui-button-text-icon-right .ui-icon.fa,
+.ui-button-icon-only .ui-icon.fa {
     overflow: visible;
 }
 
@@ -229,12 +230,17 @@ tr.ui-widget-header,
 tr.ui-widget-content,
 .ui-panelgrid .ui-widget-content {
     background: #fff;
-    border-top: 1px solid #d8d8d8 !important;
     color: #1b2b36;
 }
 
 .ui-datatable tfoot td {
     text-align: left;
+}
+
+.ui-widget-header .ui-state-default,
+.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
+    background: #fff;
+    color: #1b2b36;
 }
 
 .ui-paginator {
@@ -250,12 +256,6 @@ tr.ui-widget-content,
 .ui-paginator .ui-state-active {
     background: #0971b8;
     color: #fff;
-}
-
-.ui-widget-header .ui-state-default,
-.ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
-    background: #fff;
-    color: #1b2b36;
 }
 
 tr.ui-expanded-row-content,
@@ -285,6 +285,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-tabs.ui-widget-content,
 .ui-tabmenu.ui-widget-content {
     border: 0;
+    background: #d8d8d8;
 }
 
 .ui-tabs,
@@ -293,9 +294,14 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
     padding: 0;
 }
 
+.ui-tabs.ui-tabs-top > .ui-tabs-nav {
+    padding: 0 1.5em;
+}
+
 .ui-tabs.ui-tabs-top>.ui-tabs-nav li,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
     top: 0px;
+    margin-right: .7em;
 }
 
 .ui-tabs .ui-tabs-nav,
