@@ -94,6 +94,7 @@
     <modules>
         <module>OpacPica-Plugin</module>
         <module>Kitodo-DataManagement</module>
+        <module>Kitodo-DataAccess</module>
         <module>Kitodo-API</module>
         <module>Kitodo-FileManagement</module>
         <module>Kitodo-PersistentIdentifier</module>
