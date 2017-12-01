@@ -11,11 +11,15 @@
 
 package org.kitodo.dto;
 
+import java.util.List;
+
 /**
  * Authorization DTO object.
  */
 public class AuthorizationDTO extends BaseDTO {
     private String title;
+    private List<UserGroupDTO> userGroups;
+    private Integer userGroupsSize;
     private boolean panelShown = false;
 
     /**
@@ -35,6 +39,44 @@ public class AuthorizationDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * Get list of user groups.
+     *
+     * @return list of user groups as userGroupDTO
+     */
+    public List<UserGroupDTO> getUserGroups() {
+        return userGroups;
+    }
+
+    /**
+     * Set list of user groups.
+     *
+     * @param userGroups
+     *            list of users as UserGroupDTO
+     */
+    public void setUserGroups(List<UserGroupDTO> userGroups) {
+        this.userGroups = userGroups;
+    }
+
+    /**
+     * Get size of user groups.
+     *
+     * @return size of user groups as Integer
+     */
+    public Integer getUserGroupsSize() {
+        return userGroupsSize;
+    }
+
+    /**
+     * Set size of user groups.
+     *
+     * @param usersSize
+     *            as Integer
+     */
+    public void setUserGroupsSize(Integer usersSize) {
+        this.userGroupsSize = usersSize;
     }
 
     /**
