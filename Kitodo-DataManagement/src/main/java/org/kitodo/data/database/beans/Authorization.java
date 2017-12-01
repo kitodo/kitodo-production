@@ -11,6 +11,9 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,12 +22,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "authorization")
 public class Authorization extends BaseIndexedBean {
+
+    private static final long serialVersionUID = -5187947220333987498L;
 
     @Column(name = "title")
     private String title;
@@ -37,14 +40,32 @@ public class Authorization extends BaseIndexedBean {
             @JoinColumn(name = "authorization_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authorization_authorization_id")) })
     private List<UserGroup> userGroups;
 
+    /**
+     * Gets the title.
+     *
+     * @return
+     *      The title.
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Sets the title.
+     *
+     * @param title
+     *      The titel.
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Gets all user groups in which this authorization is used.
+     *
+     * @return
+     *      The user groups.
+     */
     public List<UserGroup> getUserGroups() {
         if (this.userGroups == null) {
             this.userGroups = new ArrayList<>();
@@ -52,6 +73,12 @@ public class Authorization extends BaseIndexedBean {
         return userGroups;
     }
 
+    /**
+     * Sets the user groups.
+     *
+     * @param userGroups
+     *      The user groups.
+     */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
     }

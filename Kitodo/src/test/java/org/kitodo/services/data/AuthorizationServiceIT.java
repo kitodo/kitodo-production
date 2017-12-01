@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -65,5 +66,26 @@ public class AuthorizationServiceIT {
     public void shouldFindAllAuthorizations() throws Exception {
         List<AuthorizationDTO> authorizations = authorizationService.findAll();
         assertEquals("Not all authorizations were found in database!", 3, authorizations.size());
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        AuthorizationDTO authorization = authorizationService.findById(2);
+        String actual = authorization.getTitle();
+        String expected = "manager";
+        assertEquals("User group was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitle() throws Exception {
+        List<JSONObject> authorizations = authorizationService.findByTitle("user", true);
+        Integer actual = authorizations.size();
+        Integer expected = 1;
+        assertEquals("Authorization was not found in index!", expected, actual);
+
+        authorizations = authorizationService.findByTitle("none", true);
+        actual = authorizations.size();
+        expected = 0;
+        assertEquals("Authorization was found in index!", expected, actual);
     }
 }

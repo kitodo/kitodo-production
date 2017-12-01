@@ -200,6 +200,14 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         }
     }
 
+    /**
+     * Gets user by login.
+     *
+     * @param login
+     *      The login.
+     * @return
+     *      The user.
+     */
     public User getByLogin(String login) throws DAOException {
         List<User> users = getByQuery("from User where login = :username", "username", login);
         if (users.size() == 1)  {

@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -24,11 +25,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -213,13 +212,10 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldGetPermissionAsString() throws Exception {
+    public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
-        assertEquals("Permission string doesn't match to given plain text!", "admin", actual.get(0));
-
-//        userGroup = userGroupService.getById(3);
-//        actual = userGroupService.getAuthorizationsAsString(userGroup);
-//        assertEquals("Permission string doesn't match to given plain text!", "4", actual);
+        List<String> expected = Arrays.asList("admin","manager","user");
+        assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
     }
 }

@@ -11,10 +11,10 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import java.util.List;
 
 public class AuthorizationDAO extends BaseDAO<Authorization> {
 
