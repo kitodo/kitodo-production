@@ -73,7 +73,7 @@ public class IndexRestClient extends KitodoRestClient {
      */
     public boolean addDocument(HttpEntity entity, Integer id) throws IOException, CustomResponseException {
         Response indexResponse = restClient.performRequest("PUT",
-                "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.<String, String>emptyMap(),
+                "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.emptyMap(),
                 entity);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
@@ -93,7 +93,7 @@ public class IndexRestClient extends KitodoRestClient {
 
         for (Map.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
             restClient.performRequestAsync("PUT", "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
-                    Collections.<String, String>emptyMap(), entry.getValue(), new ResponseListener() {
+                    Collections.emptyMap(), entry.getValue(), new ResponseListener() {
                         @Override
                         public void onSuccess(Response response) {
                             output.add(response.toString());
@@ -120,7 +120,7 @@ public class IndexRestClient extends KitodoRestClient {
      * @return status code of the response from server
      */
     public boolean deleteDocument(Integer id) throws IOException, CustomResponseException {
-        boolean result = false;
+        boolean result;
         try {
             Response indexResponse = restClient.performRequest("DELETE",
                     "/" + this.getIndex() + "/" + this.getType() + "/" + id);
@@ -160,7 +160,7 @@ public class IndexRestClient extends KitodoRestClient {
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Response indexResponse = restClient.performRequest("PUT",
                 "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types",
-                Collections.<String, String>emptyMap(), entity);
+                Collections.emptyMap(), entity);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }

@@ -76,7 +76,7 @@ public class Searcher extends Index {
                 throw new DataException(e);
             }
         } else {
-            return new Long(0);
+            return 0L;
         }
     }
 

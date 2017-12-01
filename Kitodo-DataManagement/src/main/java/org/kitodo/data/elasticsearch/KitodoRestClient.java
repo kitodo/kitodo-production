@@ -126,7 +126,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
             query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
         }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest("PUT", "/" + index, Collections.<String, String>emptyMap(),
+        Response indexResponse = restClient.performRequest("PUT", "/" + index, Collections.emptyMap(),
                 entity);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
@@ -138,7 +138,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @return false if doesn't exists, true if exists
      */
     public boolean indexExists() throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest("GET", "/" + index, Collections.<String, String>emptyMap());
+        Response indexResponse = restClient.performRequest("GET", "/" + index, Collections.emptyMap());
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
