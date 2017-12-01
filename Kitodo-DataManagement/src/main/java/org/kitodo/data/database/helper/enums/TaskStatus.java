@@ -47,7 +47,7 @@ public enum TaskStatus {
      * Private constructor, initializes integer value, title, small and big
      * image.
      */
-    private TaskStatus(int inValue, String inTitle, String smallImage, String bigImage, String searchString) {
+    TaskStatus(int inValue, String inTitle, String smallImage, String bigImage, String searchString) {
         this.value = inValue;
         this.title = inTitle;
         this.imageSmall = smallImage;
