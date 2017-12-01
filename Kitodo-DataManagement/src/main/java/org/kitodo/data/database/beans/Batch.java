@@ -253,13 +253,10 @@ public class Batch extends BaseIndexedBean {
             return false;
         }
         if (processes == null) {
-            if (other.processes != null) {
-                return false;
-            }
-        } else if (!processes.equals(other.processes)) {
-            return false;
+            return other.processes == null;
+        } else {
+            return processes.equals(other.processes);
         }
-        return true;
     }
 
     // Here will be methods which should be in BatchService but are used by jsp
