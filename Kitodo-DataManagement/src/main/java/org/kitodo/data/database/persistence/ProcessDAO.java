@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.persistence;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Process;

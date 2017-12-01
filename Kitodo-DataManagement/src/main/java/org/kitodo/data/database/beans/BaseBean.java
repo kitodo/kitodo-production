@@ -14,14 +14,10 @@ package org.kitodo.data.database.beans;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import org.kitodo.data.database.helper.enums.IndexAction;
 
 /**
  * Base bean class.
