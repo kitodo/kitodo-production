@@ -164,14 +164,26 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Find user groups with exact permissions.
+     * Find user groups with authorization title.
      *
-     * @param permission
+     * @param authorizationTitle
      *            of the searched user group
      * @return list of JSON objects
      */
-    List<JSONObject> findByPermission(Integer permission) throws DataException {
-        QueryBuilder query = createSimpleQuery("permission", permission, true);
+    List<JSONObject> findByAuthorizationTitle(String authorizationTitle) throws DataException {
+        QueryBuilder query = createSimpleQuery("authorizations.title", authorizationTitle, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find user groups with authorization id.
+     *
+     * @param authorizationId
+     *            of the searched user group
+     * @return list of JSON objects
+     */
+    List<JSONObject> findByAuthorizationId(Integer authorizationId) throws DataException {
+        QueryBuilder query = createSimpleQuery("authorizations.id", authorizationId, true);
         return searcher.findDocuments(query.toString());
     }
 

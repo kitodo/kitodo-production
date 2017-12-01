@@ -24,9 +24,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -166,18 +168,19 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldFindByPermission() throws Exception {
-        List<JSONObject> userGroups = userGroupService.findByPermission(1);
+    public void shouldFindByAuthorization() throws Exception {
+
+        List<JSONObject> userGroups = userGroupService.findByAuthorizationTitle("admin");
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
 
-        userGroups = userGroupService.findByPermission(4);
+        userGroups = userGroupService.findByAuthorizationTitle("user");
         actual = userGroups.size();
-        expected = 1;
+        expected = 2;
         assertEquals("User group was not found in index!", expected, actual);
 
-        userGroups = userGroupService.findByPermission(5);
+        userGroups = userGroupService.findByAuthorizationTitle("notExisting");
         actual = userGroups.size();
         expected = 0;
         assertEquals("User group was found in index!", expected, actual);

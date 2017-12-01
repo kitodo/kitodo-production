@@ -25,7 +25,7 @@ public class AuthorizationType extends BaseType<Authorization> {
 
         JSONObject authorizationObject = new JSONObject();
         authorizationObject.put("title", authorization.getTitle());
-        authorizationObject.put("userGroup", addObjectRelation(authorization.getUserGroups(), true));
+        authorizationObject.put("userGroups", addObjectRelation(authorization.getUserGroups(), true));
 
         return new NStringEntity(authorizationObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

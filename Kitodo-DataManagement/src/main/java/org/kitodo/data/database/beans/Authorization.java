@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,6 +46,9 @@ public class Authorization extends BaseIndexedBean {
     }
 
     public List<UserGroup> getUserGroups() {
+        if (this.userGroups == null) {
+            this.userGroups = new ArrayList<>();
+        }
         return userGroups;
     }
 

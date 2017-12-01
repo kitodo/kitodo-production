@@ -31,6 +31,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -310,15 +311,23 @@ public class LoginForm implements Serializable {
      * @return int
      */
     public int getMaximaleBerechtigung() {
-        int result = 1;
-//        if (this.myBenutzer != null) {
-//            for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
-//                if (userGroup.getPermission() < result || result == 0) {
-//                    result = userGroup.getPermission();
-//                }
-//            }
-//        }
-        return result;
+        //TODO Only to keep compatibility to old front end security handling
+        //TODO delete this methode when all security tags are replaced at front end
+        if (this.myBenutzer != null) {
+            for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
+                if (userGroup.getAuthorizations().size() > 0) {
+                    for (Authorization authorization : userGroup.getAuthorizations()) {
+                        if (authorization.getTitle().equals("admin")) {
+                            return 1;
+                        }
+                        if (authorization.getTitle().equals("manager")) {
+                            return 2;
+                        }
+                    }
+                }
+            }
+        }
+        return 4;
     }
 
     public String getPasswortAendernAlt() {
