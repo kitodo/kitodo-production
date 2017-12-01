@@ -78,7 +78,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        boolean condition = userGroup.getTitle().equals("Admin") && userGroup.getPermission().equals(1);
+        boolean condition = userGroup.getTitle().equals("Admin") && userGroup.getAuthorizations().get(0).getTitle().equals("admin");
         assertTrue("User group was not found in database!", condition);
     }
 
@@ -212,11 +212,11 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetPermissionAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        String actual = userGroupService.getPermissionAsString(userGroup);
-        assertEquals("Permission string doesn't match to given plain text!", "1", actual);
+        List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
+        assertEquals("Permission string doesn't match to given plain text!", "admin", actual.get(0));
 
-        userGroup = userGroupService.getById(3);
-        actual = userGroupService.getPermissionAsString(userGroup);
-        assertEquals("Permission string doesn't match to given plain text!", "4", actual);
+//        userGroup = userGroupService.getById(3);
+//        actual = userGroupService.getAuthorizationsAsString(userGroup);
+//        assertEquals("Permission string doesn't match to given plain text!", "4", actual);
     }
 }

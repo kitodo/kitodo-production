@@ -310,14 +310,14 @@ public class LoginForm implements Serializable {
      * @return int
      */
     public int getMaximaleBerechtigung() {
-        int result = 0;
-        if (this.myBenutzer != null) {
-            for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
-                if (userGroup.getPermission() < result || result == 0) {
-                    result = userGroup.getPermission();
-                }
-            }
-        }
+        int result = 1;
+//        if (this.myBenutzer != null) {
+//            for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
+//                if (userGroup.getPermission() < result || result == 0) {
+//                    result = userGroup.getPermission();
+//                }
+//            }
+//        }
         return result;
     }
 

@@ -150,6 +150,7 @@ public class MockDatabase {
     }
 
     public static void insertUserGroupsFull() throws DAOException, DataException {
+        insertAuthorizations();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();

@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 
@@ -52,7 +53,23 @@ public class UserGroupTypeTest {
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setId(1);
         firstUserGroup.setTitle("Administrator");
-        firstUserGroup.setPermission(1);
+
+        List<Authorization> adminAuthorizations = new ArrayList<>();
+        Authorization adminAuthorization = new Authorization();
+        adminAuthorization.setTitle("admin");
+
+        Authorization managerAuthorization = new Authorization();
+        managerAuthorization.setTitle("manager");
+
+        Authorization userAuthorization = new Authorization();
+        userAuthorization.setTitle("user");
+
+        adminAuthorizations.add(adminAuthorization);
+        adminAuthorizations.add(managerAuthorization);
+        adminAuthorizations.add(userAuthorization);
+
+        firstUserGroup.setAuthorizations(adminAuthorizations);
+
         firstUserGroup.setUsers(users);
         userGroups.add(firstUserGroup);
 

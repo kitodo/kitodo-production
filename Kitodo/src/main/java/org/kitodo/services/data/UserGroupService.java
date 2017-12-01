@@ -248,7 +248,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            object
      * @return authorizations as list of Strings
      */
-    public List<String> getAuthorizations(UserGroup userGroup) {
+    public List<String> getAuthorizationsAsString(UserGroup userGroup) {
         List<Authorization> authorizations = userGroup.getAuthorizations();
         List<String> stringAuthorizations = new ArrayList<>();
         for (Authorization authorization : authorizations) {
