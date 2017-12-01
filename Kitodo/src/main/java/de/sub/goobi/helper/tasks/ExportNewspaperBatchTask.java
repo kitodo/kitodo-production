@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.logging.log4j.LogManager;
@@ -501,12 +502,12 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocument act,
             Prefs ruleSet)
             throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
-        for (Integer year : years.keySet()) {
-            if (year != ownYear) {
+        for (Map.Entry<Integer, String> year : years.entrySet()) {
+            if (year.getKey() != ownYear) {
                 DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-                        MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(),
+                        MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.getKey().toString(),
                         MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleSet);
-                child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, years.get(year));
+                child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, year.getValue());
             }
         }
     }

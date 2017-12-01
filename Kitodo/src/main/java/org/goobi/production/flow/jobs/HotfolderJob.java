@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -122,14 +123,15 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 if (!failedData.isEmpty()) {
                                     // // TODO Errorhandling
                                     logger.trace("17");
-                                    for (String filename : failedData.keySet()) {
-                                        File oldFile = new File(hotfolder.getFolderAsFile(), filename);
+                                    for (Map.Entry<String, Integer> entry : failedData.entrySet()) {
+                                        String key = entry.getKey();
+                                        File oldFile = new File(hotfolder.getFolderAsFile(), key);
                                         if (oldFile.exists()) {
                                             File newFile = new File(oldFile.getAbsolutePath() + "_");
                                             oldFile.renameTo(newFile);
                                         }
-                                        logger.error("error while importing file: " + filename + " with error code "
-                                                + failedData.get(filename));
+                                        logger.error("error while importing file: " + key + " with error code "
+                                                + entry.getValue());
                                     }
                                 }
                                 hotfolder.unlock();

@@ -61,9 +61,10 @@ public class Projects {
             data.put(project, templates);
         }
         List<Project> result = new ArrayList<>();
-        for (Project project : data.keySet()) {
-            project.template = new ArrayList<>(data.get(project));
-            result.add(project);
+        for (Map.Entry<Project, Set<Process>> entry : data.entrySet()) {
+            Project key = entry.getKey();
+            key.template = new ArrayList<>(entry.getValue());
+            result.add(key);
         }
         return new ProjectsRootNode(result);
     }
