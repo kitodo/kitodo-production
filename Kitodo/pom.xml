@@ -30,7 +30,7 @@
 
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
-        <maxAllowedViolations>182</maxAllowedViolations>
+        <maxAllowedViolations>162</maxAllowedViolations>
     </properties>
 
     <dependencies>
