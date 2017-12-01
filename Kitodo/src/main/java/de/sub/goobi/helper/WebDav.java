@@ -62,9 +62,14 @@ public class WebDav implements Serializable {
         FilenameFilter filter = new FileNameEndsWithFilter("]");
 
         try {
-            URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
-            files = fileService.getSubUris(filter, directoryName);
-        } catch (Exception ioe) {
+            if (currentUser != null) {
+                URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
+                files = fileService.getSubUris(filter, directoryName);
+            } else {
+                Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler - no user assigned");
+                return files;
+            }
+        } catch (IOException ioe) {
             logger.error("Exception uploadFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
             return files;
@@ -92,27 +97,31 @@ public class WebDav implements Serializable {
         URI verzeichnisAlle;
         User currentUser = Helper.getCurrentUser();
         try {
-            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser)
-                    .resolve(inVerzeichnis);
-            for (URI name : inList) {
-                fileService.deleteSymLink(verzeichnisAlle.resolve(name));
+            if (currentUser != null) {
+                verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser)
+                        .resolve(inVerzeichnis);
+                for (URI name : inList) {
+                    fileService.deleteSymLink(verzeichnisAlle.resolve(name));
+                }
+            } else {
+                Helper.setFehlerMeldung("Upload stopped, error - no logged user");
             }
         } catch (Exception ioe) {
             logger.error("Exception RemoveFromHomeAlle()", ioe);
-            Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
+            Helper.setFehlerMeldung("Upload stopped, error", ioe.getMessage());
         }
     }
 
     /**
      * Upload from home.
      *
-     * @param myProcess
+     * @param process
      *            Process object
      */
-    public void uploadFromHome(Process myProcess) {
-        User aktuellerBenutzer = Helper.getCurrentUser();
-        if (aktuellerBenutzer != null) {
-            uploadFromHome(aktuellerBenutzer, myProcess);
+    public void uploadFromHome(Process process) {
+        User currentUser = Helper.getCurrentUser();
+        if (currentUser != null) {
+            uploadFromHome(currentUser, process);
         }
     }
 
@@ -164,29 +173,33 @@ public class WebDav implements Serializable {
         URI userHome;
 
         try {
-            source = serviceManager.getFileService().getImagesDirectory(process);
-            userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
+            if (currentUser != null) {
+                source = serviceManager.getFileService().getImagesDirectory(process);
+                userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
 
-            /*
-             * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
-             * existieren
-             */
-            if (currentUser.isWithMassDownload()) {
-                URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
-                fileService.createDirectoryForUser(project, currentUser.getLogin());
+                /*
+                 * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
+                 * existieren
+                 */
+                if (currentUser.isWithMassDownload()) {
+                    URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
+                    fileService.createDirectoryForUser(project, currentUser.getLogin());
 
-                project = Paths.get(userHome + DONEDIRECTORYNAME).toUri();
-                fileService.createDirectoryForUser(project, currentUser.getLogin());
+                    project = Paths.get(userHome + DONEDIRECTORYNAME).toUri();
+                    fileService.createDirectoryForUser(project, currentUser.getLogin());
+                }
+
+                URI destination = userHome;
+                if (currentUser.isWithMassDownload() && process.getProject() != null) {
+                    destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
+                }
+                destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
+
+                fileService.createSymLink(source, destination, onlyRead, currentUser);
+            } else {
+                Helper.setFehlerMeldung("Aborted download to home, error - there is not current user");
             }
-
-            URI destination = userHome;
-            if (currentUser.isWithMassDownload() && process.getProject() != null) {
-                destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
-            }
-            destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
-
-            fileService.createSymLink(source, destination, onlyRead, currentUser);
-        } catch (Exception ioe) {
+        } catch (IOException ioe) {
             logger.error("Exception downloadToHome()", ioe);
             Helper.setFehlerMeldung("Aborted download to home, error", ioe.getMessage());
         }

@@ -101,15 +101,18 @@ public class MetadataValidationService {
         }
 
         DocStruct logical = dd.getLogicalDocStruct();
-        if (logical.getAllIdentifierMetadata() != null && logical.getAllIdentifierMetadata().size() > 0) {
-            Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
-            try {
-                result = checkIfMetadataValueNotReplaced(logical, identifierTopStruct, metadataLanguage);
+        List<Metadata> allIdentifierMetadata = logical.getAllIdentifierMetadata();
+        if (allIdentifierMetadata != null && allIdentifierMetadata.size() > 0) {
+            Metadata identifierTopStruct = allIdentifierMetadata.get(0);
 
-                DocStruct firstChild = logical.getAllChildren().get(0);
-                Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
+            result = checkIfMetadataValueNotReplaced(logical, identifierTopStruct, metadataLanguage);
+
+            DocStruct firstChild = logical.getAllChildren().get(0);
+            List<Metadata> allChildIdentifierMetadata = firstChild.getAllIdentifierMetadata();
+            if (allChildIdentifierMetadata != null && allChildIdentifierMetadata.size() > 0) {
+                Metadata identifierFirstChild = allChildIdentifierMetadata.get(0);
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
-                        && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
+                            && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
                     List<String> parameter = new ArrayList<>();
                     parameter.add(identifierTopStruct.getType().getName());
                     parameter.add(logical.getType().getName());
@@ -119,7 +122,7 @@ public class MetadataValidationService {
                 }
 
                 result = checkIfMetadataValueNotReplaced(firstChild, identifierFirstChild, metadataLanguage);
-            } catch (Exception e) {
+            } else {
                 logger.info("no firstChild or no identifier");
             }
         } else {

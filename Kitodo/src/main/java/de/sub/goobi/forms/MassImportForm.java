@@ -639,6 +639,7 @@ public class MassImportForm implements Serializable {
         this.currentPlugin = currentPlugin;
         if (currentPlugin != null && currentPlugin.length() > 0) {
             this.plugin = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.Import, this.currentPlugin);
+
             if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
                 this.allFilenames = this.plugin.getAllFilenames();
             }

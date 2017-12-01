@@ -734,7 +734,7 @@ public class AktuelleSchritteForm extends BasisForm {
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
          * setzen
          */
-        if (fertigListe != null && fertigListe.size() > 0 && this.nurOffeneSchritte) {
+        if (fertigListe.size() > 0 && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
             filterAll();
         }
