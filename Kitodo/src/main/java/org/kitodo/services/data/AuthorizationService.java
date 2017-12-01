@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.UserGroup;
@@ -91,6 +92,28 @@ public class AuthorizationService extends TitleSearchService<Authorization, Auth
     @Override
     public List<AuthorizationDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return findAll(sort, offset, size, true);
+    }
+
+    /**
+     * Refresh user's group object after update.
+     *
+     * @param authorization
+     *            object
+     */
+    public void refresh(Authorization authorization) {
+        dao.refresh(authorization);
+    }
+
+    /**
+     * Find authorizations by id of user group.
+     *
+     * @param id
+     *            of user group
+     * @return list of JSON objects with authorizations for specific user group id
+     */
+    List<JSONObject> findByUserGroupId(Integer id) throws DataException {
+        QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
+        return searcher.findDocuments(query.toString());
     }
 
     @Override
