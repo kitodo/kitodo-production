@@ -567,8 +567,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return script path as String
      */
     public String getScriptPath(Task task) {
-        if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
-            return task.getTypeAutomaticScriptPath();
+        if (task.getScriptPath() != null && !task.getScriptPath().equals("")) {
+            return task.getScriptPath();
         }
         return "";
     }
@@ -582,8 +582,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public HashMap<String, String> getScript(Task task) {
         HashMap<String, String> answer = new HashMap<>();
-        if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
-            answer.put(task.getScriptName(), task.getTypeAutomaticScriptPath());
+        if (task.getScriptPath() != null && !task.getScriptPath().equals("")) {
+            answer.put(task.getScriptName(), task.getScriptPath());
         }
         return answer;
     }
@@ -653,7 +653,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            boolean
      */
     public void executeScript(Task task, boolean automatic) throws DataException {
-        String script = task.getTypeAutomaticScriptPath();
+        String script = task.getScriptPath();
         boolean scriptFinishedSuccessful = true;
         if (logger.isDebugEnabled()) {
             logger.debug("starting script " + script);

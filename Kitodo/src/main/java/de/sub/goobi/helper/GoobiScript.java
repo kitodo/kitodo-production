@@ -214,7 +214,7 @@ public class GoobiScript {
                 if (task.getTitle().equalsIgnoreCase(taskName)) {
                     if (scriptName != null) {
                         if (task.getScriptName().equals(scriptName)) {
-                            String path = task.getTypeAutomaticScriptPath();
+                            String path = task.getScriptPath();
                             serviceManager.getTaskService().executeScript(task, path, false);
                         }
                     } else {
@@ -479,21 +479,20 @@ public class GoobiScript {
         /*
          * Durchführung der Action
          */
-        for (Process proz : inProzesse) {
-            if (proz.getTasks() != null) {
-                for (Task task : proz.getTasks()) {
+        for (Process process : inProzesse) {
+            if (process.getTasks() != null) {
+                for (Task task : process.getTasks()) {
                     if (task.getTitle().equals(this.myParameters.get("steptitle"))) {
-                        task.setTypeAutomaticScriptPath(this.myParameters.get("script"));
+                        task.setScriptPath(this.myParameters.get("script"));
                         task.setScriptName(this.myParameters.get("label"));
-                        task.setTypeScriptStep(true);
                         try {
-                            serviceManager.getProcessService().save(proz);
+                            serviceManager.getProcessService().save(process);
                         } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while saving process: " + proz.getTitle(), e);
-                            logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                                    "Error while saving process: " + process.getTitle(), e);
+                            logger.error("kitodoScriptfield" + "Error while saving process: " + process.getTitle(), e);
                         }
-                        Helper.setMeldung("kitodoScriptfield", "Added script to step: ", proz.getTitle());
+                        Helper.setMeldung("kitodoScriptfield", "Added script to step: ", process.getTitle());
                         break;
                     }
                 }

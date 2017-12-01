@@ -86,14 +86,11 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeAcceptClose")
     private boolean typeAcceptClose = false;
 
-    @Column(name = "typeScriptStep")
-    private Boolean typeScriptStep = false;
-
     @Column(name = "scriptName")
     private String scriptName;
 
-    @Column(name = "typeAutomaticScriptPath")
-    private String typeAutomaticScriptPath;
+    @Column(name = "scriptPath")
+    private String scriptPath;
 
     @Column(name = "typeCloseVerify")
     private boolean typeCloseVerify = false;
@@ -437,17 +434,6 @@ public class Task extends BaseIndexedBean {
         this.typeCloseVerify = typeCloseVerify;
     }
 
-    public Boolean getTypeScriptStep() {
-        if (this.typeScriptStep == null) {
-            this.typeScriptStep = false;
-        }
-        return this.typeScriptStep;
-    }
-
-    public void setTypeScriptStep(Boolean typeScriptStep) {
-        this.typeScriptStep = typeScriptStep;
-    }
-
     public String getScriptName() {
         return this.scriptName;
     }
@@ -456,12 +442,12 @@ public class Task extends BaseIndexedBean {
         this.scriptName = scriptName;
     }
 
-    public String getTypeAutomaticScriptPath() {
-        return this.typeAutomaticScriptPath;
+    public String getScriptPath() {
+        return this.scriptPath;
     }
 
-    public void setTypeAutomaticScriptPath(String typeAutomaticScriptPath) {
-        this.typeAutomaticScriptPath = typeAutomaticScriptPath;
+    public void setScriptPath(String scriptPath) {
+        this.scriptPath = scriptPath;
     }
 
     public Boolean getBatchStep() {

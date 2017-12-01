@@ -108,9 +108,8 @@ public class BeanHelper {
             Task taskNew = new Task();
             taskNew.setTypeAutomatic(task.isTypeAutomatic());
             taskNew.setScriptName(task.getScriptName());
-            taskNew.setTypeAutomaticScriptPath(task.getTypeAutomaticScriptPath());
+            taskNew.setScriptPath(task.getScriptPath());
             taskNew.setBatchStep(task.isBatchStep());
-            taskNew.setTypeScriptStep(task.getTypeScriptStep());
             taskNew.setTypeAcceptClose(task.isTypeAcceptClose());
             taskNew.setTypeCloseVerify(task.isTypeCloseVerify());
             taskNew.setTypeExportDMS(task.isTypeExportDMS());
