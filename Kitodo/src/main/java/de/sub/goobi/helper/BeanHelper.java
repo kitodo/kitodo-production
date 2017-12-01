@@ -126,9 +126,6 @@ public class BeanHelper {
             taskNew.setHomeDirectory(task.getHomeDirectory());
             taskNew.setProcess(processCopy);
 
-            taskNew.setStepPlugin(task.getStepPlugin());
-            taskNew.setValidationPlugin(task.getValidationPlugin());
-
             /*
              * Benutzer übernehmen
              */

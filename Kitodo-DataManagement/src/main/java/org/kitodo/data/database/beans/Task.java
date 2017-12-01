@@ -101,12 +101,6 @@ public class Task extends BaseIndexedBean {
     @Column(name = "batchStep")
     private Boolean batchStep = false;
 
-    @Column(name = "stepPlugin")
-    private String stepPlugin;
-
-    @Column(name = "validationPlugin")
-    private String validationPlugin;
-
     /**
      * This field contains information about user, which works on this task.
      */
@@ -491,22 +485,6 @@ public class Task extends BaseIndexedBean {
         this.batchStep = batchStep;
     }
 
-    public String getStepPlugin() {
-        return stepPlugin;
-    }
-
-    public void setStepPlugin(String stepPlugin) {
-        this.stepPlugin = stepPlugin;
-    }
-
-    public String getValidationPlugin() {
-        return validationPlugin;
-    }
-
-    public void setValidationPlugin(String validationPlugin) {
-        this.validationPlugin = validationPlugin;
-    }
-
     /**
      * Get localized title.
      * 
@@ -579,7 +557,6 @@ public class Task extends BaseIndexedBean {
             return this.scriptName;
         }
         return "";
-
     }
 
 }

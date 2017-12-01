@@ -47,11 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IStepPlugin;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
@@ -450,19 +446,6 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String schrittDurchBenutzerAbschliessen() throws DAOException, DataException {
-
-        if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
-            IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
-                    mySchritt.getValidationPlugin());
-            if (ivp != null) {
-                ivp.setStep(mySchritt);
-                if (!ivp.validate()) {
-                    return null;
-                }
-            } else {
-                Helper.setFehlerMeldung("ErrorLoadingValidationPlugin");
-            }
-        }
 
         /*
          * if step allows writing of images, then count all images here
@@ -1377,20 +1360,6 @@ public class AktuelleSchritteForm extends BasisForm {
 
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
         this.hideCorrectionTasks = hideCorrectionTasks;
-    }
-
-    /**
-     * Call task plugin.
-     *
-     * @return String
-     */
-    public String callStepPlugin() {
-        if (mySchritt.getStepPlugin() != null && mySchritt.getStepPlugin().length() > 0) {
-            IStepPlugin isp = (IStepPlugin) PluginLoader.getPluginByTitle(PluginType.Step, mySchritt.getStepPlugin());
-            isp.initialize(mySchritt, "");
-            isp.execute();
-        }
-        return null;
     }
 
     /**

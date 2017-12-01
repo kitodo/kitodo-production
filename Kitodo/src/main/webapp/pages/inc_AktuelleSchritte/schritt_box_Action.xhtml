@@ -129,17 +129,6 @@
                                     <h:outputText value="#{msgs.russischeMetadatenExportieren}" />
                                 </h:commandLink>
                                 -->
-                                <!-- Plugin-Schaltknopf -->
-
-                                <h:commandLink
-                                        rendered="#{AktuelleSchritteForm.mySchritt.stepPlugin != null and AktuelleSchritteForm.mySchritt.stepPlugin != ''}"
-                                        action="#{AktuelleSchritteForm.callStepPlugin}"
-                                        title="#{msgs.stepPlugin} (#{AktuelleSchritteForm.mySchritt.stepPlugin})">
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt=""
-                                                    style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText
-                                            value="#{msgs.stepPlugin} (#{AktuelleSchritteForm.mySchritt.stepPlugin})"/>
-                                </h:commandLink>
 
                                 <!-- Script-Schaltknopf -->
                                 <h:commandLink id="action3"
