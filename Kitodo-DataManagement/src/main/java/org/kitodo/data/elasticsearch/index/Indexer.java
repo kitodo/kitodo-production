@@ -107,7 +107,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      */
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseIndexedBeans, S baseType)
-            throws IOException, InterruptedException, CustomResponseException {
+            throws InterruptedException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
