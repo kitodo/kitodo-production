@@ -813,6 +813,17 @@ public class ModsPlugin implements Plugin {
 
                 String docID = extractDocumentIdentifier(doc, transformationScript);
 
+                // read "additionalDetails" from document via XPaths elements
+                // specified in plugin configuration file
+                Document transformedDocument = transformXML(doc, transformationScript);
+                for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
+                    XPath detailPath = XPath.newInstance(detailField.getValue());
+                    Element detailElement = (Element) detailPath.selectSingleNode(transformedDocument);
+                    if (!Objects.equals(detailElement, null)) {
+                        result.put(detailField.getKey(), detailElement.getText());
+                    }
+                }
+
                 @SuppressWarnings("unchecked")
                 ArrayList<Element> recordNodes = (ArrayList<Element>) srwRecordXPath.selectNodes(doc);
 
