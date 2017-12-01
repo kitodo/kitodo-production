@@ -175,19 +175,12 @@ public class BenutzergruppenForm extends BasisForm {
     // replace calls to this function with "/pages/usergroupEdit" once we have
     // completely switched to the new frontend pages
     private String redirectToEdit(String urlSuffix) {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/usergroupEdit" + urlSuffix;
-            } else {
-                return "/pages/BenutzergruppenBearbeiten" + urlSuffix;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
-            // used from it's integration test
-            // class "ProjekteFormIT", where no "FacesContext" is available!
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                .get("referer");
+        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+        if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
+            return "/pages/usergroupEdit" + urlSuffix;
+        } else {
             return "/pages/BenutzergruppenBearbeiten" + urlSuffix;
         }
     }
@@ -196,19 +189,12 @@ public class BenutzergruppenForm extends BasisForm {
     // replace calls to this function with "/pages/users" once we have completely
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("usergroupEdit.jsf")) {
-                return "/pages/users" + urlSuffix;
-            } else {
-                return "/pages/BenutzergruppenAlle" + urlSuffix;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
-            // used from it's integration test
-            // class "ProjekteFormIT", where no "FacesContext" is available!
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                .get("referer");
+        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+        if (!callerViewId.isEmpty() && callerViewId.contains("usergroupEdit.jsf")) {
+            return "/pages/users" + urlSuffix;
+        } else {
             return "/pages/BenutzergruppenAlle" + urlSuffix;
         }
     }
