@@ -248,25 +248,4 @@ public class WebDav implements Serializable {
             logger.error(e);
         }
     }
-
-    /**
-     * Get amount.
-     *
-     * @param inVerzeichnis
-     *            String
-     * @return int
-     */
-    public int getAnzahlBaende(String inVerzeichnis) {
-        try {
-            User aktuellerBenutzer = Helper.getCurrentUser();
-            URI verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
-                    .resolve(inVerzeichnis);
-            FilenameFilter filter = new FileNameEndsWithFilter("]");
-            return fileService.getSubUris(filter, verzeichnisAlle).size();
-        } catch (Exception e) {
-            logger.error(e);
-            return 0;
-        }
-    }
-
 }
