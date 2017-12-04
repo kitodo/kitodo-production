@@ -13,7 +13,6 @@ package org.goobi.production.plugin.interfaces;
 
 import java.util.HashMap;
 
-import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.StepReturnValue;
 import org.kitodo.data.database.beans.Task;
 
@@ -30,7 +29,4 @@ public interface IStepPlugin extends IPlugin {
     HashMap<String, StepReturnValue> validate();
 
     Task getStep();
-
-    PluginGuiType getPluginGuiType();
-
 }
