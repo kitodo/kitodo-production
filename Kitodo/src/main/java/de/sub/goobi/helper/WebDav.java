@@ -66,7 +66,7 @@ public class WebDav implements Serializable {
                 URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
                 files = fileService.getSubUris(filter, directoryName);
             } else {
-                Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler - no user assigned");
+                Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", Helper.getTranslation("noUser"));
                 return files;
             }
         } catch (IOException ioe) {
