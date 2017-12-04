@@ -38,6 +38,9 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     @Column(name = "title")
     private String title;
 
+    @Column(name = "permission")
+    private Integer permission;
+
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<User> users;
 

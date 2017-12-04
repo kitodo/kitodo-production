@@ -15,7 +15,7 @@ CREATE TABLE authorization (
   `title` VARCHAR(255) DEFAULT NULL,
   `indexAction` VARCHAR(6) DEFAULT NULL,
   PRIMARY KEY (`id`))
-DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
+  DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Insert admin authorization
 INSERT INTO authorization (`title`, `indexAction`) VALUES ('admin', 'INDEX');

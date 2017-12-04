@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,13 +33,14 @@ public class SecurityUserDetails extends User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
+        List<UserGroup> userGroups = super.getUserGroups();
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-        String userrole = super.getLogin();
-        if (userrole.equals("testAdmin")) {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-        } else {
-            grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
+        for (UserGroup userGroup : userGroups) {
+            List<Authorization> authorizations = userGroup.getAuthorizations();
+            for (Authorization authorization : authorizations) {
+                grantedAuthorities.add(new SimpleGrantedAuthority(authorization.getTitle()));
+            }
         }
         return grantedAuthorities;
     }

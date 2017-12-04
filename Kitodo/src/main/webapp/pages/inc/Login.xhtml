@@ -23,10 +23,10 @@
     <sec:authorize access="isAuthenticated()">
         <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
             <h:panelGroup>
-                <sec:authorize access="hasAuthority('ADMIN')">
+                <sec:authorize access="hasAuthority('admin')">
                     <h:outputText value="role: admin"/>
                 </sec:authorize>
-                <sec:authorize access="hasAuthority('USER')">
+                <sec:authorize access="hasAuthority('user')">
                     <h:outputText value="role: user"/>
                 </sec:authorize>
             </h:panelGroup>
