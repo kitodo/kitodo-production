@@ -107,11 +107,6 @@ public class LdapGruppenForm extends BasisForm {
         filterKein();
     }
 
-    public String FilterKeinMitZurueck() {
-        filterKein();
-        return this.zurueck;
-    }
-
     /*
      * Getter und Setter
      */
