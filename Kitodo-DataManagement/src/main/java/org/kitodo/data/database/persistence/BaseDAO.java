@@ -169,7 +169,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *             if a HibernateException is thrown
      */
     @SuppressWarnings("unchecked")
-    protected static void removeObject(Class cls, Integer id) throws DAOException {
+    static void removeObject(Class cls, Integer id) throws DAOException {
         Transaction transaction = null;
         try {
             Session session = HibernateHelper.getHibernateSession();
@@ -199,7 +199,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return Object may be null if object with ID doesn't exist
      */
     @SuppressWarnings({"unchecked" })
-    protected T retrieveObject(Class cls, Integer id) throws DAOException {
+    T retrieveObject(Class cls, Integer id) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
             if (session == null) {
@@ -226,7 +226,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return constrained list of results
      */
     @SuppressWarnings("unchecked")
-    protected List<T> retrieveObjects(String query, int first, int max) throws DAOException {
+    List<T> retrieveObjects(String query, int first, int max) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
@@ -248,7 +248,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return list of results
      */
     @SuppressWarnings("unchecked")
-    protected List<T> retrieveObjects(String query, String parameter) throws DAOException {
+    List<T> retrieveObjects(String query, String parameter) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
@@ -271,7 +271,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return List of objects
      */
     @SuppressWarnings("unchecked")
-    protected List<T> retrieveObjects(String query, String namedParameter, String parameter) throws DAOException {
+    List<T> retrieveObjects(String query, String namedParameter, String parameter) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
@@ -290,7 +290,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return List of all objects
      */
     @SuppressWarnings("unchecked")
-    protected List<T> retrieveAllObjects(Class cls) {
+    List<T> retrieveAllObjects(Class cls) {
         Session session = HibernateHelper.getHibernateSession();
         Query query = session.createQuery("FROM " + cls.getSimpleName());
         return (List<T>) query.list();
@@ -302,7 +302,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @param object
      *            to persist
      */
-    protected void storeObject(T object) throws DAOException {
+    void storeObject(T object) throws DAOException {
         Transaction transaction = null;
         try {
             Session session = HibernateHelper.getHibernateSession();
@@ -328,7 +328,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @param list
      *            of objects
      */
-    protected void storeList(List<T> list) throws DAOException {
+    void storeList(List<T> list) throws DAOException {
         Transaction transaction = null;
         try {
             Session session = HibernateHelper.getHibernateSession();
@@ -352,7 +352,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @param object
      *            associated with the session
      */
-    protected void refreshObject(T object) {
+    void refreshObject(T object) {
         Session session = HibernateHelper.getHibernateSession();
         if (session == null) {
             session = HibernateUtil.getSessionFactory().openSession();
@@ -363,7 +363,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    protected T loadObjects(Class cls, Integer id) throws DAOException {
+    T loadObjects(Class cls, Integer id) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
             if (session == null) {
@@ -384,7 +384,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @param object
      *            to update
      */
-    protected void updateObject(T object) {
+    void updateObject(T object) {
         Session session = HibernateHelper.getHibernateSession();
         if (session == null) {
             session = HibernateUtil.getSessionFactory().openSession();

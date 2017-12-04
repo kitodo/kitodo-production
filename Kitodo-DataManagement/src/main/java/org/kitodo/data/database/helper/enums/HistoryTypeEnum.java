@@ -99,7 +99,7 @@ public enum HistoryTypeEnum {
      * Private constructor, initializes integer value, title and sets boolean,
      * if EventType contains string and/or numeric content.
      */
-    private HistoryTypeEnum(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
+    HistoryTypeEnum(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
             String groupingExpression) {
         this.value = inValue;
         this.title = inTitle;

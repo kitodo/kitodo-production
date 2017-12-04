@@ -51,7 +51,7 @@ public enum TaskEditType {
     /**
      * Private constructor, initializes integer value and title.
      */
-    private TaskEditType(int inValue, String inTitle) {
+    TaskEditType(int inValue, String inTitle) {
         this.value = inValue;
         this.title = inTitle;
     }
