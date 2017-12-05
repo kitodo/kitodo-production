@@ -23,8 +23,7 @@
     <sec:authorize access="isAuthenticated()">
         <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
             <h:panelGroup>
-                <h:outputText rendered="#{LoginForm.myBenutzer != null}"
-                              style="font-weight: normal"
+                <h:outputText style="font-weight: normal"
                               value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}"/>
             </h:panelGroup>
             <h:panelGroup>

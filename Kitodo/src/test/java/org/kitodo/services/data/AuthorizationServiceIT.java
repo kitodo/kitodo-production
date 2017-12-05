@@ -19,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -87,5 +88,11 @@ public class AuthorizationServiceIT {
         actual = authorizations.size();
         expected = 0;
         assertEquals("Authorization was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetAllAuthorizations() throws Exception {
+        List<Authorization> authorizations = authorizationService.getAll();
+        assertEquals("Authorizations were not found databse!", 3, authorizations.size());
     }
 }

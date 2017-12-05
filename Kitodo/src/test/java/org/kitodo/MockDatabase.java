@@ -736,7 +736,7 @@ public class MockDatabase {
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
-        firstUser.setCss("/css/fancy.css");
+        firstUser.setCss("old/userStyles/classic.css");
         serviceManager.getUserService().save(firstUser);
 
         User secondUser = new User();
@@ -783,7 +783,8 @@ public class MockDatabase {
         users.add(secondUser);
         firstUserGroup.setUsers(users);
         serviceManager.getUserGroupService().save(firstUserGroup);
-
+        adminAuthorization.getUserGroups().add(firstUserGroup);
+        serviceManager.getAuthorizationService().save(adminAuthorization);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setTitle("Random");

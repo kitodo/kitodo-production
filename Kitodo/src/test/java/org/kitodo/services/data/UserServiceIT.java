@@ -34,6 +34,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.dto.UserDTO;
@@ -343,7 +344,7 @@ public class UserServiceIT {
     @Test
     public void shouldGetCss() throws Exception {
         User user = userService.getById(1);
-        boolean condition = userService.getCss(user).equals("/css/fancy.css");
+        boolean condition = userService.getCss(user).equals("old/userStyles/classic.css");
         assertTrue("Css file is incorrect!", condition);
 
         user = userService.getById(2);
@@ -486,4 +487,11 @@ public class UserServiceIT {
         expected = 2;
         assertEquals("Size of users is incorrect!", expected, actual);
     }
+
+    @Test
+    public void shouldGetAuthorizationOfUser()throws Exception {
+        Authorization authorization = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorizations().get(0);
+        assertEquals("Authorization title is incorrect!","admin",authorization.getTitle());
+    }
+
 }

@@ -30,6 +30,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
@@ -51,6 +53,7 @@ public class LoginForm implements Serializable {
     private String passwortAendernNeu1;
     private String passwortAendernNeu2;
     private transient ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(LoginForm.class);
 
     /**
      * Log out.
@@ -335,9 +338,6 @@ public class LoginForm implements Serializable {
                     for (Authorization authorization : userGroup.getAuthorizations()) {
                         if (authorization.getTitle().equals("admin")) {
                             return 1;
-                        }
-                        if (authorization.getTitle().equals("manager")) {
-                            return 2;
                         }
                     }
                 }
