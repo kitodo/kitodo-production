@@ -47,6 +47,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -88,7 +89,6 @@ import ugh.fileformats.mets.MetsMods;
 public class PicaMassImport implements IImportPlugin, IPlugin {
 
     private static final Logger logger = LogManager.getLogger(PicaMassImport.class);
-
     private static final String NAME = "intranda Pica Massenimport";
     private String data = "";
     private String importFolder = "";
@@ -103,12 +103,10 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private static final String[] TOTALITY_IDENTIFIER_FIELD = new String[] {"036D", "9" };
 
     protected String ats;
-    protected List<Property> processProperties = new ArrayList<>();
     protected List<Property> workpieceProperties = new ArrayList<>();
     protected List<Property> templateProperties = new ArrayList<>();
 
     protected String currentTitle;
-    protected String docType;
     protected String author = "";
     protected String volumeNumber = "";
 
@@ -432,7 +430,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public String getProcessTitle() {
-        String answer = "";
+        String answer;
         if (StringUtils.isNotBlank(this.ats)) {
             answer = ats.toLowerCase() + "_" + this.currentIdentifier;
         } else {
@@ -516,31 +514,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                             XSSFCell cell = row.getCell(i);
                             // changing all cell types to String
                             cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                            if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-                                int value = (int) cell.getNumericCellValue();
-                                Record r = new Record();
-                                r.setId(String.valueOf(value));
-                                r.setData(String.valueOf(value));
-                                records.add(r);
-                                // logger.debug("found content " + value + " in
-                                // row " + j + " cell " + i);
-
-                            } else if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                                String value = cell.getStringCellValue();
-                                if (value.trim().matches(PPN_PATTERN)) {
-                                    // remove date and time from list
-                                    if (value.length() > 6) {
-                                        if (logger.isDebugEnabled()) {
-                                            logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
-                                        }
-                                        // found numbers and character 'X' as
-                                        // last sign
-                                        Record r = new Record();
-                                        r.setId(value.trim());
-                                        r.setData(value.trim());
-                                        records.add(r);
-                                    }
-                                }
+                            Record record = changeCellTypeToString(cell, i, j);
+                            if (record != null) {
+                                records.add(record);
                             }
                         }
                     }
@@ -559,31 +535,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                             // changing all cell types to String
                             if (cell != null) {
                                 cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                                if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-                                    int value = (int) cell.getNumericCellValue();
-                                    Record r = new Record();
-                                    r.setId(String.valueOf(value));
-                                    r.setData(String.valueOf(value));
-                                    records.add(r);
-                                    // logger.debug("found content " + value + "
-                                    // in row " + j + " cell " + i);
-
-                                } else if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                                    String value = cell.getStringCellValue();
-                                    if (value.trim().matches(PPN_PATTERN)) {
-                                        // remove date and time from list
-                                        if (value.length() > 6) {
-                                            if (logger.isDebugEnabled()) {
-                                                logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
-                                            }
-                                            // found numbers and character 'X'
-                                            // as last sign
-                                            Record r = new Record();
-                                            r.setId(value.trim());
-                                            r.setData(value.trim());
-                                            records.add(r);
-                                        }
-                                    }
+                                Record record = changeCellTypeToString(cell, i, j);
+                                if (record != null) {
+                                    records.add(record);
                                 }
                             }
                         }
@@ -628,6 +582,32 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         // logger.error(e);
         // }
         return records;
+    }
+
+    private Record changeCellTypeToString(Cell cell, int i, int j) {
+        Record record = new Record();
+
+        if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+            int value = (int) cell.getNumericCellValue();
+            record.setId(String.valueOf(value));
+            record.setData(String.valueOf(value));
+            return record;
+        } else if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+            String value = cell.getStringCellValue();
+            if (value.trim().matches(PPN_PATTERN)) {
+                // remove date and time from list
+                if (value.length() > 6) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
+                    }
+                    // found numbers and character 'X' as last sign
+                    record.setId(value.trim());
+                    record.setData(value.trim());
+                    return record;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -696,53 +676,51 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     private String createAtstsl(String myTitle, String author) {
-        String myAtsTsl = "";
+        StringBuilder atsTsl = new StringBuilder();
         if (author != null && !author.equals("")) {
             /* author */
             if (author.length() > 4) {
-                myAtsTsl = author.substring(0, 4);
+                atsTsl.append(author.substring(0, 4));
             } else {
-                myAtsTsl = author;
+                atsTsl.append(author);
                 /* titel */
             }
 
             if (myTitle.length() > 4) {
-                myAtsTsl += myTitle.substring(0, 4);
+                atsTsl.append(myTitle.substring(0, 4));
             } else {
-                myAtsTsl += myTitle;
+                atsTsl.append(myTitle);
             }
         }
 
         /*
-         * -------------------------------- bei Zeitschriften Tsl berechnen
-         * --------------------------------
+         * bei Zeitschriften Tsl berechnen
          */
-        // if (gattung.startsWith("ab") || gattung.startsWith("ob")) {
         if (author == null || author.equals("")) {
-            myAtsTsl = "";
+            atsTsl = new StringBuilder();
             StringTokenizer tokenizer = new StringTokenizer(myTitle);
             int counter = 1;
             while (tokenizer.hasMoreTokens()) {
                 String tok = tokenizer.nextToken();
                 if (counter == 1) {
                     if (tok.length() > 4) {
-                        myAtsTsl += tok.substring(0, 4);
+                        atsTsl.append(tok.substring(0, 4));
                     } else {
-                        myAtsTsl += tok;
+                        atsTsl.append(tok);
                     }
                 }
                 if (counter == 2 || counter == 3) {
                     if (tok.length() > 2) {
-                        myAtsTsl += tok.substring(0, 2);
+                        atsTsl.append(tok.substring(0, 2));
                     } else {
-                        myAtsTsl += tok;
+                        atsTsl.append(tok);
                     }
                 }
                 if (counter == 4) {
                     if (tok.length() > 1) {
-                        myAtsTsl += tok.substring(0, 1);
+                        atsTsl.append(tok.substring(0, 1));
                     } else {
-                        myAtsTsl += tok;
+                        atsTsl.append(tok);
                     }
                 }
                 counter++;
@@ -750,10 +728,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         }
         /* im ATS-TSL die Umlaute ersetzen */
         if (FacesContext.getCurrentInstance() != null) {
-            myAtsTsl = UghUtils.convertUmlaut(myAtsTsl);
+            atsTsl = new StringBuilder(UghUtils.convertUmlaut(atsTsl.toString()));
         }
-        myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
-        return myAtsTsl;
+        return atsTsl.toString().replaceAll("[\\W]", "");
     }
 
     /**
@@ -803,7 +780,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      */
     private String getOpacAddress() throws ImportPluginException {
 
-        String address = "";
+        String address;
 
         try (FileInputStream istream = new FileInputStream(
                 FilenameUtils.concat(this.getGoobiConfigDirectory(), "kitodo_opac.xml"))) {

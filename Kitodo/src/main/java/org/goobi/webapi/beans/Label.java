@@ -75,20 +75,21 @@ public class Label {
      */
     public static List<Label> toListOfLabels(Map<String, String> data, KeyAttribute keyAttribute) {
         List<Label> result = new ArrayList<>();
-        for (String key : data.keySet()) {
-            Label entry = new Label();
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            String key = entry.getKey();
+            Label label = new Label();
             switch (keyAttribute) {
                 case LABEL:
-                    entry.label = key;
+                    label.label = key;
                     break;
                 case LANGUAGE:
-                    entry.language = key;
+                    label.language = key;
                     break;
                 default:
                     throw new UnreachableCodeException();
             }
-            entry.value = data.get(key);
-            result.add(entry);
+            label.value = entry.getValue();
+            result.add(label);
         }
         return result;
     }

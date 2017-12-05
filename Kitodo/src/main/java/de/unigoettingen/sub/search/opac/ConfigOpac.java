@@ -17,6 +17,7 @@ import de.sub.goobi.helper.Helper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -177,9 +178,7 @@ public class ConfigOpac {
         List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt("catalogue");
         for (HierarchicalConfiguration catalogue : catalogues) {
             if (title.equals(catalogue.getString("[@title]"))) {
-                for (String restriction : catalogue.getStringArray("restriction")) {
-                    result.add(restriction);
-                }
+                result.addAll(Arrays.asList(catalogue.getStringArray("restriction")));
                 break;
             }
         }

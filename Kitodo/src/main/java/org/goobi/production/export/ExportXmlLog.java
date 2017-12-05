@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -95,8 +96,6 @@ public class ExportXmlLog {
      *            the process to export
      * @param os
      *            the OutputStream to write the contents to
-     * @throws IOException
-    -     *             add description
      */
     public void startExport(Process process, OutputStream os, String xslt) throws IOException {
         try {
@@ -373,43 +372,30 @@ public class ExportXmlLog {
 
         try {
             URI metadataFilePath = serviceManager.getFileService().getMetadataFilePath(process);
-            Document metsDoc = new SAXBuilder().build(serviceManager.getFileService().getFile(metadataFilePath).toString());
+            Document metsDoc = new SAXBuilder()
+                    .build(serviceManager.getFileService().getFile(metadataFilePath).toString());
             Document anchorDoc = null;
             URI anchorFileName = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
                     .replace("meta.xml", "meta_anchor.xml"));
             if (serviceManager.getFileService().fileExist(anchorFileName)
                     && serviceManager.getFileService().canRead(anchorFileName)) {
-                anchorDoc = new SAXBuilder().build(serviceManager.getFileService().getFile(metadataFilePath).toString());
+                anchorDoc = new SAXBuilder()
+                        .build(serviceManager.getFileService().getFile(metadataFilePath).toString());
             }
             HashMap<String, Namespace> namespaces = new HashMap<>();
 
             HashMap<String, String> names = getNamespacesFromConfig();
-            for (String key : names.keySet()) {
-                namespaces.put(key, Namespace.getNamespace(key, names.get(key)));
+            for (Map.Entry<String, String> entry : names.entrySet()) {
+                String key = entry.getKey();
+                namespaces.put(key, Namespace.getNamespace(key, entry.getValue()));
             }
 
             HashMap<String, String> fields = getMetsFieldsFromConfig(false);
-            for (String key : fields.keySet()) {
-                List<Element> metsValues = getMetsValues(fields.get(key), metsDoc, namespaces);
-                for (Element element : metsValues) {
-                    Element ele = new Element("property", xmlns);
-                    ele.setAttribute("name", key);
-                    ele.addContent(element.getTextTrim());
-                    metadataElements.add(ele);
-                }
-            }
+            metadataElements = prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
 
             if (anchorDoc != null) {
                 fields = getMetsFieldsFromConfig(true);
-                for (String key : fields.keySet()) {
-                    List<Element> metsValues = getMetsValues(fields.get(key), anchorDoc, namespaces);
-                    for (Element element : metsValues) {
-                        Element ele = new Element("property", xmlns);
-                        ele.setAttribute("name", key);
-                        ele.addContent(element.getTextTrim());
-                        metadataElements.add(ele);
-                    }
-                }
+                metadataElements = prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
             }
 
             metsElement.addContent(metadataElements);
@@ -420,6 +406,21 @@ public class ExportXmlLog {
         }
         processElm.setContent(processElements);
         return doc;
+    }
+
+    private ArrayList<Element> prepareMetadataElements(ArrayList<Element> metadataElements, Map<String, String> fields,
+            Document document, HashMap<String, Namespace> namespaces, Namespace xmlns) throws JaxenException {
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            String key = entry.getKey();
+            List<Element> metsValues = getMetsValues(entry.getValue(), document, namespaces);
+            for (Element element : metsValues) {
+                Element ele = new Element("property", xmlns);
+                ele.setAttribute("name", key);
+                ele.addContent(element.getTextTrim());
+                metadataElements.add(ele);
+            }
+        }
+        return metadataElements;
     }
 
     /**
@@ -438,16 +439,15 @@ public class ExportXmlLog {
             throws JaxenException {
         JDOMXPath xpath = new JDOMXPath(expr.trim().replace("\n", ""));
         // Add all namespaces
-        for (String key : namespaces.keySet()) {
-            Namespace value = namespaces.get(key);
-            xpath.addNamespace(key, value.getURI());
+        for (Map.Entry<String, Namespace> entry : namespaces.entrySet()) {
+            xpath.addNamespace(entry.getKey(), entry.getValue().getURI());
         }
         return xpath.selectNodes(element);
     }
 
     /**
-     * This method transforms the xml log using a xslt file and opens a new
-     * window with the output file.
+     * This method transforms the xml log using a xslt file and opens a new window
+     * with the output file.
      *
      * @param out
      *            ServletOutputStream

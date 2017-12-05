@@ -14,6 +14,7 @@ package org.goobi.production.properties;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -151,9 +152,7 @@ public class ImportProperty implements IProperty {
     public List<String> getValueList() {
         String[] values = this.value.split("; ");
         List<String> answer = new ArrayList<>();
-        for (String val : values) {
-            answer.add(val);
-        }
+        answer.addAll(Arrays.asList(values));
         return answer;
     }
 

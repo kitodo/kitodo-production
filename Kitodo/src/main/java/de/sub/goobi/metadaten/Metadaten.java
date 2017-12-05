@@ -1009,43 +1009,35 @@ public class Metadaten {
      *
      * @param inStrukturelement
      *            DocStruct object
-     * @param inTyp
+     * @param type
      *            String
      */
-    private String determineMetadata(DocStruct inStrukturelement, String inTyp) {
-        String rueckgabe = "";
+    private String determineMetadata(DocStruct inStrukturelement, String type) {
+        StringBuilder result = new StringBuilder();
         List<Metadata> allMDs = inStrukturelement.getAllMetadata();
         if (allMDs != null) {
             for (Metadata md : allMDs) {
-                if (md.getType().getName().equals(inTyp)) {
-                    rueckgabe += (md.getValue() == null ? "" : md.getValue()) + " ";
+                if (md.getType().getName().equals(type)) {
+                    result.append(md.getValue() == null ? "" : md.getValue());
+                    result.append(" ");
                 }
             }
         }
-        return rueckgabe.trim();
+        return result.toString().trim();
     }
 
     /**
      * Gets metadata value of specific type of an DocStruct element.
+     *
      * @param docStructElement
      *      The DocStruct element.
-     *
-     * @param inTyp
+     * @param type
      *      The metadata typ.
      * @return
      *      The metadata value.
      */
-    public String getMetadataByElementAndType(DocStruct docStructElement, String inTyp) {
-        String result = "";
-        List<Metadata> allMDs = docStructElement.getAllMetadata();
-        if (allMDs != null) {
-            for (Metadata md : allMDs) {
-                if (md.getType().getName().equals(inTyp)) {
-                    result += (md.getValue() == null ? "" : md.getValue()) + " ";
-                }
-            }
-        }
-        return result.trim();
+    public String getMetadataByElementAndType(DocStruct docStructElement, String type) {
+        return determineMetadata(docStructElement, type);
     }
 
     /**
@@ -1283,21 +1275,15 @@ public class Metadaten {
                 // Build a new list of children for the edited element
                 List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
                 if (positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)) {
-                    for (DocStruct createdElement : createdElements) {
-                        newChildren.add(createdElement);
-                    }
+                    newChildren.addAll(createdElements);
                 }
                 for (DocStruct child : childrenBefore) {
                     if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT)) {
-                        for (DocStruct element : createdElements) {
-                            newChildren.add(element);
-                        }
+                        newChildren.addAll(createdElements);
                     }
                     newChildren.add(child);
                     if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT)) {
-                        for (DocStruct element : createdElements) {
-                            newChildren.add(element);
-                        }
+                        newChildren.addAll(createdElements);
                     }
                 }
 
@@ -1493,7 +1479,7 @@ public class Metadaten {
         for (Metadata meineSeite : listMetadaten) {
             this.structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, this.myPrefs, this.process);
             this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler),
-                    determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
+                    determineMetadata(meineSeite.getDocStruct(), "physPageNumber") + ": "
                             + meineSeite.getValue());
         }
     }
@@ -2944,9 +2930,7 @@ public class Metadaten {
         String pref = (String) suggest;
         ArrayList<String> result = new ArrayList<>();
         ArrayList<String> all = new ArrayList<>();
-        for (String si : this.allPages) {
-            all.add(si);
-        }
+        all.addAll(Arrays.asList(this.allPages));
 
         for (String element : all) {
             if (element != null && element.contains(pref) || "".equals(pref)) {
