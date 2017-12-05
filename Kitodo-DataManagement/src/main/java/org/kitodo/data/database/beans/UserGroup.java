@@ -59,6 +59,11 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         this.authorizations = new ArrayList<>();
     }
 
+    /**
+     * Gets title.
+     *
+     * @return The title.
+     */
     public String getTitle() {
         if (this.title == null) {
             return "";
@@ -67,30 +72,69 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         }
     }
 
+    /**
+     * Sets title.
+     *
+     * @param title
+     *            The title.
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Gets authorizations.
+     *
+     * @return The authorizations.
+     */
     public List<Authorization> getAuthorizations() {
         return authorizations;
     }
 
+    /**
+     * Sets authorizations.
+     *
+     * @param authorizations
+     *            The authorizations.
+     */
     public void setAuthorizations(List<Authorization> authorizations) {
         this.authorizations = authorizations;
     }
 
+    /**
+     * Gets users.
+     *
+     * @return The users.
+     */
     public List<User> getUsers() {
-        return this.users;
+        return users;
     }
 
+    /**
+     * Sets users.
+     *
+     * @param users
+     *            The users.
+     */
     public void setUsers(List<User> users) {
         this.users = users;
     }
 
+    /**
+     * Gets tasks.
+     *
+     * @return The tasks.
+     */
     public List<Task> getTasks() {
-        return this.tasks;
+        return tasks;
     }
 
+    /**
+     * Sets tasks.
+     *
+     * @param tasks
+     *            The tasks.
+     */
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }

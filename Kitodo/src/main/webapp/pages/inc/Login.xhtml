@@ -23,17 +23,13 @@
     <sec:authorize access="isAuthenticated()">
         <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
             <h:panelGroup>
-                <sec:authorize access="hasAuthority('admin')">
-                    <h:outputText value="role: admin"/>
-                </sec:authorize>
-                <sec:authorize access="hasAuthority('user')">
-                    <h:outputText value="role: user"/>
-                </sec:authorize>
+                <h:outputText rendered="#{LoginForm.myBenutzer != null}"
+                              style="font-weight: normal"
+                              value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}"/>
             </h:panelGroup>
-            <h:outputText value="#{request.remoteUser}"/>
             <h:panelGroup>
                 <form action="${request.contextPath}/logout" method="POST">
-                    <input type="submit" value="#{msgs.logout}"/>
+                    <input id="logout" type="submit" value="#{msgs.logout}"/>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </form>
             </h:panelGroup>
@@ -41,10 +37,9 @@
     </sec:authorize>
 
     <sec:authorize access="isAnonymous()">
-        <h:panelGrid rendered="#{LoginForm.myBenutzer == null}" columns="1" width="90%"
+        <h:panelGrid columns="1" width="90%"
                      styleClass="loginBorder">
-            <h:panelGroup id="logintable"
-                          rendered="#{LoginForm.myBenutzer == null and !LoginForm.schonEingeloggt}">
+            <h:panelGroup id="logintable">
 
                 <form action="${request.contextPath}/login" method="POST">
                     <font color="red">
@@ -53,7 +48,7 @@
                     <h:panelGrid columns="2" style="font-size: 9px">
                         <h:outputText value="#{msgs.login}"/>
                         <h:panelGroup>
-                            <input id="login" type="text" name="username"/>
+                            <input id="username" type="text" name="username"/>
                         </h:panelGroup>
 
                         <h:outputText value="#{msgs.password}"/>
@@ -62,11 +57,10 @@
                         </h:panelGroup>
 
                     </h:panelGrid>
-                    <input type="submit" value="Login"/>
+                    <input id="login" type="submit" value="Login"/>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </form>
             </h:panelGroup>
-
 
             <h:panelGroup
                 rendered="#{LoginForm.myBenutzer == null and LoginForm.schonEingeloggt}">

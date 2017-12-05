@@ -30,9 +30,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+
         http
             .authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("admin")
+                .antMatchers("/pages/statischBedienung.jsf").permitAll()
+                .antMatchers("/pages/statischTechnischerHintergrund.jsf").permitAll()
+                .antMatchers("/pages/images/**").permitAll()
+                .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
+                .antMatchers("/js/toggle.js").permitAll()
+                .anyRequest().authenticated()
                 .and()
             .formLogin()
                 .loginPage("/pages/Main.jsf")
@@ -49,5 +57,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(serviceManager.getUserService()).passwordEncoder(passwordEncoder);
     }
-
 }

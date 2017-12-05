@@ -56,6 +56,9 @@ import org.kitodo.helper.RelatedProperty;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -217,6 +220,25 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         } else {
             throw new UsernameNotFoundException("Username " + login + "was found more than once");
         }
+    }
+
+    /**
+     * Gets the current authenticated user.
+     *
+     * @return
+     *      The user.
+     */
+    public User getAuthenticatedUser() throws DAOException {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            UserDetails userDetails = principal instanceof UserDetails ? (UserDetails) principal : null;
+            if (userDetails != null) {
+                return getByLogin(userDetails.getUsername());
+            }
+        }
+        return null;
     }
 
     public List<User> getByQuery(String query, String parameter) throws DAOException {

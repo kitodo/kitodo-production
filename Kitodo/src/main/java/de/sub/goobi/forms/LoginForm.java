@@ -297,8 +297,24 @@ public class LoginForm implements Serializable {
         this.password = password;
     }
 
+    /**
+     * Gets current authenticated User.
+     *
+     * @return
+     *      The User.
+     */
     public User getMyBenutzer() {
-        return this.myBenutzer;
+        if (myBenutzer != null) {
+            return this.myBenutzer;
+        } else {
+            try {
+                myBenutzer = serviceManager.getUserService().getAuthenticatedUser();
+                return this.myBenutzer;
+            } catch (DAOException e) {
+                Helper.setFehlerMeldung(e);
+            }
+        }
+        return null;
     }
 
     public void setMyBenutzer(User myClass) {
@@ -311,8 +327,8 @@ public class LoginForm implements Serializable {
      * @return int
      */
     public int getMaximaleBerechtigung() {
-        //TODO Only to keep compatibility to old front end security handling
-        //TODO delete this methode when all security tags are replaced at front end
+        //TODO Only to keep compatibility to old frontend pages
+        //TODO delete this methode when all new frontend is ready or security tags are replaced
         if (this.myBenutzer != null) {
             for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
                 if (userGroup.getAuthorizations().size() > 0) {
