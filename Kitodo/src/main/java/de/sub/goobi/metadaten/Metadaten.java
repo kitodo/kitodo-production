@@ -1261,46 +1261,46 @@ public class Metadaten {
             }
         } else {
             DocStruct edited = positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT) ? docStruct
-                : docStruct.getParent();
+                    : docStruct.getParent();
             if (edited == null) {
                 logger.debug("The selected element cannot investigate the father.");
-            }
-
-            List<DocStruct> childrenBefore = edited.getAllChildren();
-            if (childrenBefore == null) {
-                for (DocStruct element : createdElements) {
-                    edited.addChild(element);
-                }
             } else {
-                // Build a new list of children for the edited element
-                List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
-                if (positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)) {
-                    newChildren.addAll(createdElements);
-                }
-                for (DocStruct child : childrenBefore) {
-                    if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT)) {
+                List<DocStruct> childrenBefore = edited.getAllChildren();
+                if (childrenBefore == null) {
+                    for (DocStruct element : createdElements) {
+                        edited.addChild(element);
+                    }
+                } else {
+                    // Build a new list of children for the edited element
+                    List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
+                    if (positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.FIRST_CHILD_OF_CURRENT_ELEMENT)) {
                         newChildren.addAll(createdElements);
                     }
-                    newChildren.add(child);
-                    if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT)) {
-                        newChildren.addAll(createdElements);
+                    for (DocStruct child : childrenBefore) {
+                        if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.BEFOR_CURRENT_ELEMENT)) {
+                            newChildren.addAll(createdElements);
+                        }
+                        newChildren.add(child);
+                        if (child == docStruct && positionOfNewDocStrucElement.equals(PositionOfNewDocStrucElement.AFTER_CURRENT_ELEMENT)) {
+                            newChildren.addAll(createdElements);
+                        }
                     }
-                }
 
-                // Remove the existing children
-                for (DocStruct child : newChildren) {
-                    edited.removeChild(child);
-                }
+                    // Remove the existing children
+                    for (DocStruct child : newChildren) {
+                        edited.removeChild(child);
+                    }
 
-                // Set the new children on the edited element
-                for (DocStruct child : newChildren) {
-                    edited.addChild(child);
+                    // Set the new children on the edited element
+                    for (DocStruct child : newChildren) {
+                        edited.addChild(child);
+                    }
                 }
             }
         }
-
         return createdElements.iterator().next();
     }
+
 
     /**
      * mögliche Docstructs als Kind zurückgeben.
@@ -1976,9 +1976,12 @@ public class Metadaten {
                 if (addrdf != null) {
 
                     /* die Liste aller erlaubten Metadatenelemente erstellen */
-                    List<String> erlaubte = new ArrayList<>();
-                    for (MetadataType metadataType : this.docStruct.getAddableMetadataTypes()) {
-                        erlaubte.add(metadataType.getName());
+                    List<MetadataType> addableMetadataTypes = this.docStruct.getAddableMetadataTypes();
+                    List<String> allowed = new ArrayList<>();
+                    if (addableMetadataTypes != null && addableMetadataTypes.size() > 0) {
+                        for (MetadataType metadataType : addableMetadataTypes) {
+                            allowed.add(metadataType.getName());
+                        }
                     }
 
                     /*
@@ -1986,13 +1989,13 @@ public class Metadaten {
                      * dann hinzufügen
                      */
                     for (Metadata metadata : addrdf.getDigitalDocument().getLogicalDocStruct().getAllMetadata()) {
-                        if (erlaubte.contains(metadata.getType().getName())) {
+                        if (allowed.contains(metadata.getType().getName())) {
                             this.docStruct.addMetadata(metadata);
                         }
                     }
 
                     for (Person person : addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons()) {
-                        if (erlaubte.contains(person.getType().getName())) {
+                        if (allowed.contains(person.getType().getName())) {
                             this.docStruct.addPerson(person);
                         }
                     }

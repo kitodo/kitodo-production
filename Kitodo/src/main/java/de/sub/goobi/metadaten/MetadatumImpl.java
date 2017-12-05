@@ -191,7 +191,9 @@ public class MetadatumImpl implements Metadatum {
                     this.selectedItems.add(i.getLabel());
                 }
             }
-            setWert(values);
+            if (values != null) {
+                setWert(values);
+            }
         }
         return this.selectedItems;
     }

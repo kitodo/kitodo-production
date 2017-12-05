@@ -60,11 +60,11 @@ public class ExportMets {
             throws IOException, DocStructHasNoTypeException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        URI userHome = null;
         if (login != null) {
-            userHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
+            URI userHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
+            return startExport(process, userHome);
         }
-        return startExport(process, userHome);
+        return false;
     }
 
     /**
@@ -149,8 +149,12 @@ public class ExportMets {
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFileGroup);
         mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
-        mm.write(metaFile.toString());
-        Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
-        return true;
+        if (mm != null) {
+            mm.write(metaFile.toString());
+            Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
+            return true;
+        }
+        Helper.setFehlerMeldung(process.getTitle() + ": was not finished!");
+        return false;
     }
 }

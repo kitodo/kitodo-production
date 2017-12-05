@@ -494,8 +494,6 @@ public class SchemaService {
         Metadata mdPPNBand = null;
         Metadata mdSorting = null;
         try {
-            Metadata mdTitle = new Metadata(prefs.getMetadataTypeByName("TitleDocMain"));
-            mdTitle.setValue(title);
             mdVerlag = new Metadata(prefs.getMetadataTypeByName("PublisherName"));
             mdVerlag.setValue(verlag);
             mdPlace = new Metadata(prefs.getMetadataTypeByName("PlaceOfPublication"));
@@ -507,27 +505,22 @@ public class SchemaService {
             mdPPNBand = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
             mdPPNBand.setValue("PPN" + ppn + "_" + bandNumber);
             mdSorting = new Metadata(prefs.getMetadataTypeByName("CurrentNoSorting"));
-        } catch (MetadataTypeNotAllowedException e1) {
-            logger.error(e1);
-        }
-        try {
             int bandInt = Integer.parseInt(bandNumber) * 10;
             mdSorting.setValue(String.valueOf(bandInt));
-        } catch (NumberFormatException e) {
-            logger.error(e.getMessage());
+        } catch (MetadataTypeNotAllowedException | NumberFormatException e) {
+            logger.error(e);
         }
 
         /*
          * assign magazine's metadata
          */
         inTopStruct.getAllMetadataByType(prefs.getMetadataTypeByName("TitleDocMain")).get(0).setValue(title);
-
         try {
-            inTopStruct.addMetadata(mdVerlag);
-            inTopStruct.addMetadata(mdPlace);
-            inTopStruct.addMetadata(mdPPN);
-            inTopStruct.addMetadata(mdISSN);
-        } catch (Exception e) {
+            inTopStruct = preventNullMetadataInsert(inTopStruct, mdVerlag);
+            inTopStruct = preventNullMetadataInsert(inTopStruct, mdPlace);
+            inTopStruct = preventNullMetadataInsert(inTopStruct, mdPPN);
+            inTopStruct = preventNullMetadataInsert(inTopStruct, mdISSN);
+        } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
             logger.error(e.getMessage());
         }
 
@@ -536,16 +529,22 @@ public class SchemaService {
          */
         DocStruct structBand = inTopStruct.getAllChildren().get(0);
         if (structBand != null) {
-
             try {
-                structBand.addMetadata(mdVerlag);
-                structBand.addMetadata(mdPlace);
-                structBand.addMetadata(mdPPNBand);
-                structBand.addMetadata(mdSorting);
+                structBand = preventNullMetadataInsert(structBand, mdVerlag);
+                structBand = preventNullMetadataInsert(structBand, mdPlace);
+                structBand = preventNullMetadataInsert(structBand, mdPPNBand);
+                structBand = preventNullMetadataInsert(structBand, mdSorting);
             } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
                 logger.error(e.getMessage());
             }
         }
+    }
+
+    private DocStruct preventNullMetadataInsert(DocStruct docStruct, Metadata metadata) throws MetadataTypeNotAllowedException {
+        if (metadata != null) {
+            docStruct.addMetadata(metadata);
+        }
+        return docStruct;
     }
 
     /**
