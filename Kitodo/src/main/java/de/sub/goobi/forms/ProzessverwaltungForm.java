@@ -179,10 +179,11 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Create new process.
      */
-    private void newProcess() {
+    public String newProcess() {
         this.process = new Process();
         this.newProcessTitle = "";
         this.modusBearbeiten = "prozess";
+        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
