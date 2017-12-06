@@ -105,7 +105,7 @@
                                 </h:link>
 
                             <!-- Prozessübersicht -->
-                                <sec:authorize access="hasAnyAuthority('admin','manager','user')">
+                                <sec:authorize access="hasAuthority('admin')">
                             <h:commandLink styleClass="mlink" id="allProcesses"
                                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                                            action="#{ProzessverwaltungForm.filterCurrentProcesses}"
@@ -115,7 +115,6 @@
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.aktuelleProzesse}" />
                             </h:commandLink>
-
 
                                     <!-- batches -->
                                     <h:link styleClass="mlink"
@@ -127,17 +126,19 @@
                                         <h:outputText value="#{msgs.batches}"/>
                                     </h:link>
 
-                                    <!-- neuen Vorgang anlegen -->
-                                    <h:link styleClass="mlink" id="newProcess"
-                                            outcome="/pages/ProzessverwaltungAlle"
-                                            style="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                        <f:param name="linkId" value="newProcess"/>
-                                        <h:panelGroup
-                                            rendered="#{request.getParameter('linkId') == 'newProcess' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml'}">
-                                            <f:verbatim>&#8250; </f:verbatim>
-                                        </h:panelGroup>
-                                        <h:outputText value="#{msgs.neuenVorgangAnlegen}"/>
-                                    </h:link>
+                                    <sec:authorize access="hasAuthority('manger')">
+                                        <!-- neuen Vorgang anlegen -->
+                                        <h:link styleClass="mlink" id="newProcess"
+                                                outcome="/pages/ProzessverwaltungAlle"
+                                                style="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                            <f:param name="linkId" value="newProcess"/>
+                                            <h:panelGroup
+                                                rendered="#{request.getParameter('linkId') == 'newProcess' and view.viewId == '/pages/ProzessverwaltungAlle.xhtml'}">
+                                                <f:verbatim>&#8250; </f:verbatim>
+                                            </h:panelGroup>
+                                            <h:outputText value="#{msgs.neuenVorgangAnlegen}"/>
+                                        </h:link>
+                                    </sec:authorize>
 
                             <!-- Prozessvorlagen -->
                             <h:commandLink styleClass="mlink" id="templates"

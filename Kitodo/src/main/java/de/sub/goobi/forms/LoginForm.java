@@ -342,8 +342,10 @@ public class LoginForm implements Serializable {
                     }
                 }
             }
+            return 4;
         }
-        return 4;
+        return 0;
+
     }
 
     public String getPasswortAendernAlt() {

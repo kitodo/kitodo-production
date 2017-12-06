@@ -88,7 +88,10 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      * @return The authorizations.
      */
     public List<Authorization> getAuthorizations() {
-        return authorizations;
+        if (this.authorizations == null) {
+            this.authorizations = new ArrayList<>();
+        }
+        return this.authorizations;
     }
 
     /**
