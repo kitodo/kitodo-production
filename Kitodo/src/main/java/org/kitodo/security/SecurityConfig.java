@@ -30,6 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // CSRF protection is disabled. In default enabled state, it is needed to
+        // include CSRF Token on every request.
         http.csrf().disable();
 
         http
