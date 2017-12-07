@@ -306,7 +306,7 @@ public class LoginForm implements Serializable {
      * Gets current authenticated User.
      *
      * @return
-     *      The User.
+     *      The user object or null if no user is authenticated.
      */
     public User getMyBenutzer() {
         if (myBenutzer != null) {
@@ -317,9 +317,9 @@ public class LoginForm implements Serializable {
                 return this.myBenutzer;
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(e);
+                return null;
             }
         }
-        return null;
     }
 
     public void setMyBenutzer(User myClass) {
@@ -339,14 +339,14 @@ public class LoginForm implements Serializable {
                 if (userGroup.getAuthorizations().size() > 0) {
                     for (Authorization authorization : userGroup.getAuthorizations()) {
                         if (authorization.getTitle().equals("admin")) {
-                            return 1;
+                            return 1; //Admin permission
                         }
                     }
                 }
             }
-            return 4;
+            return 4; //User permission
         }
-        return 0;
+        return 0; //Anonymus permission
 
     }
 

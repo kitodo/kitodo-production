@@ -223,10 +223,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Gets the current authenticated user.
+     * Gets the current authenticated user and loads object from database.
      *
      * @return
-     *      The user.
+     *      The user object or null if no user is authenticated.
      */
     public User getAuthenticatedUser() throws DAOException {
         SecurityContext securityContext = SecurityContextHolder.getContext();

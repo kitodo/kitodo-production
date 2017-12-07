@@ -109,8 +109,10 @@ public class User extends BaseIndexedBean {
     }
 
     /**
-     * Copy Constructor
+     * Copy Constructor.
+     * 
      * @param user
+     *            The user.
      */
     public User(User user) {
         this.active = user.active;
