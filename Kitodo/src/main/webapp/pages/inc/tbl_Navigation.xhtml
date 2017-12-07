@@ -104,17 +104,17 @@
                                     <h:outputText value="#{msgs.nachEinemBandSuchen}"/>
                                 </h:link>
 
-                            <!-- Prozessübersicht -->
+                                <!-- Prozessübersicht -->
                                 <sec:authorize access="hasAuthority('admin')">
-                            <h:commandLink styleClass="mlink" id="allProcesses"
-                                           rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                           action="#{ProzessverwaltungForm.filterCurrentProcesses}"
-                                           style="#{NavigationForm.aktuell == '22' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '22'}">
-                                    <f:verbatim>&#8250; </f:verbatim>
-                                </h:panelGroup>
-                                <h:outputText value="#{msgs.aktuelleProzesse}" />
-                            </h:commandLink>
+                                    <h:commandLink styleClass="mlink" id="allProcesses"
+                                                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                                                   action="#{ProzessverwaltungForm.filterCurrentProcesses}"
+                                                   style="#{NavigationForm.aktuell == '22' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                        <h:panelGroup rendered="#{NavigationForm.aktuell == '22'}">
+                                            <f:verbatim>&#8250; </f:verbatim>
+                                        </h:panelGroup>
+                                        <h:outputText value="#{msgs.aktuelleProzesse}"/>
+                                    </h:commandLink>
 
                                     <!-- batches -->
                                     <h:link styleClass="mlink"
@@ -140,16 +140,16 @@
                                         </h:link>
                                     </sec:authorize>
 
-                            <!-- Prozessvorlagen -->
-                            <h:commandLink styleClass="mlink" id="templates"
-                                           rendered="#{LoginForm.maximaleBerechtigung == 1}"
-                                           action="#{ProzessverwaltungForm.filterTemplates}"
-                                           style="#{NavigationForm.aktuell == '24' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '24'}">
-                                    <f:verbatim>&#8250; </f:verbatim>
-                                </h:panelGroup>
-                                <h:outputText value="#{msgs.prozessvorlagen}" />
-                            </h:commandLink>
+                                    <!-- Prozessvorlagen -->
+                                    <h:commandLink styleClass="mlink" id="templates"
+                                                   rendered="#{LoginForm.maximaleBerechtigung == 1}"
+                                                   action="#{ProzessverwaltungForm.filterTemplates}"
+                                                   style="#{NavigationForm.aktuell == '24' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                        <h:panelGroup rendered="#{NavigationForm.aktuell == '24'}">
+                                            <f:verbatim>&#8250; </f:verbatim>
+                                        </h:panelGroup>
+                                        <h:outputText value="#{msgs.prozessvorlagen}"/>
+                                    </h:commandLink>
                                 </sec:authorize>
 
                             </h:panelGroup>
