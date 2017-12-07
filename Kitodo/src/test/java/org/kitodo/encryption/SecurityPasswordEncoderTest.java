@@ -19,7 +19,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.kitodo.security.SecurityPasswordEncoder;
 
-public class DesEncrypterTest {
+public class SecurityPasswordEncoderTest {
     static Map<String, String> testData;
 
     static {
