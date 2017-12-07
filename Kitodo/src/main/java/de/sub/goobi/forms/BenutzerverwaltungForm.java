@@ -49,6 +49,7 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzerverwaltungForm")
@@ -60,6 +61,8 @@ public class BenutzerverwaltungForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private int userId;
+    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+    private String password;
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -81,8 +84,9 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.userObject.setSurname("");
         this.userObject.setLogin("");
         this.userObject.setLdapLogin("");
-        this.userObject.setPasswordDecrypted("Passwort");
+        this.userObject.setPassword("");
         this.userId = 0;
+        this.password = "";
         return redirectToEdit("?faces-redirect=true");
     }
 
@@ -159,6 +163,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 
         try {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
+                this.userObject.setPassword(passwordEncoder.encrypt(this.password));
                 this.serviceManager.getUserService().save(this.userObject);
                 return redirectToList("?faces-redirect=true");
             } else {
@@ -373,7 +378,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String ldapKonfigurationSchreiben() {
         Ldap myLdap = new Ldap();
         try {
-            myLdap.createNewUser(this.userObject, this.userObject.getPasswordDecrypted());
+            myLdap.createNewUser(this.userObject, passwordEncoder.decrypt(this.userObject.getPassword()));
         } catch (Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Could not generate ldap entry: " + e.getMessage());
@@ -443,6 +448,25 @@ public class BenutzerverwaltungForm extends BasisForm {
             logger.error("Unable to load user groups: " + e.getMessage());
             return new LinkedList<>();
         }
+    }
+
+    /**
+     * Gets password.
+     *
+     * @return The password.
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets password.
+     *
+     * @param password
+     *            The password.
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     // TODO:

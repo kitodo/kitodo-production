@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.kitodo.data.encryption.DesEncrypter;
+import org.kitodo.security.SecurityPasswordEncoder;
 
 public class DesEncrypterTest {
     static Map<String, String> testData;
@@ -34,7 +34,7 @@ public class DesEncrypterTest {
     @Test
     public void encryptTest() {
         for (String clearText : testData.keySet()) {
-            String encrypted = new DesEncrypter().encrypt(clearText);
+            String encrypted = new SecurityPasswordEncoder().encrypt(clearText);
             assertTrue("Encrypted Password doesn't match the precomputed one!",
                     encrypted.equals(testData.get(clearText)));
         }
@@ -43,7 +43,7 @@ public class DesEncrypterTest {
     @Test
     public void decryptTest() {
         for (String clearText : testData.keySet()) {
-            String decrypted = new DesEncrypter().decrypt(testData.get(clearText));
+            String decrypted = new SecurityPasswordEncoder().decrypt(testData.get(clearText));
             assertTrue("Decrypted Password doesn't match the given plain text", decrypted.equals(clearText));
         }
     }

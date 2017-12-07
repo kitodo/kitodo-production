@@ -71,6 +71,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -728,11 +729,13 @@ public class MockDatabase {
     }
 
     private static void insertUsers() throws DAOException, DataException {
+        SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+
         User firstUser = new User();
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
         firstUser.setLogin("kowal");
-        firstUser.setPasswordDecrypted("test");
+        firstUser.setPassword(passwordEncoder.encrypt("test"));
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);

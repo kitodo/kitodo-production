@@ -38,6 +38,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
 @Named("LoginForm")
@@ -52,6 +53,7 @@ public class LoginForm implements Serializable {
     private String passwortAendernAlt;
     private String passwortAendernNeu1;
     private String passwortAendernNeu2;
+    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
 
@@ -218,7 +220,7 @@ public class LoginForm implements Serializable {
                 Ldap myLdap = new Ldap();
                 myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
                 User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
-                temp.setPasswordDecrypted(this.passwortAendernNeu1);
+                temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
                 Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));

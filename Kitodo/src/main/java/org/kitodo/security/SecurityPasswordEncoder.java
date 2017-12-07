@@ -31,7 +31,6 @@ import javax.crypto.spec.PBEParameterSpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.encryption.DesEncrypter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class SecurityPasswordEncoder implements PasswordEncoder {
@@ -52,7 +51,7 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
     private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
                                                (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
-    private static final Logger logger = LogManager.getLogger(DesEncrypter.class);
+    private static final Logger logger = LogManager.getLogger(SecurityPasswordEncoder.class);
 
     private void initialize(String passPhrase) {
         int iterationCount = 19;
@@ -92,7 +91,7 @@ public class SecurityPasswordEncoder implements PasswordEncoder {
      *            String to encrypt
      * @return encrypted string or null on error
      */
-    private String encrypt(String messageToEncrypt) {
+    public String encrypt(String messageToEncrypt) {
         if (messageToEncrypt == null) {
             messageToEncrypt = "";
         }

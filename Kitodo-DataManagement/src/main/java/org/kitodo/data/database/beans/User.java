@@ -25,7 +25,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.kitodo.data.encryption.DesEncrypter;
 
 @Entity
 @Table(name = "user")
@@ -166,16 +165,6 @@ public class User extends BaseIndexedBean {
 
     public void setPassword(String inputPassword) {
         this.password = inputPassword;
-    }
-
-    public String getPasswordDecrypted() {
-        DesEncrypter encrypter = new DesEncrypter();
-        return encrypter.decrypt(this.password);
-    }
-
-    public void setPasswordDecrypted(String inputPassword) {
-        DesEncrypter encrypter = new DesEncrypter();
-        this.password = encrypter.encrypt(inputPassword);
     }
 
     public boolean isActive() {
