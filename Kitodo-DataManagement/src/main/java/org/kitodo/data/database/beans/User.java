@@ -115,11 +115,13 @@ public class User extends BaseIndexedBean {
      *            The user.
      */
     public User(User user) {
+
+        this.setId(user.getId());
+        this.setIndexAction(user.getIndexAction());
         this.active = user.active;
         this.configProductionDateShow = user.configProductionDateShow;
         this.css = user.css;
         this.deleted = user.deleted;
-        this.filters = user.filters;
         this.ldapGroup = user.ldapGroup;
         this.ldapLogin = user.ldapLogin;
         this.location = user.location;
@@ -128,13 +130,40 @@ public class User extends BaseIndexedBean {
         this.name = user.name;
         this.password = user.password;
         this.processingTasks = user.processingTasks;
-        this.projects = user.projects;
-        this.sessionTimeout = user.sessionTimeout;
         this.surname = user.surname;
-        this.tableSize = user.tableSize;
-        this.tasks = user.tasks;
-        this.userGroups = user.userGroups;
         this.withMassDownload = user.withMassDownload;
+
+        if (user.userGroups != null) {
+            this.userGroups = user.userGroups;
+        } else {
+            this.userGroups = new ArrayList<>();
+        }
+
+        if (user.projects != null) {
+            this.projects = user.projects;
+        } else {
+            this.projects = new ArrayList<>();
+        }
+
+        if (user.tasks != null) {
+            this.tasks = user.tasks;
+        } else {
+            this.tasks = new ArrayList<>();
+        }
+
+        if (user.filters != null) {
+            this.filters = user.filters;
+        } else {
+            this.filters = new ArrayList<>();
+        }
+
+        //default values
+        if (user.sessionTimeout != null) {
+            this.sessionTimeout = user.sessionTimeout;
+        }
+        if (user.tableSize != null) {
+            this.tableSize = user.tableSize;
+        }
     }
 
     public String getLogin() {

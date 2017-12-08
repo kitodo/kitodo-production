@@ -240,16 +240,8 @@ public class LoginForm implements Serializable {
      */
     public String BenutzerkonfigurationSpeichern() {
         try {
-            User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
-            temp.setTableSize(this.myBenutzer.getTableSize());
-            temp.setMetadataLanguage(this.myBenutzer.getMetadataLanguage());
-            temp.setConfigProductionDateShow(this.myBenutzer.isConfigProductionDateShow());
-            temp.setCss(this.myBenutzer.getCss());
-            serviceManager.getUserService().save(temp);
-            this.myBenutzer = temp;
+            serviceManager.getUserService().save(this.myBenutzer);
             Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
-        } catch (DAOException e) {
-            Helper.setFehlerMeldung("could not save", e.getMessage());
         } catch (DataException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
         }
@@ -313,7 +305,10 @@ public class LoginForm implements Serializable {
             return this.myBenutzer;
         } else {
             try {
-                myBenutzer = serviceManager.getUserService().getAuthenticatedUser();
+                User newUser = serviceManager.getUserService().getAuthenticatedUser();
+                if (newUser != null) {
+                    myBenutzer = new User(newUser);
+                }
                 return this.myBenutzer;
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(e);

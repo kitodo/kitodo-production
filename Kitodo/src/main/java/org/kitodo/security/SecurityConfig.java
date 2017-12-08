@@ -30,8 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // CSRF protection is disabled. In default enabled state, it is needed to
-        // include CSRF Token on every request.
+        // CSRF protection is disabled. In default enabled state, CSRF Token must be included on every request.
         http.csrf().disable();
 
         http
@@ -42,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/pages/images/**").permitAll()
                 .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
                 .antMatchers("/js/toggle.js").permitAll()
+                .antMatchers("/pages/aktiveNutzer.jsf").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
