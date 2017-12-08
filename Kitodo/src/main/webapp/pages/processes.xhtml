@@ -31,7 +31,7 @@
                         <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                             <ul>
                                 <li>
-                                    <p:commandButton action="#{ProzessverwaltungForm.addFilterToUser}" icon="fa fa-floppy-o fa-lg" value="#{msgs.addFilter}"/>
+                                    <p:commandButton action="#{ProzessverwaltungForm.addFilterToUser}" icon="fa fa-floppy-o fa-lg" value="#{msgs.addFilter}" update="@form"/>
                                 </li>
                                 <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
                                     <li>
