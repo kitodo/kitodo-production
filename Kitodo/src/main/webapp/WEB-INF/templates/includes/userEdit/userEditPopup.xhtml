@@ -1,0 +1,52 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view locale="#{SpracheForm.locale}">
+        <h:body>
+            <!-- edit dialog -->
+            <p:dialog widgetVar="addUserGroupDialog"
+                      header="#{msgs.benutzergruppenHinzufuegen}"
+                      width="700px"
+                      modal="true"
+                      dynamic="true">
+                <h:form>
+                    <p:dataTable var="item"
+                                 value="#{BenutzergruppenForm.lazyDTOModel}"
+                                 lazy="true"
+                                 paginator="true"
+                                 rows="#{LoginForm.myBenutzer.tableSize}"
+                                 paginatorPosition="bottom">
+                        <p:column headerText="#{msgs.benutzergruppe}">
+                            <h:outputText value="#{item.title}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+                            <p:commandLink action="#{BenutzerverwaltungForm.addToGroup}"
+                                           title="add to user group"
+                                           update="userEditForm">
+                                <i class="fa fa-user-plus fa-lg"/>
+                                <f:param name="ID" value="#{item.id}"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                    <p:commandButton onclick="PF('addUserGroupDialog').hide()" value="#{msgs.close}"/>
+                </h:form>
+            </p:dialog>
+        </h:body>
+    </f:view>
+</ui:composition>

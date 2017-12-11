@@ -1,0 +1,41 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dataTable var="item"
+                 value="#{LdapGruppenForm.page.listReload}"
+                 lazy="true"
+                 paginator="true"
+                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 paginatorPosition="bottom">
+        <p:column headerText="#{msgs.ldapgruppe}">
+            <h:outputText value="#{item.title}"/>
+        </p:column>
+        <p:column headerText="#{msgs.homeVerzeichnis}">
+            <h:outputText value="#{item.homeDirectory}"/>
+        </p:column>
+        <p:column headerText="gidNumber">
+            <h:outputText value="#{item.gidNumber}"/>
+        </p:column>
+        <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+            <h:link outcome="ldapgroupEdit">
+                <f:param name="id" value="#{item.id}" />
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+        </p:column>
+    </p:dataTable>
+</ui:composition>

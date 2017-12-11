@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.kitodo.data.database.beans.LdapGroup;
@@ -41,7 +42,7 @@ public class LdapGruppenForm extends BasisForm {
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
         this.itemId = 0;
-        return "/pages/LdapGruppenBearbeiten?faces-redirect=true";
+        return redirectToEdit("?faces-redirect=true");
     }
 
     /**
@@ -52,7 +53,7 @@ public class LdapGruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
-            return "/pages/LdapGruppenAlle?faces-redirect=true";
+            return redirectToList("?faces-redirect=true");
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Could not save", e.getMessage());
             return null;
@@ -71,7 +72,7 @@ public class LdapGruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
             return null;
         }
-        return "/pages/LdapGruppenAlle";
+        return redirectToList("?faces-redirect=true");
     }
 
     /**
@@ -125,5 +126,33 @@ public class LdapGruppenForm extends BasisForm {
 
     public int getItemId() {
         return this.itemId;
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/ldapgroupEdit" once we have
+    // completely switched to the new frontend pages
+    private String redirectToEdit(String urlSuffix) {
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                .get("referer");
+        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+        if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
+            return "/pages/ldapgroupEdit" + urlSuffix;
+        } else {
+            return "/pages/LdapGruppeBearbeiten" + urlSuffix;
+        }
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/users" once we have completely
+    // switched to the new frontend pages
+    private String redirectToList(String urlSuffix) {
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                .get("referer");
+        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+        if (!callerViewId.isEmpty() && callerViewId.contains("ldapgroupEdit.jsf")) {
+            return "/pages/users" + urlSuffix;
+        } else {
+            return "/pages/LdapGruppenAlle" + urlSuffix;
+        }
     }
 }

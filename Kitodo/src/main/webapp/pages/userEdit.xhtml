@@ -1,0 +1,128 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id" value="#{BenutzerverwaltungForm.userId}"/>
+        <f:viewAction action="#{BenutzerverwaltungForm.loadUserObject}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="userEditForm">
+                <p:panel styleClass="content-header">
+                    <h3>
+                        <h:outputText value="#{msgs.benutzerBearbeiten}"
+                                      rendered="#{BenutzerverwaltungForm.userObject.id ne null}"/>
+                        <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
+                                      rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
+                    </h3>
+                    <p:commandButton value="#{msgs.speichern}"
+                                     action="#{BenutzerverwaltungForm.save}"
+                                     update="notifications"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.userYouWillBeRedirected}','severity':'info'});"
+                                     styleClass="button-filled-blue"/>
+                </p:panel>
+                <!-- main form -->
+                <p:panel>
+                    <div>
+                        <p:outputLabel for="surname" value="#{msgs.surname}"/>
+                        <p:inputText id="surname"
+                                     placeholder="#{msgs.surname}"
+                                     value="#{BenutzerverwaltungForm.userObject.surname}"
+                                     required="true"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
+                        <p:inputText id="firstName"
+                                     placeholder="#{msgs.vorname}"
+                                     value="#{BenutzerverwaltungForm.userObject.name}"
+                                     required="true"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="location" value="#{msgs.standort}"/>
+                        <p:inputText id="location"
+                                     placeholder="#{msgs.standort}"
+                                     value="#{BenutzerverwaltungForm.userObject.location}"
+                                     required="true"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="login" value="#{msgs.login}"/>
+                        <p:inputText id="login"
+                                     placeholder="#{msgs.login}"
+                                     value="#{BenutzerverwaltungForm.userObject.login}"
+                                     readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
+                                     required="true"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="password" value="#{msgs.password}"/>
+                        <p:password id="password"
+                                    placeholder="#{msgs.password}"
+                                    value="#{BenutzerverwaltungForm.userObject.passwordDecrypted}"
+                                    required="true"
+                                    redisplay="true"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="metaDataLanguage" value="#{msgs.spracheFuerMetadaten}"/>
+                        <p:inputText id="metaDataLanguage"
+                                     placeholder="#{msgs.spracheFuerMetadaten}"
+                                     value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
+                                     required="true"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
+                        <p:selectBooleanCheckbox id="active"
+                                                 value="#{BenutzerverwaltungForm.userObject.active}"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
+                        <p:selectBooleanCheckbox id="withMassDownload"
+                                                 value="#{BenutzerverwaltungForm.userObject.withMassDownload}"/>
+                    </div>
+                </p:panel>
+                <!-- user groups -->
+                <p:panel>
+                    <p:dataTable var="item" value="#{BenutzerverwaltungForm.userObject.userGroups}">
+                        <p:column headerText="#{msgs.benutzergruppen}">
+                            <h:outputText value="#{item.title}"/>
+                        </p:column>
+                        <p:column styleClass="actionsColumn">
+                            <p:commandLink action="#{BenutzerverwaltungForm.deleteFromGroup}"
+                                           title="#{msgs.ausGruppeLoeschen}"
+                                           update="@form">
+                                <i class="fa fa-trash-o fa-lg"/>
+                                <f:param name="ID" value="#{item.id}"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                    <p:commandButton value="#{msgs.benutzergruppenHinzufuegen}"
+                                     actionListener="#{BenutzergruppenForm.filterKeinMitZurueck}"
+                                     oncomplete="PF('addUserGroupDialog').show()"
+                                     icon="fa fa-plus-circle fa-lg"
+                                     iconPos="right"
+                                     styleClass="button-filled-green"/>
+                </p:panel>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <!-- add user groups dialog -->
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
+    </ui:define>
+</ui:composition>
