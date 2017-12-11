@@ -9,12 +9,29 @@ import java.io.File;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class ModelerFormTest {
 
+    private static FileService fileService = new ServiceManager().getFileService();
+
     @AfterClass
     public static void removeDiagram() throws Exception {
-        new ServiceManager().getFileService().delete(new File(ConfigCore.getKitodoDiagramDirectory() + "test2.bpmn20.xml").toURI());
+        fileService.delete(new File(ConfigCore.getKitodoDiagramDirectory() + "new.bpmn20.xml").toURI());
+        fileService.delete(new File(ConfigCore.getKitodoDiagramDirectory() + "test2.bpmn20.xml").toURI());
+    }
+
+    @Test
+    public void shouldCreateXMLDiagram() {
+        ModelerForm modelerForm = new ModelerForm();
+        modelerForm.setXmlDiagram(null);
+
+        modelerForm.setNewXMLDiagramName("new.bpmn20.xml");
+        modelerForm.createXMLDiagram();
+        assertTrue("Diagram XML was not read!", fileService.fileExist(new File(ConfigCore.getKitodoDiagramDirectory() + "new.bpmn20.xml").toURI()));
+
+        modelerForm.readXMLDiagram();
+        assertTrue("Diagram XML was not read!", modelerForm.getXmlDiagram() != null);
     }
 
     @Test
