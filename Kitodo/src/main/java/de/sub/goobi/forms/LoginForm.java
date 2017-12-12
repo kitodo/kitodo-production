@@ -30,11 +30,15 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
 @Named("LoginForm")
@@ -49,7 +53,9 @@ public class LoginForm implements Serializable {
     private String passwortAendernAlt;
     private String passwortAendernNeu1;
     private String passwortAendernNeu2;
+    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(LoginForm.class);
 
     /**
      * Log out.
@@ -214,7 +220,7 @@ public class LoginForm implements Serializable {
                 Ldap myLdap = new Ldap();
                 myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
                 User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
-                temp.setPasswordDecrypted(this.passwortAendernNeu1);
+                temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
                 Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
@@ -234,16 +240,8 @@ public class LoginForm implements Serializable {
      */
     public String BenutzerkonfigurationSpeichern() {
         try {
-            User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
-            temp.setTableSize(this.myBenutzer.getTableSize());
-            temp.setMetadataLanguage(this.myBenutzer.getMetadataLanguage());
-            temp.setConfigProductionDateShow(this.myBenutzer.isConfigProductionDateShow());
-            temp.setCss(this.myBenutzer.getCss());
-            serviceManager.getUserService().save(temp);
-            this.myBenutzer = temp;
+            serviceManager.getUserService().save(this.myBenutzer);
             Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
-        } catch (DAOException e) {
-            Helper.setFehlerMeldung("could not save", e.getMessage());
         } catch (DataException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
         }
@@ -296,8 +294,27 @@ public class LoginForm implements Serializable {
         this.password = password;
     }
 
+    /**
+     * Gets current authenticated User.
+     *
+     * @return
+     *      The user object or null if no user is authenticated.
+     */
     public User getMyBenutzer() {
-        return this.myBenutzer;
+        if (myBenutzer != null) {
+            return this.myBenutzer;
+        } else {
+            try {
+                User newUser = serviceManager.getUserService().getAuthenticatedUser();
+                if (newUser != null) {
+                    myBenutzer = new User(newUser);
+                }
+                return this.myBenutzer;
+            } catch (DAOException e) {
+                Helper.setFehlerMeldung(e);
+                return null;
+            }
+        }
     }
 
     public void setMyBenutzer(User myClass) {
@@ -310,15 +327,22 @@ public class LoginForm implements Serializable {
      * @return int
      */
     public int getMaximaleBerechtigung() {
-        int result = 0;
+        //TODO Only to keep compatibility to old frontend pages
+        //TODO delete this methode when all new frontend is ready or security tags are replaced
         if (this.myBenutzer != null) {
             for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
-                if (userGroup.getPermission() < result || result == 0) {
-                    result = userGroup.getPermission();
+                if (userGroup.getAuthorizations().size() > 0) {
+                    for (Authorization authorization : userGroup.getAuthorizations()) {
+                        if (authorization.getTitle().equals("admin")) {
+                            return 1; //Admin permission
+                        }
+                    }
                 }
             }
+            return 4; //User permission
         }
-        return result;
+        return 0; //Anonymus permission
+
     }
 
     public String getPasswortAendernAlt() {

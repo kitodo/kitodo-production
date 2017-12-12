@@ -47,11 +47,23 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
+    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
+    private List<Authorization> authorizations;
+
+    /**
+     * The Constructor.
+     */
     public UserGroup() {
         this.tasks = new ArrayList<>();
         this.users = new ArrayList<>();
+        this.authorizations = new ArrayList<>();
     }
 
+    /**
+     * Gets title.
+     *
+     * @return The title.
+     */
     public String getTitle() {
         if (this.title == null) {
             return "";
@@ -60,35 +72,72 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         }
     }
 
+    /**
+     * Sets title.
+     *
+     * @param title
+     *            The title.
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public Integer getPermission() {
-        if (this.permission == null) {
-            this.permission = 4;
-        } else if (this.permission == 3) {
-            this.permission = 4;
+    /**
+     * Gets authorizations.
+     *
+     * @return The authorizations.
+     */
+    public List<Authorization> getAuthorizations() {
+        if (this.authorizations == null) {
+            this.authorizations = new ArrayList<>();
         }
-        return this.permission;
+        return this.authorizations;
     }
 
-    public void setPermission(int permission) {
-        this.permission = permission;
+    /**
+     * Sets authorizations.
+     *
+     * @param authorizations
+     *            The authorizations.
+     */
+    public void setAuthorizations(List<Authorization> authorizations) {
+        this.authorizations = authorizations;
     }
 
+    /**
+     * Gets users.
+     *
+     * @return The users.
+     */
     public List<User> getUsers() {
-        return this.users;
+        return users;
     }
 
+    /**
+     * Sets users.
+     *
+     * @param users
+     *            The users.
+     */
     public void setUsers(List<User> users) {
         this.users = users;
     }
 
+    /**
+     * Gets tasks.
+     *
+     * @return The tasks.
+     */
     public List<Task> getTasks() {
-        return this.tasks;
+        return tasks;
     }
 
+    /**
+     * Sets tasks.
+     *
+     * @param tasks
+     *            The tasks.
+     */
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
@@ -112,19 +161,4 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         return this.getTitle().hashCode();
     }
 
-    // Here will be methods which should be in UserService but are used by jsp
-    // files
-
-    public String getPermissionAsString() {
-        if (this.getPermission() == null) {
-            this.setPermission(4);
-        } else if (this.getPermission() == 3) {
-            this.setPermission(4);
-        }
-        return String.valueOf(this.getPermission().intValue());
-    }
-
-    public void setPermissionAsString(String permission) {
-        this.setPermission(Integer.parseInt(permission));
-    }
 }

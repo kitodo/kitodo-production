@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -163,14 +164,26 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Find user groups with exact permissions.
+     * Find user groups with authorization title.
      *
-     * @param permission
+     * @param authorizationTitle
      *            of the searched user group
      * @return list of JSON objects
      */
-    List<JSONObject> findByPermission(Integer permission) throws DataException {
-        QueryBuilder query = createSimpleQuery("permission", permission, true);
+    List<JSONObject> findByAuthorizationTitle(String authorizationTitle) throws DataException {
+        QueryBuilder query = createSimpleQuery("authorizations.title", authorizationTitle, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find user groups with authorization id.
+     *
+     * @param authorizationId
+     *            of the searched user group
+     * @return list of JSON objects
+     */
+    List<JSONObject> findByAuthorizationId(Integer authorizationId) throws DataException {
+        QueryBuilder query = createSimpleQuery("authorizations.id", authorizationId, true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -179,7 +192,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *
      * @param id
      *            of user
-     * @return list of JSON objects with users for specific user group id
+     * @return list of JSON objects with user groups for specific user id.
      */
     List<JSONObject> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
@@ -241,22 +254,18 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Get permission as a string.
+     * Get authorizations for given user group.
      *
      * @param userGroup
      *            object
-     * @return permission as a string
+     * @return authorizations as list of Strings
      */
-    public String getPermissionAsString(UserGroup userGroup) {
-        if (userGroup.getPermission() == null) {
-            userGroup.setPermission(4);
-        } else if (userGroup.getPermission() == 3) {
-            userGroup.setPermission(4);
+    public List<String> getAuthorizationsAsString(UserGroup userGroup) {
+        List<Authorization> authorizations = userGroup.getAuthorizations();
+        List<String> stringAuthorizations = new ArrayList<>();
+        for (Authorization authorization : authorizations) {
+            stringAuthorizations.add(authorization.getTitle());
         }
-        return String.valueOf(userGroup.getPermission().intValue());
-    }
-
-    public void setPermissionAsString(UserGroup userGroup, String permission) {
-        userGroup.setPermission(Integer.parseInt(permission));
+        return stringAuthorizations;
     }
 }

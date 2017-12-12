@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.encryption;
+package org.kitodo.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -31,21 +31,31 @@ import javax.crypto.spec.PBEParameterSpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class DesEncrypter {
+public class SecurityPasswordEncoder implements PasswordEncoder {
+
+    @Override
+    public String encode(CharSequence rawPassword) {
+        return encrypt(rawPassword.toString());
+    }
+
+    @Override
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        return encrypt(rawPassword.toString()).equals(encodedPassword);
+    }
+
     private Cipher encryptionCipher;
     private Cipher decryptionCipher;
 
     private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
-            (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
+                                               (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
-    private static final Logger logger = LogManager.getLogger(DesEncrypter.class);
+    private static final Logger logger = LogManager.getLogger(SecurityPasswordEncoder.class);
 
-    private void initialise(String passPhrase) {
+    private void initialize(String passPhrase) {
         int iterationCount = 19;
-
         KeySpec keySpec = new PBEKeySpec(passPhrase.toCharArray(), defaultSalt, iterationCount);
-
         try {
             SecretKey secretKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
             encryptionCipher = Cipher.getInstance(secretKey.getAlgorithm());
@@ -69,9 +79,9 @@ public class DesEncrypter {
     /**
      * Using class constructor with default passphrase for en- and decryption.
      */
-    public DesEncrypter() {
+    public SecurityPasswordEncoder() {
         String defaultPassPhrase = "rusDML_Passphrase_for_secure_encryption_2005";
-        initialise(defaultPassPhrase);
+        initialize(defaultPassPhrase);
     }
 
     /**
@@ -95,7 +105,6 @@ public class DesEncrypter {
         } catch (IllegalBlockSizeException e) {
             logger.warn("Catched IllegalBlockSizeException with message: " + e.getMessage());
         }
-
         return null;
     }
 
@@ -107,7 +116,6 @@ public class DesEncrypter {
      * @return decrypted string or null on error
      */
     public String decrypt(String messageToDecrypt) {
-
         try {
             byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes(StandardCharsets.UTF_8));
             byte[] utfEight = decryptionCipher.doFinal(dec);
@@ -117,7 +125,6 @@ public class DesEncrypter {
         } catch (BadPaddingException e) {
             logger.warn("Catched BadPaddingException with message: " + e.getMessage());
         }
-
         return null;
     }
 }
