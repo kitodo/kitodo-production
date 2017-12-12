@@ -122,7 +122,19 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                 }
             }
             logger.info(entities.size() + " entities loaded!");
-            return entities;
+            int dataSize = entities.size();
+            // pagination
+            if(dataSize > pageSize) {
+                try {
+                    return entities.subList(first, first + pageSize);
+                }
+                catch(IndexOutOfBoundsException e) {
+                    return entities.subList(first, first + (dataSize % pageSize));
+                }
+            }
+            else {
+                return entities;
+            }
         } catch (DataException e) {
             logger.error(e.getMessage());
             return new LinkedList();
