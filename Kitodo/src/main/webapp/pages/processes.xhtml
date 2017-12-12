@@ -18,6 +18,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
+        <h:outputScript name="js/filter.js" target="body" />
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>#{msgs.prozessverwaltung}</h3>
@@ -43,26 +44,6 @@
                                 </ui:repeat>
                             </ul>
                         </p:overlayPanel>
-                        <script type="text/javascript">
-                            //<![CDATA[
-                                function setFilter(filterString) {
-                                    document.getElementById('filterMenu:filterfield').value = filterString;
-                                    applyFilter(filterString);
-                                }
-
-                                function applyFilter(filterString) {
-                                    var invisibleFilter = document.getElementById('j_id_2s:j_id_2u:j_id_2v:j_id_2w:filter');
-                                    invisibleFilter.value = filterString;
-                                    invisibleFilter.dispatchEvent(new Event('keyup'));
-                                }
-
-                                window.onload = function () {
-                                    document.getElementById('filterMenu:filterfield').addEventListener('change', function () {
-                                        applyFilter(this.value);
-                                    });
-                                }
-                            //]]>
-                        </script>
                     </div>
                 </h:form>
             </p:panel>

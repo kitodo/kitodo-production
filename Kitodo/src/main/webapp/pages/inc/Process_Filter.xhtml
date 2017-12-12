@@ -19,6 +19,7 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui">
 >
+    <h:outputScript name="js/oldFilter.js" target="body" />
 
     <h:panelGrid id="myFilterGrid" width="100%" columnClasses="standardTable_ColumnRight" rowClasses="standardTable_Row"
                  columns="1">
@@ -71,30 +72,6 @@
     </h:panelGroup>
 
     </h:panelGrid>
-    <script type="text/javascript">
-        //<![CDATA[
-            function setFilter(filterString) {
-                document.getElementById('filterfield').value = filterString;
-                applyFilter(filterString);
-            }
-
-            function applyFilter(filterString) {
-                var invisibleFilter = document.getElementById('processform:auflistung:ajaxcolumn:filter');
-                invisibleFilter.value = filterString;
-                invisibleFilter.dispatchEvent(new Event('keyup'));
-            }
-
-            window.onload = function () {
-                document.getElementById('filterfield').addEventListener('change', function () {
-                    applyFilter(this.value);
-                });
-                document.getElementById('select').addEventListener('change', function () {
-                    setFilter(this.value);
-                    applyFilter(this.value);
-                });
-            }
-        //]]>
-    </script>
 
     <!--
     <h:panelGrid id="myFilterGrid" width="100%" columnClasses="standardTable_ColumnRight" rowClasses="standardTable_Row_bottom" columns="1">
