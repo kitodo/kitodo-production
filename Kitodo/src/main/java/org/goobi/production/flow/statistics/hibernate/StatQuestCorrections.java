@@ -16,11 +16,10 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
@@ -77,15 +76,13 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
     @Override
     public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
 
-        List<DataTable> allTables = new ArrayList<>();
-
         // gathering IDs from the filter passed by dataSource
         List<Integer> idList = getIds(dataSource);
         if (idList == null || idList.size() == 0) {
             return null;
         }
 
-        //TODO: replace it with some other solution
+        // TODO: replace it with some other solution
         // adding time restrictions
         String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, getTimeUnit(), idList)
                 .getSQL(HistoryTypeEnum.taskError, null, false, false);
@@ -125,12 +122,11 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
             // finally adding dataRow to DataTable and fetching next row
             dtbl.addDataRow(dataRow);
         }
-
-        // a list of DataTables is expected as return Object, even if there is
-        // only one Data Table as it is here in this implementation
         dtbl.setUnitLabel(Helper.getTranslation(getTimeUnit().getSingularTitle()));
-        allTables.add(dtbl);
-        return allTables;
+
+        // a list of DataTables is expected as return object, even if there is
+        // only one data table, as it is here in this implementation
+        return Arrays.asList(new DataTable[] {dtbl });
     }
 
     @SuppressWarnings("unchecked")

@@ -1176,7 +1176,7 @@ public class Metadaten {
         }
 
         if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
-            DocStruct temp = this.docStruct;
+            final DocStruct temp = this.docStruct;
             this.docStruct = ds;
             this.ajaxPageStart = this.pagesStart;
             this.ajaxPageEnd = this.pagesEnd;

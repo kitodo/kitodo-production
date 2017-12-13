@@ -13,7 +13,6 @@ package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +32,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
@@ -44,7 +41,9 @@ import ugh.dl.Prefs;
 public class VariableReplacer {
 
     private enum MetadataLevel {
-        ALL, FIRSTCHILD, TOPSTRUCT
+        ALL,
+        FIRSTCHILD,
+        TOPSTRUCT
     }
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
@@ -97,10 +96,10 @@ public class VariableReplacer {
         for (MatchResult r : findRegexMatches(this.namespaceMeta, inString)) {
             if (r.group(1).toLowerCase().startsWith("firstchild.")) {
                 inString = inString.replace(r.group(),
-                        getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
+                    getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
             } else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
                 inString = inString.replace(r.group(),
-                        getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
+                    getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
             } else {
                 inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
             }
@@ -108,9 +107,6 @@ public class VariableReplacer {
 
         // replace paths and files
         try {
-            String processPath = fileService
-                    .getFileName(serviceManager.getProcessService().getProcessDataDirectory(this.process))
-                    .replace("\\", "/");
             String tifPath = fileService
                     .getFileName(serviceManager.getProcessService().getImagesTifDirectory(false, this.process))
                     .replace("\\", "/");
@@ -118,28 +114,28 @@ public class VariableReplacer {
             String origPath = fileService
                     .getFileName(serviceManager.getProcessService().getImagesOrigDirectory(false, this.process))
                     .replace("\\", "/");
-            String metaFile = fileService.getFileName(fileService.getMetadataFilePath(this.process)).replace("\\", "/");
-            String ocrBasisPath = fileService.getFileName(fileService.getOcrDirectory(this.process)).replace("\\", "/");
-            String ocrPlaintextPath = fileService.getFileName(fileService.getTxtDirectory(this.process)).replace("\\",
-                    "/");
-            // TODO name ändern?
-            String sourcePath = fileService.getFileName(fileService.getSourceDirectory(this.process))
-                    .replace("\\", "/");
-            String importPath = fileService.getFileName(fileService.getImportDirectory(this.process)).replace("\\",
-                    "/");
-            String prefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
 
             /*
-             * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird
-             * diese rausgenommen
+             * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben
+             * wollen, wird diese rausgenommen
              */
             tifPath = replaceSeparator(tifPath);
             imagePath = replaceSeparator(imagePath);
             origPath = replaceSeparator(origPath);
+            String processPath = fileService
+                    .getFileName(serviceManager.getProcessService().getProcessDataDirectory(this.process))
+                    .replace("\\", "/");
             processPath = replaceSeparator(processPath);
+            String importPath = fileService.getFileName(fileService.getImportDirectory(this.process)).replace("\\",
+                "/");
             importPath = replaceSeparator(importPath);
+            String sourcePath = fileService.getFileName(fileService.getSourceDirectory(this.process)).replace("\\",
+                "/");
             sourcePath = replaceSeparator(sourcePath);
+            String ocrBasisPath = fileService.getFileName(fileService.getOcrDirectory(this.process)).replace("\\", "/");
             ocrBasisPath = replaceSeparator(ocrBasisPath);
+            String ocrPlaintextPath = fileService.getFileName(fileService.getTxtDirectory(this.process)).replace("\\",
+                "/");
             ocrPlaintextPath = replaceSeparator(ocrPlaintextPath);
 
             inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
@@ -156,7 +152,9 @@ public class VariableReplacer {
             inString = replaceString(inString, "(ocrplaintextpath)", ocrPlaintextPath);
             inString = replaceString(inString, "(processtitle)", this.process.getTitle());
             inString = replaceString(inString, "(processid)", String.valueOf(this.process.getId().intValue()));
+            String metaFile = fileService.getFileName(fileService.getMetadataFilePath(this.process)).replace("\\", "/");
             inString = replaceString(inString, "(metaFile)", metaFile);
+            String prefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
             inString = replaceString(inString, "(prefs)", prefs);
 
             inString = replaceStringForTask(inString);
@@ -275,7 +273,8 @@ public class VariableReplacer {
             switch (inLevel) {
                 case FIRSTCHILD:
                     /*
-                     * ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden
+                     * ohne vorhandenes FirstChild, kann dieses nicht
+                     * zurückgegeben werden
                      */
                     if (resultFirst == null) {
                         if (logger.isInfoEnabled()) {

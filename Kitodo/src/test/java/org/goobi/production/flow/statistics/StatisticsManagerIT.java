@@ -102,10 +102,10 @@ public class StatisticsManagerIT {
     @Test
     public void testStatisticsManager() {
         StatisticsManager testProjects = new StatisticsManager(StatisticsMode.PROJECTS, testFilter, locale);
-        StatisticsManager testStorage = new StatisticsManager(StatisticsMode.STORAGE, testFilter, locale);
         assertEquals(StatisticsMode.THROUGHPUT, testManager.getStatisticMode());
         assertEquals(StatisticsMode.PRODUCTION, testManager2.getStatisticMode());
         assertEquals(StatisticsMode.PROJECTS, testProjects.getStatisticMode());
+        StatisticsManager testStorage = new StatisticsManager(StatisticsMode.STORAGE, testFilter, locale);
         assertEquals(StatisticsMode.STORAGE, testStorage.getStatisticMode());
         assertNotSame(testManager, testManager2);
     }

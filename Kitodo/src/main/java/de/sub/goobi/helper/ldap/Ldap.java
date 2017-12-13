@@ -454,8 +454,6 @@ public class Ldap {
             env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
 
             try {
-                DirContext ctx = new InitialDirContext(env);
-
                 /*
                  * Encryption of password and Base64-Encoding
                  */
@@ -495,13 +493,13 @@ public class Ldap {
                     logger.error(e);
                 }
 
-                BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
-                        String.valueOf(System.currentTimeMillis() / 1000L));
-
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userpassword);
                 mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
                 mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);
+                BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
+                        String.valueOf(System.currentTimeMillis() / 1000L));
                 mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
+                DirContext ctx = new InitialDirContext(env);
                 ctx.modifyAttributes(getUserDN(inUser), mods);
 
                 // Close the context when we're done

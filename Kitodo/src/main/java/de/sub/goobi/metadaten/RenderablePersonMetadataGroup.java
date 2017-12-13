@@ -13,16 +13,13 @@ package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.production.constants.Parameters;
-
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataGroupType;
@@ -45,7 +42,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     enum Field {
-        NORMDATA_RECORD("normDataRecord", true), FIRSTNAME("vorname", false), LASTNAME("nachname", false);
+        NORMDATA_RECORD("normDataRecord", true),
+        FIRSTNAME("vorname", false),
+        LASTNAME("nachname", false);
 
         private boolean isIdentifier;
         private String resourceKey;
@@ -261,7 +260,6 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      */
     @Override
     public List<Person> toMetadata() {
-        List<Person> result = new ArrayList<>(1);
         Person person;
         try {
             person = new Person(metadataType);
@@ -276,7 +274,6 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
         }
         person.setFirstname(getField(Field.FIRSTNAME).getValue());
         person.setLastname(getField(Field.LASTNAME).getValue());
-        result.add(person);
-        return result;
+        return Arrays.asList(new Person[] {person });
     }
 }

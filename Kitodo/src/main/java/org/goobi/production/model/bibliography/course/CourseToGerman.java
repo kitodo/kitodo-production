@@ -88,7 +88,6 @@ public class CourseToGerman {
      */
     private static String titleToString(Block block, boolean subsequentBlock) {
         StringBuilder result = new StringBuilder(500);
-        int currentIssuesSize = block.getIssues().size();
         if (!subsequentBlock) {
             result.append("Die Zeitung erschien vom ");
             appendDate(result, block.getFirstAppearance());
@@ -102,6 +101,7 @@ public class CourseToGerman {
         result.append(" regelmäßig ");
 
         Iterator<Issue> issueIterator = block.getIssues().iterator();
+        int currentIssuesSize = block.getIssues().size();
         for (int issueIndex = 0; issueIndex < currentIssuesSize; issueIndex++) {
             Issue issue = issueIterator.next();
             result.append("an allen ");

@@ -12,14 +12,12 @@
 package org.goobi.production.importer;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -169,32 +167,29 @@ public class GoobiHotfolder implements IGoobiHotfolder {
             logger.trace("config 6");
 
             for (int i = 0; i <= count; i++) {
-
                 logger.trace("config 7");
                 String name = config.getString("hotfolder(" + i + ")[@name]");
-                logger.trace("config 8");
-                URI folder = URI.create(config.getString("hotfolder(" + i + ")[@folder]"));
                 logger.trace("config 9");
                 Integer template = config.getInt("hotfolder(" + i + ")[@template]");
-                logger.trace("config 10");
-
-                String updateStrategy = config.getString("hotfolder(" + i + ")[@updateStrategy]");
-                logger.trace("config 11");
-                String collection = config.getString("hotfolder(" + i + ")[@collection]");
                 logger.trace("config 12");
                 if (name == null || name.equals("") || template == null) {
                     logger.trace("config 13");
                     break;
                 }
+                logger.trace("config 10");
+                String updateStrategy = config.getString("hotfolder(" + i + ")[@updateStrategy]");
                 logger.trace("config 14");
                 if (updateStrategy == null || updateStrategy.equals("")) {
                     logger.trace("config 15");
                     updateStrategy = "ignore";
                 }
+                String collection = config.getString("hotfolder(" + i + ")[@collection]");
                 if (collection.equals("")) {
                     logger.trace("config 16");
                     collection = null;
                 }
+                logger.trace("config 8");
+                URI folder = URI.create(config.getString("hotfolder(" + i + ")[@folder]"));
                 logger.trace("config 17");
                 answer.add(new GoobiHotfolder(name, folder, template, updateStrategy, collection));
             }

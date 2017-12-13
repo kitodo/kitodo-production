@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.ObjectInputStream;
@@ -37,11 +36,9 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -154,9 +151,6 @@ public class Helper extends HibernateHelper implements Observer {
      * übergeben.
      */
     private static void setMeldung(String control, String message, String description, boolean onlyInfo) {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        // Never forget: Strings are immutable
         message = message.replaceAll("<", "&lt;");
         message = message.replaceAll(">", "&gt;");
         description = description.replaceAll("<", "&lt;");
@@ -186,9 +180,10 @@ public class Helper extends HibernateHelper implements Observer {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
                     onlyInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
         }
+        FacesContext context = FacesContext.getCurrentInstance();
         if (context != null) {
             context.addMessage(control,
-                    new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));
+                new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
             logger.log(onlyInfo ? Level.INFO : Level.ERROR, compoundMessage);

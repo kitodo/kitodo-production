@@ -16,11 +16,10 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -47,7 +46,8 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
      * org.goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override
@@ -58,12 +58,12 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
      * List)
      */
     @Override
     public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
-        List<DataTable> allTables = new ArrayList<>();
 
         // gathering IDs from the filter passed by dataSource
         List<Integer> idList = getIds(dataSource);
@@ -110,12 +110,11 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
             // finally adding dataRow to DataTable and fetching next row
             dtbl.addDataRow(dataRow);
         }
-
-        // a list of DataTables is expected as return Object, even if there is
-        // only one Data Table as it is here in this implementation
         dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
-        allTables.add(dtbl);
-        return allTables;
+
+        // a list of DataTables is expected as return object, even if there is
+        // only one data table, as it is here in this implementation
+        return Arrays.asList(new DataTable[] {dtbl });
     }
 
     @SuppressWarnings("unchecked")

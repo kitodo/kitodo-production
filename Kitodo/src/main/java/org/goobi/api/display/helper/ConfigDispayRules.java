@@ -13,11 +13,9 @@ package org.goobi.api.display.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -63,15 +61,12 @@ public final class ConfigDispayRules {
             for (int i = 0; i <= countRuleSet; i++) {
                 int projectContext = config.getMaxIndex("ruleSet(" + i + ").context");
                 for (int j = 0; j <= projectContext; j++) {
-                    HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = new HashMap<>();
                     HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bindstate = new HashMap<>();
                     String projectName = config.getString("ruleSet(" + i + ").context(" + j + ")[@projectName]");
                     String bind = config.getString("ruleSet(" + i + ").context(" + j + ").bind");
                     int anotherCountSelect = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").anotherSelect");
                     int countSelect = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").select");
                     int countTextArea = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").textarea");
-                    int countInput = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").input");
-                    int countReadOnly = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").readonly");
                     HashMap<String, ArrayList<Item>> anotherSelect = new HashMap<>();
                     HashMap<String, ArrayList<Item>> select = new HashMap<>();
                     HashMap<String, ArrayList<Item>> input = new HashMap<>();
@@ -95,12 +90,14 @@ public final class ConfigDispayRules {
                         ArrayList<Item> items = getTextareaByElementName(projectName, bind, elementName);
                         textarea.put(elementName, items);
                     }
+                    int countInput = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").input");
                     for (int k = 0; k <= countInput; k++) {
                         String elementName = config
                                 .getString("ruleSet(" + i + ").context(" + j + ").input(" + k + ")[@tns:ref]");
                         ArrayList<Item> items = getInputByElementName(projectName, bind, elementName);
                         input.put(elementName, items);
                     }
+                    int countReadOnly = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").readonly");
                     for (int k = 0; k <= countReadOnly; k++) {
                         String elementName = config
                                 .getString("ruleSet(" + i + ").context(" + j + ").readonly(" + k + ")[@tns:ref]");
@@ -108,6 +105,7 @@ public final class ConfigDispayRules {
                         readonly.put(elementName, items);
                     }
 
+                    HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = new HashMap<>();
                     itemsByType.put("anotherSelect", anotherSelect);
                     itemsByType.put("select", select);
                     itemsByType.put("input", input);
@@ -152,17 +150,17 @@ public final class ConfigDispayRules {
                         for (int k = 0; k <= item; k++) {
                             Item myItem = new Item(
                                     config.getString(
-                                            "ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").label"),
+                                        "ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").label"),
                                     // the displayed value
                                     config.getString(
-                                            // the internal value, which will be
-                                            // taken if label is selected
-                                            "ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").value"),
+                                        // the internal value, which will be
+                                        // taken if label is selected
+                                        "ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").value"),
                                     config.getBoolean(
-                                            // indicates wheter given item is
-                                            // preselected or not
-                                            "ruleSet.context(" + i + ").select1(" + j + ").item(" + k
-                                                    + ")[@tns:selected]"));
+                                        // indicates wheter given item is
+                                        // preselected or not
+                                        "ruleSet.context(" + i + ").select1(" + j + ").item(" + k
+                                                + ")[@tns:selected]"));
                             listOfItems.add(myItem);
                         }
                     }
@@ -197,19 +195,17 @@ public final class ConfigDispayRules {
                         int item = config.getMaxIndex("ruleSet.context(" + i + ").select(" + j + ").item");
 
                         for (int k = 0; k <= item; k++) {
-                            Item myItem = new Item(
+                            Item myItem = new Item(config.getString(
+                                // the displayed value
+                                "ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").label"),
                                     config.getString(
-                                            // the displayed value
-                                            "ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").label"),
-                                    config.getString(
-                                            // the internal value, which will be
-                                            // taken if label is selected
-                                            "ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").value"),
+                                        // the internal value, which will be
+                                        // taken if label is selected
+                                        "ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").value"),
                                     config.getBoolean(
-                                            // indicated wheter given item is
-                                            // preselected or not
-                                            "ruleSet.context(" + i + ").select(" + j + ").item(" + k
-                                                    + ")[@tns:selected]"));
+                                        // indicated wheter given item is
+                                        // preselected or not
+                                        "ruleSet.context(" + i + ").select(" + j + ").item(" + k + ")[@tns:selected]"));
                             listOfItems.add(myItem);
                         }
                     }

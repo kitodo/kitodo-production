@@ -13,7 +13,6 @@ package org.goobi.production.flow.statistics.hibernate;
 
 import java.util.Date;
 import java.util.List;
-
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
@@ -67,7 +66,6 @@ public class SQLStepRequests extends SQLGenerator {
             groupInnerSelect = " group by history.process_id, history.numericValue ";
         }
 
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -91,9 +89,10 @@ public class SQLStepRequests extends SQLGenerator {
             innerWhereClause = innerWhereClause + " AND history.numericValue=" + stepOrder.toString() + " ";
         }
 
-        subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(this.myTimeUnit, "history.date")
-                + " " + "AS 'intervall', " + timeLimiter + " AS 'timeLimiter', history.stringValue AS 'stepName' "
-                + "FROM history WHERE " + innerWhereClause + groupInnerSelect + ") AS table_1";
+        String subQuery = "(SELECT numericValue AS 'stepOrder', "
+                + getIntervallExpression(this.myTimeUnit, "history.date") + " AS 'intervall', " + timeLimiter
+                + " AS 'timeLimiter', history.stringValue AS 'stepName' " + "FROM history WHERE " + innerWhereClause
+                + groupInnerSelect + ") AS table_1";
 
         this.mySql = "SELECT count(table_1.stepOrder) AS 'stepCount', table_1.intervall AS 'intervall' "
                 + addedListing(stepOrderGrouping) + "FROM " + subQuery + " " + outerWhereClause

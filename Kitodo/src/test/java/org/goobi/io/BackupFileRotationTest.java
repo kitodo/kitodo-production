@@ -86,7 +86,6 @@ public class BackupFileRotationTest {
     @Test
     public void shouldWriteTwoBackupFiles() throws IOException {
         int numberOfBackups = 2;
-        FileService fileService = new FileService();
 
         Process process = new Process();
         process.setId(2);
@@ -94,6 +93,7 @@ public class BackupFileRotationTest {
 
         runBackup(numberOfBackups, process);
 
+        FileService fileService = new FileService();
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
         assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1");
@@ -103,19 +103,19 @@ public class BackupFileRotationTest {
     @Test
     public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns() throws IOException {
         String contentOne = "Test One.";
-        int numberOfBackups = 2;
+        final int kNumberOfBackups = 2;
         Process process = new Process();
         process.setId(2);
         process.setProcessBaseUri(URI.create("2"));
         URI resolve = fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         writeFile(resolve, contentOne);
-        runBackup(numberOfBackups, process);
+        runBackup(kNumberOfBackups, process);
 
         assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1",
             contentOne);
 
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
-        runBackup(numberOfBackups, process);
+        runBackup(kNumberOfBackups, process);
 
         assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".2",
             contentOne);
@@ -124,16 +124,16 @@ public class BackupFileRotationTest {
     @Test
     public void secondBackupFileCorrectModifiedDate() throws IOException {
         long expectedLastModifiedDate;
-        int numberOfBackups = 2;
+        final int kNumberOfBackups = 2;
         Process process = new Process();
         process.setId(2);
         process.setProcessBaseUri(URI.create("2"));
         expectedLastModifiedDate = getLastModifiedFileDate(
             processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME);
 
-        runBackup(numberOfBackups, process);
+        runBackup(kNumberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
-        runBackup(numberOfBackups, process);
+        runBackup(kNumberOfBackups, process);
 
         assertLastModifiedDate(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".2",
             expectedLastModifiedDate);
@@ -159,7 +159,7 @@ public class BackupFileRotationTest {
 
     @Test
     public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns() throws IOException {
-        int numberOfBackups = 3;
+        final int kNumberOfBackups = 3;
         String contentOne = "Test One.";
 
         Process process = new Process();
@@ -168,11 +168,11 @@ public class BackupFileRotationTest {
         URI correctURI = URI
                 .create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
         writeFile(correctURI, contentOne);
-        runBackup(numberOfBackups, process);
+        runBackup(kNumberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
-        runBackup(numberOfBackups, process);
+        runBackup(kNumberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
-        runBackup(numberOfBackups, process);
+        runBackup(kNumberOfBackups, process);
 
         assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".3",
             contentOne);

@@ -1326,7 +1326,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 break;
         }
         ff.read(metadataFile.getPath());
-    
+
         return ff;
     }
 
@@ -2090,7 +2090,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException {
         FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        Project project = process.getProject();
         MetsModsImportExport mm = new MetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fi.getImagesDirectory();
@@ -2158,6 +2157,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
+        Project project = process.getProject();
         List<ProjectFileGroup> myFilegroups = project.getProjectFileGroups();
 
         if (myFilegroups != null && myFilegroups.size() > 0) {

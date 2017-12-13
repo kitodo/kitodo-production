@@ -16,11 +16,9 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
@@ -79,22 +77,17 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         // retrieving the statistical data
         Integer exactStepDone = null;
         String stepname = null;
-        List<DataTable> allTables = new ArrayList<>();
 
         // gathering some information from the filter passed by dataSource
         // exactStepDone is very important ...
 
-        //TODO; find way to replace it
-        /*try {
-            exactStepDone = originalFilter.stepDone();
-        } catch (UnsupportedOperationException e1) {
-            logger.error(e1);
-        }
-        try {
-            stepname = originalFilter.stepDoneName();
-        } catch (UnsupportedOperationException e1) {
-            logger.error(e1);
-        }*/
+        // TODO; find way to replace it
+        /*
+         * try { exactStepDone = originalFilter.stepDone(); } catch
+         * (UnsupportedOperationException e1) { logger.error(e1); } try {
+         * stepname = originalFilter.stepDoneName(); } catch
+         * (UnsupportedOperationException e1) { logger.error(e1); }
+         */
 
         // we have to build a query from scratch by reading the ID's
         List<Integer> idList = getIds(dataSource);
@@ -119,9 +112,6 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         query.addScalar("pages", StandardBasicTypes.INTEGER);
         query.addScalar("intervall", StandardBasicTypes.STRING);
 
-        @SuppressWarnings("rawtypes")
-        List list = query.list();
-
         StringBuilder title = new StringBuilder(StatisticsMode.PRODUCTION.getTitle());
         title.append(" (");
         title.append(this.cu.getTitle());
@@ -141,7 +131,10 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         DataRow dataRowChart;
         DataRow dataRow;
 
-        // each data row comes out as an Array of Objects
+        @SuppressWarnings("rawtypes")
+        List list = query.list();
+
+        // each data row comes out as an array of objects
         // the only way to extract the data is by knowing
         // in which order they come out
         for (Object obj : list) {
@@ -165,16 +158,16 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
                 switch (this.cu) {
                     case volumesAndPages: {
                         dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
-                                (new Converter(objArr[0]).getDouble()));
+                            (new Converter(objArr[0]).getDouble()));
                         dataRowChart.addValue(CalculationUnit.pages.getTitle() + " (*100)",
-                                (new Converter(objArr[1]).getDouble()) / 100);
+                            (new Converter(objArr[1]).getDouble()) / 100);
                         dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
                         dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
                     }
                         break;
                     case volumes: {
                         dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
-                                (new Converter(objArr[0]).getDouble()));
+                            (new Converter(objArr[0]).getDouble()));
                         dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
                     }
                         break;
@@ -206,6 +199,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         dtblChart.setShowableInTable(false);
         dtbl.setShowableInChart(false);
 
+        List<DataTable> allTables = new ArrayList<>();
         allTables.add(dtblChart);
         allTables.add(dtbl);
         return allTables;
