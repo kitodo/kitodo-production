@@ -14,7 +14,6 @@ package de.sub.goobi.metadaten;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,14 +27,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.faces.model.SelectItem;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -335,8 +331,8 @@ public class MetadatenHelper implements Comparator<Object> {
                 newTypes.add(dst);
             } else {
                 Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
-                logger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel
-                        + " nicht definiert");
+                logger.error(
+                    "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
             }
         }
 
@@ -467,6 +463,8 @@ public class MetadatenHelper implements Comparator<Object> {
                             // element
                         }
                     } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                        logger.info(
+                            "Skipping inconsistent element" + (e.getMessage() != null ? ": " + e.getMessage() : ""));
                     }
                 }
             }
@@ -528,8 +526,7 @@ public class MetadatenHelper implements Comparator<Object> {
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
         try (InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
-                StandardCharsets.UTF_8);
-             BufferedReader bufRead = new BufferedReader(input)) {
+                StandardCharsets.UTF_8); BufferedReader bufRead = new BufferedReader(input)) {
             char[] buffer = new char[200];
             while (bufRead.read(buffer) >= 0) {
                 String temp = new String(buffer).toLowerCase();
