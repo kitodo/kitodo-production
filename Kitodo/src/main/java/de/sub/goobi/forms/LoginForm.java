@@ -326,19 +326,19 @@ public class LoginForm implements Serializable {
         this.passwortAendernAlt = passwortAendernAlt;
     }
 
-    public String getPasswortAendernNeu1() {
+    public String getNewPassword() {
         return this.newPassword;
     }
 
-    public void setPasswortAendernNeu1(String newPassword) {
+    public void getNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
 
-    public String getPasswortAendernNeu2() {
+    public String getNewPasswordRepeated() {
         return this.newPasswordRepeated;
     }
 
-    public void setPasswortAendernNeu2(String newPasswordRepeated) {
+    public void getNewPasswordRepeated(String newPasswordRepeated) {
         this.newPasswordRepeated = newPasswordRepeated;
     }
 
