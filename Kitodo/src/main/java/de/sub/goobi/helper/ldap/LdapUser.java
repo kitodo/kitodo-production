@@ -12,7 +12,6 @@
 package de.sub.goobi.helper.ldap;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -20,7 +19,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.naming.Binding;
@@ -40,7 +38,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -105,12 +102,12 @@ public class LdapUser implements DirContext {
             this.myAttrs.put("sambaAcctFlags", ReplaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
             this.myAttrs.put("sambaLogonScript", ReplaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
             this.myAttrs.put("sambaPrimaryGroupSID",
-                    ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
+                ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
             this.myAttrs.put("sambaSID", ReplaceVariables(lp.getSambaSID(), inUser, inUidNumber));
 
             this.myAttrs.put("sambaPwdMustChange", ReplaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
             this.myAttrs.put("sambaPasswordHistory",
-                    ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
+                ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
             this.myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
             this.myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
             this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
@@ -129,8 +126,8 @@ public class LdapUser implements DirContext {
             }
             /* NTLM */
             try {
-                byte hmm[] = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
-                this.myAttrs.put("sambaNTPassword", toHexString(hmm));
+                byte[] digest = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
+                this.myAttrs.put("sambaNTPassword", toHexString(digest));
             } catch (UnsupportedEncodingException e) {
                 logger.error(e);
             }
@@ -143,7 +140,7 @@ public class LdapUser implements DirContext {
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
             String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
             this.myAttrs.put("userPassword",
-                    "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+                "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
         }
     }
 
@@ -165,9 +162,9 @@ public class LdapUser implements DirContext {
         String result = inString.replaceAll("\\{login\\}", inUser.getLogin());
         result = result.replaceAll("\\{user full name\\}", inUser.getName() + " " + inUser.getSurname());
         result = result.replaceAll("\\{uidnumber\\*2\\+1000\\}",
-                String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
+            String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
         result = result.replaceAll("\\{uidnumber\\*2\\+1001\\}",
-                String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
+            String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
         if (logger.isDebugEnabled()) {
             logger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
             logger.debug("Replace outstring: " + result);
@@ -255,7 +252,7 @@ public class LdapUser implements DirContext {
      *            byte
      * @return String
      */
-    public static String toHexString(byte bytes[]) {
+    public static String toHexString(byte[] bytes) {
         StringBuffer retString = new StringBuffer();
         for (int i = 0; i < bytes.length; ++i) {
             retString.append(Integer.toHexString(0x0100 + (bytes[i] & 0x00FF)).substring(1));

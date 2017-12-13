@@ -13,7 +13,6 @@ package org.goobi.production.chart;
 
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -24,7 +23,6 @@ import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -159,7 +157,7 @@ public class ProjectStatusDraw {
             // Draw the bar
             // fixed width: 15 pixels
             drawHorizontalBar(borderLeft, y, t.getStepsCompleted() * chartWidth / nonNullMaxSteps, BARWIDTH,
-                    chartcolor.getColor());
+                chartcolor.getColor());
 
             // Print number of steps completed
             String stepsCompletedString = t.getStepsCompleted().toString() + "/" + t.getStepsMax().toString();
@@ -167,11 +165,11 @@ public class ProjectStatusDraw {
                     + fm.stringWidth(stepsCompletedString)) >= borderLeft + chartWidth) {
                 g2d.setColor(Color.white);
                 drawRightAlignedString(stepsCompletedString,
-                        borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps - fm.getHeight(), y);
+                    borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps - fm.getHeight(), y);
             } else {
                 g2d.setColor(Color.black);
                 drawLeftAlignedString(stepsCompletedString,
-                        borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight(), y);
+                    borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight(), y);
             }
         }
 
@@ -182,7 +180,7 @@ public class ProjectStatusDraw {
         if (logger.isDebugEnabled()) {
             logger.debug(datePosition + " / " + duration);
         }
-        float dash[] = {2.0f };
+        float[] dash = {2.0f };
         BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash, 0.0f);
         g2d.setStroke(dashed);
         g2d.setColor(Color.black);
@@ -190,7 +188,7 @@ public class ProjectStatusDraw {
                 BORDERTOP + dataTable.getNumberOfTasks() * BARSPACING - BARWIDTH,
                 borderLeft + datePosition * chartWidth / duration, BORDERTOP - 1 * fm.getHeight()));
         drawCenteredString(dateFormatter.format(today), borderLeft + datePosition * chartWidth / duration,
-                BORDERTOP - 2.5 * fm.getHeight());
+            BORDERTOP - 2.5 * fm.getHeight());
     }
 
     /**
