@@ -108,7 +108,7 @@ public class SimpleLoginST {
 
     /**
      * Watcher for WebDriverExceptions on travis which makes screenshot and
-     * sends email
+     * sends email.
      */
     @Rule
     public TestRule seleniumExceptionWatcher = new TestWatcher() {
