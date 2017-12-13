@@ -45,6 +45,14 @@ public class StatisticsManagerIT {
     private static URI tempPath;
     private static final ServiceManager serviceManager = new ServiceManager();
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
@@ -55,6 +63,9 @@ public class StatisticsManagerIT {
         testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
     }
 
+    /**
+     * Creates objects that several tests need.
+     */
     @Before
     public void initTestManager() {
         Calendar one = Calendar.getInstance();
@@ -76,6 +87,12 @@ public class StatisticsManagerIT {
         testManager.setTargetResultOutput(targetResultOutput);
     }
 
+    /**
+     * Releases expensive external resources allocated in {@code setUp()}.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @AfterClass
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();

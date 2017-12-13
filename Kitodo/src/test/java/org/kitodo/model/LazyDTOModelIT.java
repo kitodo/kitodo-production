@@ -12,7 +12,6 @@
 package org.kitodo.model;
 
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -29,6 +28,14 @@ public class LazyDTOModelIT {
     private static UserService userService = serviceManager.getUserService();
     private static LazyDTOModel lazyDTOModel = null;
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();

@@ -78,6 +78,14 @@ public class SimpleLoginST {
 
     private static final String GECKO_DRIVER_VERSION = "0.19.0";
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
@@ -91,6 +99,12 @@ public class SimpleLoginST {
 
     }
 
+    /**
+     * Releases expensive external resources allocated in {@code setUp()}.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @AfterClass
     public static void tearDown() throws Exception {
         driver.close();

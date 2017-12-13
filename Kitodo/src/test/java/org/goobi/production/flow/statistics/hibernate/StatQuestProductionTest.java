@@ -40,6 +40,11 @@ public class StatQuestProductionTest {
     private List testFilter = new ArrayList();
     StatisticsManager testManager = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     */
     @BeforeClass
     public static void setUp() {
         // TODO: HIBERNATE fix

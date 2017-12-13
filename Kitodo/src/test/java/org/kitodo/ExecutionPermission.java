@@ -20,6 +20,14 @@ import java.util.Set;
 
 public class ExecutionPermission {
 
+    /**
+     * Sets the execute bit on a file stored in a unixoid file system.
+     * 
+     * @param file
+     *            file whose permissions are to set
+     * @throws IOException
+     *             if an I/O exception occurs
+     */
     public static void setExecutePermission(File file) throws IOException {
         Set<PosixFilePermission> permissions = setNoExecutePermission();
 

@@ -12,14 +12,12 @@
 package org.kitodo.editor;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.goobi.production.constants.FileNames;
 import org.junit.AfterClass;
@@ -38,6 +36,15 @@ public class XMLEditorTest {
     private static String absolutePath = ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE;
     private static XMLEditor xmlEditor = null;
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws IOException
+     *             if an I/O error occurs writing to or creating the file, or
+     *             the text cannot be encoded as {@code UTF-8}
+     */
     @BeforeClass
     public static void setUp() throws IOException {
         List<String> lines = new ArrayList<>();

@@ -16,10 +16,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import de.sub.goobi.converter.ProcessConverter;
-
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +39,14 @@ public class MockitoTest {
     @Mock
     private ProcessConverter mockedProcessConverter;
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() {
         process1 = new Process();

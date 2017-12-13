@@ -37,6 +37,14 @@ public class CommandServiceTest {
     private static File longWorkingScript1s = new File(
             System.getProperty("user.dir") + "/src/test/resources/long_working_script_1s.sh");
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws IOException
+     *             if an I/O exception of some sort has occurred
+     */
     @BeforeClass
     public static void setUp() throws IOException {
 
@@ -54,6 +62,12 @@ public class CommandServiceTest {
 
     }
 
+    /**
+     * Releases expensive external resources allocated in {@code setUp()}.
+     * 
+     * @throws IOException
+     *             if an I/O exception of some sort has occurred
+     */
     @AfterClass
     public static void tearDown() throws IOException {
         if (!windows) {

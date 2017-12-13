@@ -19,7 +19,6 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.elasticsearch.index.query.Operator;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
@@ -38,7 +37,6 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.PropertyDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
 import ugh.dl.DigitalDocument;
 
 /**
@@ -49,6 +47,14 @@ public class ProcessServiceIT {
     private static FileService fileService = new FileService();
     private static final ProcessService processService = new ServiceManager().getProcessService();
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
@@ -56,6 +62,12 @@ public class ProcessServiceIT {
         fileService.createDirectory(URI.create(""), "1");
     }
 
+    /**
+     * Releases expensive external resources allocated in {@code setUp()}.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
@@ -108,7 +120,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetAllProcessesInGivenRange() throws Exception {
-        List<Process> processes = processService.getAll(3,10);
+        List<Process> processes = processService.getAll(3, 10);
         assertEquals("Not all processes were found in database!", 2, processes.size());
     }
 
@@ -604,7 +616,7 @@ public class ProcessServiceIT {
     public void shouldFindNotArchivedProcesses() throws Exception {
         List<ProcessDTO> notArchivedProcesses = processService.findNotArchivedProcesses(null);
         assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 3",
-                notArchivedProcesses.size() == 3);
+            notArchivedProcesses.size() == 3);
     }
 
     @Test
@@ -615,16 +627,17 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindNotClosedAndNotArchivedProcessesWithoutTemplates() throws Exception {
-        List<ProcessDTO> notClosedAndNotArchivedProcesses = processService.findNotClosedAndNotArchivedProcessesWithoutTemplates(null);
+        List<ProcessDTO> notClosedAndNotArchivedProcesses = processService
+                .findNotClosedAndNotArchivedProcessesWithoutTemplates(null);
         assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 2",
-                notClosedAndNotArchivedProcesses.size() == 2);
+            notClosedAndNotArchivedProcesses.size() == 2);
     }
 
     @Test
     public void shouldFindNotArchivedTemplates() throws Exception {
         List<ProcessDTO> notArchivedTemplates = processService.findNotArchivedTemplates(null);
         assertTrue("Found " + notArchivedTemplates.size() + " processes, instead of 1",
-                notArchivedTemplates.size() == 1);
+            notArchivedTemplates.size() == 1);
     }
 
     @Test
@@ -643,14 +656,15 @@ public class ProcessServiceIT {
     public void shouldFindAllNotArchivedWithoutTemplates() throws Exception {
         List<ProcessDTO> notArchivedProcessesWithoutTemplates = processService.findAllNotArchivedWithoutTemplates(null);
         assertTrue("Found " + notArchivedProcessesWithoutTemplates.size() + " processes, instead of 2",
-                notArchivedProcessesWithoutTemplates.size() == 2);
+            notArchivedProcessesWithoutTemplates.size() == 2);
     }
 
     @Test
     public void shouldFindAllNotClosedAndNotArchivedTemplates() throws Exception {
-        List<ProcessDTO> notClosedAndNotArchivedTemplates = processService.findAllNotClosedAndNotArchivedTemplates(null);
+        List<ProcessDTO> notClosedAndNotArchivedTemplates = processService
+                .findAllNotClosedAndNotArchivedTemplates(null);
         assertTrue("Found " + notClosedAndNotArchivedTemplates.size() + " processes, instead of 1",
-                notClosedAndNotArchivedTemplates.size() == 1);
+            notClosedAndNotArchivedTemplates.size() == 1);
     }
 
     @Test

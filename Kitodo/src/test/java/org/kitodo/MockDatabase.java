@@ -88,7 +88,10 @@ public class MockDatabase {
         tcpServer = Server.createTcpServer().start();
     }
 
-    public static void stopDatabaseServer() throws SQLException {
+    /**
+     * Stops the database server.
+     */
+    public static void stopDatabaseServer() {
         if (tcpServer.isRunning(true)) {
             tcpServer.shutdown();
         }

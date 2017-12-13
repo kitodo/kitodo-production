@@ -31,6 +31,11 @@ import org.junit.Test;
 public class StatQuestCorrectionsTest {
     static StatQuestCorrections test;
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     */
     @BeforeClass
     public static void setUp() {
         // TODO: HIBERNATE fix

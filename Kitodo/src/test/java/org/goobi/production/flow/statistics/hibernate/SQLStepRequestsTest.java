@@ -26,6 +26,14 @@ public class SQLStepRequestsTest {
     static SQLStepRequests request;
     static HistoryTypeEnum typeSelection;
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() {
         Calendar one = Calendar.getInstance();

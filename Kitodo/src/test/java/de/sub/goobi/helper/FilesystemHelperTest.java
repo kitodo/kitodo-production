@@ -14,13 +14,11 @@ package de.sub.goobi.helper;
 import static junit.framework.Assert.fail;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +30,12 @@ public class FilesystemHelperTest {
     public void setUp() {
     }
 
+    /**
+     * Releases resources allocated in {@code setUp()}.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @After
     public void tearDown() throws Exception {
         FileService fileService = new FileService();

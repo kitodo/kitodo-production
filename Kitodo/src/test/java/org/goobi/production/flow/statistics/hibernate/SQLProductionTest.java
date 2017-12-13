@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,6 +23,14 @@ public class SQLProductionTest {
 
     static SQLProduction sqlProd;
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() {
         ArrayList<Integer> testList = new ArrayList<>();
