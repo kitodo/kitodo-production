@@ -1160,6 +1160,28 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
+    /**
+     * Task status up.
+     */
+    public void setTaskStatusUp() throws DAOException, DataException {
+        if (this.task.getProcessingStatusEnum() != TaskStatus.DONE) {
+            this.task = serviceManager.getTaskService().setProcessingStatusUp(this.task);
+            this.task.setEditTypeEnum(TaskEditType.ADMIN);
+            Task task = serviceManager.getTaskService().getById(this.task.getId());
+            if (this.task.getProcessingStatusEnum() == TaskStatus.DONE) {
+                serviceManager.getTaskService().close(task, true);
+            } else {
+                this.task.setProcessingTime(new Date());
+                User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+                if (user != null) {
+                    this.task.setProcessingUser(user);
+                }
+            }
+        }
+        save();
+        deleteSymlinksFromUserHomes();
+    }
+
     private void setTaskStatusUp(Process process) throws DataException {
         List<Task> tasks = process.getTasks();
 
@@ -1188,6 +1210,24 @@ public class ProzessverwaltungForm extends BasisForm {
         for (Task s : bla) {
             logger.warn(message + " " + s.getTitle() + "   " + s.getOrdering());
         }
+    }
+
+    /**
+     * Task status down.
+     *
+     * @return empty String
+     */
+    public String setTaskStatusDown() {
+        this.task.setEditTypeEnum(TaskEditType.ADMIN);
+        task.setProcessingTime(new Date());
+        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        if (ben != null) {
+            task.setProcessingUser(ben);
+        }
+        this.task = serviceManager.getTaskService().setProcessingStatusDown(this.task);
+        save();
+        deleteSymlinksFromUserHomes();
+        return null;
     }
 
     private void setTaskStatusDown(Process process) {
@@ -1243,46 +1283,6 @@ public class ProzessverwaltungForm extends BasisForm {
         for (ProcessDTO process : processes) {
             setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
-    }
-
-    /**
-     * Task status up.
-     */
-    public void setTaskStatusUp() throws DAOException, DataException {
-        if (this.task.getProcessingStatusEnum() != TaskStatus.DONE) {
-            this.task = serviceManager.getTaskService().setProcessingStatusUp(this.task);
-            this.task.setEditTypeEnum(TaskEditType.ADMIN);
-            Task task = serviceManager.getTaskService().getById(this.task.getId());
-            if (this.task.getProcessingStatusEnum() == TaskStatus.DONE) {
-                serviceManager.getTaskService().close(task, true);
-            } else {
-                this.task.setProcessingTime(new Date());
-                User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (user != null) {
-                    this.task.setProcessingUser(user);
-                }
-            }
-        }
-        save();
-        deleteSymlinksFromUserHomes();
-    }
-
-    /**
-     * Task status down.
-     *
-     * @return empty String
-     */
-    public String setTaskStatusDown() {
-        this.task.setEditTypeEnum(TaskEditType.ADMIN);
-        task.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            task.setProcessingUser(ben);
-        }
-        this.task = serviceManager.getTaskService().setProcessingStatusDown(this.task);
-        save();
-        deleteSymlinksFromUserHomes();
-        return null;
     }
 
     /**

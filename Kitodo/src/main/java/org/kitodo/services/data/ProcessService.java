@@ -139,6 +139,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return instance;
     }
 
+    /**
+     * Find all processes sorted according to sort query.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted processes as ProcessDTO objects
+     */
+    public List<ProcessDTO> findAll(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
+    }
+
     @Override
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
@@ -1286,6 +1297,39 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return ff;
     }
 
+    /**
+     * Reads the metadata File.
+     *
+     * @param metadataFile
+     *            The given metadataFile.
+     * @param prefs
+     *            The Preferences
+     * @return The fileFormat.
+     */
+    public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
+            throws IOException, PreferencesException, ReadException {
+        /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
+        String type = MetadatenHelper.getMetaFileType(metadataFile);
+        Fileformat ff;
+        switch (type) {
+            case "metsmods":
+                ff = new MetsModsImportExport(prefs);
+                break;
+            case "mets":
+                ff = new MetsMods(prefs);
+                break;
+            case "xstream":
+                ff = new XStream(prefs);
+                break;
+            default:
+                ff = new RDFFile(prefs);
+                break;
+        }
+        ff.read(metadataFile.getPath());
+    
+        return ff;
+    }
+
     private Fileformat determineFileFormat(String type, Process process) throws PreferencesException {
         Fileformat fileFormat = null;
         RulesetService rulesetService = serviceManager.getRulesetService();
@@ -1743,39 +1787,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public Double findAmountOfImagesForNotTemplatesAndProjectId(Integer projectId) throws DataException {
         String query = getQueryTemplateAndProjectId(projectId).toString();
         return findSumAggregation(query, "sortHelperImages");
-    }
-
-    /**
-     * Reads the metadata File.
-     *
-     * @param metadataFile
-     *            The given metadataFile.
-     * @param prefs
-     *            The Preferences
-     * @return The fileFormat.
-     */
-    public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
-            throws IOException, PreferencesException, ReadException {
-        /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-        String type = MetadatenHelper.getMetaFileType(metadataFile);
-        Fileformat ff;
-        switch (type) {
-            case "metsmods":
-                ff = new MetsModsImportExport(prefs);
-                break;
-            case "mets":
-                ff = new MetsMods(prefs);
-                break;
-            case "xstream":
-                ff = new XStream(prefs);
-                break;
-            default:
-                ff = new RDFFile(prefs);
-                break;
-        }
-        ff.read(metadataFile.getPath());
-
-        return ff;
     }
 
     /**
@@ -2315,17 +2326,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         return propertiesForDocket;
-    }
-
-    /**
-     * Find all processes sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<ProcessDTO> findAll(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
     }
 
     /**

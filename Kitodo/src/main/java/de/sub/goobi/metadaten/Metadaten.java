@@ -505,6 +505,48 @@ public class Metadaten {
         return getAddableMetadataTypes(docStruct, tempMetadatumList);
     }
 
+    private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
+        ArrayList<SelectItem> selectItems = new ArrayList<SelectItem>();
+    
+        // zuerst mal alle addierbaren Metadatentypen ermitteln
+    
+        List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
+        if (types == null) {
+            return selectItems;
+        }
+    
+        //alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
+    
+        for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
+            if (mdt.getIsPerson()) {
+                types.remove(mdt);
+            }
+        }
+    
+        //die Metadatentypen sortieren
+        HelperComparator c = new HelperComparator();
+        c.setSortType("MetadatenTypen");
+        Collections.sort(types, c);
+    
+        int counter = types.size();
+    
+        for (MetadataType mdt : types) {
+            selectItems.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
+            try {
+                Metadata md = new Metadata(mdt);
+                MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.process);
+                counter++;
+                if (tempMetadatumList != null) {
+                    tempMetadatumList.add(mdum);
+                }
+    
+            } catch (MetadataTypeNotAllowedException e) {
+                logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
+            }
+        }
+        return selectItems;
+    }
+
     /**
      * Gets addable metadatatypes from tempTyp.
      *
@@ -522,48 +564,6 @@ public class Metadaten {
         }
 
         return getAddableMetadataTypes(ds, this.tempMetadatumList);
-    }
-
-    private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
-        ArrayList<SelectItem> selectItems = new ArrayList<SelectItem>();
-
-        // zuerst mal alle addierbaren Metadatentypen ermitteln
-
-        List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
-        if (types == null) {
-            return selectItems;
-        }
-
-        //alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
-
-        for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
-            if (mdt.getIsPerson()) {
-                types.remove(mdt);
-            }
-        }
-
-        //die Metadatentypen sortieren
-        HelperComparator c = new HelperComparator();
-        c.setSortType("MetadatenTypen");
-        Collections.sort(types, c);
-
-        int counter = types.size();
-
-        for (MetadataType mdt : types) {
-            selectItems.add(new SelectItem(mdt.getName(), this.metaHelper.getMetadatatypeLanguage(mdt)));
-            try {
-                Metadata md = new Metadata(mdt);
-                MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.process);
-                counter++;
-                if (tempMetadatumList != null) {
-                    tempMetadatumList.add(mdum);
-                }
-
-            } catch (MetadataTypeNotAllowedException e) {
-                logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
-            }
-        }
-        return selectItems;
     }
 
     public ArrayList<MetadatumImpl> getTempMetadatumList() {

@@ -127,18 +127,10 @@ public class StatistikForm {
         return getAmountOfCurrentTasks(false, false);
     }
 
-    public int getAmountOfCurrentOpenTasks() {
-        return getAmountOfCurrentTasks(true, false);
-    }
-
-    public int getAmountOfCurrentInProcessingTasks() {
-        return getAmountOfCurrentTasks(false, true);
-    }
-
     private int getAmountOfCurrentTasks(boolean open, boolean inProcessing) {
         Long amount = 0L;
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-
+    
         if (login == null) {
             return 0;
         } else {
@@ -146,7 +138,7 @@ public class StatistikForm {
                 return 0;
             }
         }
-
+    
         try {
             amount = serviceManager.getTaskService().getAmountOfCurrentTasks(open, inProcessing, login.getMyBenutzer());
         } catch (DataException e) {
@@ -154,6 +146,14 @@ public class StatistikForm {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
         }
         return amount.intValue();
+    }
+
+    public int getAmountOfCurrentOpenTasks() {
+        return getAmountOfCurrentTasks(true, false);
+    }
+
+    public int getAmountOfCurrentInProcessingTasks() {
+        return getAmountOfCurrentTasks(false, true);
     }
 
     public boolean getShowStatistics() {
