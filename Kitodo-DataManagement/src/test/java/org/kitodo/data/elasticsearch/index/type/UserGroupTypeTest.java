@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 
@@ -52,13 +53,33 @@ public class UserGroupTypeTest {
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setId(1);
         firstUserGroup.setTitle("Administrator");
-        firstUserGroup.setPermission(1);
+
+        List<Authorization> adminAuthorizations = new ArrayList<>();
+        Authorization adminAuthorization = new Authorization();
+        adminAuthorization.setTitle("admin");
+        adminAuthorization.setId(1);
+
+        Authorization managerAuthorization = new Authorization();
+        managerAuthorization.setTitle("manager");
+        managerAuthorization.setId(2);
+
+        Authorization userAuthorization = new Authorization();
+        userAuthorization.setTitle("user");
+        userAuthorization.setId(3);
+
+        adminAuthorizations.add(adminAuthorization);
+        adminAuthorizations.add(managerAuthorization);
+        adminAuthorizations.add(userAuthorization);
+
+        firstUserGroup.setAuthorizations(adminAuthorizations);
+
         firstUserGroup.setUsers(users);
         userGroups.add(firstUserGroup);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setId(2);
         secondUserGroup.setTitle("Random");
+        secondUserGroup.setAuthorizations(adminAuthorizations);
         userGroups.add(secondUserGroup);
 
         return userGroups;
@@ -73,14 +94,18 @@ public class UserGroupTypeTest {
         HttpEntity document = userGroupType.createDocument(userGroup);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser
-                .parse("{\"title\":\"Administrator\",\"permission\":1,\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\""
-                        + ",\"id\":1,\"login\":\"first\"},{\"surname\":\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}");
+                .parse("{\"authorizations\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
+                        + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Administrator\",\"users\":[{\"surname\":"
+                        + "\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":\"Barney\","
+                        + "\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}");
         assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
 
         userGroup = prepareData().get(1);
         document = userGroupType.createDocument(userGroup);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Random\",\"permission\":4,\"users\":[]}");
+        expected = (JSONObject) parser
+            .parse("{\"authorizations\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
+                    + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Random\",\"users\":[]}");
         assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

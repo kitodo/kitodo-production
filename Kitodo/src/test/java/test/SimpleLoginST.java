@@ -181,15 +181,15 @@ public class SimpleLoginST {
 
         Thread.sleep(2000);
 
-        WebElement username = driver.findElement(By.id("login"));
+        WebElement username = driver.findElement(By.id("username"));
 
         username.clear();
         username.sendKeys(userName);
 
-        WebElement password = driver.findElement(By.id("passwort"));
+        WebElement password = driver.findElement(By.id("password"));
         password.clear();
         password.sendKeys(userPassword);
-        WebElement loginButton = driver.findElement(By.linkText("Einloggen"));
+        WebElement loginButton = driver.findElement(By.id("login"));
 
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", loginButton);
         Thread.sleep(200);
@@ -204,7 +204,7 @@ public class SimpleLoginST {
         rulesetsButton.click();
         Thread.sleep(500);
 
-        WebElement logoutButton = driver.findElement(By.id("loginform:logout"));
+        WebElement logoutButton = driver.findElement(By.id("logout"));
         Assert.assertNotNull(logoutButton);
 
     }

@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -78,7 +79,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        boolean condition = userGroup.getTitle().equals("Admin") && userGroup.getPermission().equals(1);
+        boolean condition = userGroup.getTitle().equals("Admin") && userGroup.getAuthorizations().get(0).getTitle().equals("admin");
         assertTrue("User group was not found in database!", condition);
     }
 
@@ -166,18 +167,19 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldFindByPermission() throws Exception {
-        List<JSONObject> userGroups = userGroupService.findByPermission(1);
+    public void shouldFindByAuthorization() throws Exception {
+
+        List<JSONObject> userGroups = userGroupService.findByAuthorizationTitle("admin");
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
 
-        userGroups = userGroupService.findByPermission(4);
+        userGroups = userGroupService.findByAuthorizationTitle("user");
         actual = userGroups.size();
-        expected = 1;
+        expected = 2;
         assertEquals("User group was not found in index!", expected, actual);
 
-        userGroups = userGroupService.findByPermission(5);
+        userGroups = userGroupService.findByAuthorizationTitle("notExisting");
         actual = userGroups.size();
         expected = 0;
         assertEquals("User group was found in index!", expected, actual);
@@ -210,13 +212,10 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldGetPermissionAsString() throws Exception {
+    public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        String actual = userGroupService.getPermissionAsString(userGroup);
-        assertEquals("Permission string doesn't match to given plain text!", "1", actual);
-
-        userGroup = userGroupService.getById(3);
-        actual = userGroupService.getPermissionAsString(userGroup);
-        assertEquals("Permission string doesn't match to given plain text!", "4", actual);
+        List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
+        List<String> expected = Arrays.asList("admin","manager","user");
+        assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
     }
 }

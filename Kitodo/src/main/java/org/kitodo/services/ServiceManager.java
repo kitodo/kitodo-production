@@ -12,6 +12,7 @@
 package org.kitodo.services;
 
 import org.kitodo.services.command.CommandService;
+import org.kitodo.services.data.AuthorizationService;
 import org.kitodo.services.data.BatchService;
 import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
@@ -35,6 +36,7 @@ import org.kitodo.services.validation.MetadataValidationService;
 
 public class ServiceManager {
 
+    private AuthorizationService authorizationService;
     private BatchService batchService;
     private DocketService docketService;
     private FilterService filterService;
@@ -56,6 +58,12 @@ public class ServiceManager {
     private FileStructureValidationService fileStructureValidationService;
     private LongTimePreservationValidationService longTimePreservationValidationService;
     private MetadataValidationService metadataValidationService;
+
+    private void initializeAuthorizationService() {
+        if (authorizationService == null) {
+            authorizationService = AuthorizationService.getInstance();
+        }
+    }
 
     private void initializeBatchService() {
         if (batchService == null) {
@@ -181,6 +189,16 @@ public class ServiceManager {
         if (metadataValidationService == null) {
             metadataValidationService = new MetadataValidationService();
         }
+    }
+
+    /**
+     * Initialize AuthorizationService if it is not yet initialized and next return it.
+     *
+     * @return AuthorizationService object
+     */
+    public AuthorizationService getAuthorizationService() {
+        initializeAuthorizationService();
+        return authorizationService;
     }
 
     /**

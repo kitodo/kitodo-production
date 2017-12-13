@@ -28,7 +28,7 @@ public class UserGroupType extends BaseType<UserGroup> {
 
         JSONObject userGroupObject = new JSONObject();
         userGroupObject.put("title", userGroup.getTitle());
-        userGroupObject.put("permission", userGroup.getPermission());
+        userGroupObject.put("authorizations", addObjectRelation(userGroup.getAuthorizations(),true));
         userGroupObject.put("users", addObjectRelation(userGroup.getUsers(), true));
 
         return new NStringEntity(userGroupObject.toJSONString(), ContentType.APPLICATION_JSON);

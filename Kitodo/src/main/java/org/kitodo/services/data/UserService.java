@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.File;
@@ -45,17 +46,24 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.FilterDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.RelatedProperty;
+import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class UserService extends SearchService<User, UserDTO, UserDAO> {
+public class UserService extends SearchService<User, UserDTO, UserDAO> implements UserDetailsService {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserService.class);
@@ -96,6 +104,17 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
         manageProjectsDependenciesForIndex(user);
         manageTasksDependenciesForIndex(user);
         manageUserGroupsDependenciesForIndex(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = null;
+        try {
+            user = getByLogin(username);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung(e);
+        }
+        return new SecurityUserDetails(user);
     }
 
     /**
@@ -182,6 +201,44 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
                 serviceManager.getUserGroupService().saveToIndex(userGroup);
             }
         }
+    }
+
+    /**
+     * Gets user by login.
+     *
+     * @param login
+     *      The login.
+     * @return
+     *      The user.
+     */
+    public User getByLogin(String login) throws DAOException {
+        List<User> users = getByQuery("from User where login = :username", "username", login);
+        if (users.size() == 1)  {
+            return users.get(0);
+        } else if (users.size() == 0) {
+            throw new UsernameNotFoundException("Username " + login + "not found!");
+        } else {
+            throw new UsernameNotFoundException("Username " + login + "was found more than once");
+        }
+    }
+
+    /**
+     * Gets the current authenticated user and loads object from database.
+     *
+     * @return
+     *      The user object or null if no user is authenticated.
+     */
+    public User getAuthenticatedUser() throws DAOException {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            UserDetails userDetails = principal instanceof UserDetails ? (UserDetails) principal : null;
+            if (userDetails != null) {
+                return getByLogin(userDetails.getUsername());
+            }
+        }
+        return null;
     }
 
     public List<User> getByQuery(String query, String parameter) throws DAOException {
@@ -622,7 +679,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> {
                 Ldap ldap = new Ldap();
                 return ldap.isUserPasswordCorrect(user, inputPassword);
             } else {
-                DesEncrypter encrypter = new DesEncrypter();
+                SecurityPasswordEncoder encrypter = new SecurityPasswordEncoder();
                 String encoded = encrypter.encrypt(inputPassword);
                 return user.getPassword().equals(encoded);
             }
