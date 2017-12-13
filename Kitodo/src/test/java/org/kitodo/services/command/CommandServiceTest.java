@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -156,7 +155,7 @@ public class CommandServiceTest {
         Thread.sleep(1000); // wait for async thread to finish;
         CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
         assertEquals("result message should contain IOException",
-                commandResult.getMessages().get(0).contains("IOException"), true);
+            commandResult.getMessages().get(0).contains("IOException"), true);
     }
 
     @Test
@@ -190,8 +189,9 @@ public class CommandServiceTest {
      * @return The CommandResult.
      */
     public CommandResult getLastFinishedCommandResult(ArrayList<CommandResult> commandResults) {
-        if (commandResults.isEmpty())
+        if (commandResults.isEmpty()) {
             return null;
+        }
 
         return commandResults.get(commandResults.size() - 1);
     }

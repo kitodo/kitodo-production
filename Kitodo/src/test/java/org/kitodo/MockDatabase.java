@@ -17,7 +17,6 @@ import static org.kitodo.data.database.beans.Batch.Type.NEWSPAPER;
 import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
 
 import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,7 +88,7 @@ public class MockDatabase {
     }
 
     public static void stopDatabaseServer() throws SQLException {
-        if(tcpServer.isRunning(true)){
+        if (tcpServer.isRunning(true)) {
             tcpServer.shutdown();
         }
     }
@@ -159,13 +157,14 @@ public class MockDatabase {
         }
     }
 
-    private static String randomString(int lenght){
+    private static String randomString(int lenght) {
         final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
         StringBuilder sb = new StringBuilder(lenght);
-        for( int i = 0; i < lenght; i++ )
-            sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+        for (int i = 0; i < lenght; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
         return sb.toString();
     }
 
@@ -839,8 +838,8 @@ public class MockDatabase {
     }
 
     /**
-     * Clean database after class. Truncate all tables, reset id sequences and clear
-     * session.
+     * Clean database after class. Truncate all tables, reset id sequences and
+     * clear session.
      */
     public static void cleanDatabase() {
         Session session = Helper.getHibernateSession();
