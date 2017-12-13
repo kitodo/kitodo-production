@@ -12,14 +12,11 @@
 package org.goobi.mq;
 
 import de.sub.goobi.helper.enums.ReportLevel;
-
 import javax.jms.MapMessage;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 public class WebServiceResult {
@@ -73,15 +70,14 @@ public class WebServiceResult {
 
             // If reporting to ActiveMQ is disabled, write log message
             logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
-                    "Processing message \"" + id + '@' + queueName + "\" reports " + level.toLowerCase() + "."
-                            + (message != null ? " (" + message + ")" : ""));
+                "Processing message \"" + id + '@' + queueName + "\" reports " + level.toLowerCase() + "."
+                        + (message != null ? " (" + message + ")" : ""));
         } else {
             try {
                 MapMessage report = ActiveMQDirector.getSession().createMapMessage();
 
                 DateTime now = new DateTime();
-                DateTimeFormatter iso8601formatter = ISODateTimeFormat.dateTime();
-                report.setString("timestamp", iso8601formatter.print(now));
+                report.setString("timestamp", ISODateTimeFormat.dateTime().print(now));
                 report.setString("queue", queueName);
                 report.setString("id", id);
                 report.setString("level", level.toLowerCase());
@@ -93,7 +89,8 @@ public class WebServiceResult {
 
             } catch (Exception exce) {
                 logger.fatal("Error sending report  for \"" + id + '@' + queueName + "\" (" + level.toLowerCase()
-                        + (message != null ? ": " + message : "") + "): Giving up.", exce);
+                        + (message != null ? ": " + message : "") + "): Giving up.",
+                    exce);
             }
         }
     }

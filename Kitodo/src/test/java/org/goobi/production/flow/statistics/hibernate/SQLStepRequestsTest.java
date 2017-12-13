@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
-
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,11 +28,11 @@ public class SQLStepRequestsTest {
 
     @BeforeClass
     public static void setUp() {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01);
-        cal2.set(2009, 03, 31);
-        request = new SQLStepRequests(cal1.getTime(), cal2.getTime(), TimeUnit.days, null);
+        Calendar one = Calendar.getInstance();
+        Calendar other = Calendar.getInstance();
+        one.set(2009, 01, 01);
+        other.set(2009, 03, 31);
+        request = new SQLStepRequests(one.getTime(), other.getTime(), TimeUnit.days, null);
         typeSelection = HistoryTypeEnum.storageDifference;
     }
 

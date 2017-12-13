@@ -461,14 +461,14 @@ public class Ldap {
                  */
                 MessageDigest md = MessageDigest.getInstance(ConfigCore.getParameter("ldap_encryption", "SHA"));
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
+                String digestBaseSixtyfour = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
                 ModificationItem[] mods = new ModificationItem[4];
 
                 /*
                  * UserPasswort-Attribut ändern
                  */
                 BasicAttribute userpassword = new BasicAttribute("userPassword",
-                        "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+                        "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBaseSixtyfour);
 
                 /*
                  * LanMgr-Passwort-Attribut ändern

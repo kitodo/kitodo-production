@@ -13,7 +13,7 @@ package de.sub.goobi.export.download;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
+import de.sub.goobi.export.dms.ExportDmsCorrectRusdml;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -102,7 +102,7 @@ public class ExportMets {
         // only for the metadata of the RUSDML project
         ConfigProjects cp = new ConfigProjects(process.getProject().getTitle());
         if (cp.getParamList("dmsImport.check").contains("rusdml")) {
-            ExportDms_CorrectRusdml exportCorrect = new ExportDms_CorrectRusdml(process, this.myPrefs, gdzfile);
+            ExportDmsCorrectRusdml exportCorrect = new ExportDmsCorrectRusdml(process, this.myPrefs, gdzfile);
             atsPpnBand = exportCorrect.correctionStart();
         }
 

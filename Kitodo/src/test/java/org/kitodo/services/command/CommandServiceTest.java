@@ -137,14 +137,14 @@ public class CommandServiceTest {
 
     @Test
     public void runLongScriptAsync() throws InterruptedException {
-        String commandString2s = "src/test/resources/long_working_script_2s" + scriptExtension;
-        String commandString1s = "src/test/resources/long_working_script_1s" + scriptExtension;
+        String commandStringTwoS = "src/test/resources/long_working_script_2s" + scriptExtension;
+        String commandStringOneS = "src/test/resources/long_working_script_1s" + scriptExtension;
         CommandService service = new CommandService();
-        service.runCommandAsync(commandString2s);
-        service.runCommandAsync(commandString1s);
+        service.runCommandAsync(commandStringTwoS);
+        service.runCommandAsync(commandStringOneS);
         Thread.sleep(3000); // wait for async thread to finish;
         CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertEquals("latest finished command should be the 2 s one", commandResult.getCommand(), commandString2s);
+        assertEquals("latest finished command should be the 2 s one", commandResult.getCommand(), commandStringTwoS);
     }
 
     @Test

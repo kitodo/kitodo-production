@@ -20,19 +20,16 @@ import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
-
 import org.kitodo.services.ServiceManager;
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -123,7 +120,7 @@ public class SchemaService {
                             process.getTitle() + ": could not find any referenced images, export aborted"));
                 } else {
                     Helper.setFehlerMeldung(
-                            process.getTitle() + ": could not find any referenced images, export aborted");
+                        process.getTitle() + ": could not find any referenced images, export aborted");
                 }
                 return null;
             }
@@ -256,7 +253,8 @@ public class SchemaService {
      *            object
      * @param process
      *            object
-     * @param atsPpnBand as String
+     * @param atsPpnBand
+     *            as String
      */
     public void tempConvertRusdml(DigitalDocument digitalDocument, Prefs prefs, Process process, String atsPpnBand)
             throws ExportFileException, MetadataTypeNotAllowedException {
@@ -272,7 +270,8 @@ public class SchemaService {
     }
 
     /**
-     * Run through all structural elements recursively and assign the children's sides to the parent elements.
+     * Run through all structural elements recursively and assign the children's
+     * sides to the parent elements.
      *
      * @param inStruct
      *            DocStruct object
@@ -481,7 +480,7 @@ public class SchemaService {
         String title = BeanHelper.determineWorkpieceProperty(process, "Haupttitel");
         String verlag = BeanHelper.determineWorkpieceProperty(process, "Verlag");
         String place = BeanHelper.determineWorkpieceProperty(process, "Erscheinungsort");
-        String ISSN = BeanHelper.determineWorkpieceProperty(process, "ISSN");
+        String issn = BeanHelper.determineWorkpieceProperty(process, "ISSN");
         String bandNumber = BeanHelper.determineWorkpieceProperty(process, "Band");
 
         /*
@@ -499,7 +498,7 @@ public class SchemaService {
             mdPlace = new Metadata(prefs.getMetadataTypeByName("PlaceOfPublication"));
             mdPlace.setValue(place);
             mdISSN = new Metadata(prefs.getMetadataTypeByName("ISSN"));
-            mdISSN.setValue(ISSN);
+            mdISSN.setValue(issn);
             mdPPN = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
             mdPPN.setValue("PPN" + ppn);
             mdPPNBand = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
@@ -540,7 +539,8 @@ public class SchemaService {
         }
     }
 
-    private DocStruct preventNullMetadataInsert(DocStruct docStruct, Metadata metadata) throws MetadataTypeNotAllowedException {
+    private DocStruct preventNullMetadataInsert(DocStruct docStruct, Metadata metadata)
+            throws MetadataTypeNotAllowedException {
         if (metadata != null) {
             docStruct.addMetadata(metadata);
         }

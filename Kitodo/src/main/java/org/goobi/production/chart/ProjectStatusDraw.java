@@ -45,7 +45,7 @@ public class ProjectStatusDraw {
     private static int BARWIDTH = 15;
     private static int BARSPACING = 3 * BARWIDTH;
 
-    private Graphics2D g2d;
+    private Graphics2D gTwoD;
     private ProjectStatusDataTable dataTable;
 
     // dimensions of the whole graphic
@@ -67,21 +67,21 @@ public class ProjectStatusDraw {
      *
      * @param inDataTable
      *            the {@link DataTable} (contains the {@link DataRow}-objects)
-     * @param g2d
+     * @param gTwoD
      *            the {@link Graphics2D}-object, where to paint
      * @param width
      *            the width of the image
      * @param height
      *            the height of the image
      */
-    public ProjectStatusDraw(ProjectStatusDataTable inDataTable, Graphics2D g2d, int width, int height) {
+    public ProjectStatusDraw(ProjectStatusDataTable inDataTable, Graphics2D gTwoD, int width, int height) {
         this.dataTable = inDataTable;
-        this.g2d = g2d;
+        this.gTwoD = gTwoD;
         this.width = width;
         // Only width will be given. See above.
         this.height = height;
         // FontMetrics is used to measure the height and length of strings
-        fm = g2d.getFontMetrics();
+        fm = gTwoD.getFontMetrics();
     }
 
     /**
@@ -105,8 +105,8 @@ public class ProjectStatusDraw {
         chartWidth = width - borderLeft - BORDERRIGHT;
 
         // Set background color to white
-        g2d.setColor(Color.white);
-        g2d.fillRect(0, 0, width, height);
+        gTwoD.setColor(Color.white);
+        gTwoD.fillRect(0, 0, width, height);
 
         // Determine current date
         Date today = (Calendar.getInstance()).getTime();
@@ -124,7 +124,7 @@ public class ProjectStatusDraw {
         // Format dates as strings using SimpleDateFormat
         SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
-        g2d.setColor(Color.black);
+        gTwoD.setColor(Color.black);
         // Print date of project begin
         drawLeftAlignedString(dateFormatter.format(projectBegin), borderLeft, BORDERTOP - 1.5 * fm.getHeight());
         // Print date of project end
@@ -135,7 +135,7 @@ public class ProjectStatusDraw {
 
             int y = BORDERTOP + (dataTable.getTaskIndex(t.getTitle())) * BARSPACING;
 
-            g2d.setColor(Color.black);
+            gTwoD.setColor(Color.black);
             // Print task title
             drawRightAlignedString(t.getTitle(), borderLeft - fm.getHeight(), y);
 
@@ -163,11 +163,11 @@ public class ProjectStatusDraw {
             String stepsCompletedString = t.getStepsCompleted().toString() + "/" + t.getStepsMax().toString();
             if ((borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight()
                     + fm.stringWidth(stepsCompletedString)) >= borderLeft + chartWidth) {
-                g2d.setColor(Color.white);
+                gTwoD.setColor(Color.white);
                 drawRightAlignedString(stepsCompletedString,
                     borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps - fm.getHeight(), y);
             } else {
-                g2d.setColor(Color.black);
+                gTwoD.setColor(Color.black);
                 drawLeftAlignedString(stepsCompletedString,
                     borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight(), y);
             }
@@ -182,9 +182,9 @@ public class ProjectStatusDraw {
         }
         float[] dash = {2.0f };
         BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash, 0.0f);
-        g2d.setStroke(dashed);
-        g2d.setColor(Color.black);
-        g2d.draw(new Line2D.Double(borderLeft + datePosition * chartWidth / duration,
+        gTwoD.setStroke(dashed);
+        gTwoD.setColor(Color.black);
+        gTwoD.draw(new Line2D.Double(borderLeft + datePosition * chartWidth / duration,
                 BORDERTOP + dataTable.getNumberOfTasks() * BARSPACING - BARWIDTH,
                 borderLeft + datePosition * chartWidth / duration, BORDERTOP - 1 * fm.getHeight()));
         drawCenteredString(dateFormatter.format(today), borderLeft + datePosition * chartWidth / duration,
@@ -196,13 +196,13 @@ public class ProjectStatusDraw {
      */
     private void drawHorizontalBar(int xpos, int ypos, int length, int width, Color col) {
         int padding = 3;
-        g2d.setColor(Color.black);
-        g2d.setStroke(new BasicStroke());
-        g2d.draw(new Rectangle2D.Double(xpos, ypos - width / 2 - padding, chartWidth, width + 2 * padding));
+        gTwoD.setColor(Color.black);
+        gTwoD.setStroke(new BasicStroke());
+        gTwoD.draw(new Rectangle2D.Double(xpos, ypos - width / 2 - padding, chartWidth, width + 2 * padding));
 
         GradientPaint verlauf = new GradientPaint(xpos - length / 2, ypos, Color.white, xpos + length, ypos, col);
-        g2d.setPaint(verlauf);
-        g2d.fill(new Rectangle2D.Double(xpos + padding, ypos - width / 2, length - 2 * padding, width + 1));
+        gTwoD.setPaint(verlauf);
+        gTwoD.fill(new Rectangle2D.Double(xpos + padding, ypos - width / 2, length - 2 * padding, width + 1));
 
     }
 
@@ -217,7 +217,7 @@ public class ProjectStatusDraw {
      *            the y-position
      */
     private void drawCenteredString(String str, double xpos, double ypos) {
-        g2d.drawString(str, (int) (xpos - fm.stringWidth(str) / 2.0), (int) (ypos + 0.5 * fm.getAscent() - 1));
+        gTwoD.drawString(str, (int) (xpos - fm.stringWidth(str) / 2.0), (int) (ypos + 0.5 * fm.getAscent() - 1));
     }
 
     /**
@@ -231,7 +231,7 @@ public class ProjectStatusDraw {
      *            the y-position
      */
     private void drawLeftAlignedString(String str, double xpos, double ypos) {
-        g2d.drawString(str, (int) (xpos), (int) (ypos + 0.5 * fm.getAscent() - 1));
+        gTwoD.drawString(str, (int) (xpos), (int) (ypos + 0.5 * fm.getAscent() - 1));
     }
 
     /**
@@ -245,7 +245,7 @@ public class ProjectStatusDraw {
      *            the y-position
      */
     private void drawRightAlignedString(String str, double xpos, double ypos) {
-        g2d.drawString(str, (int) (xpos - fm.stringWidth(str)), (int) (ypos + 0.5 * fm.getAscent() - 1));
+        gTwoD.drawString(str, (int) (xpos - fm.stringWidth(str)), (int) (ypos + 0.5 * fm.getAscent() - 1));
     }
 
     /**

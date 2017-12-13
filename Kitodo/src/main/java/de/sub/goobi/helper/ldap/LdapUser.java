@@ -138,9 +138,9 @@ public class LdapUser implements DirContext {
 
             MessageDigest md = MessageDigest.getInstance(ConfigCore.getParameter("ldap_encryption", "SHA"));
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
-            String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
+            String digestBaseSixtyfour = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
             this.myAttrs.put("userPassword",
-                "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+                "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBaseSixtyfour);
         }
     }
 

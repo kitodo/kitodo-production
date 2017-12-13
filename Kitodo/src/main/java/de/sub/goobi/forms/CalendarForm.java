@@ -16,7 +16,6 @@ import de.sub.goobi.helper.DateUtils;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,11 +27,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.xml.transform.TransformerException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
@@ -642,10 +639,10 @@ public class CalendarForm implements Serializable {
 
     /**
      * The constant field TODAY hold the date of today. Reading the system clock
-     * requires much synchronisation throughout the JVM and is therefore only
-     * done once on form creation.
+     * requires synchronization throughout the JVM and is therefore only done
+     * once on form creation.
      */
-    private final LocalDate TODAY = LocalDate.now();
+    private final LocalDate kToday = LocalDate.now();
 
     protected UploadedFile uploadedFile;
 
@@ -674,7 +671,7 @@ public class CalendarForm implements Serializable {
     public CalendarForm() {
         ISSUE_COLOURS = ConfigCore
                 .getParameter("issue.colours",
-                        "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")
+                    "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")
                 .split(";");
         course = new Course();
         blockChangerResolver = new HashMap<>();
@@ -730,13 +727,13 @@ public class CalendarForm implements Serializable {
             if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
                 Helper.setMeldung("calendar.block.firstAppearance.early");
             }
-            if (blockShowing.getFirstAppearance().isAfter(TODAY)) {
+            if (blockShowing.getFirstAppearance().isAfter(kToday)) {
                 Helper.setMeldung("calendar.block.firstAppearance.fiction");
             }
             if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
                 Helper.setMeldung("calendar.block.lastAppearance.early");
             }
-            if (blockShowing.getLastAppearance().isAfter(TODAY)) {
+            if (blockShowing.getLastAppearance().isAfter(kToday)) {
                 Helper.setMeldung("calendar.block.lastAppearance.fiction");
             }
         }
@@ -1079,12 +1076,12 @@ public class CalendarForm implements Serializable {
             }
             if (numbers[2] < 100) {
                 new LocalDate();
-                numbers[2] += 100 * TODAY.getCenturyOfEra();
-                if (numbers[2] > TODAY.getYear()) {
+                numbers[2] += 100 * kToday.getCenturyOfEra();
+                if (numbers[2] > kToday.getYear()) {
                     numbers[2] -= 100;
                 }
                 Helper.setMeldung(Helper.getTranslation("calendar.block." + input + ".yearCompleted",
-                        Arrays.asList(new String[] {dateParser.group(3), Integer.toString(numbers[2]) })));
+                    Arrays.asList(new String[] {dateParser.group(3), Integer.toString(numbers[2]) })));
             }
             try {
                 return new LocalDate(numbers[2], numbers[1], numbers[0]);

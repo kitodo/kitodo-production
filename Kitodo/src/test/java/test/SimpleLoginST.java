@@ -175,23 +175,23 @@ public class SimpleLoginST {
         WebElement password = driver.findElement(By.id("passwort"));
         password.clear();
         password.sendKeys(userPassword);
-        WebElement LoginButton = driver.findElement(By.linkText("Einloggen"));
+        WebElement loginButton = driver.findElement(By.linkText("Einloggen"));
 
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", loginButton);
         Thread.sleep(200);
-        LoginButton.click();
+        loginButton.click();
         Thread.sleep(500);
 
-        WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
-        VorgaengeButton.click();
+        WebElement processesButton = driver.findElement(By.linkText("Vorgänge"));
+        processesButton.click();
         Thread.sleep(2000);
 
-        WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
-        RulesetsButton.click();
+        WebElement rulesetsButton = driver.findElement(By.linkText("Regelsätze"));
+        rulesetsButton.click();
         Thread.sleep(500);
 
-        WebElement LogoutButton = driver.findElement(By.id("loginform:logout"));
-        Assert.assertNotNull(LogoutButton);
+        WebElement logoutButton = driver.findElement(By.id("loginform:logout"));
+        Assert.assertNotNull(logoutButton);
 
     }
 
