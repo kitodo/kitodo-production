@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
 import org.goobi.production.constants.FileNames;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +51,7 @@ public class ProjectServiceTest {
         // Add xmls to complete project
         File projectsXml = new File("src/test/resources/" + FileNames.PROJECT_CONFIGURATION_FILE);
         projectsXml.createNewFile();
-        File digitalCollectionsXml = new File("src/test/resources/"+ FileNames.DIGITAL_COLLECTIONS_FILE);
+        File digitalCollectionsXml = new File("src/test/resources/" + FileNames.DIGITAL_COLLECTIONS_FILE);
         digitalCollectionsXml.createNewFile();
         Assert.assertTrue("Project should be complete", projectService.isProjectComplete(project));
         projectsXml.delete();

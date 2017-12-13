@@ -16,7 +16,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -116,7 +115,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetAllTasksInGivenRange() throws Exception {
-        List<Task> tasks = taskService.getAll(1,3);
+        List<Task> tasks = taskService.getAll(1, 3);
         assertEquals("Not all tasks were found in database!", 3, tasks.size());
     }
 
@@ -150,7 +149,7 @@ public class TaskServiceIT {
         task = taskService.getById(6);
         user = userService.getById(1);
         User oldUser = task.getProcessingUser();
-        if(oldUser != null) {
+        if (oldUser != null) {
             oldUser.getProcessingTasks().remove(task);
         }
         user.getProcessingTasks().add(task);
@@ -164,7 +163,7 @@ public class TaskServiceIT {
         task = taskService.getById(6);
         user = userService.getById(2);
         oldUser = task.getProcessingUser();
-        if(oldUser != null) {
+        if (oldUser != null) {
             oldUser.getProcessingTasks().remove(task);
         }
         user.getProcessingTasks().add(task);
@@ -296,10 +295,10 @@ public class TaskServiceIT {
 
         for (int i = 0; i < tasks.size(); i++) {
             if (i < tasks.size() - 1) {
-                boolean condition = tasks.get(i).getOrdering() <= tasks.get(i+1).getOrdering();
+                boolean condition = tasks.get(i).getOrdering() <= tasks.get(i + 1).getOrdering();
                 assertTrue("Ordering of tasks is incorrect!", condition);
             } else {
-                boolean condition = tasks.get(i-1).getOrdering() <= tasks.get(i).getOrdering();
+                boolean condition = tasks.get(i - 1).getOrdering() <= tasks.get(i).getOrdering();
                 assertTrue("Ordering of tasks is incorrect!", condition);
             }
         }
@@ -338,7 +337,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetTasksWithProcessingStatusForProjectHelper() {
-        List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1,1);
+        List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1, 1);
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
@@ -351,12 +350,12 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetSizeOfTasksWithProcessingStatusForProjectHelper() {
-        List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,1);
+        List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1, 1);
         int actual = tasksSize.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
-        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,2);
+        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1, 2);
         actual = tasksSize.size();
         expected = 0;
         assertEquals("Task's list size is incorrect!", expected, actual);
