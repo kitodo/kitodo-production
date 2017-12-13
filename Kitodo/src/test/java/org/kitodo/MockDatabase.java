@@ -761,9 +761,9 @@ public class MockDatabase {
 
     private static void insertUserGroups() throws DAOException, DataException {
         List<Authorization> adminAuthorizations = new ArrayList<>();
-        Authorization adminAuthorization = serviceManager.getAuthorizationService().getById(1); //admin
-        Authorization managerAuthorization = serviceManager.getAuthorizationService().getById(2); //manager
-        Authorization userAuthorization = serviceManager.getAuthorizationService().getById(3); //user
+        Authorization adminAuthorization = serviceManager.getAuthorizationService().getById(1); // admin
+        Authorization managerAuthorization = serviceManager.getAuthorizationService().getById(2); // manager
+        Authorization userAuthorization = serviceManager.getAuthorizationService().getById(3); // user
         adminAuthorizations.add(adminAuthorization);
         adminAuthorizations.add(managerAuthorization);
         adminAuthorizations.add(userAuthorization);
@@ -778,7 +778,7 @@ public class MockDatabase {
         userGroups.add(firstUserGroup);
         firstUser.setUserGroups(userGroups);
         secondUser.setUserGroups(userGroups);
-        firstUserGroup.setUsers(Arrays.asList(new User[] {firstUser, secondUser }));
+        firstUserGroup.setUsers(new ArrayList<User>(Arrays.asList(new User[] {firstUser, secondUser })));
         serviceManager.getUserGroupService().save(firstUserGroup);
         adminAuthorization.getUserGroups().add(firstUserGroup);
         serviceManager.getAuthorizationService().save(adminAuthorization);
