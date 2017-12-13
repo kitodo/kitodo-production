@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 
 /**
@@ -51,7 +50,8 @@ public class ProzesskopieFormTest {
         });
         testData.put("Schrdeund", new HashMap<String, String>() {
             {
-                put("", "Schriften des unter dem Hohen Protektorate S. K. Hoheit des Prinzen Georg stehenden Sächsischen Fischereivereines");
+                put("",
+                    "Schriften des unter dem Hohen Protektorate S. K. Hoheit des Prinzen Georg stehenden Sächsischen Fischereivereines");
             }
         });
         testData.put("DieacKid", new HashMap<String, String>() {
