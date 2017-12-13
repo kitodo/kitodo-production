@@ -31,6 +31,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.dto.BaseDTO;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * This class is an implementation of
@@ -156,26 +157,25 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
                 // building up row depending on requested output having
                 // different fields
                 switch (this.cu) {
-                    case volumesAndPages: {
+                    case volumesAndPages:
                         dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
                             (new Converter(objArr[0]).getDouble()));
                         dataRowChart.addValue(CalculationUnit.pages.getTitle() + " (*100)",
                             (new Converter(objArr[1]).getDouble()) / 100);
                         dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
                         dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
-                    }
                         break;
-                    case volumes: {
+                    case volumes:
                         dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
                             (new Converter(objArr[0]).getDouble()));
                         dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
-                    }
                         break;
-                    case pages: {
+                    case pages:
                         dataRowChart.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
                         dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
-                    }
                         break;
+                    default:
+                        throw new UnreachableCodeException("Complete switch");
                 }
 
                 // fall back, if conversion triggers an exception

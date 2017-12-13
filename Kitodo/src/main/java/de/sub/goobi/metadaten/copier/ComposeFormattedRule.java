@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
@@ -101,6 +100,8 @@ public class ComposeFormattedRule extends DataCopyrule {
                         continue;
                     case 'x':
                         result[i] = Long.parseLong(elements.get(i));
+                        continue;
+                    default:
                 }
             } catch (ArrayIndexOutOfBoundsException | ClassCastException | NumberFormatException e) {
             }
