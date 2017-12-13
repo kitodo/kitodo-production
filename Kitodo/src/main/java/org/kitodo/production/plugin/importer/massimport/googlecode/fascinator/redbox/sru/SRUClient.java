@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
@@ -323,7 +322,7 @@ public class SRUClient {
      *
      * @param xmlData
      *            The XML String returned from the search
-     * @return List<Node> A List containing a DOM4J Node for each search result
+     * @return list containing a Dom4j node for each search result
      */
     public List<Node> getResultList(String xmlData) {
         SRUResponse response = getResponseObject(xmlData);
@@ -767,7 +766,7 @@ public class SRUClient {
      *
      * @param search
      *            The search to submit to the NLA
-     * @return List<NLAIdentity> A list of processed Identities
+     * @return the list of processed identities
      */
     public List<NLAIdentity> nlaGetIdentitiesBySearch(String search) {
         return nlaGetIdentitiesBySearch(search, null, null);
@@ -786,7 +785,7 @@ public class SRUClient {
      *            Starting record number. Optional, with no default.
      * @param maxRecords
      *            Maximum rows to return. Optional, with no default.
-     * @return List<NLAIdentity> A list of processed Identities
+     * @return the list of processed identities
      */
     public List<NLAIdentity> nlaGetIdentitiesBySearch(String search, String startRecord, String maxRecords) {
         SRUResponse response = nlaGetResponseBySearch(search);

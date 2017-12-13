@@ -116,7 +116,7 @@ public class SimpleLoginST {
         @Override
         protected void failed(Throwable ex, Description description) {
             if ("true".equals(System.getenv().get("TRAVIS")) // make sure we are
-                                                             // on travis-ci
+                    // on travis-ci
                     && (ex instanceof WebDriverException)) {
                 try {
                     File screenshot = captureScreenShot(driver);
