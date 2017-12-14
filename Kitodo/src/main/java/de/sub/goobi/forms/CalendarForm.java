@@ -638,11 +638,11 @@ public class CalendarForm implements Serializable {
     private LocalDate firstAppearanceIsToChange = null;
 
     /**
-     * The constant field TODAY hold the date of today. Reading the system clock
+     * The constant field today hold the date of today. Reading the system clock
      * requires synchronization throughout the JVM and is therefore only done
      * once on form creation.
      */
-    private final LocalDate kToday = LocalDate.now();
+    private final LocalDate today = LocalDate.now();
 
     protected UploadedFile uploadedFile;
 
@@ -727,13 +727,13 @@ public class CalendarForm implements Serializable {
             if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
                 Helper.setMeldung("calendar.block.firstAppearance.early");
             }
-            if (blockShowing.getFirstAppearance().isAfter(kToday)) {
+            if (blockShowing.getFirstAppearance().isAfter(today)) {
                 Helper.setMeldung("calendar.block.firstAppearance.fiction");
             }
             if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
                 Helper.setMeldung("calendar.block.lastAppearance.early");
             }
-            if (blockShowing.getLastAppearance().isAfter(kToday)) {
+            if (blockShowing.getLastAppearance().isAfter(today)) {
                 Helper.setMeldung("calendar.block.lastAppearance.fiction");
             }
         }
@@ -1076,8 +1076,8 @@ public class CalendarForm implements Serializable {
             }
             if (numbers[2] < 100) {
                 new LocalDate();
-                numbers[2] += 100 * kToday.getCenturyOfEra();
-                if (numbers[2] > kToday.getYear()) {
+                numbers[2] += 100 * today.getCenturyOfEra();
+                if (numbers[2] > today.getYear()) {
                     numbers[2] -= 100;
                 }
                 Helper.setMeldung(Helper.getTranslation("calendar.block." + input + ".yearCompleted",

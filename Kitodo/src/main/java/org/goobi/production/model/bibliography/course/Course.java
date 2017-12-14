@@ -415,8 +415,8 @@ public class Course extends ArrayList<Block> {
      * @return a guessed total number of pages for the full course of appearance
      */
     public long guessTotalNumberOfPages() {
-        final int kWeekdayPages = 40;
-        final int kSundayPages = 240;
+        final int weekdayPages = 40;
+        final int sundayPages = 240;
 
         long result = 0;
         for (Block block : this) {
@@ -424,7 +424,7 @@ public class Course extends ArrayList<Block> {
             for (LocalDate day = block.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
                 for (Issue issue : block.getIssues()) {
                     if (issue.isMatch(day)) {
-                        result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? kWeekdayPages : kSundayPages;
+                        result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? weekdayPages : sundayPages;
                     }
                 }
             }

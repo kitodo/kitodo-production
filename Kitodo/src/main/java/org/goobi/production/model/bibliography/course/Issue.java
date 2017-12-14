@@ -397,29 +397,29 @@ public class Issue {
      *            last day of the date range
      */
     void recalculateRegularity(LocalDate firstAppearance, LocalDate lastAppearance) {
-        final int kAppeared = 1;
-        final int kNotAppeared = 0;
+        final int appeared = 1;
+        final int notAppeared = 0;
         Set<LocalDate> remainingAdditions = new HashSet<>();
         Set<LocalDate> remainingExclusions = new HashSet<>();
 
         @SuppressWarnings("unchecked")
-        HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][kAppeared + 1];
+        HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][appeared + 1];
         for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-            subsets[dayOfWeek - 1][kNotAppeared] = new HashSet<>();
-            subsets[dayOfWeek - 1][kAppeared] = new HashSet<>();
+            subsets[dayOfWeek - 1][notAppeared] = new HashSet<>();
+            subsets[dayOfWeek - 1][appeared] = new HashSet<>();
         }
 
         for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-            subsets[day.getDayOfWeek() - 1][isMatch(day) ? kAppeared : kNotAppeared].add(day);
+            subsets[day.getDayOfWeek() - 1][isMatch(day) ? appeared : notAppeared].add(day);
         }
 
         for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-            if (subsets[dayOfWeek - 1][kAppeared].size() > subsets[dayOfWeek - 1][kNotAppeared].size()) {
+            if (subsets[dayOfWeek - 1][appeared].size() > subsets[dayOfWeek - 1][notAppeared].size()) {
                 daysOfWeek.add(dayOfWeek);
-                remainingExclusions.addAll(subsets[dayOfWeek - 1][kNotAppeared]);
+                remainingExclusions.addAll(subsets[dayOfWeek - 1][notAppeared]);
             } else {
                 daysOfWeek.remove(dayOfWeek);
-                remainingAdditions.addAll(subsets[dayOfWeek - 1][kAppeared]);
+                remainingAdditions.addAll(subsets[dayOfWeek - 1][appeared]);
             }
         }
 

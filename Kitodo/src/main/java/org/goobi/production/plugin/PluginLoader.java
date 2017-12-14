@@ -139,8 +139,8 @@ public class PluginLoader {
      * @return a HashMap to configure the plug-ins
      */
     private static HashMap<String, String> getPluginConfiguration() {
-        final short kEntries = 2;
-        HashMap<String, String> conf = new HashMap<>((int) Math.ceil(kEntries / 0.75));
+        final short entries = 2;
+        HashMap<String, String> conf = new HashMap<>((int) Math.ceil(entries / 0.75));
         conf.put("configDir", ConfigCore.getKitodoConfigDirectory());
         conf.put("tempDir", ConfigCore.getParameter(Parameters.PLUGIN_TEMP_DIR));
         return conf;
@@ -157,17 +157,17 @@ public class PluginLoader {
      */
     @SuppressWarnings("unchecked")
     public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
-        final String kInternalClassesPrefix = "net.xeoh.plugins.";
-        final short kInternalClassesCount = 4;
+        final String internalClassesPrefix = "net.xeoh.plugins.";
+        final short internalClassesCount = 4;
         ArrayList<T> result;
 
         PluginType type = UnspecificPlugin.typeOf(clazz);
         PluginManagerUtil pluginLoader = getPluginLoader(type);
         Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class);
         // Never API version supports no-arg getPlugins() TODO: update API
-        result = new ArrayList<>(plugins.size() - kInternalClassesCount);
+        result = new ArrayList<>(plugins.size() - internalClassesCount);
         for (Plugin implementation : plugins) {
-            if (implementation.getClass().getName().startsWith(kInternalClassesPrefix)) {
+            if (implementation.getClass().getName().startsWith(internalClassesPrefix)) {
                 continue; // Skip plugin API internal classes
             }
             try {
