@@ -99,7 +99,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
             List entities;
             if (additionalFiltering) {
                 ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
-                Map <String, String> filterMap = (Map<String, String>) filters;
+                Map<String, String> filterMap = (Map<String, String>) filters;
                 String filterString = null;
                 if (filters.isEmpty()) {
                     form.setFilter("");
@@ -124,15 +124,13 @@ public class LazyDTOModel extends LazyDataModel<Object> {
             logger.info(entities.size() + " entities loaded!");
             int dataSize = entities.size();
             // pagination
-            if(dataSize > pageSize) {
+            if (dataSize > pageSize) {
                 try {
                     return entities.subList(first, first + pageSize);
-                }
-                catch(IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e) {
                     return entities.subList(first, first + (dataSize % pageSize));
                 }
-            }
-            else {
+            } else {
                 return entities;
             }
         } catch (DataException e) {

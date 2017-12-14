@@ -16,15 +16,16 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
-    <h:form>
+    <h:form id="processesForm">
         <p:dataTable var="item"
+                     id="processList"
                      value="#{ProzessverwaltungForm.lazyDTOModel}"
                      lazy="true"
                      paginator="true"
                      rows="#{LoginForm.myBenutzer.tableSize}"
                      paginatorPosition="bottom">
 
-            <p:column headerText="#{msgs.prozessTitel}" filterBy="#{item.title}">
+            <p:column id="titleColumn" headerText="#{msgs.prozessTitel}" filterBy="#{item.title}">
                 <h:outputText value="#{item.title}"/>
             </p:column>
 

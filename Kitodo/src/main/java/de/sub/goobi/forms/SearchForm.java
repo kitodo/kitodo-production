@@ -409,7 +409,7 @@ public class SearchForm {
         if (form != null) {
             form.filter = search;
             form.setModusAnzeige("aktuell");
-            form.setLazyDTOModel(new LazyDTOModel(true,serviceManager.getProcessService()));
+            form.setLazyDTOModel(new LazyDTOModel(true, serviceManager.getProcessService()));
             return form.filterAll();
         }
         return null;
