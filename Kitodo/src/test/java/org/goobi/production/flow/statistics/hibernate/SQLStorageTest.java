@@ -21,21 +21,21 @@ public class SQLStorageTest {
 
     @Test
     public final void testSQLStorage() {
-        Calendar one = Calendar.getInstance();
-        Calendar other = Calendar.getInstance();
-        one.set(2009, 01, 01);
-        other.set(2009, 03, 31);
-        SQLStorage storage = new SQLStorage(one.getTime(), other.getTime(), TimeUnit.days, null);
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01);
+        calendarTwo.set(2009, 03, 31);
+        SQLStorage storage = new SQLStorage(calendarOne.getTime(), calendarTwo.getTime(), TimeUnit.days, null);
         assertNotNull(storage);
     }
 
     @Test
     public final void testGetSQL() {
-        Calendar one = Calendar.getInstance();
-        Calendar other = Calendar.getInstance();
-        one.set(2009, 01, 01);
-        other.set(2009, 03, 31);
-        SQLStorage storage = new SQLStorage(one.getTime(), other.getTime(), TimeUnit.days, null);
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01);
+        calendarTwo.set(2009, 03, 31);
+        SQLStorage storage = new SQLStorage(calendarOne.getTime(), calendarTwo.getTime(), TimeUnit.days, null);
         String answer = storage.getSQL();
         assertNotNull(answer);
 

@@ -89,11 +89,11 @@ public class StatQuestProductionTest {
 
     @Test
     public void testSetTimeFrame() {
-        Calendar one = Calendar.getInstance();
-        Calendar other = Calendar.getInstance();
-        one.set(2008, 01, 01);
-        other.set(2008, 03, 31);
-        test.setTimeFrame(one.getTime(), other.getTime());
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2008, 01, 01);
+        calendarTwo.set(2008, 03, 31);
+        test.setTimeFrame(calendarOne.getTime(), calendarTwo.getTime());
     }
 
     @Test

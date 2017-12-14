@@ -36,11 +36,11 @@ public class SQLStepRequestsTest {
      */
     @BeforeClass
     public static void setUp() {
-        Calendar one = Calendar.getInstance();
-        Calendar other = Calendar.getInstance();
-        one.set(2009, 01, 01);
-        other.set(2009, 03, 31);
-        request = new SQLStepRequests(one.getTime(), other.getTime(), TimeUnit.days, null);
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01);
+        calendarTwo.set(2009, 03, 31);
+        request = new SQLStepRequests(calendarOne.getTime(), calendarTwo.getTime(), TimeUnit.days, null);
         typeSelection = HistoryTypeEnum.storageDifference;
     }
 
