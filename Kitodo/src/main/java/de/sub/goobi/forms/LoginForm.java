@@ -294,8 +294,7 @@ public class LoginForm implements Serializable {
     /**
      * Gets current authenticated User.
      *
-     * @return
-     *      The user object or null if no user is authenticated.
+     * @return The user object or null if no user is authenticated.
      */
     public User getMyBenutzer() {
         if (myBenutzer != null) {
@@ -306,7 +305,7 @@ public class LoginForm implements Serializable {
                 if (newUser != null) {
                     myBenutzer = new User(newUser);
                 }
-        return this.myBenutzer;
+                return this.myBenutzer;
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(e);
                 return null;
@@ -324,21 +323,22 @@ public class LoginForm implements Serializable {
      * @return int
      */
     public int getMaximaleBerechtigung() {
-        //TODO Only to keep compatibility to old frontend pages
-        //TODO delete this methode when all new frontend is ready or security tags are replaced
+        // TODO Only to keep compatibility to old frontend pages
+        // TODO delete this methode when all new frontend is ready or security
+        // tags are replaced
         if (this.myBenutzer != null) {
             for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
                 if (userGroup.getAuthorizations().size() > 0) {
                     for (Authorization authorization : userGroup.getAuthorizations()) {
                         if (authorization.getTitle().equals("admin")) {
-                            return 1; //Admin permission
+                            return 1; // Admin permission
                         }
                     }
                 }
             }
-            return 4; //User permission
+            return 4; // User permission
         }
-        return 0; //Anonymus permission
+        return 0; // Anonymus permission
 
     }
 
