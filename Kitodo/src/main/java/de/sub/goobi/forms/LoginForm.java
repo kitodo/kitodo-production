@@ -350,18 +350,40 @@ public class LoginForm implements Serializable {
         this.passwortAendernAlt = passwortAendernAlt;
     }
 
+    /**
+     * Getter for the read-writable property {@code newPassword}.
+     * 
+     * @return value of field {@code newPassword}
+     */
     public String getNewPassword() {
         return this.newPassword;
     }
 
+    /**
+     * Setter for the read-writable property {@code newPassword}.
+     * 
+     * @param newPassword
+     *            value for field {@code newPassword}
+     */
     public void getNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
 
+    /**
+     * Getter for the read-writable property {@code newPasswordRepeated}.
+     * 
+     * @return value of field {@code newPasswordRepeated}
+     */
     public String getNewPasswordRepeated() {
         return this.newPasswordRepeated;
     }
 
+    /**
+     * Setter for the read-writable property {@code newPasswordRepeated}.
+     * 
+     * @param newPasswordRepeated
+     *            value for field {@code newPasswordRepeated}
+     */
     public void getNewPasswordRepeated(String newPasswordRepeated) {
         this.newPasswordRepeated = newPasswordRepeated;
     }
