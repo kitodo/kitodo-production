@@ -20,15 +20,15 @@
 >
 
     <h:commandLink  style="color:black" id="plusminusbutton">
-        <f:ajax render="auflistung">
-            <h:graphicImage value="/pages/images/plus.gif" alt="show details"
-                            style="margin-right:4px" rendered="#{!item.panelShown}"/>
-            <h:graphicImage value="/pages/images/minus.gif" alt="hide details"
-                            style="margin-right:4px" rendered="#{item.panelShown}"/>
-            <t:updateActionListener value="#{item.panelShown?false:true}"
-                                    property="#{item.panelShown}"/>
-            <h:outputText value="#{item.title}"/>
-        </f:ajax>
+
+        <h:graphicImage value="/pages/images/plus.gif"  alt="show details"
+                        style="margin-right:4px" rendered="#{!item.panelShown}"/>
+        <h:graphicImage value="/pages/images/minus.gif" alt="hide details"
+                        style="margin-right:4px" rendered="#{item.panelShown}"/>
+        <t:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}"/>
+        <h:outputText value="#{item.title}"/>
+        <f:ajax render="auflistungIntern plusminusbutton"/>
     </h:commandLink>
+
 
 </ui:composition>
