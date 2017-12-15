@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.kitodo.dataaccess.format.xml.XMLWriter;
 
 /**
  * Convenience class to serialize a node.
@@ -86,6 +87,17 @@ public enum SerializationFormat {
         @Override
         public void write(Node node, Map<String, String> map, File file) throws IOException {
             write(node, map, file, "TURTLE");
+        }
+    },
+    /**
+     * The XML serialization format ({@code application/xml}, {@code text/xml}).
+     *
+     * @see "https://en.wikipedia.org/wiki/XML"
+     */
+    XML {
+        @Override
+        public void write(Node node, Map<String, String> map, File file) throws IOException {
+            XMLWriter.toFile(node, file, 2, map);
         }
     };
 
