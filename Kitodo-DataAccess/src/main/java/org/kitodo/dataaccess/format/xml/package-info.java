@@ -10,6 +10,6 @@
  */
 
 /**
- * This package is intended to provide read and write access to plain XML files.
+ * This package provides read and write access to plain XML files.
  */
 package org.kitodo.dataaccess.format.xml;
