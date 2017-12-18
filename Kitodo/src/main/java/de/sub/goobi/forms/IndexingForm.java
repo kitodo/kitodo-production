@@ -367,6 +367,7 @@ public class IndexingForm {
             return indexRestClient.getServerInformation();
         } catch (IOException e) {
             logger.error(e.getMessage());
+            HelperForm.saveMessage();
             return "";
         }
     }
