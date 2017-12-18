@@ -133,11 +133,10 @@ public class MapMessageObjectReader {
      */
     public Integer getMandatoryInteger(String key) throws IllegalArgumentException,
             JMSException {
-        Integer result = ticket.getInt(key);
-        if (result == null)
+        if (!ticket.itemExists(key))
             throw new IllegalArgumentException("Missing mandatory argument: \""
                     + key + "\"");
-        return result;
+        return ticket.getInt(key);
     }
 
     /**
