@@ -559,6 +559,10 @@ main {
     vertical-align: middle;
 }
 
+.ui-datatable th .ui-column-filter {
+    display: none;
+}
+
 .ui-tabs .ui-tabs-panel > div.mets-file-groups,
 .ui-tabs .ui-tabs-panel > div.mets-file-groups > div {
     padding: 0;

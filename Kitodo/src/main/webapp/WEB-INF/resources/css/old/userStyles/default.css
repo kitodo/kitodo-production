@@ -570,6 +570,10 @@ a.text_head:hover {
     vertical-align: top;
 }
 
+.ui-datatable th .ui-column-filter {
+    display: none;
+}
+
 /*
    ------------------------------------------------------------
    Popup component

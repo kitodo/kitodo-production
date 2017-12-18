@@ -18,6 +18,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
+        <h:outputScript name="js/filter.js" target="body" />
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>#{msgs.prozessverwaltung}</h3>
@@ -25,17 +26,17 @@
                 <!-- filters -->
                 <h:form id="filterMenu">
                     <div class="ui-inputgroup">
-                        <p:inputText placeholder="#{msgs.filter}"/>
-                        <p:commandButton type="submit" action="#{ProzessverwaltungForm.filterAll}" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
+                        <p:inputText id="filterfield" placeholder="#{msgs.filter}"/>
+                        <p:commandButton onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
                         <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down" styleClass="button-filled-blue"/>
                         <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                             <ul>
                                 <li>
-                                    <p:commandButton action="#{ProzessverwaltungForm.addFilterToUser}" icon="fa fa-floppy-o fa-lg" value="#{msgs.addFilter}"/>
+                                    <p:commandButton action="#{ProzessverwaltungForm.addFilterToUser}" icon="fa fa-floppy-o fa-lg" value="#{msgs.addFilter}" update="@form"/>
                                 </li>
                                 <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
                                     <li>
-                                        <p:commandLink value="#{filter}"/>
+                                        <p:commandLink value="#{filter}" onclick="setFilter('#{filter}')"/>
                                         <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete button-blue">
                                             <i class="fa fa-trash-o fa-lg"/>
                                         </p:commandLink>
@@ -43,12 +44,11 @@
                                 </ui:repeat>
                             </ul>
                         </p:overlayPanel>
-
                     </div>
                 </h:form>
             </p:panel>
 
-            <p:tabView>
+            <p:tabView id="tabs">
                 <p:tab title="#{msgs.uebersicht}">
                     <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
                 </p:tab>

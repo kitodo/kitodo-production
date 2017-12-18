@@ -145,7 +145,6 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public ProzessverwaltungForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProcessService()));
         this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);
         this.anzeigeAnpassen.put("swappedOut", false);
@@ -153,6 +152,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.anzeigeAnpassen.put("processId", false);
         this.anzeigeAnpassen.put("batchId", false);
         this.sortierung = "titelAsc";
+        super.setLazyDTOModel(new LazyDTOModel(true, serviceManager.getProcessService()));
         /*
          * Vorgangsdatum generell anzeigen?
          */
