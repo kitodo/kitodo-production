@@ -19,125 +19,125 @@
         #########################################-->
 
 <html
-        xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:t="http://myfaces.apache.org/tomahawk"
-        xmlns:p="http://primefaces.org/ui"
->
-<f:view locale="#{SpracheForm.locale}">
-    <ui:include src="inc/head.xhtml" />
-    <h:body>
-        <table class="headTable" cellspacing="0" cellpadding="0"
-               style="padding-left:5px;padding-right:5px;margin-top:5px;">
-            <ui:include src="inc/tbl_Kopf.xhtml" />
-        </table>
-        <table cellspacing="5" cellpadding="0" class="layoutTable"
-               align="center">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+        <h:body>
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                   style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                   align="center">
 
-            <tr>
-                <ui:include src="inc/tbl_Navigation.xhtml" />
-                <td valign="top" class="layoutInhalt">
+                <tr>
+                    <ui:include src="inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
 
-                    <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
-                    <h:form id="groupform">
-                        <!-- Breadcrumb -->
-                        <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
-                            <h:panelGroup id="id1">
-                                <h:link id="id2" value="#{msgs.startseite}"
-                                        outcome="/pages/Main"/>
-                                <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                <h:outputText id="id3" value="#{msgs.benutzergruppen}"/>
-                            </h:panelGroup>
-                        </h:panelGrid>
+                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+                        <h:form id="groupform">
+                            <!-- Breadcrumb -->
+                            <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
+                                <h:panelGroup id="id1">
+                                    <h:link id="id2" value="#{msgs.startseite}"
+                                            outcome="/pages/Main"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:outputText id="id3" value="#{msgs.benutzergruppen}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
 
-                        <table border="0" align="center" width="100%" cellpadding="15">
-                            <tr>
-                                <td>
+                            <table border="0" align="center" width="100%" cellpadding="15">
+                                <tr>
+                                    <td>
 
-                                    <!-- Überschrift -->
-                                    <h3>
-                                        <h:outputText id="id4" value="#{msgs.benutzergruppen}"/>
-                                    </h3>
+                                        <!-- Überschrift -->
+                                        <h3>
+                                            <h:outputText id="id4" value="#{msgs.benutzergruppen}"/>
+                                        </h3>
 
-                                    <!-- newUser-Schaltknopf -->
-                                    <h:commandLink id="id5" action="#{BenutzergruppenForm.newUserGroup}"
-                                                   immediate="true"
-                                                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                        <h:outputText id="id6"
-                                                      value="#{msgs.neueBenutzergruppeAnlegen}"/>
-                                    </h:commandLink>
+                                        <!-- newUser-Schaltknopf -->
+                                        <h:commandLink id="id5" action="#{BenutzergruppenForm.newUserGroup}"
+                                                       immediate="true"
+                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                                            <h:outputText id="id6"
+                                                          value="#{msgs.neueBenutzergruppeAnlegen}"/>
+                                        </h:commandLink>
 
-                                    <!-- globale Warn- und Fehlermeldungen -->
-                                    <h:messages id="id7" globalOnly="true" errorClass="text_red"
-                                                infoClass="text_blue" showDetail="true" showSummary="true"
-                                                tooltip="true"/>
+                                        <!-- globale Warn- und Fehlermeldungen -->
+                                        <h:messages id="id7" globalOnly="true" errorClass="text_red"
+                                                    infoClass="text_blue" showDetail="true" showSummary="true"
+                                                    tooltip="true"/>
 
-                                    <!-- List of user groups -->
+                                        <!-- List of user groups -->
 
-                                    <p:dataTable id="auflistung" tableStyleClass="standardTable"
-                                                 var="item" value="#{BenutzergruppenForm.lazyDTOModel}" lazy="true"
-                                                 rows="#{LoginForm.myBenutzer.tableSize}" paginator="true"
-                                                 style="margin-top: 10px; width: 100%;">
+                                        <p:dataTable id="auflistung" tableStyleClass="standardTable"
+                                                     var="item" value="#{BenutzergruppenForm.lazyDTOModel}" lazy="true"
+                                                     rows="#{LoginForm.myBenutzer.tableSize}" paginator="true"
+                                                     style="margin-top: 10px; width: 100%;">
 
-                                        <p:column rendered="true" id="id8" headerText="#{msgs.benutzergruppe}">
-                                            <ui:include src="/pages/inc/ajaxPlusMinusButton.xhtml" />
-
-
-                                            <h:panelGroup id="auflistungIntern">
+                                            <p:column rendered="true" id="id8" headerText="#{msgs.benutzergruppe}">
+                                                <ui:include src="/pages/inc/ajaxPlusMinusButton.xhtml" />
 
 
-                                                <t:dataTable id="benutzergruppendetails" styleClass="standardTable" width="90%"
-                                                             style="margin-left:12px;margin-top:5px;width:90%" cellspacing="1px"
-                                                             cellpadding="1px" headerClass="standardTable_Header"
-                                                             rowClasses="standardTable_Row1"
-                                                             rowStyleClass="standardTable_Row1"
+                                                <h:panelGroup id="auflistungIntern">
 
-                                                             rendered="#{item.panelShown}"
-                                                             var="step" value="#{item.users}">
-                                                    <h:column id="id12"  >
-                                                        <f:facet name="header">
-                                                            <h:outputText id="id13" value="#{msgs.benutzer}"/>
-                                                        </f:facet>
-                                                        <h:outputText id="id14" value="#{step.fullName}"/>
-                                                    </h:column>
-                                                </t:dataTable>
-                                            </h:panelGroup>
-                                        </p:column>
 
-                                        <p:column headerText="#{msgs.auswahl}"
-                                                  rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                            <!-- Bearbeiten-Schaltknopf -->
-                                            <h:link id="id16" outcome="/pages/BenutzergruppenBearbeiten"
-                                                    title="#{msgs.benutzerBearbeiten}">
-                                                <f:param name="id" value="#{item.id}"/>
-                                                <h:graphicImage id="id17" alt="edit"
-                                                                value="/pages/images/buttons/edit.gif"/>
-                                            </h:link>
-                                        </p:column>
+                                                    <t:dataTable id="benutzergruppendetails" styleClass="standardTable" width="90%"
+                                                                 style="margin-left:12px;margin-top:5px;width:90%" cellspacing="1px"
+                                                                 cellpadding="1px" headerClass="standardTable_Header"
+                                                                 rowClasses="standardTable_Row1"
+                                                                 rowStyleClass="standardTable_Row1"
 
-                                    </p:dataTable>
+                                                                 rendered="#{item.panelShown}"
+                                                                 var="step" value="#{item.users}">
+                                                        <h:column id="id12"  >
+                                                            <f:facet name="header">
+                                                                <h:outputText id="id13" value="#{msgs.benutzer}"/>
+                                                            </f:facet>
+                                                            <h:outputText id="id14" value="#{step.fullName}"/>
+                                                        </h:column>
+                                                    </t:dataTable>
+                                                </h:panelGroup>
+                                            </p:column>
 
-                                    <!-- newUser-Schaltknopf -->
-                                    <h:commandLink id="id52" action="#{BenutzergruppenForm.newUserGroup}"
-                                                   immediate="true"
-                                                   rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (BenutzergruppenForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
-                                        <h:outputText id="id62"
-                                                      value="#{msgs.neueBenutzergruppeAnlegen}"/>
-                                    </h:commandLink>
-                                </td>
-                            </tr>
-                        </table>
-                    </h:form>
-                    <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+                                            <p:column headerText="#{msgs.auswahl}"
+                                                      rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                                                <!-- Bearbeiten-Schaltknopf -->
+                                                <h:link id="id16" outcome="/pages/BenutzergruppenBearbeiten"
+                                                        title="#{msgs.benutzerBearbeiten}">
+                                                    <f:param name="id" value="#{item.id}"/>
+                                                    <h:graphicImage id="id17" alt="edit"
+                                                                    value="/pages/images/buttons/edit.gif"/>
+                                                </h:link>
+                                            </p:column>
 
-                </td>
-            </tr>
-            <ui:include src="inc/tbl_Fuss.xhtml" />
-        </table>
+                                        </p:dataTable>
 
-    </h:body>
-</f:view>
+                                        <!-- newUser-Schaltknopf -->
+                                        <h:commandLink id="id52" action="#{BenutzergruppenForm.newUserGroup}"
+                                                       immediate="true"
+                                                       rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (BenutzergruppenForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
+                                            <h:outputText id="id62"
+                                                          value="#{msgs.neueBenutzergruppeAnlegen}"/>
+                                        </h:commandLink>
+                                    </td>
+                                </tr>
+                            </table>
+                        </h:form>
+                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+
+                    </td>
+                </tr>
+                <ui:include src="inc/tbl_Fuss.xhtml" />
+            </table>
+
+        </h:body>
+    </f:view>
 
 </html>
