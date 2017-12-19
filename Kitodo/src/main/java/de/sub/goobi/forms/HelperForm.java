@@ -305,13 +305,4 @@ public class HelperForm implements Serializable {
     public boolean getUserStepDoneSearchEnabled() {
         return ConfigCore.getBooleanParameter("withUserStepDoneSearch");
     }
-    public static void saveMessage() {
-
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Failed",  "The elastic search server is not running!") );
-
-
-    }
 }

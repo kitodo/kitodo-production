@@ -22,8 +22,6 @@
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
         <h:body>
-            <p:growl id="notifications" rendered="#{empty indexingForm.serverInformation}"
-                     widgetVar="notifications" autoUpdate="true"  showDetail="true" sticky="true"/>
             <script type="text/javascript">
                     function createMapping() {
                         toggleButtons(false);
