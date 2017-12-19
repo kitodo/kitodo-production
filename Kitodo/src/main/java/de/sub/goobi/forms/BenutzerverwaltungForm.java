@@ -91,29 +91,12 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * display all users without filtering.
-     *
-     * @return page or empty String
-     */
-    public String filterKein() {
-        this.filter = null;
-        List<UserDTO> users = new ArrayList<>();
-        try {
-            users = getUsers();
-        } catch (DataException e) {
-            logger.error(e);
-        }
-        this.page = new Page<>(0, users);
-        return "/pages/BenutzerAlle";
-    }
-
-    /**
      * This method initializes the user list without any filters whenever the
      * bean is constructed.
      */
     @PostConstruct
     public void initializeUserList() {
-        filterKein();
+        filterAll();
     }
 
     /**
@@ -231,7 +214,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             logger.error(e);
             return null;
         }
-        return filterKein();
+        return filterAll();
     }
 
     /**
