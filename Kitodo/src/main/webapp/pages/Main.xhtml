@@ -19,97 +19,101 @@
         #########################################-->
 
 <html
-        xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:t="http://myfaces.apache.org/tomahawk"
-        xmlns:p="http://primefaces.org/ui"
->
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
+    >
 
-<f:view locale="#{SpracheForm.locale}">
-    <ui:include src="inc/head.xhtml" />
-    <h:body >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+        <h:body>
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                       style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                       align="center">
 
-        <table cellspacing="5" cellpadding="0" class="layoutTable"
-               align="center">
-            <tr>
-                <ui:include src="inc/tbl_Navigation.xhtml" />
-                <td valign="top" class="layoutInhalt">
+                <tr>
+                    <ui:include src="inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
 
-                    <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
-                    <h:form id="useform">
-                        <!-- Breadcrumb -->
-                        <p:growl id="notifications" rendered="#{empty indexingForm.serverInformation}"
-                                 widgetVar="notifications" autoUpdate="true"  showDetail="true" sticky="true"/>
-                        <h:panelGrid id="id2" columns="1" styleClass="layoutInhaltKopf">
-                            <h:panelGroup id="id3">
-                                <h:outputText id="id4" value="#{msgs.startseite}"/>
-                            </h:panelGroup>
-                        </h:panelGrid>
-                        <!-- // Breadcrumb -->
-
-                        <!-- Inhalt -->
-                        <!-- goobi logo for version 151 -->
-                        <h:panelGrid id="id511" columns="2" width="100%" cellpadding="15"
-                                     cellspacing="0" border="0" rowClasses="rowTop">
-
-                            <!-- Einführung -->
-                            <t:panelGroup id="id6">
-
-                                <noscript>
-                                    <h:outputText
-                                            style="color: red;font-weight: bold;margin-bottom:20px;display:block"
-                                            value="#{msgs.keinJavascript}"/>
-                                </noscript>
-
-                                <!-- globale Warn- und Fehlermeldungen -->
-                                <h:messages id="id5" globalOnly="true" errorClass="text_red"
-                                            infoClass="text_blue" showDetail="true" showSummary="true"
-                                            tooltip="true" rendered="#{not empty indexingForm.serverInformation}"/>
-
-                                <img src="#{HelperForm.logoUrl}"/>
-
-                                <h3 style="margin-top:15px">
-                                    <h:outputText id="id7" value="#{msgs.startseite}"/>
-                                </h3>
-
-                                <!-- globale Warn- und Fehlermeldungen -->
-                                <h:messages id="id8" globalOnly="true" errorClass="text_red"
-                                            infoClass="text_blue" showDetail="true" showSummary="true"
-                                            tooltip="true" rendered="#{not empty indexingForm.serverInformation}"/>
-
-                                <p style="text-align: justify;">
-                                    <h:outputText id="id9" style="text-align: justify;"
-                                                  value="#{HelperForm.applicationHomepageMsg}"
-                                                  escape="false"/>
-                                </p>
-                            </t:panelGroup>
-                            <!-- // Einführung -->
-
-                            <!-- Kästen mit der Statistik -->
-                            <h:panelGrid id="id10" columns="1" cellpadding="0px"
-                                         width="200 px" style="margin-top: 10px">
-                                <ui:include src="inc_Main/box1.xhtml" />
-                                <!-- <ui:include src="inc_Main/box2.xhtml" /> -->
-                                <!--
-                                <ui:include src="inc_Main/box3.xhtml" />
-                                -->
+                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+                        <h:form id="useform">
+                            <!-- Breadcrumb -->
+                            <p:growl id="notifications" rendered="#{empty indexingForm.serverInformation}"
+                                     widgetVar="notifications" autoUpdate="true"  showDetail="true" sticky="true"/>
+                            <h:panelGrid id="id2" columns="1" styleClass="layoutInhaltKopf">
+                                <h:panelGroup id="id3">
+                                    <h:outputText id="id4" value="#{msgs.startseite}"/>
+                                </h:panelGroup>
                             </h:panelGrid>
-                            <!-- // Kästen mit der Statistik -->
+                            <!-- // Breadcrumb -->
 
-                        </h:panelGrid>
-                        <!-- // Inhalt -->
+                            <!-- Inhalt -->
+                            <!-- goobi logo for version 151 -->
+                            <h:panelGrid id="id511" columns="2" width="100%" cellpadding="15"
+                                         cellspacing="0" border="0" rowClasses="rowTop">
+
+                                <!-- Einführung -->
+                                <t:panelGroup id="id6">
+
+                                    <noscript>
+                                        <h:outputText
+                                                style="color: red;font-weight: bold;margin-bottom:20px;display:block"
+                                                value="#{msgs.keinJavascript}"/>
+                                    </noscript>
+
+                                    <!-- globale Warn- und Fehlermeldungen -->
+                                    <h:messages id="id5" globalOnly="true" errorClass="text_red"
+                                                infoClass="text_blue" showDetail="true" showSummary="true"
+                                                tooltip="true" rendered="#{not empty indexingForm.serverInformation}"/>
+
+                                    <img src="#{HelperForm.logoUrl}"/>
+
+                                    <h3 style="margin-top:15px">
+                                        <h:outputText id="id7" value="#{msgs.startseite}"/>
+                                    </h3>
+
+                                    <!-- globale Warn- und Fehlermeldungen -->
+                                    <h:messages id="id8" globalOnly="true" errorClass="text_red"
+                                                infoClass="text_blue" showDetail="true" showSummary="true"
+                                                tooltip="true" rendered="#{not empty indexingForm.serverInformation}"/>
+
+                                    <p style="text-align: justify;">
+                                        <h:outputText id="id9" style="text-align: justify;"
+                                                      value="#{HelperForm.applicationHomepageMsg}"
+                                                      escape="false"/>
+                                    </p>
+                                </t:panelGroup>
+                                <!-- // Einführung -->
+
+                                <!-- Kästen mit der Statistik -->
+                                <h:panelGrid id="id10" columns="1" cellpadding="0px"
+                                             width="200 px" style="margin-top: 10px">
+                                    <ui:include src="inc_Main/box1.xhtml" />
+                                    <!-- <ui:include src="inc_Main/box2.xhtml" /> -->
+                                    <!--
+                                    <ui:include src="inc_Main/box3.xhtml" />
+                                    -->
+                                </h:panelGrid>
+                                <!-- // Kästen mit der Statistik -->
+
+                            </h:panelGrid>
+                            <!-- // Inhalt -->
 
 
-                    </h:form>
-                    <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+                        </h:form>
+                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
 
-                </td>
-            </tr>
-            <ui:include src="inc/tbl_Fuss.xhtml" />
-        </table>
-    </h:body>
-</f:view>
+                    </td>
+                </tr>
+                <ui:include src="inc/tbl_Fuss.xhtml" />
+            </table>
+        </h:body>
+    </f:view>
 
 </html>
