@@ -258,16 +258,6 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * No filter back.
-     *
-     * @return String
-     */
-    public String filterKeinMitZurueck() {
-        filterKein();
-        return this.zurueck;
-    }
-
-    /**
      * Add file group.
      *
      * @return String

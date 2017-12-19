@@ -130,11 +130,6 @@ public class BenutzergruppenForm extends BasisForm {
         filterKein();
     }
 
-    public String filterKeinMitZurueck() {
-        filterKein();
-        return this.zurueck;
-    }
-
     /**
      * Method being used as viewAction for user group edit form. If
      * 'userGroupId' is '0', the form for creating a new user group will be
