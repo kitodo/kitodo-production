@@ -178,7 +178,7 @@ public class ProjekteForm extends BasisForm {
         } else {
             try {
                 serviceManager.getProjectService().save(this.myProjekt);
-                return filterKein();
+                return redirectToList("?faces-redirect=true");
             } catch (DataException e) {
                 Helper.setFehlerMeldung("Project could not be saved: ", e.getMessage());
                 logger.error(e);
@@ -229,32 +229,7 @@ public class ProjekteForm extends BasisForm {
                 return null;
             }
         }
-        return filterKein();
-    }
-
-    /**
-     * No filter.
-     *
-     * @return page or empty String
-     */
-    public String filterKein() {
-        List<ProjectDTO> projects = new ArrayList<>();
-        try {
-            projects = serviceManager.getProjectService().findAll();
-        } catch (DataException e) {
-            logger.error(e);
-        }
-        this.page = new Page<>(0, projects);
         return redirectToList("?faces-redirect=true");
-    }
-
-    /**
-     * This method initializes the project list without any filters whenever the
-     * bean is constructed.
-     */
-    @PostConstruct
-    public void initializeProjectList() {
-        filterKein();
     }
 
     /**
