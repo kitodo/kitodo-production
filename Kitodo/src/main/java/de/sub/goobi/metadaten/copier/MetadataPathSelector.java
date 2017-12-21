@@ -16,12 +16,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-
 import ugh.dl.DocStruct;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
@@ -191,7 +189,8 @@ public class MetadataPathSelector extends MetadataSelector {
                     logger.debug("Cannot create structural element " + docStructType + " as child of "
                             + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
                             + ": Accessing the rule set failed with exception: "
-                            + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+                            + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()),
+                        e);
                 }
                 return;
             }
@@ -310,7 +309,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     private DocStruct getSubnode(DocStruct logicalNode) {
         List<DocStruct> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
-                ANY_METADATA_TYPE_SYMBOL);
+            ANY_METADATA_TYPE_SYMBOL);
         if (children == null) {
             children = Collections.emptyList();
         }
@@ -321,6 +320,8 @@ public class MetadataPathSelector extends MetadataSelector {
                 if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
                     return children.get(0);
                 }
+                break;
+            default:
         }
 
         if (index == null) {

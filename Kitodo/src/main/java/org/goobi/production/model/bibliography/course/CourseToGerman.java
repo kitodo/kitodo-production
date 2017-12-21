@@ -12,14 +12,12 @@
 package org.goobi.production.model.bibliography.course;
 
 import de.sub.goobi.helper.DateUtils;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
@@ -39,7 +37,7 @@ public class CourseToGerman {
      * </p>
      */
     private static final String[] DAYS_OF_WEEK_NAMES = new String[] {null, "Montag", "Dienstag", "Mittwoch",
-            "Donnerstag", "Freitag", "Samstag", "Sonntag" };
+                                                                     "Donnerstag", "Freitag", "Samstag", "Sonntag" };
 
     /**
      * Month’s names in German.
@@ -49,7 +47,8 @@ public class CourseToGerman {
      * </p>
      */
     private static final String[] MONTH_NAMES = new String[] {null, "Januar", "Februar", "März", "April", "Mai", "Juni",
-            "Juli", "August", "September", "Oktober", "November", "Dezember" };
+                                                              "Juli", "August", "September", "Oktober", "November",
+                                                              "Dezember" };
 
     /**
      * The function toString() returns a verbal description of the course of
@@ -89,7 +88,6 @@ public class CourseToGerman {
      */
     private static String titleToString(Block block, boolean subsequentBlock) {
         StringBuilder result = new StringBuilder(500);
-        int currentIssuesSize = block.getIssues().size();
         if (!subsequentBlock) {
             result.append("Die Zeitung erschien vom ");
             appendDate(result, block.getFirstAppearance());
@@ -103,6 +101,7 @@ public class CourseToGerman {
         result.append(" regelmäßig ");
 
         Iterator<Issue> issueIterator = block.getIssues().iterator();
+        int currentIssuesSize = block.getIssues().size();
         for (int issueIndex = 0; issueIndex < currentIssuesSize; issueIndex++) {
             Issue issue = issueIterator.next();
             result.append("an allen ");

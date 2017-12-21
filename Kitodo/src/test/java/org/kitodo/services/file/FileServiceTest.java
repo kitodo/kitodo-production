@@ -12,14 +12,12 @@
 package org.kitodo.services.file;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.junit.AfterClass;
@@ -34,6 +32,14 @@ public class FileServiceTest {
     private static FileService fileService = new FileService();
     private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(FileServiceTest.class);
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() throws IOException {
         fileService.createDirectory(URI.create(""), "fileServiceTest");
@@ -79,7 +85,8 @@ public class FileServiceTest {
         Assert.assertTrue(file.isDirectory());
         Assert.assertFalse(file.isFile());
         Assert.assertTrue(file.exists());
-        Assert.assertTrue("Incorrect path!", Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
+        Assert.assertTrue("Incorrect path!",
+            Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
     }
 
     @Test
@@ -105,7 +112,8 @@ public class FileServiceTest {
         file = fileService.getFile(URI.create("fileServiceTest/testMetaExisting"));
 
         Assert.assertTrue(file.exists());
-        Assert.assertTrue("Incorrect path!", Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
+        Assert.assertTrue("Incorrect path!",
+            Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
     }
 
     @Test
@@ -332,7 +340,7 @@ public class FileServiceTest {
     public void testCopyFileToDirectoryWithMissingSource() throws IOException {
         URI originFile = URI.create("fileServiceTest/copyFileToDirectoryMissingSource");
         URI targetDirectory = fileService.createDirectory(URI.create("fileServiceTest"),
-                "copyFileToDirectoryMissingSourceTarget");
+            "copyFileToDirectoryMissingSourceTarget");
 
         Assert.assertFalse(fileService.fileExist(originFile));
         Assert.assertTrue(fileService.fileExist(targetDirectory));

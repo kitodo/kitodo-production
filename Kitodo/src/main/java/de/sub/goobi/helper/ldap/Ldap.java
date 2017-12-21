@@ -13,7 +13,6 @@ package de.sub.goobi.helper.ldap;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Hashtable;
-
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -43,7 +41,6 @@ import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,8 +89,9 @@ public class Ldap {
             ctx.bind(getUserDN(inBenutzer), dr);
             ctx.close();
             setNextUidNumber();
-            Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " "
-                    + serviceManager.getUserService().getFullName(inBenutzer), "");
+            Helper.setMeldung(null,
+                Helper.getTranslation("ldapWritten") + " " + serviceManager.getUserService().getFullName(inBenutzer),
+                "");
             /*
              * check if HomeDir exists, else create it
              */
@@ -330,7 +328,7 @@ public class Ldap {
             ctx = new InitialDirContext(env);
             Attributes matchAttrs = new BasicAttributes(true);
             NamingEnumeration<SearchResult> answer = ctx.search("ou=users,dc=gdz,dc=sub,dc=uni-goettingen,dc=de",
-                    matchAttrs);
+                matchAttrs);
             rueckgabe = answer.hasMoreElements();
 
             while (answer.hasMore()) {
@@ -456,21 +454,19 @@ public class Ldap {
             env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
 
             try {
-                DirContext ctx = new InitialDirContext(env);
-
                 /*
                  * Encryption of password and Base64-Encoding
                  */
                 MessageDigest md = MessageDigest.getInstance(ConfigCore.getParameter("ldap_encryption", "SHA"));
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
+                String digestBaseSixtyfour = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
                 ModificationItem[] mods = new ModificationItem[4];
 
                 /*
                  * UserPasswort-Attribut ändern
                  */
                 BasicAttribute userpassword = new BasicAttribute("userPassword",
-                        "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+                        "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBaseSixtyfour);
 
                 /*
                  * LanMgr-Passwort-Attribut ändern
@@ -490,20 +486,20 @@ public class Ldap {
                  */
                 BasicAttribute ntlmpassword = null;
                 try {
-                    byte hmm[] = digester.digest(inNewPassword.getBytes("UnicodeLittleUnmarked"));
-                    ntlmpassword = new BasicAttribute("sambaNTPassword", LdapUser.toHexString(hmm));
+                    byte[] digest = digester.digest(inNewPassword.getBytes("UnicodeLittleUnmarked"));
+                    ntlmpassword = new BasicAttribute("sambaNTPassword", LdapUser.toHexString(digest));
                 } catch (UnsupportedEncodingException e) {
                     // TODO: Make sure that the password isn't logged here
                     logger.error(e);
                 }
 
-                BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
-                        String.valueOf(System.currentTimeMillis() / 1000L));
-
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userpassword);
                 mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
                 mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);
+                BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
+                        String.valueOf(System.currentTimeMillis() / 1000L));
                 mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
+                DirContext ctx = new InitialDirContext(env);
                 ctx.modifyAttributes(getUserDN(inUser), mods);
 
                 // Close the context when we're done

@@ -13,7 +13,6 @@ package org.goobi.production.flow.statistics.hibernate;
 
 import java.util.Date;
 import java.util.List;
-
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
@@ -48,8 +47,8 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
 
     /**
      * This is an extended SQL generator for an SQL extracting data from the
-     * historyEvent log. depending on the parameters the query returns up to four
-     * fields
+     * historyEvent log. depending on the parameters the query returns up to
+     * four fields
      * <p/>
      * (non-Javadoc)
      * 
@@ -60,12 +59,13 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      * @param stepOrder
      *            - operates as additional filter
      * @param stepOrderGrouping
-     *            - adding 'stepOrder' and 'stepName' fields in select and in group
-     *            by clause
+     *            - adding 'stepOrder' and 'stepName' fields in select and in
+     *            group by clause
      * @param includeLoops
      *            - adding additional stepOpen from Correction and other loops
      *
-     * @return SQLExpression for MySQL DBMS - default fields stepCount and intervall
+     * @return SQLExpression for MySQL DBMS - default fields stepCount and
+     *         intervall
      */
     public String getSQL(HistoryTypeEnum typeSelection, Integer stepOrder, Boolean stepOrderGrouping,
             Boolean includeLoops) {
@@ -80,7 +80,6 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
             groupInnerSelect = " GROUP BY process_id, numericValue, stringValue ";
         }
 
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -103,8 +102,8 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
             innerWhereClause = innerWhereClause + " AND h.numericValue=" + stepOrder.toString() + " ";
         }
 
-        subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(myTimeUnit, "history.date") + " "
-                + "AS 'intervall', history.date AS 'timeLimiter', history.stringValue AS 'stepName' " + "FROM "
+        String subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(myTimeUnit, "history.date")
+                + " AS 'intervall', history.date AS 'timeLimiter', history.stringValue AS 'stepName' " + "FROM "
                 + "(SELECT DISTINCT h.numericValue, h.stringValue, " + timeLimiter + " as date, h.process_id, h.type "
                 + "FROM history h " + "WHERE " + innerWhereClause + groupInnerSelect + ") AS history " + ") AS table_1";
 
@@ -180,8 +179,8 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      *
      * @param eventSelection
      *            as HistoryTypeEnum
-     * @return SQL String to retrieve the highest numericValue (stepOrder) for the
-     *         event defined in eventSelection
+     * @return SQL String to retrieve the highest numericValue (stepOrder) for
+     *         the event defined in eventSelection
      */
     public String getSQLMaxStepOrder(HistoryTypeEnum eventSelection) {
 
@@ -209,8 +208,8 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
      *
      * @param eventSelection
      *            as HistoryTypeEnum
-     * @return SQL String to retrieve the lowest numericValue (stepOrder) for the
-     *         event defined in eventSelection
+     * @return SQL String to retrieve the lowest numericValue (stepOrder) for
+     *         the event defined in eventSelection
      */
     public String getSQLMinStepOrder(HistoryTypeEnum eventSelection) {
 

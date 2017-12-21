@@ -16,13 +16,11 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
@@ -52,8 +50,9 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
     private Boolean flagIncludeLoops = false;
 
     /**
-     * loops included means that all step open all stepdone are considered loops not
-     * included means that only min(date) or max(date) - depending on option in.
+     * loops included means that all step open all stepdone are considered loops
+     * not included means that only min(date) or max(date) - depending on option
+     * in.
      *
      * @see HistoryTypeEnum
      *
@@ -78,7 +77,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
      * (org.goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override
@@ -96,8 +96,6 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
     @Override
     public List<DataTable> getDataTables(List<? extends BaseDTO> dataSource) {
 
-        List<DataTable> allTables = new ArrayList<>();
-
         // gathering IDs from the filter passed by dataSource
         this.myIDlist = getIds(dataSource);
 
@@ -105,8 +103,6 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
             return null;
         }
 
-        // a list of DataTables is expected as return Object, even if there is
-        // only one Data Table as it is here in this implementation
         DataTable tableStepOpenAndDone = getAllSteps(HistoryTypeEnum.taskOpen);
         tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
         tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " ("
@@ -114,6 +110,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
         tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
         tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
         tableStepOpenAndDone.setShowableInChart(false);
+        List<DataTable> allTables = new ArrayList<>();
         allTables.add(tableStepOpenAndDone);
 
         tableStepOpenAndDone = getAllSteps(HistoryTypeEnum.taskDone);
@@ -318,12 +315,12 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
     /**
      * Method generates a DataTable based on the input SQL. Methods success is
-     * depending on a very specific data structure ... so don't use it if you don't
-     * exactly understand it
+     * depending on a very specific data structure ... so don't use it if you
+     * don't exactly understand it
      *
      * @param natSQL
-     *            headerFromSQL -> to be used, if headers need to be read in first
-     *            in order to get a certain sorting
+     *            headerFromSQL -> to be used, if headers need to be read in
+     *            first in order to get a certain sorting
      * @return DataTable
      */
 
@@ -349,10 +346,9 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
                 Object[] objArr = (Object[]) obj;
                 try {
                     headerRow.setName(new Converter(objArr[3]).getString() + "");
-                    headerRow.addValue(
-                            new Converter(new Converter(objArr[2]).getInteger()).getString() + " ("
-                                    + new Converter(objArr[1]).getString() + ")",
-                            (new Converter(objArr[0]).getDouble()));
+                    headerRow.addValue(new Converter(new Converter(objArr[2]).getInteger()).getString() + " ("
+                            + new Converter(objArr[1]).getString() + ")",
+                        (new Converter(objArr[0]).getDouble()));
 
                 } catch (Exception e) {
                     headerRow.addValue(e.getMessage(), 0.0);
@@ -412,7 +408,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
                     dataRow.setName(new Converter(objArr[3]).getString() + "");
                 }
                 dataRow.addValue(new Converter(new Converter(objArr[2]).getInteger()).getString() + " ("
-                        + new Converter(objArr[1]).getString() + ")", (new Converter(objArr[0]).getDouble()));
+                        + new Converter(objArr[1]).getString() + ")",
+                    (new Converter(objArr[0]).getDouble()));
 
             } catch (Exception e) {
                 dataRow.addValue(e.getMessage(), 0.0);

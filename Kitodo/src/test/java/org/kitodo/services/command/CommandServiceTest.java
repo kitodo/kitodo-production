@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,6 +37,14 @@ public class CommandServiceTest {
     private static File longWorkingScript1s = new File(
             System.getProperty("user.dir") + "/src/test/resources/long_working_script_1s.sh");
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws IOException
+     *             if an I/O exception of some sort has occurred
+     */
     @BeforeClass
     public static void setUp() throws IOException {
 
@@ -55,6 +62,12 @@ public class CommandServiceTest {
 
     }
 
+    /**
+     * Releases expensive external resources allocated in {@code setUp()}.
+     * 
+     * @throws IOException
+     *             if an I/O exception of some sort has occurred
+     */
     @AfterClass
     public static void tearDown() throws IOException {
         if (!windows) {
@@ -138,14 +151,14 @@ public class CommandServiceTest {
 
     @Test
     public void runLongScriptAsync() throws InterruptedException {
-        String commandString2s = "src/test/resources/long_working_script_2s" + scriptExtension;
-        String commandString1s = "src/test/resources/long_working_script_1s" + scriptExtension;
+        String commandStringTwoS = "src/test/resources/long_working_script_2s" + scriptExtension;
+        String commandStringOneS = "src/test/resources/long_working_script_1s" + scriptExtension;
         CommandService service = new CommandService();
-        service.runCommandAsync(commandString2s);
-        service.runCommandAsync(commandString1s);
+        service.runCommandAsync(commandStringTwoS);
+        service.runCommandAsync(commandStringOneS);
         Thread.sleep(3000); // wait for async thread to finish;
         CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertEquals("latest finished command should be the 2 s one", commandResult.getCommand(), commandString2s);
+        assertEquals("latest finished command should be the 2 s one", commandResult.getCommand(), commandStringTwoS);
     }
 
     @Test
@@ -156,7 +169,7 @@ public class CommandServiceTest {
         Thread.sleep(1000); // wait for async thread to finish;
         CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
         assertEquals("result message should contain IOException",
-                commandResult.getMessages().get(0).contains("IOException"), true);
+            commandResult.getMessages().get(0).contains("IOException"), true);
     }
 
     @Test
@@ -190,8 +203,9 @@ public class CommandServiceTest {
      * @return The CommandResult.
      */
     public CommandResult getLastFinishedCommandResult(ArrayList<CommandResult> commandResults) {
-        if (commandResults.isEmpty())
+        if (commandResults.isEmpty()) {
             return null;
+        }
 
         return commandResults.get(commandResults.size() - 1);
     }

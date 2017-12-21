@@ -19,11 +19,9 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataTable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.Ignore;
@@ -45,10 +43,10 @@ public class StatQuestProjectAssociationsTest {
 
     @Test
     public void testIsRendererInverted() {
-        IRenderer inRenderer = new ChartRenderer();
-        IRenderer inRenderer2 = new HtmlTableRenderer();
-        assertFalse(test.isRendererInverted(inRenderer));
-        assertTrue(test.isRendererInverted(inRenderer2));
+        IRenderer chartRenderer = new ChartRenderer();
+        IRenderer htmlTableRenderer = new HtmlTableRenderer();
+        assertFalse(test.isRendererInverted(chartRenderer));
+        assertTrue(test.isRendererInverted(htmlTableRenderer));
     }
 
     @Test

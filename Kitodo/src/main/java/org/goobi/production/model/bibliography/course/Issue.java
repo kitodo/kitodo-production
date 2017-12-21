@@ -13,7 +13,6 @@ package org.goobi.production.model.bibliography.course;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
@@ -398,29 +397,29 @@ public class Issue {
      *            last day of the date range
      */
     void recalculateRegularity(LocalDate firstAppearance, LocalDate lastAppearance) {
-        final int APPEARED = 1;
-        final int NOT_APPEARED = 0;
+        final int appeared = 1;
+        final int notAppeared = 0;
         Set<LocalDate> remainingAdditions = new HashSet<>();
         Set<LocalDate> remainingExclusions = new HashSet<>();
 
         @SuppressWarnings("unchecked")
-        HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][APPEARED + 1];
+        HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][appeared + 1];
         for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-            subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<>();
-            subsets[dayOfWeek - 1][APPEARED] = new HashSet<>();
+            subsets[dayOfWeek - 1][notAppeared] = new HashSet<>();
+            subsets[dayOfWeek - 1][appeared] = new HashSet<>();
         }
 
         for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-            subsets[day.getDayOfWeek() - 1][isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
+            subsets[day.getDayOfWeek() - 1][isMatch(day) ? appeared : notAppeared].add(day);
         }
 
         for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-            if (subsets[dayOfWeek - 1][APPEARED].size() > subsets[dayOfWeek - 1][NOT_APPEARED].size()) {
+            if (subsets[dayOfWeek - 1][appeared].size() > subsets[dayOfWeek - 1][notAppeared].size()) {
                 daysOfWeek.add(dayOfWeek);
-                remainingExclusions.addAll(subsets[dayOfWeek - 1][NOT_APPEARED]);
+                remainingExclusions.addAll(subsets[dayOfWeek - 1][notAppeared]);
             } else {
                 daysOfWeek.remove(dayOfWeek);
-                remainingAdditions.addAll(subsets[dayOfWeek - 1][APPEARED]);
+                remainingAdditions.addAll(subsets[dayOfWeek - 1][appeared]);
             }
         }
 

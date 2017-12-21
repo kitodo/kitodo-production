@@ -14,19 +14,16 @@ package de.sub.goobi.importer;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -77,7 +74,6 @@ public class ImportZentralblatt {
         logger.debug("ParsenZentralblatt() - start");
         this.myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         String prozessID = String.valueOf(inProzess.getId().intValue());
-        String line;
         this.separator = ":";
         boolean istAbsatz = false;
         boolean istErsterTitel = true;
@@ -96,6 +92,7 @@ public class ImportZentralblatt {
         /*
          * alle Zeilen durchlaufen
          */
+        String line;
         while ((line = reader.readLine()) != null) {
             // logger.debug(line);
 

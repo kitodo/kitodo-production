@@ -12,14 +12,12 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
-
+import org.kitodo.production.exceptions.UnreachableCodeException;
 import ugh.dl.RomanNumeral;
 
 /**
@@ -28,12 +26,12 @@ import ugh.dl.RomanNumeral;
 public class Paginator {
 
     public enum Mode {
-        PAGES(Helper.getTranslation("seitenzaehlung"),"paginierung_seite.svg"),
-        COLUMNS(Helper.getTranslation("spaltenzaehlung"),"paginierung_spalte.svg"),
-        FOLIATION(Helper.getTranslation("blattzaehlung"),"paginierung_blatt.svg"),
-        RECTOVERSO_FOLIATION(Helper.getTranslation("blattzaehlungrectoverso"),"paginierung_blatt_rectoverso.svg"),
-        RECTOVERSO(Helper.getTranslation("seitenzaehlungrectoverso"),"paginierung_seite_rectoverso.svg"),
-        DOUBLE_PAGES(Helper.getTranslation("seitenzaehlungdoppelseiten"),"paginierung_doppelseite.svg");
+        PAGES(Helper.getTranslation("seitenzaehlung"), "paginierung_seite.svg"),
+        COLUMNS(Helper.getTranslation("spaltenzaehlung"), "paginierung_spalte.svg"),
+        FOLIATION(Helper.getTranslation("blattzaehlung"), "paginierung_blatt.svg"),
+        RECTOVERSO_FOLIATION(Helper.getTranslation("blattzaehlungrectoverso"), "paginierung_blatt_rectoverso.svg"),
+        RECTOVERSO(Helper.getTranslation("seitenzaehlungrectoverso"), "paginierung_seite_rectoverso.svg"),
+        DOUBLE_PAGES(Helper.getTranslation("seitenzaehlungdoppelseiten"), "paginierung_doppelseite.svg");
 
         private String label;
         private String image;
@@ -282,6 +280,8 @@ public class Paginator {
             case ARABIC:
                 sequence = new IntegerSequence(start, end, increment);
                 break;
+            default:
+                throw new UnreachableCodeException("Complete switch");
         }
         return sequence;
     }

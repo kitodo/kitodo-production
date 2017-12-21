@@ -12,14 +12,13 @@
 package org.goobi.production.flow.statistics.enums;
 
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * Enum of all time units for the statistics
@@ -178,9 +177,9 @@ public enum TimeUnit {
                 // TODO: Remove use of deprecated method
                 return new DateTime(inDate).toString(getFormatter()) + "/"
                         + Integer.toString((inDate.getMonth() - 1) / 3 + 1);
+            default:
+                throw new UnreachableCodeException("Complete switch");
         }
-        return inDate.toString();
-
     }
 
     private Date getNextDate(Date inDate) {
@@ -196,8 +195,9 @@ public enum TimeUnit {
                 return new DateTime(inDate).plusWeeks(1).toDate();
             case years:
                 return new DateTime(inDate).plusYears(1).toDate();
+            default:
+                throw new UnreachableCodeException("Complete switch");
         }
-        return inDate;
     }
 
     private DateTimeFormatter getFormatter() {
@@ -213,8 +213,9 @@ public enum TimeUnit {
             case quarters:
                 // has to be extended by the calling function
                 return DateTimeFormat.forPattern("yyyy");
+            default:
+                throw new UnreachableCodeException("Complete switch");
         }
-        return null;
     }
 
 }

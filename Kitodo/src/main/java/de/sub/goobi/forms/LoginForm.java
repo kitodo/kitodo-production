@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.metadaten.MetadatenSperrung;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -24,12 +23,10 @@ import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
@@ -51,8 +48,8 @@ public class LoginForm implements Serializable {
     private User tempBenutzer;
     private boolean schonEingeloggt = false;
     private String passwortAendernAlt;
-    private String passwortAendernNeu1;
-    private String passwortAendernNeu2;
+    private String newPassword;
+    private String newPasswordRepeated;
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
@@ -94,7 +91,7 @@ public class LoginForm implements Serializable {
             List<User> treffer;
             try {
                 treffer = serviceManager.getUserService().getByQuery("from User where login = :username", "username",
-                        this.login);
+                    this.login);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not read database", e.getMessage());
                 return null;
@@ -193,8 +190,8 @@ public class LoginForm implements Serializable {
             /* in der Session den Login speichern */
             SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
             temp.sessionBenutzerAktualisieren(
-                    (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false),
-                    this.myBenutzer);
+                (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false),
+                this.myBenutzer);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not read database", e.getMessage());
             return null;
@@ -212,15 +209,15 @@ public class LoginForm implements Serializable {
     public String PasswortAendernSpeichern() {
         /* ist das aktuelle Passwort korrekt angegeben ? */
         /* ist das neue Passwort beide Male gleich angegeben? */
-        if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
+        if (!this.newPassword.equals(this.newPasswordRepeated)) {
             Helper.setFehlerMeldung(Helper.getTranslation("neuesPasswortNichtGleich"));
         } else {
             try {
                 /* wenn alles korrekt, dann jetzt speichern */
                 Ldap myLdap = new Ldap();
-                myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
+                myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.newPassword);
                 User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
-                temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
+                temp.setPassword(passwordEncoder.encrypt(this.newPassword));
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
                 Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
@@ -297,8 +294,7 @@ public class LoginForm implements Serializable {
     /**
      * Gets current authenticated User.
      *
-     * @return
-     *      The user object or null if no user is authenticated.
+     * @return The user object or null if no user is authenticated.
      */
     public User getMyBenutzer() {
         if (myBenutzer != null) {
@@ -327,21 +323,22 @@ public class LoginForm implements Serializable {
      * @return int
      */
     public int getMaximaleBerechtigung() {
-        //TODO Only to keep compatibility to old frontend pages
-        //TODO delete this methode when all new frontend is ready or security tags are replaced
+        // TODO Only to keep compatibility to old frontend pages
+        // TODO delete this methode when all new frontend is ready or security
+        // tags are replaced
         if (this.myBenutzer != null) {
             for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
                 if (userGroup.getAuthorizations().size() > 0) {
                     for (Authorization authorization : userGroup.getAuthorizations()) {
                         if (authorization.getTitle().equals("admin")) {
-                            return 1; //Admin permission
+                            return 1; // Admin permission
                         }
                     }
                 }
             }
-            return 4; //User permission
+            return 4; // User permission
         }
-        return 0; //Anonymus permission
+        return 0; // Anonymus permission
 
     }
 
@@ -353,20 +350,42 @@ public class LoginForm implements Serializable {
         this.passwortAendernAlt = passwortAendernAlt;
     }
 
-    public String getPasswortAendernNeu1() {
-        return this.passwortAendernNeu1;
+    /**
+     * Getter for the read-writable property {@code newPassword}.
+     * 
+     * @return value of field {@code newPassword}
+     */
+    public String getNewPassword() {
+        return this.newPassword;
     }
 
-    public void setPasswortAendernNeu1(String passwortAendernNeu1) {
-        this.passwortAendernNeu1 = passwortAendernNeu1;
+    /**
+     * Setter for the read-writable property {@code newPassword}.
+     * 
+     * @param newPassword
+     *            value for field {@code newPassword}
+     */
+    public void getNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 
-    public String getPasswortAendernNeu2() {
-        return this.passwortAendernNeu2;
+    /**
+     * Getter for the read-writable property {@code newPasswordRepeated}.
+     * 
+     * @return value of field {@code newPasswordRepeated}
+     */
+    public String getNewPasswordRepeated() {
+        return this.newPasswordRepeated;
     }
 
-    public void setPasswortAendernNeu2(String passwortAendernNeu2) {
-        this.passwortAendernNeu2 = passwortAendernNeu2;
+    /**
+     * Setter for the read-writable property {@code newPasswordRepeated}.
+     * 
+     * @param newPasswordRepeated
+     *            value for field {@code newPasswordRepeated}
+     */
+    public void getNewPasswordRepeated(String newPasswordRepeated) {
+        this.newPasswordRepeated = newPasswordRepeated;
     }
 
     public boolean isSchonEingeloggt() {

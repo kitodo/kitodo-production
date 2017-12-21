@@ -19,12 +19,10 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataTable;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.Ignore;
@@ -56,19 +54,19 @@ public class StatQuestThroughputIT {
 
     @Test
     public void testSetTimeFrame() {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01);
-        cal2.set(2009, 03, 31);
-        test.setTimeFrame(cal1.getTime(), cal2.getTime());
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01);
+        calendarTwo.set(2009, 03, 31);
+        test.setTimeFrame(calendarOne.getTime(), calendarTwo.getTime());
     }
 
     @Test
     public void testIsRendererInverted() {
-        IRenderer inRenderer = new ChartRenderer();
-        IRenderer inRenderer2 = new HtmlTableRenderer();
-        assertFalse(test.isRendererInverted(inRenderer2));
-        assertTrue(test.isRendererInverted(inRenderer));
+        IRenderer chartReader = new ChartRenderer();
+        IRenderer htmlTableReader = new HtmlTableRenderer();
+        assertFalse(test.isRendererInverted(htmlTableReader));
+        assertTrue(test.isRendererInverted(chartReader));
     }
 
     @Test

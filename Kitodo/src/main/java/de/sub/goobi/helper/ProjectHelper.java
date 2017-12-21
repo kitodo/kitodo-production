@@ -112,13 +112,13 @@ public class ProjectHelper {
             }
         }
 
-        Comparator<StepInformation> comp = new compareWorkflowSteps();
+        Comparator<StepInformation> comp = new CompareWorkflowSteps();
         Collections.sort(workFlow, comp);
         return workFlow;
     }
 
     // TODO: move this class to StepInformation
-    private static class compareWorkflowSteps implements Comparator<StepInformation>, Serializable {
+    private static class CompareWorkflowSteps implements Comparator<StepInformation>, Serializable {
         private static final long serialVersionUID = 1L;
 
         /**

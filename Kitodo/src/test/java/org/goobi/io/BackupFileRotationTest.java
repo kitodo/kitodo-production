@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +63,8 @@ public class BackupFileRotationTest {
         process.setProcessBaseUri(URI.create("2"));
         int numberOfBackups = 1;
         String content = "Test One.";
-        URI correctURI = URI.create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
+        URI correctURI = URI
+                .create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
         writeFile(correctURI, content);
         runBackup(numberOfBackups, process);
         assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1", content);
@@ -77,16 +77,15 @@ public class BackupFileRotationTest {
         process.setProcessBaseUri(URI.create("2"));
         int numberOfBackups = 1;
         long originalModifiedDate = getLastModifiedFileDate(
-                processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME);
+            processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
         assertLastModifiedDate(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1",
-                originalModifiedDate);
+            originalModifiedDate);
     }
 
     @Test
     public void shouldWriteTwoBackupFiles() throws IOException {
         int numberOfBackups = 2;
-        FileService fileService = new FileService();
 
         Process process = new Process();
         process.setId(2);
@@ -94,6 +93,7 @@ public class BackupFileRotationTest {
 
         runBackup(numberOfBackups, process);
 
+        FileService fileService = new FileService();
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
         assertFileExists(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1");
@@ -102,39 +102,41 @@ public class BackupFileRotationTest {
 
     @Test
     public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns() throws IOException {
-        String content1 = "Test One.";
-        int numberOfBackups = 2;
+        String contentOne = "Test One.";
+        final int numberOfBackups = 2;
         Process process = new Process();
         process.setId(2);
         process.setProcessBaseUri(URI.create("2"));
         URI resolve = fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
-        writeFile(resolve, content1);
+        writeFile(resolve, contentOne);
         runBackup(numberOfBackups, process);
 
-        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" +  BACKUP_FILE_NAME + ".1", content1);
+        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".1",
+            contentOne);
 
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
 
-        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".2", content1);
+        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".2",
+            contentOne);
     }
 
     @Test
     public void secondBackupFileCorrectModifiedDate() throws IOException {
         long expectedLastModifiedDate;
-        int numberOfBackups = 2;
+        final int numberOfBackups = 2;
         Process process = new Process();
         process.setId(2);
         process.setProcessBaseUri(URI.create("2"));
         expectedLastModifiedDate = getLastModifiedFileDate(
-                processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME);
+            processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME);
 
         runBackup(numberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
 
         assertLastModifiedDate(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".2",
-                expectedLastModifiedDate);
+            expectedLastModifiedDate);
     }
 
     @Test
@@ -157,21 +159,23 @@ public class BackupFileRotationTest {
 
     @Test
     public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns() throws IOException {
-        int numberOfBackups = 3;
-        String content1 = "Test One.";
+        final int numberOfBackups = 3;
+        String contentOne = "Test One.";
 
         Process process = new Process();
         process.setId(2);
         process.setProcessBaseUri(URI.create("2"));
-        URI correctURI = URI.create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
-        writeFile(correctURI, content1);
+        URI correctURI = URI
+                .create(processService.getProcessDataDirectory(process).toString() + "/" + BACKUP_FILE_NAME);
+        writeFile(correctURI, contentOne);
         runBackup(numberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
 
-        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".3", content1);
+        assertFileHasContent(processService.getProcessDataDirectory(process) + "/" + BACKUP_FILE_NAME + ".3",
+            contentOne);
     }
 
     @Test
@@ -198,7 +202,7 @@ public class BackupFileRotationTest {
     private void assertLastModifiedDate(String fileName, long expectedLastModifiedDate) {
         long currentLastModifiedDate = getLastModifiedFileDate(fileName);
         assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate,
-                currentLastModifiedDate);
+            currentLastModifiedDate);
     }
 
     private long getLastModifiedFileDate(String fileName) {

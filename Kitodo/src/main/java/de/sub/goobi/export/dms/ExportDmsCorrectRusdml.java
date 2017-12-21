@@ -25,12 +25,12 @@ import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 
-public class ExportDms_CorrectRusdml {
+public class ExportDmsCorrectRusdml {
     private final Prefs prefs;
     private final Process process;
     private final DigitalDocument digitalDocument;
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(ExportDms_CorrectRusdml.class);
+    private static final Logger logger = LogManager.getLogger(ExportDmsCorrectRusdml.class);
 
     /**
      * Constructor.
@@ -39,7 +39,7 @@ public class ExportDms_CorrectRusdml {
      * @param prefs   Prefs object
      * @param gdzFile Fileformat object
      */
-    public ExportDms_CorrectRusdml(Process process, Prefs prefs, Fileformat gdzFile) throws PreferencesException {
+    public ExportDmsCorrectRusdml(Process process, Prefs prefs, Fileformat gdzFile) throws PreferencesException {
         this.prefs = prefs;
         this.digitalDocument = gdzFile.getDigitalDocument();
         this.process = process;

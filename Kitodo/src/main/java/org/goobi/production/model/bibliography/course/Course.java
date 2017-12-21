@@ -12,7 +12,6 @@
 package org.goobi.production.model.bibliography.course;
 
 import de.sub.goobi.helper.XMLUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
@@ -417,8 +415,8 @@ public class Course extends ArrayList<Block> {
      * @return a guessed total number of pages for the full course of appearance
      */
     public long guessTotalNumberOfPages() {
-        final int WEEKDAY_PAGES = 40;
-        final int SUNDAY_PAGES = 240;
+        final int weekdayPages = 40;
+        final int sundayPages = 240;
 
         long result = 0;
         for (Block block : this) {
@@ -426,7 +424,7 @@ public class Course extends ArrayList<Block> {
             for (LocalDate day = block.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
                 for (Issue issue : block.getIssues()) {
                     if (issue.isMatch(day)) {
-                        result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? WEEKDAY_PAGES : SUNDAY_PAGES;
+                        result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? weekdayPages : sundayPages;
                     }
                 }
             }

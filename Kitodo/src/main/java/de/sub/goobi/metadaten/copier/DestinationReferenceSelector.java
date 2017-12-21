@@ -13,9 +13,7 @@ package de.sub.goobi.metadaten.copier;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.configuration.ConfigurationException;
-
 import ugh.dl.DocStruct;
 
 /**
@@ -30,8 +28,9 @@ public class DestinationReferenceSelector extends DataSelector {
     /**
      * Regular expression pattern to parse the path string.
      */
-    Pattern DESTINATION_REFERENCE_SELECTOR_SCHEME = Pattern.compile(Pattern.quote(RESPECTIVE_DESTINATION_REFERENCE)
-            + "(\\d+)([" + METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "].*)");
+    static final Pattern DESTINATION_REFERENCE_SELECTOR_SCHEME = Pattern
+            .compile(Pattern.quote(RESPECTIVE_DESTINATION_REFERENCE) + "(\\d+)([" + METADATA_PATH_SEPARATOR
+                    + METADATA_SEPARATOR + "].*)");
 
     /**
      * Hierarchical level to retrieve (0 references the top level).

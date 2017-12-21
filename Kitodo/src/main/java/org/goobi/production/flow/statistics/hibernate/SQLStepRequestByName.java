@@ -13,7 +13,6 @@ package org.goobi.production.flow.statistics.hibernate;
 
 import java.util.Date;
 import java.util.List;
-
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
@@ -48,8 +47,8 @@ public class SQLStepRequestByName extends SQLGenerator {
 
     /**
      * This is an extended SQL generator for an SQL extracting data from the
-     * historyEvent log. Depending on the parameters the query returns up to four
-     * fields (non-Javadoc)
+     * historyEvent log. Depending on the parameters the query returns up to
+     * four fields (non-Javadoc)
      * 
      * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
      *
@@ -62,7 +61,8 @@ public class SQLStepRequestByName extends SQLGenerator {
      * @param includeLoops
      *            - adding additional stepOpen from Correction and other loops
      *
-     * @return SQLExpression for MySQL DBMS - default fields stepCount and interval
+     * @return SQLExpression for MySQL DBMS - default fields stepCount and
+     *         interval
      */
     public String getSQL(HistoryTypeEnum typeSelection, String stepName, Boolean stepOrderGrouping,
             Boolean includeLoops) {
@@ -77,7 +77,6 @@ public class SQLStepRequestByName extends SQLGenerator {
             groupInnerSelect = " GROUP BY process_id, numericValue, stringValue ";
         }
 
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -100,8 +99,8 @@ public class SQLStepRequestByName extends SQLGenerator {
             innerWhereClause = innerWhereClause + " AND h.stringValue='" + stepName + "' ";
         }
 
-        subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(myTimeUnit, "history.date") + " "
-                + "AS 'intervall', history.date AS 'timeLimiter', history.stringValue AS 'stepName' " + "FROM "
+        String subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(myTimeUnit, "history.date")
+                + " AS 'intervall', history.date AS 'timeLimiter', history.stringValue AS 'stepName' " + "FROM "
                 + "(SELECT DISTINCT h.numericValue, h.stringValue, " + timeLimiter + " as date, h.process_id, h.type "
                 + "FROM history h " + "WHERE " + innerWhereClause + groupInnerSelect + ") AS history " + ") AS table_1";
 
@@ -177,8 +176,8 @@ public class SQLStepRequestByName extends SQLGenerator {
      *
      * @param eventSelection
      *            as HistoryTypeEnum
-     * @return SQL String to retrieve the highest numericValue (stepOrder) for the
-     *         event defined in eventSelection
+     * @return SQL String to retrieve the highest numericValue (stepOrder) for
+     *         the event defined in eventSelection
      */
     public String getSQLMaxStepOrder(HistoryTypeEnum eventSelection) {
 
@@ -206,8 +205,8 @@ public class SQLStepRequestByName extends SQLGenerator {
      * 
      * @param eventSelection
      *            as HistoryTypeEnum
-     * @return SQL String to retrieve the lowest numericValue (stepOrder) for the
-     *         event defined in eventSelection
+     * @return SQL String to retrieve the lowest numericValue (stepOrder) for
+     *         the event defined in eventSelection
      */
     public String getSQLMinStepOrder(HistoryTypeEnum eventSelection) {
 

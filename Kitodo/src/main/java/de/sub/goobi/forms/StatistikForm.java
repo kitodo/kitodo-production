@@ -13,10 +13,8 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.exceptions.DataException;
@@ -29,11 +27,10 @@ public class StatistikForm {
     private static final Logger logger = LogManager.getLogger(StatistikForm.class);
 
     /**
-     * The function getAmountUsers() counts the number of user accounts in
-     * the kitodo.production environment. Since user accounts are not hard
-     * deleted from the database when the delete button is pressed a where
-     * clause is used in the SQL statement to exclude the deleted accounts from
-     * the sum.
+     * The function getAmountUsers() counts the number of user accounts in the
+     * kitodo.production environment. Since user accounts are not hard deleted
+     * from the database when the delete button is pressed a where clause is
+     * used in the SQL statement to exclude the deleted accounts from the sum.
      *
      * @return the count of valid user accounts
      */
@@ -127,14 +124,6 @@ public class StatistikForm {
         return getAmountOfCurrentTasks(false, false);
     }
 
-    public int getAmountOfCurrentOpenTasks() {
-        return getAmountOfCurrentTasks(true, false);
-    }
-
-    public int getAmountOfCurrentInProcessingTasks() {
-        return getAmountOfCurrentTasks(false, true);
-    }
-
     private int getAmountOfCurrentTasks(boolean open, boolean inProcessing) {
         Long amount = 0L;
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -154,6 +143,14 @@ public class StatistikForm {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
         }
         return amount.intValue();
+    }
+
+    public int getAmountOfCurrentOpenTasks() {
+        return getAmountOfCurrentTasks(true, false);
+    }
+
+    public int getAmountOfCurrentInProcessingTasks() {
+        return getAmountOfCurrentTasks(false, true);
     }
 
     public boolean getShowStatistics() {

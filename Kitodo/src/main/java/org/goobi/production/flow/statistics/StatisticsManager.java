@@ -16,7 +16,6 @@ import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.statistik.StatistikLaufzeitSchritte;
 import de.sub.goobi.statistik.StatistikStatus;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +34,7 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.goobi.production.flow.statistics.hibernate.StatQuestThroughput;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultValueDataset;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * The Class StatisticsManager organizes all statistical questions by choosing
@@ -155,8 +154,8 @@ public class StatisticsManager implements Serializable {
         }
 
         /*
-         * calculate the statistical results and save it as List of DataTables (because
-         * some statistical questions allow multiple tables and charts)
+         * calculate the statistical results and save it as List of DataTables
+         * (because some statistical questions allow multiple tables and charts)
          */
         IStatisticalQuestion question = statisticMode.getStatisticalQuestion();
         try {
@@ -219,11 +218,10 @@ public class StatisticsManager implements Serializable {
      * statistical question here.
      *
      * @param question
-     *            the {@link IStatisticalQuestion} where the dates should be set, if
-     *            it is an implementation of
+     *            the {@link IStatisticalQuestion} where the dates should be
+     *            set, if it is an implementation of
      *            {@link IStatisticalQuestionLimitedTimeframe}
      */
-    @SuppressWarnings("incomplete-switch")
     private void setTimeFrameToStatisticalQuestion(IStatisticalQuestion question) {
         /* only add a date, if correct interface is implemented here */
         if (question instanceof IStatisticalQuestionLimitedTimeframe) {
@@ -269,6 +267,8 @@ public class StatisticsManager implements Serializable {
                         calculatedEndDate = calulateStartDateForTimeFrame(cl);
                         calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.YEAR, -1);
                         break;
+                    default:
+                        throw new UnreachableCodeException("Complete switch");
                 }
 
             } else {

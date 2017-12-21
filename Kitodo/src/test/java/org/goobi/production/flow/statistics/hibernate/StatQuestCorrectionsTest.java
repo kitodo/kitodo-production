@@ -19,11 +19,9 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.BeforeClass;
@@ -33,6 +31,11 @@ import org.junit.Test;
 public class StatQuestCorrectionsTest {
     static StatQuestCorrections test;
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     */
     @BeforeClass
     public static void setUp() {
         // TODO: HIBERNATE fix
@@ -78,11 +81,11 @@ public class StatQuestCorrectionsTest {
 
     @Test
     public final void testSetTimeFrame() {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01);
-        cal2.set(2009, 03, 31);
-        test.setTimeFrame(cal1.getTime(), cal2.getTime());
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01);
+        calendarTwo.set(2009, 03, 31);
+        test.setTimeFrame(calendarOne.getTime(), calendarTwo.getTime());
     }
 
     @Test

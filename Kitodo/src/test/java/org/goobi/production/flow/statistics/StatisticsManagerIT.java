@@ -16,7 +16,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URI;
@@ -25,7 +24,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.ResultOutput;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -47,6 +45,14 @@ public class StatisticsManagerIT {
     private static URI tempPath;
     private static final ServiceManager serviceManager = new ServiceManager();
 
+    /**
+     * Performs computationally expensive setup shared several tests. This
+     * compromises the independence of the tests, bit is a necessary
+     * optimization here.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
@@ -57,20 +63,23 @@ public class StatisticsManagerIT {
         testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
     }
 
+    /**
+     * Creates objects that several tests need.
+     */
     @Before
     public void initTestManager() {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01, 0, 0, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
-        cal2.set(2009, 03, 31, 0, 0, 0);
-        cal2.set(Calendar.MILLISECOND, 0);
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01, 0, 0, 0);
+        calendarOne.set(Calendar.MILLISECOND, 0);
+        calendarTwo.set(2009, 03, 31, 0, 0, 0);
+        calendarTwo.set(Calendar.MILLISECOND, 0);
         TimeUnit sourceTimeUnit = TimeUnit.months;
         CalculationUnit targetCalculationUnit = CalculationUnit.volumes;
         ResultOutput targetResultOutput = ResultOutput.chart;
-        testManager.setSourceDateFrom(cal1.getTime());
+        testManager.setSourceDateFrom(calendarOne.getTime());
         testManager.setShowAverage(false);
-        testManager.setSourceDateTo(cal2.getTime());
+        testManager.setSourceDateTo(calendarTwo.getTime());
         testManager.setSourceNumberOfTimeUnitsAsString("3");
         testManager.setSourceTimeUnit(sourceTimeUnit);
         testManager.setTargetTimeUnit(sourceTimeUnit);
@@ -78,6 +87,12 @@ public class StatisticsManagerIT {
         testManager.setTargetResultOutput(targetResultOutput);
     }
 
+    /**
+     * Releases expensive external resources allocated in {@code setUp()}.
+     * 
+     * @throws Exception
+     *             if something goes wrong
+     */
     @AfterClass
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
@@ -104,10 +119,10 @@ public class StatisticsManagerIT {
     @Test
     public void testStatisticsManager() {
         StatisticsManager testProjects = new StatisticsManager(StatisticsMode.PROJECTS, testFilter, locale);
-        StatisticsManager testStorage = new StatisticsManager(StatisticsMode.STORAGE, testFilter, locale);
         assertEquals(StatisticsMode.THROUGHPUT, testManager.getStatisticMode());
         assertEquals(StatisticsMode.PRODUCTION, testManager2.getStatisticMode());
         assertEquals(StatisticsMode.PROJECTS, testProjects.getStatisticMode());
+        StatisticsManager testStorage = new StatisticsManager(StatisticsMode.STORAGE, testFilter, locale);
         assertEquals(StatisticsMode.STORAGE, testStorage.getStatisticMode());
         assertNotSame(testManager, testManager2);
     }
@@ -150,43 +165,43 @@ public class StatisticsManagerIT {
 
     @Test
     public final void testGetSourceDateFrom() {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01, 0, 0, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
-        cal2.set(2009, 03, 31, 0, 0, 0);
-        cal2.set(Calendar.MILLISECOND, 0);
-        assertEquals(cal1.getTime(), testManager.getSourceDateFrom());
-        assertNotSame(cal2.getTime(), testManager.getSourceDateFrom());
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01, 0, 0, 0);
+        calendarOne.set(Calendar.MILLISECOND, 0);
+        calendarTwo.set(2009, 03, 31, 0, 0, 0);
+        calendarTwo.set(Calendar.MILLISECOND, 0);
+        assertEquals(calendarOne.getTime(), testManager.getSourceDateFrom());
+        assertNotSame(calendarTwo.getTime(), testManager.getSourceDateFrom());
     }
 
     @Test
     public final void testSetSourceDateFrom() {
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(2009, 01, 02, 0, 0, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
-        testManager.setSourceDateFrom(cal1.getTime());
-        assertEquals(cal1.getTime(), testManager.getSourceDateFrom());
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2009, 01, 02, 0, 0, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        testManager.setSourceDateFrom(calendar.getTime());
+        assertEquals(calendar.getTime(), testManager.getSourceDateFrom());
     }
 
     @Test
     public final void testGetSourceDateTo() {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01, 0, 0, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
-        cal2.set(2009, 03, 31, 0, 0, 0);
-        cal2.set(Calendar.MILLISECOND, 0);
-        assertNotSame(cal1.getTime(), testManager.getSourceDateTo());
-        assertEquals(cal2.getTime(), testManager.getSourceDateTo());
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarOne.set(2009, 01, 01, 0, 0, 0);
+        calendarOne.set(Calendar.MILLISECOND, 0);
+        calendarTwo.set(2009, 03, 31, 0, 0, 0);
+        calendarTwo.set(Calendar.MILLISECOND, 0);
+        assertNotSame(calendarOne.getTime(), testManager.getSourceDateTo());
+        assertEquals(calendarTwo.getTime(), testManager.getSourceDateTo());
     }
 
     @Test
     public final void testSetSourceDateTo() {
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(2009, 04, 01);
-        testManager.setSourceDateTo(cal1.getTime());
-        assertEquals(cal1.getTime(), testManager.getSourceDateTo());
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2009, 04, 01);
+        testManager.setSourceDateTo(calendar.getTime());
+        assertEquals(calendar.getTime(), testManager.getSourceDateTo());
     }
 
     @Test

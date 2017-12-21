@@ -12,19 +12,16 @@
 package org.goobi.production.plugin;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -142,8 +139,8 @@ public class PluginLoader {
      * @return a HashMap to configure the plug-ins
      */
     private static HashMap<String, String> getPluginConfiguration() {
-        short ENRIES = 2;
-        HashMap<String, String> conf = new HashMap<>((int) Math.ceil(ENRIES / 0.75));
+        final short entries = 2;
+        HashMap<String, String> conf = new HashMap<>((int) Math.ceil(entries / 0.75));
         conf.put("configDir", ConfigCore.getKitodoConfigDirectory());
         conf.put("tempDir", ConfigCore.getParameter(Parameters.PLUGIN_TEMP_DIR));
         return conf;
@@ -160,17 +157,17 @@ public class PluginLoader {
      */
     @SuppressWarnings("unchecked")
     public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
-        final String INTERNAL_CLASSES_PREFIX = "net.xeoh.plugins.";
-        final short INTERNAL_CLASSES_COUNT = 4;
+        final String internalClassesPrefix = "net.xeoh.plugins.";
+        final short internalClassesCount = 4;
         ArrayList<T> result;
 
         PluginType type = UnspecificPlugin.typeOf(clazz);
         PluginManagerUtil pluginLoader = getPluginLoader(type);
         Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class);
         // Never API version supports no-arg getPlugins() TODO: update API
-        result = new ArrayList<>(plugins.size() - INTERNAL_CLASSES_COUNT);
+        result = new ArrayList<>(plugins.size() - internalClassesCount);
         for (Plugin implementation : plugins) {
-            if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX)) {
+            if (implementation.getClass().getName().startsWith(internalClassesPrefix)) {
                 continue; // Skip plugin API internal classes
             }
             try {
@@ -179,8 +176,9 @@ public class PluginLoader {
                 result.add(plugin);
             } catch (NoSuchMethodException | SecurityException e) {
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Bad implementation of " + type.getName() + " plugin "
-                            + implementation.getClass().getName(), e);
+                    logger.warn(
+                        "Bad implementation of " + type.getName() + " plugin " + implementation.getClass().getName(),
+                        e);
                 }
             }
         }

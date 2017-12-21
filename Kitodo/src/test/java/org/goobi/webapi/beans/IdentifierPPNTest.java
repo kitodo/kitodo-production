@@ -11,9 +11,8 @@
 
 package org.goobi.webapi.beans;
 
-import org.junit.Test;
-
 import junit.framework.Assert;
+import org.junit.Test;
 
 public class IdentifierPPNTest {
 
@@ -29,7 +28,7 @@ public class IdentifierPPNTest {
         String identifier = "32578597x";
 
         Assert.assertTrue("Given lowercase PPN " + identifier + " should be correct.",
-                IdentifierPPN.isValid(identifier));
+            IdentifierPPN.isValid(identifier));
 
     }
 

@@ -12,7 +12,6 @@
 package org.goobi.production.export;
 
 import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -171,7 +169,7 @@ public class ExportXmlLog {
     public Document createDocument(Process process, boolean addNamespace) {
 
         Element processElm = new Element("process");
-        Document doc = new Document(processElm);
+        final Document doc = new Document(processElm);
 
         processElm.setAttribute("processID", String.valueOf(process.getId()));
 
@@ -446,8 +444,8 @@ public class ExportXmlLog {
     }
 
     /**
-     * This method transforms the xml log using a xslt file and opens a new window
-     * with the output file.
+     * This method transforms the xml log using a xslt file and opens a new
+     * window with the output file.
      *
      * @param out
      *            ServletOutputStream

@@ -23,28 +23,28 @@ public class RulesetFormIT {
     private Ruleset ruleset;
 
     @Test
-    public void shouldCreateRuleset(){
+    public void shouldCreateRuleset() {
         ruleset = rulesetForm.getRuleset();
-        Assert.assertNull("ruleset should be null",ruleset);
+        Assert.assertNull("ruleset should be null", ruleset);
         rulesetForm.createNewRuleset();
         ruleset = rulesetForm.getRuleset();
-        Assert.assertNotNull("ruleset should not be null",ruleset);
+        Assert.assertNotNull("ruleset should not be null", ruleset);
     }
 
     @Test
-    public void shouldRedirectAtRulesetCreation(){
+    public void shouldRedirectAtRulesetCreation() {
         String shouldRedirect = "/pages/RegelsaetzeBearbeiten?faces-redirect=true";
-        String Redirect = rulesetForm.createNewRuleset();
-        assertEquals("Should redirect to RegelsaetzeBearbeiten",shouldRedirect,Redirect);
+        String redirect = rulesetForm.createNewRuleset();
+        assertEquals("Should redirect to RegelsaetzeBearbeiten", shouldRedirect, redirect);
     }
 
     @Test
-    public void shouldReturnNullOnSaveRulesetIfXmlNotFound(){
+    public void shouldReturnNullOnSaveRulesetIfXmlNotFound() {
         rulesetForm.createNewRuleset();
         ruleset = rulesetForm.getRuleset();
         ruleset.setFile("NotExisting.xml");
         ruleset.setTitle("NotExisting");
         rulesetForm.setRuleset(ruleset);
-        Assert.assertNull("saveRuleset should return null",rulesetForm.saveRuleset());
+        Assert.assertNull("saveRuleset should return null", rulesetForm.saveRuleset());
     }
 }
