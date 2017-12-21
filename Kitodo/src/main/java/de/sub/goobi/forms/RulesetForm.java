@@ -71,7 +71,7 @@ public class RulesetForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(this.ruleset);
-                return noFiltering();
+                return "/pages/RegelsaetzeAlle?faces-redirect=true";
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
                 return null;
@@ -100,7 +100,7 @@ public class RulesetForm extends BasisForm {
     /**
      * Remove.
      *
-     * @return page or empty String
+     * @return redirect link or empty String
      */
     public String removeRuleset() {
         try {
@@ -114,37 +114,12 @@ public class RulesetForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return noFiltering();
+        return "/pages/RegelsaetzeAlle?faces-redirect=true";
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
         Integer number = serviceManager.getProcessService().findByRuleset(ruleset).size();
         return number > 0;
-    }
-
-    /**
-     * No filtering.
-     *
-     * @return page or empty String
-     */
-    public String noFiltering() {
-        List<RulesetDTO> rulesets = new ArrayList<>();
-        try {
-            rulesets = serviceManager.getRulesetService().findAll();
-        } catch (DataException e) {
-            logger.error(e);
-        }
-        this.page = new Page<>(0, rulesets);
-        return "/pages/RegelsaetzeAlle?faces-redirect=true";
-    }
-
-    /**
-     * This method initializes the ruleset list without applying any filters
-     * whenever the bean is constructed.
-     */
-    @PostConstruct
-    public void initializeRulesetList() {
-        noFiltering();
     }
 
     /**
