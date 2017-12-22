@@ -418,7 +418,7 @@ public class ProzessverwaltungForm extends BasisForm {
             return null;
         }
         this.modusAnzeige = "aktuell";
-        return "/pages/ProzessverwaltungAlle";
+        return "/pages/ProzessverwaltungAlle?faces-redirect=true";
     }
 
     /**
@@ -441,7 +441,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
         this.page = new Page<>(0, this.processDTOS);
         this.modusAnzeige = "vorlagen";
-        return "/pages/ProzessverwaltungAlle";
+        return "/pages/ProzessverwaltungAlle?faces-redirect=true";
     }
 
     /**
