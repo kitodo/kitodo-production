@@ -38,32 +38,21 @@
                                      styleClass="button-filled-blue"/>
                 </p:panel>
                 <!-- main form -->
-                <p:panel>
-                    <div>
-                        <p:outputLabel for="title" value="#{msgs.titel}"/>
-                        <p:inputText id="title"
-                                     value="#{BenutzergruppenForm.myBenutzergruppe.title}"
-                                     placeholder="#{msgs.titel}"
-                                     required="true"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="permission" value="#{msgs.berechtigung}"/>
-                        <p:selectOneMenu id="permission"
-                                         value="#{BenutzergruppenForm.myBenutzergruppe.permissionAsString}"
-                                         required="true">
-                            <f:selectItem itemValue="1" itemLabel="#{msgs.administration}"/>
-                            <f:selectItem itemValue="2" itemLabel="#{msgs.prozessverwaltung}"/>
-                            <f:selectItem itemValue="4" itemLabel="#{msgs.normaleNutzerBerechtigung}"/>
-                        </p:selectOneMenu>
-                        <p:commandButton value="#{msgs.loeschen}"
-                                         onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
-                                         action="#{BenutzergruppenForm.delete}"
-                                         rendered="#{BenutzergruppenForm.myBenutzergruppe.id ne null}"
-                                         icon="fa fa-trash-o fa-lg"
-                                         iconPos="right"/>
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="title" value="#{msgs.titel}"/>
+                    <p:inputText id="title"
+                                 value="#{BenutzergruppenForm.myBenutzergruppe.title}"
+                                 placeholder="#{msgs.titel}"
+                                 required="true"/>
 
-                    </div>
-                </p:panel>
+                    <p:outputLabel for="authorizations" value="#{msgs.berechtigungen}"/>
+                    <p:pickList id="authorizations"
+                                value="#{BenutzergruppenForm.authorizations}"
+                                var="authorization" itemLabel="#{authorization}" itemValue="#{authorization}">
+                        <f:facet name="sourceCaption" style="color: #000;">#{msgs.available}</f:facet>
+                        <f:facet name="targetCaption" style="color: #000;">#{msgs.assigned}</f:facet>
+                    </p:pickList>
+                </p:panelGrid>
             </h:form>
         </p:panel>
     </ui:define>

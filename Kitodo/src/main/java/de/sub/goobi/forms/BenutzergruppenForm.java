@@ -29,9 +29,11 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.primefaces.model.DualListModel;
 
 @Named("BenutzergruppenForm")
 @SessionScoped
@@ -164,6 +166,29 @@ public class BenutzergruppenForm extends BasisForm {
 
     public int getUserGroupId() {
         return this.userGroupId;
+    }
+
+    /**
+     * Return the list of available authorization levels and the list of
+     * authorization levels currently assigned to 'myBenutzergruppe' as a combined
+     * 'DualListModel' that is used by the frontend for authorization management of
+     * user groups utilizing a PrimeFaces PickList object.
+     *
+     * @return DualListModel of available and assigned authorization levels
+     */
+    public DualListModel<String> getAuthorizations() {
+        List<String> availableAuthorizations = new ArrayList<>();
+        try {
+            for (AuthorizationDTO authorization : serviceManager.getAuthorizationService().findAll()) {
+                availableAuthorizations.add(authorization.getTitle());
+            }
+        } catch (DataException e) {
+            logger.error(e.getMessage());
+        }
+        List<String> assignedAuthorizations = serviceManager.getUserGroupService()
+                .getAuthorizationsAsString(this.myBenutzergruppe);
+
+        return new DualListModel<>(availableAuthorizations, assignedAuthorizations);
     }
 
     // TODO:
