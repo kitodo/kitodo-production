@@ -30,7 +30,7 @@ public class Workpiece extends BaseIndexedBean {
     private static final long serialVersionUID = 123266825187246791L;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "process_id")
+    @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_workpiece_process_id"))
     private Process process;
 
     @ManyToMany(cascade = CascadeType.ALL)
