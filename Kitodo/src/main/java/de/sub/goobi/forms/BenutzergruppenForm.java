@@ -12,13 +12,10 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -29,7 +26,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
@@ -102,32 +98,6 @@ public class BenutzergruppenForm extends BasisForm {
             return null;
         }
         return redirectToList("?faces-redirect=true");
-    }
-
-    /**
-     * Display all user groups with any filtering.
-     *
-     * @return page or empty String
-     */
-    public String filterKein() {
-        try {
-            List<UserGroupDTO> userGroups = serviceManager.getUserGroupService().findAll();
-            this.page = new Page<>(0, userGroups);
-        } catch (DataException e) {
-            Helper.setFehlerMeldung("Error, could not read", e.getMessage());
-            logger.error(e);
-            return null;
-        }
-        return "/pages/BenutzergruppenAlle";
-    }
-
-    /**
-     * This method initializes the user group list without applying any filters
-     * whenever the bean is constructed.
-     */
-    @PostConstruct
-    public void initializeUserGroupList() {
-        filterKein();
     }
 
     /**
