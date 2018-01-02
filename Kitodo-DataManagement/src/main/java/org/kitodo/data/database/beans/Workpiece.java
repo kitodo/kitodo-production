@@ -29,7 +29,7 @@ import javax.persistence.Transient;
 public class Workpiece extends BaseIndexedBean {
     private static final long serialVersionUID = 123266825187246791L;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "process_id")
     private Process process;
 
