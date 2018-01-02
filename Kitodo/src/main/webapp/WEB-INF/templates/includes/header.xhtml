@@ -74,8 +74,8 @@
                             <ul id="nav-user">
                                 <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}<h:outputText rendered="#{LoginForm.maximaleBerechtigung == 1}"> <i>(Admin)</i></h:outputText></h3></li>
                                 <li><a href="">#{msgs.Language}: #{SpracheForm.locale}</a></li>
-                                <li><h:link value="#{msgs.userData}" outcome="BenutzerKonfiguration"/></li>
-                                <li><h:link value="#{msgs.passwortAendern}" outcome="PasswortAendern"/></li>
+                                <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
+                                <li><h:link value="#{msgs.passwortAendern}" outcome="changePassword"/></li>
                                 <li><h:commandLink value="#{msgs.signout}" action="#{LoginForm.Ausloggen}"/></li>
                             </ul>
                         </h:form>
