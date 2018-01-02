@@ -65,6 +65,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private Task mySchritt = new Task();
     private Problem problem = new Problem();
     private Solution solution = new Solution();
+    private List<TaskDTO> selectedTasks;
     private ObjectMode editMode = ObjectMode.NONE;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
@@ -703,23 +704,29 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Auswahl mittels Selectboxen.
+     * Get list of selected Tasks.
+     *
+     * @return List of selected Tasks
      */
-    @SuppressWarnings("unchecked")
-    public void selectionAll() {
-        for (TaskDTO task : (List<TaskDTO>) this.page.getList()) {
-            task.setSelected(true);
-        }
+    public List<TaskDTO> getSelectedTasks() {
+        return this.selectedTasks;
     }
 
     /**
-     * Selection none.
+     * Set selected tasks: Set tasks in old list to false and set new list to true.
+     *
+     * @param selectedTasks provided by data table
      */
-    @SuppressWarnings("unchecked")
-    public void selectionNone() {
-        for (TaskDTO task : (List<TaskDTO>) this.page.getList()) {
-            task.setSelected(false);
+    public void setSelectedTasks(List<TaskDTO> selectedTasks) {
+        if (this.selectedTasks != null && !this.selectedTasks.isEmpty()) {
+            for (TaskDTO task : this.selectedTasks) {
+                task.setSelected(false);
+            }
         }
+        for (TaskDTO task : selectedTasks) {
+            task.setSelected(true);
+        }
+        this.selectedTasks = selectedTasks;
     }
 
     /**
