@@ -144,7 +144,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.anzeigeAnpassen.put("processId", false);
         this.anzeigeAnpassen.put("batchId", false);
         this.sortierung = "titelAsc";
-        super.setLazyDTOModel(new LazyDTOModel(true, serviceManager.getProcessService()));
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProcessService()));
         /*
          * Vorgangsdatum generell anzeigen?
          */
