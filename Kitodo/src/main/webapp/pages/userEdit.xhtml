@@ -40,62 +40,47 @@
                                      styleClass="button-filled-blue"/>
                 </p:panel>
                 <!-- main form -->
-                <p:panel>
-                    <div>
-                        <p:outputLabel for="surname" value="#{msgs.surname}"/>
-                        <p:inputText id="surname"
-                                     placeholder="#{msgs.surname}"
-                                     value="#{BenutzerverwaltungForm.userObject.surname}"
-                                     required="true"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
-                        <p:inputText id="firstName"
-                                     placeholder="#{msgs.vorname}"
-                                     value="#{BenutzerverwaltungForm.userObject.name}"
-                                     required="true"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="location" value="#{msgs.standort}"/>
-                        <p:inputText id="location"
-                                     placeholder="#{msgs.standort}"
-                                     value="#{BenutzerverwaltungForm.userObject.location}"
-                                     required="true"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="login" value="#{msgs.login}"/>
-                        <p:inputText id="login"
-                                     placeholder="#{msgs.login}"
-                                     value="#{BenutzerverwaltungForm.userObject.login}"
-                                     readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
-                                     required="true"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="password" value="#{msgs.password}"/>
-                        <p:password id="password"
-                                    placeholder="#{msgs.password}"
-                                    value="#{BenutzerverwaltungForm.password}"
-                                    required="true"
-                                    redisplay="true"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="metaDataLanguage" value="#{msgs.spracheFuerMetadaten}"/>
-                        <p:inputText id="metaDataLanguage"
-                                     placeholder="#{msgs.spracheFuerMetadaten}"
-                                     value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
-                                     required="true"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
-                        <p:selectBooleanCheckbox id="active"
-                                                 value="#{BenutzerverwaltungForm.userObject.active}"/>
-                    </div>
-                    <div>
-                        <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
-                        <p:selectBooleanCheckbox id="withMassDownload"
-                                                 value="#{BenutzerverwaltungForm.userObject.withMassDownload}"/>
-                    </div>
-                </p:panel>
+                <p:messages id="useredit-messages" autoUpdate="true" />
+                <p:panelGrid id="useredit-grid" columns="2">
+                    <p:outputLabel for="surname" value="#{msgs.surname}"/>
+                    <p:inputText id="surname"
+                                 placeholder="#{msgs.surname}"
+                                 value="#{BenutzerverwaltungForm.userObject.surname}"
+                                 required="true"/>
+                    <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
+                    <p:inputText id="firstName"
+                                 placeholder="#{msgs.vorname}"
+                                 value="#{BenutzerverwaltungForm.userObject.name}"
+                                 required="true"/>
+                    <p:outputLabel for="location" value="#{msgs.standort}"/>
+                    <p:inputText id="location"
+                                 placeholder="#{msgs.standort}"
+                                 value="#{BenutzerverwaltungForm.userObject.location}"
+                                 required="true"/>
+                    <p:outputLabel for="login" value="#{msgs.login}"/>
+                    <p:inputText id="login"
+                                 placeholder="#{msgs.login}"
+                                 value="#{BenutzerverwaltungForm.userObject.login}"
+                                 readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
+                                 required="true"/>
+                    <p:outputLabel for="password" value="#{msgs.password}"/>
+                    <p:password id="password"
+                                placeholder="#{msgs.password}"
+                                value="#{BenutzerverwaltungForm.password}"
+                                required="true"
+                                redisplay="true"/>
+                    <p:outputLabel for="metaDataLanguage" value="#{msgs.spracheFuerMetadaten}"/>
+                    <p:inputText id="metaDataLanguage"
+                                 placeholder="#{msgs.spracheFuerMetadaten}"
+                                 value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
+                                 required="true"/>
+                    <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
+                    <p:selectBooleanCheckbox id="active"
+                                             value="#{BenutzerverwaltungForm.userObject.active}"/>
+                    <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
+                    <p:selectBooleanCheckbox id="withMassDownload"
+                                             value="#{BenutzerverwaltungForm.userObject.withMassDownload}"/>
+                </p:panelGrid>
                 <!-- user groups -->
                 <p:panel>
                     <p:dataTable var="item" value="#{BenutzerverwaltungForm.userObject.userGroups}">
