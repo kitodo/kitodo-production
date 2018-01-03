@@ -34,7 +34,7 @@ public class EncodingFilter implements Filter {
      *            The Configuration from web.xml file.
      */
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         encoding = filterConfig.getInitParameter("requestEncoding");
         if (encoding == null) {
             encoding = "UTF-8";

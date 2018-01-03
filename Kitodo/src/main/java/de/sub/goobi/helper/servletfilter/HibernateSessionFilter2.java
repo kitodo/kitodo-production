@@ -35,12 +35,12 @@ import org.kitodo.data.database.persistence.HibernateSessionLong;
 public class HibernateSessionFilter2 implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+            throws ServletException {
         HttpServletRequest myRequest = (HttpServletRequest) request;
         HibernateSessionLong hsl = null;
         Session session = null;

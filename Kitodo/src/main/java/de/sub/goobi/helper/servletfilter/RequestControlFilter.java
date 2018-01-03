@@ -73,7 +73,7 @@ public class RequestControlFilter implements Filter {
      */
     @Override
     @SuppressWarnings({"unchecked", "rawtypes" })
-    public void init(FilterConfig config) throws ServletException {
+    public void init(FilterConfig config) {
 
         // parse all of the initialization parameters, collecting the exclude
         // patterns and the max wait parameters

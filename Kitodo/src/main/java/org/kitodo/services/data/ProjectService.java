@@ -80,8 +80,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Project project)
-            throws CustomResponseException, DataException, IOException {
+    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException {
         manageProcessesDependenciesForIndex(project);
         manageUsersDependenciesForIndex(project);
     }

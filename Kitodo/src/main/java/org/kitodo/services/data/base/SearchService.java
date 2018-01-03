@@ -178,7 +178,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex(List<T> baseIndexedBeans)
-            throws CustomResponseException, DAOException, InterruptedException, IOException {
+            throws CustomResponseException, DAOException, InterruptedException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(baseIndexedBeans, type);
         for (T baseIndexedBean : baseIndexedBeans) {
