@@ -27,6 +27,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TemplateDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -174,5 +175,13 @@ public class TemplateServiceIT {
         TemplateDTO template = templateService.findById(1);
         int actual = template.getPropertiesSize();
         assertEquals("Template's properties size is not equal to given value!", 2, actual);
+    }
+
+    @Test
+    public void shouldNotInsertTemplateWithoutProcess() throws Exception {
+        Template template = new Template();
+        template.setOrigin("null");
+        exception.expect(DataException.class);
+        templateService.save(template);
     }
 }
