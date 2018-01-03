@@ -101,7 +101,9 @@ button .ui-icon {
 
 .ui-inputfield,
 .ui-selectcheckboxmenu-multiple-container.ui-inputfield,
-.ui-widget-content .ui-inputfield {
+.ui-picklist-list-wrapper,
+.ui-widget-content .ui-inputfield
+{
     border: 1px solid #004f81;
     padding: .7em;
     color: #0971b8;
@@ -264,6 +266,11 @@ tr.ui-expanded-row-content tr.ui-widget-header,
 .ui-panelgrid .ui-widget-header {
     border-top: 0px none !important;
     background: transparent;
+}
+
+.ui-picklist-caption {
+    border-bottom: 1px solid #000 !important;
+    color: #000;
 }
 
 tr.ui-expanded-row-content .ui-panelgrid {
