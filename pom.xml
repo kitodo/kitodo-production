@@ -43,6 +43,7 @@
         <tomcat.version>7.0.81</tomcat.version>
         <log4j.version>2.6.2</log4j.version>
         <junit.version>4.12</junit.version>
+        <elasticsearch.version>5.6.5</elasticsearch.version>
     </properties>
 
     <repositories>
