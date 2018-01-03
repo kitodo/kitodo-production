@@ -72,7 +72,7 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return filterKein();
+                return "/pages/DocketList";
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
@@ -106,38 +106,13 @@ public class DocketForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return filterKein();
+        return "/pages/DocketList";
     }
 
     private boolean hasAssignedProcesses(Docket d) throws DataException {
         ProcessService processService = serviceManager.getProcessService();
         Integer number = processService.findByDocket(d).size();
         return number > 0;
-    }
-
-    /**
-     * No filter.
-     *
-     * @return page or empty String
-     */
-    public String filterKein() {
-        List<DocketDTO> dockets = new ArrayList<>();
-        try {
-            dockets = serviceManager.getDocketService().findAll();
-        } catch (DataException e) {
-            logger.error(e);
-        }
-        this.page = new Page<>(0, dockets);
-        return "/pages/DocketList";
-    }
-
-    /**
-     * This method initializes the docket list without any filter whenever the
-     * bean is constructed.
-     */
-    @PostConstruct
-    public void initializeDocketList() {
-        filterKein();
     }
 
     /**

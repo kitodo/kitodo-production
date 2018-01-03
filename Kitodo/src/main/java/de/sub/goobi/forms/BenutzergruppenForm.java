@@ -105,32 +105,6 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
-     * Display all user groups with any filtering.
-     *
-     * @return page or empty String
-     */
-    public String filterKein() {
-        try {
-            List<UserGroupDTO> userGroups = serviceManager.getUserGroupService().findAll();
-            this.page = new Page<>(0, userGroups);
-        } catch (DataException e) {
-            Helper.setFehlerMeldung("Error, could not read", e.getMessage());
-            logger.error(e);
-            return null;
-        }
-        return "/pages/BenutzergruppenAlle";
-    }
-
-    /**
-     * This method initializes the user group list without applying any filters
-     * whenever the bean is constructed.
-     */
-    @PostConstruct
-    public void initializeUserGroupList() {
-        filterKein();
-    }
-
-    /**
      * Method being used as viewAction for user group edit form. If
      * 'userGroupId' is '0', the form for creating a new user group will be
      * displayed.
