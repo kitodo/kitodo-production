@@ -49,7 +49,7 @@
                     <div>
                         <p:outputLabel for="permission" value="#{msgs.berechtigung}"/>
                         <p:selectOneMenu id="permission"
-                                         value="#{BenutzergruppenForm.myBenutzergruppe.permissionAsString}"
+                                         value="#{BenutzergruppenForm.myBenutzergruppe.authorizations}"
                                          required="true">
                             <f:selectItem itemValue="1" itemLabel="#{msgs.administration}"/>
                             <f:selectItem itemValue="2" itemLabel="#{msgs.prozessverwaltung}"/>
