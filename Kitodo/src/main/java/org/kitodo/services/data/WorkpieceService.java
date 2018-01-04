@@ -165,7 +165,7 @@ public class WorkpieceService extends SearchService<Workpiece, WorkpieceDTO, Wor
     }
 
     @Override
-    public WorkpieceDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public WorkpieceDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) {
         WorkpieceDTO workpieceDTO = new WorkpieceDTO();
         workpieceDTO.setId(getIdFromJSONObject(jsonObject));
         return workpieceDTO;

@@ -125,7 +125,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
-    public RulesetDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public RulesetDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) {
         RulesetDTO rulesetDTO = new RulesetDTO();
         rulesetDTO.setId(getIdFromJSONObject(jsonObject));
         JSONObject rulesetJSONObject = getSource(jsonObject);

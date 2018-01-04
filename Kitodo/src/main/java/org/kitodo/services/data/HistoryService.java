@@ -81,7 +81,7 @@ public class HistoryService extends SearchService<History, HistoryDTO, HistoryDA
     }
 
     @Override
-    public HistoryDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public HistoryDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) {
         HistoryDTO historyDTO = new HistoryDTO();
         historyDTO.setId(getIdFromJSONObject(jsonObject));
         JSONObject historyJSONObject = getSource(jsonObject);

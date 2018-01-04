@@ -32,7 +32,7 @@ public class SecurityCheckFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig conf) throws ServletException {
+    public void init(FilterConfig conf) {
 
     }
 

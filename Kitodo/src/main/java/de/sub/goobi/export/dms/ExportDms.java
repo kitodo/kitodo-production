@@ -84,8 +84,7 @@ public class ExportDms extends ExportMets {
      *            String
      */
     @Override
-    public boolean startExport(Process process, URI inZielVerzeichnis)
-            throws IOException, WriteException, PreferencesException, TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis) {
         if (process.getProject().isUseDmsImport()
                 && ConfigCore.getBooleanParameter("asynchronousAutomaticExport", false)) {
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));

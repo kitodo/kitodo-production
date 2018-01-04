@@ -190,7 +190,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     @Override
-    public PropertyDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public PropertyDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) {
         PropertyDTO propertyDTO = new PropertyDTO();
         propertyDTO.setId(getIdFromJSONObject(jsonObject));
         JSONObject propertyJSONObject = getSource(jsonObject);

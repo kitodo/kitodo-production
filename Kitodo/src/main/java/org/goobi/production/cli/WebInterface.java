@@ -40,7 +40,7 @@ public class WebInterface extends HttpServlet {
     private static final long serialVersionUID = 6187229284187412768L;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
         if (ConfigCore.getBooleanParameter("useWebApi", false)) {
             String ip = "";
@@ -61,7 +61,6 @@ public class WebInterface extends HttpServlet {
                 resp.setContentType("");
                 generateAnswer(resp, 401, "Internal error", "Missing credentials");
                 return;
-
             }
 
             Map<String, String[]> parameter = req.getParameterMap();
@@ -141,7 +140,7 @@ public class WebInterface extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         doGet(req, resp);
     }
 
