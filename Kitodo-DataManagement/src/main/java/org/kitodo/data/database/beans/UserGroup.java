@@ -35,7 +35,7 @@ import javax.persistence.Table;
 public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> {
     private static final long serialVersionUID = -5924845694417474352L;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
     @Column(name = "permission")

@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -94,5 +95,13 @@ public class AuthorizationServiceIT {
     public void shouldGetAllAuthorizations() throws Exception {
         List<Authorization> authorizations = authorizationService.getAll();
         assertEquals("Authorizations were not found databse!", 3, authorizations.size());
+    }
+
+    @Test
+    public void shouldNotSaveAlreadyExistingAuthorization() throws DataException {
+        Authorization adminAuthorization = new Authorization();
+        adminAuthorization.setTitle("admin");
+        exception.expect(DataException.class);
+        authorizationService.save(adminAuthorization);
     }
 }

@@ -59,7 +59,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public static final String ANCHOR_SEPARATOR = "\u00A6";
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
     @Column(name = "useDmsImport")

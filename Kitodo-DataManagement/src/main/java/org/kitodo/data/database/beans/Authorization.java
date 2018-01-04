@@ -29,7 +29,7 @@ public class Authorization extends BaseIndexedBean {
 
     private static final long serialVersionUID = -5187947220333987498L;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
     @ManyToMany(cascade = CascadeType.PERSIST)

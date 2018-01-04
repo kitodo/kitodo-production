@@ -31,6 +31,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -225,5 +226,13 @@ public class ProjectServiceIT {
         List<StepInformation> expected = new ArrayList<>();
         List<StepInformation> actual = projectService.getWorkFlow(project);
         assertEquals("Work flow doesn't match to given work flow!", expected, actual);
+    }
+
+    @Test
+    public void shouldNotSaveUsergroupWithAlreadyExistingTitle() throws DataException {
+        Project project = new Project();
+        project.setTitle("Admin");
+        exception.expect(DataException.class);
+        projectService.save(project);
     }
 }

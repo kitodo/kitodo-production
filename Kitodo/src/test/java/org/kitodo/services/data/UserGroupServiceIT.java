@@ -25,9 +25,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
@@ -218,6 +220,21 @@ public class UserGroupServiceIT {
         List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
         List<String> expected = Arrays.asList("admin","manager","user");
         assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetAuthorizations() throws Exception {
+        UserGroup userGroup = userGroupService.getById(1);
+        List<Authorization> actual = userGroup.getAuthorizations();
+        assertEquals("Permission strings doesn't match to given plain text!", "admin", actual.get(0).getTitle());
+    }
+
+    @Test
+    public void shouldNotSaveUsergroupWithAlreadyExistingTitle() throws DataException {
+        UserGroup userGroup = new UserGroup();
+        userGroup.setTitle("Admin");
+        exception.expect(DataException.class);
+        userGroupService.save(userGroup);
     }
 
     @Test
