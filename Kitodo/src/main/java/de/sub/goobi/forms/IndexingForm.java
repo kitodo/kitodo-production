@@ -13,6 +13,7 @@ package de.sub.goobi.forms;
 
 import static java.lang.Math.toIntExact;
 
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.IndexWorker;
 
 import java.io.IOException;
@@ -367,6 +368,7 @@ public class IndexingForm {
             return indexRestClient.getServerInformation();
         } catch (IOException e) {
             logger.error(e.getMessage());
+            Helper.setFehlerMeldung("elasticSearchNotRunning");
             return "";
         }
     }
