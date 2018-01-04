@@ -35,7 +35,12 @@
                                      action="#{BenutzergruppenForm.save}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
-                                     styleClass="button-filled-blue"/>
+                                     styleClass="button-filled-blue"
+                                     onclick="PF('notifications').renderMessage({
+                                        'summary':'#{msgs.userGroupSaving}',
+                                        'detail':'#{msgs.youWillBeRedirected}',
+                                        'severity':'info'});"
+                                     update="notifications"/>
                 </p:panel>
 
                 <!-- main form -->
