@@ -507,5 +507,4 @@ public class UserServiceIT {
         exception.expect(DataException.class);
         userService.save(newUser);
     }
-
 }
