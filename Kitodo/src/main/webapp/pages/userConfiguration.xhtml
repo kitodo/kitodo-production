@@ -1,0 +1,78 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="userconfigform" onkeypress="ifEnterClick(event, 'userconfigform:absenden');">
+
+                <p:panel styleClass="content-header">
+                    <h3>#{msgs.benutzerkonfiguration}</h3>
+
+                    <p:commandButton id="submit"
+                                     value="#{msgs.speichern}"
+                                     action="#{LoginForm.BenutzerkonfigurationSpeichern}"
+                                     update="sticky-notifications"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     validateClient="true"
+                                     styleClass="button-filled-blue">
+                        <f:ajax execute="@form" render="@form"/>
+                    </p:commandButton>
+                </p:panel>
+
+                <p:messages id="configuration-messages" autoUpdate="true" />
+
+                <p:panelGrid id="userConfigurationGrid" columns="2">
+
+                    <!-- session timeout -->
+                    <h:outputLabel for="session-timeout" value="#{msgs.timeoutForSession}"/>
+                    <p:inputText id="session-timeout" value="#{LoginForm.myBenutzer.sessionTimeoutInMinutes}"
+                                 label="'#{msgs.timeoutForSession}'">
+                        <f:convertNumber integerOnly="true"/>
+                    </p:inputText>
+
+                    <!-- table size -->
+                    <h:outputLabel for="table-size" value="#{msgs.tableSize}" />
+                    <p:inputText id="table-size" value="#{LoginForm.myBenutzer.tableSize}" label="'#{msgs.tableSize}'">
+                        <f:convertNumber integerOnly="true"/>
+                    </p:inputText>
+
+                    <!-- metadata language -->
+                    <h:outputLabel for="metadata-language" value="#{msgs.spracheFuerMetadaten}" />
+                    <p:inputText id="metadata-language" value="#{LoginForm.myBenutzer.metadataLanguage}"/>
+
+                    <!-- color scheme -->
+                    <h:outputLabel for="color-scheme" value="#{msgs.colorScheme}" />
+                    <p:selectOneMenu id="color-scheme" value="#{LoginForm.myBenutzer.css}">
+                        <f:selectItems id="id19" value="#{HelperForm.cssFiles}"/>
+                    </p:selectOneMenu>
+
+                    <!-- show process data in my tasks -->
+                    <h:outputLabel for="show-process-data" value="#{msgs.spalteVorgangsdatumInEigenenAufgabenAnzeigen}" />
+                    <p:selectBooleanCheckbox id="show-process-data" value="#{LoginForm.myBenutzer.configProductionDateShow}"/>
+
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.benutzerkonfiguration}</a></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
+</ui:composition>

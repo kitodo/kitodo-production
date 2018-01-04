@@ -213,7 +213,7 @@ public class LoginForm implements Serializable {
         /* ist das aktuelle Passwort korrekt angegeben ? */
         /* ist das neue Passwort beide Male gleich angegeben? */
         if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
-            Helper.setFehlerMeldung(Helper.getTranslation("neuesPasswortNichtGleich"));
+            Helper.setFehlerMeldung(Helper.getTranslation("passwordsDontMatch"));
         } else {
             try {
                 /* wenn alles korrekt, dann jetzt speichern */
