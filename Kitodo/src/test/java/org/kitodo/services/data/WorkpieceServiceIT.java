@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -27,6 +28,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -161,5 +163,13 @@ public class WorkpieceServiceIT {
         Workpiece workpiece = workpieceService.getById(1);
         int actual = workpieceService.getPropertiesSize(workpiece);
         assertEquals("Workpiece's properties size is not equal to given value!", 2, actual);
+    }
+
+    @Test
+    public void shouldNotInsertWorkpieceWithoutProcess() throws Exception {
+        Workpiece workpiece = new Workpiece();
+        workpiece.setProperties(new ArrayList<>());
+        exception.expect(DataException.class);
+        workpieceService.save(workpiece);
     }
 }

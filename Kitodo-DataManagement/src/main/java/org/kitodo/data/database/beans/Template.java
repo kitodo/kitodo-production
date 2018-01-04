@@ -33,7 +33,7 @@ public class Template extends BaseIndexedBean {
     @Column(name = "origin")
     private String origin;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
     private Process process;
 
