@@ -41,6 +41,20 @@
         <maxAllowedViolations>1</maxAllowedViolations>
         <tomcat.baseversion>7</tomcat.baseversion>
         <tomcat.version>7.0.81</tomcat.version>
+        <commons-codec.version>1.11</commons-codec.version>
+        <commons-compress.version>1.4</commons-compress.version>
+        <commons-configuration.version>1.6</commons-configuration.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
+        <commons-io.version>2.5</commons-io.version>
+        <hibernate.version>5.2.10.Final</hibernate.version>
+        <jaxen.version>1.1.1</jaxen.version>
+        <jersey.version>1.19.3</jersey.version>
+        <joda-time.version>2.3</joda-time.version>
+        <myfaces.version>2.2.12</myfaces.version>
+        <mysql.version>5.1.38</mysql.version>
+        <poi.version>3.6</poi.version>
+        <primefaces.version>6.1.1</primefaces.version>
+        <saxon.version>9.0.0.4</saxon.version>
         <log4j.version>2.6.2</log4j.version>
         <junit.version>4.12</junit.version>
         <elasticsearch.version>5.6.5</elasticsearch.version>
@@ -207,7 +221,7 @@
                             <dependency>
                                 <groupId>mysql</groupId>
                                 <artifactId>mysql-connector-java</artifactId>
-                                <version>5.1.38</version>
+                                <version>${mysql.version}</version>
                             </dependency>
                         </dependencies>
                         <executions>

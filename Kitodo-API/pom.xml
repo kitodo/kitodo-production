@@ -37,12 +37,12 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
+            <version>${commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.core</groupId>
             <artifactId>myfaces-api</artifactId>
-            <version>2.2.12</version>
+            <version>${myfaces.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>

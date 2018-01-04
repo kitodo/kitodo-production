@@ -91,22 +91,22 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>1.19.3</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.19.3</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-            <version>1.19.3</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
-            <version>1.19.3</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -130,11 +130,6 @@
             <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
             <groupId>commons-discovery</groupId>
             <artifactId>commons-discovery</artifactId>
             <version>0.4</version>
@@ -153,7 +148,7 @@
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
+            <version>${commons-httpclient.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -234,7 +229,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.38</version>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.barcode4j</groupId>
@@ -367,7 +362,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-contrib</artifactId>
-            <version>3.6</version>
+            <version>${poi.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -382,7 +377,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.6</version>
+            <version>${poi.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlbeans</groupId>
@@ -393,7 +388,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>3.6</version>
+            <version>${poi.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -532,7 +527,7 @@
         <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9-dom</artifactId>
-            <version>9.0.0.4</version>
+            <version>${saxon.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jsfcomp.chartcreator</groupId>
@@ -546,19 +541,9 @@
             <version>1.2-daily</version>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
-        </dependency>
-        <dependency>
             <groupId>net.sf.j2ep</groupId>
             <artifactId>j2ep</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.marc4j</groupId>
@@ -629,12 +614,12 @@
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>primefaces-extensions</artifactId>
-            <version>6.1.1</version>
+            <version>${primefaces.version}</version>
         </dependency>
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>resources-codemirror</artifactId>
-            <version>6.1.1</version>
+            <version>${primefaces.version}</version>
         </dependency>
         <dependency>
             <groupId>org.omnifaces</groupId>
