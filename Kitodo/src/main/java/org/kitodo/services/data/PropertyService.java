@@ -221,4 +221,11 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     public String getNormalizedValue(Property property) {
         return property.getValue().replace(" ", "_").trim();
     }
+
+    public Property transfer(Property property) {
+        Property newProperty = new Property();
+        newProperty.setTitle(property.getTitle());
+        newProperty.setValue(property.getValue());
+        return newProperty;
+    }
 }
