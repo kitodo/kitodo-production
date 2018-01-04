@@ -13,14 +13,10 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
@@ -29,7 +25,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.DocketDTO;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
