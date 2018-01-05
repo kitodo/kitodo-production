@@ -16,8 +16,12 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlage'}">
+
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode != 'template'}">
         <table cellpadding="3" cellspacing="0" width="100%"
                        class="main_statistikboxen">
             <tr>
@@ -43,12 +47,10 @@
                                 <h:outputText value="#{ProzessverwaltungForm.template.origin}"/>
                             </td>
                             <td rowspan="2" align="right">
-                                <h:commandLink title="#{msgs.bearbeiten}"
-                                               action="#{NavigationForm.Reload}">
+                                <h:commandLink title="#{msgs.bearbeiten}" action="#{NavigationForm.Reload}">
                                     <h:graphicImage value="/pages/images/buttons/edit_20.gif" alt="edit"/>
                                     <t:updateActionListener
-                                            property="#{ProzessverwaltungForm.modusBearbeiten}"
-                                            value="vorlage"/>
+                                            property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.TEMPLATE}"/>
                                 </h:commandLink>
 
                                 <h:commandLink title="#{msgs.loeschen}"
@@ -66,9 +68,8 @@
     </ui:fragment>
 
     <!-- Box für die Bearbeitung der Details -->
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlage'}">
-        <table cellpadding="3" cellspacing="0" width="100%"
-               class="eingabeBoxen">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'template'}">
+        <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
 
             <tr>
                 <td class="eingabeBoxen_row1" colspan="2">
@@ -99,17 +100,16 @@
 
                 <tr>
                     <td class="eingabeBoxen_row3" align="left">
-                        <h:commandButton value="#{msgs.abbrechen}" immediate="true"
-                                         action="#{NavigationForm.Reload}">
+                        <h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.Reload}">
                             <t:updateActionListener
-                                    property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                    property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                         </h:commandButton>
                     </td>
                     <td class="eingabeBoxen_row3" align="right">
                         <h:commandButton value="#{msgs.uebernehmen}" id="absenden"
                                          action="#{ProzessverwaltungForm.VorlageUebernehmen}">
                             <t:updateActionListener
-                                    property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                    property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                         </h:commandButton>
                     </td>
                 </tr>

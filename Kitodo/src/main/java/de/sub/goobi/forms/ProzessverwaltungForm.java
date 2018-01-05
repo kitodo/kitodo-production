@@ -85,6 +85,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.enums.ObjectMode;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -111,7 +112,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private Workpiece workpiece;
     private Property workpieceProperty;
     private String modusAnzeige = "aktuell";
-    private String modusBearbeiten = "";
+    private ObjectMode editMode = ObjectMode.NONE;
     private String kitodoScript;
     private HashMap<String, Boolean> anzeigeAnpassen;
     private String newProcessTitle;
@@ -173,7 +174,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String newProcess() {
         this.process = new Process();
         this.newProcessTitle = "";
-        this.modusBearbeiten = "prozess";
+        this.editMode = ObjectMode.PROCESS;
         return "/pages/ProzessverwaltungBearbeiten";
     }
 
@@ -186,7 +187,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.process = new Process();
         this.newProcessTitle = "";
         this.process.setTemplate(true);
-        this.modusBearbeiten = "prozess";
+        this.editMode = ObjectMode.PROCESS;
         return "/pages/ProzessverwaltungBearbeiten";
     }
 
@@ -278,7 +279,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.newProcessTitle.matches(validateRegEx)) {
-            this.modusBearbeiten = "prozess";
+            this.editMode = ObjectMode.PROCESS;
             Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
             return false;
         } else {
@@ -677,7 +678,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        this.modusBearbeiten = "schritt";
+        this.editMode = ObjectMode.TASK;
         this.taskId = this.task.getId();
         return "/pages/inc_Prozessverwaltung/schritt?faces-redirect=true&id=" + this.taskId;
     }
@@ -1353,12 +1354,12 @@ public class ProzessverwaltungForm extends BasisForm {
         this.modusAnzeige = modusAnzeige;
     }
 
-    public String getModusBearbeiten() {
-        return this.modusBearbeiten;
+    public ObjectMode getEditMode() {
+        return editMode;
     }
 
-    public void setModusBearbeiten(String modusBearbeiten) {
-        this.modusBearbeiten = modusBearbeiten;
+    public void setEditMode(ObjectMode editMode) {
+        this.editMode = editMode;
     }
 
     /**

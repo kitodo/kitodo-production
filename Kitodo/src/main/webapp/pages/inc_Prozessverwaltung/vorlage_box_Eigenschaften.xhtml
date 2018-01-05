@@ -21,9 +21,12 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlageeigenschaft'}">
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode != 'templateProperty'}">
         <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaften}"/>
         </h4>
@@ -34,7 +37,7 @@
                  headerClass="standardTable_Header" rowClasses="standardTable_Row1"
                  columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
                  var="item" value="#{ProzessverwaltungForm.template.properties}"
-                 rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlageeigenschaft'}">
+                 rendered="#{ProzessverwaltungForm.editMode.mode != 'templateProperty'}">
 
         <h:column>
             <f:facet name="header">
@@ -55,27 +58,19 @@
                 <h:outputText value="#{msgs.auswahl}"/>
             </f:facet>
             <!-- Bearbeiten-Schaltknopf -->
-            <h:commandLink action="inc_Prozessverwaltung/vorlage"
-                           title="#{msgs.bearbeiten}">
+            <h:commandLink action="inc_Prozessverwaltung/vorlage" title="#{msgs.bearbeiten}">
                 <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
-                <t:updateActionListener
-                        property="#{ProzessverwaltungForm.templateProperty}"
-                        value="#{item}"/>
-                <t:updateActionListener
-                        property="#{ProzessverwaltungForm.modusBearbeiten}"
-                        value="vorlageeigenschaft"/>
+                <t:updateActionListener property="#{ProzessverwaltungForm.templateProperty}" value="#{item}"/>
+                <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.TEMPLATEPROPERTY}"/>
             </h:commandLink>
         </h:column>
     </t:dataTable>
 
     <!-- newUser-Schaltknopf -->
-    <h:commandLink action="#{ProzessverwaltungForm.VorlageEigenschaftNeu}"
-                   value="#{msgs.eigenschaftHinzufuegen}"
+    <h:commandLink action="#{ProzessverwaltungForm.VorlageEigenschaftNeu}" value="#{msgs.eigenschaftHinzufuegen}"
                    title="#{msgs.eigenschaftHinzufuegen}"
-                   rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlageeigenschaft'}">
-        <t:updateActionListener
-                property="#{ProzessverwaltungForm.modusBearbeiten}"
-                value="vorlageeigenschaft"/>
+                   rendered="#{ProzessverwaltungForm.editMode.mode != 'templateProperty'}">
+        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.TEMPLATEPROPERTY}"/>
     </h:commandLink>
 
 
@@ -83,15 +78,14 @@
     <!-- ++++++++++     Eigenschaft bearbeiten      +++++++++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlageeigenschaft'}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'templateProperty'}">
         <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
         </h4>
     </ui:fragment>
     <!-- Box für die Bearbeitung der Details -->
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlageeigenschaft'}">
-        <table cellpadding="3" cellspacing="0" width="100%"
-               class="eingabeBoxen">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'templateProperty'}">
+        <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
             <tr>
                 <td class="eingabeBoxen_row1" colspan="2">
                     <h:outputText value="#{msgs.eigenschaft}"/>
@@ -130,7 +124,7 @@
                     <h:commandButton value="#{msgs.abbrechen}"
                                      action="#{NavigationForm.Reload}" immediate="true">
                         <t:updateActionListener
-                                property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
                 <td class="eingabeBoxen_row3" align="right">
@@ -139,12 +133,12 @@
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                      rendered="#{ProzessverwaltungForm.templateProperty.id != null}">
                         <t:updateActionListener
-                                property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                     <h:commandButton value="#{msgs.uebernehmen}"
                                      action="#{ProzessverwaltungForm.VorlageEigenschaftUebernehmen}">
                         <t:updateActionListener
-                                property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
             </tr>

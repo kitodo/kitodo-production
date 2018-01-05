@@ -17,8 +17,12 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='schritt'}">
+
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode !='task'}">
         <table cellpadding="3" cellspacing="0" width="100%" class="main_statistikboxen">
 
             <tr>
@@ -47,8 +51,8 @@
                                 <h:commandLink title="#{msgs.bearbeiten}" action="#{NavigationForm.Reload}"
                                                style=";margin-right:20px">
                                     <h:graphicImage value="/pages/images/buttons/edit_20.gif" alt="reload"/>
-                                    <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}"
-                                                            value="schritt"/>
+                                    <t:updateActionListener property="#{ProzessverwaltungForm.editMode}"
+                                                            value="#{objectMode.TASK}"/>
                                 </h:commandLink>
                             </td>
                         </tr>
@@ -150,7 +154,7 @@
 
 
     <!-- Box für die Bearbeitung der Details -->
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='schritt'}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'task'}">
         <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
             <tr>
                 <td class="eingabeBoxen_row1" colspan="2">
@@ -260,7 +264,7 @@
             <tr>
                 <td class="eingabeBoxen_row3" align="left">
                     <h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.Reload}">
-                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
                 <td class="eingabeBoxen_row3" align="right">
@@ -269,7 +273,7 @@
                                      rendered="#{ProzessverwaltungForm.task.id != null}"/>
                     <h:commandButton value="#{msgs.uebernehmen}" id="absenden"
                                      action="#{ProzessverwaltungForm.saveTask}">
-                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
             </tr>
