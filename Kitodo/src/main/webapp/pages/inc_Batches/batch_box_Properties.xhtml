@@ -19,12 +19,15 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui"
     >
+
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
     <h:form id="propform2" rendered="#{AktuelleSchritteForm.batchHelper.propertiesSize>0}">
         <h4>
             <h:outputText value="#{msgs.erweiterteEigenschaften}"/>
         </h4>
         <!-- Box für die Bearbeitung der Details -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' and AktuelleSchritteForm.batchHelper.propertiesSize>0}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode != 'processProperty' and AktuelleSchritteForm.batchHelper.propertiesSize>0}">
             <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
                 <thead class="standardTable_Header">
                     <tr>
@@ -59,8 +62,8 @@
                                     <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
                                     <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.property}"
                                                                 value="#{property}"/>
-                                    <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
-                                                                value="eigenschaft"/>
+                                    <t:updateActionListener property="#{AktuelleSchritteForm.editMode}"
+                                                                value="#{objectMode.PROCESSPROPERTY}"/>
                                     <f:ajax render="editBatch"/>
                                 </h:commandLink>
 
@@ -77,7 +80,7 @@
         </ui:fragment>
 
         <!-- Box für die Bearbeitung der Details -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' and AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == 'processProperty' and AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
                 <tr>
                     <td class="eingabeBoxen_row1" colspan="2">
@@ -138,18 +141,17 @@
                 <tr>
                     <td class="eingabeBoxen_row3" align="left">
                         <h:commandButton value="#{msgs.abbrechen}" action="#{NavigationForm.Reload}" immediate="true">
-                            <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value=""/>
+                            <t:updateActionListener property="#{AktuelleSchritteForm.editMode}" value="#{objectMode.NONE}"/>
                         </h:commandButton>
                     </td>
                     <td class="eingabeBoxen_row3" align="right">
                         <h:commandButton value="#{msgs.applyToThisProcess}"
                                          action="#{AktuelleSchritteForm.batchHelper.saveCurrentProperty}">
-
-                            <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value=""/>
+                            <t:updateActionListener property="#{AktuelleSchritteForm.editMode}" value="#{objectMode.NONE}"/>
                         </h:commandButton>
                         <h:commandButton value="#{msgs.applyToAllProcesses}"
                                          action="#{AktuelleSchritteForm.batchHelper.saveCurrentPropertyForAll}">
-                            <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value=""/>
+                            <t:updateActionListener property="#{AktuelleSchritteForm.editMode}" value="#{objectMode.NONE}"/>
                         </h:commandButton>
                     </td>
                 </tr>

@@ -23,7 +23,7 @@
     rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
 
         <!-- ++++++++++++++++     Import      ++++++++++++++++ -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='' and AktuelleSchritteForm.mySchritt.process.blockedUser == null and AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null and AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
             <table cellpadding="3" cellspacing="0" width="100%"
                        class="eingabeBoxen" style="margin-top:20px">
                 <tr>
@@ -73,7 +73,7 @@
         <!-- ++++++++++++++++     // Import      ++++++++++++++++ -->
         <h:form id="actionform">
             <!-- ++++++++++++++++     Action      ++++++++++++++++ -->
-            <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten==''}">
+            <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == ''}">
                 <table cellpadding="3" cellspacing="0" width="100%"
                        class="eingabeBoxen" style="margin-top:20px">
                     <tr>

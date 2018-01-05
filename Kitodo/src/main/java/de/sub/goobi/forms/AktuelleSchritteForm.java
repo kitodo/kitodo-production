@@ -57,6 +57,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
+import org.kitodo.enums.ObjectMode;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
@@ -71,7 +72,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private Integer mySolutionID;
     private String problemMessage;
     private String solutionMessage;
-    private String modusBearbeiten = "";
+    private ObjectMode editMode = ObjectMode.NONE;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
     private int pageAnzahlImages = 0;
@@ -870,7 +871,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *            Object
      */
     public void setMySchritt(Task task) {
-        this.modusBearbeiten = "";
+        this.editMode = ObjectMode.NONE;
         setStep(task);
     }
 
@@ -891,12 +892,12 @@ public class AktuelleSchritteForm extends BasisForm {
         return this.mySchritt;
     }
 
-    public String getModusBearbeiten() {
-        return this.modusBearbeiten;
+    public ObjectMode getEditMode() {
+        return this.editMode;
     }
 
-    public void setModusBearbeiten(String modusBearbeiten) {
-        this.modusBearbeiten = modusBearbeiten;
+    public void setEditMode(ObjectMode editMode) {
+        this.editMode = editMode;
     }
 
     public Integer getMyProblemID() {
