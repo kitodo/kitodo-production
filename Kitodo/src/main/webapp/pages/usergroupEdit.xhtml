@@ -67,6 +67,11 @@
             </h:form>
         </p:panel>
     </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.benutzergruppeBearbeiten}</a></li>
+        <li><h:link value="#{msgs.users}" outcome="users"/></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
     <!-- add user groups dialog -->
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>

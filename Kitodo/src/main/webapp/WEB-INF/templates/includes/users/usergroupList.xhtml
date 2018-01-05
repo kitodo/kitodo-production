@@ -32,4 +32,8 @@
             </h:link>
         </p:column>
     </p:dataTable>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.benutzergruppen}</a></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
 </ui:composition>
