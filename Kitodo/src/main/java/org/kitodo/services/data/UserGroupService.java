@@ -32,6 +32,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.RelatedProperty;
@@ -109,8 +110,29 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      */
     @Override
     protected void manageDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+        manageAuthorizationsDependenciesForIndex(userGroup);
         manageTasksDependenciesForIndex(userGroup);
         manageUsersDependenciesForIndex(userGroup);
+    }
+
+    /**
+     * Check if IndexAction flag is delete. If true remove user group from list
+     * of user groups and re-save authorization, if false only re-save authorization object.
+     *
+     * @param userGroup
+     *            object
+     */
+    private void manageAuthorizationsDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+        if (userGroup.getIndexAction() == IndexAction.DELETE) {
+            for (Authorization authorization : userGroup.getAuthorizations()) {
+                authorization.getUserGroups().remove(userGroup);
+                serviceManager.getAuthorizationService().saveToIndex(authorization);
+            }
+        } else {
+            for (Authorization authorization : userGroup.getAuthorizations()) {
+                serviceManager.getAuthorizationService().saveToIndex(authorization);
+            }
+        }
     }
 
     /**
@@ -218,10 +240,12 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         JSONObject userGroupJSONObject = getSource(jsonObject);
         userGroupDTO.setTitle(getStringPropertyForDTO(userGroupJSONObject, "title"));
         userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, "users"));
+        userGroupDTO.setAuthorizationsSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, "authorizations"));
         if (!related) {
             userGroupDTO = convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
         } else {
-            userGroupDTO = addBasicUserRelation(userGroupDTO, userGroupJSONObject);
+            userGroupDTO = addBasicAuthorizationsRelation(userGroupDTO, userGroupJSONObject);
+            userGroupDTO = addBasicUsersRelation(userGroupDTO, userGroupJSONObject);
         }
         return userGroupDTO;
     }
@@ -231,7 +255,26 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         return userGroupDTO;
     }
 
-    private UserGroupDTO addBasicUserRelation(UserGroupDTO userGroupDTO, JSONObject jsonObject) {
+    private UserGroupDTO addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JSONObject jsonObject) {
+        if (userGroupDTO.getAuthorizationsSize() > 0) {
+            List<AuthorizationDTO> authorizations = new ArrayList<>();
+            List<String> subKeys = new ArrayList<>();
+            subKeys.add("title");
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "authorizations", subKeys);
+            for (RelatedProperty relatedProperty : relatedProperties) {
+                AuthorizationDTO authorization = new AuthorizationDTO();
+                authorization.setId(relatedProperty.getId());
+                if (relatedProperty.getValues().size() > 0) {
+                    authorization.setTitle(relatedProperty.getValues().get(0));
+                }
+                authorizations.add(authorization);
+            }
+            userGroupDTO.setAuthorizations(authorizations);
+        }
+        return userGroupDTO;
+    }
+
+    private UserGroupDTO addBasicUsersRelation(UserGroupDTO userGroupDTO, JSONObject jsonObject) {
         if (userGroupDTO.getUsersSize() > 0) {
             List<UserDTO> users = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();

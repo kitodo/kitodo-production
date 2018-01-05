@@ -28,6 +28,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.dto.AuthorizationDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -217,5 +218,14 @@ public class UserGroupServiceIT {
         List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
         List<String> expected = Arrays.asList("admin","manager","user");
         assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetAuthorizationForAdmin() throws Exception {
+        List<UserGroupDTO> userGroupDTOS = userGroupService.convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
+        assertEquals("Incorrect amount of found user groups", 1, userGroupDTOS.size());
+
+        AuthorizationDTO authorizationDTO = userGroupDTOS.get(0).getAuthorizations().get(0);
+        assertEquals("Incorrect authorization!", "admin", authorizationDTO.getTitle());
     }
 }
