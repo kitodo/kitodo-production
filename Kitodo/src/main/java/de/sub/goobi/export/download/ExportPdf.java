@@ -50,26 +50,27 @@ public class ExportPdf extends ExportMets {
     private final FileService fileService = serviceManager.getFileService();
 
     @Override
-    public boolean startExport(Process myProcess, URI inZielVerzeichnis)
+    public boolean startExport(Process myProcess, URI userHome)
             throws ReadException, IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
 
         /*
          * Read Document
          */
         Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
-        prepareUserDirectory(inZielVerzeichnis);
+        prepareUserDirectory(userHome);
         this.myPrefs = serviceManager.getRulesetService().getPreferences(myProcess.getRuleset());
 
         /*
          * first of all write mets-file in images-Folder of process
          */
-        URI metsTempFile = fileService.createResource(myProcess.getTitle() + ".xml");
-        writeMetsFile(myProcess, metsTempFile, gdzfile, true);
+        URI targetFileName = fileService.createResource(myProcess.getTitle() + ".xml");
+        URI metaFile = userHome.resolve(targetFileName);
+        writeMetsFile(myProcess, metaFile, gdzfile, true);
         Helper.setMeldung(null, myProcess.getTitle() + ": ", "mets file created");
         Helper.setMeldung(null, myProcess.getTitle() + ": ", "start pdf generation now");
 
         if (logger.isDebugEnabled()) {
-            logger.debug("METS file created: " + metsTempFile);
+            logger.debug("METS file created: " + targetFileName);
         }
 
         FacesContext context = FacesContext.getCurrentInstance();
@@ -83,11 +84,11 @@ public class ExportPdf extends ExportMets {
              * use contentserver api for creation of pdf-file
              */
             CreatePdfFromServletThread pdf = new CreatePdfFromServletThread();
-            pdf.setMetsURL(metsTempFile.toURL());
-            pdf.setTargetFolder(inZielVerzeichnis);
+            pdf.setMetsURL(metaFile.toURL());
+            pdf.setTargetFolder(userHome);
             pdf.setInternalServletPath(myBasisUrl);
             if (logger.isDebugEnabled()) {
-                logger.debug("Taget directory: " + inZielVerzeichnis);
+                logger.debug("Target directory: " + userHome);
                 logger.debug("Using ContentServer2 base URL: " + myBasisUrl);
             }
             pdf.initialize(myProcess);
@@ -108,7 +109,7 @@ public class ExportPdf extends ExportMets {
                  */
 
                 // TODO:second condition is always true if reached
-                if (serviceManager.getMetadataValidationService().validate(myProcess) && metsTempFile.toURL() != null) {
+                if (serviceManager.getMetadataValidationService().validate(myProcess) && metaFile.toURL() != null) {
                     /*
                      * if no contentserverurl defined use internal
                      * goobiContentServerServlet
@@ -116,7 +117,7 @@ public class ExportPdf extends ExportMets {
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
                         contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
                     }
-                    kitodoContentServerUrl = new URL(contentServerUrl + metsTempFile.toURL() + AND_TARGET_FILE_NAME_IS
+                    kitodoContentServerUrl = new URL(contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
                             + myProcess.getTitle() + PDF_EXTENSION);
                     /*
                      * mets data does not exist or is invalid
@@ -131,16 +132,17 @@ public class ExportPdf extends ExportMets {
                     ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
                     int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();
-                    TreeSet<String> filenames = new TreeSet<>(new MetadatenHelper(null, null));
+                    TreeSet<String> fileNames = new TreeSet<>(new MetadatenHelper(null, null));
+                    String basePath = ConfigCore.getKitodoDataDirectory();
                     for (URI data : meta) {
-                        String file = data.toURL().toString();
-                        filenames.add(file);
+                        String file = basePath + data.getRawPath();
+                        fileNames.add(file);
                         capacity += file.length();
                     }
                     StringBuilder url = new StringBuilder(capacity);
                     url.append(contentServerUrl);
                     boolean subsequent = false;
-                    for (String f : filenames) {
+                    for (String f : fileNames) {
                         if (subsequent) {
                             url.append('$');
                         } else {
@@ -170,8 +172,8 @@ public class ExportPdf extends ExportMets {
                     response.sendRedirect(kitodoContentServerUrl.toString());
                     context.responseComplete();
                 }
-                if (metsTempFile.toURL() != null) {
-                    File tempMets = new File(metsTempFile.toURL().toString());
+                if (metaFile.toURL() != null) {
+                    File tempMets = new File(metaFile.toURL().toString());
                     tempMets.delete();
                 }
             } catch (Exception e) {
@@ -180,7 +182,7 @@ public class ExportPdf extends ExportMets {
                  * report Error to User as Error-Log
                  */
                 String text = "error while pdf creation: " + e.getMessage();
-                URI uri = inZielVerzeichnis.resolve(myProcess.getTitle() + ".PDF-ERROR.log");
+                URI uri = userHome.resolve(myProcess.getTitle() + ".PDF-ERROR.log");
                 try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {
                     output.write(text);
                 } catch (IOException e1) {
