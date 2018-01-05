@@ -31,13 +31,13 @@
     </style>
 
     <h4>
-        <h:outputText value="#{msgs.prozessvorlagen}" rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen'}"/>
-        <h:outputText value="#{msgs.aktuelleProzesse}" rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}"/>
+        <h:outputText value="#{msgs.prozessvorlagen}" rendered="#{ProzessverwaltungForm.displayMode.mode == 'template'}"/>
+        <h:outputText value="#{msgs.aktuelleProzesse}" rendered="#{ProzessverwaltungForm.displayMode.mode == 'process'}"/>
     </h4>
 
     <!-- new template button -->
     <h:commandLink action="#{ProzessverwaltungForm.newTemplate}" immediate="true"
-                   rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige=='vorlagen'}"
+                   rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.displayMode.mode == 'template'}"
                    id="new2">
         <h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"/>
     </h:commandLink>
@@ -58,7 +58,7 @@
 
         <!-- +++++++++++++++++  SelectionBoxes ++++++++++++++++++++++++ -->
         <p:column selectionMode="multiple" style="width:16px;text-align:center"
-                  rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}">
+                  rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}">
         </p:column>
 
         <!-- +++++++++++++++++  ProzessID ++++++++++++++++++++++++ -->
@@ -78,9 +78,9 @@
                     <!-- Header -->
                     <h:panelGroup>
                         <h:outputText value="#{msgs.prozessvorlagen}"
-                                      rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen'}"/>
+                                      rendered="#{ProzessverwaltungForm.displayMode.mode == 'template'}"/>
                         <h:outputText value="#{msgs.prozessTitel}"
-                                      rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}"/>
+                                      rendered="#{ProzessverwaltungForm.displayMode.mode == 'process'}"/>
                     </h:panelGroup>
                 </t:div>
             </f:facet>
@@ -160,7 +160,7 @@
         </p:column>
 
         <p:column style="text-align:center" headerText="#{msgs.sperrungen}"
-                  rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and ProzessverwaltungForm.anzeigeAnpassen['lockings']}">
+                  rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and ProzessverwaltungForm.anzeigeAnpassen['lockings']}">
             <h:outputText value="#{item.blockedUser.fullName}" rendered="#{item.blockedUser != null}"/>
         </p:column>
 
@@ -168,7 +168,7 @@
 
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
             <h:link outcome="/pages/ProzessverwaltungBearbeiten"
-                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
+                    rendered="#{ProzessverwaltungForm.displayMode.mode != 'template'}"
                     title="#{msgs.prozessBearbeiten}">
                 <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit process"
                                 style="margin-right:5px"/>
@@ -177,7 +177,7 @@
 
             <!-- Bearbeiten-Schaltknopf: Vorlagen -->
             <h:link outcome="/pages/ProzessverwaltungBearbeiten"
-                    rendered="#{(LoginForm.maximaleBerechtigung == 1) and ProzessverwaltungForm.modusAnzeige=='vorlagen'}"
+                    rendered="#{(LoginForm.maximaleBerechtigung == 1) and ProzessverwaltungForm.displayMode.mode == 'template'}"
                     title="#{msgs.prozessBearbeiten}">
                 <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit template"
                                 style="margin-right:5px"/>
@@ -187,7 +187,7 @@
             <!-- tif-Header-Schaltknopf -->
             <h:commandLink action="#{ProzessverwaltungForm.downloadTiffHeader}" id="action12"
                            title="#{msgs.dateiMitTiffHeaderSpeichern}"
-                           rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and 0==1}">
+                           rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and 0==1}">
                 <h:graphicImage value="/pages/images/buttons/tif.gif" alt="tif export" style="margin-right:1px"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
             </h:commandLink>
@@ -195,7 +195,7 @@
             <!-- Multi-Tiff-Export-Schaltknopf -->
             <h:commandLink action="#{ProzessverwaltungForm.downloadMultiTiff}" id="action13"
                            title="#{msgs.multiTiffDownloaden}"
-                           rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and LoginForm.maximaleBerechtigung == 1 and 0==1}">
+                           rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and LoginForm.maximaleBerechtigung == 1 and 0==1}">
                 <h:graphicImage value="/pages/images/buttons/view3.gif" alt="multiple tiff export"
                                 style="margin-right:3px"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
@@ -203,7 +203,7 @@
 
             <!-- Metadaten-Schaltknopf -->
             <h:commandLink action="#{Metadaten.readXml}" id="action14" title="#{msgs.metadatenBearbeiten}"
-                           rendered="#{(LoginForm.maximaleBerechtigung != 1) and (LoginForm.maximaleBerechtigung != 2) and item.blockedUser == null and ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
+                           rendered="#{(LoginForm.maximaleBerechtigung != 1) and (LoginForm.maximaleBerechtigung != 2) and item.blockedUser == null and ProzessverwaltungForm.displayMode.mode != 'template'}">
                 <h:graphicImage value="/pages/images/buttons/view1.gif" alt="view" style="margin-right:10px"/>
                 <f:param name="nurLesen" value="true"/>
                 <f:param name="ProzesseID" value="#{item.id}"/>
@@ -215,7 +215,7 @@
 
                 <!-- Metadaten-Schaltknopf -->
                 <h:commandLink action="#{Metadaten.readXml}" id="action15" title="#{msgs.metadatenBearbeiten}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template'}">
                     <h:graphicImage value="/pages/images/buttons/view1.gif" alt="view" style="margin-right:10px"/>
                     <f:param name="ProzesseID" value="#{item.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
@@ -225,7 +225,7 @@
                 <!-- Download-Schaltknopf -->
                 <h:commandLink action="#{ProzessverwaltungForm.downloadToHome}" id="action16"
                                title="#{msgs.imHomeVerzeichnisVerlinken}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and !item.imageFolderInUse}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and !item.imageFolderInUse}">
                     <h:graphicImage value="/pages/images/buttons/load_down2.gif" alt="download"
                                     style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
@@ -235,7 +235,7 @@
                 <h:commandLink action="#{ProzessverwaltungForm.downloadToHome}" id="action17"
                                title="#{msgs.imHomeVerzeichnisVerlinkenTrotzBearbeitung}"
                                onclick="if (!confirm('#{msgs.warningAdminBeforeLinking}')) return"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and item.imageFolderInUse}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and item.imageFolderInUse}">
                     <h:graphicImage value="/pages/images/buttons/load_down3.gif" alt="download"
                                     style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
@@ -245,7 +245,7 @@
                 <h:commandLink action="#{ProzessverwaltungForm.uploadFromHome}" id="action18"
                                title="#{msgs.ausHomeverzeichnisEntfernen}"
                                onclick="if (!confirm('#{msgs.ausHomeverzeichnisEntfernen}?')) return"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template'}">
                     <h:graphicImage value="/pages/images/buttons/load_up2.gif" alt="upload"
                                     style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
@@ -253,7 +253,7 @@
 
                 <!-- XML Export-Schaltknopf -->
                 <h:commandLink id="ubid119" action="#{ProzessverwaltungForm.createXML}" title="#{msgs.createXML}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template'}">
                     <h:graphicImage id="ubid120" alt="xml export" value="/pages/images/buttons/xml.gif"
                                     style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
@@ -262,7 +262,7 @@
                 <!-- Docket Export -->
                 <h:commandLink id="ubid1119" action="#{ProzessverwaltungForm.downloadDocket}"
                                title="#{msgs.laufzettelDrucken}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template'}">
                     <h:graphicImage id="ubid1120" alt="docket export" value="/pages/images/buttons/laufzettel.png"
                                     style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.process}" value="#{item}"/>
@@ -270,7 +270,7 @@
 
                 <!-- Mets-Export-Schaltknopf -->
                 <h:commandLink action="#{ProzessverwaltungForm.exportMets}" id="action19" title="#{msgs.exportMets}"
-                               rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and item.tifDirectoryExists}">
+                               rendered="#{(ProzessverwaltungForm.displayMode.mode != 'template' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/mets.png" alt="mets export"
                                     style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.processId}" value="#{item.id}"/>
@@ -278,41 +278,41 @@
 
                 <!-- Mets-Export-Schaltknopf greyed -->
                 <h:graphicImage
-                    rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and !item.tifDirectoryExists}"
+                    rendered="#{(ProzessverwaltungForm.displayMode.mode != 'template' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) and !item.tifDirectoryExists}"
                     value="/pages/images/buttons/metsGreyed.png" alt="mets export unavailable"
                     style="margin-right:2px"
                     title="#{msgs.exportMets}"/>
 
                 <!-- PDF-Export-Schaltknopf -->
                 <h:commandLink action="#{ProzessverwaltungForm.exportPdf}" id="action20" title="#{msgs.exportPdf}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/pdf.png" alt="pdf export" style="margin-right:2px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.processId}" value="#{item.id}"/>
                 </h:commandLink>
 
                 <!-- PDF-Export-Schaltknopf greyed -->
                 <h:graphicImage
-                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
+                    rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
                     value="/pages/images/buttons/pdfGreyed.png" alt="pdf export unavailable" style="margin-right:2px"
                     title="#{msgs.exportPdf}"/>
 
                 <!-- DMS-Export-Schaltknopf -->
                 <h:commandLink action="#{ProzessverwaltungForm.exportDMS}" id="action21" title="#{msgs.importDms}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and item.tifDirectoryExists}">
                     <h:graphicImage value="/pages/images/buttons/dms.png" alt="dms export" style="margin-right:0px"/>
                     <t:updateActionListener property="#{ProzessverwaltungForm.processId}" value="#{item.id}"/>
                 </h:commandLink>
 
                 <!-- PDF-Export-Schaltknopf greyed -->
                 <h:graphicImage
-                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
+                    rendered="#{ProzessverwaltungForm.displayMode.mode != 'template' and (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) and !item.tifDirectoryExists}"
                     value="/pages/images/buttons/dmsGreyed.png" alt="dms export unavailable" style="margin-right:2px"
                     title="#{msgs.importDms}"/>
 
                 <!-- ProzessKopie-Schaltknopf -->
                 <h:commandLink action="#{ProzesskopieForm.prepare(item.id)}" id="action22"
                                title="#{item.containsUnreachableSteps?msgs.prozessvorlageMitUnvollstaendigenSchrittdetails:msgs.eineKopieDieserProzessvorlageAnlegen}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen'}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode == 'template'}">
                     <h:graphicImage value="/pages/images/buttons/star_blue.gif" style="margin-right:3px"
                                     alt="" rendered="#{!item.containsUnreachableSteps}"/>
                     <h:graphicImage value="/pages/images/buttons/star_red.gif" style="margin-right:3px"
@@ -321,7 +321,7 @@
 
                 <!-- MassenImport -->
                 <h:commandLink action="#{MassImportForm.prepare(item.id)}" id="action222" title="#{msgs.MassenImport}"
-                               rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen' and HelperForm.massImportAllowed}">
+                               rendered="#{ProzessverwaltungForm.displayMode.mode == 'template' and HelperForm.massImportAllowed}">
                     <h:graphicImage value="/pages/images/buttons/star_blue_multi.png" style="margin-right:3px"
                                     alt="mass import" rendered="#{!item.containsUnreachableSteps}"/>
                     <h:graphicImage value="/pages/images/buttons/star_red.gif" style="margin-right:3px"
@@ -335,7 +335,7 @@
 
     <!-- new template button -->
     <h:commandLink action="#{ProzessverwaltungForm.newTemplate}" immediate="true"
-                   rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.modusAnzeige=='vorlagen' and (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
+                   rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) and ProzessverwaltungForm.displayMode.mode == 'template' and (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
                    id="new4">
         <h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"/>
     </h:commandLink>

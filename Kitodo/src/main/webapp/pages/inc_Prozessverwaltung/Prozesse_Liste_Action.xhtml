@@ -23,7 +23,7 @@
 >
 
     <ui:fragment
-            rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
+            rendered="#{ProzessverwaltungForm.displayMode.mode == 'process' and (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
 
         <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
             <tr>
@@ -47,7 +47,7 @@
                         </h:commandLink>
 
                         <h:panelGroup
-                                rendered="#{LoginForm.myBenutzer.withMassDownload and ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{LoginForm.myBenutzer.withMassDownload and ProzessverwaltungForm.displayMode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-9">
                                 <h:commandLink id="downloadswitcher">
@@ -91,7 +91,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup
-                                rendered="#{LoginForm.maximaleBerechtigung == 1 and ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{LoginForm.maximaleBerechtigung == 1 and ProzessverwaltungForm.displayMode.mode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-1">
                                 <h:commandLink id="agoraswitcher">
@@ -137,7 +137,7 @@
 
                         <!-- Bearbeitungsstatus hochsetzen-->
                         <h:panelGroup
-                                rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{ProzessverwaltungForm.displayMode.mode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-2">
                                 <h:graphicImage value="/pages/images/buttons/step_for_20px.gif" alt="step forward"
@@ -180,7 +180,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup
-                                rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{ProzessverwaltungForm.displayMode.mode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-3">
                                 <h:graphicImage value="/pages/images/buttons/step_back_20px.gif" alt="step backward"
@@ -224,7 +224,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup
-                                rendered="#{LoginForm.maximaleBerechtigung == 1 and ProzessverwaltungForm.modusAnzeige=='aktuell'  and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{LoginForm.maximaleBerechtigung == 1 and ProzessverwaltungForm.displayMode.mode =='process'  and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-4">
                                 <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="edit"
@@ -342,7 +342,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup
-                                rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{ProzessverwaltungForm.displayMode.mode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <h:graphicImage value="/pages/images/buttons/excel20.png" alt="excel export"
                                             style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
@@ -352,7 +352,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup
-                                rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{ProzessverwaltungForm.displayMode.mode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
                             <h:graphicImage value="/pages/images/buttons/pdf.png" alt="pdf export"
                                             style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                             <h:commandLink action="#{ProzessverwaltungForm.generateResultAsPdf}"
@@ -363,7 +363,7 @@
 
 
                         <h:panelGroup
-                                rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{ProzessverwaltungForm.displayMode.mode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-5">
                                 <h:graphicImage value="/pages/images/buttons/statistik1_20px.gif" alt="statistics"
@@ -402,7 +402,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup
-                                rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+                                rendered="#{ProzessverwaltungForm.displayMode.mode == 'process' and ProzessverwaltungForm.page.totalResults > 0 }">
 
                             <span class="toggle" data-for="toggle-6">
                                 <h:graphicImage value="/pages/images/buttons/statistik4_20px.gif" alt="statistics"

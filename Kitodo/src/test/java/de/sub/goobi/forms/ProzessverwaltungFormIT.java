@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.dto.ProcessDTO;
+import org.kitodo.enums.ObjectMode;
 
 public class ProzessverwaltungFormIT {
 
@@ -47,7 +48,7 @@ public class ProzessverwaltungFormIT {
 
         prozessverwaltungForm.setShowArchivedProjects(false);
         prozessverwaltungForm.setShowClosedProcesses(false);
-        prozessverwaltungForm.setModusAnzeige("aktuell");
+        prozessverwaltungForm.setDisplayMode(ObjectMode.PROCESS);
         prozessverwaltungForm.setFilter("id:2 3");
 
         prozessverwaltungForm.filterAll();
@@ -60,7 +61,7 @@ public class ProzessverwaltungFormIT {
         processDTOS = prozessverwaltungForm.getProcessDTOS();
         assertEquals("Amount of found processes is incorrect!", 2, processDTOS.size());
 
-        prozessverwaltungForm.setModusAnzeige("vorlagen");
+        prozessverwaltungForm.setDisplayMode(ObjectMode.TEMPLATE);
 
         prozessverwaltungForm.filterAll();
         processDTOS = prozessverwaltungForm.getProcessDTOS();
