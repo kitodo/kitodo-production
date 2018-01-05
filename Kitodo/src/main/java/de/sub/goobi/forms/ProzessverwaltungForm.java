@@ -2110,18 +2110,40 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
+    /**
+     * Get property for process.
+     *
+     * @return property for process
+     */
     public Property getProperty() {
         return this.property;
     }
 
+    /**
+     * Set property for process.
+     *
+     * @param property
+     *            for process as Property object
+     */
     public void setProperty(Property property) {
         this.property = property;
     }
 
+    /**
+     * Get list of process properties.
+     *
+     * @return list of process properties
+     */
     public List<Property> getProperties() {
-        return properties;
+        return this.properties;
     }
 
+    /**
+     * Set list of process properties.
+     *
+     * @param properties
+     *            for process as Property objects
+     */
     public void setProperties(List<Property> properties) {
         this.properties = properties;
     }

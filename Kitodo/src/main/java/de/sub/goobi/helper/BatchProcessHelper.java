@@ -30,6 +30,7 @@ public class BatchProcessHelper {
     private List<Property> properties;
     private Property property;
     private String processName;
+    private List<String> processNameList = new ArrayList<>();
 
     /**
      * Constructor.
@@ -47,16 +48,27 @@ public class BatchProcessHelper {
         loadProcessProperties();
     }
 
+    /**
+     * Get property for process.
+     *
+     * @return property for process
+     */
     public Property getProperty() {
         return this.property;
     }
 
+    /**
+     * Set property for process.
+     *
+     * @param property
+     *            for process as Property object
+     */
     public void setProperty(Property property) {
         this.property = property;
     }
 
     /**
-     * Get properties.
+     * Get list of process properties.
      *
      * @return list of process properties
      */
@@ -64,20 +76,49 @@ public class BatchProcessHelper {
         return this.properties;
     }
 
+    /**
+     * Set list of process properties.
+     *
+     * @param properties
+     *            for process as Property objects
+     */
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Get size of properties' list.
+     *
+     * @return size of properties' list
+     */
     public int getPropertiesSize() {
         return this.properties.size();
     }
 
-    private List<String> processNameList = new ArrayList<>();
-
+    /**
+     * Get list of process' names.
+     * 
+     * @return list of process' names as list of String objects
+     */
     public List<String> getProcessNameList() {
         return this.processNameList;
     }
 
+    /**
+     * Set list of process' names.
+     * 
+     * @param processNameList
+     *            as list of String objects
+     */
     public void setProcessNameList(List<String> processNameList) {
         this.processNameList = processNameList;
     }
 
+    /**
+     * Get process name.
+     * 
+     * @return process name as String
+     */
     public String getProcessName() {
         return this.processName;
     }

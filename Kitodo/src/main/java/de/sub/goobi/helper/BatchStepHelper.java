@@ -95,18 +95,49 @@ public class BatchStepHelper {
         this.currentStep = currentStep;
     }
 
+    /**
+     * Get property for process.
+     *
+     * @return property for process
+     */
     public Property getProperty() {
         return this.property;
     }
 
+    /**
+     * Set property for process.
+     *
+     * @param property
+     *            for process as Property object
+     */
     public void setProperty(Property property) {
         this.property = property;
     }
 
+    /**
+     * Get list of process properties.
+     *
+     * @return list of process properties
+     */
     public List<Property> getProperties() {
         return this.properties;
     }
 
+    /**
+     * Set list of process properties.
+     *
+     * @param properties
+     *            for process as Property objects
+     */
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Get size of properties' list.
+     *
+     * @return size of properties' list
+     */
     public int getPropertiesSize() {
         return this.properties.size();
     }
