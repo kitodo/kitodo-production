@@ -103,7 +103,7 @@
                                                     <h:outputText id="id4a" value="#{msgs.eigenschaften}"/>
                                                 </h4>
                                                 <h:form>
-                                                    <ui:fragment rendered="#{BatchForm.modusBearbeiten!='eigenschaft' and BatchForm.batchHelper.propertyListSize>0}">
+                                                    <ui:fragment rendered="#{BatchForm.modusBearbeiten!='eigenschaft' and BatchForm.batchHelper.propertiesSize>0}">
                                                         <table cellspacing="1px" cellpadding="1px" width="100%"
                                                                    class="standardTable">
 
@@ -120,46 +120,29 @@
                                                                     </th>
                                                                 </tr>
                                                             </thead>
-
-
-                                                                <t:dataList var="proc"
-                                                                            value="#{BatchForm.batchHelper.containerlessProperties}"
+                                                                <t:dataList var="property"
+                                                                            value="#{BatchForm.batchHelper.properties}"
                                                                             rowCountVar="propCount" rowIndexVar="propInd">
-                                                                    <ui:fragment rendered="#{container!=0 }">
-                                                                        <tr class="standardTable_Row1">
-                                                                            <td>
-                                                                                <h:outputText value="#{proc.name}"/>
-                                                                            </td>
-                                                                            <td>
-                                                                                <h:outputText value="#{proc.value}"/>
-                                                                            </td>
-                                                                            <td class="standardTable_ColumnCentered">
-
-                                                                                <h:commandLink action="#{NavigationForm.Reload}" title="#{msgs.bearbeiten}">
-                                                                                    <h:graphicImage alt="edit"
-                                                                                            value="/pages/images/buttons/edit.gif"/>
-                                                                                    <t:updateActionListener
-                                                                                            property="#{BatchForm.batchHelper.processProperty}"
-                                                                                            value="#{proc}"/>
-                                                                                    <t:updateActionListener
-                                                                                            property="#{BatchForm.batchHelper.container}"
-                                                                                            value="0"/>
-                                                                                    <t:updateActionListener
-                                                                                            property="#{BatchForm.modusBearbeiten}"
-                                                                                            value="eigenschaft"/>
-                                                                                </h:commandLink>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </ui:fragment>
-                                                                </t:dataList>
-
-                                                                <ui:fragment rendered="#{rowIndex lt rowCount and rowIndex != 0}">
-                                                                    <tr>
-                                                                        <td colspan="3" class="standardTable_Row1">
-                                                                            <h:outputText value="&#160;" escape="false"/>
+                                                                    <tr class="standardTable_Row1">
+                                                                        <td>
+                                                                            <h:outputText value="#{property.title}"/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <h:outputText value="#{property.value}"/>
+                                                                        </td>
+                                                                        <td class="standardTable_ColumnCentered">
+                                                                            <h:commandLink action="#{NavigationForm.Reload}" title="#{msgs.bearbeiten}">
+                                                                                <h:graphicImage alt="edit" value="/pages/images/buttons/edit.gif"/>
+                                                                                <t:updateActionListener
+                                                                                        property="#{BatchForm.batchHelper.property}"
+                                                                                        value="#{property}"/>
+                                                                                <t:updateActionListener
+                                                                                        property="#{BatchForm.modusBearbeiten}"
+                                                                                        value="eigenschaft"/>
+                                                                            </h:commandLink>
                                                                         </td>
                                                                     </tr>
-                                                                </ui:fragment>
+                                                                </t:dataList>
                                                         </table>
                                                     </ui:fragment>
 
@@ -183,19 +166,19 @@
                                                                     <table>
 
                                                                         <t:dataList var="myprocess_item"
-                                                                                    value="#{BatchForm.batchHelper.containerProperties}">
+                                                                                    value="#{BatchForm.batchHelper.properties}">
 
                                                                             <!-- 	<x:aliasBean alias="#{myprocess_item}" value="#{BatchForm.batchHelper.processProperty}">-->
                                                                             <tr>
                                                                                 <td>
                                                                                     <h:outputText id="eigenschafttitel"
                                                                                                   style="margin-right:15px"
-                                                                                                  value="#{myprocess_item.name}: "/>
+                                                                                                  value="#{myprocess_item.title}: "/>
                                                                                 </td>
                                                                                 <td>
                                                                                     <!-- textarea -->
                                                                                     <h:panelGroup id="prpvw15_1"
-                                                                                                  rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null'))}">
+                                                                                                  rendered="#{((myprocess_item.type.name == 'string') || (myprocess_item.type.name == 'null'))}">
                                                                                         <h:inputText id="file"
                                                                                                      style="margin-right:15px"
                                                                                                      value="#{myprocess_item.value}"/>
@@ -220,11 +203,11 @@
                                                                                                 value="#{myprocess_item.value}"
                                                                                                 style="margin-right:15px"
                                                                                                 id="prpvw15_2_1">
-                                                                                            <f:selectItems id="prpvw15_2_2"
+                                                                                            <!--<f:selectItems id="prpvw15_2_2"
                                                                                                             value="#{myprocess_item.possibleValues}"
                                                                                                             var="myprocess_items"
                                                                                                             itemLabel="#{myprocess_items}"
-                                                                                                            itemValue="#{myprocess_items}"/>
+                                                                                                            itemValue="#{myprocess_items}"/>-->
                                                                                         </h:selectOneMenu>
                                                                                     </h:panelGroup>
 
@@ -235,11 +218,11 @@
                                                                                                              style="margin-right:15px"
                                                                                                              value="#{myprocess_item.valueList}"
                                                                                                              size="5">
-                                                                                            <f:selectItems id="prpvw15_3_2"
+                                                                                            <!--<f:selectItems id="prpvw15_3_2"
                                                                                                             value="#{myprocess_item.possibleValues}"
                                                                                                             var="myprocess_items"
                                                                                                             itemLabel="#{myprocess_items}"
-                                                                                                            itemValue="#{myprocess_items}"/>
+                                                                                                            itemValue="#{myprocess_items}"/>-->
                                                                                         </h:selectManyListbox>
                                                                                     </h:panelGroup>
 
@@ -247,7 +230,7 @@
                                                                                     <h:panelGroup id="prpvw15_4"
                                                                                                   rendered="#{(myprocess_item.type.name == 'boolean')}">
                                                                                         <h:selectBooleanCheckbox
-                                                                                                value="#{myprocess_item.booleanValue}"/>
+                                                                                                value="#{myprocess_item.value}"/>
                                                                                         <!-- 			<h:selectOneMenu value="#{myprocess_item.booleanValue}" style="margin-right:15px" id="prpvw15_4_1">
                                                                                         <f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
                                                                                         <f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
