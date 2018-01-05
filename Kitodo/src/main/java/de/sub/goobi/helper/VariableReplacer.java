@@ -25,8 +25,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.properties.ProcessProperty;
-import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -190,9 +188,9 @@ public class VariableReplacer {
             // replace Prozesseigenschaft, usage: (process.PROPERTYTITLE)
             for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
-                List<ProcessProperty> ppList = PropertyParser.getPropertiesForProcess(this.process);
-                for (ProcessProperty pe : ppList) {
-                    if (pe.getName().equalsIgnoreCase(propertyTitle)) {
+                List<Property> ppList = this.process.getProperties();
+                for (Property pe : ppList) {
+                    if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
                         inString = inString.replace(r.group(), pe.getValue());
                         break;
                     }
