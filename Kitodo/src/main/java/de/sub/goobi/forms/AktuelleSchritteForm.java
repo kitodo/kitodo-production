@@ -17,7 +17,6 @@ import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
@@ -27,15 +26,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
@@ -48,9 +43,6 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.properties.AccessCondition;
-import org.goobi.production.properties.ProcessProperty;
-import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
@@ -95,10 +87,8 @@ public class AktuelleSchritteForm extends BasisForm {
     private Boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private BatchStepHelper batchHelper;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
-    private Integer container;
-    private List<ProcessProperty> processPropertyList;
-    private ProcessProperty processProperty;
+    private List<Property> properties;
+    private Property property;
     private transient ServiceManager serviceManager = new ServiceManager();
     private int stepId;
 
@@ -297,8 +287,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String takeOverBatch() {
         // find all steps with same batch id and step status
-        List<Task> currentStepsOfBatch = new ArrayList<>();
-
+        List<Task> currentStepsOfBatch;
         String taskTitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
                 Type.LOGISTIC);
@@ -375,8 +364,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String batchesEdit() {
         // find all steps with same batch id and step status
-        List<Task> currentStepsOfBatch = new ArrayList<>();
-
+        List<Task> currentStepsOfBatch;
         String taskTitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
                 Type.LOGISTIC);
@@ -488,7 +476,7 @@ public class AktuelleSchritteForm extends BasisForm {
             }
         }
 
-        for (ProcessProperty prop : processPropertyList) {
+        /*for (ProcessProperty prop : processPropertyList) {
             if (prop.getCurrentStepAccessCondition().equals(AccessCondition.WRITEREQUIRED)
                     && (prop.getValue() == null || prop.getValue().equals(""))) {
                 Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " "
@@ -500,7 +488,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 Helper.setFehlerMeldung(Helper.getTranslation("PropertyValidation", parameter));
                 return null;
             }
-        }
+        }*/
 
         /*
          * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten
@@ -1095,6 +1083,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
+            //TODO: why this not used variable is here?
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             this.mySchritt.setProcess(serviceManager.getProcessService().addToWikiField(this.addToWikiField,
                     this.mySchritt.getProcess()));
@@ -1107,107 +1096,24 @@ public class AktuelleSchritteForm extends BasisForm {
         }
     }
 
-    // TODO property
-
-    public ProcessProperty getProcessProperty() {
-        return this.processProperty;
+    public Property getProperty() {
+        return this.property;
     }
 
-    public void setProcessProperty(ProcessProperty processProperty) {
-        this.processProperty = processProperty;
+    public void setProperty(Property property) {
+        this.property = property;
     }
 
-    public List<ProcessProperty> getProcessProperties() {
-        return this.processPropertyList;
+    public List<Property> getProperties() {
+        return this.properties;
     }
 
-    private void loadProcessProperties() {
-        this.containers = new TreeMap<>();
-        this.processPropertyList = PropertyParser.getPropertiesForStep(this.mySchritt);
-
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.mySchritt.getProcess());
-                pt.setProzesseigenschaft(processProperty);
-                this.mySchritt.getProcess().getProperties().add(processProperty);
-                pt.transfer();
-            }
-            if (!this.containers.keySet().contains(pt.getContainer())) {
-                PropertyListObject plo = new PropertyListObject(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            } else {
-                PropertyListObject plo = this.containers.get(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            }
-        }
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
     }
 
-    /**
-     * Save current property.
-     */
-    public void saveCurrentProperty() {
-        List<ProcessProperty> ppList = getContainerProperties();
-        for (ProcessProperty pp : ppList) {
-            this.processProperty = pp;
-            if (isValidProcessProperty()) {
-                if (this.processProperty.getProzesseigenschaft() == null) {
-                    Property processProperty = new Property();
-                    processProperty.getProcesses().add(this.mySchritt.getProcess());
-                    this.processProperty.setProzesseigenschaft(processProperty);
-                    this.myProcess.getProperties().add(processProperty);
-                }
-                this.processProperty.transfer();
-            } else {
-                return;
-            }
-
-            this.mySchritt.getProcess().getProperties().add(this.processProperty.getProzesseigenschaft());
-            this.processProperty.getProzesseigenschaft().getProcesses().add(this.mySchritt.getProcess());
-            try {
-                this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-                this.serviceManager.getPropertyService().save(this.processProperty.getProzesseigenschaft());
-                Helper.setMeldung("propertySaved");
-            } catch (DataException e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("propertyNotSaved");
-            }
-        }
-        loadProcessProperties();
-    }
-
-    private boolean isValidProcessProperty() {
-        if (this.processProperty.isValid()) {
-            return true;
-        } else {
-            String value = Helper.getTranslation("propertyNotValid",
-                    Arrays.asList(new String[] {processProperty.getName() }));
-            Helper.setFehlerMeldung(value);
-            Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
-            return false;
-        }
-    }
-
-    public Map<Integer, PropertyListObject> getContainers() {
-        return this.containers;
-    }
-
-    public List<Integer> getContainerList() {
-        return new ArrayList<>(this.containers.keySet());
-    }
-
-    /**
-     * Get size of properties list.
-     *
-     * @return size
-     */
-    public int getPropertyListSize() {
-        if (this.processPropertyList == null) {
-            return 0;
-        }
-        return this.processPropertyList.size();
+    public int getPropertiesSize() {
+        return this.properties.size();
     }
 
     /**
@@ -1215,20 +1121,48 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return list of sorted properties
      */
-    public List<ProcessProperty> getSortedProperties() {
-        Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
-        Collections.sort(this.processPropertyList, comp);
-        return this.processPropertyList;
+    public List<Property> getSortedProperties() {
+        Collections.sort(this.properties);
+        return this.properties;
+    }
+
+    private void loadProcessProperties() {
+        serviceManager.getProcessService().refresh(this.myProcess);
+        setProperties(this.myProcess.getProperties());
+    }
+
+    /**
+     * Save current property.
+     */
+    public void saveCurrentProperty() {
+        try {
+            serviceManager.getPropertyService().save(this.property);
+            if (!this.myProcess.getProperties().contains(this.property)) {
+                this.myProcess.getProperties().add(this.property);
+            }
+            serviceManager.getProcessService().save(this.myProcess);
+            Helper.setMeldung("propertiesSaved");
+        } catch (DataException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("propertiesNotSaved");
+        }
+        loadProcessProperties();
     }
 
     /**
      * Duplicate property.
      */
     public void duplicateProperty() {
-        ProcessProperty pt = this.processProperty.getClone(0);
-        this.processPropertyList.add(pt);
-        this.processProperty = pt;
-        saveCurrentProperty();
+        Property newProperty = serviceManager.getPropertyService().transfer(this.property);
+        try {
+            newProperty.getProcesses().add(this.myProcess);
+            this.myProcess.getProperties().add(newProperty);
+            serviceManager.getPropertyService().save(newProperty);
+            Helper.setMeldung("propertySaved");
+        } catch (DataException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("propertiesNotSaved");
+        }
         loadProcessProperties();
     }
 
@@ -1238,112 +1172,6 @@ public class AktuelleSchritteForm extends BasisForm {
 
     public void setBatchHelper(BatchStepHelper batchHelper) {
         this.batchHelper = batchHelper;
-    }
-
-    /**
-     * Get containerless properties.
-     *
-     * @return list of properties
-     */
-    public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-        for (ProcessProperty pp : this.processPropertyList) {
-            if (pp.getContainer() == 0) {
-                answer.add(pp);
-            }
-        }
-        return answer;
-    }
-
-    public Integer getContainer() {
-        return this.container;
-    }
-
-    /**
-     * Set container.
-     *
-     * @param container
-     *            Integer
-     */
-    public void setContainer(Integer container) {
-        this.container = container;
-        if (container != null && container > 0) {
-            this.processProperty = getContainerProperties().get(0);
-        }
-    }
-
-    /**
-     * Get container properties.
-     *
-     * @return list of properties
-     */
-    public List<ProcessProperty> getContainerProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-        // int currentContainer = this.processProperty.getContainer();
-
-        if (this.container != null && this.container > 0) {
-            for (ProcessProperty pp : this.processPropertyList) {
-                if (pp.getContainer() == this.container) {
-                    answer.add(pp);
-                }
-            }
-        } else {
-            answer.add(this.processProperty);
-        }
-
-        return answer;
-    }
-
-    /**
-     * Duplicate container.
-     *
-     * @return String
-     */
-    public String duplicateContainer() {
-        Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<>();
-        // search for all properties in container
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getContainer() == currentContainer) {
-                plist.add(pt);
-            }
-        }
-        int newContainerNumber = 0;
-        if (currentContainer > 0) {
-            newContainerNumber++;
-            // find new unused container number
-            boolean search = true;
-            while (search) {
-                if (!this.containers.containsKey(newContainerNumber)) {
-                    search = false;
-                } else {
-                    newContainerNumber++;
-                }
-            }
-        }
-        // clone properties
-        for (ProcessProperty pt : plist) {
-            ProcessProperty newProp = pt.getClone(newContainerNumber);
-            this.processPropertyList.add(newProp);
-            this.processProperty = newProp;
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.mySchritt.getProcess());
-                this.processProperty.setProzesseigenschaft(processProperty);
-                this.mySchritt.getProcess().getProperties().add(processProperty);
-            }
-            this.processProperty.transfer();
-
-        }
-        try {
-            this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-            Helper.setMeldung("propertySaved");
-        } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
-        }
-        loadProcessProperties();
-        return null;
     }
 
     public boolean getShowAutomaticTasks() {

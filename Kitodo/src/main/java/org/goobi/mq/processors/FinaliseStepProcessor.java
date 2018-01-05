@@ -19,8 +19,7 @@ import java.util.Map;
 
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
-import org.goobi.production.properties.AccessCondition;
-import org.goobi.production.properties.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -79,22 +78,15 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      *            A Map with the properties to set
      */
     protected void updateProperties(AktuelleSchritteForm dialog, Map<String, String> propertiesToSet) {
-        List<ProcessProperty> availableProperties = dialog.getProcessProperties();
+        List<Property> availableProperties = dialog.getProperties();
         for (int position = 0; position < availableProperties.size(); position++) {
-            ProcessProperty propertyAtPosition = availableProperties.get(position);
-            String key = propertyAtPosition.getName();
+            Property propertyAtPosition = availableProperties.get(position);
+            String key = propertyAtPosition.getTitle();
             if (propertiesToSet.containsKey(key)) {
                 String desiredValue = propertiesToSet.get(key);
-                AccessCondition permissions = propertyAtPosition.getCurrentStepAccessCondition();
-                if (AccessCondition.WRITE.equals(permissions) || AccessCondition.WRITEREQUIRED.equals(permissions)) {
-                    propertyAtPosition.setValue(desiredValue);
-                    if (dialog.getContainer() == null || dialog.getContainer() == 0) {
-                        dialog.setProcessProperty(propertyAtPosition);
-                    } else {
-                        availableProperties.set(position, propertyAtPosition);
-                    }
-                    dialog.saveCurrentProperty();
-                }
+                propertyAtPosition.setValue(desiredValue);
+                dialog.setProperty(propertyAtPosition);
+                dialog.saveCurrentProperty();
             }
         }
     }

@@ -23,7 +23,7 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui"
     >
-    <h:form id="propform2" rendered="#{AktuelleSchritteForm.propertyListSize>0}">
+    <h:form id="propform2" rendered="#{AktuelleSchritteForm.propertiesSize>0}">
         <!-- Box für die Bearbeitung der Details -->
         <!--
         <htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
@@ -61,7 +61,7 @@
 
         </x:dataTable>
         -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' and AktuelleSchritteForm.propertyListSize>0}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' and AktuelleSchritteForm.propertiesSize>0}">
             <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
                 <thead class="standardTable_Header">
                     <tr>
@@ -76,102 +76,37 @@
                         </th>
                     </tr>
                 </thead>
-                <t:dataList var="container" value="#{AktuelleSchritteForm.containerList}" rowCountVar="rowCount"
-                            rowIndexVar="rowIndex">
-                    <t:dataList var="proc" value="#{AktuelleSchritteForm.containerlessProperties}" rowCountVar="propCount"
+                    <t:dataList var="property" value="#{AktuelleSchritteForm.properties}" rowCountVar="propCount"
                                 rowIndexVar="propInd">
-                        <ui:fragment rendered="#{container==0 }">
-                            <tr class="standardTable_Row1">
-                                <td>
-                                    <h:outputText value="#{proc.name}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{proc.value}" rendered="#{proc.type.name !=  'link'}"/>
+                        <tr class="standardTable_Row1">
+                            <td>
+                                <h:outputText value="#{property.title}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{property.value}" rendered="#{property.type.name !=  'link'}"/>
 
-                                    <h:outputLink title="#{proc.value}" value="#{proc.value}"
-                                                  rendered="#{proc.type.name ==  'link'}" target="_blank">
-                                        <h:outputText value="#{proc.value}"/>
-                                    </h:outputLink>
-                                </td>
-                                <td class="standardTable_ColumnCentered">
-
-                                    <h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}"
-                                                   rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id and proc.currentStepAccessCondition != 'READ'}">
-                                        <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
-                                        <t:updateActionListener property="#{AktuelleSchritteForm.processProperty}" value="#{proc}"/>
-                                        <t:updateActionListener property="#{AktuelleSchritteForm.container}" value="0"/>
-                                        <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
+                                <h:outputLink title="#{property.value}" value="#{property.value}"
+                                                  rendered="#{property.type.name ==  'link'}" target="_blank">
+                                    <h:outputText value="#{property.value}"/>
+                                </h:outputLink>
+                            </td>
+                            <td class="standardTable_ColumnCentered">
+                                <h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
+                                    <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
+                                    <t:updateActionListener property="#{AktuelleSchritteForm.property}" value="#{property}"/>
+                                    <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
                                                                 value="eigenschaft"/>
-                                        <f:ajax render="editBatch"/>
-                                    </h:commandLink>
+                                    <f:ajax render="editBatch"/>
+                                </h:commandLink>
 
-
-                                    <h:commandLink action="#{AktuelleSchritteForm.duplicateProperty}" title="#{msgs.duplicate}"
-                                                   rendered="#{proc.duplicationAllowed}">
-                                        <h:graphicImage value="/pages/images/buttons/copy.gif" alt="copy"/>
-                                        <t:updateActionListener property="#{AktuelleSchritteForm.processProperty}" value="#{proc}"/>
-                                        <t:updateActionListener property="#{AktuelleSchritteForm.container}" value="0"/>
-                                    </h:commandLink>
-
-
-                                </td>
-                            </tr>
-                        </ui:fragment>
-                    </t:dataList>
-
-                    <ui:fragment rendered="#{rowIndex lt rowCount and rowIndex != 0}">
-                        <tr>
-                            <td colspan="3" class="standardTable_Row1">
-                                <h:outputText value="&#160;" escape="false"/>
+                                <h:commandLink action="#{AktuelleSchritteForm.duplicateProperty}" title="#{msgs.duplicate}">
+                                    <h:graphicImage value="/pages/images/buttons/copy.gif" alt="copy"/>
+                                    <t:updateActionListener property="#{AktuelleSchritteForm.property}" value="#{property}"/>
+                                </h:commandLink>
                             </td>
                         </tr>
-                    </ui:fragment>
-
-                    <t:dataList var="process_item" value="#{AktuelleSchritteForm.containers[container].propertyList}"
-                                rowCountVar="propCount" rowIndexVar="propInd">
-                        <ui:fragment rendered="#{container!=0 }">
-                            <tr class="standardTable_Row1">
-                                <td>
-                                    <h:outputText value="#{process_item.name}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{process_item.value}" rendered="#{process_item.type.name !=  'link'}"/>
-                                    <h:outputLink title="#{process_item.value}" value="#{process_item.value}"
-                                                  rendered="#{process_item.type.name ==  'link'}" target="_blank">
-                                        <h:outputText value="#{process_item.value}"/>
-                                    </h:outputLink>
-                                    <!-- 						<h:outputText value="#{process_item.value}" /> -->
-                                </td>
-                                <ui:fragment rendered="#{propInd ==0}">
-                                    <td class="standardTable_ColumnCentered"
-                                            rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}">
-                                        <h:panelGroup
-                                                rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id and process_item.currentStepAccessCondition != 'READ'}">
-                                            <h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}">
-                                                <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
-                                                <t:updateActionListener property="#{AktuelleSchritteForm.container}"
-                                                                        value="#{container}"/>
-                                                <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
-                                                                        value="eigenschaft"/>
-                                                <f:ajax render="editBatch"/>
-                                            </h:commandLink>
-
-
-                                            <h:commandLink action="#{AktuelleSchritteForm.duplicateContainer}" title="#{msgs.duplicate}"
-                                                           rendered="#{process_item.duplicationAllowed}">
-                                                <h:graphicImage value="/pages/images/buttons/copy.gif" alt="edit"/>
-                                                <t:updateActionListener property="#{AktuelleSchritteForm.container}"
-                                                                        value="#{container}"/>
-                                            </h:commandLink>
-
-                                        </h:panelGroup>
-                                    </td>
-                                </ui:fragment>
-                            </tr>
-                        </ui:fragment>
                     </t:dataList>
-
-                </t:dataList>
             </table>
         </ui:fragment>
 
@@ -188,21 +123,20 @@
                     <td class="eingabeBoxen_row2" colspan="2">
                         <table>
 
-                            <t:dataList var="myprocess_item" value="#{AktuelleSchritteForm.containerProperties}">
+                            <t:dataList var="myprocess_item" value="#{AktuelleSchritteForm.properties}">
 
                                 <!-- 	<t:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.processProperty}">-->
                                 <tr>
                                     <td>
                                         <h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px"
-                                                      value="#{myprocess_item.name}: "/>
+                                                      value="#{myprocess_item.title}: "/>
                                     </td>
                                     <td>
                                         <!-- textarea -->
                                         <h:panelGroup id="prpvw15_1"
-                                                      rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null') || (myprocess_item.type.name == 'link'))}">
+                                                      rendered="#{((myprocess_item.type.name == 'string') || (myprocess_item.type.name == 'null') || (myprocess_item.type.name == 'link'))}">
                                             <h:inputText id="file" style="width: 500px;margin-right:15px"
-                                                         value="#{myprocess_item.value}"
-                                                         readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}"/>
+                                                         value="#{myprocess_item.value}"/>
                                         </h:panelGroup>
 
                                         <!-- numbers only -->
@@ -210,8 +144,7 @@
                                                       rendered="#{myprocess_item.type.name == 'integer' || myprocess_item.type.name == 'number'}">
 
                                             <h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px"
-                                                         value="#{myprocess_item.value}"
-                                                         readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
+                                                         value="#{myprocess_item.value}">
                                                 <f:validateLongRange minimum="0"/>
                                             </h:inputText>
                                         </h:panelGroup>
@@ -219,11 +152,10 @@
                                         <!--  SelectOneMenu -->
                                         <h:panelGroup id="prpvw15_2" rendered="#{(myprocess_item.type.name == 'list')}">
                                             <h:selectOneMenu value="#{myprocess_item.value}"
-                                                             style="width: 500px;margin-right:15px" id="prpvw15_2_1"
-                                                             readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
-                                                <f:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}"
+                                                             style="width: 500px;margin-right:15px" id="prpvw15_2_1">
+                                                <!--<f:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}"
                                                                 var="myprocess_items" itemLabel="#{myprocess_items}"
-                                                                itemValue="#{myprocess_items}"/>
+                                                                itemValue="#{myprocess_items}"/>-->
                                             </h:selectOneMenu>
                                         </h:panelGroup>
 
@@ -231,23 +163,21 @@
                                         <h:panelGroup id="prpvw15_3"
                                                       rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
                                             <h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px"
-                                                                 value="#{myprocess_item.valueList}" size="5"
-                                                                 readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
-                                                <f:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}"
+                                                                 value="#{myprocess_item.valueList}" size="5">
+                                                <!--<f:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}"
                                                                 var="myprocess_items" itemLabel="#{myprocess_items}"
-                                                                itemValue="#{myprocess_items}"/>
+                                                                itemValue="#{myprocess_items}"/>-->
                                             </h:selectManyListbox>
                                         </h:panelGroup>
 
                                         <!--  Boolean -->
                                         <h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
-                                            <h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}"
-                                                                     readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}"/>
+                                            <h:selectBooleanCheckbox value="#{myprocess_item.value}"/>
                                         </h:panelGroup>
 
                                         <!--  Date  -->
                                         <h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
-                                            <p:calendar id="prpvw15_5_1" value="#{myprocess_item.dateValue}"
+                                            <p:calendar id="prpvw15_5_1" value="#{myprocess_item.value}"
                                                         locale="#{SpracheForm.locale}" navigator="true"
                                                         pattern="dd.MM.yyyy"  style="width: 500px;margin-right:15px" />
                                         </h:panelGroup>
