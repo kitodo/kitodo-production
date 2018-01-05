@@ -217,9 +217,10 @@
                                                         </h:panelGroup>
 
                                                         <h:panelGroup id="id43">
-                                                            <p:commandLink value="#{msgs.benutzergruppenHinzufuegen}"
-                                                                           oncomplete="PF('addUserToUserGroupDialog').show()"
-                                                                           styleClass="standardlink"/>
+                                                            <button onclick="PF('addUserToUserGroupDialog').show()"
+                                                                    type="button">
+                                                                <h:outputText value="#{msgs.benutzergruppenHinzufuegen}"/>
+                                                            </button>
                                                             <p:dialog widgetVar="addUserToUserGroupDialog" header="#{msgs.benutzergruppenHinzufuegen}"
                                                                       height="380px" width="430px"
                                                                       dynamic="true" modal="true"
