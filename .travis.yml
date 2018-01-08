@@ -14,6 +14,11 @@ sudo: required
 
 addons:
   firefox: "55.0"
+  apt:
+      sources:
+        - mysql-5.7-trusty
+      packages:
+        - mysql-server
 
 env: DB=mysql
 
@@ -31,6 +36,8 @@ before_install:
 before_script:
   - cp config/database.yml.travis config/database.yml
   - cp Kitodo-DataManagement/src/main/resources/db/config/flyway.properties.travis Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+  - sudo mysql_upgrade -u root
+  - sudo service mysql restart
   - mysql -u root -e 'CREATE DATABASE kitodo;'
   - mysql -u root -e "CREATE USER 'kitodo'@'localhost' IDENTIFIED BY 'kitodo';"
   - mysql -u root -e "GRANT ALL ON kitodo.* TO 'kitodo'@'localhost';"

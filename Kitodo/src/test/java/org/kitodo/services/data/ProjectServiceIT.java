@@ -31,6 +31,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -117,26 +118,31 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldRemoveProject() throws Exception {
+    public void shouldRemoveProjectById() throws Exception {
         Project project = new Project();
         project.setTitle("To Remove");
         projectService.save(project);
-        Project foundProject = projectService.getById(4);
+        Integer projectId = project.getId();
+        Project foundProject = projectService.getById(projectId);
         assertEquals("Additional project was not inserted in database!", "To Remove", foundProject.getTitle());
 
         projectService.remove(foundProject);
         exception.expect(DAOException.class);
-        projectService.getById(4);
+        projectService.getById(projectId);
+    }
 
-        project = new Project();
+    @Test
+    public void shouldRemoveProjectByObject() throws Exception {
+        Project project = new Project();
         project.setTitle("To remove");
         projectService.save(project);
-        foundProject = projectService.getById(5);
+        Integer projectId = project.getId();
+        Project foundProject = projectService.getById(projectId);
         assertEquals("Additional project was not inserted in database!", "To remove", foundProject.getTitle());
 
-        projectService.remove(5);
+        projectService.remove(projectId);
         exception.expect(DAOException.class);
-        projectService.getById(5);
+        projectService.getById(projectId);
     }
 
     @Test
@@ -225,5 +231,13 @@ public class ProjectServiceIT {
         List<StepInformation> expected = new ArrayList<>();
         List<StepInformation> actual = projectService.getWorkFlow(project);
         assertEquals("Work flow doesn't match to given work flow!", expected, actual);
+    }
+
+    @Test
+    public void shouldNotSaveProjectWithAlreadyExistingTitle() throws DataException {
+        Project project = new Project();
+        project.setTitle("First project");
+        exception.expect(DataException.class);
+        projectService.save(project);
     }
 }

@@ -31,12 +31,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -64,6 +67,9 @@ public class UserServiceIT {
     public void multipleInit() throws InterruptedException {
         Thread.sleep(500);
     }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountAllUsers() throws Exception {
@@ -494,4 +500,11 @@ public class UserServiceIT {
         assertEquals("Authorization title is incorrect!","admin",authorization.getTitle());
     }
 
+    @Test
+    public void shouldNotSaveUserWithSameLogin() throws DataException {
+        User newUser = new User();
+        newUser.setLogin("kowal");
+        exception.expect(DataException.class);
+        userService.save(newUser);
+    }
 }
