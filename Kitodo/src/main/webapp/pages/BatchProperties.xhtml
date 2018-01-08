@@ -196,46 +196,14 @@
                                                                                         </h:inputText>
                                                                                     </h:panelGroup>
 
-                                                                                    <!--  SelectOneMenu -->
-                                                                                    <h:panelGroup id="prpvw15_2"
-                                                                                                  rendered="#{(myprocess_item.type.name == 'list')}">
-                                                                                        <h:selectOneMenu
-                                                                                                value="#{myprocess_item.value}"
-                                                                                                style="margin-right:15px"
-                                                                                                id="prpvw15_2_1">
-                                                                                            <!--<f:selectItems id="prpvw15_2_2"
-                                                                                                            value="#{myprocess_item.possibleValues}"
-                                                                                                            var="myprocess_items"
-                                                                                                            itemLabel="#{myprocess_items}"
-                                                                                                            itemValue="#{myprocess_items}"/>-->
-                                                                                        </h:selectOneMenu>
-                                                                                    </h:panelGroup>
-
-                                                                                    <!--  SelectManyMenu -->
-                                                                                    <h:panelGroup id="prpvw15_3"
-                                                                                                  rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
-                                                                                        <h:selectManyListbox id="prpvw15_3_1"
-                                                                                                             style="margin-right:15px"
-                                                                                                             value="#{myprocess_item.valueList}"
-                                                                                                             size="5">
-                                                                                            <!--<f:selectItems id="prpvw15_3_2"
-                                                                                                            value="#{myprocess_item.possibleValues}"
-                                                                                                            var="myprocess_items"
-                                                                                                            itemLabel="#{myprocess_items}"
-                                                                                                            itemValue="#{myprocess_items}"/>-->
-                                                                                        </h:selectManyListbox>
-                                                                                    </h:panelGroup>
-
                                                                                     <!--  Boolean -->
                                                                                     <h:panelGroup id="prpvw15_4"
                                                                                                   rendered="#{(myprocess_item.type.name == 'boolean')}">
-                                                                                        <h:selectBooleanCheckbox
-                                                                                                value="#{myprocess_item.value}"/>
-                                                                                        <!-- 			<h:selectOneMenu value="#{myprocess_item.booleanValue}" style="margin-right:15px" id="prpvw15_4_1">
+                                                                                        <h:selectBooleanCheckbox value="#{myprocess_item.value}"/>
+                                                                                        <h:selectOneMenu value="#{myprocess_item.value}" style="margin-right:15px" id="prpvw15_4_1">
                                                                                         <f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
                                                                                         <f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
                                                                                     </h:selectOneMenu>
-                                                                                        -->
                                                                                     </h:panelGroup>
 
                                                                                     <!--  Date  -->

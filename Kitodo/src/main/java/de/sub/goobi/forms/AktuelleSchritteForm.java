@@ -175,14 +175,18 @@ public class AktuelleSchritteForm extends BasisForm {
         if (this.sortierung.equals("prozessDesc")) {
             sort += ", " + SortBuilders.fieldSort("process").order(SortOrder.DESC).toString();
         }
-        /*
-         * if (this.sortierung.equals("batchAsc")) { order = Order.asc("proc.batchID");
-         * } if (this.sortierung.equals("batchDesc")) { order =
-         * Order.desc("proc.batchID"); } if (this.sortierung.equals("prozessdateAsc")) {
-         * order = Order.asc("proc.creationDate"); } if
-         * (this.sortierung.equals("prozessdateDesc")) { order =
-         * Order.desc("proc.creationDate"); }
-         */
+        /*if (this.sortierung.equals("batchAsc")) {
+            order = Order.asc("proc.batchID");
+        }
+        if (this.sortierung.equals("batchDesc")) {
+            order = Order.desc("proc.batchID");
+        }
+        if (this.sortierung.equals("prozessdateAsc")) {
+            order = Order.asc("proc.creationDate");
+        }
+        if (this.sortierung.equals("prozessdateDesc")) {
+            order = Order.desc("proc.creationDate");
+        }*/
         if (this.sortierung.equals("projektAsc")) {
             sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
         }
@@ -472,21 +476,6 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
             }
         }
-
-        /*for (ProcessProperty prop : processPropertyList) {
-            if (prop.getCurrentStepAccessCondition().equals(AccessCondition.WRITEREQUIRED)
-                    && (prop.getValue() == null || prop.getValue().equals(""))) {
-                Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " "
-                        + Helper.getTranslation("requiredValue"));
-                return null;
-            } else if (!prop.isValid()) {
-                List<String> parameter = new ArrayList<>();
-                parameter.add(prop.getName());
-                Helper.setFehlerMeldung(Helper.getTranslation("PropertyValidation", parameter));
-                return null;
-            }
-        }*/
-
         /*
          * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten schon
          * vorher draussen
