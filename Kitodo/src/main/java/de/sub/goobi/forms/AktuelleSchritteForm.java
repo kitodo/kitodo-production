@@ -1120,16 +1120,6 @@ public class AktuelleSchritteForm extends BasisForm {
         return this.properties.size();
     }
 
-    /**
-     * Get sorted properties.
-     *
-     * @return list of sorted properties
-     */
-    public List<Property> getSortedProperties() {
-        Collections.sort(this.properties);
-        return this.properties;
-    }
-
     private void loadProcessProperties() {
         serviceManager.getProcessService().refresh(this.myProcess);
         setProperties(this.myProcess.getProperties());

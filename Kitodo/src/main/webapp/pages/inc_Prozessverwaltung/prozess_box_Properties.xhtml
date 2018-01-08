@@ -72,37 +72,6 @@
                     </td>
                 </tr>
             </t:dataList>
-
-            <!--
-            <t:dataList var="process_item" value="#{ProzessverwaltungForm.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
-
-                <tr rendered="#{container != 0 and process_item.container==container}" class="standardTable_Row1">
-
-                    <td>
-                        <h:outputText value="#{process_item.name}" />
-                    </td>
-                    <td>
-                        <h:outputText value="#{process_item.value}" />
-                    </td>
-
-                    <td class="standardTable_ColumnCentered" rowspan="''+#{ProzessverwaltungForm.containers[container]}" rendered="#{cont != container }">
-
-                        <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
-                            <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
-                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}" />
-                            <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft" />
-
-                        </h:commandLink>
-
-                        <h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}">
-                            <h:graphicImage value="/pages/images/buttons/copy.gif" alt="copy"/>
-                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}" />
-                        </h:commandLink>
-                    </td>
-
-                </tr>
-            </t:dataList>
-            -->
         </table>
     </ui:fragment>
 

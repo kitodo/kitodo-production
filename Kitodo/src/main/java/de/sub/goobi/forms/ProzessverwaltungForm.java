@@ -2154,16 +2154,6 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Get sorted properties.
-     *
-     * @return list of ProcessProperty objects
-     */
-    public List<Property> getSortedProperties() {
-        Collections.sort(this.properties);
-        return this.properties;
-    }
-
-    /**
      * Create new property.
      */
     public void createNewProperty() {
