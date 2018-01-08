@@ -24,10 +24,8 @@ import org.kitodo.services.data.ProjectService;
 import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
-import org.kitodo.services.data.TemplateService;
 import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
-import org.kitodo.services.data.WorkpieceService;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SessionService;
@@ -49,10 +47,8 @@ public class ServiceManager {
     private ProjectService projectService;
     private RulesetService rulesetService;
     private TaskService taskService;
-    private TemplateService templateService;
     private UserGroupService userGroupService;
     private UserService userService;
-    private WorkpieceService workpieceService;
     private FileService fileService;
     private CommandService commandService;
     private SchemaService schemaService;
@@ -139,12 +135,6 @@ public class ServiceManager {
         }
     }
 
-    private void initializeTemplateService() {
-        if (templateService == null) {
-            templateService = TemplateService.getInstance();
-        }
-    }
-
     private void initializeUserGroupService() {
         if (userGroupService == null) {
             userGroupService = UserGroupService.getInstance();
@@ -154,12 +144,6 @@ public class ServiceManager {
     private void initializeUserService() {
         if (userService == null) {
             userService = UserService.getInstance();
-        }
-    }
-
-    private void initializeWorkpieceService() {
-        if (workpieceService == null) {
-            workpieceService = WorkpieceService.getInstance();
         }
     }
 
@@ -338,17 +322,6 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize TemplateService if it is not yet initialized and next return
-     * it.
-     *
-     * @return TemplateService object
-     */
-    public TemplateService getTemplateService() {
-        initializeTemplateService();
-        return templateService;
-    }
-
-    /**
      * Initialize UserGroupService if it is not yet initialized and next return
      * it.
      *
@@ -367,17 +340,6 @@ public class ServiceManager {
     public UserService getUserService() {
         initializeUserService();
         return userService;
-    }
-
-    /**
-     * Initialize WorkpieceService if it is not yet initialized and next return
-     * it.
-     *
-     * @return WorkpieceService object
-     */
-    public WorkpieceService getWorkpieceService() {
-        initializeWorkpieceService();
-        return workpieceService;
     }
 
     /**

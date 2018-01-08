@@ -72,9 +72,7 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
@@ -351,13 +349,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void manageTemplatesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Template template : process.getTemplates()) {
-                serviceManager.getTemplateService().removeFromIndex(template);
+            for (Property template : process.getTemplates()) {
+                serviceManager.getPropertyService().removeFromIndex(template);
             }
         } else {
-            for (Template template : process.getTemplates()) {
-                serviceManager.getTemplateService().saveToIndex(template);
-                saveDependantProperties(template.getProperties());
+            for (Property template : process.getTemplates()) {
+                serviceManager.getPropertyService().saveToIndex(template);
             }
         }
     }
@@ -371,13 +368,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void manageWorkpiecesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Workpiece workpiece : process.getWorkpieces()) {
-                serviceManager.getWorkpieceService().removeFromIndex(workpiece);
+            for (Property workpiece : process.getWorkpieces()) {
+                serviceManager.getPropertyService().removeFromIndex(workpiece);
             }
         } else {
-            for (Workpiece workpiece : process.getWorkpieces()) {
-                serviceManager.getWorkpieceService().saveToIndex(workpiece);
-                saveDependantProperties(workpiece.getProperties());
+            for (Property workpiece : process.getWorkpieces()) {
+                serviceManager.getPropertyService().saveToIndex(workpiece);
             }
         }
     }
@@ -395,18 +391,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         List<Integer> newList = new ArrayList<>(firstList);
         newList.removeAll(secondList);
         return newList;
-    }
-
-    /**
-     * Save to index dependant properties.
-     *
-     * @param properties
-     *            List
-     */
-    private void saveDependantProperties(List<Property> properties) throws CustomResponseException, IOException {
-        for (Property property : properties) {
-            serviceManager.getPropertyService().saveToIndex(property);
-        }
     }
 
     /**
@@ -2384,11 +2368,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         docketdata.setComment(process.getWikiField());
 
         if (!process.getTemplates().isEmpty() && process.getTemplates().get(0) != null) {
-            docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates().get(0).getProperties()));
+            docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates()));
         }
         if (!process.getWorkpieces().isEmpty() && process.getWorkpieces().get(0) != null) {
             docketdata
-                    .setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces().get(0).getProperties()));
+                    .setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces()));
         }
         docketdata.setProcessProperties(getDocketDataForProperties(process.getProperties()));
 

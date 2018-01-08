@@ -60,10 +60,8 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
@@ -141,9 +139,7 @@ public class MockDatabase {
         insertProjectFileGroups();
         insertProcesses();
         insertProcessProperties();
-        insertWorkpieces();
         insertWorkpieceProperties();
-        insertTemplates();
         insertTemplateProperties();
         insertUserFilters();
         insertTasks();
@@ -677,27 +673,8 @@ public class MockDatabase {
         serviceManager.getUserService().save(secondUser);
     }
 
-    private static void insertTemplates() throws DAOException, DataException {
-        Process process = serviceManager.getProcessService().getById(1);
-        process.setTemplate(true);
-
-        Template firstTemplate = new Template();
-        firstTemplate.setProcess(process);
-        firstTemplate.setOrigin("test");
-        serviceManager.getTemplateService().save(firstTemplate);
-
-        Template secondTemplate = new Template();
-        secondTemplate.setProcess(process);
-        secondTemplate.setOrigin("addition");
-        serviceManager.getTemplateService().save(secondTemplate);
-
-        process.getTemplates().add(firstTemplate);
-        process.getTemplates().add(secondTemplate);
-        serviceManager.getProcessService().save(process);
-    }
-
     private static void insertTemplateProperties() throws DAOException, DataException {
-        Template template = serviceManager.getTemplateService().getById(1);
+        Process template = serviceManager.getProcessService().getById(1);
 
         Property firstTemplateProperty = new Property();
         firstTemplateProperty.setTitle("firstTemplate title");
@@ -723,9 +700,9 @@ public class MockDatabase {
         secondTemplateProperty.getTemplates().add(template);
         serviceManager.getPropertyService().save(secondTemplateProperty);
 
-        template.getProperties().add(firstTemplateProperty);
-        template.getProperties().add(secondTemplateProperty);
-        serviceManager.getTemplateService().save(template);
+        template.getTemplates().add(firstTemplateProperty);
+        template.getTemplates().add(secondTemplateProperty);
+        serviceManager.getProcessService().save(template);
     }
 
     private static void insertUsers() throws DAOException, DataException {
@@ -824,24 +801,8 @@ public class MockDatabase {
         serviceManager.getUserService().save(user);
     }
 
-    private static void insertWorkpieces() throws DAOException, DataException {
-        Process process = serviceManager.getProcessService().getById(1);
-
-        Workpiece firstWorkpiece = new Workpiece();
-        firstWorkpiece.setProcess(process);
-        serviceManager.getWorkpieceService().save(firstWorkpiece);
-
-        Workpiece secondWorkpiece = new Workpiece();
-        secondWorkpiece.setProcess(process);
-        serviceManager.getWorkpieceService().save(secondWorkpiece);
-
-        process.getWorkpieces().add(firstWorkpiece);
-        process.getWorkpieces().add(secondWorkpiece);
-        serviceManager.getProcessService().save(process);
-    }
-
     private static void insertWorkpieceProperties() throws DAOException, DataException {
-        Workpiece workpiece = serviceManager.getWorkpieceService().getById(1);
+        Process workpiece = serviceManager.getProcessService().getById(1);
 
         Property firstWorkpieceProperty = new Property();
         firstWorkpieceProperty.setTitle("FirstWorkpiece Property");
@@ -867,9 +828,9 @@ public class MockDatabase {
         secondWorkpieceProperty.getWorkpieces().add(workpiece);
         serviceManager.getPropertyService().save(secondWorkpieceProperty);
 
-        workpiece.getProperties().add(firstWorkpieceProperty);
-        workpiece.getProperties().add(secondWorkpieceProperty);
-        serviceManager.getWorkpieceService().save(workpiece);
+        workpiece.getWorkpieces().add(firstWorkpieceProperty);
+        workpiece.getWorkpieces().add(secondWorkpieceProperty);
+        serviceManager.getProcessService().save(workpiece);
     }
 
     /**

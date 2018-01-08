@@ -23,8 +23,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.PropertyDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -76,11 +74,11 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         for (Process process : property.getProcesses()) {
             serviceManager.getProcessService().saveToIndex(process);
         }
-        for (Template template : property.getTemplates()) {
-            serviceManager.getTemplateService().saveToIndex(template);
+        for (Process template : property.getTemplates()) {
+            serviceManager.getProcessService().saveToIndex(template);
         }
-        for (Workpiece workpiece : property.getWorkpieces()) {
-            serviceManager.getWorkpieceService().saveToIndex(workpiece);
+        for (Process workpiece : property.getWorkpieces()) {
+            serviceManager.getProcessService().saveToIndex(workpiece);
         }
     }
 
