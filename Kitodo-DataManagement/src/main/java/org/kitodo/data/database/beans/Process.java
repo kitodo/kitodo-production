@@ -100,17 +100,23 @@ public class Process extends BaseIndexedBean {
     @OrderBy("date ASC")
     private List<History> history;
 
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Workpiece> workpieces;
-
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Template> templates;
-
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "process_x_property", joinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
     private List<Property> properties;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "template_x_property", joinColumns = {
+            @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_x_property_process_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
+    private List<Property> templates;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "workpiece_x_property", joinColumns = {
+            @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_process_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
+    private List<Property> workpieces;
 
     @ManyToMany(mappedBy = "processes")
     private List<Batch> batches = new ArrayList<>();
@@ -348,9 +354,9 @@ public class Process extends BaseIndexedBean {
     /**
      * Get list of templates.
      * 
-     * @return list of Template objects or empty list
+     * @return list of Property objects or empty list
      */
-    public List<Template> getTemplates() {
+    public List<Property> getTemplates() {
         if (this.templates == null) {
             this.templates = new ArrayList<>();
         }
@@ -358,23 +364,35 @@ public class Process extends BaseIndexedBean {
 
     }
 
-    public void setTemplates(List<Template> templates) {
+    /**
+     * Set list of templates.
+     * 
+     * @param templates
+     *            as list of Property objects
+     */
+    public void setTemplates(List<Property> templates) {
         this.templates = templates;
     }
 
     /**
      * Get list of workpieces.
      * 
-     * @return list of Workpiece objects or empty list
+     * @return list of Property objects or empty list
      */
-    public List<Workpiece> getWorkpieces() {
+    public List<Property> getWorkpieces() {
         if (this.workpieces == null) {
             this.workpieces = new ArrayList<>();
         }
         return this.workpieces;
     }
 
-    public void setWorkpieces(List<Workpiece> workpieces) {
+    /**
+     * Set list of workpieces.
+     * 
+     * @param workpieces
+     *            as list of Property objects
+     */
+    public void setWorkpieces(List<Property> workpieces) {
         this.workpieces = workpieces;
     }
 
