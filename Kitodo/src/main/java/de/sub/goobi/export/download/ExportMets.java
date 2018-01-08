@@ -150,7 +150,7 @@ public class ExportMets {
         mm.setWriteLocal(writeLocalFileGroup);
         mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {
-            mm.write(metaFile.toString());
+            mm.write(metaFile.getRawPath());
             Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
             return true;
         }
