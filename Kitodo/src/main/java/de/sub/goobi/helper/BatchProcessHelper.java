@@ -13,13 +13,9 @@ package de.sub.goobi.helper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.properties.ProcessProperty;
-import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -27,15 +23,14 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 public class BatchProcessHelper {
-
     private final List<Process> processes;
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BatchProcessHelper.class);
     private Process currentProcess;
-    private List<ProcessProperty> processPropertyList;
-    private ProcessProperty processProperty;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
-    private Integer container;
+    private List<Property> properties;
+    private Property property;
+    private String processName;
+    private List<String> processNameList = new ArrayList<>();
 
     /**
      * Constructor.
@@ -50,33 +45,80 @@ public class BatchProcessHelper {
         }
         this.currentProcess = processes.iterator().next();
         this.processName = this.currentProcess.getTitle();
-        loadProcessProperties(this.currentProcess);
+        loadProcessProperties();
     }
 
-    public ProcessProperty getProcessProperty() {
-        return this.processProperty;
+    /**
+     * Get property for process.
+     *
+     * @return property for process
+     */
+    public Property getProperty() {
+        return this.property;
     }
 
-    public void setProcessProperty(ProcessProperty processProperty) {
-        this.processProperty = processProperty;
+    /**
+     * Set property for process.
+     *
+     * @param property
+     *            for process as Property object
+     */
+    public void setProperty(Property property) {
+        this.property = property;
     }
 
-    public int getPropertyListSize() {
-        return this.processPropertyList.size();
+    /**
+     * Get list of process properties.
+     *
+     * @return list of process properties
+     */
+    public List<Property> getProperties() {
+        return this.properties;
     }
 
-    private List<String> processNameList = new ArrayList<>();
+    /**
+     * Set list of process properties.
+     *
+     * @param properties
+     *            for process as Property objects
+     */
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
 
+    /**
+     * Get size of properties' list.
+     *
+     * @return size of properties' list
+     */
+    public int getPropertiesSize() {
+        return this.properties.size();
+    }
+
+    /**
+     * Get list of process' names.
+     * 
+     * @return list of process' names as list of String objects
+     */
     public List<String> getProcessNameList() {
         return this.processNameList;
     }
 
+    /**
+     * Set list of process' names.
+     * 
+     * @param processNameList
+     *            as list of String objects
+     */
     public void setProcessNameList(List<String> processNameList) {
         this.processNameList = processNameList;
     }
 
-    private String processName = "";
-
+    /**
+     * Get process name.
+     * 
+     * @return process name as String
+     */
     public String getProcessName() {
         return this.processName;
     }
@@ -92,7 +134,7 @@ public class BatchProcessHelper {
         for (Process s : this.processes) {
             if (s.getTitle().equals(processName)) {
                 this.currentProcess = s;
-                loadProcessProperties(this.currentProcess);
+                loadProcessProperties();
                 break;
             }
         }
@@ -102,24 +144,20 @@ public class BatchProcessHelper {
      * Save current property.
      */
     public void saveCurrentProperty() {
-        List<ProcessProperty> ppList = getContainerProperties();
-        for (ProcessProperty pp : ppList) {
-            this.processProperty = pp;
-            if (!prepareProcessPropertyForTransfer()) {
-                return;
-            }
-            this.processProperty.transfer();
+        List<Property> ppList = getProperties();
+        for (Property pp : ppList) {
+            this.property = pp;
 
-            Process p = this.currentProcess;
-            List<Property> propertyList = p.getProperties();
+            Process currentProcess = this.currentProcess;
+            List<Property> propertyList = currentProcess.getProperties();
             for (Property processProperty : propertyList) {
                 if (processProperty.getTitle() == null) {
-                    p.getProperties().remove(processProperty);
+                    currentProcess.getProperties().remove(processProperty);
                 }
             }
-            for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
-                if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
-                    process.getProperties().add(this.processProperty.getProzesseigenschaft());
+            for (Process process : this.property.getProcesses()) {
+                if (!process.getProperties().contains(this.property)) {
+                    process.getProperties().add(this.property);
                 }
             }
             try {
@@ -136,19 +174,15 @@ public class BatchProcessHelper {
      * Save current property for all.
      */
     public void saveCurrentPropertyForAll() {
-        List<ProcessProperty> ppList = getContainerProperties();
+        List<Property> ppList = getProperties();
         boolean error = false;
-        for (ProcessProperty pp : ppList) {
-            this.processProperty = pp;
-            if (!prepareProcessPropertyForTransfer()) {
-                return;
-            }
-            this.processProperty.transfer();
+        for (Property pp : ppList) {
+            this.property = pp;
 
             Property processProperty = new Property();
-            processProperty.setTitle(this.processProperty.getName());
-            processProperty.setValue(this.processProperty.getValue());
-            processProperty.setContainer(this.processProperty.getContainer());
+            processProperty.setTitle(this.property.getTitle());
+            processProperty.setValue(this.property.getValue());
+            processProperty.setContainer(this.property.getContainer());
 
             for (Process process : this.processes) {
                 if (!process.equals(this.currentProcess)) {
@@ -176,8 +210,8 @@ public class BatchProcessHelper {
                         }
                     }
                 } else {
-                    if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
-                        process.getProperties().add(this.processProperty.getProzesseigenschaft());
+                    if (!process.getProperties().contains(this.property)) {
+                        process.getProperties().add(this.property);
                     }
                 }
 
@@ -205,111 +239,12 @@ public class BatchProcessHelper {
         }
     }
 
-    private boolean prepareProcessPropertyForTransfer() {
-        if (!this.processProperty.isValid()) {
-            List<String> param = new ArrayList<>();
-            param.add(processProperty.getName());
-            String value = Helper.getTranslation("propertyNotValid", param);
-            Helper.setFehlerMeldung(value);
-            return false;
-        }
-        if (this.processProperty.getProzesseigenschaft() == null) {
-            Property processProperty = new Property();
-            processProperty.getProcesses().add(this.currentProcess);
-            this.processProperty.setProzesseigenschaft(processProperty);
-            this.currentProcess.getProperties().add(processProperty);
-        }
-        return true;
-    }
-
-    private void loadProcessProperties(Process process) {
+    private void loadProcessProperties() {
         serviceManager.getProcessService().refresh(this.currentProcess);
-        this.containers = new TreeMap<>();
-        this.processPropertyList = PropertyParser.getPropertiesForProcess(this.currentProcess);
+        this.properties = this.currentProcess.getProperties();
 
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(process);
-                pt.setProzesseigenschaft(processProperty);
-                process.getProperties().add(processProperty);
-                pt.transfer();
-            }
-            if (!this.containers.keySet().contains(pt.getContainer())) {
-                PropertyListObject plo = new PropertyListObject(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            } else {
-                PropertyListObject plo = this.containers.get(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            }
-        }
-        for (Process p : this.processes) {
-            for (Property processProperty : p.getProperties()) {
-                if (!this.containers.keySet().contains(processProperty.getContainer())) {
-                    this.containers.put(processProperty.getContainer(), null);
-                }
-            }
+        for (Process process : this.processes) {
+            serviceManager.getProcessService().refresh(process);
         }
     }
-
-    public Map<Integer, PropertyListObject> getContainers() {
-        return this.containers;
-    }
-
-    /**
-     * Get containerless properties.
-     *
-     * @return list of process properties
-     */
-    public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-        for (ProcessProperty pp : this.processPropertyList) {
-            if (pp.getContainer() == 0 && pp.getName() != null) {
-                answer.add(pp);
-            }
-        }
-        return answer;
-    }
-
-    public Integer getContainer() {
-        return this.container;
-    }
-
-    /**
-     * Set container.
-     *
-     * @param container
-     *            Integer
-     */
-    public void setContainer(Integer container) {
-        this.container = container;
-        if (container != null && container > 0) {
-            this.processProperty = getContainerProperties().get(0);
-        }
-    }
-
-    /**
-     * Get container properties.
-     *
-     * @return list of process properties
-     */
-    public List<ProcessProperty> getContainerProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-
-        if (this.container != null && this.container > 0) {
-            for (ProcessProperty pp : this.processPropertyList) {
-                if (pp.getContainer() == this.container && pp.getName() != null) {
-                    answer.add(pp);
-                }
-            }
-        } else {
-            answer.add(this.processProperty);
-        }
-
-        return answer;
-    }
-
-
 }

@@ -27,7 +27,6 @@ import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
 
 import java.io.File;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,7 +41,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -71,10 +68,6 @@ import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
-import org.goobi.production.properties.IProperty;
-import org.goobi.production.properties.ProcessProperty;
-import org.goobi.production.properties.PropertyParser;
-import org.goobi.production.properties.Type;
 import org.jdom.transform.XSLTransformException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -85,6 +78,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
@@ -112,7 +106,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private StatisticsManager statisticsManager;
     private List<ProcessCounterObject> processCounterObjects;
     private HashMap<String, Integer> counterSummary;
-    private Property myProzessEigenschaft;
     private Template template;
     private Property templateProperty;
     private Workpiece workpiece;
@@ -126,10 +119,8 @@ public class ProzessverwaltungForm extends BasisForm {
     private StatisticsRenderingElement myCurrentTable;
     private boolean showClosedProcesses = false;
     private boolean showArchivedProjects = false;
-    private List<ProcessProperty> processPropertyList;
-    private ProcessProperty processProperty;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
-    private Integer container;
+    private List<Property> properties;
+    private Property property;
     private String addToWikiField = "";
     private List<ProcessDTO> processDTOS = new ArrayList<>();
     private boolean showStatistics = false;
@@ -637,14 +628,6 @@ public class ProzessverwaltungForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             logger.error(e);
         }
-        return null;
-    }
-
-    /**
-     * New process property.
-     */
-    public String ProzessEigenschaftNeu() {
-        myProzessEigenschaft = new Property();
         return null;
     }
 
@@ -1304,14 +1287,6 @@ public class ProzessverwaltungForm extends BasisForm {
         this.process = process;
         this.newProcessTitle = process.getTitle();
         loadProcessProperties();
-    }
-
-    public Property getMyProzessEigenschaft() {
-        return this.myProzessEigenschaft;
-    }
-
-    public void setMyProzessEigenschaft(Property myProzessEigenschaft) {
-        this.myProzessEigenschaft = myProzessEigenschaft;
     }
 
     public Task getTask() {
@@ -2135,140 +2110,114 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
-    public ProcessProperty getProcessProperty() {
-        return this.processProperty;
-    }
-
-    public void setProcessProperty(ProcessProperty processProperty) {
-        this.processProperty = processProperty;
-    }
-
-    public List<ProcessProperty> getProcessProperties() {
-        return this.processPropertyList;
-    }
-
-    private void loadProcessProperties() {
-        this.containers = new TreeMap<>();
-        this.processPropertyList = PropertyParser.getPropertiesForProcess(this.process);
-
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(process);
-                pt.setProzesseigenschaft(processProperty);
-                process.getProperties().add(processProperty);
-                pt.transfer();
-            }
-            if (!this.containers.keySet().contains(pt.getContainer())) {
-                PropertyListObject plo = new PropertyListObject(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            } else {
-                PropertyListObject plo = this.containers.get(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            }
-        }
+    /**
+     * Get property for process.
+     *
+     * @return property for process
+     */
+    public Property getProperty() {
+        return this.property;
     }
 
     /**
-     * TODO validierung nur bei Schritt abgeben, nicht bei normalen speichern.
+     * Set property for process.
+     *
+     * @param property
+     *            for process as Property object
      */
-    public void saveProcessProperties() {
-        boolean valid = true;
-        for (IProperty p : this.processPropertyList) {
-            if (!p.isValid()) {
-                List<String> param = new ArrayList<>();
-                param.add(p.getName());
-                String value = Helper.getTranslation("propertyNotValid", param);
-                Helper.setFehlerMeldung(value);
-                valid = false;
-            }
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
+    /**
+     * Get list of process properties.
+     *
+     * @return list of process properties
+     */
+    public List<Property> getProperties() {
+        return this.properties;
+    }
+
+    /**
+     * Set list of process properties.
+     *
+     * @param properties
+     *            for process as Property objects
+     */
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+
+    private void loadProcessProperties() {
+        serviceManager.getProcessService().refresh(this.process);
+        this.properties = this.process.getProperties();
+    }
+
+    /**
+     * Create new property.
+     */
+    public void createNewProperty() {
+        if (this.properties == null) {
+            this.properties = new ArrayList<>();
         }
-
-        if (valid) {
-            for (ProcessProperty p : this.processPropertyList) {
-                if (p.getProzesseigenschaft() == null) {
-                    Property processProperty = new Property();
-                    processProperty.getProcesses().add(this.process);
-                    p.setProzesseigenschaft(processProperty);
-                    this.process.getProperties().add(processProperty);
-                }
-                p.transfer();
-                if (!this.process.getProperties().contains(p.getProzesseigenschaft())) {
-                    try {
-                        serviceManager.getPropertyService().save(p.getProzesseigenschaft());
-                        this.process.getProperties().add(p.getProzesseigenschaft());
-                    } catch (DataException e) {
-                        logger.error("New property couldn't be saved: " + e.getMessage());
-                    }
-                }
-            }
-
-            List<Property> properties = this.process.getProperties();
-            for (Property processProperty : properties) {
-                if (processProperty.getTitle() == null) {
-                    this.process.getProperties().remove(processProperty);
-                }
-            }
-
-            try {
-                serviceManager.getProcessService().save(this.process);
-                Helper.setMeldung("Properties saved");
-            } catch (DataException e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("Properties could not be saved");
-            }
-        }
+        Property property = new Property();
+        property.setType(PropertyType.String);
+        this.properties.add(property);
+        this.property = property;
     }
 
     /**
      * Save current property.
      */
     public void saveCurrentProperty() {
-        List<ProcessProperty> ppList = getContainerProperties();
-        for (ProcessProperty pp : ppList) {
-            this.processProperty = pp;
-            if (isValidProcessProperty()) {
-                if (this.processProperty.getProzesseigenschaft() == null) {
-                    Property processProperty = new Property();
-                    processProperty.getProcesses().add(this.process);
-                    this.processProperty.setProzesseigenschaft(processProperty);
-                    this.process.getProperties().add(processProperty);
-                }
-                this.processProperty.transfer();
-
-                List<Property> properties = this.process.getProperties();
-                removePropertiesWithEmptyTitle(properties);
-
-                this.processProperty.getProzesseigenschaft().getProcesses().add(this.process);
-            } else {
-                return;
+        try {
+            serviceManager.getPropertyService().save(this.property);
+            if (!this.process.getProperties().contains(this.property)) {
+                this.process.getProperties().add(this.property);
             }
-
-            try {
-                serviceManager.getPropertyService().save(this.processProperty.getProzesseigenschaft());
-                this.process.getProperties().add(this.processProperty.getProzesseigenschaft());
-                serviceManager.getProcessService().save(this.process);
-                Helper.setMeldung("propertiesSaved");
-            } catch (DataException e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("propertiesNotSaved");
-            }
+            serviceManager.getProcessService().save(this.process);
+            Helper.setMeldung("propertiesSaved");
+        } catch (DataException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("propertiesNotSaved");
         }
         loadProcessProperties();
     }
 
-    private boolean isValidProcessProperty() {
-        if (this.processProperty.isValid()) {
-            return true;
-        } else {
-            List<String> propertyNames = new ArrayList<>();
-            propertyNames.add(processProperty.getName());
-            String errorMessage = Helper.getTranslation("propertyNotValid", propertyNames);
-            Helper.setFehlerMeldung(errorMessage);
-            return false;
+    /**
+     * Delete property.
+     */
+    public void deleteProperty() {
+        try {
+            this.property.getProcesses().clear();
+            this.process.getProperties().remove(this.property);
+            serviceManager.getProcessService().save(this.process);
+            serviceManager.getPropertyService().remove(this.property);
+        } catch (DataException e) {
+            logger.error("Property couldn't be removed: " + e.getMessage());
+            Helper.setFehlerMeldung("propertiesNotDeleted");
         }
+
+        List<Property> properties = this.process.getProperties();
+        removePropertiesWithEmptyTitle(properties);
+        loadProcessProperties();
+    }
+
+    /**
+     * Duplicate property.
+     */
+    public void duplicateProperty() {
+        Property newProperty = serviceManager.getPropertyService().transfer(this.property);
+        try {
+            newProperty.getProcesses().add(this.process);
+            this.process.getProperties().add(newProperty);
+            serviceManager.getPropertyService().save(newProperty);
+            Helper.setMeldung("propertySaved");
+        } catch (DataException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("propertiesNotSaved");
+        }
+        loadProcessProperties();
     }
 
     //TODO: is it really a case that title is empty?
@@ -2288,197 +2237,12 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Get property list's size.
-     *
-     * @return size
-     */
-    public int getPropertyListSize() {
-        if (this.processPropertyList == null) {
-            return 0;
-        }
-        return this.processPropertyList.size();
-    }
-
-    public Map<Integer, PropertyListObject> getContainers() {
-        return this.containers;
-    }
-
-    public List<Integer> getContainerList() {
-        return new ArrayList<>(this.containers.keySet());
-    }
-
-    /**
-     * Get sorted properties.
-     *
-     * @return list of ProcessProperty objects
-     */
-    public List<ProcessProperty> getSortedProperties() {
-        Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
-        Collections.sort(this.processPropertyList, comp);
-        return this.processPropertyList;
-    }
-
-    /**
-     * Delete property.
-     */
-    public void deleteProperty() {
-        List<ProcessProperty> ppList = getContainerProperties();
-        for (ProcessProperty pp : ppList) {
-            this.processPropertyList.remove(pp);
-            try {
-                pp.getProzesseigenschaft().getProcesses().clear();
-                this.process.getProperties().remove(pp.getProzesseigenschaft());
-                serviceManager.getProcessService().save(this.process);
-                serviceManager.getPropertyService().remove(pp.getProzesseigenschaft());
-            } catch (DataException e) {
-                logger.error("Property couldn't be removed: " + e.getMessage());
-                Helper.setFehlerMeldung("propertiesNotDeleted");
-            }
-        }
-
-        List<Property> properties = this.process.getProperties();
-        removePropertiesWithEmptyTitle(properties);
-
-        // saveWithoutValidation();
-        loadProcessProperties();
-    }
-
-    /**
-     * Duplicate property.
-     */
-    public void duplicateProperty() {
-        ProcessProperty pt = this.processProperty.getClone(0);
-        this.processPropertyList.add(pt);
-        saveProcessProperties();
-    }
-
-    public Integer getContainer() {
-        return this.container;
-    }
-
-    /**
-     * Set container.
-     *
-     * @param container
-     *            Integer
-     */
-    public void setContainer(Integer container) {
-        this.container = container;
-        if (container != null && container > 0) {
-            this.processProperty = getContainerProperties().get(0);
-        }
-    }
-
-    /**
-     * Get container properties.
-     *
-     * @return list of ProcessProperty objects
-     */
-    public List<ProcessProperty> getContainerProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-
-        if (this.container != null && this.container > 0) {
-            for (ProcessProperty pp : this.processPropertyList) {
-                if (pp.getContainer() == this.container) {
-                    answer.add(pp);
-                }
-            }
-        } else {
-            answer.add(this.processProperty);
-        }
-
-        return answer;
-    }
-
-    /**
-     * Duplicate container.
-     *
-     * @return empty String
-     */
-    public String duplicateContainer() {
-        Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<>();
-        // search for all properties in container
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getContainer() == currentContainer) {
-                plist.add(pt);
-            }
-        }
-        int newContainerNumber = 0;
-        if (currentContainer > 0) {
-            newContainerNumber++;
-            // find new unused container number
-            boolean search = true;
-            while (search) {
-                if (!this.containers.containsKey(newContainerNumber)) {
-                    search = false;
-                } else {
-                    newContainerNumber++;
-                }
-            }
-        }
-        // clone properties
-        for (ProcessProperty pt : plist) {
-            ProcessProperty newProp = pt.getClone(newContainerNumber);
-            this.processPropertyList.add(newProp);
-            this.processProperty = newProp;
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.process);
-                this.processProperty.setProzesseigenschaft(processProperty);
-                this.process.getProperties().add(processProperty);
-            }
-            this.processProperty.transfer();
-
-        }
-        try {
-            serviceManager.getProcessService().save(this.process);
-            Helper.setMeldung("propertySaved");
-        } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
-        }
-        loadProcessProperties();
-
-        return null;
-    }
-
-    /**
-     * Get containerless properties.
-     *
-     * @return list of ProcessProperty objects
-     */
-    public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-        for (ProcessProperty pp : this.processPropertyList) {
-            if (pp.getContainer() == 0) {
-                answer.add(pp);
-            }
-        }
-        return answer;
-    }
-
-    /**
      * Get list od DTO processes.
      *
      * @return list of ProcessDTO objects
      */
     public List<ProcessDTO> getProcessDTOS() {
         return processDTOS;
-    }
-
-    /**
-     * Create new property.
-     */
-    public void createNewProperty() {
-        if (this.processPropertyList == null) {
-            this.processPropertyList = new ArrayList<>();
-        }
-        ProcessProperty pp = new ProcessProperty();
-        pp.setType(Type.TEXT);
-        pp.setContainer(0);
-        this.processPropertyList.add(pp);
-        this.processProperty = pp;
     }
 
     /**

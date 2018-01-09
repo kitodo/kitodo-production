@@ -19,11 +19,8 @@ import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.faces.model.SelectItem;
 import javax.naming.AuthenticationException;
@@ -32,9 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.properties.AccessCondition;
-import org.goobi.production.properties.ProcessProperty;
-import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -54,10 +48,8 @@ public class BatchStepHelper {
     private static final Logger logger = LogManager.getLogger(BatchStepHelper.class);
     private Task currentStep;
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private List<ProcessProperty> processPropertyList;
-    private ProcessProperty processProperty;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
-    private Integer container;
+    private List<Property> properties;
+    private Property property;
     private String myProblemStep;
     private String mySolutionStep;
     private String problemMessage;
@@ -103,24 +95,51 @@ public class BatchStepHelper {
         this.currentStep = currentStep;
     }
 
-    /*
-     * properties
+    /**
+     * Get property for process.
+     *
+     * @return property for process
      */
-
-    public ProcessProperty getProcessProperty() {
-        return this.processProperty;
+    public Property getProperty() {
+        return this.property;
     }
 
-    public void setProcessProperty(ProcessProperty processProperty) {
-        this.processProperty = processProperty;
+    /**
+     * Set property for process.
+     *
+     * @param property
+     *            for process as Property object
+     */
+    public void setProperty(Property property) {
+        this.property = property;
     }
 
-    public List<ProcessProperty> getProcessProperties() {
-        return this.processPropertyList;
+    /**
+     * Get list of process properties.
+     *
+     * @return list of process properties
+     */
+    public List<Property> getProperties() {
+        return this.properties;
     }
 
-    public int getPropertyListSize() {
-        return this.processPropertyList.size();
+    /**
+     * Set list of process properties.
+     *
+     * @param properties
+     *            for process as Property objects
+     */
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Get size of properties' list.
+     *
+     * @return size of properties' list
+     */
+    public int getPropertiesSize() {
+        return this.properties.size();
     }
 
     public List<String> getProcessNameList() {
@@ -156,13 +175,9 @@ public class BatchStepHelper {
      * Save current property.
      */
     public void saveCurrentProperty() {
-        List<ProcessProperty> ppList = getContainerProperties();
-        for (ProcessProperty pp : ppList) {
-            this.processProperty = pp;
-            if (!prepareProcessPropertyForTransfer()) {
-                return;
-            }
-            this.processProperty.transfer();
+        List<Property> ppList = getProperties();
+        for (Property pp : ppList) {
+            this.property = pp;
 
             Process p = this.currentStep.getProcess();
             List<Property> props = p.getProperties();
@@ -171,9 +186,9 @@ public class BatchStepHelper {
                     p.getProperties().remove(processProperty);
                 }
             }
-            for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
-                if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
-                    process.getProperties().add(this.processProperty.getProzesseigenschaft());
+            for (Process process : this.property.getProcesses()) {
+                if (!process.getProperties().contains(this.property)) {
+                    process.getProperties().add(this.property);
                 }
             }
             try {
@@ -191,22 +206,18 @@ public class BatchStepHelper {
      */
     public void saveCurrentPropertyForAll() {
         boolean error = false;
-        List<ProcessProperty> ppList = getContainerProperties();
-        for (ProcessProperty pp : ppList) {
-            this.processProperty = pp;
-            if (!prepareProcessPropertyForTransfer()) {
-                return;
-            }
-            this.processProperty.transfer();
+        List<Property> ppList = getProperties();
+        for (Property pp : ppList) {
+            this.property = pp;
 
             Property processProperty = new Property();
-            processProperty.setTitle(this.processProperty.getName());
-            processProperty.setValue(this.processProperty.getValue());
-            processProperty.setContainer(this.processProperty.getContainer());
+            processProperty.setTitle(this.property.getTitle());
+            processProperty.setValue(this.property.getValue());
+            processProperty.setContainer(this.property.getContainer());
 
-            for (Task s : this.steps) {
-                Process process = s.getProcess();
-                if (!s.equals(this.currentStep)) {
+            for (Task task : this.steps) {
+                Process process = task.getProcess();
+                if (!task.equals(this.currentStep)) {
                     if (processProperty.getTitle() != null) {
                         boolean match = false;
                         for (Property processPe : process.getProperties()) {
@@ -231,8 +242,8 @@ public class BatchStepHelper {
                         }
                     }
                 } else {
-                    if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
-                        process.getProperties().add(this.processProperty.getProzesseigenschaft());
+                    if (!process.getProperties().contains(this.property)) {
+                        process.getProperties().add(this.property);
                     }
                 }
 
@@ -257,69 +268,11 @@ public class BatchStepHelper {
         }
     }
 
-    private boolean prepareProcessPropertyForTransfer() {
-        if (!this.processProperty.isValid()) {
-            Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
-            return false;
-        }
-        if (this.processProperty.getProzesseigenschaft() == null) {
-            Property processProperty = new Property();
-            processProperty.getProcesses().add(this.currentStep.getProcess());
-            this.processProperty.setProzesseigenschaft(processProperty);
-            this.currentStep.getProcess().getProperties().add(processProperty);
-        }
-        return true;
-    }
+    private void loadProcessProperties(Task task) {
+        Process process = task.getProcess();
+        serviceManager.getProcessService().refresh(process);
+        this.properties = process.getProperties();
 
-    private void loadProcessProperties(Task s) {
-        this.containers = new TreeMap<>();
-        this.processPropertyList = PropertyParser.getPropertiesForStep(s);
-        List<Process> pList = new ArrayList<>();
-        for (Task step : this.steps) {
-            pList.add(step.getProcess());
-        }
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(s.getProcess());
-                pt.setProzesseigenschaft(processProperty);
-                s.getProcess().getProperties().add(processProperty);
-                pt.transfer();
-            }
-            if (!this.containers.keySet().contains(pt.getContainer())) {
-                PropertyListObject plo = new PropertyListObject(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            } else {
-                PropertyListObject plo = this.containers.get(pt.getContainer());
-                plo.addToList(pt);
-                this.containers.put(pt.getContainer(), plo);
-            }
-        }
-
-        for (Process p : pList) {
-            for (Property processProperty : p.getProperties()) {
-                if (!this.containers.keySet().contains(processProperty.getContainer())) {
-                    this.containers.put(processProperty.getContainer(), null);
-                }
-            }
-        }
-    }
-
-    public Map<Integer, PropertyListObject> getContainers() {
-        return this.containers;
-    }
-
-    /**
-     * Get container size.
-     *
-     * @return size
-     */
-    public int getContainersSize() {
-        if (this.containers == null) {
-            return 0;
-        }
-        return this.containers.size();
     }
 
     /**
@@ -327,102 +280,9 @@ public class BatchStepHelper {
      *
      * @return list of sorted properties
      */
-    public List<ProcessProperty> getSortedProperties() {
-        Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
-        Collections.sort(this.processPropertyList, comp);
-        return this.processPropertyList;
-    }
-
-    /**
-     * Get containerless properties.
-     *
-     * @return list of containerless properties
-     */
-    public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-        for (ProcessProperty pp : this.processPropertyList) {
-            if (pp.getContainer() == 0 && pp.getName() != null) {
-                answer.add(pp);
-            }
-        }
-        return answer;
-    }
-
-    public Integer getContainer() {
-        return this.container;
-    }
-
-    /**
-     * Set container.
-     *
-     * @param container
-     *            Integer
-     */
-    public void setContainer(Integer container) {
-        this.container = container;
-        if (container != null && container > 0) {
-            this.processProperty = getContainerProperties().get(0);
-        }
-    }
-
-    /**
-     * Get container properties.
-     *
-     * @return list of container properties
-     */
-    public List<ProcessProperty> getContainerProperties() {
-        List<ProcessProperty> answer = new ArrayList<>();
-
-        if (this.container != null && this.container > 0) {
-            for (ProcessProperty pp : this.processPropertyList) {
-                if (pp.getContainer() == this.container && pp.getName() != null) {
-                    answer.add(pp);
-                }
-            }
-        } else {
-            answer.add(this.processProperty);
-        }
-
-        return answer;
-    }
-
-    /**
-     * Duplicate container for single.
-     *
-     * @return empty String
-     */
-    public String duplicateContainerForSingle() {
-        Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<>();
-        // search for all properties in container
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getContainer() == currentContainer) {
-                plist.add(pt);
-            }
-        }
-        int newContainerNumber = 0;
-        if (currentContainer > 0) {
-            newContainerNumber++;
-            // find new unused container number
-            boolean search = true;
-            while (search) {
-                if (!this.containers.containsKey(newContainerNumber)) {
-                    search = false;
-                } else {
-                    newContainerNumber++;
-                }
-            }
-        }
-        // clone properties
-        for (ProcessProperty pt : plist) {
-            ProcessProperty newProp = pt.getClone(newContainerNumber);
-            this.processPropertyList.add(newProp);
-            this.processProperty = newProp;
-            saveCurrentProperty();
-        }
-        loadProcessProperties(this.currentStep);
-
-        return "";
+    public List<Property> getSortedProperties() {
+        Collections.sort(this.properties);
+        return this.properties;
     }
 
     private void saveStep() {
@@ -438,44 +298,6 @@ public class BatchStepHelper {
         } catch (DataException e) {
             logger.error(e);
         }
-    }
-
-    /**
-     * Duplicate container for all.
-     *
-     * @return empty String
-     */
-    public String duplicateContainerForAll() {
-        Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<>();
-        // search for all properties in container
-        for (ProcessProperty pt : this.processPropertyList) {
-            if (pt.getContainer() == currentContainer) {
-                plist.add(pt);
-            }
-        }
-
-        int newContainerNumber = 0;
-        if (currentContainer > 0) {
-            newContainerNumber++;
-            boolean search = true;
-            while (search) {
-                if (!this.containers.containsKey(newContainerNumber)) {
-                    search = false;
-                } else {
-                    newContainerNumber++;
-                }
-            }
-        }
-        // clone properties
-        for (ProcessProperty pt : plist) {
-            ProcessProperty newProp = pt.getClone(newContainerNumber);
-            this.processPropertyList.add(newProp);
-            this.processProperty = newProp;
-            saveCurrentPropertyForAll();
-        }
-        loadProcessProperties(this.currentStep);
-        return "";
     }
 
     /**
@@ -870,11 +692,6 @@ public class BatchStepHelper {
      * @return String
      */
     public String batchDurchBenutzerAbschliessen() throws DAOException, DataException {
-
-        // for (ProcessProperty pp : this.processPropertyList) {
-        // this.processProperty = pp;
-        // saveCurrentPropertyForAll();
-        // }
         for (Task s : this.steps) {
             boolean error = false;
 
@@ -907,20 +724,12 @@ public class BatchStepHelper {
 
                 loadProcessProperties(s);
 
-                for (ProcessProperty prop : processPropertyList) {
-
-                    if (prop.getCurrentStepAccessCondition().equals(AccessCondition.WRITEREQUIRED)
-                            && (prop.getValue() == null || prop.getValue().equals(""))) {
+                for (Property prop : this.properties) {
+                    if ((prop.getValue() == null || prop.getValue().equals(""))) {
                         List<String> parameter = new ArrayList<>();
-                        parameter.add(prop.getName());
+                        parameter.add(prop.getTitle());
                         parameter.add(s.getProcess().getTitle());
                         Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyEmpty", parameter));
-                        error = true;
-                    } else if (!prop.isValid()) {
-                        List<String> parameter = new ArrayList<>();
-                        parameter.add(prop.getName());
-                        parameter.add(s.getProcess().getTitle());
-                        Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyValidation", parameter));
                         error = true;
                     }
                 }
@@ -944,9 +753,5 @@ public class BatchStepHelper {
      */
     public String getScriptName() {
         return getCurrentStep().getScriptName();
-    }
-
-    public List<Integer> getContainerList() {
-        return new ArrayList<>(this.containers.keySet());
     }
 }
