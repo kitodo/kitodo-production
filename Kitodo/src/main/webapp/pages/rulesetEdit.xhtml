@@ -1,0 +1,73 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id" value="#{RulesetForm.rulesetId}"/>
+        <f:viewAction action="#{RulesetForm.loadRuleset}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="rulesetEditForm">
+                <p:panel styleClass="content-header">
+                    <h3>
+                        <h:outputText value="#{msgs.regelsatzBearbeiten}"
+                                      rendered="#{RulesetForm.ruleset.id ne null}"/>
+                        <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
+                                      rendered="#{RulesetForm.ruleset.id eq null}"/>
+                    </h3>
+                    <p:commandButton value="#{msgs.speichern}"
+                                     action="#{RulesetForm.saveRuleset}"
+                                     update="notifications"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.rulesetYouWillBeRedirected}','severity':'info'});"
+                                     styleClass="button-filled-blue"/>
+                </p:panel>
+                <p:messages autoUpdate="true" />
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="title" value="#{msgs.titel}"/>
+                    <p:inputText id="title"
+                                 placeholder="#{msgs.titel}"
+                                 value="#{RulesetForm.ruleset.title}"
+                                 required="true"/>
+                    <p:outputLabel for="file" value="#{msgs.datei}"/>
+                    <p:inputText id="file"
+                                 placeholder="#{msgs.datei}"
+                                 value="#{RulesetForm.ruleset.file}"
+                                 required="true"/>
+                    <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
+                    <p:selectBooleanCheckbox id="sortByRuleset"
+                                             value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li>
+            <a href="">
+                <h:outputText value="#{msgs.regelsatzBearbeiten}"
+                              rendered="#{RulesetForm.ruleset.id ne null}"/>
+                <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
+                              rendered="#{RulesetForm.ruleset.id eq null}"/>
+            </a>
+        </li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
+</ui:composition>

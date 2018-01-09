@@ -43,7 +43,7 @@
         <p:column headerText="#{msgs.auswahl}"
                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                   styleClass="actionsColumn">
-            <h:link outcome="RegelsaetzeBearbeiten"
+            <h:link outcome="rulesetEdit"
                     title="#{msgs.regelsatzBearbeiten}">
                 <f:param name="id" value="#{item.id}" />
                 <i class="fa fa-pencil-square-o fa-lg"/>
