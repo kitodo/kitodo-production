@@ -53,8 +53,8 @@
                                  required="true"/>
                     <p:outputLabel for="authorizations" value="#{msgs.berechtigungen}"/>
                     <p:pickList id="authorizations"
-                                value="#{BenutzergruppenForm.authorizations}"
-                                var="authorization" itemLabel="#{authorization.title}" itemValue="#{authorization.id}">
+                                value="#{BenutzergruppenForm.authorizations}" converter="AuthorizationConverter"
+                                var="authorization" itemLabel="#{authorization.title}" itemValue="#{authorization}">
                         <f:facet name="sourceCaption" style="color: #000;">#{msgs.available}</f:facet>
                         <f:facet name="targetCaption" style="color: #000;">#{msgs.assigned}</f:facet>
                     </p:pickList>

@@ -71,7 +71,7 @@ public class BenutzergruppenForm extends BasisForm {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
             return redirectToList("?faces-redirect=true");
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+            Helper.setFehlerMeldung("Error, could not save user group", e.getMessage());
             return null;
         }
     }
@@ -162,16 +162,7 @@ public class BenutzergruppenForm extends BasisForm {
      *            list of authorizations assigned to 'myBenutzergruppe'
      */
     public void setAuthorizations(DualListModel<Authorization> authorizations) {
-        try {
-            List<Authorization> assignedAuthorizations = new ArrayList<>();
-            for (Object object : authorizations.getTarget()) {
-                assignedAuthorizations
-                        .add(serviceManager.getAuthorizationService().getById(Integer.parseInt((String) object)));
-            }
-            this.myBenutzergruppe.setAuthorizations(assignedAuthorizations);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
-        }
+        this.myBenutzergruppe.setAuthorizations(authorizations.getTarget());
     }
 
     // TODO:
