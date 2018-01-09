@@ -22,10 +22,8 @@ public enum ObjectType {
     PROPERTY("eigenschaften"),
     RULESET("regelsaetze"),
     TASK("schritte"),
-    TEMPLATE("templateProperties"),
     USER("users"),
     USERGROUP("benutzergruppen"),
-    WORKPIECE("werkstuecke"),
     FILTER("filter"),
     NONE("");
 
@@ -33,7 +31,7 @@ public enum ObjectType {
 
     /**
      * Constructor setting the message key of the object type, used to retrieve it's
-     * translation from the messages ressource bundle.
+     * translation from the messages resource bundle.
      *
      * @param messageKey
      *            used for translating the object types name
