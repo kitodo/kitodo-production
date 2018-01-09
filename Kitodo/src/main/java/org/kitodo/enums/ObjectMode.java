@@ -28,6 +28,11 @@ public enum ObjectMode {
         this.mode = mode;
     }
 
+    /**
+     * Get mode for object.
+     * 
+     * @return mode as String
+     */
     public String getMode() {
         return mode;
     }
