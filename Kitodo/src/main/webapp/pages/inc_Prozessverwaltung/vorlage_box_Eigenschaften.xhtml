@@ -67,7 +67,7 @@
     </t:dataTable>
 
     <!-- newUser-Schaltknopf -->
-    <h:commandLink action="#{ProzessverwaltungForm.VorlageEigenschaftNeu}" value="#{msgs.eigenschaftHinzufuegen}"
+    <h:commandLink action="#{ProzessverwaltungForm.createTemplateProperty}" value="#{msgs.eigenschaftHinzufuegen}"
                    title="#{msgs.eigenschaftHinzufuegen}"
                    rendered="#{ProzessverwaltungForm.editMode.mode != 'templateProperty'}">
         <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.TEMPLATEPROPERTY}"/>
@@ -129,14 +129,14 @@
                 </td>
                 <td class="eingabeBoxen_row3" align="right">
                     <h:commandButton value="#{msgs.loeschen}"
-                                     action="#{ProzessverwaltungForm.VorlageEigenschaftLoeschen}"
+                                     action="#{ProzessverwaltungForm.deleteTemplateProperty}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                      rendered="#{ProzessverwaltungForm.templateProperty.id != null}">
                         <t:updateActionListener
                                 property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                     <h:commandButton value="#{msgs.uebernehmen}"
-                                     action="#{ProzessverwaltungForm.VorlageEigenschaftUebernehmen}">
+                                     action="#{ProzessverwaltungForm.saveTemplateProperty}">
                         <t:updateActionListener
                                 property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>

@@ -69,7 +69,7 @@
     </t:dataTable>
 
     <!-- newUser-Schaltknopf -->
-    <h:commandLink action="#{ProzessverwaltungForm.WerkstueckEigenschaftNeu}"
+    <h:commandLink action="#{ProzessverwaltungForm.createWorkpieceProperty}"
                    value="#{msgs.eigenschaftHinzufuegen}"
                    title="#{msgs.eigenschaftHinzufuegen}"
                    rendered="#{ProzessverwaltungForm.editMode.mode != 'workpieceProperty'}">
@@ -135,14 +135,14 @@
                 </td>
                 <td class="eingabeBoxen_row3" align="right">
                     <h:commandButton value="#{msgs.loeschen}"
-                                     action="#{ProzessverwaltungForm.WerkstueckEigenschaftLoeschen}"
+                                     action="#{ProzessverwaltungForm.deleteWorkpieceProperty}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                      rendered="#{ProzessverwaltungForm.workpieceProperty.id != null}">
                         <t:updateActionListener
                                 property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                     <h:commandButton value="#{msgs.uebernehmen}"
-                                     action="#{ProzessverwaltungForm.WerkstueckEigenschaftUebernehmen}">
+                                     action="#{ProzessverwaltungForm.saveWorkpieceProperty}">
                         <t:updateActionListener
                                 property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
