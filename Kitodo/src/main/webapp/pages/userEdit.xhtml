@@ -96,11 +96,13 @@
                             </p:commandLink>
                         </p:column>
                     </p:dataTable>
-                    <p:commandButton value="#{msgs.benutzergruppenHinzufuegen}"
-                                     oncomplete="PF('addUserGroupDialog').show()"
-                                     icon="fa fa-plus-circle fa-lg"
-                                     iconPos="right"
-                                     styleClass="button-filled-green"/>
+                    <button onclick="PF('addUserGroupDialog').show()"
+                            type="button"
+                            class="ui-button ui-widget ui-corner-all button-filled-green"
+                            style="padding:.7em;border:none;">
+                        #{msgs.benutzergruppenHinzufuegen}
+                        <i class="fa fa-plus-circle fa-lg"/>
+                    </button>
                 </p:panel>
             </h:form>
         </p:panel>
