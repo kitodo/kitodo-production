@@ -1,0 +1,65 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id" value="#{DocketForm.docketId}"/>
+        <f:viewAction action="#{DocketForm.loadDocket}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="docketEditForm">
+                <p:panel styleClass="content-header">
+                    <h3>
+                        <h:outputText value="#{msgs.createNewDocket}"
+                                      rendered="#{DocketForm.myDocket.id == null}"/>
+                        <h:outputText value="#{msgs.editDocket}"
+                                      rendered="#{DocketForm.myDocket.id != null}"/>
+                    </h3>
+
+                    <p:commandButton value="#{msgs.speichern}"
+                                     action="#{DocketForm.save}"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     styleClass="button-filled-blue"
+                                     onclick="PF('notifications').renderMessage({
+                                        'summary':'#{msgs.docketSaving}',
+                                        'detail':'#{msgs.youWillBeRedirected}',
+                                        'severity':'info'});"/>
+                </p:panel>
+                <!-- main form -->
+                <p:messages id="docket-messages" autoUpdate="true" />
+                <p:panelGrid id="docket-grid" columns="2">
+                    <p:outputLabel for="title" value="#{msgs.titel}"/>
+                    <p:inputText id="title"
+                                 value="#{DocketForm.myDocket.title}"
+                                 placeholder="#{msgs.titel}"
+                                 required="true"/>
+                    <p:outputLabel for="file" value="#{msgs.datei}"/>
+                    <p:inputText id="file" value="#{DocketForm.myDocket.file}"
+                                 required="true"/>
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.editDocket}</a></li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
+</ui:composition>
