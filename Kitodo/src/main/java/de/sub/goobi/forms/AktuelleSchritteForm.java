@@ -892,10 +892,21 @@ public class AktuelleSchritteForm extends BasisForm {
         return this.mySchritt;
     }
 
+    /**
+     * Get mode for edition.
+     *
+     * @return mode for edition as ObjectMode objects
+     */
     public ObjectMode getEditMode() {
         return this.editMode;
     }
 
+    /**
+     * Set mode for edition.
+     *
+     * @param editMode
+     *            mode for edition as ObjectMode objects
+     */
     public void setEditMode(ObjectMode editMode) {
         this.editMode = editMode;
     }
