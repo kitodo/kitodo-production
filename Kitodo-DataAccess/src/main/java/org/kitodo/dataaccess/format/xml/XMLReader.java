@@ -486,7 +486,7 @@ public class XMLReader {
      *             if the reading fails
      */
     public static Node toNode(File path, Storage storage) throws SAXException, IOException {
-        return toNode(parseXML(new FileInputStream(path), null), urlStringForFile(path), storage);
+        return toNode(parseXML(new FileInputStream(path), Optional.empty()), urlStringForFile(path), storage);
     }
 
     /**

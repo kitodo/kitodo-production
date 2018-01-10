@@ -32,8 +32,8 @@ public enum SerializationFormat {
      */
     N_TRIPLES {
         @Override
-        public void write(Node node, Map<String, String> map, File file) throws IOException {
-            write(node, map, file, "N-TRIPLE");
+        public void write(Node node, Map<String, String> namespaces, File file) throws IOException {
+            write(node, namespaces, file, "N-TRIPLE");
         }
     },
     /**
@@ -43,8 +43,8 @@ public enum SerializationFormat {
      */
     N3 {
         @Override
-        public void write(Node node, Map<String, String> map, File file) throws IOException {
-            write(node, map, file, "N3");
+        public void write(Node node, Map<String, String> namespaces, File file) throws IOException {
+            write(node, namespaces, file, "N3");
         }
     },
     /**
@@ -59,8 +59,8 @@ public enum SerializationFormat {
      */
     RDF_XML {
         @Override
-        public void write(Node node, Map<String, String> map, File file) throws IOException {
-            write(node, map, file, "RDF/XML");
+        public void write(Node node, Map<String, String> namespaces, File file) throws IOException {
+            write(node, namespaces, file, "RDF/XML");
         }
     },
     /**
@@ -74,8 +74,8 @@ public enum SerializationFormat {
      */
     RDF_XML_ABBREV {
         @Override
-        public void write(Node node, Map<String, String> map, File file) throws IOException {
-            write(node, map, file, "RDF/XML-ABBREV");
+        public void write(Node node, Map<String, String> namespaces, File file) throws IOException {
+            write(node, namespaces, file, "RDF/XML-ABBREV");
         }
     },
     /**
@@ -85,8 +85,8 @@ public enum SerializationFormat {
      */
     TURTLE {
         @Override
-        public void write(Node node, Map<String, String> map, File file) throws IOException {
-            write(node, map, file, "TURTLE");
+        public void write(Node node, Map<String, String> namespaces, File file) throws IOException {
+            write(node, namespaces, file, "TURTLE");
         }
     },
     /**
@@ -96,8 +96,8 @@ public enum SerializationFormat {
      */
     XML {
         @Override
-        public void write(Node node, Map<String, String> map, File file) throws IOException {
-            XMLWriter.toFile(node, file, 2, map);
+        public void write(Node node, Map<String, String> namespaces, File file) throws IOException {
+            XMLWriter.toFile(node, file, 2, namespaces);
         }
     };
 
@@ -106,7 +106,7 @@ public enum SerializationFormat {
      *
      * @param file
      *            a file to write to
-     * @param map
+     * @param namespaces
      *            user defined namespace prefixes, mapped from prefix to
      *            namespace, the namespace must end either in {@code #} or
      *            {@code /}
@@ -115,10 +115,10 @@ public enum SerializationFormat {
      *            are {@code RDF/XML}, {@code RDF/XML-ABBREV}, {@code N-TRIPLE},
      *            {@code TURTLE} and {@code N3}.
      */
-    static void write(Node node, Map<String, String> map, File file, String lang) throws IOException {
+    static void write(Node node, Map<String, String> namespaces, File file, String lang) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(file);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-            write(node, map, bos, lang);
+            write(node, namespaces, bos, lang);
         }
     }
 
@@ -127,7 +127,7 @@ public enum SerializationFormat {
      *
      * @param out
      *            an output stream to write to
-     * @param map
+     * @param namespaces
      *            user defined namespace prefixes, mapped from prefix to
      *            namespace, the namespace must end either in {@code #} or
      *            {@code /}
@@ -136,11 +136,11 @@ public enum SerializationFormat {
      *            are {@code RDF/XML}, {@code RDF/XML-ABBREV}, {@code N-TRIPLE},
      *            {@code TURTLE} and {@code N3}.
      */
-    private static void write(Node node, Map<String, String> map, OutputStream out, String lang) {
+    private static void write(Node node, Map<String, String> namespaces, OutputStream out, String lang) {
         Model model = ModelFactory.createDefaultModel();
         node.toRDFNode(model, true);
-        if (map != null) {
-            model.setNsPrefixes(map);
+        if (namespaces != null) {
+            model.setNsPrefixes(namespaces);
         }
         model.write(out, lang);
     }
@@ -150,7 +150,7 @@ public enum SerializationFormat {
      *
      * @param node
      *            node to print
-     * @param map
+     * @param namespaces
      *            map of prefixes to resolve. For XML, mapping from namespaces,
      *            without {@code #}, to abbreviations; for all other formats
      *            mapping from abbreviations to namespaces, with {@code #}.
@@ -159,5 +159,5 @@ public enum SerializationFormat {
      * @throws IOException
      *             if the writing fails
      */
-    public abstract void write(Node node, Map<String, String> map, File file) throws IOException;
+    public abstract void write(Node node, Map<String, String> namespaces, File file) throws IOException;
 }

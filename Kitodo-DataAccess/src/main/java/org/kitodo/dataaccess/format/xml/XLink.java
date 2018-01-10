@@ -537,8 +537,8 @@ public enum XLink implements NodeReference {
             title.forEach(entry -> node
                     .add(storage.createNode(TITLE).put(XML.LANG, entry.getLanguageTag()).setValue(entry.getValue())));
         }
-        actuate.ifPresent(value -> node.put(ACTUATE, actuate.toString()));
-        show.ifPresent(value -> node.put(SHOW, show.toString()));
+        actuate.ifPresent(value -> node.put(ACTUATE, value.toString()));
+        show.ifPresent(value -> node.put(SHOW, value.toString()));
         return node;
     }
 

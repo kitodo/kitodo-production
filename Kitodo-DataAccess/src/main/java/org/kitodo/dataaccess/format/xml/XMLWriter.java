@@ -110,7 +110,7 @@ public class XMLWriter {
             Collection<ObjectType> objects = entry.getValue();
             ObjectType object = objects.iterator().next();
             Optional<Long> index = RDF.sequenceNumberOf(relation);
-            if (!index.isPresent()) {
+            if (index.isPresent()) {
                 if (objects.size() <= 1) {
                     orderedElements.put(index.get(), object);
                     if (first > index.get()) {
