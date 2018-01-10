@@ -163,6 +163,19 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
+     * This function can be overriden to implement specific filters e.g. in ProcessService.
+     * Since there are no general filters at the moment this function just returns null,
+     * but a query for general filters can be implemented here in the future.
+     *
+     * @param filters Map of parameters used for filtering
+     * @return null
+     * @throws DataException
+     */
+    public String createCountQuery(Map filters) throws DataException {
+        return null;
+    }
+
+    /**
      * Method saves object to database.
      *
      * @param baseIndexedBean

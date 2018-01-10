@@ -178,6 +178,35 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
+    @Override
+    public String createCountQuery(Map filters) throws DataException {
+        // TODO: find other way than retrieving the form bean to access "modusAnzeige" e.g. whether templates or processes should be returned!
+        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
+        boolean isTemplate = form.getModusAnzeige().equals("vorlagen");
+        Map<String, String> filterMap = (Map<String, String>) filters;
+
+        BoolQueryBuilder query = null;
+
+        if (Objects.equals(filters, null) || filters.isEmpty()) {
+            query = new BoolQueryBuilder();
+            query.must(getQuerySortHelperStatus(false));
+            query.must(getQueryProjectArchived(false));
+            query.must(getQueryTemplate(isTemplate));
+        } else {
+            for (Map.Entry<String, String> entry : filterMap.entrySet()) {
+                query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, isTemplate, false, false);
+                if (!form.isShowClosedProcesses()) {
+                    query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+                }
+                if (!form.isShowArchivedProjects()) {
+                    query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+                }
+            }
+        }
+
+        return query.toString();
+    }
+
     /**
      * Method saves or removes batches, tasks and project related to modified
      * process.
