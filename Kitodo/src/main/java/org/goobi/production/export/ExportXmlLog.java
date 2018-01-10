@@ -43,8 +43,6 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
@@ -291,78 +289,76 @@ public class ExportXmlLog {
         // template information
         Element templates = new Element("originals", xmlns);
         ArrayList<Element> templateElements = new ArrayList<>();
-        for (Template v : process.getTemplates()) {
-            Element template = new Element("original", xmlns);
-            template.setAttribute("originalID", String.valueOf(v.getId()));
 
-            ArrayList<Element> templateProperties = new ArrayList<>();
-            for (Property prop : v.getProperties()) {
-                Element property = new Element("property", xmlns);
-                property.setAttribute("propertyIdentifier", prop.getTitle());
+        Element template = new Element("original", xmlns);
+        template.setAttribute("originalID", String.valueOf(process.getId()));
+
+        ArrayList<Element> templateProperties = new ArrayList<>();
+        for (Property prop : process.getTemplates()) {
+            Element property = new Element("property", xmlns);
+            property.setAttribute("propertyIdentifier", prop.getTitle());
+            if (prop.getValue() != null) {
+                property.setAttribute("value", replacer(prop.getValue()));
+            } else {
+                property.setAttribute("value", "");
+            }
+
+            Element label = new Element("label", xmlns);
+
+            label.setText(prop.getTitle());
+            property.addContent(label);
+
+            templateProperties.add(property);
+            if (prop.getTitle().equals("Signatur")) {
+                Element secondProperty = new Element("property", xmlns);
+                secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
                 if (prop.getValue() != null) {
-                    property.setAttribute("value", replacer(prop.getValue()));
-                } else {
-                    property.setAttribute("value", "");
-                }
-
-                Element label = new Element("label", xmlns);
-
-                label.setText(prop.getTitle());
-                property.addContent(label);
-
-                templateProperties.add(property);
-                if (prop.getTitle().equals("Signatur")) {
-                    Element secondProperty = new Element("property", xmlns);
-                    secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
-                    if (prop.getValue() != null) {
-                        secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
-                        Element secondLabel = new Element("label", xmlns);
-                        secondLabel.setText(prop.getTitle());
-                        secondProperty.addContent(secondLabel);
-                        templateProperties.add(secondProperty);
-                    }
+                    secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
+                    Element secondLabel = new Element("label", xmlns);
+                    secondLabel.setText(prop.getTitle());
+                    secondProperty.addContent(secondLabel);
+                    templateProperties.add(secondProperty);
                 }
             }
-            if (templateProperties.size() != 0) {
-                Element properties = new Element("properties", xmlns);
-                properties.addContent(templateProperties);
-                template.addContent(properties);
-            }
-            templateElements.add(template);
         }
+        if (templateProperties.size() != 0) {
+            Element properties = new Element("properties", xmlns);
+            properties.addContent(templateProperties);
+            template.addContent(properties);
+        }
+        templateElements.add(template);
         templates.addContent(templateElements);
         processElements.add(templates);
 
         // digital document information
         Element digdoc = new Element("digitalDocuments", xmlns);
         ArrayList<Element> docElements = new ArrayList<>();
-        for (Workpiece w : process.getWorkpieces()) {
-            Element dd = new Element("digitalDocument", xmlns);
-            dd.setAttribute("digitalDocumentID", String.valueOf(w.getId()));
 
-            ArrayList<Element> docProperties = new ArrayList<>();
-            for (Property prop : w.getProperties()) {
-                Element property = new Element("property", xmlns);
-                property.setAttribute("propertyIdentifier", prop.getTitle());
-                if (prop.getValue() != null) {
-                    property.setAttribute("value", replacer(prop.getValue()));
-                } else {
-                    property.setAttribute("value", "");
-                }
+        Element dd = new Element("digitalDocument", xmlns);
+        dd.setAttribute("digitalDocumentID", String.valueOf(process.getId()));
 
-                Element label = new Element("label", xmlns);
-
-                label.setText(prop.getTitle());
-                property.addContent(label);
-                docProperties.add(property);
+        ArrayList<Element> docProperties = new ArrayList<>();
+        for (Property prop : process.getWorkpieces()) {
+            Element property = new Element("property", xmlns);
+            property.setAttribute("propertyIdentifier", prop.getTitle());
+            if (prop.getValue() != null) {
+                property.setAttribute("value", replacer(prop.getValue()));
+            } else {
+                property.setAttribute("value", "");
             }
-            if (docProperties.size() != 0) {
-                Element properties = new Element("properties", xmlns);
-                properties.addContent(docProperties);
-                dd.addContent(properties);
-            }
-            docElements.add(dd);
+
+            Element label = new Element("label", xmlns);
+
+            label.setText(prop.getTitle());
+            property.addContent(label);
+            docProperties.add(property);
         }
+        if (docProperties.size() != 0) {
+            Element properties = new Element("properties", xmlns);
+            properties.addContent(docProperties);
+            dd.addContent(properties);
+        }
+        docElements.add(dd);
         digdoc.addContent(docElements);
         processElements.add(digdoc);
 
