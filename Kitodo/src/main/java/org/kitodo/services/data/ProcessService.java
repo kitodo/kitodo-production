@@ -523,6 +523,51 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Find process by property.
+     * 
+     * @param title
+     *            of property as String
+     * @param value
+     *            of property as String
+     * @param contains
+     *            true or false
+     * @return list of process JSONObjects
+     */
+    public List<JSONObject> findByProcessProperty(String title, String value, boolean contains) throws DataException {
+        return findByProperty(title, value, "process", "properties.id", contains);
+    }
+
+    /**
+     * Find process by template.
+     * 
+     * @param title
+     *            of property as String
+     * @param value
+     *            of property as String
+     * @param contains
+     *            true or false
+     * @return list of process JSONObjects
+     */
+    public List<JSONObject> findByTemplateProperty(String title, String value, boolean contains) throws DataException {
+        return findByProperty(title, value, "template", "templates.id", contains);
+    }
+
+    /**
+     * Find process by workpiece.
+     * 
+     * @param title
+     *            of property as String
+     * @param value
+     *            of property as String
+     * @param contains
+     *            true or false
+     * @return list of process JSONObjects
+     */
+    public List<JSONObject> findByWorkpieceProperty(String title, String value, boolean contains) throws DataException {
+        return findByProperty(title, value, "workpiece", "workpieces.id", contains);
+    }
+
+    /**
      * Find processes by property.
      *
      * @param title
@@ -533,22 +578,23 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of JSON objects with processes for specific property
      */
-    List<JSONObject> findByProperty(String title, String value, boolean contains) throws DataException {
+    private List<JSONObject> findByProperty(String title, String value, String type, String key, boolean contains)
+            throws DataException {
         Set<Integer> propertyIds = new HashSet<>();
 
         List<JSONObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, "process", contains);
+            properties = serviceManager.getPropertyService().findByTitle(title, type, contains);
         } else if (title == null) {
-            properties = serviceManager.getPropertyService().findByValue(value, "process", contains);
+            properties = serviceManager.getPropertyService().findByValue(value, type, contains);
         } else {
-            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, "process", contains);
+            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
         }
 
         for (JSONObject property : properties) {
             propertyIds.add(getIdFromJSONObject(property));
         }
-        return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
+        return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
     }
 
     private List<JSONObject> findBySort(boolean closed, boolean archived, boolean template, String sort,
@@ -698,8 +744,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(processJSONObject, "sortHelperDocstructs"));
         processDTO.setSortHelperImages(getIntegerPropertyForDTO(processJSONObject, "sortHelperImages"));
         processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(processJSONObject, "sortHelperMetadata"));
-        processDTO.setTifDirectoryExists(checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(),
-                processDTO.getProcessBaseUri()));
+        processDTO.setTifDirectoryExists(
+                checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         if (!related) {
             processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
@@ -1772,8 +1818,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Count amount of process' templates.
-     * @return amount of process' templates as Long
+     * Count amount of templates for process.
+     * 
+     * @return amount of templates for process as Long
      */
     public Long countTemplates() throws DataException {
         return count(getQueryTemplate(true).toString());
@@ -2379,8 +2426,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates()));
         }
         if (!process.getWorkpieces().isEmpty() && process.getWorkpieces().get(0) != null) {
-            docketdata
-                    .setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces()));
+            docketdata.setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces()));
         }
         docketdata.setProcessProperties(getDocketDataForProperties(process.getProperties()));
 
@@ -2444,7 +2490,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return the list of sorted processes as ProcessDTO objects
      */
     public List<ProcessDTO> findNotClosedAndNotArchivedProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, false, sort), false);
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, false, sort),
+                false);
     }
 
     /**

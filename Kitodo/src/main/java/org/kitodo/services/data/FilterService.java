@@ -44,10 +44,8 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
-import org.kitodo.dto.TemplateDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
-import org.kitodo.dto.WorkpieceDTO;
 import org.kitodo.enums.FilterString;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
@@ -938,10 +936,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<JSONObject> jsonObjects;
         List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
         if (titleValue.size() > 1) {
-            jsonObjects = serviceManager.getProcessService().findByProperty(titleValue.get(0), titleValue.get(1),
+            jsonObjects = serviceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
                     !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByProperty(null, titleValue.get(0), !negate);
+            jsonObjects = serviceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
         }
         List<PropertyDTO> propertyDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
                 true);
@@ -983,12 +981,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<JSONObject> jsonObjects;
         List<String> templateProperty = getFilterValueFromFilterStringForProperty(filter, FilterString.TEMPLATE);
         if (templateProperty.size() > 1) {
-            jsonObjects = serviceManager.getTemplateService().findByProperty(templateProperty.get(0),
+            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
                     templateProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getTemplateService().findByProperty(null, templateProperty.get(0), !negate);
+            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0), !negate);
         }
-        List<TemplateDTO> templateDTOS = serviceManager.getTemplateService().convertJSONObjectsToDTOs(jsonObjects,
+        List<PropertyDTO> templateDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
                 true);
         QueryBuilder templateQuery = createSetQuery("template", collectIds(templateDTOS), true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, templateQuery);
@@ -1016,12 +1014,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<String> workpieceProperty = getFilterValueFromFilterStringForProperty(filter,
                 FilterString.PROCESSPROPERTY);
         if (workpieceProperty.size() > 1) {
-            jsonObjects = serviceManager.getWorkpieceService().findByProperty(workpieceProperty.get(0),
+            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
                     workpieceProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getWorkpieceService().findByProperty(null, workpieceProperty.get(0), !negate);
+            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0), !negate);
         }
-        List<WorkpieceDTO> workpieceDTOS = serviceManager.getWorkpieceService().convertJSONObjectsToDTOs(jsonObjects,
+        List<PropertyDTO> workpieceDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
                 true);
         QueryBuilder workpieceQuery = createSetQuery("workpieces.id", collectIds(workpieceDTOS), true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, workpieceQuery);
