@@ -154,19 +154,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
 
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return findAll(sort, offset, size);
-        }
-
         // TODO: find other way than retrieving the form bean to access "modusAnzeige" e.g. whether templates or processes should be returned!
         ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
+        boolean isTemplate = form.getModusAnzeige().equals("vorlagen");
         Map<String, String> filterMap = (Map<String, String>) filters;
 
         BoolQueryBuilder query = null;
 
-        for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            boolean isTemplate = form.getModusAnzeige().equals("vorlagen");
+        if (Objects.equals(filters, null) || filters.isEmpty()) {
+            return convertJSONObjectsToDTOs(findBySort(false, false, isTemplate, sort, offset, size), false);
+        }
 
+        for (Map.Entry<String, String> entry : filterMap.entrySet()) {
             query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, isTemplate, false, false);
             if (!form.isShowClosedProcesses()) {
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
@@ -556,6 +555,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             propertyIds.add(getIdFromJSONObject(property));
         }
         return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
+    }
+
+    private List<JSONObject> findBySort(boolean closed, boolean archived, boolean template, String sort,
+            Integer offset, Integer size) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQuerySortHelperStatus(closed));
+        query.must(getQueryProjectArchived(archived));
+        query.must(getQueryTemplate(template));
+        return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
     private List<JSONObject> findBySortHelperStatusProjectArchivedAndTemplate(boolean closed, boolean archived,
