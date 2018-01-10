@@ -1772,6 +1772,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Count amount of process' templates.
+     * @return amount of process' templates as Long
+     */
+    public Long countTemplates() throws DataException {
+        return count(getQueryTemplate(true).toString());
+    }
+
+    /**
      * Find amount of processes for given title.
      * 
      * @param title
