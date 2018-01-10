@@ -85,6 +85,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.enums.ObjectMode;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -111,7 +112,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private Workpiece workpiece;
     private Property workpieceProperty;
     private String modusAnzeige = "aktuell";
-    private String modusBearbeiten = "";
+    private ObjectMode editMode = ObjectMode.NONE;
     private String kitodoScript;
     private HashMap<String, Boolean> anzeigeAnpassen;
     private String newProcessTitle;
@@ -173,7 +174,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String newProcess() {
         this.process = new Process();
         this.newProcessTitle = "";
-        this.modusBearbeiten = "prozess";
+        this.editMode = ObjectMode.PROCESS;
         return "/pages/ProzessverwaltungBearbeiten";
     }
 
@@ -186,7 +187,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.process = new Process();
         this.newProcessTitle = "";
         this.process.setTemplate(true);
-        this.modusBearbeiten = "prozess";
+        this.editMode = ObjectMode.PROCESS;
         return "/pages/ProzessverwaltungBearbeiten";
     }
 
@@ -278,7 +279,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.newProcessTitle.matches(validateRegEx)) {
-            this.modusBearbeiten = "prozess";
+            this.editMode = ObjectMode.PROCESS;
             Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
             return false;
         } else {
@@ -341,15 +342,13 @@ public class ProzessverwaltungForm extends BasisForm {
                     // renaming defined directories
                     String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
                     for (String processDir : processDirs) {
-                        //TODO: check it out
-                        URI processDirAbsolute = serviceManager.getProcessService()
-                                .getProcessDataDirectory(process)
+                        // TODO: check it out
+                        URI processDirAbsolute = serviceManager.getProcessService().getProcessDataDirectory(process)
                                 .resolve(processDir.replace("(processtitle)", process.getTitle()));
 
                         File dir = new File(processDirAbsolute);
                         if (dir.isDirectory()) {
-                            dir.renameTo(new File(
-                                    dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+                            dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
                         }
                     }
                 }
@@ -515,7 +514,8 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void filterProcessesWithFilter() throws DataException {
-        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false, false, false);
+        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false,
+                false, false);
         if (!this.showClosedProcesses) {
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
         }
@@ -528,7 +528,8 @@ public class ProzessverwaltungForm extends BasisForm {
     private void filterProcessesWithoutFilter() throws DataException {
         if (!this.showClosedProcesses) {
             if (!this.showArchivedProjects) {
-                processDTOS = serviceManager.getProcessService().findNotClosedAndNotArchivedProcessesWithoutTemplates(sortList());
+                processDTOS = serviceManager.getProcessService()
+                        .findNotClosedAndNotArchivedProcessesWithoutTemplates(sortList());
             } else {
                 processDTOS = serviceManager.getProcessService().findNotClosedProcessesWithoutTemplates(sortList());
             }
@@ -542,7 +543,8 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void filterTemplatesWithFilter() throws DataException {
-        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, true, false, false);
+        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, true,
+                false, false);
         if (!this.showClosedProcesses) {
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
         }
@@ -677,7 +679,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e);
         }
-        this.modusBearbeiten = "schritt";
+        this.editMode = ObjectMode.TASK;
         this.taskId = this.task.getId();
         return "/pages/inc_Prozessverwaltung/schritt?faces-redirect=true&id=" + this.taskId;
     }
@@ -1298,7 +1300,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.task.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
     }
 
-    //TODO: why second setter for task
+    // TODO: why second setter for task
     public void setTaskReload(Task task) {
         this.task = task;
     }
@@ -1311,7 +1313,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.template = template;
     }
 
-    //TODO: why second setter for template
+    // TODO: why second setter for template
     public void setTemplateReload(Template template) {
         this.template = template;
     }
@@ -1353,12 +1355,23 @@ public class ProzessverwaltungForm extends BasisForm {
         this.modusAnzeige = modusAnzeige;
     }
 
-    public String getModusBearbeiten() {
-        return this.modusBearbeiten;
+    /**
+     * Get mode for edition.
+     * 
+     * @return mode for edition as ObjectMode objects
+     */
+    public ObjectMode getEditMode() {
+        return editMode;
     }
 
-    public void setModusBearbeiten(String modusBearbeiten) {
-        this.modusBearbeiten = modusBearbeiten;
+    /**
+     * Set mode for edition.
+     * 
+     * @param editMode
+     *            mode for edition as ObjectMode objects
+     */
+    public void setEditMode(ObjectMode editMode) {
+        this.editMode = editMode;
     }
 
     /**
@@ -1586,7 +1599,8 @@ public class ProzessverwaltungForm extends BasisForm {
     public void kitodoScriptHits() {
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.page.getCompleteList()), this.kitodoScript);
+            gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.page.getCompleteList()),
+                    this.kitodoScript);
         } catch (DAOException | DataException e) {
             logger.error(e);
         }
@@ -1848,8 +1862,8 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * transforms xml logfile with given xslt and provides download.
-     * //TODO: why this whole stuff is not used?
+     * transforms xml logfile with given xslt and provides download. //TODO: why
+     * this whole stuff is not used?
      */
     public void transformXml() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -2220,7 +2234,7 @@ public class ProzessverwaltungForm extends BasisForm {
         loadProcessProperties();
     }
 
-    //TODO: is it really a case that title is empty?
+    // TODO: is it really a case that title is empty?
     private void removePropertiesWithEmptyTitle(List<Property> properties) {
         for (Property processProperty : properties) {
             if (processProperty.getTitle() == null) {
@@ -2257,7 +2271,8 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Set the id of the current process.
      *
-     * @param processId as int
+     * @param processId
+     *            as int
      */
     public void setProcessId(int processId) {
         this.processId = processId;
@@ -2291,7 +2306,8 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Set the id of the current task.
      *
-     * @param taskId as int
+     * @param taskId
+     *            as int
      */
     public void setTaskId(int taskId) {
         this.taskId = taskId;
@@ -2305,7 +2321,7 @@ public class ProzessverwaltungForm extends BasisForm {
             if (taskId != 0) {
                 setTask(this.serviceManager.getTaskService().getById(this.taskId));
             } else {
-                //TODO: find way to redirect with usage of inserted task
+                // TODO: find way to redirect with usage of inserted task
                 setTask(this.serviceManager.getTaskService().getByQuery("FROM Task ORDER BY id DESC").get(0));
             }
         } catch (DAOException e) {
@@ -2354,7 +2370,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Sets selected processDTOs.
      *
      * @param selectedProcesses
-     *          The list of ProcessDTOs.
+     *            The list of ProcessDTOs.
      */
     public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
         this.selectedProcesses = selectedProcesses;

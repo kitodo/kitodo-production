@@ -24,13 +24,15 @@
     xmlns:p="http://primefaces.org/ui"
     >
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode != 'processProperty'}">
         <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaften}"/>
         </h4>
     </ui:fragment>
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode != 'processProperty'}">
         <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
 
         <thead class="standardTable_Header">
@@ -63,7 +65,7 @@
                         <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
                             <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
                             <t:updateActionListener property="#{ProzessverwaltungForm.property}" value="#{property}"/>
-                            <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft"/>
+                            <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.PROCESSPROPERTY}"/>
                         </h:commandLink>
                         <h:commandLink action="#{ProzessverwaltungForm.duplicateProperty}" title="#{msgs.duplicate}">
                             <h:graphicImage value="/pages/images/buttons/copy.gif" alt="copy"/>
@@ -79,8 +81,8 @@
     <!-- newUser-Schaltknopf -->
     <h:commandLink action="#{ProzessverwaltungForm.createNewProperty}" value="#{msgs.eigenschaftHinzufuegen}"
                    title="#{msgs.eigenschaftHinzufuegen}"
-                   rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
-    <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft"/>
+                   rendered="#{ProzessverwaltungForm.editMode.mode != 'processProperty'}">
+    <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.PROCESSPROPERTY}"/>
     </h:commandLink>
 
 
@@ -88,14 +90,14 @@
     <!-- +++++++++     Eigenschaft bearbeiten      ++++++++++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='eigenschaft'}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'processProperty'}">
         <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
         </h4>
     </ui:fragment>
 
     <!-- Box für die Bearbeitung der Details -->
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='eigenschaft'}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'processProperty'}">
         <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
             <tr>
                 <td class="eingabeBoxen_row1" colspan="2">
@@ -156,19 +158,19 @@
             <tr>
                 <td class="eingabeBoxen_row3" align="left">
                     <h:commandButton value="#{msgs.abbrechen}" action="#{NavigationForm.Reload}" immediate="true">
-                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
                 <td class="eingabeBoxen_row3" align="right">
 
                     <h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteProperty}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')">
-                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
 
 
                     <h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveCurrentProperty}">
-                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
             </tr>

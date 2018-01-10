@@ -24,7 +24,11 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
+
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="../inc/head.xhtml" />
         <h:body>
@@ -103,8 +107,8 @@
                                                             <t:updateActionListener
                                                                     property="#{ProzessverwaltungForm.process}"
                                                                     value="#{ProzesskopieForm.prozessKopie}"/>
-                                                            <t:updateActionListener value=""
-                                                                                    property="#{ProzessverwaltungForm.modusBearbeiten}"/>
+                                                            <t:updateActionListener value="#{objectMode.NONE}"
+                                                                                    property="#{ProzessverwaltungForm.editMode}"/>
                                                             <h:graphicImage id="utid23"
                                                                             alt="/pages/images/buttons/edit_20.gif"
                                                                             value="/pages/images/buttons/edit_20.gif"

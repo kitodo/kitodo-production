@@ -21,8 +21,12 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
-    >
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='werkstueckeigenschaft'}">
+    xmlns:p="http://primefaces.org/ui"
+>
+
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode != 'workpieceProperty'}">
         <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaften}"/>
         </h4>
@@ -32,8 +36,8 @@
                  cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
                  rowClasses="standardTable_Row1"
                  columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
-                 var="item" value="#{ProzessverwaltungForm.workpiece.eigenschaftenList}"
-                 rendered="#{ProzessverwaltungForm.modusBearbeiten!='werkstueckeigenschaft'}">
+                 var="item" value="#{ProzessverwaltungForm.workpiece.properties}"
+                 rendered="#{ProzessverwaltungForm.editMode.mode != 'workpieceProperty'}">
 
         <h:column>
             <f:facet name="header">
@@ -54,15 +58,12 @@
                 <h:outputText value="#{msgs.auswahl}"/>
             </f:facet>
             <!-- Bearbeiten-Schaltknopf -->
-            <h:commandLink action="ProzessverwaltungBearbeitenWerkstueck"
-                           title="#{msgs.bearbeiten}">
+            <h:commandLink action="ProzessverwaltungBearbeitenWerkstueck" title="#{msgs.bearbeiten}">
                 <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
                 <t:updateActionListener
-                        property="#{ProzessverwaltungForm.workpieceProperty}"
-                        value="#{item}"/>
-                <t:updateActionListener
-                        property="#{ProzessverwaltungForm.modusBearbeiten}"
-                        value="werkstueckeigenschaft"/>
+                        property="#{ProzessverwaltungForm.workpieceProperty}" value="#{item}"/>
+                <t:updateActionListener property="#{ProzessverwaltungForm.editMode}"
+                        value="#{objectMode.WORKPIECEPROPERTY}"/>
             </h:commandLink>
         </h:column>
     </t:dataTable>
@@ -71,10 +72,9 @@
     <h:commandLink action="#{ProzessverwaltungForm.WerkstueckEigenschaftNeu}"
                    value="#{msgs.eigenschaftHinzufuegen}"
                    title="#{msgs.eigenschaftHinzufuegen}"
-                   rendered="#{ProzessverwaltungForm.modusBearbeiten!='werkstueckeigenschaft'}">
-        <t:updateActionListener
-                property="#{ProzessverwaltungForm.modusBearbeiten}"
-                value="werkstueckeigenschaft"/>
+                   rendered="#{ProzessverwaltungForm.editMode.mode != 'workpieceProperty'}">
+        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}"
+                value="#{objectMode.WORKPIECEPROPERTY}"/>
     </h:commandLink>
 
 
@@ -82,14 +82,14 @@
     <!-- +++++++++     Eigenschaft bearbeiten      ++++++++++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='werkstueckeigenschaft'}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'workpieceProperty'}">
         <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
         </h4>
     </ui:fragment>
 
     <!-- Box für die Bearbeitung der Details -->
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='werkstueckeigenschaft'}">
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'workpieceProperty'}">
         <table cellpadding="3" cellspacing="0" width="100%"
                class="eingabeBoxen">
             <tr>
@@ -130,7 +130,7 @@
                     <h:commandButton value="#{msgs.abbrechen}"
                                      action="#{NavigationForm.Reload}" immediate="true">
                         <t:updateActionListener
-                                property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
                 <td class="eingabeBoxen_row3" align="right">
@@ -139,12 +139,12 @@
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                      rendered="#{ProzessverwaltungForm.workpieceProperty.id != null}">
                         <t:updateActionListener
-                                property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                     <h:commandButton value="#{msgs.uebernehmen}"
                                      action="#{ProzessverwaltungForm.WerkstueckEigenschaftUebernehmen}">
                         <t:updateActionListener
-                                property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                                property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                     </h:commandButton>
                 </td>
             </tr>
