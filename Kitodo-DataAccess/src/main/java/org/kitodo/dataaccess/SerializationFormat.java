@@ -117,7 +117,7 @@ public enum SerializationFormat {
      */
     static void write(Node node, Map<String, String> namespaces, File file, String lang) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(file);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);) {
+                BufferedOutputStream bos = new BufferedOutputStream(fos)) {
             write(node, namespaces, bos, lang);
         }
     }
@@ -151,9 +151,9 @@ public enum SerializationFormat {
      * @param node
      *            node to print
      * @param namespaces
-     *            map of prefixes to resolve. For XML, mapping from namespaces,
-     *            without {@code #}, to abbreviations; for all other formats
-     *            mapping from abbreviations to namespaces, with {@code #}.
+     *            user defined namespace prefixes, mapped from prefix to
+     *            namespace, the namespace must end either in {@code #} or
+     *            {@code /}
      * @param file
      *            path to the file to write to
      * @throws IOException

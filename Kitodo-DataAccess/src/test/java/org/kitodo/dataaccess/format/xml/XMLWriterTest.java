@@ -93,9 +93,9 @@ public class XMLWriterTest {
         Namespaces namespaces = new Namespaces() {
             private static final long serialVersionUID = 1L;
             {
-                put("http://www.loc.gov/METS/", "mets");
-                put("http://www.loc.gov/mods/v3", "mods");
-                put("http://www.w3.org/1999/xlink", "xlink");
+                put("mets", "http://www.loc.gov/METS/");
+                put("mods", "http://www.loc.gov/mods/v3#");
+                put("xlink", "http://www.w3.org/1999/xlink#");
             }
         };
         File expectedResult = new File("src/test/resources/xmlWriterTest-expectedResult.xml");

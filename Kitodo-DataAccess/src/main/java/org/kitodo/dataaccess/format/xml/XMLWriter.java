@@ -185,7 +185,7 @@ public class XMLWriter {
      * @return the DOM document
      */
     private static Document toDocument(Node node, Map<String, String> namespaces) {
-        Namespaces abbr = new Namespaces(namespaces);
+        Namespaces abbr = namespaces instanceof Namespaces ? (Namespaces) namespaces : new Namespaces(namespaces);
         DocumentBuilder builder;
         try {
             builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

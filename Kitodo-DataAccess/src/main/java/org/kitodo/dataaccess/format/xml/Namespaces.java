@@ -14,6 +14,8 @@ package org.kitodo.dataaccess.format.xml;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.kitodo.dataaccess.RDF;
 import org.kitodo.dataaccess.RDFS;
 
@@ -55,7 +57,7 @@ import org.kitodo.dataaccess.RDFS;
  * while namespaces ending in a slash are declared <strong>with</strong> the
  * trailing slash.
  */
-public class Namespaces extends HashMap<String, String> {
+public class Namespaces extends DualHashBidiMap<String, String> {
     /**
      * Maps the constant namespaces "xml:" and "xmlns:" to their reserved
      * prefixes. The map is populated in a static block below.
@@ -103,6 +105,80 @@ public class Namespaces extends HashMap<String, String> {
     }
 
     /**
+     * Counter to create new namespace prefixes.
+     */
+    private long next;
+
+    /**
+     * The map of used namespaces in serializing an XML document. Mapping
+     * direction is namespace to prefix, {@code #} namespaces are stored without
+     * the {@code #} at the end, {@code /} namespaces are stored with a
+     * {@code /} as last character.
+     */
+    private final Map<String, String> used;
+
+    /**
+     * Creates a new NamespaceHandler for a given Node which is considered the
+     * root node of the XML document.
+     */
+    public Namespaces() {
+        this(null);
+    }
+
+    /**
+     * Creates a new NamespaceHandler for a given Node which is considered the
+     * root node of the XML document.
+     *
+     * @param presets
+     *            Presets of namespace shortcuts, mapped namespace to shortcut.
+     *            May be null or empty.
+     */
+    public Namespaces(Map<String, String> presets) {
+        super.put(DEFAULT_PREFIX_RDF, RDF.NAMESPACE);
+        super.put(DEFAULT_PREFIX_RDFS, RDFS.NAMESPACE);
+        if (presets != null) {
+            super.putAll(presets);
+        }
+        used = new HashMap<>();
+    }
+
+    /**
+     * Returns the abbreviated attribute. If the attribute is in the same
+     * namespace as the element that will hold it, the prefix is omitted.
+     *
+     * @param element
+     *            node the attribute is on
+     * @param attribute
+     *            attribute key to convert
+     * @return abbreviated or basic attribute
+     */
+    String abbreviateAttribute(String element, String attribute) {
+        String ns = namespaceOfForXMLFile(attribute);
+        if (ns.isEmpty()) {
+            return attribute;
+        }
+        available(ns);
+        String tag = attribute.substring(ns.endsWith("/") ? ns.length() : ns.length() + 1);
+        return namespaceOfForXMLFile(element).equals(ns) ? tag : used.get(ns) + ':' + tag;
+    }
+
+    /**
+     * Returns the abbreviated element name.
+     *
+     * @param element
+     *            URL to abbreviate for an element name
+     * @return the abbreviated node name
+     */
+    String abbreviateElement(String element) {
+        String ns = namespaceOfForXMLFile(element);
+        if (ns.isEmpty()) {
+            return element;
+        }
+        available(ns);
+        return used.get(ns) + ':' + element.substring(ns.endsWith("/") ? ns.length() : ns.length() + 1);
+    }
+
+    /**
      * Returns a sequence of letters from a positive whole number.
      *
      * @param value
@@ -114,6 +190,35 @@ public class Namespaces extends HashMap<String, String> {
         long higher = value / 26;
         String letter = new String(Character.toChars(codePoint));
         return higher == 0 ? letter : asLetters(higher).concat(letter);
+    }
+
+    /**
+     * Grants that a prefix is available for a namespace. Missing prefixes are
+     * either fetched from the constants or the presets or else are created
+     * alphabetically ascending.
+     *
+     * @param namespace
+     *            the namespace
+     */
+    private void available(String namespace) {
+        if (!used.containsKey(namespace)) {
+            if (CONSTANTS.containsKey(namespace)) {
+                used.put(namespace, CONSTANTS.get(namespace));
+            } else {
+                String withHash = namespace.endsWith("/") || namespace.endsWith("#") ? namespace
+                        : namespace.concat("#");
+                BidiMap<String, String> inversedSuper = super.inverseBidiMap();
+                if (inversedSuper.containsKey(withHash)) {
+                    used.put(namespace, inversedSuper.get(withHash));
+                } else {
+                    String prefix;
+                    do {
+                        prefix = asLetters(++next);
+                    } while (super.containsKey(prefix) || CONSTANTS.containsValue(prefix));
+                    used.put(namespace, prefix);
+                }
+            }
+        }
     }
 
     /**
@@ -135,6 +240,34 @@ public class Namespaces extends HashMap<String, String> {
         }
         result.append(localName);
         return result.toString();
+    }
+
+    /**
+     * Expands an abbreviated URL.
+     *
+     * @param abbreviatedUrl
+     *            URL to expand
+     * @return expanded URL
+     */
+    public String expand(String abbreviatedUrl) {
+        return expand(abbreviatedUrl, this);
+    }
+
+    /**
+     * Expands an abbreviated URL referencing a map of prefixes.
+     *
+     * @param abbreviatedUrl
+     *            URL to expand
+     * @param prefixes
+     *            map of prefixes
+     * @return expanded URL
+     */
+    public static String expand(String abbreviatedUrl, Map<String, String> prefixes) {
+        String namespace = prefixes.get(getPrefix(abbreviatedUrl));
+        if (namespace == null) {
+            return abbreviatedUrl;
+        }
+        return concat(namespace, abbreviatedUrl.substring(abbreviatedUrl.indexOf(':') + 1));
     }
 
     /**
@@ -184,151 +317,6 @@ public class Namespaces extends HashMap<String, String> {
     }
 
     /**
-     * Returns the namespace part of an URL. If the URL contains an anchor
-     * symbol the namespace is considered the sequence before it, omitting the
-     * anchor symbol, otherwise the namespace is considered the sequence up to
-     * and including the last slash.
-     *
-     * @param url
-     *            url to return the namespace from
-     * @return the namespace
-     */
-    static String namespaceOfForXMLFile(String url) {
-        int numberSign = url.indexOf('#');
-        if (numberSign > -1) {
-            return url.substring(0, numberSign);
-        }
-        return url.substring(0, url.lastIndexOf('/') + 1);
-    }
-
-    /**
-     * Counter to create new namespace prefixes.
-     */
-    private long next;
-
-    /**
-     * The map of used namespaces in serializing an XML document. Mapping
-     * direction is namespace to prefix, {@code #} namespaces are stored without
-     * the {@code #} at the end, {@code /} namespaces are stored with a
-     * {@code /} as last character.
-     */
-    private final Map<String, String> used;
-
-    /**
-     * Creates a new NamespaceHandler for a given Node which is considered the
-     * root node of the XML document.
-     */
-    public Namespaces() {
-        this(null);
-    }
-
-    /**
-     * Creates a new NamespaceHandler for a given Node which is considered the
-     * root node of the XML document.
-     *
-     * @param presets
-     *            Presets of namespace shortcuts, mapped namespace to shortcut.
-     *            May be null or empty.
-     */
-    public Namespaces(Map<String, String> presets) {
-        super((int) Math.ceil(((presets != null ? presets.size() : 0) + 2) / 0.75));
-        super.put(RDF.NAMESPACE, DEFAULT_PREFIX_RDF);
-        super.put(RDFS.NAMESPACE, DEFAULT_PREFIX_RDFS);
-        if (presets != null) {
-            super.putAll(presets);
-        }
-        used = new HashMap<>();
-    }
-
-    /**
-     * Returns the abbreviated attribute. If the attribute is in the same
-     * namespace as the element that will hold it, the prefix is omitted.
-     *
-     * @param element
-     *            node the attribute is on
-     * @param attribute
-     *            attribute key to convert
-     * @return abbreviated or basic attribute
-     */
-    String abbreviateAttribute(String element, String attribute) {
-        String ns = namespaceOfForXMLFile(attribute);
-        if (ns.isEmpty()) {
-            return attribute;
-        }
-        available(ns);
-        String tag = attribute.substring(ns.endsWith("/") ? ns.length() : ns.length() + 1);
-        return namespaceOfForXMLFile(element).equals(ns) ? tag : used.get(ns) + ':' + tag;
-    }
-
-    /**
-     * Returns the abbreviated element name.
-     *
-     * @param element
-     *            URL to abbreviate for an element name
-     * @return the abbreviated node name
-     */
-    String abbreviateElement(String element) {
-        String ns = namespaceOfForXMLFile(element);
-        if (ns.isEmpty()) {
-            return element;
-        }
-        available(ns);
-        return used.get(ns) + ':' + element.substring(ns.endsWith("/") ? ns.length() : ns.length() + 1);
-    }
-
-    /**
-     * Grants that a prefix is available for a namespace. Missing prefixes are
-     * either fetched from the constants or the presets or else are created
-     * alphabetically ascending.
-     *
-     * @param namespace
-     *            the namespace
-     */
-    private void available(String namespace) {
-        if (!used.containsKey(namespace)) {
-            if (CONSTANTS.containsKey(namespace)) {
-                used.put(namespace, CONSTANTS.get(namespace));
-            } else if (super.containsKey(namespace)) {
-                used.put(namespace, super.get(namespace));
-            } else {
-                String prefix;
-                do {
-                    prefix = asLetters(++next);
-                } while (super.containsValue(prefix) || CONSTANTS.containsValue(prefix));
-                used.put(namespace, prefix);
-            }
-        }
-    }
-
-    /**
-     * Expands an abbreviated URL.
-     *
-     * @param abbreviatedUrl
-     *            URL to expand
-     * @return expanded URL
-     */
-    public String expand(String abbreviatedUrl) {
-        return expand(abbreviatedUrl, this);
-    }
-
-    /**
-     * Expands an abbreviated URL referencing a map of prefixes.
-     *
-     * @param abbreviatedUrl
-     *            URL to expand
-     * @param prefixes
-     *            map of prefixes
-     * @return expanded URL
-     */
-    public static String expand(String abbreviatedUrl, Map<String, String> prefixes) {
-        String namespace = prefixes.get(getPrefix(abbreviatedUrl));
-        if (namespace == null) {
-            return abbreviatedUrl;
-        }
-        return concat(namespace, abbreviatedUrl.substring(abbreviatedUrl.indexOf(':') + 1));
-    }
-
-    /**
      * Returns all namespaces to be added to the document head. Mapping
      * direction is namespace to prefix, {@code #} namespaces are stored without
      * the {@code #} at the end, {@code /} namespaces are stored with a
@@ -344,5 +332,23 @@ public class Namespaces extends HashMap<String, String> {
             result.put(PREFIX_XMLNS + ':' + entry.getValue(), prefix);
         }
         return result.entrySet();
+    }
+
+    /**
+     * Returns the namespace part of an URL. If the URL contains an anchor
+     * symbol the namespace is considered the sequence before it, omitting the
+     * anchor symbol, otherwise the namespace is considered the sequence up to
+     * and including the last slash.
+     *
+     * @param url
+     *            url to return the namespace from
+     * @return the namespace
+     */
+    static String namespaceOfForXMLFile(String url) {
+        int numberSign = url.indexOf('#');
+        if (numberSign > -1) {
+            return url.substring(0, numberSign);
+        }
+        return url.substring(0, url.lastIndexOf('/') + 1);
     }
 }
