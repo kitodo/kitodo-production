@@ -19,27 +19,25 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
-
 import java.io.IOException;
 import java.net.URI;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.MetsModsImportExport;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
@@ -146,7 +144,7 @@ public class ExportMets {
     protected boolean writeMetsFile(Process process, URI metaFile, Fileformat gdzfile, boolean writeLocalFileGroup)
             throws PreferencesException, WriteException, IOException, TypeNotAllowedForParentException {
 
-        MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
+        MetsModsImportExport mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFileGroup);
         mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {

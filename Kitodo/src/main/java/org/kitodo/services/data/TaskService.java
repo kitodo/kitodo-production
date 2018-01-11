@@ -35,6 +35,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.Prefs;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -57,9 +59,6 @@ import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;

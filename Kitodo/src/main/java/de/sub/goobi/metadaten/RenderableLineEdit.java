@@ -16,10 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataType;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataGroup;
+import org.kitodo.api.ugh.MetadataType;
 
 /**
  * Backing bean for a (multi-line) text input element to edit metadatum

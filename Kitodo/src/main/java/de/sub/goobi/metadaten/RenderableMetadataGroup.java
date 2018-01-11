@@ -18,17 +18,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.faces.model.SelectItem;
-
 import org.apache.commons.configuration.ConfigurationException;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataGroup;
+import org.kitodo.api.ugh.MetadataGroupType;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.helper.Util;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataGroupType;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
@@ -37,7 +35,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * provides the currently selected type of metadata group to add, a list of all
  * types to choose from and the members of the chosen type in order to browse
  * and alter their values.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableMetadataGroup extends RenderableMetadatum {
@@ -95,7 +93,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * Creates a RenderableMetadataGroup instance able to add any metadata group
      * that still can be added to the currently selected level of the document
      * structure hierararchy.
-     * 
+     *
      * @param addableTypes
      *            all metadata group types available for adding to the current
      *            logical document structure node
@@ -129,7 +127,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * setters are called and provides the ability to delete the associated
      * metadata group from the document structure node. Changing the metadata
      * group type is not possible.
-     * 
+     *
      * @param data
      *            metadata group whose data shall be shown
      * @param container
@@ -159,7 +157,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * Protected constructor for classes extending RenderableMetadataGroup,
      * creates a new RenderableMetadataGroup with exactly one type.
-     * 
+     *
      * @param metadataType
      *            metadata type this element is for
      * @param binding
@@ -195,7 +193,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * copy master and sets the values of the fields to the values of the copy
      * master, but doesn’t bind them to the copy master, so changing the values
      * late won’t arm the master object this copy is derived from.
-     * 
+     *
      * @param master
      *            a metadata group that a copy shall be created of
      * @param addableTypes
@@ -226,7 +224,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * If update is false, they need to be initialised explicitly so that they
      * carry a copy of the value. They will not be bound the data object and
      * thus can be used to create a copy of the data.
-     * 
+     *
      * @param data
      *            metadata group whose data shall be shown
      * @param autoUpdate
@@ -291,7 +289,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * The function getMembers returns the input elements of this metadata
      * group.
-     * 
+     *
      * @return the input elements of this group
      */
     public Collection<RenderableGroupableMetadatum> getMembers() {
@@ -301,7 +299,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * Returns the number of elements in the members list, to be used for the
      * label cell height in HTML.
-     * 
+     *
      * @return the number of elements in the members list.
      */
     public String getRowspan() {
@@ -321,7 +319,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * available for the currently selected document structure element.
      * Depending on the rule set, availability means that some elements cannot
      * be added more than once and thus may not be available to add any more.
-     * 
+     *
      * @return the metadata group types available
      */
     public Collection<SelectItem> getPossibleTypes() {
@@ -335,7 +333,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * The function getSize() returns the number of elements in this metadata
      * group.
-     * 
+     *
      * @return the number of elements in this group
      */
     public int getSize() {
@@ -348,7 +346,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * metadata group type select box. The user will be shown the label returned
      * for the corresponding element in getPossibleTypes(), not the internal
      * name.
-     * 
+     *
      * @return the internal name of the metadata group type
      */
     public String getType() {
@@ -360,7 +358,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * this instance can be created on the logical document structure node
      * currently under edit in the metadata editor to either render the action
      * link to copy this metadata group, or not.
-     * 
+     *
      * @return the internal name of the metadata group type
      */
     public boolean isCopyable() {
@@ -372,7 +370,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * RenderableMetadatum because if setLanguage() is called for a metadata
      * group, both the label display language for the group and for all of its
      * members must be set.
-     * 
+     *
      * @see de.sub.goobi.metadaten.RenderableMetadatum#setLanguage(java.lang.String)
      */
     @Override
@@ -388,7 +386,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * metadata group type the user chose to edit, referenced by its name. If it
      * differs from the current one, this renderable metadata group will be
      * updated to represent the new type instead.
-     * 
+     *
      * @param type
      *            name of the metadata group type desired
      * @throws ConfigurationException
@@ -410,13 +408,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * Returs the currently showing metadata group as a
      * {@link ugh.dl.MetadataGroup} so that it can be added to some structural
      * element.
-     * 
+     *
      * @return the showing metatdata group as ugh.dl.MetadataGroup
      */
     public MetadataGroup toMetadataGroup() {
         MetadataGroup result;
         try {
-            result = new MetadataGroup(type);
+            result = UghImplementation.INSTANCE.createMetadataGroup(type);
         } catch (MetadataTypeNotAllowedException e) {
             throw new NullPointerException("MetadataGroupType must not be null at MetadataGroup creation.");
         }
@@ -441,7 +439,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * metadata group initially in the constructor and subsequently if the user
      * alters the metadata group type he or she wants to create. Members that
      * previously existed will be kept.
-     * 
+     *
      * @param newGroupType
      *            metadata group type to initialize this renderable metadata
      *            group to

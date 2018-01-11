@@ -21,9 +21,8 @@ import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Prefs;
 
 public interface IImportPlugin extends IPlugin {
 

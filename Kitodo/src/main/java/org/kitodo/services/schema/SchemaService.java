@@ -20,35 +20,33 @@ import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.ContentFile;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.MetsModsImportExport;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.VirtualFileGroup;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
-
 import org.kitodo.services.ServiceManager;
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.dl.VirtualFileGroup;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
  * Service for schema manipulations.
@@ -123,7 +121,7 @@ public class SchemaService {
                             process.getTitle() + ": could not find any referenced images, export aborted"));
                 } else {
                     Helper.setFehlerMeldung(
-                            process.getTitle() + ": could not find any referenced images, export aborted");
+                        process.getTitle() + ": could not find any referenced images, export aborted");
                 }
                 return null;
             }
@@ -236,7 +234,7 @@ public class SchemaService {
     }
 
     private VirtualFileGroup setVirtualFileGroup(ProjectFileGroup projectFileGroup, VariableReplacer variableReplacer) {
-        VirtualFileGroup virtualFileGroup = new VirtualFileGroup();
+        VirtualFileGroup virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
 
         virtualFileGroup.setName(projectFileGroup.getName());
         virtualFileGroup.setPathToFiles(variableReplacer.replace(projectFileGroup.getPath()));
@@ -256,7 +254,8 @@ public class SchemaService {
      *            object
      * @param process
      *            object
-     * @param atsPpnBand as String
+     * @param atsPpnBand
+     *            as String
      */
     public void tempConvertRusdml(DigitalDocument digitalDocument, Prefs prefs, Process process, String atsPpnBand)
             throws ExportFileException, MetadataTypeNotAllowedException {
@@ -272,7 +271,8 @@ public class SchemaService {
     }
 
     /**
-     * Run through all structural elements recursively and assign the children's sides to the parent elements.
+     * Run through all structural elements recursively and assign the children's
+     * sides to the parent elements.
      *
      * @param inStruct
      *            DocStruct object
@@ -381,9 +381,9 @@ public class SchemaService {
          * Sprachcode den richtigen MainTitle zuweisen
          */
         MetadataType mdtOrg = prefs.getMetadataTypeByName("TitleDocMain");
-        Metadata metaOrg = new Metadata(mdtOrg);
+        Metadata metaOrg = UghImplementation.INSTANCE.createMetadata(mdtOrg);
         MetadataType mdtTrans = prefs.getMetadataTypeByName("MainTitleTranslated");
-        Metadata metaTrans = new Metadata(mdtTrans);
+        Metadata metaTrans = UghImplementation.INSTANCE.createMetadata(mdtTrans);
         if (language.equals("ru")) {
             metaOrg.setValue(titleRu);
             metaTrans.setValue(titleOther);
@@ -494,17 +494,17 @@ public class SchemaService {
         Metadata mdPPNBand = null;
         Metadata mdSorting = null;
         try {
-            mdVerlag = new Metadata(prefs.getMetadataTypeByName("PublisherName"));
+            mdVerlag = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("PublisherName"));
             mdVerlag.setValue(verlag);
-            mdPlace = new Metadata(prefs.getMetadataTypeByName("PlaceOfPublication"));
+            mdPlace = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("PlaceOfPublication"));
             mdPlace.setValue(place);
-            mdISSN = new Metadata(prefs.getMetadataTypeByName("ISSN"));
+            mdISSN = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("ISSN"));
             mdISSN.setValue(ISSN);
-            mdPPN = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
+            mdPPN = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
             mdPPN.setValue("PPN" + ppn);
-            mdPPNBand = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
+            mdPPNBand = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
             mdPPNBand.setValue("PPN" + ppn + "_" + bandNumber);
-            mdSorting = new Metadata(prefs.getMetadataTypeByName("CurrentNoSorting"));
+            mdSorting = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CurrentNoSorting"));
             int bandInt = Integer.parseInt(bandNumber) * 10;
             mdSorting.setValue(String.valueOf(bandInt));
         } catch (MetadataTypeNotAllowedException | NumberFormatException e) {
@@ -540,7 +540,8 @@ public class SchemaService {
         }
     }
 
-    private DocStruct preventNullMetadataInsert(DocStruct docStruct, Metadata metadata) throws MetadataTypeNotAllowedException {
+    private DocStruct preventNullMetadataInsert(DocStruct docStruct, Metadata metadata)
+            throws MetadataTypeNotAllowedException {
         if (metadata != null) {
             docStruct.addMetadata(metadata);
         }

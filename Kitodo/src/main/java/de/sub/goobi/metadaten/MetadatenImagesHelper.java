@@ -18,7 +18,6 @@ import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
 import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
-
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -36,26 +35,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.api.ugh.ContentFile;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.Reference;
+import org.kitodo.api.ugh.RomanNumeral;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
-import ugh.dl.Reference;
-import ugh.dl.RomanNumeral;
 import ugh.exceptions.ContentFileNotLinkedException;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
@@ -103,7 +101,7 @@ public class MetadatenImagesHelper {
              */
             MetadataType metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
             try {
-                Metadata mdForPath = new Metadata(metadataTypeForPath);
+                Metadata mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
                 URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process);
                 String pathString = new File(pathURI).getPath();
                 mdForPath.setValue(pathString);
@@ -116,10 +114,10 @@ public class MetadatenImagesHelper {
 
         if (directory == null) {
             checkIfImagesValid(process.getTitle(),
-                    serviceManager.getProcessService().getImagesTifDirectory(true, process));
+                serviceManager.getProcessService().getImagesTifDirectory(true, process));
         } else {
             checkIfImagesValid(process.getTitle(),
-                    fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
+                fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
         /*
@@ -153,7 +151,7 @@ public class MetadatenImagesHelper {
                                 .resolve(page.getImageName());
                     } else {
                         imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE,
-                                directory + page.getImageName());
+                            directory + page.getImageName());
                     }
                     if (fileService.fileExist(imageFile)) {
                         assignedImages.put(page.getImageName(), page);
@@ -226,7 +224,7 @@ public class MetadatenImagesHelper {
                     // remove page
                     physicaldocstruct.removeChild(page);
                     List<Reference> refs = new ArrayList<>(page.getAllFromReferences());
-                    for (ugh.dl.Reference ref : refs) {
+                    for (Reference ref : refs) {
                         ref.getSource().removeReferenceTo(page);
                     }
                 }
@@ -273,7 +271,7 @@ public class MetadatenImagesHelper {
 
     /**
      * Create Metadata for logical page number.
-     * 
+     *
      * @param currentPhysicalOrder
      *            as int
      * @param defaultPagination
@@ -283,14 +281,14 @@ public class MetadatenImagesHelper {
     private Metadata createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
             throws MetadataTypeNotAllowedException {
         MetadataType metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-        Metadata metadata = new Metadata(metadataType);
+        Metadata metadata = UghImplementation.INSTANCE.createMetadata(metadataType);
         metadata.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
         return metadata;
     }
 
     /**
      * Create Metadata for physical page number.
-     * 
+     *
      * @param currentPhysicalOrder
      *            as int
      * @return Metadata object
@@ -298,7 +296,7 @@ public class MetadatenImagesHelper {
     private Metadata createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
             throws MetadataTypeNotAllowedException {
         MetadataType metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
-        Metadata metadata = new Metadata(metadataType);
+        Metadata metadata = UghImplementation.INSTANCE.createMetadata(metadataType);
         metadata.setValue(String.valueOf(++currentPhysicalOrder));
         return metadata;
     }
@@ -313,7 +311,7 @@ public class MetadatenImagesHelper {
      * @return ContentFile object
      */
     private ContentFile createContentFile(Process process, URI image) throws IOException {
-        ContentFile contentFile = new ContentFile();
+        ContentFile contentFile = UghImplementation.INSTANCE.createContentFile();
         URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process).resolve(image);
         contentFile.setLocation(path.getPath());
         return contentFile;
@@ -332,7 +330,7 @@ public class MetadatenImagesHelper {
         if (defaultPagination.equalsIgnoreCase("arabic")) {
             return String.valueOf(currentPhysicalOrder);
         } else if (defaultPagination.equalsIgnoreCase("roman")) {
-            RomanNumeral roman = new RomanNumeral();
+            RomanNumeral roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
@@ -355,10 +353,12 @@ public class MetadatenImagesHelper {
         }
         if (ConfigCore.getParameter("kitodoContentServerUrl", "").equals("")) {
             logger.trace("api");
-            //TODO source image files are locked under windows forever after converting to png begins.
+            // TODO source image files are locked under windows forever after
+            // converting to png begins.
             ImageManager imageManager = new ImageManager(inFileName.toURL());
             logger.trace("im");
-            RenderedImage renderedImage = imageManager.scaleImageByPixel(tmpSize, tmpSize, ImageManager.SCALE_BY_PERCENT, intRotation);
+            RenderedImage renderedImage = imageManager.scaleImageByPixel(tmpSize, tmpSize,
+                ImageManager.SCALE_BY_PERCENT, intRotation);
             logger.trace("ri");
             JpegInterpreter jpegInterpreter = new JpegInterpreter(renderedImage);
             logger.trace("pi");
@@ -440,7 +440,7 @@ public class MetadatenImagesHelper {
                     for (Iterator<URI> iterator = files.iterator(); iterator.hasNext(); counter++) {
                         currentFileName = fileService.getFileName(iterator.next());
                         int curFileNumber = Integer
-                                    .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
+                                .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
                         if (curFileNumber != counter + myDiff) {
                             Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
                                     + " but found File " + currentFileName);
@@ -451,7 +451,7 @@ public class MetadatenImagesHelper {
                 } catch (NumberFormatException e1) {
                     isValid = false;
                     Helper.setFehlerMeldung(
-                            "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
+                        "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
                 }
                 return isValid;
             }
@@ -518,7 +518,8 @@ public class MetadatenImagesHelper {
                     String filenamePrefix = filename.replace("." + Metadaten.getFileExtension(filename), "");
                     for (URI currentImage : dataList) {
                         String currentFileName = fileService.getFileName(currentImage);
-                        String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),"");
+                        String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),
+                            "");
                         if (currentImagePrefix.equals(filenamePrefix)) {
                             orderedFilenameList.add(currentImage);
                             break;

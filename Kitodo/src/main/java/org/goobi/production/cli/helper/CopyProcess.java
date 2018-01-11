@@ -22,7 +22,6 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -31,9 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import javax.faces.model.SelectItem;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +41,13 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -54,18 +58,10 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsMods;
 
 public class CopyProcess extends ProzesskopieForm {
 
@@ -108,7 +104,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
-            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
@@ -154,7 +150,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
-            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
@@ -193,7 +189,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         this.docType = cp.getParamString("createNewProcess.defaultdoctype",
-                ConfigOpac.getAllDoctypes().get(0).getTitle());
+            ConfigOpac.getAllDoctypes().get(0).getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
         this.naviFirstPage = "NewProcess/Page1";
@@ -263,7 +259,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
 
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
@@ -323,8 +319,8 @@ public class CopyProcess extends ProzesskopieForm {
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
                             MetadataType mdt = UghHelper.getMetadataType(
-                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                    field.getMetadata());
+                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                field.getMetadata());
                             Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
@@ -527,7 +523,7 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * Checks if process title is available. If yes, return true, if no, return
      * false.
-     * 
+     *
      * @param title
      *            of process
      * @return boolean
@@ -569,11 +565,12 @@ public class CopyProcess extends ProzesskopieForm {
             return this.prozessKopie;
         }
 
-        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
+        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
+                .toString();
         boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
         if (!successful) {
             String message = "Metadata directory: " + baseProcessDirectory + "in path:"
-                    +  ConfigCore.getKitodoDataDirectory() + " was not created!";
+                    + ConfigCore.getKitodoDataDirectory() + " was not created!";
             logger.error(message);
             Helper.setFehlerMeldung(message);
             return null;
@@ -697,8 +694,8 @@ public class CopyProcess extends ProzesskopieForm {
     private void removeCollections(DocStruct colStruct) {
         try {
             MetadataType mdt = UghHelper.getMetadataType(
-                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                    "singleDigCollection");
+                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                "singleDigCollection");
             ArrayList<Metadata> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
                 for (Metadata md : myCollections) {
@@ -718,7 +715,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         Fileformat ff;
         try {
-            ff = new MetsMods(myPrefs);
+            ff = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             ff.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
@@ -1183,7 +1180,8 @@ public class CopyProcess extends ProzesskopieForm {
         while (tokenizer.hasMoreTokens()) {
             String string = tokenizer.nextToken();
             /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
+             * übernehmen
              */
             if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
                 this.tifHeaderImageDescription.append(string.substring(1, string.length() - 1));
@@ -1206,8 +1204,8 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(string) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeaderImageDescription.append(
-                                calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                        this.tifHeaderImageDescription
+                                .append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }

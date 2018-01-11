@@ -21,9 +21,8 @@ import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Prefs;
 
 /**
  * The class CataloguePlugin is a redirection class that takes a library

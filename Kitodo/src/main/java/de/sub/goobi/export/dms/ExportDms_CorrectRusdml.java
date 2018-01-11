@@ -16,12 +16,11 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Prefs;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 

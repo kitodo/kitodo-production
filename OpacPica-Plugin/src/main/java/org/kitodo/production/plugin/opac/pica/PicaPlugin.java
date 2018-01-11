@@ -35,14 +35,14 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.w3c.dom.Node;
 
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+import org.kitodo.api.millstone.DigitalDocument;
+import org.kitodo.api.millstone.DocStruct;
+import org.kitodo.api.millstone.DocStructType;
+import org.kitodo.api.millstone.Fileformat;
+import org.kitodo.api.millstone.Prefs;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.fileformats.mets.XStream;
+import org.kitodo.api.millstone.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
 /**

@@ -12,8 +12,7 @@
 package de.sub.goobi.metadaten;
 
 import java.util.List;
-
-import ugh.dl.Metadata;
+import org.kitodo.api.ugh.Metadata;
 
 /**
  * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to

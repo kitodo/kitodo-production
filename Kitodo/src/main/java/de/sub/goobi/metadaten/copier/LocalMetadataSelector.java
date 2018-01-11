@@ -13,20 +13,19 @@ package de.sub.goobi.metadaten.copier;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import ugh.dl.DocStruct;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.UghImplementation;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
  * A LocalMetadataSelector provides methods to retrieve or modify metadata on a
  * document structure node.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class LocalMetadataSelector extends MetadataSelector {
@@ -35,7 +34,7 @@ public class LocalMetadataSelector extends MetadataSelector {
     /**
      * Metadata type to return.
      */
-    private final MetadataType selector = new MetadataType();
+    private final MetadataType selector = UghImplementation.INSTANCE.createMetadataType();
 
     /**
      * Creates a new LocalMetadataSelector.
@@ -186,7 +185,8 @@ public class LocalMetadataSelector extends MetadataSelector {
     private void tryToCreateANewMetadatum(CopierData data, DocStruct logicalNode, String value) {
         Metadata copy = null;
         try {
-            copy = new Metadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
+            copy = UghImplementation.INSTANCE
+                    .createMetadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
         } catch (MetadataTypeNotAllowedException e) {
             // copy rules aren’t related to the rule set but depend on it, so
             // copy rules that don’t work with the current rule set are ignored
@@ -200,7 +200,8 @@ public class LocalMetadataSelector extends MetadataSelector {
             if (logger.isDebugEnabled()) {
                 logger.debug("Cannot create metadata element " + selector.getName()
                         + ": Accessing the rule set failed with exception: "
-                        + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+                        + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()),
+                    e);
             }
             return;
         }

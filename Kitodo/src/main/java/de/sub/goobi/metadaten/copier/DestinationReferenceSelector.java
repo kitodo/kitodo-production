@@ -15,8 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.ConfigurationException;
-
-import ugh.dl.DocStruct;
+import org.kitodo.api.ugh.DocStruct;
 
 /**
  * A DestinationReferenceSelector provides methods to retrieve document

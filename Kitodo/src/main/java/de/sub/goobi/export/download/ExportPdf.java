@@ -33,11 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.kitodo.api.filemanagement.filters.FileNameMatchesFilter;
+import org.kitodo.api.ugh.Fileformat;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;

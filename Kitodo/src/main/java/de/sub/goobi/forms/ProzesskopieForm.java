@@ -21,7 +21,6 @@ import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,11 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -50,14 +47,23 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
-import org.goobi.production.plugin.PluginLoader;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -71,15 +77,6 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
@@ -88,7 +85,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.UGHException;
 import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.XStream;
 
 @Named("ProzesskopieForm")
 @SessionScoped
@@ -321,7 +317,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         this.docType = cp.getParamString("createNewProcess.defaultdoctype",
-                ConfigOpac.getAllDoctypes().get(0).getTitle());
+            ConfigOpac.getAllDoctypes().get(0).getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
         if (this.opacKatalog.equals("")) {
@@ -562,8 +558,7 @@ public class ProzesskopieForm implements Serializable {
                     DocStruct myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
-                            myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
-                                    .get(0);
+                            myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
                             logger.error(e);
                         }
@@ -593,8 +588,8 @@ public class ProzesskopieForm implements Serializable {
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
                             MetadataType mdt = UghHelper.getMetadataType(
-                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                    field.getMetadata());
+                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                field.getMetadata());
                             Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
@@ -772,8 +767,7 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Anlegen des Prozesses und save der Metadaten.
      */
-    public String createNewProcess()
-            throws ReadException, IOException, PreferencesException, WriteException {
+    public String createNewProcess() throws ReadException, IOException, PreferencesException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -794,11 +788,12 @@ public class ProzesskopieForm implements Serializable {
             return null;
         }
 
-        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
+        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
+                .toString();
         boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
         if (!successful) {
             String message = "Metadata directory: " + baseProcessDirectory + "in path:"
-                    +  ConfigCore.getKitodoDataDirectory() + " was not created!";
+                    + ConfigCore.getKitodoDataDirectory() + " was not created!";
             logger.error(message);
             Helper.setFehlerMeldung(message);
             return null;
@@ -827,14 +822,14 @@ public class ProzesskopieForm implements Serializable {
                     Prefs ruleset = serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                     while (populizer.getType().getAnchorClass() != null) {
                         populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
-                                rdf.getDigitalDocument(), ruleset);
+                            rdf.getDigitalDocument(), ruleset);
                     }
                 }
             } catch (NullPointerException | IndexOutOfBoundsException e) { // if
                 // getAllAllowedDocStructTypes()
                 // returns null
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
-                        populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
+                    populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
             } catch (UGHException catchAll) {
                 Helper.setFehlerMeldung(catchAll.getMessage());
             }
@@ -846,10 +841,10 @@ public class ProzesskopieForm implements Serializable {
                     DocStruct tempChild = null;
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
-                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
-                                    .get(0);
+                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
+                            logger.error(
+                                e.getMessage() + " The first child below the top structure could not be determined!");
                         }
                     }
                     /*
@@ -874,8 +869,8 @@ public class ProzesskopieForm implements Serializable {
                          */
                         if (!field.getMetadata().equals("ListOfCreators")) {
                             MetadataType mdt = UghHelper.getMetadataType(
-                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                    field.getMetadata());
+                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                field.getMetadata());
                             Metadata metadata = UghHelper.getMetadata(tempStruct, mdt);
                             if (metadata != null) {
                                 metadata.setValue(field.getValue());
@@ -927,13 +922,15 @@ public class ProzesskopieForm implements Serializable {
                         this.rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(metadata);
                     }
                 }
-                Metadata newMetadata = new Metadata(mdt);
+                Metadata newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newMetadata.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
-                            + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
+                    newMetadata
+                            .setValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                                    + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 } else {
-                    newMetadata.setValue("file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
-                            + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
+                    newMetadata
+                            .setValue("file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                                    + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 }
                 this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
 
@@ -1024,9 +1021,9 @@ public class ProzesskopieForm implements Serializable {
                     allMetadata = Collections.emptyList();
                 }
                 for (Metadata available : allMetadata) {
-                    Map<String, Metadata> availableMetadata = higherLevelMetadata
-                            .containsKey(available.getType().getName())
-                            ? higherLevelMetadata.get(available.getType().getName()) : new HashMap<>();
+                    Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(
+                        available.getType().getName()) ? higherLevelMetadata.get(available.getType().getName())
+                                : new HashMap<>();
                     if (!availableMetadata.containsKey(available.getValue())) {
                         availableMetadata.put(available.getValue(), available);
                     }
@@ -1093,9 +1090,9 @@ public class ProzesskopieForm implements Serializable {
     private void addCollections(DocStruct colStruct) {
         for (String s : this.digitalCollections) {
             try {
-                Metadata md = new Metadata(UghHelper.getMetadataType(
-                        serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                        "singleDigCollection"));
+                Metadata md = UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
+                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                    "singleDigCollection"));
                 md.setValue(s);
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
@@ -1111,8 +1108,8 @@ public class ProzesskopieForm implements Serializable {
     private void removeCollections(DocStruct colStruct) {
         try {
             MetadataType mdt = UghHelper.getMetadataType(
-                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                    "singleDigCollection");
+                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                "singleDigCollection");
             ArrayList<Metadata> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
                 for (Metadata md : myCollections) {
@@ -1131,8 +1128,8 @@ public class ProzesskopieForm implements Serializable {
     public void createNewFileformat() {
         Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
         try {
-            DigitalDocument dd = new DigitalDocument();
-            Fileformat ff = new XStream(myPrefs);
+            DigitalDocument dd = UghImplementation.INSTANCE.createDigitalDocument();
+            Fileformat ff = UghImplementation.INSTANCE.createXStream(myPrefs);
             ff.setDigitalDocument(dd);
             /* BoundBook hinzufügen */
             DocStructType dst = myPrefs.getDocStrctTypeByName("BoundBook");
@@ -1281,13 +1278,13 @@ public class ProzesskopieForm implements Serializable {
                             // new has a child, but old not
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.copy(true, false),
-                                    newLogicalDocstruct.getAllChildren().get(0));
+                                newLogicalDocstruct.getAllChildren().get(0));
                         } else if (oldLogicalDocstruct.getAllChildren() != null
                                 && newLogicalDocstruct.getAllChildren() != null) {
                             // both have children
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
-                                    newLogicalDocstruct.getAllChildren().get(0));
+                                newLogicalDocstruct.getAllChildren().get(0));
                         }
                     }
                 } catch (PreferencesException e) {
@@ -1423,7 +1420,7 @@ public class ProzesskopieForm implements Serializable {
         ArrayList<String> defaultCollections = new ArrayList<>();
 
         String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
-                FileNames.DIGITAL_COLLECTIONS_FILE);
+            FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
@@ -1709,7 +1706,7 @@ public class ProzesskopieForm implements Serializable {
                     if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
                         newTitle.append(
-                                calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }
@@ -1739,10 +1736,10 @@ public class ProzesskopieForm implements Serializable {
             } catch (NumberFormatException e) {
                 if (inFeldName.equals("Bandnummer")) {
                     Helper.setFehlerMeldung(
-                            Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
+                        Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
                 } else {
                     Helper.setFehlerMeldung(
-                            Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
+                        Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
                 }
             }
             if (rueckgabe != null && rueckgabe.length() < 4) {
@@ -1821,7 +1818,7 @@ public class ProzesskopieForm implements Serializable {
                     if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
                         this.tifHeaderImageDescription += calculateProcessTitleCheck(additionalField.getTitle(),
-                                additionalField.getValue());
+                            additionalField.getValue());
                     }
 
                 }
@@ -1842,7 +1839,7 @@ public class ProzesskopieForm implements Serializable {
 
     /**
      * Downloads a docket for the process.
-     * 
+     *
      * @return the navigation-strign
      */
     public String downloadDocket() {

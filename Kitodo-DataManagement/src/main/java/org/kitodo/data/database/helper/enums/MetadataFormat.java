@@ -11,10 +11,10 @@
 
 package org.kitodo.data.database.helper.enums;
 
-import ugh.dl.Fileformat;
-import ugh.fileformats.excel.RDFFile;
-import ugh.fileformats.mets.MetsMods;
-import ugh.fileformats.mets.XStream;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.MetsMods;
+import org.kitodo.api.ugh.RDFFile;
+import org.kitodo.api.ugh.XStream;
 
 public enum MetadataFormat {
 

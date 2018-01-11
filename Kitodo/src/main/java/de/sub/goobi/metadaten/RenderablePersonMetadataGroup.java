@@ -13,21 +13,19 @@ package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.production.constants.Parameters;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataGroupType;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataGroup;
+import org.kitodo.api.ugh.MetadataGroupType;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.UghImplementation;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
@@ -45,7 +43,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     enum Field {
-        NORMDATA_RECORD("normDataRecord", true), FIRSTNAME("vorname", false), LASTNAME("nachname", false);
+        NORMDATA_RECORD("normDataRecord", true),
+        FIRSTNAME("vorname", false),
+        LASTNAME("nachname", false);
 
         private boolean isIdentifier;
         private String resourceKey;
@@ -128,7 +128,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
     private static final MetadataGroupType getGroupTypeFor(MetadataType type) {
-        MetadataGroupType result = new MetadataGroupType();
+        MetadataGroupType result = UghImplementation.INSTANCE.createMetadataGroupType();
         result.setName(type.getName());
         result.setAllLanguages(type.getAllLanguages());
         if (type.getNum() != null) {
@@ -152,7 +152,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
     private static final MetadataType getMetadataTypeFor(MetadataType type, Field field) {
-        MetadataType result = new MetadataType();
+        MetadataType result = UghImplementation.INSTANCE.createMetadataType();
         result.setName(type.getName() + '.' + field.toString());
         if (type.getNum() != null) {
             result.setNum(type.getNum());
@@ -264,7 +264,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
         List<Person> result = new ArrayList<>(1);
         Person person;
         try {
-            person = new Person(metadataType);
+            person = UghImplementation.INSTANCE.createPerson(metadataType);
         } catch (MetadataTypeNotAllowedException e) {
             throw new NullPointerException(e.getMessage());
         }

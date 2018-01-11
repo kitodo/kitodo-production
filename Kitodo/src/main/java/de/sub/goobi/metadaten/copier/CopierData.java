@@ -11,13 +11,12 @@
 
 package de.sub.goobi.metadaten.copier;
 
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Prefs;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
 /**

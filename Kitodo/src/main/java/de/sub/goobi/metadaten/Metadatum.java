@@ -17,8 +17,7 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
-
-import ugh.dl.Metadata;
+import org.kitodo.api.ugh.Metadata;
 
 public interface Metadatum {
 

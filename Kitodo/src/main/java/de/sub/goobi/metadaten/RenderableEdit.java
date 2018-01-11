@@ -17,12 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.constants.Parameters;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataGroup;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
 
 /**
  * Backing bean for a single line input box element to edit a metadatum

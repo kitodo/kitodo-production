@@ -18,29 +18,27 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.Reference;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
@@ -96,7 +94,7 @@ public class MetadataValidationService {
             dd = gdzfile.getDigitalDocument();
         } catch (Exception e) {
             Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + process.getTitle(),
-                    e.getMessage());
+                e.getMessage());
             return false;
         }
 
@@ -112,7 +110,7 @@ public class MetadataValidationService {
             if (allChildIdentifierMetadata != null && allChildIdentifierMetadata.size() > 0) {
                 Metadata identifierFirstChild = allChildIdentifierMetadata.get(0);
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
-                            && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
+                        && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
                     List<String> parameter = new ArrayList<>();
                     parameter.add(identifierTopStruct.getType().getName());
                     parameter.add(logical.getType().getName());
@@ -169,7 +167,7 @@ public class MetadataValidationService {
         if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
             for (String pageWithoutDocStruct : seitenOhneDocstructs) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationPages"),
-                        pageWithoutDocStruct);
+                    pageWithoutDocStruct);
             }
             result = false;
         }
@@ -178,11 +176,11 @@ public class MetadataValidationService {
          * auf mandatory Values der Metadaten prüfen
          */
         List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<>(),
-                metadataLanguage);
+            metadataLanguage);
         if (mandatoryList.size() != 0) {
             for (String mandatory : mandatoryList) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataMandatoryElement"),
-                        mandatory);
+                    mandatory);
             }
             result = false;
         }
@@ -192,10 +190,11 @@ public class MetadataValidationService {
          * angegeben wurden
          */
         List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<>(),
-                prefs, metadataLanguage);
+            prefs, metadataLanguage);
         if (configuredList.size() != 0) {
             for (String configured : configuredList) {
-                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataInvalidData"), configured);
+                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataInvalidData"),
+                    configured);
             }
             result = false;
         }
@@ -203,7 +202,7 @@ public class MetadataValidationService {
         MetadatenImagesHelper mih = new MetadatenImagesHelper(prefs, dd);
         try {
             if (!mih.checkIfImagesValid(process.getTitle(),
-                    serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
+                serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
                 result = false;
             }
         } catch (Exception e) {
@@ -241,8 +240,8 @@ public class MetadataValidationService {
     }
 
     private boolean checkIfMetadataValueNotReplaced(DocStruct docStruct, Metadata metadata, String metadataLanguage) {
-        if (!metadata.getValue()
-                .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+        if (!metadata.getValue().replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "")
+                .equals("")) {
             List<String> parameter = new ArrayList<>();
             parameter.add(metadata.getType().getNameByLanguage(metadataLanguage));
             parameter.add(docStruct.getType().getNameByLanguage(metadataLanguage));
@@ -354,8 +353,8 @@ public class MetadataValidationService {
      * individuelle konfigurierbare projektspezifische Validierung der
      * Metadaten.
      */
-    private List<String> checkConfiguredValidationValues(DocStruct docStruct, ArrayList<String> errorList,
-                                                         Prefs prefs, String language) {
+    private List<String> checkConfiguredValidationValues(DocStruct docStruct, ArrayList<String> errorList, Prefs prefs,
+            String language) {
         /*
          * Konfiguration öffnen und die Validierungsdetails auslesen
          */
@@ -380,7 +379,7 @@ public class MetadataValidationService {
                 mdt = UghHelper.getMetadataType(prefs, propMetadatatype);
             } catch (UghHelperException e) {
                 Helper.setFehlerMeldung("[" + this.process.getTitle() + "] " + "Metadatatype does not exist: ",
-                        propMetadatatype);
+                    propMetadatatype);
             }
             /*
              * wenn das Metadatum des FirstChilds überprüfen werden soll, dann
@@ -433,8 +432,8 @@ public class MetadataValidationService {
      * erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
      * vorhanden.
      */
-    private void checkCreateElementFrom(ArrayList<MetadataType> metadataTypes,
-                                        DocStruct docStruct, MetadataType mdt, String language) {
+    private void checkCreateElementFrom(ArrayList<MetadataType> metadataTypes, DocStruct docStruct, MetadataType mdt,
+            String language) {
 
         /*
          * existiert das zu erzeugende Metadatum schon, dann überspringen,
@@ -444,7 +443,7 @@ public class MetadataValidationService {
         List<? extends Metadata> createMetadaten = docStruct.getAllMetadataByType(mdt);
         if (createMetadaten == null || createMetadaten.size() == 0) {
             try {
-                Metadata createdElement = new Metadata(mdt);
+                Metadata createdElement = UghImplementation.INSTANCE.createMetadata(mdt);
                 StringBuilder value = new StringBuilder();
                 /*
                  * alle anzufügenden Metadaten durchlaufen und an das Element
@@ -502,7 +501,7 @@ public class MetadataValidationService {
      * Metadatum soll mit bestimmten String beginnen oder enden.
      */
     private void checkStartsEndsWith(List<String> inFehlerList, String propStartswith, String propEndswith,
-                                     DocStruct myStruct, MetadataType mdt, String language) {
+            DocStruct myStruct, MetadataType mdt, String language) {
         /* startswith oder endswith */
         List<? extends Metadata> alleMetadaten = myStruct.getAllMetadataByType(mdt);
         if (alleMetadaten != null && alleMetadaten.size() > 0) {
@@ -561,7 +560,8 @@ public class MetadataValidationService {
     /**
      * Set if automatic save is allowed.
      *
-     * @param autoSave true or false
+     * @param autoSave
+     *            true or false
      */
     public void setAutoSave(boolean autoSave) {
         this.autoSave = autoSave;

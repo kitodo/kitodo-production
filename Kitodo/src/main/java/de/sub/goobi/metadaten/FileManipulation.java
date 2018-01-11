@@ -13,7 +13,6 @@ package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -23,28 +22,26 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
+import org.kitodo.api.ugh.ContentFile;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
@@ -115,7 +112,7 @@ public class FileManipulation {
                 logger.trace("folder to import: " + currentFolder);
             }
             URI filename = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
-                    ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
+                ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
 
             if (logger.isTraceEnabled()) {
                 logger.trace("filename to import: " + filename);
@@ -143,7 +140,7 @@ public class FileManipulation {
             // sequence
             if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getProcess())
                     .equals(serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
-                            ProcessSubType.IMAGE, currentFolder + File.separator))) {
+                        ProcessSubType.IMAGE, currentFolder + File.separator))) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("update pagination for " + metadataBean.getProcess().getTitle());
                 }
@@ -216,7 +213,7 @@ public class FileManipulation {
 
                     // physical page no for new page
 
-                    Metadata mdTemp = new Metadata(physicalPageNoType);
+                    Metadata mdTemp = UghImplementation.INSTANCE.createMetadata(physicalPageNoType);
                     mdTemp.setValue(String.valueOf(indexToImport + 1));
                     newPage.addMetadata(mdTemp);
 
@@ -226,7 +223,7 @@ public class FileManipulation {
                     // logical page no
                     // logicalPageNoType =
                     // prefs.getMetadataTypeByName("logicalPageNumber");
-                    mdTemp = new Metadata(logicalPageNoType);
+                    mdTemp = UghImplementation.INSTANCE.createMetadata(logicalPageNoType);
 
                     if (insertMode.equalsIgnoreCase("uncounted")) {
                         mdTemp.setValue("uncounted");
@@ -246,7 +243,7 @@ public class FileManipulation {
                     newPage.addMetadata(mdTemp);
                     doc.getLogicalDocStruct().addReferenceTo(newPage, "logical_physical");
 
-                    ContentFile cf = new ContentFile();
+                    ContentFile cf = UghImplementation.INSTANCE.createContentFile();
                     cf.setLocation(fileService.getFileName(filename));
                     newPage.addContentFile(cf);
                     doc.getFileSet().addFile(cf);
@@ -318,7 +315,7 @@ public class FileManipulation {
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
         URI processSubTypeURI = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
-                ProcessSubType.IMAGE, currentFolder);
+            ProcessSubType.IMAGE, currentFolder);
         ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
         for (URI currentFile : filesInFolder) {
             String currentFileName = fileService.getFileName(currentFile);
@@ -526,7 +523,7 @@ public class FileManipulation {
                     // check if current import folder is master folder
                     if (fileService.getFileName(subFolder).startsWith(masterPrefix)) {
                         URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
-                                currentProcess);
+                            currentProcess);
                         ArrayList<URI> objectInFolder = fileService.getSubUris(subFolder);
                         Collections.sort(objectInFolder);
                         for (URI file : objectInFolder) {
@@ -534,11 +531,11 @@ public class FileManipulation {
                         }
                     } else {
                         importedFileNames = copyFileToDirectoryForNamesWithUnderscore(subFolder, currentProcess,
-                                importedFileNames);
+                            importedFileNames);
                     }
                 } else {
                     importedFileNames = copyFileToDirectoryForNamesWithUnderscore(subFolder, currentProcess,
-                            importedFileNames);
+                        importedFileNames);
                 }
             }
         }

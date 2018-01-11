@@ -13,10 +13,9 @@ package de.sub.goobi.helper;
 
 import java.io.Serializable;
 import java.util.Comparator;
-
-import ugh.dl.DocStructType;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
 
 public class HelperComparator implements Comparator<Object>, Serializable {
 

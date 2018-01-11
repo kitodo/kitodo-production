@@ -19,10 +19,9 @@ import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataType;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataGroup;
+import org.kitodo.api.ugh.MetadataType;
 
 /**
  * Backing bean for a select list style input element to edit a metadatum with

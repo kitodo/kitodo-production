@@ -12,8 +12,7 @@
 package de.sub.goobi.metadaten.copier;
 
 import org.apache.commons.configuration.ConfigurationException;
-
-import ugh.dl.DocStruct;
+import org.kitodo.api.ugh.DocStruct;
 
 /**
  * Abstract base class that different types of metadata selectors are based on.

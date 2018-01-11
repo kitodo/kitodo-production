@@ -13,7 +13,6 @@ package org.kitodo.services.file;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +32,8 @@ import org.goobi.io.BackupFileRotation;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
@@ -43,13 +43,8 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.RulesetService;
-
-import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.WriteException;
-import ugh.fileformats.excel.RDFFile;
-import ugh.fileformats.mets.MetsMods;
-import ugh.fileformats.mets.XStream;
 
 public class FileService {
 
@@ -120,7 +115,7 @@ public class FileService {
 
             CommandService commandService = serviceManager.getCommandService();
             List<String> commandParameter = Arrays.asList(userName, new File(dirName).getPath());
-            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirUserHome")),commandParameter);
+            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirUserHome")), commandParameter);
         }
     }
 
@@ -456,13 +451,13 @@ public class FileService {
         Ruleset ruleset = process.getRuleset();
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
             case METS:
-                ff = new MetsMods(rulesetService.getPreferences(ruleset));
+                ff = UghImplementation.INSTANCE.createMetsMods(rulesetService.getPreferences(ruleset));
                 break;
             case RDF:
-                ff = new RDFFile(rulesetService.getPreferences(ruleset));
+                ff = UghImplementation.INSTANCE.createRDFFile(rulesetService.getPreferences(ruleset));
                 break;
             default:
-                ff = new XStream(rulesetService.getPreferences(ruleset));
+                ff = UghImplementation.INSTANCE.createXStream(rulesetService.getPreferences(ruleset));
                 break;
         }
         // createBackupFile();
@@ -489,9 +484,9 @@ public class FileService {
             if (temporaryAnchorFile.isFile()
                     && FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
                 String anchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
-                        temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
+                    temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
                 temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
-                        temporaryAnchorFileName);
+                    temporaryAnchorFileName);
                 renameFile(Paths.get(temporaryAnchorFileName).toUri(), new File(anchorFileName).toURI().getRawPath());
             }
         }
@@ -657,7 +652,7 @@ public class FileService {
      * @return The URI of the requested location
      */
     public URI getProcessSubTypeURI(Integer processId, String processTitle, URI processDataDirectory,
-                                    ProcessSubType processSubType, String resourceName) throws DAOException {
+            ProcessSubType processSubType, String resourceName) throws DAOException {
 
         if (processDataDirectory == null) {
             Process process = serviceManager.getProcessService().getById(processId);
@@ -669,7 +664,7 @@ public class FileService {
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory, processTitle, processSubType,
-                resourceName);
+            resourceName);
     }
 
     /**
@@ -694,7 +689,7 @@ public class FileService {
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
-                resourceName);
+            resourceName);
     }
 
     /**
@@ -714,15 +709,16 @@ public class FileService {
      *            as String
      * @return unmapped URI
      */
-    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle, URI processDataDirectory, ProcessSubType processSubType,
-                                               String resourceName) throws DAOException {
-        URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType, resourceName);
+    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle,
+            URI processDataDirectory, ProcessSubType processSubType, String resourceName) throws DAOException {
+        URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType,
+            resourceName);
         return getSubUris(filter, processSubTypeURI);
     }
 
     /**
      * Get part of the URI for specific process.
-     * 
+     *
      * @param filter
      *            FilenameFilter object
      * @param process

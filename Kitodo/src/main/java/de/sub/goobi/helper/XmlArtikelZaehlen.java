@@ -13,15 +13,14 @@ package de.sub.goobi.helper;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.Person;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.Person;
 import ugh.exceptions.PreferencesException;
 
 public class XmlArtikelZaehlen {

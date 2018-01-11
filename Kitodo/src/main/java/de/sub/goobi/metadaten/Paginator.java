@@ -12,15 +12,13 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
-
-import ugh.dl.RomanNumeral;
+import org.kitodo.api.ugh.RomanNumeral;
+import org.kitodo.api.ugh.UghImplementation;
 
 /**
  * Sets new labels to a given set of pages.
@@ -28,12 +26,12 @@ import ugh.dl.RomanNumeral;
 public class Paginator {
 
     public enum Mode {
-        PAGES(Helper.getTranslation("seitenzaehlung"),"paginierung_seite.svg"),
-        COLUMNS(Helper.getTranslation("spaltenzaehlung"),"paginierung_spalte.svg"),
-        FOLIATION(Helper.getTranslation("blattzaehlung"),"paginierung_blatt.svg"),
-        RECTOVERSO_FOLIATION(Helper.getTranslation("blattzaehlungrectoverso"),"paginierung_blatt_rectoverso.svg"),
-        RECTOVERSO(Helper.getTranslation("seitenzaehlungrectoverso"),"paginierung_seite_rectoverso.svg"),
-        DOUBLE_PAGES(Helper.getTranslation("seitenzaehlungdoppelseiten"),"paginierung_doppelseite.svg");
+        PAGES(Helper.getTranslation("seitenzaehlung"), "paginierung_seite.svg"),
+        COLUMNS(Helper.getTranslation("spaltenzaehlung"), "paginierung_spalte.svg"),
+        FOLIATION(Helper.getTranslation("blattzaehlung"), "paginierung_blatt.svg"),
+        RECTOVERSO_FOLIATION(Helper.getTranslation("blattzaehlungrectoverso"), "paginierung_blatt_rectoverso.svg"),
+        RECTOVERSO(Helper.getTranslation("seitenzaehlungrectoverso"), "paginierung_seite_rectoverso.svg"),
+        DOUBLE_PAGES(Helper.getTranslation("seitenzaehlungdoppelseiten"), "paginierung_doppelseite.svg");
 
         private String label;
         private String image;
@@ -170,7 +168,7 @@ public class Paginator {
         }
         // roman numbers
         if (paginationType == Paginator.Type.ROMAN) {
-            RomanNumeral roman = new RomanNumeral();
+            RomanNumeral roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(paginationStartValue);
         }
     }
@@ -324,7 +322,7 @@ public class Paginator {
         if (paginationType == Paginator.Type.ARABIC) {
             paginationBaseValue = Integer.parseInt(paginationStartValue);
         } else if (paginationType == Paginator.Type.ROMAN) {
-            RomanNumeral r = new RomanNumeral();
+            RomanNumeral r = UghImplementation.INSTANCE.createRomanNumeral();
             r.setValue(paginationStartValue);
             paginationBaseValue = r.intValue();
         }

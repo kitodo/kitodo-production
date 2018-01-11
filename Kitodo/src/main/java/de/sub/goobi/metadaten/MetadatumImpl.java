@@ -23,11 +23,10 @@ import org.goobi.api.display.DisplayCase;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Prefs;
 import org.kitodo.data.database.beans.Process;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen

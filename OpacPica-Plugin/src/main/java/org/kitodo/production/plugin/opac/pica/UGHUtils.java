@@ -28,10 +28,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ugh.dl.DocStruct;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
+import org.kitodo.api.millstone.DocStruct;
+import org.kitodo.api.millstone.Metadata;
+import org.kitodo.api.millstone.MetadataType;
+import org.kitodo.api.millstone.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 

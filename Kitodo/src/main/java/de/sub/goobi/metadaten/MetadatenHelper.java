@@ -14,7 +14,6 @@ package de.sub.goobi.metadaten;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,22 +27,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.faces.model.SelectItem;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.Reference;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
@@ -335,8 +332,8 @@ public class MetadatenHelper implements Comparator<Object> {
                 newTypes.add(dst);
             } else {
                 Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
-                logger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel
-                        + " nicht definiert");
+                logger.error(
+                    "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
             }
         }
 
@@ -458,11 +455,11 @@ public class MetadatenHelper implements Comparator<Object> {
                 if (!(inStruct.getAllMetadataByType(mdt) != null && inStruct.getAllMetadataByType(mdt).size() != 0)) {
                     try {
                         if (mdt.getIsPerson()) {
-                            Person p = new Person(mdt);
+                            Person p = UghImplementation.INSTANCE.createPerson(mdt);
                             p.setRole(mdt.getName());
                             inStruct.addPerson(p);
                         } else {
-                            Metadata md = new Metadata(mdt);
+                            Metadata md = UghImplementation.INSTANCE.createMetadata(mdt);
                             inStruct.addMetadata(md); // add this new metadata
                             // element
                         }
@@ -528,8 +525,7 @@ public class MetadatenHelper implements Comparator<Object> {
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
         try (InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
-                StandardCharsets.UTF_8);
-             BufferedReader bufRead = new BufferedReader(input)) {
+                StandardCharsets.UTF_8); BufferedReader bufRead = new BufferedReader(input)) {
             char[] buffer = new char[200];
             while (bufRead.read(buffer) >= 0) {
                 String temp = new String(buffer).toLowerCase();

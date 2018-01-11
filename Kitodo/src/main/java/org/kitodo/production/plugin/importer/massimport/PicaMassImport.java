@@ -18,7 +18,6 @@
 package org.kitodo.production.plugin.importer.massimport;
 
 import de.sub.goobi.helper.exceptions.ImportPluginException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import javax.faces.context.FacesContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,9 +34,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -65,25 +61,25 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.MetsMods;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsMods;
 
 @PluginImplementation
 public class PicaMassImport implements IImportPlugin, IPlugin {
@@ -145,8 +141,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         currentIdentifier = data;
 
         if (logger.isDebugEnabled()) {
-            logger.debug("retrieving pica record for " + currentIdentifier + " with server address: "
-                    + this.getOpacAddress());
+            logger.debug(
+                "retrieving pica record for " + currentIdentifier + " with server address: " + this.getOpacAddress());
         }
         String search = SRUHelper.search(currentIdentifier, this.getOpacAddress());
         logger.trace(search);
@@ -230,7 +226,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             } else {
                 // generating ats
                 ats = createAtstsl(currentTitle, author);
-                Metadata atstsl = new Metadata(atsType);
+                Metadata atstsl = UghImplementation.INSTANCE.createMetadata(atsType);
                 atstsl.setValue(ats);
                 logicalDS.addMetadata(atstsl);
             }
@@ -298,7 +294,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             try {
                 // pathimagefiles
                 MetadataType mdt = prefs.getMetadataTypeByName("pathimagefiles");
-                Metadata newmd = new Metadata(mdt);
+                Metadata newmd = UghImplementation.INSTANCE.createMetadata(mdt);
                 newmd.setValue("/images/");
                 dd.getPhysicalDocStruct().addMetadata(newmd);
 
@@ -311,12 +307,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                         volumes = Collections.emptyList();
                     }
                     for (String collection : this.currentCollectionList) {
-                        Metadata mdCollection = new Metadata(mdTypeCollection);
+                        Metadata mdCollection = UghImplementation.INSTANCE.createMetadata(mdTypeCollection);
                         mdCollection.setValue(collection);
                         topLogicalStruct.addMetadata(mdCollection);
                         for (DocStruct volume : volumes) {
                             try {
-                                Metadata mdCollectionForVolume = new Metadata(mdTypeCollection);
+                                Metadata mdCollectionForVolume = UghImplementation.INSTANCE
+                                        .createMetadata(mdTypeCollection);
                                 mdCollectionForVolume.setValue(collection);
                                 volume.addMetadata(mdCollectionForVolume);
                             } catch (MetadataTypeNotAllowedException e) {
@@ -410,7 +407,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      * @param attributeValue
      *            attribute to locate
      * @return value, or "" if not found
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     private static String getSubelementValue(Element inElement, String attributeValue) {
@@ -460,7 +457,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             if (ff != null) {
                 r.setId(this.currentIdentifier);
                 try {
-                    MetsMods mm = new MetsMods(this.prefs);
+                    MetsMods mm = UghImplementation.INSTANCE.createMetsMods(this.prefs);
                     mm.setDigitalDocument(ff.getDigitalDocument());
                     String fileName = getImportFolder() + getProcessTitle() + ".xml";
                     if (logger.isDebugEnabled()) {

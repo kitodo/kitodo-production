@@ -12,25 +12,23 @@
 package de.sub.goobi.importer;
 
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -372,7 +370,7 @@ public class ImportRussland {
             throws MetadataTypeNotAllowedException {
         MetadataType mdt = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
                 .getMetadataTypeByName(inMdtName);
-        Metadata md = new Metadata(mdt);
+        Metadata md = UghImplementation.INSTANCE.createMetadata(mdt);
         try {
             md.setValue(inDetail.substring(4).trim());
 
@@ -401,8 +399,8 @@ public class ImportRussland {
 
     private void addPerson(DocStruct inStruct, String inRole, String inDetail)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
-        Person p = new Person(serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
-                .getMetadataTypeByName(inRole));
+        Person p = UghImplementation.INSTANCE.createPerson(
+            serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset()).getMetadataTypeByName(inRole));
         String pName = inDetail.substring(4).trim();
         if (pName.length() == 0) {
             return;

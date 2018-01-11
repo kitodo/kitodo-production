@@ -15,8 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.TreeNode;
 
 import java.util.ArrayList;
-
-import ugh.dl.DocStruct;
+import org.kitodo.api.ugh.DocStruct;
 
 public class TreeNodeStruct3 extends TreeNode {
 

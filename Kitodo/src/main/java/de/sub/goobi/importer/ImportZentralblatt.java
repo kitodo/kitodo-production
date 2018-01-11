@@ -14,33 +14,30 @@ package de.sub.goobi.importer;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DocStruct;
+import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.XStream;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -86,7 +83,7 @@ public class ImportZentralblatt {
         /*
          * Vorbereitung der Dokumentenstruktur
          */
-        DigitalDocument dd = new DigitalDocument();
+        DigitalDocument dd = UghImplementation.INSTANCE.createDigitalDocument();
         DocStructType dst = this.myPrefs.getDocStrctTypeByName("Periodical");
         DocStruct dsPeriodical = dd.createDocStruct(dst);
         dst = this.myPrefs.getDocStrctTypeByName("PeriodicalVolume");
@@ -199,7 +196,7 @@ public class ImportZentralblatt {
         dd.setLogicalDocStruct(dsPeriodical);
         dd.setPhysicalDocStruct(dsBoundBook);
         try {
-            Fileformat gdzfile = new XStream(this.myPrefs);
+            Fileformat gdzfile = UghImplementation.INSTANCE.createXStream(this.myPrefs);
             gdzfile.setDigitalDocument(dd);
 
             /*
@@ -278,7 +275,7 @@ public class ImportZentralblatt {
         if (dsPeriodicalIssue == null) {
             dst = this.myPrefs.getDocStrctTypeByName("PeriodicalIssue");
             dsPeriodicalIssue = inDigitalDocument.createDocStruct(dst);
-            Metadata myMD = new Metadata(mdt);
+            Metadata myMD = UghImplementation.INSTANCE.createMetadata(mdt);
             // myMD.setType(mdt);
             myMD.setValue(myRight);
             dsPeriodicalIssue.addMetadata(myMD);
@@ -309,10 +306,10 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("J")) {
             mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
-            List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends Metadata> myList = inStruct.getAllMetadataByType(mdt);
             /* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
             if (myList.size() == 0) {
-                md = new Metadata(mdt);
+                md = UghImplementation.INSTANCE.createMetadata(mdt);
                 // md.setType(mdt);
                 md.setValue(myRight);
                 inStruct.addMetadata(md);
@@ -335,11 +332,11 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("Y")) {
             mdt = this.myPrefs.getMetadataTypeByName("PublicationYear");
-            List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends Metadata> myList = inStruct.getAllMetadataByType(mdt);
 
             /* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
             if (myList.size() == 0) {
-                md = new Metadata(mdt);
+                md = UghImplementation.INSTANCE.createMetadata(mdt);
                 // md.setType(mdt);
                 md.setValue(myRight);
                 inStruct.addMetadata(md);
@@ -367,11 +364,11 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("V")) {
             mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
-            List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends Metadata> myList = inStruct.getAllMetadataByType(mdt);
 
             /* wenn noch keine Bandnummer vergeben wurde, dann jetzt */
             if (myList.size() == 0) {
-                md = new Metadata(mdt);
+                md = UghImplementation.INSTANCE.createMetadata(mdt);
                 md.setValue(myRight);
                 inStruct.addMetadata(md);
             } else {
@@ -428,7 +425,7 @@ public class ImportZentralblatt {
             } else {
                 mdt = this.myPrefs.getMetadataTypeByName("MainTitleTranslated");
             }
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -439,7 +436,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("LA")) {
             mdt = this.myPrefs.getMetadataTypeByName("DocLanguage");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight.toLowerCase());
             inStruct.addMetadata(md);
             return;
@@ -450,7 +447,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("AN")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLIdentifier");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -461,7 +458,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("P")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLPageNumber");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -472,7 +469,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("SO")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLSource");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -483,7 +480,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("AB")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLAbstract");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -494,7 +491,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("RV")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewAuthor");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -505,7 +502,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("CI")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLCita");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -516,7 +513,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("DE")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLTempID");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -527,7 +524,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("SI")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewLink");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -538,7 +535,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("XX")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLIntern");
-            md = new Metadata(mdt);
+            md = UghImplementation.INSTANCE.createMetadata(mdt);
             md.setValue(myRight);
             inStruct.addMetadata(md);
             return;
@@ -550,7 +547,7 @@ public class ImportZentralblatt {
         if (myLeft.equals("KW")) {
             StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
             while (tokenizer.hasMoreTokens()) {
-                md = new Metadata(this.myPrefs.getMetadataTypeByName("Keyword"));
+                md = UghImplementation.INSTANCE.createMetadata(this.myPrefs.getMetadataTypeByName("Keyword"));
                 String myTok = tokenizer.nextToken();
                 md.setValue(myTok.trim());
                 inStruct.addMetadata(md);
@@ -564,7 +561,7 @@ public class ImportZentralblatt {
         if (myLeft.equals("AU")) {
             StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
             while (tokenizer.hasMoreTokens()) {
-                Person p = new Person(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
+                Person p = UghImplementation.INSTANCE.createPerson(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
                 String myTok = tokenizer.nextToken();
 
                 if (!myTok.contains(",")) {
@@ -586,7 +583,8 @@ public class ImportZentralblatt {
         if (myLeft.equals("NH")) {
             StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
             while (tokenizer.hasMoreTokens()) {
-                Person p = new Person(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
+                Person p = UghImplementation.INSTANCE
+                        .createPerson(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
                 String myTok = tokenizer.nextToken();
 
                 if (!myTok.contains(",")) {
@@ -608,7 +606,7 @@ public class ImportZentralblatt {
         if (myLeft.equals("CC")) {
             StringTokenizer tokenizer = new StringTokenizer(myRight);
             while (tokenizer.hasMoreTokens()) {
-                md = new Metadata(this.myPrefs.getMetadataTypeByName("ClassificationMSC"));
+                md = UghImplementation.INSTANCE.createMetadata(this.myPrefs.getMetadataTypeByName("ClassificationMSC"));
                 String myTok = tokenizer.nextToken();
                 md.setValue(myTok.trim());
                 inStruct.addMetadata(md);

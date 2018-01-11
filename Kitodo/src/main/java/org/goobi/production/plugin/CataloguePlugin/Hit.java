@@ -18,8 +18,7 @@ import java.util.regex.Pattern;
 import org.goobi.production.model.bibliography.Citation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
-import ugh.dl.Fileformat;
+import org.kitodo.api.ugh.Fileformat;
 
 /**
  * The class Hit represents a hit retrieved from the search plug-in.
