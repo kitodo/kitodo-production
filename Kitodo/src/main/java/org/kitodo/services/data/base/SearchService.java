@@ -169,7 +169,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param filters Map of parameters used for filtering
      * @return null
-     * @throws DataException
+     * @throws DataException that can be caused by ElasticSearch
      */
     public String createCountQuery(Map filters) throws DataException {
         return null;
