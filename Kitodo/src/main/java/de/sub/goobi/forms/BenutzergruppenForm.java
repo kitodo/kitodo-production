@@ -162,6 +162,7 @@ public class BenutzergruppenForm extends BasisForm {
      *            list of authorizations assigned to 'myBenutzergruppe'
      */
     public void setAuthorizations(DualListModel<Authorization> authorizations) {
+        authorizations.getTarget().removeIf(Objects::isNull);
         this.myBenutzergruppe.setAuthorizations(authorizations.getTarget());
     }
 
