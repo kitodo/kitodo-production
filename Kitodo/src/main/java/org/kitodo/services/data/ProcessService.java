@@ -156,6 +156,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // TODO: find other way than retrieving the form bean to access "modusAnzeige" e.g. whether templates or processes should be returned!
         ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
+        if (Objects.equals(form, null)) {
+            form = new ProzessverwaltungForm();
+        }
         boolean isTemplate = form.getModusAnzeige().equals("vorlagen");
         Map<String, String> filterMap = (Map<String, String>) filters;
 
@@ -174,7 +177,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
             }
         }
-        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+
+        String queryString = "";
+        if (!Objects.equals(query, null)) {
+            queryString = query.toString();
+        }
+        return convertJSONObjectsToDTOs(searcher.findDocuments(queryString, sort, offset, size), false);
     }
 
     @Override
