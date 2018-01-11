@@ -20,7 +20,8 @@ public interface Fileformat {
     DigitalDocument getDigitalDocument()
             throws PreferencesException /* Error on creating process */;
 
-    void read(String path) throws PreferencesException, ReadException;
+    /** @return value is never used! */
+    boolean read(String path) throws PreferencesException, ReadException;
 
     void setDigitalDocument(DigitalDocument newFile);
 

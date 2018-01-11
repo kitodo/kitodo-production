@@ -21,7 +21,9 @@ public interface Metadata {
 
     public void setDocStruct(DocStruct docStruct);
 
-    public void setType(MetadataType metadataType);
+    /** @return always {@code true}. The result is never used. */
+    public boolean setType(MetadataType metadataType);
 
-    public void setValue(String value);
+    /** @return always {@code true}. The result is never used. */
+    public boolean setValue(String value);
 }

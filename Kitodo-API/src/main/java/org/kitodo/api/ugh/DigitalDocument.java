@@ -28,8 +28,10 @@ public interface DigitalDocument {
 
     void overrideContentFiles(List<String> images);
 
-    void setLogicalDocStruct(DocStruct docStruct);
+    /** @return always {@code true}. The result is never used. */
+    boolean setLogicalDocStruct(DocStruct docStruct);
 
-    void setPhysicalDocStruct(DocStruct docStruct);
+    /** @return always {@code true}. The result is never used. */
+    boolean setPhysicalDocStruct(DocStruct docStruct);
 
 }

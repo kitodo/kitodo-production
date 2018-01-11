@@ -14,5 +14,8 @@ package org.kitodo.api.ugh;
 public interface ContentFile {
     String getLocation();
 
-    void setLocation(String fileName);
+    /**
+     * @return always {@code true}. Return value is never used.
+     */
+    boolean setLocation(String fileName);
 }
