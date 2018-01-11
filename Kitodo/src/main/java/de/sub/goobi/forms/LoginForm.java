@@ -392,6 +392,14 @@ public class LoginForm implements Serializable {
         return result;
     }
 
+    /**
+     * Checks and returns whether this is the first time the user visits a Kitodo
+     * page in the current session or not. Makes use of the fact that "LoginForm" is
+     * a SessionScoped bean.
+     *
+     * @return whether this is the users first visit to Kitodo during the current
+     *         session or not
+     */
     public boolean isFirstVisit() {
         boolean visit = firstVisit;
         if (firstVisit) {
