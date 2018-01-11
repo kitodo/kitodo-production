@@ -11,11 +11,14 @@
 
 package org.kitodo.api.ugh;
 
-public interface ContentFile {
-    String getLocation();
+public interface FileSetInterface {
 
-    /**
-     * @return always {@code true}. Return value is never used.
-     */
-    boolean setLocation(String fileName);
+    void addFile(ContentFileInterface contentFileInterface);
+
+    void addVirtualFileGroup(VirtualFileGroupInterface v);
+
+    Iterable<ContentFileInterface> getAllFiles();
+
+    void removeFile(ContentFileInterface contentFileInterface);
+
 }

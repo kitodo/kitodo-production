@@ -11,15 +11,12 @@
 
 package org.kitodo.api.ugh;
 
-public interface VirtualFileGroup {
+public interface ReferenceInterface {
 
-    public void setFileSuffix(String suffix);
+    DocStructInterface getSource();
 
-    public void setMimetype(String mimeType);
+    DocStructInterface getTarget();
 
-    public void setName(String name);
+    String getType();
 
-    public void setOrdinary(boolean ordinary);
-
-    public void setPathToFiles(String replace);
 }

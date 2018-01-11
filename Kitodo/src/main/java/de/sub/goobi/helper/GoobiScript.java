@@ -25,9 +25,9 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.Fileformat;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
@@ -158,7 +158,7 @@ public class GoobiScript {
     private void updateContentFiles(List<Process> inProzesse) {
         for (Process proz : inProzesse) {
             try {
-                Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
+                FileformatInterface myRdf = serviceManager.getProcessService().readMetadataFile(proz);
                 myRdf.getDigitalDocument().addAllContentFiles();
                 serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ContentFiles updated: ", proz.getTitle());
@@ -808,16 +808,16 @@ public class GoobiScript {
     public void updateImagePath(List<Process> inProzesse) {
         for (Process proz : inProzesse) {
             try {
-                Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
-                MetadataType mdt = UghHelper.getMetadataType(proz, "pathimagefiles");
-                List<? extends Metadata> alleImagepfade = myRdf.getDigitalDocument().getPhysicalDocStruct()
+                FileformatInterface myRdf = serviceManager.getProcessService().readMetadataFile(proz);
+                MetadataTypeInterface mdt = UghHelper.getMetadataType(proz, "pathimagefiles");
+                List<? extends MetadataInterface> alleImagepfade = myRdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
                 if (alleImagepfade.size() > 0) {
-                    for (Metadata md : alleImagepfade) {
+                    for (MetadataInterface md : alleImagepfade) {
                         myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
                     }
                 }
-                Metadata newmd = UghImplementation.INSTANCE.createMetadata(mdt);
+                MetadataInterface newmd = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(proz) + proz.getTitle()
                             + DIRECTORY_SUFFIX);

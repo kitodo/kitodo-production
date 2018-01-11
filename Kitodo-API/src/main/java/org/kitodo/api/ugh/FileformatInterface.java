@@ -15,15 +15,15 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 
-public interface Fileformat {
+public interface FileformatInterface {
 
-    DigitalDocument getDigitalDocument()
+    DigitalDocumentInterface getDigitalDocument()
             throws PreferencesException /* Error on creating process */;
 
     /** @return value is never used! */
     boolean read(String path) throws PreferencesException, ReadException;
 
-    void setDigitalDocument(DigitalDocument newFile);
+    void setDigitalDocument(DigitalDocumentInterface newFile);
 
     boolean write(String string) throws WriteException;
 

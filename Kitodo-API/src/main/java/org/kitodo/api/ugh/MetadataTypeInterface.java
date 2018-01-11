@@ -14,7 +14,7 @@ package org.kitodo.api.ugh;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface MetadataType {
+public interface MetadataTypeInterface {
 
     Map<String, String> getAllLanguages();
 

@@ -12,7 +12,7 @@
 package org.goobi.pagination;
 
 import java.util.ArrayList;
-import org.kitodo.api.ugh.RomanNumeral;
+import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.api.ugh.UghImplementation;
 
 public class RomanNumberSequence extends ArrayList<String> {
@@ -32,7 +32,7 @@ public class RomanNumberSequence extends ArrayList<String> {
     }
 
     private void generateElements(int start, int end, int increment) {
-        RomanNumeral r = UghImplementation.INSTANCE.createRomanNumeral();
+        RomanNumeralInterface r = UghImplementation.INSTANCE.createRomanNumeral();
         for (int i = start; i <= end; i = (i + increment)) {
             r.setValue(i);
             this.add(r.toString());

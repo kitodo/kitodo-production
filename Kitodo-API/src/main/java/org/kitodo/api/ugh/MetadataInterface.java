@@ -11,18 +11,18 @@
 
 package org.kitodo.api.ugh;
 
-public interface Metadata {
+public interface MetadataInterface {
 
-    public DocStruct getDocStruct();
+    public DocStructInterface getDocStruct();
 
-    public MetadataType getType();
+    public MetadataTypeInterface getType();
 
     public String getValue();
 
-    public void setDocStruct(DocStruct docStruct);
+    public void setDocStruct(DocStructInterface docStructInterface);
 
     /** @return always {@code true}. The result is never used. */
-    public boolean setType(MetadataType metadataType);
+    public boolean setType(MetadataTypeInterface metadataTypeInterface);
 
     /** @return always {@code true}. The result is never used. */
     public boolean setValue(String value);

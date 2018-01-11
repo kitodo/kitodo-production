@@ -11,6 +11,11 @@
 
 package org.kitodo.api.ugh;
 
-public interface XStream extends Fileformat {
+public interface ContentFileInterface {
+    String getLocation();
 
+    /**
+     * @return always {@code true}. Return value is never used.
+     */
+    boolean setLocation(String fileName);
 }

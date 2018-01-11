@@ -16,9 +16,9 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
@@ -34,7 +34,7 @@ public class LocalMetadataSelector extends MetadataSelector {
     /**
      * Metadata type to return.
      */
-    private final MetadataType selector = UghImplementation.INSTANCE.createMetadataType();
+    private final MetadataTypeInterface selector = UghImplementation.INSTANCE.createMetadataType();
 
     /**
      * Creates a new LocalMetadataSelector.
@@ -69,7 +69,7 @@ public class LocalMetadataSelector extends MetadataSelector {
      *      java.lang.String)
      */
     @Override
-    protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
+    protected void createIfPathExistsOnly(CopierData data, DocStructInterface logicalNode, String value) {
         if (findMetadatumIn(logicalNode) != null) {
             return;
         }
@@ -93,8 +93,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      */
 
     @Override
-    protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {
-        Metadata existingMetadatum = findMetadatumIn(logicalNode);
+    protected void createOrOverwrite(CopierData data, DocStructInterface logicalNode, String value) {
+        MetadataInterface existingMetadatum = findMetadatumIn(logicalNode);
         if (existingMetadatum != null) {
             existingMetadatum.setValue(value);
         } else {
@@ -112,11 +112,11 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
      */
     @Override
-    protected Iterable<MetadataSelector> findAll(DocStruct node) {
+    protected Iterable<MetadataSelector> findAll(DocStructInterface node) {
         ArrayList<MetadataSelector> result = new ArrayList<>(1);
-        List<MetadataType> addableTypes = node.getAddableMetadataTypes();
+        List<MetadataTypeInterface> addableTypes = node.getAddableMetadataTypes();
         if (addableTypes != null) {
-            for (MetadataType addable : addableTypes) {
+            for (MetadataTypeInterface addable : addableTypes) {
                 if (selector.getName().equals(addable.getName())) {
                     result.add(this);
                     break;
@@ -136,8 +136,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
      */
     @Override
-    protected String findIn(DocStruct node) {
-        Metadata found = findMetadatumIn(node);
+    protected String findIn(DocStructInterface node) {
+        MetadataInterface found = findMetadatumIn(node);
         return found != null ? found.getValue() : null;
     }
 
@@ -150,9 +150,9 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @return the metadata, or null if absent
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
      */
-    private Metadata findMetadatumIn(DocStruct node) {
-        List<? extends Metadata> metadata = node.getAllMetadataByType(selector);
-        for (Metadata metadatum : metadata) {
+    private MetadataInterface findMetadatumIn(DocStructInterface node) {
+        List<? extends MetadataInterface> metadataInterface = node.getAllMetadataByType(selector);
+        for (MetadataInterface metadatum : metadataInterface) {
             if (selector.getName().equals(metadatum.getType().getName())) {
                 return metadatum;
             }
@@ -182,8 +182,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param value
      *            value to write if no metadataof this type is available
      */
-    private void tryToCreateANewMetadatum(CopierData data, DocStruct logicalNode, String value) {
-        Metadata copy = null;
+    private void tryToCreateANewMetadatum(CopierData data, DocStructInterface logicalNode, String value) {
+        MetadataInterface copy = null;
         try {
             copy = UghImplementation.INSTANCE
                     .createMetadata(data.getPreferences().getMetadataTypeByName(selector.getName()));

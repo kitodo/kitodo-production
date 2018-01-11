@@ -14,15 +14,15 @@ package org.kitodo.api.ugh;
 import java.util.List;
 import java.util.Map;
 
-public interface MetadataGroupType {
+public interface MetadataGroupTypeInterface {
 
-    void addMetadataType(MetadataType metadataType);
+    void addMetadataType(MetadataTypeInterface metadataTypeInterface);
 
     Map<String, String> getAllLanguages();
 
     String getLanguage(String language);
 
-    List<MetadataType> getMetadataTypeList();
+    List<MetadataTypeInterface> getMetadataTypeList();
 
     String getName();
 

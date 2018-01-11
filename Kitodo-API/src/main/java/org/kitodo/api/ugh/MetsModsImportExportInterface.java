@@ -11,7 +11,7 @@
 
 package org.kitodo.api.ugh;
 
-public interface MetsModsImportExport extends Fileformat {
+public interface MetsModsImportExportInterface extends FileformatInterface {
 
     static final String CREATE_LABEL_ATTRIBUTE_TYPE = "...";
     static final String CREATE_MPTR_ELEMENT_TYPE = "...";

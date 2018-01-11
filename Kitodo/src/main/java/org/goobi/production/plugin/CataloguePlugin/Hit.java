@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import org.goobi.production.model.bibliography.Citation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.FileformatInterface;
 
 /**
  * The class Hit represents a hit retrieved from the search plug-in.
@@ -149,8 +149,8 @@ public class Hit {
      *
      * @return the full hit record
      */
-    public Fileformat getFileformat() {
-        return getAs("fileformat", Fileformat.class);
+    public FileformatInterface getFileformat() {
+        return getAs("fileformat", FileformatInterface.class);
     }
 
     /**

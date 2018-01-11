@@ -41,15 +41,15 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.ContentFile;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.DocStructType;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
-import org.kitodo.api.ugh.Prefs;
-import org.kitodo.api.ugh.Reference;
-import org.kitodo.api.ugh.RomanNumeral;
+import org.kitodo.api.ugh.ContentFileInterface;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.ReferenceInterface;
+import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
@@ -62,13 +62,13 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class MetadatenImagesHelper {
     private static final Logger logger = LogManager.getLogger(MetadatenImagesHelper.class);
-    private final Prefs myPrefs;
-    private final DigitalDocument mydocument;
+    private final PrefsInterface myPrefs;
+    private final DigitalDocumentInterface mydocument;
     private int myLastImage = 0;
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();
 
-    public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
+    public MetadatenImagesHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
         this.myPrefs = inPrefs;
         this.mydocument = inDocument;
     }
@@ -81,9 +81,9 @@ public class MetadatenImagesHelper {
      * delete pages from the end of pyhsicalDocStruct.
      */
     public void createPagination(Process process, URI directory) throws TypeNotAllowedForParentException, IOException {
-        DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
+        DocStructInterface physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
-        DocStruct log = this.mydocument.getLogicalDocStruct();
+        DocStructInterface log = this.mydocument.getLogicalDocStruct();
         while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
                 && log.getAllChildren().size() > 0) {
             log = log.getAllChildren().get(0);
@@ -93,15 +93,15 @@ public class MetadatenImagesHelper {
          * der physische Baum wird nur angelegt, wenn er noch nicht existierte
          */
         if (physicaldocstruct == null) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
+            DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
             physicaldocstruct = this.mydocument.createDocStruct(dst);
 
             /*
              * Probleme mit dem FilePath
              */
-            MetadataType metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
+            MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
             try {
-                Metadata mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
+                MetadataInterface mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
                 URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process);
                 String pathString = new File(pathURI).getPath();
                 mdForPath.setValue(pathString);
@@ -123,8 +123,8 @@ public class MetadatenImagesHelper {
         /*
          * retrieve existing pages/images
          */
-        DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
-        List<DocStruct> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
+        DocStructTypeInterface newPage = this.myPrefs.getDocStrctTypeByName("page");
+        List<DocStructInterface> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
         if (oldPages == null) {
             oldPages = new ArrayList<>();
         }
@@ -138,12 +138,12 @@ public class MetadatenImagesHelper {
         }
 
         String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
-        Map<String, DocStruct> assignedImages = new HashMap<>();
-        List<DocStruct> pageElementsWithoutImages = new ArrayList<>();
+        Map<String, DocStructInterface> assignedImages = new HashMap<>();
+        List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
         List<URI> imagesWithoutPageElements = new ArrayList<>();
 
         if (physicaldocstruct.getAllChildren() != null && !physicaldocstruct.getAllChildren().isEmpty()) {
-            for (DocStruct page : physicaldocstruct.getAllChildren()) {
+            for (DocStructInterface page : physicaldocstruct.getAllChildren()) {
                 if (page.getImageName() != null) {
                     URI imageFile = null;
                     if (directory == null) {
@@ -184,10 +184,10 @@ public class MetadatenImagesHelper {
 
         // case 1: existing pages but no images (some images are removed)
         if (!pageElementsWithoutImages.isEmpty() && imagesWithoutPageElements.isEmpty()) {
-            for (DocStruct pageToRemove : pageElementsWithoutImages) {
+            for (DocStructInterface pageToRemove : pageElementsWithoutImages) {
                 physicaldocstruct.removeChild(pageToRemove);
-                List<Reference> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-                for (Reference ref : refs) {
+                List<ReferenceInterface> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
+                for (ReferenceInterface ref : refs) {
                     ref.getSource().removeReferenceTo(pageToRemove);
                 }
             }
@@ -195,7 +195,7 @@ public class MetadatenImagesHelper {
             // case 2: no page docs but images (some images are added)
             int currentPhysicalOrder = assignedImages.size();
             for (URI newImage : imagesWithoutPageElements) {
-                DocStruct dsPage = this.mydocument.createDocStruct(newPage);
+                DocStructInterface dsPage = this.mydocument.createDocStruct(newPage);
                 try {
                     // physical page no
                     physicaldocstruct.addChild(dsPage);
@@ -214,7 +214,7 @@ public class MetadatenImagesHelper {
             }
         } else {
             // case 3: empty page docs and unassinged images
-            for (DocStruct page : pageElementsWithoutImages) {
+            for (DocStructInterface page : pageElementsWithoutImages) {
                 if (!imagesWithoutPageElements.isEmpty()) {
                     // assign new image name to page
                     URI newImageName = imagesWithoutPageElements.get(0);
@@ -223,8 +223,8 @@ public class MetadatenImagesHelper {
                 } else {
                     // remove page
                     physicaldocstruct.removeChild(page);
-                    List<Reference> refs = new ArrayList<>(page.getAllFromReferences());
-                    for (Reference ref : refs) {
+                    List<ReferenceInterface> refs = new ArrayList<>(page.getAllFromReferences());
+                    for (ReferenceInterface ref : refs) {
                         ref.getSource().removeReferenceTo(page);
                     }
                 }
@@ -233,7 +233,7 @@ public class MetadatenImagesHelper {
                 // create new page elements
                 int currentPhysicalOrder = physicaldocstruct.getAllChildren().size();
                 for (URI newImage : imagesWithoutPageElements) {
-                    DocStruct dsPage = this.mydocument.createDocStruct(newPage);
+                    DocStructInterface dsPage = this.mydocument.createDocStruct(newPage);
                     try {
                         // physical page no
                         physicaldocstruct.addChild(dsPage);
@@ -253,15 +253,15 @@ public class MetadatenImagesHelper {
             }
         }
         int currentPhysicalOrder = 1;
-        MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         if (physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
-            for (DocStruct page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
-                List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
+            for (DocStructInterface page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
+                List<? extends MetadataInterface> pageNoMetadata = page.getAllMetadataByType(mdt);
                 if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
                     currentPhysicalOrder++;
                     break;
                 }
-                for (Metadata pageNo : pageNoMetadata) {
+                for (MetadataInterface pageNo : pageNoMetadata) {
                     pageNo.setValue(String.valueOf(currentPhysicalOrder));
                 }
                 currentPhysicalOrder++;
@@ -278,12 +278,12 @@ public class MetadatenImagesHelper {
      *            as String
      * @return Metadata object
      */
-    private Metadata createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
+    private MetadataInterface createMetadataForLogicalPageNumber(int currentPhysicalOrder, String defaultPagination)
             throws MetadataTypeNotAllowedException {
-        MetadataType metadataType = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-        Metadata metadata = UghImplementation.INSTANCE.createMetadata(metadataType);
-        metadata.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
-        return metadata;
+        MetadataTypeInterface metadataTypeInterface = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+        MetadataInterface metadataInterface = UghImplementation.INSTANCE.createMetadata(metadataTypeInterface);
+        metadataInterface.setValue(determinePagination(currentPhysicalOrder, defaultPagination));
+        return metadataInterface;
     }
 
     /**
@@ -293,12 +293,12 @@ public class MetadatenImagesHelper {
      *            as int
      * @return Metadata object
      */
-    private Metadata createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
+    private MetadataInterface createMetadataForPhysicalPageNumber(int currentPhysicalOrder)
             throws MetadataTypeNotAllowedException {
-        MetadataType metadataType = this.myPrefs.getMetadataTypeByName("physPageNumber");
-        Metadata metadata = UghImplementation.INSTANCE.createMetadata(metadataType);
-        metadata.setValue(String.valueOf(++currentPhysicalOrder));
-        return metadata;
+        MetadataTypeInterface metadataTypeInterface = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        MetadataInterface metadataInterface = UghImplementation.INSTANCE.createMetadata(metadataTypeInterface);
+        metadataInterface.setValue(String.valueOf(++currentPhysicalOrder));
+        return metadataInterface;
     }
 
     /**
@@ -310,11 +310,11 @@ public class MetadatenImagesHelper {
      *            URI to image
      * @return ContentFile object
      */
-    private ContentFile createContentFile(Process process, URI image) throws IOException {
-        ContentFile contentFile = UghImplementation.INSTANCE.createContentFile();
+    private ContentFileInterface createContentFile(Process process, URI image) throws IOException {
+        ContentFileInterface contentFileInterface = UghImplementation.INSTANCE.createContentFile();
         URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process).resolve(image);
-        contentFile.setLocation(path.getPath());
-        return contentFile;
+        contentFileInterface.setLocation(path.getPath());
+        return contentFileInterface;
     }
 
     /**
@@ -330,7 +330,7 @@ public class MetadatenImagesHelper {
         if (defaultPagination.equalsIgnoreCase("arabic")) {
             return String.valueOf(currentPhysicalOrder);
         } else if (defaultPagination.equalsIgnoreCase("roman")) {
-            RomanNumeral roman = UghImplementation.INSTANCE.createRomanNumeral();
+            RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
@@ -511,9 +511,9 @@ public class MetadatenImagesHelper {
         }
         List<URI> orderedFilenameList = new ArrayList<>();
         if (dataList.size() != 0) {
-            List<DocStruct> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+            List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
             if (pagesList != null) {
-                for (DocStruct page : pagesList) {
+                for (DocStructInterface page : pagesList) {
                     String filename = page.getImageName();
                     String filenamePrefix = filename.replace("." + Metadaten.getFileExtension(filename), "");
                     for (URI currentImage : dataList) {
@@ -548,11 +548,11 @@ public class MetadatenImagesHelper {
      *            DocStruct object
      * @return list of Strings
      */
-    public List<URI> getImageFiles(DocStruct physical) {
+    public List<URI> getImageFiles(DocStructInterface physical) {
         List<URI> orderedFileList = new ArrayList<>();
-        List<DocStruct> pages = physical.getAllChildren();
+        List<DocStructInterface> pages = physical.getAllChildren();
         if (pages != null) {
-            for (DocStruct page : pages) {
+            for (DocStructInterface page : pages) {
                 URI filename = URI.create(page.getImageName());
                 if (filename != null) {
                     orderedFileList.add(filename);

@@ -59,15 +59,15 @@ import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
-import org.kitodo.api.ugh.ContentFile;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.Fileformat;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetsModsImportExport;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.ContentFileInterface;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
-import org.kitodo.api.ugh.VirtualFileGroup;
+import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
@@ -1260,7 +1260,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return filer format
      */
-    public Fileformat readMetadataFile(Process process) throws ReadException, IOException, PreferencesException {
+    public FileformatInterface readMetadataFile(Process process) throws ReadException, IOException, PreferencesException {
         URI metadataFileUri = serviceManager.getFileService().getMetadataFilePath(process);
         if (!checkForMetadataFile(process)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
@@ -1272,7 +1272,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             logger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
         }
 
-        Fileformat ff = determineFileFormat(type, process);
+        FileformatInterface ff = determineFileFormat(type, process);
         try {
             ff.read(serviceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (ReadException e) {
@@ -1285,8 +1285,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return ff;
     }
 
-    private Fileformat determineFileFormat(String type, Process process) throws PreferencesException {
-        Fileformat fileFormat = null;
+    private FileformatInterface determineFileFormat(String type, Process process) throws PreferencesException {
+        FileformatInterface fileFormat = null;
         RulesetService rulesetService = serviceManager.getRulesetService();
 
         switch (type) {
@@ -1321,7 +1321,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return file format
      */
-    public Fileformat readMetadataAsTemplateFile(Process process)
+    public FileformatInterface readMetadataAsTemplateFile(Process process)
             throws ReadException, IOException, PreferencesException {
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         if (fileService.fileExist(processSubTypeURI)) {
@@ -1329,7 +1329,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (logger.isDebugEnabled()) {
                 logger.debug("current template.xml file type: " + type);
             }
-            Fileformat ff = determineFileFormat(type, process);
+            FileformatInterface ff = determineFileFormat(type, process);
             ff.read(processSubTypeURI.toString());
             return ff;
         } else {
@@ -1653,7 +1653,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *             if creating the process directory or reading the meta data
      *             file fails
      */
-    public DigitalDocument getDigitalDocument(Process process) throws PreferencesException, ReadException, IOException {
+    public DigitalDocumentInterface getDigitalDocument(Process process) throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
     }
 
@@ -1753,27 +1753,27 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @param metadataFile
      *            The given metadataFile.
-     * @param prefs
+     * @param prefsInterface
      *            The Preferences
      * @return The fileFormat.
      */
-    public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
+    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefsInterface)
             throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadatenHelper.getMetaFileType(metadataFile);
-        Fileformat ff;
+        FileformatInterface ff;
         switch (type) {
             case "metsmods":
-                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
+                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefsInterface);
                 break;
             case "mets":
-                ff = UghImplementation.INSTANCE.createMetsMods(prefs);
+                ff = UghImplementation.INSTANCE.createMetsMods(prefsInterface);
                 break;
             case "xstream":
-                ff = UghImplementation.INSTANCE.createXStream(prefs);
+                ff = UghImplementation.INSTANCE.createXStream(prefsInterface);
                 break;
             default:
-                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
+                ff = UghImplementation.INSTANCE.createRDFFile(prefsInterface);
                 break;
         }
         ff.read(metadataFile.getPath());
@@ -1790,7 +1790,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText) throws IOException,
             PreferencesException, org.apache.commons.configuration.ConfigurationException, WriteException {
-        Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
 
         Project project = process.getProject();
 
@@ -1800,8 +1800,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         /*
          * Dokument einlesen
          */
-        Fileformat gdzfile;
-        Fileformat newfile;
+        FileformatInterface gdzfile;
+        FileformatInterface newfile;
         FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         try {
             URI metadataPath = fi.getMetadataFilePath();
@@ -1941,10 +1941,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * Run through all metadata and children of given docstruct to trim the
      * strings calls itself recursively.
      */
-    private void trimAllMetadata(DocStruct inStruct) {
+    private void trimAllMetadata(DocStructInterface inStruct) {
         /* trim all metadata values */
         if (inStruct.getAllMetadata() != null) {
-            for (Metadata md : inStruct.getAllMetadata()) {
+            for (MetadataInterface md : inStruct.getAllMetadata()) {
                 if (md.getValue() != null) {
                     md.setValue(md.getValue().trim());
                 }
@@ -1953,7 +1953,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         /* run through all children of docstruct */
         if (inStruct.getAllChildren() != null) {
-            for (DocStruct child : inStruct.getAllChildren()) {
+            for (DocStructInterface child : inStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }
@@ -2078,19 +2078,19 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
-    protected boolean writeMetsFile(Process process, String targetFileName, Fileformat gdzfile,
+    protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException {
         FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
-        Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();
-        MetsModsImportExport mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
+        MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fi.getImagesDirectory();
         File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
          */
-        DigitalDocument dd = gdzfile.getDigitalDocument();
+        DigitalDocumentInterface dd = gdzfile.getDigitalDocument();
         if (dd.getFileSet() == null) {
             Helper.setFehlerMeldung(process.getTitle() + ": digital document does not contain images; aborting");
             return false;
@@ -2100,7 +2100,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          * get the topstruct element of the digital document depending on anchor
          * property
          */
-        DocStruct topElement = dd.getLogicalDocStruct();
+        DocStructInterface topElement = dd.getLogicalDocStruct();
         if (preferences.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
             if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
                 throw new PreferencesException(process.getTitle()
@@ -2120,7 +2120,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 Helper.setMeldung(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
-                for (DocStruct mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
+                for (DocStructInterface mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
                     topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
                 }
             } else {
@@ -2129,7 +2129,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        for (ContentFile cf : dd.getFileSet().getAllFiles()) {
+        for (ContentFileInterface cf : dd.getFileSet().getAllFiles()) {
             String location = cf.getLocation();
             // If the file's location string shoes no sign of any protocol,
             // use the file protocol.
@@ -2159,7 +2159,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     URI folder = new File(fi.getMethodFromName(pfg.getFolder())).toURI();
                     if (fileService.fileExist(folder)
                             && serviceManager.getFileService().getSubUris(folder).size() > 0) {
-                        VirtualFileGroup v = UghImplementation.INSTANCE.createVirtualFileGroup();
+                        VirtualFileGroupInterface v = UghImplementation.INSTANCE.createVirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));
                         v.setMimetype(pfg.getMimeType());
@@ -2168,7 +2168,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     }
                 } else {
 
-                    VirtualFileGroup v = UghImplementation.INSTANCE.createVirtualFileGroup();
+                    VirtualFileGroupInterface v = UghImplementation.INSTANCE.createVirtualFileGroup();
                     v.setName(pfg.getName());
                     v.setPathToFiles(vp.replace(pfg.getPath()));
                     v.setMimetype(pfg.getMimeType());

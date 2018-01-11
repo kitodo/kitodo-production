@@ -55,14 +55,14 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.DocStructType;
-import org.kitodo.api.ugh.Fileformat;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
-import org.kitodo.api.ugh.Person;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -235,7 +235,7 @@ public class ProzesskopieForm implements Serializable {
      */
     private CataloguePlugin importCatalogue;
 
-    private Fileformat rdf;
+    private FileformatInterface rdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -555,7 +555,7 @@ public class ProzesskopieForm implements Serializable {
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     /* welches Docstruct */
-                    DocStruct myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+                    DocStructInterface myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
                             myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
@@ -572,7 +572,7 @@ public class ProzesskopieForm implements Serializable {
                             /* bei Autoren die Namen zusammenstellen */
                             StringBuilder authors = new StringBuilder();
                             if (myTempStruct.getAllPersons() != null) {
-                                for (Person p : myTempStruct.getAllPersons()) {
+                                for (PersonInterface p : myTempStruct.getAllPersons()) {
                                     authors.append(p.getLastname());
                                     if (StringUtils.isNotBlank(p.getFirstname())) {
                                         authors.append(", ");
@@ -587,10 +587,10 @@ public class ProzesskopieForm implements Serializable {
                             field.setValue(authors.toString());
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
-                            MetadataType mdt = UghHelper.getMetadataType(
+                            MetadataTypeInterface mdt = UghHelper.getMetadataType(
                                 serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                 field.getMetadata());
-                            Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
+                            MetadataInterface md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
                                 md.setValue(field.getValue().replace("&amp;", "&"));
@@ -656,7 +656,7 @@ public class ProzesskopieForm implements Serializable {
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
         try {
-            DocStruct colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+            DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct);
@@ -815,11 +815,11 @@ public class ProzesskopieForm implements Serializable {
 
             // there must be at least one non-anchor level doc struct
             // if missing, insert logical doc structs until you reach it
-            DocStruct populizer = null;
+            DocStructInterface populizer = null;
             try {
                 populizer = rdf.getDigitalDocument().getLogicalDocStruct();
                 if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
-                    Prefs ruleset = serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
+                    PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                     while (populizer.getType().getAnchorClass() != null) {
                         populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
                             rdf.getDigitalDocument(), ruleset);
@@ -837,8 +837,8 @@ public class ProzesskopieForm implements Serializable {
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     /* welches Docstruct */
-                    DocStruct tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-                    DocStruct tempChild = null;
+                    DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+                    DocStructInterface tempChild = null;
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
                             tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
@@ -868,21 +868,21 @@ public class ProzesskopieForm implements Serializable {
                          * übernehmen
                          */
                         if (!field.getMetadata().equals("ListOfCreators")) {
-                            MetadataType mdt = UghHelper.getMetadataType(
+                            MetadataTypeInterface mdt = UghHelper.getMetadataType(
                                 serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                 field.getMetadata());
-                            Metadata metadata = UghHelper.getMetadata(tempStruct, mdt);
-                            if (metadata != null) {
-                                metadata.setValue(field.getValue());
+                            MetadataInterface metadataInterface = UghHelper.getMetadata(tempStruct, mdt);
+                            if (metadataInterface != null) {
+                                metadataInterface.setValue(field.getValue());
                             }
                             /*
                              * wenn dem Topstruct und dem Firstchild der Wert
                              * gegeben werden soll
                              */
                             if (tempChild != null) {
-                                metadata = UghHelper.getMetadata(tempChild, mdt);
-                                if (metadata != null) {
-                                    metadata.setValue(field.getValue());
+                                metadataInterface = UghHelper.getMetadata(tempChild, mdt);
+                                if (metadataInterface != null) {
+                                    metadataInterface.setValue(field.getValue());
                                 }
                             }
                         }
@@ -897,7 +897,7 @@ public class ProzesskopieForm implements Serializable {
             /*
              * Collectionen hinzufügen
              */
-            DocStruct colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+            DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             try {
                 addCollections(colStruct);
                 /*
@@ -914,15 +914,15 @@ public class ProzesskopieForm implements Serializable {
              * Imagepfad hinzufügen (evtl. vorhandene zunächst löschen)
              */
             try {
-                MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
-                List<? extends Metadata> allImagePaths = this.rdf.getDigitalDocument().getPhysicalDocStruct()
+                MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
+                List<? extends MetadataInterface> allImagePaths = this.rdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
                 if (allImagePaths != null && allImagePaths.size() > 0) {
-                    for (Metadata metadata : allImagePaths) {
-                        this.rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(metadata);
+                    for (MetadataInterface metadataInterface : allImagePaths) {
+                        this.rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(metadataInterface);
                     }
                 }
-                Metadata newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
+                MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newMetadata
                             .setValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
@@ -1012,16 +1012,16 @@ public class ProzesskopieForm implements Serializable {
      */
     private void updateMetadata() throws PreferencesException {
         if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
-            DocStruct enricher = rdf.getDigitalDocument().getLogicalDocStruct();
-            Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<>();
+            DocStructInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
+            Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
             while (enricher.getAllChildren() != null) {
                 // save higher level metadata for lower enrichment
-                List<Metadata> allMetadata = enricher.getAllMetadata();
+                List<MetadataInterface> allMetadata = enricher.getAllMetadata();
                 if (allMetadata == null) {
                     allMetadata = Collections.emptyList();
                 }
-                for (Metadata available : allMetadata) {
-                    Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(
+                for (MetadataInterface available : allMetadata) {
+                    Map<String, MetadataInterface> availableMetadata = higherLevelMetadata.containsKey(
                         available.getType().getName()) ? higherLevelMetadata.get(available.getType().getName())
                                 : new HashMap<>();
                     if (!availableMetadata.containsKey(available.getValue())) {
@@ -1031,17 +1031,17 @@ public class ProzesskopieForm implements Serializable {
                 }
 
                 // enrich children with inherited metadata
-                for (DocStruct nextChild : enricher.getAllChildren()) {
+                for (DocStructInterface nextChild : enricher.getAllChildren()) {
                     enricher = nextChild;
-                    for (Entry<String, Map<String, Metadata>> availableHigherMetadata : higherLevelMetadata
+                    for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata
                             .entrySet()) {
                         String enrichable = availableHigherMetadata.getKey();
                         boolean addable = false;
-                        List<MetadataType> addableTypesNotNull = enricher.getAddableMetadataTypes();
+                        List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
                         if (addableTypesNotNull == null) {
                             addableTypesNotNull = Collections.emptyList();
                         }
-                        for (MetadataType addableMetadata : addableTypesNotNull) {
+                        for (MetadataTypeInterface addableMetadata : addableTypesNotNull) {
                             if (addableMetadata.getName().equals(enrichable)) {
                                 addable = true;
                                 break;
@@ -1050,13 +1050,13 @@ public class ProzesskopieForm implements Serializable {
                         if (!addable) {
                             continue;
                         }
-                        there: for (Entry<String, Metadata> higherElement : availableHigherMetadata.getValue()
+                        there: for (Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
                                 .entrySet()) {
-                            List<Metadata> amNotNull = enricher.getAllMetadata();
+                            List<MetadataInterface> amNotNull = enricher.getAllMetadata();
                             if (amNotNull == null) {
                                 amNotNull = Collections.emptyList();
                             }
-                            for (Metadata existentMetadata : amNotNull) {
+                            for (MetadataInterface existentMetadata : amNotNull) {
                                 if (existentMetadata.getType().getName().equals(enrichable)
                                         && existentMetadata.getValue().equals(higherElement.getKey())) {
                                     continue there;
@@ -1087,10 +1087,10 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void addCollections(DocStruct colStruct) {
+    private void addCollections(DocStructInterface colStruct) {
         for (String s : this.digitalCollections) {
             try {
-                Metadata md = UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
+                MetadataInterface md = UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
                     serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection"));
                 md.setValue(s);
@@ -1105,14 +1105,14 @@ public class ProzesskopieForm implements Serializable {
     /**
      * alle Kollektionen eines übergebenen DocStructs entfernen.
      */
-    private void removeCollections(DocStruct colStruct) {
+    private void removeCollections(DocStructInterface colStruct) {
         try {
-            MetadataType mdt = UghHelper.getMetadataType(
+            MetadataTypeInterface mdt = UghHelper.getMetadataType(
                 serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                 "singleDigCollection");
-            ArrayList<Metadata> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
+            ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
-                for (Metadata md : myCollections) {
+                for (MetadataInterface md : myCollections) {
                     colStruct.removeMetadata(md);
                 }
             }
@@ -1126,52 +1126,52 @@ public class ProzesskopieForm implements Serializable {
      * Create new file format.
      */
     public void createNewFileformat() {
-        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
         try {
-            DigitalDocument dd = UghImplementation.INSTANCE.createDigitalDocument();
-            Fileformat ff = UghImplementation.INSTANCE.createXStream(myPrefs);
+            DigitalDocumentInterface dd = UghImplementation.INSTANCE.createDigitalDocument();
+            FileformatInterface ff = UghImplementation.INSTANCE.createXStream(myPrefs);
             ff.setDigitalDocument(dd);
             /* BoundBook hinzufügen */
-            DocStructType dst = myPrefs.getDocStrctTypeByName("BoundBook");
-            DocStruct dsBoundBook = dd.createDocStruct(dst);
+            DocStructTypeInterface dst = myPrefs.getDocStrctTypeByName("BoundBook");
+            DocStructInterface dsBoundBook = dd.createDocStruct(dst);
             dd.setPhysicalDocStruct(dsBoundBook);
 
             /* Monographie */
             if (!ConfigOpac.getDoctypeByName(this.docType).isPeriodical()
                     && !ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
-                DocStructType dsty = myPrefs
+                DocStructTypeInterface dsty = myPrefs
                         .getDocStrctTypeByName(ConfigOpac.getDoctypeByName(this.docType).getRulesetType());
-                DocStruct ds = dd.createDocStruct(dsty);
+                DocStructInterface ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
                 this.rdf = ff;
             } else if (ConfigOpac.getDoctypeByName(this.docType).isPeriodical()) {
                 /* Zeitschrift */
-                DocStructType dsty = myPrefs.getDocStrctTypeByName("Periodical");
-                DocStruct ds = dd.createDocStruct(dsty);
+                DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("Periodical");
+                DocStructInterface ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
 
-                DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
-                DocStruct dsvolume = dd.createDocStruct(dstyvolume);
+                DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
+                DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
                 ds.addChild(dsvolume);
                 this.rdf = ff;
             } else if (ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
                 /* MultivolumeBand */
-                DocStructType dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
-                DocStruct ds = dd.createDocStruct(dsty);
+                DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
+                DocStructInterface ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
 
-                DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("Volume");
-                DocStruct dsvolume = dd.createDocStruct(dstyvolume);
+                DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("Volume");
+                DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
                 ds.addChild(dsvolume);
                 this.rdf = ff;
             }
             if (this.docType.equals("volumerun")) {
-                DocStructType dsty = myPrefs.getDocStrctTypeByName("VolumeRun");
-                DocStruct ds = dd.createDocStruct(dsty);
+                DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("VolumeRun");
+                DocStructInterface ds = dd.createDocStruct(dsty);
                 dd.setLogicalDocStruct(ds);
 
-                DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("Record");
-                DocStruct dsvolume = dd.createDocStruct(dstyvolume);
+                DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("Record");
+                DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
                 ds.addChild(dsvolume);
                 this.rdf = ff;
             }
@@ -1254,7 +1254,7 @@ public class ProzesskopieForm implements Serializable {
             this.docType = docType;
             if (rdf != null) {
 
-                Fileformat tmp = rdf;
+                FileformatInterface tmp = rdf;
 
                 createNewFileformat();
                 try {
@@ -1262,8 +1262,8 @@ public class ProzesskopieForm implements Serializable {
                             .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
                         rdf = tmp;
                     } else {
-                        DocStruct oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
-                        DocStruct newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
+                        DocStructInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
+                        DocStructInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
                         // both have no children
                         if (oldLogicalDocstruct.getAllChildren() == null
                                 && newLogicalDocstruct.getAllChildren() == null) {
@@ -1299,10 +1299,10 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private void copyMetadata(DocStruct oldDocStruct, DocStruct newDocStruct) {
+    private void copyMetadata(DocStructInterface oldDocStruct, DocStructInterface newDocStruct) {
 
         if (oldDocStruct.getAllMetadata() != null) {
-            for (Metadata md : oldDocStruct.getAllMetadata()) {
+            for (MetadataInterface md : oldDocStruct.getAllMetadata()) {
                 try {
                     newDocStruct.addMetadata(md);
                 } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
@@ -1311,7 +1311,7 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         if (oldDocStruct.getAllPersons() != null) {
-            for (Person p : oldDocStruct.getAllPersons()) {
+            for (PersonInterface p : oldDocStruct.getAllPersons()) {
                 try {
                     newDocStruct.addPerson(p);
                 } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
@@ -2053,7 +2053,7 @@ public class ProzesskopieForm implements Serializable {
      *
      * @return the metadata file in memory
      */
-    public Fileformat getFileformat() {
+    public FileformatInterface getFileformat() {
         return rdf;
     }
 }

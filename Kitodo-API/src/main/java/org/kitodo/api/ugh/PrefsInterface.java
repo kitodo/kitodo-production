@@ -14,12 +14,12 @@ package org.kitodo.api.ugh;
 import java.util.List;
 import ugh.exceptions.PreferencesException;
 
-public interface Prefs {
-    DocStructType getDocStrctTypeByName(String identifier);
+public interface PrefsInterface {
+    DocStructTypeInterface getDocStrctTypeByName(String identifier);
 
-    MetadataType getMetadataTypeByName(String identifier);
+    MetadataTypeInterface getMetadataTypeByName(String identifier);
 
     void loadPrefs(String string) throws PreferencesException;
 
-    List<DocStructType> getAllDocStructTypes();
+    List<DocStructTypeInterface> getAllDocStructTypes();
 }

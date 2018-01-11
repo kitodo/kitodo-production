@@ -22,14 +22,14 @@ import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.DocStructType;
-import org.kitodo.api.ugh.Fileformat;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
-import org.kitodo.api.ugh.Person;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
@@ -50,7 +50,7 @@ public class ImportZentralblatt {
     private static final Logger logger = LogManager.getLogger(ImportZentralblatt.class);
     private String separator;
     private final Helper help;
-    private Prefs myPrefs;
+    private PrefsInterface myPrefs;
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -78,16 +78,16 @@ public class ImportZentralblatt {
         this.separator = ":";
         boolean istAbsatz = false;
         boolean istErsterTitel = true;
-        LinkedList<DocStruct> listArtikel = new LinkedList<>();
+        LinkedList<DocStructInterface> listArtikel = new LinkedList<>();
 
         /*
          * Vorbereitung der Dokumentenstruktur
          */
-        DigitalDocument dd = UghImplementation.INSTANCE.createDigitalDocument();
-        DocStructType dst = this.myPrefs.getDocStrctTypeByName("Periodical");
-        DocStruct dsPeriodical = dd.createDocStruct(dst);
+        DigitalDocumentInterface dd = UghImplementation.INSTANCE.createDigitalDocument();
+        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("Periodical");
+        DocStructInterface dsPeriodical = dd.createDocStruct(dst);
         dst = this.myPrefs.getDocStrctTypeByName("PeriodicalVolume");
-        DocStruct dsPeriodicalVolume = dd.createDocStruct(dst);
+        DocStructInterface dsPeriodicalVolume = dd.createDocStruct(dst);
         dsPeriodical.addChild(dsPeriodicalVolume);
 
         /*
@@ -116,8 +116,8 @@ public class ImportZentralblatt {
                  * in die Liste übernehmen
                  */
                 if (!istAbsatz) {
-                    DocStructType dstLocal = this.myPrefs.getDocStrctTypeByName("Article");
-                    DocStruct ds = dd.createDocStruct(dstLocal);
+                    DocStructTypeInterface dstLocal = this.myPrefs.getDocStrctTypeByName("Article");
+                    DocStructInterface ds = dd.createDocStruct(dstLocal);
                     listArtikel.add(ds);
                     // logger.debug("--------------- neuer Artikel
                     // ----------------");
@@ -176,7 +176,7 @@ public class ImportZentralblatt {
                      * anlegen
                      */
                     if (myLeft.equals("I")) {
-                        DocStruct dsPeriodicalIssue = parsenIssueAssignment(dsPeriodicalVolume, myRight, dd);
+                        DocStructInterface dsPeriodicalIssue = parsenIssueAssignment(dsPeriodicalVolume, myRight, dd);
                         dsPeriodicalIssue.addChild(listArtikel.getLast());
                     }
                 }
@@ -187,7 +187,7 @@ public class ImportZentralblatt {
          * physischer Baum (Seiten)
          */
         dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
-        DocStruct dsBoundBook = dd.createDocStruct(dst);
+        DocStructInterface dsBoundBook = dd.createDocStruct(dst);
 
         /*
          * jetzt die Gesamtstruktur bauen und in xml schreiben
@@ -196,7 +196,7 @@ public class ImportZentralblatt {
         dd.setLogicalDocStruct(dsPeriodical);
         dd.setPhysicalDocStruct(dsBoundBook);
         try {
-            Fileformat gdzfile = UghImplementation.INSTANCE.createXStream(this.myPrefs);
+            FileformatInterface gdzfile = UghImplementation.INSTANCE.createXStream(this.myPrefs);
             gdzfile.setDigitalDocument(dd);
 
             /*
@@ -253,20 +253,20 @@ public class ImportZentralblatt {
      *            String
      * @return DocStruct of periodical
      */
-    private DocStruct parsenIssueAssignment(DocStruct dsPeriodicalVolume, String myRight,
-            DigitalDocument inDigitalDocument)
+    private DocStructInterface parsenIssueAssignment(DocStructInterface dsPeriodicalVolume, String myRight,
+            DigitalDocumentInterface inDigitalDocument)
             throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
-        DocStructType dst;
-        MetadataType mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
-        DocStruct dsPeriodicalIssue = null;
+        DocStructTypeInterface dst;
+        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
+        DocStructInterface dsPeriodicalIssue = null;
         /* erstmal prüfen, ob das Heft schon existiert */
-        List<DocStruct> myList = dsPeriodicalVolume.getAllChildrenByTypeAndMetadataType("PeriodicalIssue", "CurrentNo");
+        List<DocStructInterface> myList = dsPeriodicalVolume.getAllChildrenByTypeAndMetadataType("PeriodicalIssue", "CurrentNo");
         if (myList != null && myList.size() != 0) {
-            for (DocStruct dsIntern : myList) {
+            for (DocStructInterface dsIntern : myList) {
                 // logger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
-                Metadata metadata = dsIntern.getAllMetadataByType(mdt).get(0);
+                MetadataInterface metadataInterface = dsIntern.getAllMetadataByType(mdt).get(0);
                 // logger.debug("und der Wert ist: " + myMD1.getValue());
-                if (metadata.getValue().equals(myRight)) {
+                if (metadataInterface.getValue().equals(myRight)) {
                     dsPeriodicalIssue = dsIntern;
                 }
             }
@@ -275,7 +275,7 @@ public class ImportZentralblatt {
         if (dsPeriodicalIssue == null) {
             dst = this.myPrefs.getDocStrctTypeByName("PeriodicalIssue");
             dsPeriodicalIssue = inDigitalDocument.createDocStruct(dst);
-            Metadata myMD = UghImplementation.INSTANCE.createMetadata(mdt);
+            MetadataInterface myMD = UghImplementation.INSTANCE.createMetadata(mdt);
             // myMD.setType(mdt);
             myMD.setValue(myRight);
             dsPeriodicalIssue.addMetadata(myMD);
@@ -287,14 +287,14 @@ public class ImportZentralblatt {
     /**
      * General parsing.
      */
-    private void parseGeneral(DocStruct inStruct, String myLeft, String myRight)
+    private void parseGeneral(DocStructInterface inStruct, String myLeft, String myRight)
             throws WrongImportFileException, MetadataTypeNotAllowedException {
 
         // logger.debug(myLeft);
         // logger.debug(myRight);
         // logger.debug("---");
-        Metadata md;
-        MetadataType mdt;
+        MetadataInterface md;
+        MetadataTypeInterface mdt;
 
         // J: Zeitschrift
         // V: Band
@@ -306,7 +306,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("J")) {
             mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
-            List<? extends Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends MetadataInterface> myList = inStruct.getAllMetadataByType(mdt);
             /* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
             if (myList.size() == 0) {
                 md = UghImplementation.INSTANCE.createMetadata(mdt);
@@ -332,7 +332,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("Y")) {
             mdt = this.myPrefs.getMetadataTypeByName("PublicationYear");
-            List<? extends Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends MetadataInterface> myList = inStruct.getAllMetadataByType(mdt);
 
             /* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
             if (myList.size() == 0) {
@@ -364,7 +364,7 @@ public class ImportZentralblatt {
          */
         if (myLeft.equals("V")) {
             mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
-            List<? extends Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends MetadataInterface> myList = inStruct.getAllMetadataByType(mdt);
 
             /* wenn noch keine Bandnummer vergeben wurde, dann jetzt */
             if (myList.size() == 0) {
@@ -389,13 +389,13 @@ public class ImportZentralblatt {
     /**
      * Parse article.
      */
-    private void parseArticle(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel)
+    private void parseArticle(DocStructInterface inStruct, String myLeft, String myRight, boolean istErsterTitel)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
         // logger.debug(myLeft);
         // logger.debug(myRight);
         // logger.debug("---");
-        Metadata md;
-        MetadataType mdt;
+        MetadataInterface md;
+        MetadataTypeInterface mdt;
 
         // J: Zeitschrift
         // V: Band
@@ -561,7 +561,7 @@ public class ImportZentralblatt {
         if (myLeft.equals("AU")) {
             StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
             while (tokenizer.hasMoreTokens()) {
-                Person p = UghImplementation.INSTANCE.createPerson(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
+                PersonInterface p = UghImplementation.INSTANCE.createPerson(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
                 String myTok = tokenizer.nextToken();
 
                 if (!myTok.contains(",")) {
@@ -583,7 +583,7 @@ public class ImportZentralblatt {
         if (myLeft.equals("NH")) {
             StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
             while (tokenizer.hasMoreTokens()) {
-                Person p = UghImplementation.INSTANCE
+                PersonInterface p = UghImplementation.INSTANCE
                         .createPerson(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
                 String myTok = tokenizer.nextToken();
 

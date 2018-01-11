@@ -11,14 +11,6 @@
 
 package org.kitodo.api.ugh;
 
-public interface RomanNumeral {
-
-    String getNumber();
-
-    int intValue();
-
-    void setValue(int currentPhysicalOrder);
-
-    void setValue(String paginationStartValue);
+public interface RDFFileInterface extends FileformatInterface {
 
 }

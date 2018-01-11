@@ -11,6 +11,14 @@
 
 package org.kitodo.api.ugh;
 
-public interface MetsMods extends Fileformat {
+public interface RomanNumeralInterface {
+
+    String getNumber();
+
+    int intValue();
+
+    void setValue(int currentPhysicalOrder);
+
+    void setValue(String paginationStartValue);
 
 }

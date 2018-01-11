@@ -16,9 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataGroup;
-import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Backing bean for a (multi-line) text input element to edit metadatum
@@ -46,7 +46,7 @@ public class RenderableLineEdit extends RenderableMetadatum
     /**
      * Constructor. Creates a RenderableLineEdit.
      * 
-     * @param metadataType
+     * @param metadataTypeInterface
      *            metadata type editable by this drop-down list
      * @param binding
      *            a metadata group whose corresponding metadata element shall be
@@ -54,10 +54,10 @@ public class RenderableLineEdit extends RenderableMetadatum
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public RenderableLineEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
-        super(metadataType, binding, container);
+    public RenderableLineEdit(MetadataTypeInterface metadataTypeInterface, MetadataGroupInterface binding, RenderableMetadataGroup container) {
+        super(metadataTypeInterface, binding, container);
         if (binding != null) {
-            for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
+            for (MetadataInterface data : binding.getMetadataByType(metadataTypeInterface.getName())) {
                 addContent(data);
             }
         }
@@ -72,7 +72,7 @@ public class RenderableLineEdit extends RenderableMetadatum
      *            data to add
      */
     @Override
-    public void addContent(Metadata data) {
+    public void addContent(MetadataInterface data) {
         if (value == null) {
             value = new ArrayList<>(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
         } else {
@@ -112,8 +112,8 @@ public class RenderableLineEdit extends RenderableMetadatum
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
      */
     @Override
-    public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<>(1);
+    public List<MetadataInterface> toMetadata() {
+        List<MetadataInterface> result = new ArrayList<>(1);
         result.add(getMetadata(StringUtils.join(value, METADATA_LINE_SEPARATOR)));
         return result;
     }

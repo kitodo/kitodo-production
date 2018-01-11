@@ -13,11 +13,11 @@ package de.sub.goobi.helper;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.Fileformat;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.Person;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -44,7 +44,7 @@ public class XmlArtikelZaehlen {
         /*
          * Dokument einlesen
          */
-        Fileformat gdzfile;
+        FileformatInterface gdzfile;
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
         } catch (Exception e) {
@@ -55,10 +55,10 @@ public class XmlArtikelZaehlen {
         /*
          * DocStruct rukursiv durchlaufen
          */
-        DigitalDocument mydocument = null;
+        DigitalDocumentInterface mydocument = null;
         try {
             mydocument = gdzfile.getDigitalDocument();
-            DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
+            DocStructInterface logicalTopstruct = mydocument.getLogicalDocStruct();
             rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
         } catch (PreferencesException e1) {
             Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
@@ -87,7 +87,7 @@ public class XmlArtikelZaehlen {
      * @param inType
      *            CountType object
      */
-    public int getNumberOfUghElements(DocStruct inStruct, CountType inType) {
+    public int getNumberOfUghElements(DocStructInterface inStruct, CountType inType) {
         int rueckgabe = 0;
         if (inStruct != null) {
             /*
@@ -99,7 +99,7 @@ public class XmlArtikelZaehlen {
             } else {
                 /* count non-empty persons */
                 if (inStruct.getAllPersons() != null) {
-                    for (Person p : inStruct.getAllPersons()) {
+                    for (PersonInterface p : inStruct.getAllPersons()) {
                         if (p.getLastname() != null && p.getLastname().trim().length() > 0) {
                             rueckgabe++;
                         }
@@ -107,7 +107,7 @@ public class XmlArtikelZaehlen {
                 }
                 /* count non-empty metadata */
                 if (inStruct.getAllMetadata() != null) {
-                    for (Metadata md : inStruct.getAllMetadata()) {
+                    for (MetadataInterface md : inStruct.getAllMetadata()) {
                         if (md.getValue() != null && md.getValue().trim().length() > 0) {
                             rueckgabe++;
                         }
@@ -119,7 +119,7 @@ public class XmlArtikelZaehlen {
              * call children recursive
              */
             if (inStruct.getAllChildren() != null) {
-                for (DocStruct struct : inStruct.getAllChildren()) {
+                for (DocStructInterface struct : inStruct.getAllChildren()) {
                     rueckgabe += getNumberOfUghElements(struct, inType);
                 }
             }

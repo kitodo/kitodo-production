@@ -13,14 +13,14 @@ package org.kitodo.api.ugh;
 
 import java.util.List;
 
-public interface DocStructType {
+public interface DocStructTypeInterface {
 
     List<String> getAllAllowedDocStructTypes(); /*
                                                  * note: list<String>! not
                                                  * list<DocStructType>
                                                  */
 
-    List<MetadataType> getAllMetadataTypes(); // iterable would be sufficient
+    List<MetadataTypeInterface> getAllMetadataTypes(); // iterable would be sufficient
 
     String getAnchorClass();
 
@@ -28,6 +28,6 @@ public interface DocStructType {
 
     String getNameByLanguage(String language);
 
-    String getNumberOfMetadataType(MetadataType metadataType);
+    String getNumberOfMetadataType(MetadataTypeInterface metadataTypeInterface);
 
 }

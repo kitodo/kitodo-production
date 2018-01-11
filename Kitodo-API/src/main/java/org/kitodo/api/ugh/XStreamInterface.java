@@ -11,6 +11,6 @@
 
 package org.kitodo.api.ugh;
 
-public interface RDFFile extends Fileformat {
+public interface XStreamInterface extends FileformatInterface {
 
 }

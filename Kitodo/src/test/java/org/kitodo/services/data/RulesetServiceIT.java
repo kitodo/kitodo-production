@@ -26,7 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
-import org.kitodo.api.ugh.DocStructType;
+import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -183,15 +183,15 @@ public class RulesetServiceIT {
     @Test
     public void shouldGetPreferences() throws Exception {
         Ruleset ruleset = rulesetService.getById(1);
-        List<DocStructType> docStructTypes = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
+        List<DocStructTypeInterface> docStructTypeInterfaces = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
 
-        int actual = docStructTypes.size();
+        int actual = docStructTypeInterfaces.size();
         assertEquals("Size of docstruct types in ruleset file is incorrect!", 2, actual);
 
-        String firstName = docStructTypes.get(0).getName();
+        String firstName = docStructTypeInterfaces.get(0).getName();
         assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Acknowledgment", firstName);
 
-        String secondName = docStructTypes.get(1).getName();
+        String secondName = docStructTypeInterfaces.get(1).getName();
         assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Article", secondName);
     }
 }

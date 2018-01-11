@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.kitodo.api.filemanagement.filters.FileNameMatchesFilter;
-import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -55,7 +55,7 @@ public class ExportPdf extends ExportMets {
         /*
          * Read Document
          */
-        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
+        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
         prepareUserDirectory(inZielVerzeichnis);
         this.myPrefs = serviceManager.getRulesetService().getPreferences(myProcess.getRuleset());
 

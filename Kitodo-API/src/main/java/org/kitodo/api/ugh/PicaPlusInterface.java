@@ -11,14 +11,6 @@
 
 package org.kitodo.api.ugh;
 
-public interface FileSet {
-
-    void addFile(ContentFile contentFile);
-
-    void addVirtualFileGroup(VirtualFileGroup v);
-
-    Iterable<ContentFile> getAllFiles();
-
-    void removeFile(ContentFile contentFile);
-
+public interface PicaPlusInterface extends FileformatInterface {
+    void read(org.w3c.dom.Node node);
 }

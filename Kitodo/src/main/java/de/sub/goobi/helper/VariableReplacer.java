@@ -25,11 +25,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -46,8 +46,8 @@ public class VariableReplacer {
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
-    DigitalDocument dd;
-    Prefs prefs;
+    DigitalDocumentInterface dd;
+    PrefsInterface prefsInterface;
     // $(meta.abc)
     private final String namespaceMeta = "\\$\\(meta\\.([\\w.-]*)\\)";
 
@@ -72,9 +72,9 @@ public class VariableReplacer {
      * @param s
      *            Task object
      */
-    public VariableReplacer(DigitalDocument inDigitalDocument, Prefs inPrefs, Process p, Task s) {
+    public VariableReplacer(DigitalDocumentInterface inDigitalDocument, PrefsInterface inPrefs, Process p, Task s) {
         this.dd = inDigitalDocument;
-        this.prefs = inPrefs;
+        this.prefsInterface = inPrefs;
         this.process = p;
         this.task = s;
     }
@@ -247,16 +247,16 @@ public class VariableReplacer {
     private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
         if (this.dd != null) {
             /* TopStruct und FirstChild ermitteln */
-            DocStruct topstruct = this.dd.getLogicalDocStruct();
-            DocStruct firstchildstruct = null;
+            DocStructInterface topstruct = this.dd.getLogicalDocStruct();
+            DocStructInterface firstchildstruct = null;
             if (topstruct.getAllChildren() != null && topstruct.getAllChildren().size() > 0) {
                 firstchildstruct = topstruct.getAllChildren().get(0);
             }
 
             /* MetadataType ermitteln und ggf. Fehler melden */
-            MetadataType mdt;
+            MetadataTypeInterface mdt;
             try {
-                mdt = UghHelper.getMetadataType(this.prefs, metadata);
+                mdt = UghHelper.getMetadataType(this.prefsInterface, metadata);
             } catch (UghHelperException e) {
                 Helper.setFehlerMeldung(e);
                 return "";
@@ -321,8 +321,8 @@ public class VariableReplacer {
      * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
      * zurückgegeben.
      */
-    private String getMetadataValue(DocStruct inDocstruct, MetadataType mdt) {
-        List<? extends Metadata> mds = inDocstruct.getAllMetadataByType(mdt);
+    private String getMetadataValue(DocStructInterface inDocstruct, MetadataTypeInterface mdt) {
+        List<? extends MetadataInterface> mds = inDocstruct.getAllMetadataByType(mdt);
         if (mds.size() > 0) {
             return mds.get(0).getValue();
         } else {

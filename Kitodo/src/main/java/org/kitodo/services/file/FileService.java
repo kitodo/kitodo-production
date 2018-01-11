@@ -32,7 +32,7 @@ import org.goobi.io.BackupFileRotation;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
-import org.kitodo.api.ugh.Fileformat;
+import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
@@ -443,10 +443,10 @@ public class FileService {
      * @throws WriteException
      *             if error occurs
      */
-    public void writeMetadataFile(Fileformat gdzfile, Process process)
+    public void writeMetadataFile(FileformatInterface gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
         RulesetService rulesetService = serviceManager.getRulesetService();
-        Fileformat ff;
+        FileformatInterface ff;
 
         Ruleset ruleset = process.getRuleset();
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
@@ -773,7 +773,7 @@ public class FileService {
         return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toUri();
     }
 
-    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
+    public void writeMetadataAsTemplateFile(FileformatInterface inFile, Process process)
             throws WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }

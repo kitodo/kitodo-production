@@ -11,7 +11,7 @@
 
 package org.kitodo.api.ugh;
 
-public interface Person extends Metadata {
+public interface PersonInterface extends MetadataInterface {
 
     String getAuthorityURI();
 

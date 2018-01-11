@@ -19,9 +19,9 @@ import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataGroup;
-import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Backing bean for a select list style input element to edit a metadatum with
@@ -40,7 +40,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
     /**
      * Constructor. Creates a RenderableListBox.
      * 
-     * @param metadataType
+     * @param metadataTypeInterface
      *            metadata type editable by this list element
      * @param binding
      *            a metadata group whose values shall be updated if the setter
@@ -50,14 +50,14 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      * @param projectName
      *            project of the process owning this metadatum
      */
-    public RenderableListBox(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
+    public RenderableListBox(MetadataTypeInterface metadataTypeInterface, MetadataGroupInterface binding, RenderableMetadataGroup container,
             String projectName) {
-        super(metadataType, binding, container);
+        super(metadataTypeInterface, binding, container);
         items = getItems(projectName, DisplayType.select);
         if (binding != null) {
-            List<Metadata> elements = binding.getMetadataByType(metadataType.getName());
+            List<MetadataInterface> elements = binding.getMetadataByType(metadataTypeInterface.getName());
             List<String> selected = new ArrayList<>(elements.size());
-            for (Metadata m : elements) {
+            for (MetadataInterface m : elements) {
                 selected.add(m.getValue());
             }
             setSelectedItems(selected);
@@ -71,7 +71,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      *            data to add
      */
     @Override
-    public void addContent(Metadata data) {
+    public void addContent(MetadataInterface data) {
         String valueToSet = data.getValue();
         for (Item item : items) {
             if (valueToSet.equals(item.getValue())) {
@@ -130,8 +130,8 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
      */
     @Override
-    public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<>(items.size());
+    public List<MetadataInterface> toMetadata() {
+        List<MetadataInterface> result = new ArrayList<>(items.size());
         for (Item item : items) {
             if (item.getIsSelected()) {
                 result.add(getMetadata(item.getValue()));

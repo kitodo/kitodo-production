@@ -11,6 +11,6 @@
 
 package org.kitodo.api.ugh;
 
-public interface PicaPlus extends Fileformat {
-    void read(org.w3c.dom.Node node);
+public interface MetsModsInterface extends FileformatInterface {
+
 }

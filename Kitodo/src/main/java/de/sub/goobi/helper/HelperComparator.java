@@ -13,9 +13,9 @@ package de.sub.goobi.helper;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import org.kitodo.api.ugh.DocStructType;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 
 public class HelperComparator implements Comparator<Object>, Serializable {
 
@@ -48,8 +48,8 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareMetadataTypes(Object firstObject, Object secondObject) {
-        MetadataType firstMetadata = (MetadataType) firstObject;
-        MetadataType secondMetadata = (MetadataType) secondObject;
+        MetadataTypeInterface firstMetadata = (MetadataTypeInterface) firstObject;
+        MetadataTypeInterface secondMetadata = (MetadataTypeInterface) secondObject;
         String firstName = firstMetadata
                 .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
         String secondName = secondMetadata
@@ -64,8 +64,8 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareMetadata(Object firstObject, Object secondObject) {
-        Metadata firstMetadata = (Metadata) firstObject;
-        Metadata secondMetadata = (Metadata) secondObject;
+        MetadataInterface firstMetadata = (MetadataInterface) firstObject;
+        MetadataInterface secondMetadata = (MetadataInterface) secondObject;
         String firstName = firstMetadata.getType()
                 .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
         String secondName = secondMetadata.getType()
@@ -80,8 +80,8 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareDocStructTypes(Object firstObject, Object secondObject) {
-        DocStructType firstDocStructType = (DocStructType) firstObject;
-        DocStructType secondDocStructType = (DocStructType) secondObject;
+        DocStructTypeInterface firstDocStructType = (DocStructTypeInterface) firstObject;
+        DocStructTypeInterface secondDocStructType = (DocStructTypeInterface) secondObject;
         String firstName = firstDocStructType
                 .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
         String secondName = secondDocStructType

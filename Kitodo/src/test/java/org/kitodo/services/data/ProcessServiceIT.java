@@ -29,7 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
-import org.kitodo.api.ugh.DigitalDocument;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -572,8 +572,8 @@ public class ProcessServiceIT {
     @Ignore("not sure how it should look")
     @Test
     public void shouldGetDigitalDocument() throws Exception {
-        DigitalDocument expected = UghImplementation.INSTANCE.createDigitalDocument();
-        DigitalDocument actual = processService.getDigitalDocument(processService.getById(2));
+        DigitalDocumentInterface expected = UghImplementation.INSTANCE.createDigitalDocument();
+        DigitalDocumentInterface actual = processService.getDigitalDocument(processService.getById(2));
         // assertEquals("Digital documents are not equal!", expected, actual);
     }
 

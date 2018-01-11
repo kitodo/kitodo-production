@@ -31,12 +31,12 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.DocStructType;
-import org.kitodo.api.ugh.Fileformat;
-import org.kitodo.api.ugh.PicaPlus;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PicaPlusInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.w3c.dom.Node;
@@ -150,21 +150,21 @@ public class SRUHelper {
      *
      * @param pica
      *            Node
-     * @param prefs
+     * @param prefsInterface
      *            Prefs
      * @return Fileformat
      */
-    public static Fileformat parsePicaFormat(Node pica, Prefs prefs)
+    public static FileformatInterface parsePicaFormat(Node pica, PrefsInterface prefsInterface)
             throws ReadException, PreferencesException, TypeNotAllowedForParentException {
 
-        PicaPlus pp = UghImplementation.INSTANCE.createPicaPlus(prefs);
+        PicaPlusInterface pp = UghImplementation.INSTANCE.createPicaPlus(prefsInterface);
         pp.read(pica);
-        DigitalDocument dd = pp.getDigitalDocument();
-        Fileformat ff = UghImplementation.INSTANCE.createXStream(prefs);
+        DigitalDocumentInterface dd = pp.getDigitalDocument();
+        FileformatInterface ff = UghImplementation.INSTANCE.createXStream(prefsInterface);
         ff.setDigitalDocument(dd);
         /* BoundBook hinzufügen */
-        DocStructType dst = prefs.getDocStrctTypeByName("BoundBook");
-        DocStruct dsBoundBook = dd.createDocStruct(dst);
+        DocStructTypeInterface dst = prefsInterface.getDocStrctTypeByName("BoundBook");
+        DocStructInterface dsBoundBook = dd.createDocStruct(dst);
         dd.setPhysicalDocStruct(dsBoundBook);
         return ff;
     }

@@ -35,8 +35,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.api.command.CommandResult;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -603,19 +603,19 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             return false;
         }
         script = script.replace("{", "(").replace("}", ")");
-        DigitalDocument dd = null;
+        DigitalDocumentInterface dd = null;
         Process po = task.getProcess();
 
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-        Prefs prefs = serviceManager.getRulesetService().getPreferences(po.getRuleset());
+        PrefsInterface prefsInterface = serviceManager.getRulesetService().getPreferences(po.getRuleset());
 
         try {
-            dd = serviceManager.getProcessService().readMetadataFile(fi.getMetadataFilePath(), prefs)
+            dd = serviceManager.getProcessService().readMetadataFile(fi.getMetadataFilePath(), prefsInterface)
                     .getDigitalDocument();
         } catch (PreferencesException | ReadException | IOException e2) {
             logger.error(e2);
         }
-        VariableReplacer replacer = new VariableReplacer(dd, prefs, po, task);
+        VariableReplacer replacer = new VariableReplacer(dd, prefsInterface, po, task);
 
         script = replacer.replace(script);
         boolean executedSuccessful = false;

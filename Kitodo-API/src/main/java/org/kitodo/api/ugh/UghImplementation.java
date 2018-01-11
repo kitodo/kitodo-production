@@ -12,6 +12,6 @@
 package org.kitodo.api.ugh;
 
 public class UghImplementation {
-    public static final UghFactory INSTANCE = null; // FIXME: Set UGH
+    public static final FactoryInterface INSTANCE = null; // FIXME: Set UGH
                                                     // implementation
 }

@@ -31,13 +31,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.IsDirectoryFilter;
-import org.kitodo.api.ugh.ContentFile;
-import org.kitodo.api.ugh.DigitalDocument;
-import org.kitodo.api.ugh.DocStruct;
-import org.kitodo.api.ugh.DocStructType;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataType;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.ContentFileInterface;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
@@ -195,25 +195,25 @@ public class FileManipulation {
             metadataBean.createPagination();
         } else {
 
-            Prefs prefs = serviceManager.getRulesetService().getPreferences(metadataBean.getProcess().getRuleset());
-            DigitalDocument doc = metadataBean.getDigitalDocument();
-            DocStruct physical = doc.getPhysicalDocStruct();
+            PrefsInterface prefsInterface = serviceManager.getRulesetService().getPreferences(metadataBean.getProcess().getRuleset());
+            DigitalDocumentInterface doc = metadataBean.getDigitalDocument();
+            DocStructInterface physical = doc.getPhysicalDocStruct();
 
-            List<DocStruct> pageList = physical.getAllChildren();
+            List<DocStructInterface> pageList = physical.getAllChildren();
 
             int indexToImport = Integer.parseInt(insertPage);
-            DocStructType newPageType = prefs.getDocStrctTypeByName("page");
-            DocStruct newPage = doc.createDocStruct(newPageType);
-            MetadataType physicalPageNoType = prefs.getMetadataTypeByName("physPageNumber");
-            MetadataType logicalPageNoType = prefs.getMetadataTypeByName("logicalPageNumber");
+            DocStructTypeInterface newPageType = prefsInterface.getDocStrctTypeByName("page");
+            DocStructInterface newPage = doc.createDocStruct(newPageType);
+            MetadataTypeInterface physicalPageNoType = prefsInterface.getMetadataTypeByName("physPageNumber");
+            MetadataTypeInterface logicalPageNoType = prefsInterface.getMetadataTypeByName("logicalPageNumber");
             for (int index = 0; index < pageList.size(); index++) {
 
                 if (index == indexToImport) {
-                    DocStruct oldPage = pageList.get(index);
+                    DocStructInterface oldPage = pageList.get(index);
 
                     // physical page no for new page
 
-                    Metadata mdTemp = UghImplementation.INSTANCE.createMetadata(physicalPageNoType);
+                    MetadataInterface mdTemp = UghImplementation.INSTANCE.createMetadata(physicalPageNoType);
                     mdTemp.setValue(String.valueOf(indexToImport + 1));
                     newPage.addMetadata(mdTemp);
 
@@ -229,10 +229,10 @@ public class FileManipulation {
                         mdTemp.setValue("uncounted");
                     } else {
                         // set new logical no. for new and old page
-                        Metadata oldPageNo = oldPage.getAllMetadataByType(logicalPageNoType).get(0);
+                        MetadataInterface oldPageNo = oldPage.getAllMetadataByType(logicalPageNoType).get(0);
                         mdTemp.setValue(oldPageNo.getValue());
                         if (index + 1 < pageList.size()) {
-                            Metadata pageNoOfFollowingElement = pageList.get(index + 1)
+                            MetadataInterface pageNoOfFollowingElement = pageList.get(index + 1)
                                     .getAllMetadataByType(logicalPageNoType).get(0);
                             oldPageNo.setValue(pageNoOfFollowingElement.getValue());
                         } else {
@@ -243,21 +243,21 @@ public class FileManipulation {
                     newPage.addMetadata(mdTemp);
                     doc.getLogicalDocStruct().addReferenceTo(newPage, "logical_physical");
 
-                    ContentFile cf = UghImplementation.INSTANCE.createContentFile();
+                    ContentFileInterface cf = UghImplementation.INSTANCE.createContentFile();
                     cf.setLocation(fileService.getFileName(filename));
                     newPage.addContentFile(cf);
                     doc.getFileSet().addFile(cf);
 
                 }
                 if (index > indexToImport) {
-                    DocStruct currentPage = pageList.get(index);
+                    DocStructInterface currentPage = pageList.get(index);
                     // check if element is last element
                     currentPage.getAllMetadataByType(physicalPageNoType).get(0).setValue(String.valueOf(index + 2));
                     if (!insertMode.equalsIgnoreCase("uncounted")) {
                         if (index + 1 == pageList.size()) {
                             currentPage.getAllMetadataByType(logicalPageNoType).get(0).setValue("uncounted");
                         } else {
-                            DocStruct followingPage = pageList.get(index + 1);
+                            DocStructInterface followingPage = pageList.get(index + 1);
                             currentPage.getAllMetadataByType(logicalPageNoType).get(0)
                                     .setValue(followingPage.getAllMetadataByType(logicalPageNoType).get(0).getValue());
                         }
@@ -311,7 +311,7 @@ public class FileManipulation {
         URI downloadFile = null;
 
         int imageOrder = Integer.parseInt(imageSelection);
-        DocStruct page = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
+        DocStructInterface page = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
         URI processSubTypeURI = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
@@ -386,7 +386,7 @@ public class FileManipulation {
             Helper.setFehlerMeldung("noFileSelected");
             return;
         }
-        List<DocStruct> allPages = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren();
+        List<DocStructInterface> allPages = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren();
         List<String> filenamesToMove = new ArrayList<>();
 
         for (String fileIndex : selectedFiles) {

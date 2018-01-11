@@ -20,9 +20,9 @@ import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
-import org.kitodo.api.ugh.Metadata;
-import org.kitodo.api.ugh.MetadataGroup;
-import org.kitodo.api.ugh.MetadataType;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
@@ -61,7 +61,7 @@ public abstract class RenderableMetadatum {
     /**
      * Holds the metadata type represented by this input element.
      */
-    protected final MetadataType metadataType;
+    protected final MetadataTypeInterface metadataTypeInterface;
 
     /**
      * Holds the available labels for this input element.
@@ -73,7 +73,7 @@ public abstract class RenderableMetadatum {
      * as the setters for the bean are called. May be null if this feature is
      * unused.
      */
-    protected final MetadataGroup binding;
+    protected final MetadataGroupInterface binding;
 
     /**
      * Creates a renderable metadatum which is not held in a renderable metadata
@@ -86,8 +86,8 @@ public abstract class RenderableMetadatum {
      *            a metadata group whose value(s) shall be updated if as the
      *            setters for the bean are called
      */
-    protected RenderableMetadatum(Map<String, String> labels, MetadataGroup binding) {
-        this.metadataType = null;
+    protected RenderableMetadatum(Map<String, String> labels, MetadataGroupInterface binding) {
+        this.metadataTypeInterface = null;
         this.labels = labels;
         this.binding = binding;
     }
@@ -97,7 +97,7 @@ public abstract class RenderableMetadatum {
      * This constructor must be used by all successors that implement
      * RenderableGroupableMetadatum.
      *
-     * @param metadataType
+     * @param metadataTypeInterface
      *            metadata type represented by this input element
      * @param binding
      *            a metadata group whose value(s) shall be read and updated if
@@ -105,9 +105,9 @@ public abstract class RenderableMetadatum {
      * @param container
      *            group that the renderable metadatum is in
      */
-    protected RenderableMetadatum(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
-        this.metadataType = metadataType;
-        this.labels = metadataType.getAllLanguages();
+    protected RenderableMetadatum(MetadataTypeInterface metadataTypeInterface, MetadataGroupInterface binding, RenderableMetadataGroup container) {
+        this.metadataTypeInterface = metadataTypeInterface;
+        this.labels = metadataTypeInterface.getAllLanguages();
         this.binding = binding;
         this.container = container;
     }
@@ -116,7 +116,7 @@ public abstract class RenderableMetadatum {
      * Factory method to create a backing bean to render a metadatum. Depending
      * on the configuration, different input component beans will be created.
      *
-     * @param metadataType
+     * @param metadataTypeInterface
      *            type of metadatum to create a bean for
      * @param binding
      *            a metadata group whose value(s) shall be read and updated if
@@ -131,23 +131,23 @@ public abstract class RenderableMetadatum {
      *             if a metadata field designed for a single value is
      *             misconfigured to show a multi-value input element
      */
-    public static RenderableGroupableMetadatum create(MetadataType metadataType, MetadataGroup binding,
+    public static RenderableGroupableMetadatum create(MetadataTypeInterface metadataTypeInterface, MetadataGroupInterface binding,
             RenderableMetadataGroup container, String projectName) throws ConfigurationException {
-        if (metadataType.getIsPerson()) {
-            return new RenderablePersonMetadataGroup(metadataType, binding, container, projectName);
+        if (metadataTypeInterface.getIsPerson()) {
+            return new RenderablePersonMetadataGroup(metadataTypeInterface, binding, container, projectName);
         }
         switch (ConfigDispayRules.getInstance().getElementTypeByName(projectName, getBindState(binding),
-            metadataType.getName())) {
+            metadataTypeInterface.getName())) {
             case input:
-                return new RenderableEdit(metadataType, binding, container);
+                return new RenderableEdit(metadataTypeInterface, binding, container);
             case readonly:
-                return new RenderableEdit(metadataType, binding, container).setReadonly(true);
+                return new RenderableEdit(metadataTypeInterface, binding, container).setReadonly(true);
             case select:
-                return new RenderableListBox(metadataType, binding, container, projectName);
+                return new RenderableListBox(metadataTypeInterface, binding, container, projectName);
             case select1:
-                return new RenderableDropDownList(metadataType, binding, container, projectName);
+                return new RenderableDropDownList(metadataTypeInterface, binding, container, projectName);
             case textarea:
-                return new RenderableLineEdit(metadataType, binding, container);
+                return new RenderableLineEdit(metadataTypeInterface, binding, container);
             default:
                 throw new UnreachableCodeException("Complete switch statement");
         }
@@ -199,10 +199,10 @@ public abstract class RenderableMetadatum {
      *            value to set the metadatum to
      * @return a metadatum with the value
      */
-    protected Metadata getMetadata(String value) {
-        Metadata result;
+    protected MetadataInterface getMetadata(String value) {
+        MetadataInterface result;
         try {
-            result = UghImplementation.INSTANCE.createMetadata(metadataType);
+            result = UghImplementation.INSTANCE.createMetadata(metadataTypeInterface);
         } catch (MetadataTypeNotAllowedException e) {
             throw new NullPointerException(e.getMessage());
         }
@@ -263,8 +263,8 @@ public abstract class RenderableMetadatum {
      */
     protected void updateBinding() {
         if (binding != null) {
-            List<Metadata> bound = binding.getMetadataList();
-            bound.removeAll(binding.getMetadataByType(metadataType.getName()));
+            List<MetadataInterface> bound = binding.getMetadataList();
+            bound.removeAll(binding.getMetadataByType(metadataTypeInterface.getName()));
             bound.addAll(((RenderableGroupableMetadatum) this).toMetadata());
         }
     }
@@ -288,7 +288,7 @@ public abstract class RenderableMetadatum {
      */
     protected final Collection<Item> getItems(String projectName, DisplayType type) {
         ArrayList<Item> prototypes = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
-            metadataType.getName(), type);
+            metadataTypeInterface.getName(), type);
         ArrayList<Item> result = new ArrayList<>(prototypes.size());
         for (Item item : prototypes) {
             result.add(new Item(item.getLabel(), item.getValue(), item.getIsSelected()));

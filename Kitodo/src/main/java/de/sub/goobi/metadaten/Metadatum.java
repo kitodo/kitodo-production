@@ -17,7 +17,7 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
-import org.kitodo.api.ugh.Metadata;
+import org.kitodo.api.ugh.MetadataInterface;
 
 public interface Metadatum {
 
@@ -33,9 +33,9 @@ public interface Metadatum {
 
     void setIdentifier(int identifier);
 
-    Metadata getMd();
+    MetadataInterface getMd();
 
-    void setMd(Metadata md);
+    void setMd(MetadataInterface md);
 
     /**
      * new functions for use of display configuration whithin xml files.

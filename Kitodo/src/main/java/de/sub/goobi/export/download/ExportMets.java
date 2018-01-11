@@ -24,9 +24,9 @@ import java.net.URI;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.ugh.Fileformat;
-import org.kitodo.api.ugh.MetsModsImportExport;
-import org.kitodo.api.ugh.Prefs;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
@@ -44,7 +44,7 @@ public class ExportMets {
 
     private final FileService fileService = serviceManager.getFileService();
     protected Helper help = new Helper();
-    protected Prefs myPrefs;
+    protected PrefsInterface myPrefs;
 
     protected static final Logger logger = LogManager.getLogger(ExportMets.class);
 
@@ -82,7 +82,7 @@ public class ExportMets {
          */
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = process.getTitle();
-        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(process);
+        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
 
         String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
@@ -141,10 +141,10 @@ public class ExportMets {
      *            true or false
      * @return true or false
      */
-    protected boolean writeMetsFile(Process process, URI metaFile, Fileformat gdzfile, boolean writeLocalFileGroup)
+    protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile, boolean writeLocalFileGroup)
             throws PreferencesException, WriteException, IOException, TypeNotAllowedForParentException {
 
-        MetsModsImportExport mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
+        MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFileGroup);
         mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {

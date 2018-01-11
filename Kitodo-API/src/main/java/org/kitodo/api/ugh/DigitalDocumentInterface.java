@@ -14,24 +14,24 @@ package org.kitodo.api.ugh;
 import java.util.List;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
-public interface DigitalDocument {
+public interface DigitalDocumentInterface {
 
     void addAllContentFiles();
 
-    DocStruct createDocStruct(DocStructType docStructType) throws TypeNotAllowedForParentException;
+    DocStructInterface createDocStruct(DocStructTypeInterface docStructTypeInterface) throws TypeNotAllowedForParentException;
 
-    FileSet getFileSet();
+    FileSetInterface getFileSet();
 
-    DocStruct getLogicalDocStruct();
+    DocStructInterface getLogicalDocStruct();
 
-    DocStruct getPhysicalDocStruct();
+    DocStructInterface getPhysicalDocStruct();
 
     void overrideContentFiles(List<String> images);
 
     /** @return always {@code true}. The result is never used. */
-    boolean setLogicalDocStruct(DocStruct docStruct);
+    boolean setLogicalDocStruct(DocStructInterface docStructInterface);
 
     /** @return always {@code true}. The result is never used. */
-    boolean setPhysicalDocStruct(DocStruct docStruct);
+    boolean setPhysicalDocStruct(DocStructInterface docStructInterface);
 
 }

@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
-import org.kitodo.api.ugh.RomanNumeral;
+import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.api.ugh.UghImplementation;
 
 /**
@@ -168,7 +168,7 @@ public class Paginator {
         }
         // roman numbers
         if (paginationType == Paginator.Type.ROMAN) {
-            RomanNumeral roman = UghImplementation.INSTANCE.createRomanNumeral();
+            RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(paginationStartValue);
         }
     }
@@ -322,7 +322,7 @@ public class Paginator {
         if (paginationType == Paginator.Type.ARABIC) {
             paginationBaseValue = Integer.parseInt(paginationStartValue);
         } else if (paginationType == Paginator.Type.ROMAN) {
-            RomanNumeral r = UghImplementation.INSTANCE.createRomanNumeral();
+            RomanNumeralInterface r = UghImplementation.INSTANCE.createRomanNumeral();
             r.setValue(paginationStartValue);
             paginationBaseValue = r.intValue();
         }
