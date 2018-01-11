@@ -46,9 +46,6 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     @Column(name = "creationDate")
     private Date creationDate;
 
-    @Column(name = "container")
-    private Integer container;
-
     @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
     private List<Process> processes;
 
@@ -208,31 +205,6 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      */
     public void setType(PropertyType inputType) {
         this.dataType = inputType.getId();
-    }
-
-    /**
-     * Get container value.
-     *
-     * @return value from database or 0
-     */
-    public Integer getContainer() {
-        if (this.container == null) {
-            return 0;
-        }
-        return this.container;
-    }
-
-    /**
-     * Set container value as given or 0 when given is null.
-     *
-     * @param container
-     *            value from database or 0
-     */
-    public void setContainer(Integer container) {
-        if (container == null) {
-            container = 0;
-        }
-        this.container = container;
     }
 
     /**
