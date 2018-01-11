@@ -170,7 +170,7 @@ public class RulesetForm extends BasisForm {
             // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
             // used from it's integration test
             // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/ProjekteBearbeiten" + urlSuffix;
+            return "/pages/RegelsaetzeBearbeiten" + urlSuffix;
         }
     }
 
@@ -191,7 +191,7 @@ public class RulesetForm extends BasisForm {
             // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
             // used from it's integration test
             // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/ProjekteBearbeiten" + urlSuffix;
+            return "/pages/RegelsaetzeAlle" + urlSuffix;
         }
     }
 
