@@ -332,10 +332,7 @@ public class XMLWriter {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(buffer));
             return new String(buffer.toByteArray(), charset);
-        } catch (TransformerException e) {
-            String message = e.getMessage();
-            throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (TransformerException | UnsupportedEncodingException e) {
             String message = e.getMessage();
             throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
         }

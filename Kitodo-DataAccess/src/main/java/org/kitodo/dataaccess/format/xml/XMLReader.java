@@ -19,9 +19,11 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
@@ -47,8 +49,15 @@ public class XMLReader {
     /**
      * The types that will be converted to a literal and not a node.
      */
-    private static final List<NodeReference> LITERAL_TYPES = Arrays
-            .asList(new NodeReference[] {RDF.PLAIN_LITERAL, RDF.LANG_STRING, RDF.XML_LITERAL, RDF.HTML });
+    private static final Map<String, NodeReference> LITERAL_TYPES = new HashMap<String, NodeReference>(4) {
+        private static final long serialVersionUID = 1L;
+        {
+            put(RDF.PLAIN_LITERAL.getIdentifier(), RDF.PLAIN_LITERAL);
+            put(RDF.LANG_STRING.getIdentifier(), RDF.LANG_STRING);
+            put(RDF.XML_LITERAL.getIdentifier(), RDF.XML_LITERAL);
+            put(RDF.HTML.getIdentifier(), RDF.HTML);
+        }
+    };
 
     /**
      * Returns an attribute from an element by its URL. If the attribute is of
@@ -239,25 +248,19 @@ public class XMLReader {
         for (org.w3c.dom.Node child : new GetChildren(element)) {
 
             // Either the child is an XML element
-
             if (child instanceof Element) {
 
                 String relation = getRelationElementType((Element) child, documentNS);
-                NodeReference literalType = null;
-                try {
-                    literalType = RDF.valueOf(getType((Element) child, documentNS).orElse(null));
-                } catch (IllegalArgumentException e) {
-                    /* it isn’t a literal */
-                }
+                String literalType = getType((Element) child, documentNS).orElse(null);
 
                 if (!relation.isEmpty()) {
                     // The child may be expressing a relation, that, due to its
                     // complexity, cannot be expressed as attribute
                     result.replace(relation, parseRelationElement((Element) child, lang, space, documentNS, storage));
-                } else if (LITERAL_TYPES.contains(literalType)) {
+                } else if (LITERAL_TYPES.containsKey(literalType)) {
                     // or a literal type
-                    result.replace(RDF.toURL(++count),
-                        inASet(parseLiteralElement((Element) child, literalType, lang, space, documentNS, storage)));
+                    result.replace(RDF.toURL(++count), inASet(parseLiteralElement((Element) child,
+                        LITERAL_TYPES.get(literalType), lang, space, documentNS, storage)));
                 } else {
                     // or the child is an ordered element (represents a node,
                     // linked by a numeric relation representing its element
@@ -333,40 +336,27 @@ public class XMLReader {
         for (org.w3c.dom.Node child : new GetChildren(element)) {
 
             // Either the child is an XML element
-
             if (child instanceof Element) {
                 Element childElement = (Element) child;
-                Optional<String> url = getType(childElement, documentNS);
+                String literalType = getType((Element) child, documentNS).orElse(null);
 
                 // Either the child is a literal
-
-                if (childElement.getAttributes().getLength() == 0) {
-                    try {
-                        NodeReference literalType = RDF.valueOf(url.orElse(null));
-                        if (LITERAL_TYPES.contains(literalType)) {
-                            String value = space.isToPreserve() ? childElement.getTextContent()
-                                    : childElement.getTextContent().trim();
-                            if (RDF.LANG_STRING.equals(literalType)) {
-                                String ownLang = childElement.getAttributeNS(
-                                    Namespaces.namespaceOfForXMLFile(XML.LANG.getIdentifier()),
-                                    Namespaces.localNameOf(XML.LANG.getIdentifier()));
-                                result.add(storage.createLangString(value, !ownLang.isEmpty() ? ownLang : lang));
-                            } else {
-                                result.add(storage.createLiteral(value, literalType));
-                            }
-                            child = child.getNextSibling();
-                            continue;
-                        }
-                    } catch (IllegalArgumentException e) {
-                        /* it isn’t a literal */
+                if ((childElement.getAttributes().getLength() == 0) && LITERAL_TYPES.containsKey(literalType)) {
+                    String value = space.trim(childElement.getTextContent());
+                    if (RDF.LANG_STRING.getIdentifier().equals(literalType)) {
+                        String ownLang = childElement.getAttributeNS(
+                            Namespaces.namespaceOfForXMLFile(XML.LANG.getIdentifier()),
+                            Namespaces.localNameOf(XML.LANG.getIdentifier()));
+                        result.add(storage.createLangString(value, !ownLang.isEmpty() ? ownLang : lang));
+                    } else {
+                        result.add(storage.createLiteral(value, literalType));
                     }
+                    child = child.getNextSibling();
+                    continue;
                 }
 
-                // or the child is a node.
-
-                // In this case, check if the attributes allow creation of a
-                // literalType
-
+                // or the child is a node. In this case, check if the attributes
+                // allow creation of a literalType
                 String literalLang = lang;
                 Space literalSpace = space;
                 boolean canCreateLiteralType = true;
@@ -387,18 +377,9 @@ public class XMLReader {
 
                 // It may then be a literal which is too complex to store as
                 // text content
-
-                NodeReference literalType = null;
-                if (canCreateLiteralType) {
-                    try {
-                        literalType = RDF.valueOf(getType((Element) child, documentNS).orElse(null));
-                    } catch (IllegalArgumentException e) {
-                        /* it isn’t a literal */
-                    }
-                }
-                if (canCreateLiteralType && (literalType != null) && LITERAL_TYPES.contains(literalType)) {
-                    result.add(parseLiteralElement((Element) child, literalType, literalLang, literalSpace, documentNS,
-                        storage));
+                if (canCreateLiteralType && LITERAL_TYPES.containsKey(literalType)) {
+                    result.add(parseLiteralElement((Element) child, LITERAL_TYPES.get(literalType), literalLang,
+                        literalSpace, documentNS, storage));
 
                 } else {
                     // or a real node
@@ -486,7 +467,7 @@ public class XMLReader {
      *             if the reading fails
      */
     public static Node toNode(File path, Storage storage) throws SAXException, IOException {
-        return toNode(parseXML(new FileInputStream(path), Optional.empty()), urlStringForFile(path), storage);
+        return toNode(parseXML(new FileInputStream(path), Optional.empty()), uriForFile(path), storage);
     }
 
     /**
@@ -549,7 +530,7 @@ public class XMLReader {
      * @throws IOException
      *             if it fails
      */
-    public static String urlStringForFile(File file) throws IOException {
+    public static String uriForFile(File file) throws IOException {
         URI uri = file.getCanonicalFile().toURI();
         try {
             String host = uri.getHost();
@@ -570,14 +551,9 @@ public class XMLReader {
             }
             return new URI(scheme, uri.getUserInfo(), host, uri.getPort(), path, uri.getQuery(), uri.getFragment())
                     .toASCIIString();
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             String message = e.getMessage();
-            throw new IOException(message != null ? message : e.getClass().getName(), e);
+            throw new IllegalArgumentException(message != null ? message : e.getClass().getName(), e);
         }
-
     }
 }
