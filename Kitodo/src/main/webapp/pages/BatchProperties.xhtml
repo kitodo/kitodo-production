@@ -20,6 +20,9 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui"
     >
+
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
         <h:body>
@@ -103,7 +106,7 @@
                                                     <h:outputText id="id4a" value="#{msgs.eigenschaften}"/>
                                                 </h4>
                                                 <h:form>
-                                                    <ui:fragment rendered="#{BatchForm.modusBearbeiten!='eigenschaft' and BatchForm.batchHelper.propertiesSize>0}">
+                                                    <ui:fragment rendered="#{BatchForm.editMode.mode != 'processProperty' and BatchForm.batchHelper.propertiesSize>0}">
                                                         <table cellspacing="1px" cellpadding="1px" width="100%"
                                                                    class="standardTable">
 
@@ -137,8 +140,8 @@
                                                                                         property="#{BatchForm.batchHelper.property}"
                                                                                         value="#{property}"/>
                                                                                 <t:updateActionListener
-                                                                                        property="#{BatchForm.modusBearbeiten}"
-                                                                                        value="eigenschaft"/>
+                                                                                        property="#{BatchForm.editMode}"
+                                                                                        value="#{objectMode.PROCESSPROPERTY}"/>
                                                                             </h:commandLink>
                                                                         </td>
                                                                     </tr>
@@ -148,7 +151,7 @@
 
 
                                                     <!-- // Box für die Bearbeitung der Details -->
-                                                    <h:panelGroup rendered="#{BatchForm.modusBearbeiten=='eigenschaft'}">
+                                                    <h:panelGroup rendered="#{BatchForm.editMode.mode == 'processProperty'}">
 
                                                         <!-- Box für die Bearbeitung der Details -->
                                                         <table cellpadding="3" cellspacing="0" width="100%"
@@ -228,8 +231,8 @@
                                                                                      action="#{NavigationForm.Reload}"
                                                                                      immediate="true">
                                                                         <t:updateActionListener
-                                                                                property="#{BatchForm.modusBearbeiten}"
-                                                                                value=""/>
+                                                                                property="#{BatchForm.editMode}"
+                                                                                value="#{objectMode.NONE}"/>
                                                                     </h:commandButton>
                                                                 </td>
                                                                 <td class="eingabeBoxen_row3" align="right">
@@ -237,14 +240,14 @@
                                                                                      action="#{BatchForm.batchHelper.saveCurrentProperty}">
 
                                                                         <t:updateActionListener
-                                                                                property="#{BatchForm.modusBearbeiten}"
-                                                                                value=""/>
+                                                                                property="#{BatchForm.editMode}"
+                                                                                value="#{objectMode.NONE}"/>
                                                                     </h:commandButton>
                                                                     <h:commandButton value="#{msgs.applyToAllProcesses}"
                                                                                      action="#{BatchForm.batchHelper.saveCurrentPropertyForAll}">
                                                                         <t:updateActionListener
-                                                                                property="#{BatchForm.modusBearbeiten}"
-                                                                                value=""/>
+                                                                                property="#{BatchForm.editMode}"
+                                                                                value="#{objectMode.NONE}"/>
                                                                     </h:commandButton>
                                                                 </td>
                                                             </tr>
