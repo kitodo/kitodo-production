@@ -23,9 +23,12 @@ body {
     line-height: 18px;
     background: url("#{resource['/images/background-top.svg']}") no-repeat #f3f3f3 center top fixed;
     background-size: auto 300px;
+    }
+
+body.first-visit {
     animation-duration: 1s;
     animation-name: slidein;
-    }
+}
 
 p, form, img, legend, ul, ol, li, h1, h2, h3, h4, h5, h6, dl, dt, dd {
     margin: 0;

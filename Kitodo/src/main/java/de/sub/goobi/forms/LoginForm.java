@@ -56,6 +56,7 @@ public class LoginForm implements Serializable {
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
+    private boolean firstVisit = true;
 
     /**
      * Log out.
@@ -389,5 +390,13 @@ public class LoginForm implements Serializable {
             result = serviceManager.getUserService().getHomeDirectory(loginForm.getMyBenutzer());
         }
         return result;
+    }
+
+    public boolean isFirstVisit() {
+        boolean visit = firstVisit;
+        if (firstVisit) {
+            firstVisit = false;
+        }
+        return visit;
     }
 }
