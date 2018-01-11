@@ -377,7 +377,6 @@ public class MockDatabase {
         firstProcessProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
-        firstProcessProperty.setContainer(1);
         firstProcessProperty.getProcesses().add(firstProcess);
         serviceManager.getPropertyService().save(firstProcessProperty);
 
@@ -389,7 +388,6 @@ public class MockDatabase {
         secondProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
-        secondProcessProperty.setContainer(2);
         secondProcessProperty.getProcesses().add(firstProcess);
         serviceManager.getPropertyService().save(secondProcessProperty);
 
@@ -401,7 +399,6 @@ public class MockDatabase {
         thirdProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
-        thirdProcessProperty.setContainer(2);
         thirdProcessProperty.getProcesses().add(firstProcess);
         serviceManager.getPropertyService().save(thirdProcessProperty);
 
@@ -414,7 +411,6 @@ public class MockDatabase {
         fourthProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         fourthProcessProperty.setCreationDate(localDate.toDate());
-        fourthProcessProperty.setContainer(2);
         fourthProcessProperty.getProcesses().add(secondProcess);
         serviceManager.getPropertyService().save(fourthProcessProperty);
 
@@ -684,7 +680,6 @@ public class MockDatabase {
         firstTemplateProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
-        firstTemplateProperty.setContainer(1);
         firstTemplateProperty.getTemplates().add(template);
         serviceManager.getPropertyService().save(firstTemplateProperty);
 
@@ -696,7 +691,6 @@ public class MockDatabase {
         secondTemplateProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondTemplateProperty.setCreationDate(localDate.toDate());
-        secondTemplateProperty.setContainer(2);
         secondTemplateProperty.getTemplates().add(template);
         serviceManager.getPropertyService().save(secondTemplateProperty);
 
@@ -812,7 +806,6 @@ public class MockDatabase {
         firstWorkpieceProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
-        firstWorkpieceProperty.setContainer(1);
         firstWorkpieceProperty.getWorkpieces().add(workpiece);
         serviceManager.getPropertyService().save(firstWorkpieceProperty);
 
@@ -824,7 +817,6 @@ public class MockDatabase {
         secondWorkpieceProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(localDate.toDate());
-        secondWorkpieceProperty.setContainer(2);
         secondWorkpieceProperty.getWorkpieces().add(workpiece);
         serviceManager.getPropertyService().save(secondWorkpieceProperty);
 

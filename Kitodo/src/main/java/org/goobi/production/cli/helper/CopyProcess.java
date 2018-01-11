@@ -1215,12 +1215,10 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private boolean verifyProperty(List<Property> properties, Property property) {
-        if (property.getContainer() == 0) {
-            for (Property tempProperty : properties) {
-                if (tempProperty.getTitle().equals(property.getTitle()) && tempProperty.getContainer() > 0) {
-                    tempProperty.setValue(property.getValue());
-                    return false;
-                }
+        for (Property tempProperty : properties) {
+            if (tempProperty.getTitle().equals(property.getTitle())) {
+                tempProperty.setValue(property.getValue());
+                return false;
             }
         }
         return true;
@@ -1231,7 +1229,6 @@ public class CopyProcess extends ProzesskopieForm {
         newProperty.setTitle(property.getTitle());
         newProperty.setValue(property.getValue());
         newProperty.setChoice(property.getChoice());
-        newProperty.setContainer(property.getContainer());
         newProperty.setType(property.getType());
         return newProperty;
     }
