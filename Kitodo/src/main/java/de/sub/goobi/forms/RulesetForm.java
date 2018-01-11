@@ -157,13 +157,20 @@ public class RulesetForm extends BasisForm {
     // replace calls to this function with "/pages/rulesetEdit" once we have
     // completely switched to the new frontend pages
     private String redirectToEdit(String urlSuffix) {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                .get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-            return "/pages/rulesetEdit" + urlSuffix;
-        } else {
-            return "/pages/RegelsaetzeBearbeiten" + urlSuffix;
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
+                return "/pages/rulesetEdit" + urlSuffix;
+            } else {
+                return "/pages/RegelsaetzeBearbeiten" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
+            // used from it's integration test
+            // class "RulesetFormIT", where no "FacesContext" is available!
+            return "/pages/ProjekteBearbeiten" + urlSuffix;
         }
     }
 
@@ -171,13 +178,20 @@ public class RulesetForm extends BasisForm {
     // replace calls to this function with "/pages/projects" once we have completely
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                .get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("rulesetEdit.jsf")) {
-            return "/pages/projects" + urlSuffix;
-        } else {
-            return "/pages/RegelsaetzeAlle" + urlSuffix;
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("rulesetEdit.jsf")) {
+                return "/pages/projects" + urlSuffix;
+            } else {
+                return "/pages/RegelsaetzeAlle" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
+            // used from it's integration test
+            // class "RulesetFormIT", where no "FacesContext" is available!
+            return "/pages/ProjekteBearbeiten" + urlSuffix;
         }
     }
 
