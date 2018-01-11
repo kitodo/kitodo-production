@@ -154,7 +154,7 @@
         <h:panelGrid columns="2">
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
             <h:link outcome="/pages/ProzessverwaltungBearbeiten"
-                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
+                    rendered="#{ProzessverwaltungForm.editMode.mode != 'template'}"
                     title="#{msgs.prozessBearbeiten}"
                     id="edit1">
                 <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit process"

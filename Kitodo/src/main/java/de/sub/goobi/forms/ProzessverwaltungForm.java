@@ -111,7 +111,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private Property templateProperty;
     private Workpiece workpiece;
     private Property workpieceProperty;
-    private String modusAnzeige = "aktuell";
+    private ObjectMode displayMode = ObjectMode.PROCESS;
     private ObjectMode editMode = ObjectMode.NONE;
     private String kitodoScript;
     private HashMap<String, Boolean> anzeigeAnpassen;
@@ -245,7 +245,7 @@ public class ProzessverwaltungForm extends BasisForm {
             logger.error(e);
             return null;
         }
-        if (this.modusAnzeige.equals("vorlagen")) {
+        if (this.displayMode.equals(ObjectMode.TEMPLATE)) {
             return filterTemplates();
         } else {
             return filterAll();
@@ -407,7 +407,7 @@ public class ProzessverwaltungForm extends BasisForm {
             Helper.setFehlerMeldung("ProzessverwaltungForm.filterCurrentProcesses", e);
             return null;
         }
-        this.modusAnzeige = "aktuell";
+        this.displayMode = ObjectMode.PROCESS;
         return "/pages/ProzessverwaltungAlle?faces-redirect=true";
     }
 
@@ -430,7 +430,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
 
         this.page = new Page<>(0, this.processDTOS);
-        this.modusAnzeige = "vorlagen";
+        this.displayMode = ObjectMode.TEMPLATE;
         return "/pages/ProzessverwaltungAlle?faces-redirect=true";
     }
 
@@ -487,13 +487,13 @@ public class ProzessverwaltungForm extends BasisForm {
          */
         try {
             if (this.filter.equals("")) {
-                if (this.modusAnzeige.equals("vorlagen")) {
+                if (this.displayMode.equals(ObjectMode.TEMPLATE)) {
                     filterTemplatesWithoutFilter();
                 } else {
                     filterProcessesWithoutFilter();
                 }
             } else {
-                if (this.modusAnzeige.equals("vorlagen")) {
+                if (this.displayMode.equals(ObjectMode.TEMPLATE)) {
                     filterTemplatesWithFilter();
                 } else {
                     filterProcessesWithFilter();
@@ -1346,13 +1346,24 @@ public class ProzessverwaltungForm extends BasisForm {
         this.workpieceProperty = workpieceProperty;
     }
 
-    public String getModusAnzeige() {
-        return this.modusAnzeige;
+    /**
+     * Get mode for display.
+     *
+     * @return mode for edition as ObjectMode objects
+     */
+    public ObjectMode getDisplayMode() {
+        return this.displayMode;
     }
 
-    public void setModusAnzeige(String modusAnzeige) {
+    /**
+     * Set mode for display and set up default sort to title ASC.
+     *
+     * @param displayMode
+     *            mode for edition as ObjectMode objects
+     */
+    public void setDisplayMode(ObjectMode displayMode) {
         this.sortierung = "titelAsc";
-        this.modusAnzeige = modusAnzeige;
+        this.displayMode = displayMode;
     }
 
     /**
