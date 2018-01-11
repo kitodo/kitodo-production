@@ -92,6 +92,7 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.enums.ObjectMode;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
@@ -154,12 +155,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
 
-        // TODO: find other way than retrieving the form bean to access "modusAnzeige" e.g. whether templates or processes should be returned!
+        // TODO: find other way than retrieving the form bean to access "displayMode"
+        // e.g. whether templates or processes should be returned!
         ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
         if (Objects.equals(form, null)) {
             form = new ProzessverwaltungForm();
         }
-        boolean isTemplate = form.getModusAnzeige().equals("vorlagen");
+        boolean isTemplate = Objects.equals(form.getDisplayMode(), ObjectMode.TEMPLATE);
         Map<String, String> filterMap = (Map<String, String>) filters;
 
         BoolQueryBuilder query = null;
@@ -187,9 +189,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     @Override
     public String createCountQuery(Map filters) throws DataException {
-        // TODO: find other way than retrieving the form bean to access "modusAnzeige" e.g. whether templates or processes should be returned!
+        // TODO: find other way than retrieving the form bean to access "displayMode"
+        // e.g. whether templates or processes should be returned!
         ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
-        boolean isTemplate = form.getModusAnzeige().equals("vorlagen");
+        boolean isTemplate = Objects.equals(form.getDisplayMode(), ObjectMode.TEMPLATE);
         Map<String, String> filterMap = (Map<String, String>) filters;
 
         BoolQueryBuilder query = null;
