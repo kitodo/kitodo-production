@@ -11,6 +11,13 @@
 
 package org.kitodo.api.ugh;
 
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.w3c.dom.Node;
+
 public interface PicaPlusInterface extends FileformatInterface {
-    void read(org.w3c.dom.Node node);
+
+    /**
+     * @return always {@code true}. The result value is never used.
+     */
+    boolean read(Node node) throws ReadException;
 }

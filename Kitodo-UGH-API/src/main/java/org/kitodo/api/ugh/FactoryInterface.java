@@ -19,29 +19,31 @@ public interface FactoryInterface {
 
     DigitalDocumentInterface createDigitalDocument();
 
-    MetadataInterface createMetadata(MetadataTypeInterface metadataTypeInterface) throws MetadataTypeNotAllowedException;
+    MetadataInterface createMetadata(MetadataTypeInterface metadataTypeInterface)
+            throws MetadataTypeNotAllowedException;
 
-    MetadataGroupInterface createMetadataGroup(MetadataGroupTypeInterface metadataGroupTypeInterface) throws MetadataTypeNotAllowedException;
+    MetadataGroupInterface createMetadataGroup(MetadataGroupTypeInterface metadataGroupTypeInterface)
+            throws MetadataTypeNotAllowedException;
 
     MetadataGroupTypeInterface createMetadataGroupType();
 
     MetadataTypeInterface createMetadataType();
 
-    MetsModsInterface createMetsMods(PrefsInterface prefsInterface);
+    MetsModsInterface createMetsMods(PrefsInterface prefsInterface) throws PreferencesException;
 
-    MetsModsImportExportInterface createMetsModsImportExport(PrefsInterface prefsInterface);
+    MetsModsImportExportInterface createMetsModsImportExport(PrefsInterface prefsInterface) throws PreferencesException;
 
     PersonInterface createPerson(MetadataTypeInterface metadataTypeInterface) throws MetadataTypeNotAllowedException;
 
+    PicaPlusInterface createPicaPlus(PrefsInterface prefsInterface);
+
     PrefsInterface createPrefs();
 
-    FileformatInterface createRDFFile(PrefsInterface prefsInterface);
+    FileformatInterface createRDFFile(PrefsInterface prefsInterface) throws PreferencesException;
 
     RomanNumeralInterface createRomanNumeral();
 
     VirtualFileGroupInterface createVirtualFileGroup();
 
     FileformatInterface createXStream(PrefsInterface prefsInterface) throws PreferencesException;
-
-    PicaPlusInterface createPicaPlus(PrefsInterface prefsInterface);
 }
