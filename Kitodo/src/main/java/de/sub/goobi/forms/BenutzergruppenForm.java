@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
@@ -22,12 +23,14 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.primefaces.model.DualListModel;
 
 @Named("BenutzergruppenForm")
 @SessionScoped
@@ -68,7 +71,7 @@ public class BenutzergruppenForm extends BasisForm {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
             return redirectToList("?faces-redirect=true");
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+            Helper.setFehlerMeldung("Error, could not save user group", e.getMessage());
             return null;
         }
     }
@@ -134,6 +137,33 @@ public class BenutzergruppenForm extends BasisForm {
 
     public int getUserGroupId() {
         return this.userGroupId;
+    }
+
+    /**
+     * Return the list of available authorization levels and the list of
+     * authorization levels currently assigned to 'myBenutzergruppe' as a combined
+     * 'DualListModel' that is used by the frontend for authorization management of
+     * user groups utilizing a PrimeFaces PickList object.
+     *
+     * @return DualListModel of available and assigned authorization levels
+     */
+    public DualListModel<Authorization> getAuthorizations() {
+        List<Authorization> assignedAuthorizations = this.myBenutzergruppe.getAuthorizations();
+        List<Authorization> availableAuthorizations = serviceManager.getAuthorizationService().getAll();
+        availableAuthorizations.removeAll(assignedAuthorizations);
+        return new DualListModel<>(availableAuthorizations, assignedAuthorizations);
+    }
+
+    /**
+     * Assign the target property of given DualListModel of authorizations to
+     * 'myBenutzergruppe' using a PrimeFaces PickList object.
+     *
+     * @param authorizations
+     *            list of authorizations assigned to 'myBenutzergruppe'
+     */
+    public void setAuthorizations(DualListModel<Authorization> authorizations) {
+        authorizations.getTarget().removeIf(Objects::isNull);
+        this.myBenutzergruppe.setAuthorizations(authorizations.getTarget());
     }
 
     // TODO:

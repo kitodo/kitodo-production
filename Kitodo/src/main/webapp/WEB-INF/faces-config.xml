@@ -70,5 +70,11 @@
         <converter-class>de.sub.goobi.converter.StatisticsCalculationUnitConverter</converter-class>
     </converter>
 
+    <!-- AuthorizationConverter -->
+    <converter>
+        <converter-id>AuthorizationConverter</converter-id>
+        <converter-class>de.sub.goobi.converter.AuthorizationConverter</converter-class>
+    </converter>
+
 </faces-config>
 
