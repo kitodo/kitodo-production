@@ -11,10 +11,7 @@
  *
 -->
 
-<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<!-- +++++++++++     Eigenschaftentabelle      ++++++++++ -->
-<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
+<!-- Property table -->
 <ui:composition
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
@@ -74,25 +71,21 @@
     </ui:fragment>
 
 
-    <!-- newUser-Schaltknopf -->
+    <!-- Add new template -->
     <h:commandLink action="#{ProzessverwaltungForm.createTemplateProperty}" value="#{msgs.eigenschaftHinzufuegen}"
                    title="#{msgs.eigenschaftHinzufuegen}"
                    rendered="#{ProzessverwaltungForm.editMode.mode != 'templateProperty'}">
         <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.TEMPLATEPROPERTY}"/>
     </h:commandLink>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- +++++++++     Eigenschaft bearbeiten      ++++++++++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
+    <!-- Edit templates for process -->
     <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'templateProperty'}">
         <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
         </h4>
     </ui:fragment>
 
-    <!-- Box für die Bearbeitung der Details -->
+    <!-- Box for edit of property's details -->
     <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'templateProperty'}">
         <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
             <tr>
@@ -101,7 +94,7 @@
                 </td>
             </tr>
 
-            <!-- Formular für die Bearbeitung der Eigenschaft -->
+            <!-- Form for edit of template -->
             <tr>
                 <td class="eingabeBoxen_row2" colspan="2">
                     <table>
