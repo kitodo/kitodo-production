@@ -21,31 +21,27 @@ import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.helper.tasks.TaskSitter;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.ArrayList;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.excel.RDFFile;
-import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
@@ -89,7 +85,7 @@ public class ExportDms extends ExportMets {
                 && ConfigCore.getBooleanParameter("asynchronousAutomaticExport", false)) {
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
             Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
-                    process.getTitle());
+                process.getTitle());
             return true;
         } else {
             return startExport(process, inZielVerzeichnis, (ExportDmsTask) null);
@@ -114,7 +110,7 @@ public class ExportDms extends ExportMets {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process, inZielVerzeichnis,
-                    serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
+                serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
         } catch (Exception e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
@@ -137,7 +133,7 @@ public class ExportDms extends ExportMets {
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocument newFile)
+    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocumentInterface newFile)
             throws IOException, WriteException, PreferencesException, TypeNotAllowedForParentException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
@@ -147,16 +143,16 @@ public class ExportDms extends ExportMets {
         /*
          * Dokument einlesen
          */
-        Fileformat gdzfile;
+        FileformatInterface gdzfile;
         try {
             switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
                 case METS:
-                    gdzfile = new MetsModsImportExport(this.myPrefs);
+                    gdzfile = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
                     break;
 
                 case METS_AND_RDF:
                 default:
-                    gdzfile = new RDFFile(this.myPrefs);
+                    gdzfile = UghImplementation.INSTANCE.createRDFFile(this.myPrefs);
                     break;
             }
 
@@ -221,7 +217,7 @@ public class ExportDms extends ExportMets {
                 /* alte Import-Ordner löschen */
                 if (!fileService.delete(userHomeProcess)) {
                     Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
-                            "Import folder could not be cleared");
+                        "Import folder could not be cleared");
                     return false;
                 }
                 /* alte Success-Ordner löschen */
@@ -229,7 +225,7 @@ public class ExportDms extends ExportMets {
                         process.getProject().getDmsImportSuccessPath() + File.separator + process.getTitle());
                 if (!fileService.delete(successFile.toURI())) {
                     Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
-                            "Success folder could not be cleared");
+                        "Success folder could not be cleared");
                     return false;
                 }
                 /* alte Error-Ordner löschen */
@@ -237,7 +233,7 @@ public class ExportDms extends ExportMets {
                         process.getProject().getDmsImportErrorPath() + File.separator + process.getTitle());
                 if (!fileService.delete(errorfile.toURI())) {
                     Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
-                            "Error folder could not be cleared");
+                        "Error folder could not be cleared");
                     return false;
                 }
 
@@ -290,10 +286,10 @@ public class ExportDms extends ExportMets {
                 exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
             }
             if (MetadataFormat.findFileFormatsHelperByName(
-                    process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
+                process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
                 writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"),
-                        gdzfile, false);
+                    gdzfile, false);
             } else {
                 /* ...wenn nicht, nur ein Fileformat schreiben. */
                 gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
@@ -301,9 +297,9 @@ public class ExportDms extends ExportMets {
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
             if (MetadataFormat.findFileFormatsHelperByName(
-                    process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
+                process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
                 writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".mets.xml"),
-                        gdzfile, false);
+                    gdzfile, false);
             }
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
@@ -351,9 +347,9 @@ public class ExportDms extends ExportMets {
         } else {
             /* ohne Agora-Import die xml-Datei direkt ins Home schreiben */
             if (MetadataFormat.findFileFormatsHelperByName(
-                    process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
+                process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
                 writeMetsFile(process, fileService.createResource(zielVerzeichnis, atsPpnBand + ".xml"), gdzfile,
-                        false);
+                    false);
             } else {
                 gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
             }
@@ -378,10 +374,10 @@ public class ExportDms extends ExportMets {
      * Run through all metadata and children of given docstruct to trim the
      * strings calls itself recursively.
      */
-    private void trimAllMetadata(DocStruct inStruct) {
+    private void trimAllMetadata(DocStructInterface inStruct) {
         /* trimm all metadata values */
         if (inStruct.getAllMetadata() != null) {
-            for (Metadata md : inStruct.getAllMetadata()) {
+            for (MetadataInterface md : inStruct.getAllMetadata()) {
                 if (md.getValue() != null) {
                     md.setValue(md.getValue().trim());
                 }
@@ -390,7 +386,7 @@ public class ExportDms extends ExportMets {
 
         /* run through all children of docstruct */
         if (inStruct.getAllChildren() != null) {
-            for (DocStruct child : inStruct.getAllChildren()) {
+            for (DocStructInterface child : inStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }

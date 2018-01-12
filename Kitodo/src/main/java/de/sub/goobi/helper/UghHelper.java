@@ -12,19 +12,17 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.helper.exceptions.UghHelperException;
-
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DocStruct;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 
 public class UghHelper {
     private static final Logger logger = LogManager.getLogger(UghHelper.class);
@@ -39,8 +37,8 @@ public class UghHelper {
      *            String
      * @return MetadataType
      */
-    public static MetadataType getMetadataType(Process inProzess, String inName) throws UghHelperException {
-        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
+    public static MetadataTypeInterface getMetadataType(Process inProzess, String inName) throws UghHelperException {
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         return getMetadataType(myPrefs, inName);
     }
 
@@ -53,8 +51,8 @@ public class UghHelper {
      *            String
      * @return MetadataType
      */
-    public static MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
-        MetadataType mdt = inPrefs.getMetadataTypeByName(inName);
+    public static MetadataTypeInterface getMetadataType(PrefsInterface inPrefs, String inName) throws UghHelperException {
+        MetadataTypeInterface mdt = inPrefs.getMetadataTypeByName(inName);
         if (mdt == null) {
             throw new UghHelperException("MetadataType does not exist in current Preferences: " + inName);
         }
@@ -70,12 +68,12 @@ public class UghHelper {
      *            MetadataType object
      * @return Metadata
      */
-    public static Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {
+    public static MetadataInterface getMetadata(DocStructInterface inStruct, MetadataTypeInterface inMetadataType) {
         if (inStruct != null && inMetadataType != null) {
-            List<? extends Metadata> all = inStruct.getAllMetadataByType(inMetadataType);
+            List<? extends MetadataInterface> all = inStruct.getAllMetadataByType(inMetadataType);
             if (all.size() == 0) {
                 try {
-                    Metadata md = new Metadata(inMetadataType);
+                    MetadataInterface md = UghImplementation.INSTANCE.createMetadata(inMetadataType);
                     md.setDocStruct(inStruct);
                     inStruct.addMetadata(md);
 

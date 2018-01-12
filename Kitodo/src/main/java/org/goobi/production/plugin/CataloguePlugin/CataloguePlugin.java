@@ -21,9 +21,8 @@ import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 
 /**
  * The class CataloguePlugin is a redirection class that takes a library
@@ -175,7 +174,7 @@ public class CataloguePlugin extends UnspecificPlugin {
         find = getDeclaredMethod("find", new Class[] {String.class, long.class }, Object.class);
         getHit = getDeclaredMethod("getHit", new Class[] {Object.class, long.class, long.class }, Map.class);
         getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] {Object.class, long.class }, long.class);
-        setPreferences = getDeclaredMethod("setPreferences", Prefs.class, Void.TYPE);
+        setPreferences = getDeclaredMethod("setPreferences", PrefsInterface.class, Void.TYPE);
         supportsCatalogue = getDeclaredMethod("supportsCatalogue", String.class, boolean.class);
         useCatalogue = getDeclaredMethod("useCatalogue", String.class, Void.TYPE);
     }
@@ -213,7 +212,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      *            Prefs object
      * @return UGH preferences
      */
-    public static Fileformat getFirstHit(String catalogue, String query, Prefs preferences) {
+    public static FileformatInterface getFirstHit(String catalogue, String query, PrefsInterface preferences) {
         try {
             CataloguePlugin plugin = PluginLoader.getCataloguePluginForCatalogue(catalogue);
             plugin.setPreferences(preferences);
@@ -303,7 +302,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      *            UGH preferences
      * @see org.kitodo.services.data.RulesetService#getPreferences()
      */
-    public void setPreferences(Prefs preferences) {
+    public void setPreferences(PrefsInterface preferences) {
         invokeQuietly(plugin, setPreferences, preferences, null);
     }
 

@@ -23,19 +23,18 @@ import java.util.Iterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Prefs;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
  * Thread implementation to export a batch holding a serial publication as set,
@@ -153,7 +152,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                         return;
                     }
                     process = processesIterator.next();
-                    DigitalDocument out = buildExportDocument(process, pointers);
+                    DigitalDocumentInterface out = buildExportDocument(process, pointers);
                     ExportDms exporter = new ExportDms(
                             ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
@@ -202,11 +201,11 @@ public class ExportSerialBatchTask extends EmptyTask {
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    private static DigitalDocument buildExportDocument(Process process, Iterable<String> allPointers)
+    private static DigitalDocumentInterface buildExportDocument(Process process, Iterable<String> allPointers)
             throws PreferencesException, ReadException, IOException, MetadataTypeNotAllowedException,
             TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-        DigitalDocument result = serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument();
-        DocStruct root = result.getLogicalDocStruct();
+        DigitalDocumentInterface result = serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument();
+        DocStructInterface root = result.getLogicalDocStruct();
         String type = "Volume";
         try {
             type = root.getAllChildren().get(0).getType().getName();
@@ -214,10 +213,10 @@ public class ExportSerialBatchTask extends EmptyTask {
             logger.error(e);
         }
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
-        Prefs ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
-                root.createChild(type, result, ruleset).addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE,
+                root.createChild(type, result, ruleset).addMetadata(MetsModsImportExportInterface.CREATE_MPTR_ELEMENT_TYPE,
                         pointer);
             }
         }

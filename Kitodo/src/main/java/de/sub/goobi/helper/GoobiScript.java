@@ -14,19 +14,27 @@ package de.sub.goobi.helper;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -36,16 +44,6 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 
 // TODO: Delete me, this should be part of the Plugins...
 // TODO: Break this up into multiple classes with a common interface
@@ -84,9 +82,9 @@ public class GoobiScript {
          */
         if (this.myParameters.get("action") == null) {
             Helper.setFehlerMeldung("kitodoScriptfield", "missing action",
-                    " - possible: 'action:swapsteps, action:adduser, action:addusergroup, "
-                            + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
-                            + "action:importFromFileSystem'");
+                " - possible: 'action:swapsteps, action:adduser, action:addusergroup, "
+                        + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
+                        + "action:importFromFileSystem'");
             return;
         }
 
@@ -125,7 +123,7 @@ public class GoobiScript {
             exportDms(inProzesse, this.myParameters.get("exportImages"), true);
         } else if (this.myParameters.get("action").equals("export")) {
             exportDms(inProzesse, this.myParameters.get("exportImages"),
-                    Boolean.valueOf(this.myParameters.get("exportOcr")));
+                Boolean.valueOf(this.myParameters.get("exportOcr")));
         } else if (this.myParameters.get("action").equals("doit")) {
             exportDms(inProzesse, "false", false);
         } else if (this.myParameters.get("action").equals("doit2")) {
@@ -148,9 +146,9 @@ public class GoobiScript {
             deleteProcess(inProzesse, contentOnly);
         } else {
             Helper.setFehlerMeldung("kitodoScriptfield", "Unknown action",
-                    " - use: 'action:swapsteps, action:adduser, action:addusergroup, "
-                            + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
-                            + "action:importFromFileSystem'");
+                " - use: 'action:swapsteps, action:adduser, action:addusergroup, "
+                        + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
+                        + "action:importFromFileSystem'");
             return;
         }
 
@@ -160,11 +158,11 @@ public class GoobiScript {
     private void updateContentFiles(List<Process> inProzesse) {
         for (Process proz : inProzesse) {
             try {
-                Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
+                FileformatInterface myRdf = serviceManager.getProcessService().readMetadataFile(proz);
                 myRdf.getDigitalDocument().addAllContentFiles();
                 serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ContentFiles updated: ", proz.getTitle());
-            } catch (ugh.exceptions.DocStructHasNoTypeException e) {
+            } catch (org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
 
             } catch (Exception e) {
@@ -242,26 +240,26 @@ public class GoobiScript {
         try {
             if (!fileService.isDirectory(sourceFolder)) {
                 Helper.setFehlerMeldung("kitodoScriptfield",
-                        "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
+                    "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
                 return;
             }
             for (Process p : inProzesse) {
                 URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, p);
                 if (fileService.getSubUris(imagesFolder).size() > 0) {
                     Helper.setFehlerMeldung("kitodoScriptfield", "",
-                            "The process " + p.getTitle() + " [" + p.getId() + "] has already data in image folder");
+                        "The process " + p.getTitle() + " [" + p.getId() + "] has already data in image folder");
                 } else {
                     URI sourceFolderProzess = fileService.createResource(sourceFolder, p.getTitle());
                     if (!fileService.isDirectory(sourceFolder)) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "",
-                                "The directory for process " + p.getTitle() + " [" + p.getId() + "] is not existing");
+                            "The directory for process " + p.getTitle() + " [" + p.getId() + "] is not existing");
                     } else {
                         fileService.copyDirectory(sourceFolderProzess, imagesFolder);
                         Helper.setMeldung("kitodoScriptfield", "",
-                                "The directory for process " + p.getTitle() + " [" + p.getId() + "] is copied");
+                            "The directory for process " + p.getTitle() + " [" + p.getId() + "] is copied");
                     }
                     Helper.setMeldung("kitodoScriptfield", "",
-                            "The process " + p.getTitle() + " [" + p.getId() + "] is copied");
+                        "The process " + p.getTitle() + " [" + p.getId() + "] is copied");
                 }
             }
         } catch (IOException e) {
@@ -331,7 +329,7 @@ public class GoobiScript {
             secondOrder = Integer.parseInt(this.myParameters.get("swap2nr"));
         } catch (NumberFormatException e1) {
             Helper.setFehlerMeldung("kitodoScriptfield", "Invalid order number used: ",
-                    this.myParameters.get("swap1nr") + " - " + this.myParameters.get("swap2nr"));
+                this.myParameters.get("swap1nr") + " - " + this.myParameters.get("swap2nr"));
             return;
         }
 
@@ -363,9 +361,10 @@ public class GoobiScript {
                     serviceManager.getTaskService().save(secondTask);
                 } catch (DataException e) {
                     Helper.setFehlerMeldung("kitodoScriptfield", "Error on save while swapping tasks in process: ",
-                            proz.getTitle() + " - " + firstTask.getTitle() + " : " + secondTask.getTitle());
+                        proz.getTitle() + " - " + firstTask.getTitle() + " : " + secondTask.getTitle());
                     logger.error("Error on save while swapping process: " + proz.getTitle() + " - "
-                            + firstTask.getTitle() + " : " + secondTask.getTitle(), e);
+                            + firstTask.getTitle() + " : " + secondTask.getTitle(),
+                        e);
                 }
                 Helper.setMeldung("kitodoScriptfield", "Swapped tasks in: ", proz.getTitle());
             }
@@ -398,7 +397,7 @@ public class GoobiScript {
                             serviceManager.getProcessService().save(proz);
                         } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while saving process: " + proz.getTitle(), e);
+                                "Error while saving process: " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                         }
                         Helper.setMeldung("kitodoScriptfield", "Removed step from process: ", proz.getTitle());
@@ -489,7 +488,7 @@ public class GoobiScript {
                             serviceManager.getProcessService().save(process);
                         } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while saving process: " + process.getTitle(), e);
+                                "Error while saving process: " + process.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving process: " + process.getTitle(), e);
                         }
                         Helper.setMeldung("kitodoScriptfield", "Added script to step: ", process.getTitle());
@@ -530,8 +529,8 @@ public class GoobiScript {
                 && !property.equals("validate") && !property.equals("exportdms") && !property.equals("batch")
                 && !property.equals("automatic")) {
             Helper.setFehlerMeldung("kitodoScriptfield", "",
-                    "wrong parameter 'property'; possible values: metadata, readimages, writeimages, "
-                            + "validate, exportdms");
+                "wrong parameter 'property'; possible values: metadata, readimages, writeimages, "
+                        + "validate, exportdms");
             return;
         }
 
@@ -574,7 +573,7 @@ public class GoobiScript {
                             serviceManager.getProcessService().save(proz);
                         } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while saving process: " + proz.getTitle(), e);
+                                "Error while saving process: " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                         }
                         Helper.setMeldung("kitodoScriptfield", "Error while saving process: ", proz.getTitle());
@@ -606,7 +605,7 @@ public class GoobiScript {
         if (!this.myParameters.get("status").equals("0") && !this.myParameters.get("status").equals("1")
                 && !this.myParameters.get("status").equals("2") && !this.myParameters.get("status").equals("3")) {
             Helper.setFehlerMeldung("kitodoScriptfield", "Wrong status parameter: status ",
-                    "(possible: 0=closed, 1=open, 2=in work, 3=finished");
+                "(possible: 0=closed, 1=open, 2=in work, 3=finished");
             return;
         }
 
@@ -621,7 +620,7 @@ public class GoobiScript {
                         serviceManager.getTaskService().save(task);
                     } catch (DataException e) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
-                                e);
+                            e);
                         logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                     }
                     Helper.setMeldung("kitodoScriptfield", "stepstatus set in process: ", proz.getTitle());
@@ -665,7 +664,7 @@ public class GoobiScript {
                         serviceManager.getTaskService().save(task);
                     } catch (DataException e) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
-                                e);
+                            e);
                         logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                     }
                     Helper.setMeldung("kitodoScriptfield", "step order changed in process: ", proz.getTitle());
@@ -694,7 +693,7 @@ public class GoobiScript {
         /* prüfen, ob ein solcher Benutzer existiert */
         User user;
         List<User> treffer = serviceManager.getUserService()
-                    .getByQuery("from User where login='" + this.myParameters.get("username") + "'");
+                .getByQuery("from User where login='" + this.myParameters.get("username") + "'");
         if (treffer != null && treffer.size() > 0) {
             user = treffer.get(0);
         } else {
@@ -748,7 +747,7 @@ public class GoobiScript {
         /* prüfen, ob ein solcher Benutzer existiert */
         UserGroup userGroup;
         List<UserGroup> treffer = serviceManager.getUserGroupService()
-                    .getByQuery("from UserGroup where title='" + this.myParameters.get("group") + "'");
+                .getByQuery("from UserGroup where title='" + this.myParameters.get("group") + "'");
         if (treffer != null && treffer.size() > 0) {
             userGroup = treffer.get(0);
         } else {
@@ -809,16 +808,16 @@ public class GoobiScript {
     public void updateImagePath(List<Process> inProzesse) {
         for (Process proz : inProzesse) {
             try {
-                Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
-                MetadataType mdt = UghHelper.getMetadataType(proz, "pathimagefiles");
-                List<? extends ugh.dl.Metadata> alleImagepfade = myRdf.getDigitalDocument().getPhysicalDocStruct()
+                FileformatInterface myRdf = serviceManager.getProcessService().readMetadataFile(proz);
+                MetadataTypeInterface mdt = UghHelper.getMetadataType(proz, "pathimagefiles");
+                List<? extends MetadataInterface> alleImagepfade = myRdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
                 if (alleImagepfade.size() > 0) {
-                    for (Metadata md : alleImagepfade) {
+                    for (MetadataInterface md : alleImagepfade) {
                         myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
                     }
                 }
-                Metadata newmd = new Metadata(mdt);
+                MetadataInterface newmd = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(proz) + proz.getTitle()
                             + DIRECTORY_SUFFIX);
@@ -830,7 +829,7 @@ public class GoobiScript {
                 serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ImagePath updated: ", proz.getTitle());
 
-            } catch (ugh.exceptions.DocStructHasNoTypeException e) {
+            } catch (org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
             } catch (UghHelperException e) {
                 Helper.setFehlerMeldung("UghHelperException", e.getMessage());

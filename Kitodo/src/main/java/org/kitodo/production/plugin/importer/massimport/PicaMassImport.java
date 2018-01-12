@@ -18,7 +18,6 @@
 package org.kitodo.production.plugin.importer.massimport;
 
 import de.sub.goobi.helper.exceptions.ImportPluginException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import javax.faces.context.FacesContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,9 +34,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -65,25 +61,25 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.MetsModsInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsMods;
 
 @PluginImplementation
 public class PicaMassImport implements IImportPlugin, IPlugin {
@@ -93,7 +89,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private String data = "";
     private String importFolder = "";
     private File importFile;
-    private Prefs prefs;
+    private PrefsInterface prefsInterface;
     private String currentIdentifier;
     private List<String> currentCollectionList;
     private String opacCatalogue;
@@ -130,8 +126,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     @Override
-    public void setPrefs(Prefs prefs) {
-        this.prefs = prefs;
+    public void setPrefs(PrefsInterface prefsInterface) {
+        this.prefsInterface = prefsInterface;
     }
 
     @Override
@@ -140,13 +136,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     @Override
-    public Fileformat convertData() throws ImportPluginException {
+    public FileformatInterface convertData() throws ImportPluginException {
 
         currentIdentifier = data;
 
         if (logger.isDebugEnabled()) {
-            logger.debug("retrieving pica record for " + currentIdentifier + " with server address: "
-                    + this.getOpacAddress());
+            logger.debug(
+                "retrieving pica record for " + currentIdentifier + " with server address: " + this.getOpacAddress());
         }
         String search = SRUHelper.search(currentIdentifier, this.getOpacAddress());
         logger.trace(search);
@@ -159,26 +155,26 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             }
             pica = addParentDataForVolume(pica);
-            Fileformat ff = SRUHelper.parsePicaFormat(pica, prefs);
-            DigitalDocument dd = ff.getDigitalDocument();
+            FileformatInterface ff = SRUHelper.parsePicaFormat(pica, prefsInterface);
+            DigitalDocumentInterface dd = ff.getDigitalDocument();
             boolean multivolue = false;
-            DocStruct logicalDS = dd.getLogicalDocStruct();
-            DocStruct child = null;
+            DocStructInterface logicalDS = dd.getLogicalDocStruct();
+            DocStructInterface child = null;
             if (logicalDS.getType().getAnchorClass() != null) {
                 child = logicalDS.getAllChildren().get(0);
                 multivolue = true;
             }
             // reading title
-            MetadataType titleType = prefs.getMetadataTypeByName("TitleDocMain");
-            List<? extends Metadata> mdList = logicalDS.getAllMetadataByType(titleType);
+            MetadataTypeInterface titleType = prefsInterface.getMetadataTypeByName("TitleDocMain");
+            List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(titleType);
             if (mdList != null && mdList.size() > 0) {
-                Metadata title = mdList.get(0);
+                MetadataInterface title = mdList.get(0);
                 currentTitle = title.getValue();
 
             }
             // reading identifier
-            MetadataType identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
-            List<? extends Metadata> childMdList = null;
+            MetadataTypeInterface identifierType = prefsInterface.getMetadataTypeByName("CatalogIDDigital");
+            List<? extends MetadataInterface> childMdList = null;
             if (child != null) {
                 childMdList = child.getAllMetadataByType(identifierType);
             }
@@ -188,7 +184,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 mdList = logicalDS.getAllMetadataByType(identifierType);
             }
             if (mdList != null && mdList.size() > 0) {
-                Metadata identifier = mdList.get(0);
+                MetadataInterface identifier = mdList.get(0);
                 currentIdentifier = identifier.getValue();
             } else {
                 currentIdentifier = String.valueOf(System.currentTimeMillis());
@@ -196,41 +192,41 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             // reading author
 
-            MetadataType authorType = prefs.getMetadataTypeByName("Author");
-            List<Person> personList = logicalDS.getAllPersonsByType(authorType);
+            MetadataTypeInterface authorType = prefsInterface.getMetadataTypeByName("Author");
+            List<PersonInterface> personList = logicalDS.getAllPersonsByType(authorType);
             if (personList != null && personList.size() > 0) {
-                Person authorMetadata = personList.get(0);
+                PersonInterface authorMetadata = personList.get(0);
                 author = authorMetadata.getDisplayname();
 
             }
 
             // reading volume number
             if (child != null) {
-                MetadataType mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
+                MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("CurrentNoSorting");
                 mdList = child.getAllMetadataByType(mdt);
                 if (mdList != null && mdList.size() > 0) {
-                    Metadata md = mdList.get(0);
+                    MetadataInterface md = mdList.get(0);
                     volumeNumber = md.getValue();
                 } else {
-                    mdt = prefs.getMetadataTypeByName("DateIssuedSort");
+                    mdt = prefsInterface.getMetadataTypeByName("DateIssuedSort");
                     mdList = child.getAllMetadataByType(mdt);
                     if (mdList != null && mdList.size() > 0) {
-                        Metadata md = mdList.get(0);
+                        MetadataInterface md = mdList.get(0);
                         volumeNumber = md.getValue();
                     }
                 }
             }
 
             // reading ats
-            MetadataType atsType = prefs.getMetadataTypeByName("TSL_ATS");
+            MetadataTypeInterface atsType = prefsInterface.getMetadataTypeByName("TSL_ATS");
             mdList = logicalDS.getAllMetadataByType(atsType);
             if (mdList != null && mdList.size() > 0) {
-                Metadata atstsl = mdList.get(0);
+                MetadataInterface atstsl = mdList.get(0);
                 ats = atstsl.getValue();
             } else {
                 // generating ats
                 ats = createAtstsl(currentTitle, author);
-                Metadata atstsl = new Metadata(atsType);
+                MetadataInterface atstsl = UghImplementation.INSTANCE.createMetadata(atsType);
                 atstsl.setValue(ats);
                 logicalDS.addMetadata(atstsl);
             }
@@ -250,7 +246,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 }
             }
             {
-                MetadataType identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
+                MetadataTypeInterface identifierAnalogType = prefsInterface.getMetadataTypeByName("CatalogIDSource");
                 mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
                 if (mdList != null && mdList.size() > 0) {
                     String analog = mdList.get(0).getValue();
@@ -267,7 +263,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 if (child != null) {
                     mdList = child.getAllMetadataByType(identifierType);
                     if (mdList != null && mdList.size() > 0) {
-                        Metadata identifier = mdList.get(0);
+                        MetadataInterface identifier = mdList.get(0);
                         Property prop = new Property();
                         prop.setTitle("Identifier Band");
                         prop.setValue(identifier.getValue());
@@ -297,26 +293,27 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             try {
                 // pathimagefiles
-                MetadataType mdt = prefs.getMetadataTypeByName("pathimagefiles");
-                Metadata newmd = new Metadata(mdt);
+                MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("pathimagefiles");
+                MetadataInterface newmd = UghImplementation.INSTANCE.createMetadata(mdt);
                 newmd.setValue("/images/");
                 dd.getPhysicalDocStruct().addMetadata(newmd);
 
                 // collections
                 if (this.currentCollectionList != null) {
-                    MetadataType mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
-                    DocStruct topLogicalStruct = dd.getLogicalDocStruct();
-                    List<DocStruct> volumes = topLogicalStruct.getAllChildren();
+                    MetadataTypeInterface mdTypeCollection = this.prefsInterface.getMetadataTypeByName("singleDigCollection");
+                    DocStructInterface topLogicalStruct = dd.getLogicalDocStruct();
+                    List<DocStructInterface> volumes = topLogicalStruct.getAllChildren();
                     if (volumes == null) {
                         volumes = Collections.emptyList();
                     }
                     for (String collection : this.currentCollectionList) {
-                        Metadata mdCollection = new Metadata(mdTypeCollection);
+                        MetadataInterface mdCollection = UghImplementation.INSTANCE.createMetadata(mdTypeCollection);
                         mdCollection.setValue(collection);
                         topLogicalStruct.addMetadata(mdCollection);
-                        for (DocStruct volume : volumes) {
+                        for (DocStructInterface volume : volumes) {
                             try {
-                                Metadata mdCollectionForVolume = new Metadata(mdTypeCollection);
+                                MetadataInterface mdCollectionForVolume = UghImplementation.INSTANCE
+                                        .createMetadata(mdTypeCollection);
                                 mdCollectionForVolume.setValue(collection);
                                 volume.addMetadata(mdCollectionForVolume);
                             } catch (MetadataTypeNotAllowedException e) {
@@ -410,7 +407,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      * @param attributeValue
      *            attribute to locate
      * @return value, or "" if not found
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     private static String getSubelementValue(Element inElement, String attributeValue) {
@@ -450,7 +447,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             this.data = r.getData();
             this.currentCollectionList = r.getCollections();
             ImportObject io = new ImportObject();
-            Fileformat ff = null;
+            FileformatInterface ff = null;
             try {
                 ff = convertData();
             } catch (ImportPluginException e1) {
@@ -460,7 +457,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             if (ff != null) {
                 r.setId(this.currentIdentifier);
                 try {
-                    MetsMods mm = new MetsMods(this.prefs);
+                    MetsModsInterface mm = UghImplementation.INSTANCE.createMetsMods(this.prefsInterface);
                     mm.setDigitalDocument(ff.getDigitalDocument());
                     String fileName = getImportFolder() + getProcessTitle() + ".xml";
                     if (logger.isDebugEnabled()) {

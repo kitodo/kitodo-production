@@ -29,18 +29,17 @@ import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
 import org.joda.time.LocalDate;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Prefs;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
  * The class CreateNewspaperProcessesTask is a LongRunningTask to create
@@ -245,7 +244,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      * The function createFirstChild() creates the first level of the logical
      * document structure available at the given parent.
      *
-     * @param docStruct
+     * @param docStructInterface
      *            level of the logical document structure to create a child in
      * @param document
      *            document to create the child in
@@ -253,11 +252,11 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            rule set the document is based on
      * @return the created child
      */
-    private DocStruct createFirstChild(DocStruct docStruct, DigitalDocument document, Prefs ruleset) {
+    private DocStructInterface createFirstChild(DocStructInterface docStructInterface, DigitalDocumentInterface document, PrefsInterface ruleset) {
         String firstAddable = null;
         try {
-            firstAddable = docStruct.getType().getAllAllowedDocStructTypes().get(0);
-            return docStruct.createChild(firstAddable, document, ruleset);
+            firstAddable = docStructInterface.getType().getAllAllowedDocStructTypes().get(0);
+            return docStructInterface.createChild(firstAddable, document, ruleset);
         } catch (Exception e) {
             StringBuilder message = new StringBuilder();
             message.append("Could not add child ");
@@ -266,11 +265,11 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                 message.append(' ');
             }
             message.append("to DocStrct");
-            if (docStruct.getType() == null) {
+            if (docStructInterface.getType() == null) {
                 message.append(" without type");
             } else {
                 message.append("Type ");
-                message.append(docStruct.getType().getName());
+                message.append(docStructInterface.getType().getName());
             }
             message.append(": ");
             if (e instanceof NullPointerException) {
@@ -298,53 +297,53 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             String publicationRun) {
 
         // initialise
-        Prefs ruleset = serviceManager.getRulesetService().getPreferences(newProcess.getProzessKopie().getRuleset());
-        DigitalDocument document;
+        PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(newProcess.getProzessKopie().getRuleset());
+        DigitalDocumentInterface document;
         try {
             document = newProcess.getFileformat().getDigitalDocument();
         } catch (PreferencesException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        DocStruct newspaper = document.getLogicalDocStruct();
+        DocStructInterface newspaper = document.getLogicalDocStruct();
 
         // try to add the publication run
         addMetadatum(newspaper, "PublicationRun", publicationRun, false);
 
         // create the year level
-        DocStruct year = createFirstChild(newspaper, document, ruleset);
+        DocStructInterface year = createFirstChild(newspaper, document, ruleset);
         String theYear = Integer.toString(issues.get(0).getDate().getYear());
-        addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
+        addMetadatum(year, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
 
         // create the month level
-        Map<Integer, DocStruct> months = new HashMap<>();
-        Map<LocalDate, DocStruct> days = new HashMap<>(488);
+        Map<Integer, DocStructInterface> months = new HashMap<>();
+        Map<LocalDate, DocStructInterface> days = new HashMap<>(488);
         for (IndividualIssue individualIssue : issues) {
             LocalDate date = individualIssue.getDate();
             Integer monthNo = date.getMonthOfYear();
             if (!months.containsKey(monthNo)) {
-                DocStruct newMonth = createFirstChild(year, document, ruleset);
-                addMetadatum(newMonth, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString(), true);
+                DocStructInterface newMonth = createFirstChild(year, document, ruleset);
+                addMetadatum(newMonth, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString(), true);
                 addMetadatum(newMonth, year.getType().getName(), theYear, false);
-                addMetadatum(newMonth, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(), false);
+                addMetadatum(newMonth, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(), false);
                 months.put(monthNo, newMonth);
             }
-            DocStruct month = months.get(monthNo);
+            DocStructInterface month = months.get(monthNo);
 
             // create the day level
             if (!days.containsKey(date)) {
-                DocStruct newDay = createFirstChild(month, document, ruleset);
-                addMetadatum(newDay, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                DocStructInterface newDay = createFirstChild(month, document, ruleset);
+                addMetadatum(newDay, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
                         Integer.toString(date.getDayOfMonth()), true);
                 addMetadatum(newDay, year.getType().getName(), theYear, false);
                 addMetadatum(newDay, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
-                addMetadatum(newDay, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
+                addMetadatum(newDay, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE,
                         Integer.toString(date.getDayOfMonth()), false);
                 days.put(date, newDay);
             }
-            DocStruct day = days.get(date);
+            DocStructInterface day = days.get(date);
 
             // create the issue
-            DocStruct issue = createFirstChild(day, document, ruleset);
+            DocStructInterface issue = createFirstChild(day, document, ruleset);
             String heading = individualIssue.getHeading();
             if ((heading != null) && (heading.trim().length() > 0)) {
                 addMetadatum(issue, issue.getType().getName(), heading, true);
@@ -352,7 +351,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             addMetadatum(issue, year.getType().getName(), theYear, false);
             addMetadatum(issue, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
             addMetadatum(issue, day.getType().getName(), Integer.toString(date.getDayOfMonth()), false);
-            addMetadatum(issue, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
+            addMetadatum(issue, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
         }
     }
 
@@ -369,7 +368,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      * @param fail
      *            if true, throws an error on fail, otherwise returns silently
      */
-    private void addMetadatum(DocStruct level, String key, String value, boolean fail) {
+    private void addMetadatum(DocStructInterface level, String key, String value, boolean fail) {
         try {
             level.addMetadata(key, value);
         } catch (Exception e) {

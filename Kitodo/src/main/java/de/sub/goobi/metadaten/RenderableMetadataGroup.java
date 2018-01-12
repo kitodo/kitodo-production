@@ -18,18 +18,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.faces.model.SelectItem;
-
 import org.apache.commons.configuration.ConfigurationException;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataGroupTypeInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.helper.Util;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataGroupType;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
  * Backing bean for a set of backing beans for input elements to edit a metadata
@@ -37,7 +35,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * provides the currently selected type of metadata group to add, a list of all
  * types to choose from and the members of the chosen type in order to browse
  * and alter their values.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableMetadataGroup extends RenderableMetadatum {
@@ -58,13 +56,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * to circumvent the need to iterate over all available types and compare
      * all of their type name strings against the identifier value to set.
      */
-    private final Map<String, MetadataGroupType> possibleTypes;
+    private final Map<String, MetadataGroupTypeInterface> possibleTypes;
 
     /**
      * Holds the type of metadata group currently under edit in the form backed
      * by this RenderableMetadataGroup instance.
      */
-    private MetadataGroupType type;
+    private MetadataGroupTypeInterface type;
 
     /**
      * Holds the name of the project the act currently under edit in the
@@ -82,7 +80,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * group which is currently created and has not yet been added to a logical
      * document structure node, the field metadataGroup is null.
      */
-    private final MetadataGroup metadataGroup;
+    private final MetadataGroupInterface metadataGroupInterface;
 
     /**
      * Metadata editor instance this RenderableMetadataGroup is showing in. It
@@ -95,7 +93,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * Creates a RenderableMetadataGroup instance able to add any metadata group
      * that still can be added to the currently selected level of the document
      * structure hierararchy.
-     * 
+     *
      * @param addableTypes
      *            all metadata group types available for adding to the current
      *            logical document structure node
@@ -106,16 +104,16 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *             if a single value metadata field is configured to show a
      *             multi-select input
      */
-    public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName)
+    public RenderableMetadataGroup(Collection<MetadataGroupTypeInterface> addableTypes, String projectName)
             throws ConfigurationException {
         super(addableTypes.iterator().next().getAllLanguages(), null);
         possibleTypes = new LinkedHashMap<>(Util.hashCapacityFor(addableTypes));
-        for (MetadataGroupType possibleType : addableTypes) {
+        for (MetadataGroupTypeInterface possibleType : addableTypes) {
             possibleTypes.put(possibleType.getName(), possibleType);
         }
         type = addableTypes.iterator().next();
         this.projectName = projectName;
-        this.metadataGroup = null;
+        this.metadataGroupInterface = null;
         this.container = null;
         updateMembers(type);
     }
@@ -129,7 +127,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * setters are called and provides the ability to delete the associated
      * metadata group from the document structure node. Changing the metadata
      * group type is not possible.
-     * 
+     *
      * @param data
      *            metadata group whose data shall be shown
      * @param container
@@ -144,13 +142,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *             if a single value metadata field is configured to show a
      *             multi-select input
      */
-    public RenderableMetadataGroup(MetadataGroup data, Metadaten container, String language, String projectName)
+    public RenderableMetadataGroup(MetadataGroupInterface data, Metadaten container, String language, String projectName)
             throws ConfigurationException {
         super(data.getType().getAllLanguages(), data);
         this.possibleTypes = Collections.emptyMap();
         this.type = data.getType();
         this.projectName = projectName;
-        this.metadataGroup = data;
+        this.metadataGroupInterface = data;
         this.container = container;
         createMembers(data, true);
         setLanguage(language);
@@ -159,8 +157,8 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * Protected constructor for classes extending RenderableMetadataGroup,
      * creates a new RenderableMetadataGroup with exactly one type.
-     * 
-     * @param metadataType
+     *
+     * @param metadataTypeInterface
      *            metadata type this element is for
      * @param binding
      *            a metadata group whose value(s) shall be read and updated if
@@ -175,14 +173,14 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *             if a single value metadata field is configured to show a
      *             multi-select input
      */
-    protected RenderableMetadataGroup(MetadataType metadataType, MetadataGroup binding,
-            RenderableMetadataGroup container, MetadataGroupType type, String projectName)
+    protected RenderableMetadataGroup(MetadataTypeInterface metadataTypeInterface, MetadataGroupInterface binding,
+            RenderableMetadataGroup container, MetadataGroupTypeInterface type, String projectName)
             throws ConfigurationException {
-        super(metadataType, binding, container);
+        super(metadataTypeInterface, binding, container);
         possibleTypes = Collections.emptyMap();
         this.type = type;
         this.projectName = projectName;
-        this.metadataGroup = null;
+        this.metadataGroupInterface = null;
         this.container = null;
         updateMembers(type);
     }
@@ -195,22 +193,22 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * copy master and sets the values of the fields to the values of the copy
      * master, but doesn’t bind them to the copy master, so changing the values
      * late won’t arm the master object this copy is derived from.
-     * 
+     *
      * @param master
      *            a metadata group that a copy shall be created of
      * @param addableTypes
      *            all metadata group types that still can be added to the
      *            logical document hierarchy node currently under edit
      */
-    public RenderableMetadataGroup(RenderableMetadataGroup master, Collection<MetadataGroupType> addableTypes) {
+    public RenderableMetadataGroup(RenderableMetadataGroup master, Collection<MetadataGroupTypeInterface> addableTypes) {
         super(master.labels, null);
         possibleTypes = new LinkedHashMap<>(Util.hashCapacityFor(addableTypes));
-        for (MetadataGroupType possibleType : addableTypes) {
+        for (MetadataGroupTypeInterface possibleType : addableTypes) {
             possibleTypes.put(possibleType.getName(), possibleType);
         }
         type = master.type;
         this.projectName = master.projectName;
-        this.metadataGroup = null;
+        this.metadataGroupInterface = null;
         this.container = null;
         try {
             createMembers(master.toMetadataGroup(), false);
@@ -226,7 +224,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * If update is false, they need to be initialised explicitly so that they
      * carry a copy of the value. They will not be bound the data object and
      * thus can be used to create a copy of the data.
-     * 
+     *
      * @param data
      *            metadata group whose data shall be shown
      * @param autoUpdate
@@ -236,10 +234,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *             if a single value metadata field is configured to show a
      *             multi-select input
      */
-    private final void createMembers(MetadataGroup data, boolean autoUpdate) throws ConfigurationException {
-        List<MetadataType> requiredFields = data.getType().getMetadataTypeList();
+    private final void createMembers(MetadataGroupInterface data, boolean autoUpdate) throws ConfigurationException {
+        List<MetadataTypeInterface> requiredFields = data.getType().getMetadataTypeList();
         members = new LinkedHashMap<>(Util.hashCapacityFor(requiredFields));
-        for (MetadataType field : requiredFields) {
+        for (MetadataTypeInterface field : requiredFields) {
             RenderableGroupableMetadatum member;
             if (!(this instanceof RenderablePersonMetadataGroup)) {
                 member = RenderableMetadatum.create(field, autoUpdate ? binding : null, this, projectName);
@@ -249,10 +247,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
             members.put(field.getName(), member);
         }
         if (!autoUpdate) {
-            for (Metadata contentValue : data.getMetadataList()) {
+            for (MetadataInterface contentValue : data.getMetadataList()) {
                 members.get(contentValue.getType().getName()).addContent(contentValue);
             }
-            for (Person contentValue : data.getPersonList()) {
+            for (PersonInterface contentValue : data.getPersonList()) {
                 members.get(contentValue.getType().getName()).addContent(contentValue);
             }
         }
@@ -285,13 +283,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * convenient way to implement add or remove operations on lists.
      */
     public void delete() {
-        container.removeMetadataGroupFromCurrentDocStruct(metadataGroup);
+        container.removeMetadataGroupFromCurrentDocStruct(metadataGroupInterface);
     }
 
     /**
      * The function getMembers returns the input elements of this metadata
      * group.
-     * 
+     *
      * @return the input elements of this group
      */
     public Collection<RenderableGroupableMetadatum> getMembers() {
@@ -301,7 +299,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * Returns the number of elements in the members list, to be used for the
      * label cell height in HTML.
-     * 
+     *
      * @return the number of elements in the members list.
      */
     public String getRowspan() {
@@ -321,12 +319,12 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * available for the currently selected document structure element.
      * Depending on the rule set, availability means that some elements cannot
      * be added more than once and thus may not be available to add any more.
-     * 
+     *
      * @return the metadata group types available
      */
     public Collection<SelectItem> getPossibleTypes() {
         ArrayList<SelectItem> result = new ArrayList<>(possibleTypes.size());
-        for (Entry<String, MetadataGroupType> possibleType : possibleTypes.entrySet()) {
+        for (Entry<String, MetadataGroupTypeInterface> possibleType : possibleTypes.entrySet()) {
             result.add(new SelectItem(possibleType.getKey(), possibleType.getValue().getLanguage(language)));
         }
         return result;
@@ -335,7 +333,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * The function getSize() returns the number of elements in this metadata
      * group.
-     * 
+     *
      * @return the number of elements in this group
      */
     public int getSize() {
@@ -348,7 +346,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * metadata group type select box. The user will be shown the label returned
      * for the corresponding element in getPossibleTypes(), not the internal
      * name.
-     * 
+     *
      * @return the internal name of the metadata group type
      */
     public String getType() {
@@ -360,7 +358,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * this instance can be created on the logical document structure node
      * currently under edit in the metadata editor to either render the action
      * link to copy this metadata group, or not.
-     * 
+     *
      * @return the internal name of the metadata group type
      */
     public boolean isCopyable() {
@@ -372,7 +370,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * RenderableMetadatum because if setLanguage() is called for a metadata
      * group, both the label display language for the group and for all of its
      * members must be set.
-     * 
+     *
      * @see de.sub.goobi.metadaten.RenderableMetadatum#setLanguage(java.lang.String)
      */
     @Override
@@ -388,7 +386,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * metadata group type the user chose to edit, referenced by its name. If it
      * differs from the current one, this renderable metadata group will be
      * updated to represent the new type instead.
-     * 
+     *
      * @param type
      *            name of the metadata group type desired
      * @throws ConfigurationException
@@ -399,7 +397,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
         if (possibleTypes.isEmpty()) {
             return;
         }
-        MetadataGroupType newType = possibleTypes.get(type);
+        MetadataGroupTypeInterface newType = possibleTypes.get(type);
         if (!newType.equals(this.type)) {
             updateMembers(newType);
         }
@@ -410,13 +408,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * Returs the currently showing metadata group as a
      * {@link ugh.dl.MetadataGroup} so that it can be added to some structural
      * element.
-     * 
+     *
      * @return the showing metatdata group as ugh.dl.MetadataGroup
      */
-    public MetadataGroup toMetadataGroup() {
-        MetadataGroup result;
+    public MetadataGroupInterface toMetadataGroup() {
+        MetadataGroupInterface result;
         try {
-            result = new MetadataGroup(type);
+            result = UghImplementation.INSTANCE.createMetadataGroup(type);
         } catch (MetadataTypeNotAllowedException e) {
             throw new NullPointerException("MetadataGroupType must not be null at MetadataGroup creation.");
         }
@@ -424,9 +422,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
         result.getPersonList().clear();
 
         for (RenderableGroupableMetadatum member : members.values()) {
-            for (Metadata element : member.toMetadata()) {
+            for (MetadataInterface element : member.toMetadata()) {
                 if (member instanceof RenderablePersonMetadataGroup) {
-                    result.addPerson(((Person) element));
+                    result.addPerson(((PersonInterface) element));
                 } else {
                     result.addMetadata(element);
                 }
@@ -441,7 +439,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * metadata group initially in the constructor and subsequently if the user
      * alters the metadata group type he or she wants to create. Members that
      * previously existed will be kept.
-     * 
+     *
      * @param newGroupType
      *            metadata group type to initialize this renderable metadata
      *            group to
@@ -449,11 +447,11 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *             if a metadata field designed for a single value is
      *             misconfigured to show a multi-value input element
      */
-    private final void updateMembers(MetadataGroupType newGroupType) throws ConfigurationException {
-        List<MetadataType> requiredMetadataTypes = newGroupType.getMetadataTypeList();
+    private final void updateMembers(MetadataGroupTypeInterface newGroupType) throws ConfigurationException {
+        List<MetadataTypeInterface> requiredMetadataTypes = newGroupType.getMetadataTypeList();
         Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<>(
                 Util.hashCapacityFor(requiredMetadataTypes));
-        for (MetadataType type : requiredMetadataTypes) {
+        for (MetadataTypeInterface type : requiredMetadataTypes) {
             RenderableGroupableMetadatum member = members.get(type.getName());
             if (member == null) {
                 if (!(this instanceof RenderablePersonMetadataGroup)) {

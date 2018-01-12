@@ -18,36 +18,34 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.ReferenceInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.dl.Reference;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-
 public class MetadataValidationService {
 
-    private List<DocStruct> docStructsOhneSeiten;
+    private List<DocStructInterface> docStructsOhneSeiten;
     private Process process;
     private boolean autoSave = false;
     private static final Logger logger = LogManager.getLogger(MetadataValidationService.class);
@@ -61,18 +59,18 @@ public class MetadataValidationService {
      * @return boolean
      */
     public boolean validate(Process process) {
-        Prefs prefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface prefsInterface = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         /*
          * Fileformat einlesen
          */
-        Fileformat gdzfile;
+        FileformatInterface gdzfile;
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(process);
         } catch (Exception e) {
             Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + process.getTitle(), e.getMessage());
             return false;
         }
-        return validate(gdzfile, prefs, process);
+        return validate(gdzfile, prefsInterface, process);
     }
 
     /**
@@ -80,39 +78,39 @@ public class MetadataValidationService {
      *
      * @param gdzfile
      *            Fileformat object
-     * @param prefs
+     * @param prefsInterface
      *            Prefs object
      * @param process
      *            object
      * @return boolean
      */
-    public boolean validate(Fileformat gdzfile, Prefs prefs, Process process) {
+    public boolean validate(FileformatInterface gdzfile, PrefsInterface prefsInterface, Process process) {
         String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
         this.process = process;
         boolean result = true;
 
-        DigitalDocument dd;
+        DigitalDocumentInterface dd;
         try {
             dd = gdzfile.getDigitalDocument();
         } catch (Exception e) {
             Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + process.getTitle(),
-                    e.getMessage());
+                e.getMessage());
             return false;
         }
 
-        DocStruct logical = dd.getLogicalDocStruct();
-        List<Metadata> allIdentifierMetadata = logical.getAllIdentifierMetadata();
+        DocStructInterface logical = dd.getLogicalDocStruct();
+        List<MetadataInterface> allIdentifierMetadata = logical.getAllIdentifierMetadata();
         if (allIdentifierMetadata != null && allIdentifierMetadata.size() > 0) {
-            Metadata identifierTopStruct = allIdentifierMetadata.get(0);
+            MetadataInterface identifierTopStruct = allIdentifierMetadata.get(0);
 
             result = checkIfMetadataValueNotReplaced(logical, identifierTopStruct, metadataLanguage);
 
-            DocStruct firstChild = logical.getAllChildren().get(0);
-            List<Metadata> allChildIdentifierMetadata = firstChild.getAllIdentifierMetadata();
+            DocStructInterface firstChild = logical.getAllChildren().get(0);
+            List<MetadataInterface> allChildIdentifierMetadata = firstChild.getAllIdentifierMetadata();
             if (allChildIdentifierMetadata != null && allChildIdentifierMetadata.size() > 0) {
-                Metadata identifierFirstChild = allChildIdentifierMetadata.get(0);
+                MetadataInterface identifierFirstChild = allChildIdentifierMetadata.get(0);
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
-                            && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
+                        && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
                     List<String> parameter = new ArrayList<>();
                     parameter.add(identifierTopStruct.getType().getName());
                     parameter.add(logical.getType().getName());
@@ -132,14 +130,14 @@ public class MetadataValidationService {
         /*
          * PathImagesFiles prüfen
          */
-        if (!this.isValidPathImageFiles(dd.getPhysicalDocStruct(), prefs)) {
+        if (!this.isValidPathImageFiles(dd.getPhysicalDocStruct(), prefsInterface)) {
             result = false;
         }
 
         /*
          * auf Docstructs ohne Seiten prüfen
          */
-        DocStruct logicalTop = dd.getLogicalDocStruct();
+        DocStructInterface logicalTop = dd.getLogicalDocStruct();
         this.docStructsOhneSeiten = new ArrayList<>();
         if (logicalTop == null) {
             Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationError"));
@@ -149,7 +147,7 @@ public class MetadataValidationService {
         }
 
         if (this.docStructsOhneSeiten.size() != 0) {
-            for (DocStruct docStructWithoutPages : this.docStructsOhneSeiten) {
+            for (DocStructInterface docStructWithoutPages : this.docStructsOhneSeiten) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationStructure")
                         + docStructWithoutPages.getType().getNameByLanguage(metadataLanguage));
             }
@@ -169,7 +167,7 @@ public class MetadataValidationService {
         if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
             for (String pageWithoutDocStruct : seitenOhneDocstructs) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationPages"),
-                        pageWithoutDocStruct);
+                    pageWithoutDocStruct);
             }
             result = false;
         }
@@ -178,11 +176,11 @@ public class MetadataValidationService {
          * auf mandatory Values der Metadaten prüfen
          */
         List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<>(),
-                metadataLanguage);
+            metadataLanguage);
         if (mandatoryList.size() != 0) {
             for (String mandatory : mandatoryList) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataMandatoryElement"),
-                        mandatory);
+                    mandatory);
             }
             result = false;
         }
@@ -192,18 +190,19 @@ public class MetadataValidationService {
          * angegeben wurden
          */
         List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<>(),
-                prefs, metadataLanguage);
+            prefsInterface, metadataLanguage);
         if (configuredList.size() != 0) {
             for (String configured : configuredList) {
-                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataInvalidData"), configured);
+                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataInvalidData"),
+                    configured);
             }
             result = false;
         }
 
-        MetadatenImagesHelper mih = new MetadatenImagesHelper(prefs, dd);
+        MetadatenImagesHelper mih = new MetadatenImagesHelper(prefsInterface, dd);
         try {
             if (!mih.checkIfImagesValid(process.getTitle(),
-                    serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
+                serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
                 result = false;
             }
         } catch (Exception e) {
@@ -240,22 +239,22 @@ public class MetadataValidationService {
         return result;
     }
 
-    private boolean checkIfMetadataValueNotReplaced(DocStruct docStruct, Metadata metadata, String metadataLanguage) {
-        if (!metadata.getValue()
-                .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+    private boolean checkIfMetadataValueNotReplaced(DocStructInterface docStructInterface, MetadataInterface metadataInterface, String metadataLanguage) {
+        if (!metadataInterface.getValue().replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "")
+                .equals("")) {
             List<String> parameter = new ArrayList<>();
-            parameter.add(metadata.getType().getNameByLanguage(metadataLanguage));
-            parameter.add(docStruct.getType().getNameByLanguage(metadataLanguage));
+            parameter.add(metadataInterface.getType().getNameByLanguage(metadataLanguage));
+            parameter.add(docStructInterface.getType().getNameByLanguage(metadataLanguage));
             Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
             return false;
         }
         return true;
     }
 
-    private boolean isValidPathImageFiles(DocStruct phys, Prefs myPrefs) {
+    private boolean isValidPathImageFiles(DocStructInterface phys, PrefsInterface myPrefs) {
         try {
-            MetadataType mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
-            List<? extends Metadata> allMetadata = phys.getAllMetadataByType(mdt);
+            MetadataTypeInterface mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
+            List<? extends MetadataInterface> allMetadata = phys.getAllMetadataByType(mdt);
             if (allMetadata != null && allMetadata.size() > 0) {
                 return true;
             } else {
@@ -268,39 +267,39 @@ public class MetadataValidationService {
         }
     }
 
-    private void checkDocStructsOhneSeiten(DocStruct docStruct) {
-        if (docStruct.getAllToReferences().size() == 0 && docStruct.getType().getAnchorClass() == null) {
-            this.docStructsOhneSeiten.add(docStruct);
+    private void checkDocStructsOhneSeiten(DocStructInterface docStructInterface) {
+        if (docStructInterface.getAllToReferences().size() == 0 && docStructInterface.getType().getAnchorClass() == null) {
+            this.docStructsOhneSeiten.add(docStructInterface);
         }
         /* alle Kinder des aktuellen DocStructs durchlaufen */
-        if (docStruct.getAllChildren() != null) {
-            for (DocStruct child : docStruct.getAllChildren()) {
+        if (docStructInterface.getAllChildren() != null) {
+            for (DocStructInterface child : docStructInterface.getAllChildren()) {
                 checkDocStructsOhneSeiten(child);
             }
         }
     }
 
-    private List<String> checkSeitenOhneDocstructs(Fileformat inRdf) throws PreferencesException {
+    private List<String> checkSeitenOhneDocstructs(FileformatInterface inRdf) throws PreferencesException {
         List<String> result = new ArrayList<>();
-        DocStruct boundBook = inRdf.getDigitalDocument().getPhysicalDocStruct();
+        DocStructInterface boundBook = inRdf.getDigitalDocument().getPhysicalDocStruct();
         /* wenn boundBook null ist */
         if (boundBook == null || boundBook.getAllChildren() == null) {
             return result;
         }
 
         /* alle Seiten durchlaufen und prüfen ob References existieren */
-        for (DocStruct docStruct : boundBook.getAllChildren()) {
-            List<Reference> refs = docStruct.getAllFromReferences();
+        for (DocStructInterface docStructInterface : boundBook.getAllChildren()) {
+            List<ReferenceInterface> refs = docStructInterface.getAllFromReferences();
             String physical = "";
             String logical = "";
             if (refs.size() == 0) {
 
-                for (Metadata metadata : docStruct.getAllMetadata()) {
-                    if (metadata.getType().getName().equals("logicalPageNumber")) {
-                        logical = " (" + metadata.getValue() + ")";
+                for (MetadataInterface metadataInterface : docStructInterface.getAllMetadata()) {
+                    if (metadataInterface.getType().getName().equals("logicalPageNumber")) {
+                        logical = " (" + metadataInterface.getValue() + ")";
                     }
-                    if (metadata.getType().getName().equals("physPageNumber")) {
-                        physical = metadata.getValue();
+                    if (metadataInterface.getType().getName().equals("physPageNumber")) {
+                        physical = metadataInterface.getValue();
                     }
                 }
                 result.add(physical + logical);
@@ -309,12 +308,12 @@ public class MetadataValidationService {
         return result;
     }
 
-    private List<String> checkMandatoryValues(DocStruct docStruct, ArrayList<String> list, String language) {
-        DocStructType dst = docStruct.getType();
-        List<MetadataType> allMDTypes = dst.getAllMetadataTypes();
-        for (MetadataType mdt : allMDTypes) {
+    private List<String> checkMandatoryValues(DocStructInterface docStructInterface, ArrayList<String> list, String language) {
+        DocStructTypeInterface dst = docStructInterface.getType();
+        List<MetadataTypeInterface> allMDTypes = dst.getAllMetadataTypes();
+        for (MetadataTypeInterface mdt : allMDTypes) {
             String number = dst.getNumberOfMetadataType(mdt);
-            List<? extends Metadata> ll = docStruct.getAllMetadataByType(mdt);
+            List<? extends MetadataInterface> ll = docStructInterface.getAllMetadataByType(mdt);
             int real = ll.size();
             // if (ll.size() > 0) {
 
@@ -342,8 +341,8 @@ public class MetadataValidationService {
         }
         // }
         /* alle Kinder des aktuellen DocStructs durchlaufen */
-        if (docStruct.getAllChildren() != null) {
-            for (DocStruct child : docStruct.getAllChildren()) {
+        if (docStructInterface.getAllChildren() != null) {
+            for (DocStructInterface child : docStructInterface.getAllChildren()) {
                 checkMandatoryValues(child, list, language);
             }
         }
@@ -354,8 +353,8 @@ public class MetadataValidationService {
      * individuelle konfigurierbare projektspezifische Validierung der
      * Metadaten.
      */
-    private List<String> checkConfiguredValidationValues(DocStruct docStruct, ArrayList<String> errorList,
-                                                         Prefs prefs, String language) {
+    private List<String> checkConfiguredValidationValues(DocStructInterface docStructInterface, ArrayList<String> errorList, PrefsInterface prefsInterface,
+            String language) {
         /*
          * Konfiguration öffnen und die Validierungsdetails auslesen
          */
@@ -375,20 +374,20 @@ public class MetadataValidationService {
             String propStartswith = cp.getParamString("validate.metadata(" + i + ")[@startswith]");
             String propEndswith = cp.getParamString("validate.metadata(" + i + ")[@endswith]");
             String propCreateElementFrom = cp.getParamString("validate.metadata(" + i + ")[@createelementfrom]");
-            MetadataType mdt = null;
+            MetadataTypeInterface mdt = null;
             try {
-                mdt = UghHelper.getMetadataType(prefs, propMetadatatype);
+                mdt = UghHelper.getMetadataType(prefsInterface, propMetadatatype);
             } catch (UghHelperException e) {
                 Helper.setFehlerMeldung("[" + this.process.getTitle() + "] " + "Metadatatype does not exist: ",
-                        propMetadatatype);
+                    propMetadatatype);
             }
             /*
              * wenn das Metadatum des FirstChilds überprüfen werden soll, dann
              * dieses jetzt (sofern vorhanden) übernehmen
              */
             if (propDoctype != null && propDoctype.equals("firstchild")) {
-                if (docStruct.getAllChildren() != null && docStruct.getAllChildren().size() > 0) {
-                    docStruct = docStruct.getAllChildren().get(0);
+                if (docStructInterface.getAllChildren() != null && docStructInterface.getAllChildren().size() > 0) {
+                    docStructInterface = docStructInterface.getAllChildren().get(0);
                 } else {
                     continue;
                 }
@@ -401,12 +400,12 @@ public class MetadataValidationService {
             if (mdt != null) {
                 /* ein CreatorsAllOrigin soll erzeugt werden */
                 if (propCreateElementFrom != null) {
-                    ArrayList<MetadataType> listOfFromMdts = new ArrayList<>();
+                    ArrayList<MetadataTypeInterface> listOfFromMdts = new ArrayList<>();
                     StringTokenizer tokenizer = new StringTokenizer(propCreateElementFrom, "|");
                     while (tokenizer.hasMoreTokens()) {
                         String tok = tokenizer.nextToken();
                         try {
-                            MetadataType emdete = UghHelper.getMetadataType(prefs, tok);
+                            MetadataTypeInterface emdete = UghHelper.getMetadataType(prefsInterface, tok);
                             listOfFromMdts.add(emdete);
                         } catch (UghHelperException e) {
                             /*
@@ -418,10 +417,10 @@ public class MetadataValidationService {
                         }
                     }
                     if (listOfFromMdts.size() > 0) {
-                        checkCreateElementFrom(listOfFromMdts, docStruct, mdt, language);
+                        checkCreateElementFrom(listOfFromMdts, docStructInterface, mdt, language);
                     }
                 } else {
-                    checkStartsEndsWith(errorList, propStartswith, propEndswith, docStruct, mdt, language);
+                    checkStartsEndsWith(errorList, propStartswith, propEndswith, docStructInterface, mdt, language);
                 }
             }
         }
@@ -433,35 +432,35 @@ public class MetadataValidationService {
      * erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
      * vorhanden.
      */
-    private void checkCreateElementFrom(ArrayList<MetadataType> metadataTypes,
-                                        DocStruct docStruct, MetadataType mdt, String language) {
+    private void checkCreateElementFrom(ArrayList<MetadataTypeInterface> metadataTypeInterfaces, DocStructInterface docStructInterface, MetadataTypeInterface mdt,
+            String language) {
 
         /*
          * existiert das zu erzeugende Metadatum schon, dann überspringen,
          * ansonsten alle Daten zusammensammeln und in das neue Element
          * schreiben
          */
-        List<? extends Metadata> createMetadaten = docStruct.getAllMetadataByType(mdt);
+        List<? extends MetadataInterface> createMetadaten = docStructInterface.getAllMetadataByType(mdt);
         if (createMetadaten == null || createMetadaten.size() == 0) {
             try {
-                Metadata createdElement = new Metadata(mdt);
+                MetadataInterface createdElement = UghImplementation.INSTANCE.createMetadata(mdt);
                 StringBuilder value = new StringBuilder();
                 /*
                  * alle anzufügenden Metadaten durchlaufen und an das Element
                  * anhängen
                  */
-                for (MetadataType mdttemp : metadataTypes) {
+                for (MetadataTypeInterface mdttemp : metadataTypeInterfaces) {
 
-                    List<Person> fromElemente = docStruct.getAllPersons();
+                    List<PersonInterface> fromElemente = docStructInterface.getAllPersons();
                     if (fromElemente != null && fromElemente.size() > 0) {
                         /*
                          * wenn Personen vorhanden sind (z.B. Illustrator), dann
                          * diese durchlaufen
                          */
-                        for (Person p : fromElemente) {
+                        for (PersonInterface p : fromElemente) {
                             if (p.getRole() == null) {
                                 Helper.setFehlerMeldung("[" + this.process.getTitle() + " "
-                                        + docStruct.getType().getNameByLanguage(language) + "] "
+                                        + docStructInterface.getType().getNameByLanguage(language) + "] "
                                         + Helper.getTranslation("MetadataPersonWithoutRole"));
                                 break;
                             } else {
@@ -480,7 +479,7 @@ public class MetadataValidationService {
 
                 if (value.length() > 0) {
                     createdElement.setValue(value.toString());
-                    docStruct.addMetadata(createdElement);
+                    docStructInterface.addMetadata(createdElement);
                 }
             } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
                 logger.error(e);
@@ -490,10 +489,10 @@ public class MetadataValidationService {
         /*
          * alle Kinder durchlaufen
          */
-        List<DocStruct> children = docStruct.getAllChildren();
+        List<DocStructInterface> children = docStructInterface.getAllChildren();
         if (children != null && children.size() > 0) {
-            for (DocStruct child : children) {
-                checkCreateElementFrom(metadataTypes, child, mdt, language);
+            for (DocStructInterface child : children) {
+                checkCreateElementFrom(metadataTypeInterfaces, child, mdt, language);
             }
         }
     }
@@ -502,11 +501,11 @@ public class MetadataValidationService {
      * Metadatum soll mit bestimmten String beginnen oder enden.
      */
     private void checkStartsEndsWith(List<String> inFehlerList, String propStartswith, String propEndswith,
-                                     DocStruct myStruct, MetadataType mdt, String language) {
+            DocStructInterface myStruct, MetadataTypeInterface mdt, String language) {
         /* startswith oder endswith */
-        List<? extends Metadata> alleMetadaten = myStruct.getAllMetadataByType(mdt);
+        List<? extends MetadataInterface> alleMetadaten = myStruct.getAllMetadataByType(mdt);
         if (alleMetadaten != null && alleMetadaten.size() > 0) {
-            for (Metadata md : alleMetadaten) {
+            for (MetadataInterface md : alleMetadaten) {
                 /* prüfen, ob es mit korrekten Werten beginnt */
                 if (propStartswith != null) {
                     boolean isOk = false;
@@ -561,7 +560,8 @@ public class MetadataValidationService {
     /**
      * Set if automatic save is allowed.
      *
-     * @param autoSave true or false
+     * @param autoSave
+     *            true or false
      */
     public void setAutoSave(boolean autoSave) {
         this.autoSave = autoSave;

@@ -16,19 +16,18 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
-import ugh.dl.DigitalDocument;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-
 public class ExportDms_CorrectRusdml {
-    private final Prefs prefs;
+    private final PrefsInterface prefsInterface;
     private final Process process;
-    private final DigitalDocument digitalDocument;
+    private final DigitalDocumentInterface digitalDocumentInterface;
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ExportDms_CorrectRusdml.class);
 
@@ -36,12 +35,12 @@ public class ExportDms_CorrectRusdml {
      * Constructor.
      *
      * @param process object
-     * @param prefs   Prefs object
+     * @param prefsInterface   Prefs object
      * @param gdzFile Fileformat object
      */
-    public ExportDms_CorrectRusdml(Process process, Prefs prefs, Fileformat gdzFile) throws PreferencesException {
-        this.prefs = prefs;
-        this.digitalDocument = gdzFile.getDigitalDocument();
+    public ExportDms_CorrectRusdml(Process process, PrefsInterface prefsInterface, FileformatInterface gdzFile) throws PreferencesException {
+        this.prefsInterface = prefsInterface;
+        this.digitalDocumentInterface = gdzFile.getDigitalDocument();
         this.process = process;
     }
 
@@ -53,7 +52,7 @@ public class ExportDms_CorrectRusdml {
     public String correctionStart() throws ExportFileException, MetadataTypeNotAllowedException {
         String atsPpnBand = generateAtsPpnBand();
 
-        serviceManager.getSchemaService().tempConvertRusdml(digitalDocument, prefs, process, atsPpnBand);
+        serviceManager.getSchemaService().tempConvertRusdml(digitalDocumentInterface, prefsInterface, process, atsPpnBand);
 
         return atsPpnBand;
     }

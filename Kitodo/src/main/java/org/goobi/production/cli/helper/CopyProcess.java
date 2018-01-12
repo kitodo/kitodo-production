@@ -22,7 +22,6 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -31,9 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import javax.faces.model.SelectItem;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +41,17 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -55,22 +63,10 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsMods;
-
 public class CopyProcess extends ProzesskopieForm {
 
     private static final Logger logger = LogManager.getLogger(CopyProcess.class);
-    private Fileformat myRdf;
+    private FileformatInterface myRdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -106,9 +102,9 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
-            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
@@ -152,9 +148,9 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
-            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
@@ -193,7 +189,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         this.docType = cp.getParamString("createNewProcess.defaultdoctype",
-                ConfigOpac.getAllDoctypes().get(0).getTitle());
+            ConfigOpac.getAllDoctypes().get(0).getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
         this.naviFirstPage = "NewProcess/Page1";
@@ -261,9 +257,9 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         readProjectConfigs();
         try {
-            Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
+            PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
 
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
@@ -283,14 +279,14 @@ public class CopyProcess extends ProzesskopieForm {
      * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
      * füllen.
      */
-    private void fillFieldsFromMetadataFile(Fileformat myRdf) throws PreferencesException {
+    private void fillFieldsFromMetadataFile(FileformatInterface myRdf) throws PreferencesException {
         if (myRdf != null) {
 
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
                     /* welches Docstruct */
 
-                    DocStruct myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
+                    DocStructInterface myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
                             myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
@@ -307,7 +303,7 @@ public class CopyProcess extends ProzesskopieForm {
                             /* bei Autoren die Namen zusammenstellen */
                             StringBuilder authors = new StringBuilder();
                             if (myTempStruct.getAllPersons() != null) {
-                                for (Person p : myTempStruct.getAllPersons()) {
+                                for (PersonInterface p : myTempStruct.getAllPersons()) {
                                     authors.append(p.getLastname());
                                     if (StringUtils.isNotBlank(p.getFirstname())) {
                                         authors.append(", ");
@@ -322,10 +318,10 @@ public class CopyProcess extends ProzesskopieForm {
                             field.setValue(authors.toString());
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
-                            MetadataType mdt = UghHelper.getMetadataType(
-                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                    field.getMetadata());
-                            Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
+                            MetadataTypeInterface mdt = UghHelper.getMetadataType(
+                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                field.getMetadata());
+                            MetadataInterface md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
                             }
@@ -406,7 +402,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
         try {
-            DocStruct colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
+            DocStructInterface colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct);
@@ -527,7 +523,7 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * Checks if process title is available. If yes, return true, if no, return
      * false.
-     * 
+     *
      * @param title
      *            of process
      * @return boolean
@@ -569,11 +565,12 @@ public class CopyProcess extends ProzesskopieForm {
             return this.prozessKopie;
         }
 
-        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
+        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
+                .toString();
         boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
         if (!successful) {
             String message = "Metadata directory: " + baseProcessDirectory + "in path:"
-                    +  ConfigCore.getKitodoDataDirectory() + " was not created!";
+                    + ConfigCore.getKitodoDataDirectory() + " was not created!";
             logger.error(message);
             Helper.setFehlerMeldung(message);
             return null;
@@ -694,14 +691,14 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * alle Kollektionen eines übergebenen DocStructs entfernen.
      */
-    private void removeCollections(DocStruct colStruct) {
+    private void removeCollections(DocStructInterface colStruct) {
         try {
-            MetadataType mdt = UghHelper.getMetadataType(
-                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                    "singleDigCollection");
-            ArrayList<Metadata> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
+            MetadataTypeInterface mdt = UghHelper.getMetadataType(
+                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                "singleDigCollection");
+            ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
-                for (Metadata md : myCollections) {
+                for (MetadataInterface md : myCollections) {
                     colStruct.removeMetadata(md);
                 }
             }
@@ -714,11 +711,11 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public void createNewFileformat() {
 
-        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
 
-        Fileformat ff;
+        FileformatInterface ff;
         try {
-            ff = new MetsMods(myPrefs);
+            ff = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             ff.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
@@ -1183,7 +1180,8 @@ public class CopyProcess extends ProzesskopieForm {
         while (tokenizer.hasMoreTokens()) {
             String string = tokenizer.nextToken();
             /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
+             * übernehmen
              */
             if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
                 this.tifHeaderImageDescription.append(string.substring(1, string.length() - 1));
@@ -1206,8 +1204,8 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (additionalField.getTitle().equals(string) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeaderImageDescription.append(
-                                calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                        this.tifHeaderImageDescription
+                                .append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }

@@ -11,14 +11,13 @@
 
 package de.sub.goobi.metadaten.copier;
 
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
 
 /**
  * A CopierData object contains all the data the data copier has access to. It
@@ -39,7 +38,7 @@ public class CopierData {
     /**
      * The workspace file to modify.
      */
-    private final Fileformat fileformat;
+    private final FileformatInterface fileformatInterface;
 
     /**
      * The Goobi process corresponding to the workspace file.
@@ -56,7 +55,7 @@ public class CopierData {
      *            destination metadata selector to use
      */
     public CopierData(CopierData data, MetadataSelector destination) {
-        this.fileformat = data.fileformat;
+        this.fileformatInterface = data.fileformatInterface;
         this.process = data.process;
         this.destination = destination;
     }
@@ -64,13 +63,13 @@ public class CopierData {
     /**
      * Creates a new CopierData bean.
      *
-     * @param fileformat
+     * @param fileformatInterface
      *            the document to modify
      * @param process
      *            the related goobi process
      */
-    public CopierData(Fileformat fileformat, Process process) {
-        this.fileformat = fileformat;
+    public CopierData(FileformatInterface fileformatInterface, Process process) {
+        this.fileformatInterface = fileformatInterface;
         this.process = process;
         this.destination = null;
     }
@@ -91,9 +90,9 @@ public class CopierData {
      *
      * @return the digital document
      */
-    DigitalDocument getDigitalDocument() {
+    DigitalDocumentInterface getDigitalDocument() {
         try {
-            return fileformat.getDigitalDocument();
+            return fileformatInterface.getDigitalDocument();
         } catch (PreferencesException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -104,7 +103,7 @@ public class CopierData {
      *
      * @return the logical document structure
      */
-    public DocStruct getLogicalDocStruct() {
+    public DocStructInterface getLogicalDocStruct() {
         return getDigitalDocument().getLogicalDocStruct();
     }
 
@@ -113,7 +112,7 @@ public class CopierData {
      *
      * @return the required ruleset.
      */
-    public Prefs getPreferences() {
+    public PrefsInterface getPreferences() {
         return serviceManager.getRulesetService().getPreferences((process).getRuleset());
     }
 
@@ -135,6 +134,6 @@ public class CopierData {
      */
     @Override
     public String toString() {
-        return "{fileformat: " + fileformat.toString() + ", process: " + getProcessTitle() + '}';
+        return "{fileformat: " + fileformatInterface.toString() + ", process: " + getProcessTitle() + '}';
     }
 }

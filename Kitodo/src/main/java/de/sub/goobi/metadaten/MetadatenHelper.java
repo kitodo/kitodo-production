@@ -14,7 +14,6 @@ package de.sub.goobi.metadaten;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,38 +27,36 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.faces.model.SelectItem;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.ReferenceInterface;
+import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.dl.Reference;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class MetadatenHelper implements Comparator<Object> {
     private static final Logger logger = LogManager.getLogger(MetadatenHelper.class);
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
     private static ServiceManager serviceManager = new ServiceManager();
-    private Prefs prefs;
-    private DigitalDocument digitalDocument;
+    private PrefsInterface prefsInterface;
+    private DigitalDocumentInterface digitalDocumentInterface;
 
-    public MetadatenHelper(Prefs inPrefs, DigitalDocument inDocument) {
-        this.prefs = inPrefs;
-        this.digitalDocument = inDocument;
+    public MetadatenHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
+        this.prefsInterface = inPrefs;
+        this.digitalDocumentInterface = inDocument;
     }
 
     /**
@@ -89,23 +86,23 @@ public class MetadatenHelper implements Comparator<Object> {
      *            String
      * @return DocStruct object
      */
-    public DocStruct changeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
+    public DocStructInterface changeCurrentDocstructType(DocStructInterface inOldDocstruct, String inNewType)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException,
             TypeNotAllowedForParentException {
         // inOldDocstruct.getType().getName()
         // + " soll werden zu " + inNewType);
-        DocStructType dst = this.prefs.getDocStrctTypeByName(inNewType);
-        DocStruct newDocstruct = this.digitalDocument.createDocStruct(dst);
+        DocStructTypeInterface dst = this.prefsInterface.getDocStrctTypeByName(inNewType);
+        DocStructInterface newDocstruct = this.digitalDocumentInterface.createDocStruct(dst);
         /*
          * alle Metadaten hinzufügen
          */
         if (inOldDocstruct.getAllMetadata() != null && inOldDocstruct.getAllMetadata().size() > 0) {
-            for (Metadata old : inOldDocstruct.getAllMetadata()) {
+            for (MetadataInterface old : inOldDocstruct.getAllMetadata()) {
                 boolean match = false;
 
                 if (newDocstruct.getPossibleMetadataTypes() != null
                         && newDocstruct.getPossibleMetadataTypes().size() > 0) {
-                    for (MetadataType mt : newDocstruct.getPossibleMetadataTypes()) {
+                    for (MetadataTypeInterface mt : newDocstruct.getPossibleMetadataTypes()) {
                         if (mt.getName().equals(old.getType().getName())) {
                             match = true;
                             break;
@@ -133,11 +130,11 @@ public class MetadatenHelper implements Comparator<Object> {
          * alle Personen hinzufügen
          */
         if (inOldDocstruct.getAllPersons() != null && inOldDocstruct.getAllPersons().size() > 0) {
-            for (Person old : inOldDocstruct.getAllPersons()) {
+            for (PersonInterface old : inOldDocstruct.getAllPersons()) {
                 boolean match = false;
                 if (newDocstruct.getPossibleMetadataTypes() != null
                         && newDocstruct.getPossibleMetadataTypes().size() > 0) {
-                    for (MetadataType mt : newDocstruct.getPossibleMetadataTypes()) {
+                    for (MetadataTypeInterface mt : newDocstruct.getPossibleMetadataTypes()) {
                         if (mt.getName().equals(old.getType().getName())) {
                             match = true;
                             break;
@@ -160,8 +157,8 @@ public class MetadatenHelper implements Comparator<Object> {
          * alle Seiten hinzufügen
          */
         if (inOldDocstruct.getAllToReferences() != null) {
-            for (Reference reference : inOldDocstruct.getAllToReferences()) {
-                newDocstruct.addReferenceTo(reference.getTarget(), reference.getType());
+            for (ReferenceInterface referenceInterface : inOldDocstruct.getAllToReferences()) {
+                newDocstruct.addReferenceTo(referenceInterface.getTarget(), referenceInterface.getType());
             }
         }
 
@@ -169,7 +166,7 @@ public class MetadatenHelper implements Comparator<Object> {
          * alle Docstruct-Children hinzufügen
          */
         if (inOldDocstruct.getAllChildren() != null && inOldDocstruct.getAllChildren().size() > 0) {
-            for (DocStruct old : inOldDocstruct.getAllChildren()) {
+            for (DocStructInterface old : inOldDocstruct.getAllChildren()) {
                 if (newDocstruct.getType().getAllAllowedDocStructTypes() != null
                         && newDocstruct.getType().getAllAllowedDocStructTypes().size() > 0) {
 
@@ -194,7 +191,7 @@ public class MetadatenHelper implements Comparator<Object> {
         inOldDocstruct.getParent().addChild(newDocstruct);
         int i = 1;
         // TODO: get rid of Iterators, use a for Loop instead
-        for (Iterator<DocStruct> iter = newDocstruct.getParent().getAllChildren().iterator(); iter.hasNext(); i++) {
+        for (Iterator<DocStructInterface> iter = newDocstruct.getParent().getAllChildren().iterator(); iter.hasNext(); i++) {
             if (iter.next() == inOldDocstruct) {
                 break;
             }
@@ -216,12 +213,12 @@ public class MetadatenHelper implements Comparator<Object> {
      * @param inStruct
      *            DocStruct object
      */
-    public void moveNodeUp(DocStruct inStruct) throws TypeNotAllowedAsChildException {
-        DocStruct parent = inStruct.getParent();
+    public void moveNodeUp(DocStructInterface inStruct) throws TypeNotAllowedAsChildException {
+        DocStructInterface parent = inStruct.getParent();
         if (parent == null) {
             return;
         }
-        List<DocStruct> alleDS = null;
+        List<DocStructInterface> alleDS = null;
 
         /* das erste Element kann man nicht nach oben schieben */
         if (parent.getAllChildren().get(0) == inStruct) {
@@ -229,7 +226,7 @@ public class MetadatenHelper implements Comparator<Object> {
         }
 
         /* alle Elemente des Parents durchlaufen */
-        for (DocStruct tempDS : parent.getAllChildren()) {
+        for (DocStructInterface tempDS : parent.getAllChildren()) {
             /*
              * wenn das folgende Element das zu verschiebende ist dabei die
              * Exception auffangen, falls es kein nächstes Kind gibt
@@ -253,13 +250,13 @@ public class MetadatenHelper implements Comparator<Object> {
 
         if (alleDS != null) {
             /* anschliessend die Childs entfernen */
-            for (DocStruct child : alleDS) {
+            for (DocStructInterface child : alleDS) {
                 parent.removeChild(child);
             }
 
             /* anschliessend die Childliste korrigieren */
             // parent.addChild(myStrukturelement);
-            for (DocStruct child : alleDS) {
+            for (DocStructInterface child : alleDS) {
                 parent.addChild(child);
             }
         }
@@ -271,16 +268,16 @@ public class MetadatenHelper implements Comparator<Object> {
      * @param inStruct
      *            DocStruct object
      */
-    public void moveNodeDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
-        DocStruct parent = inStruct.getParent();
+    public void moveNodeDown(DocStructInterface inStruct) throws TypeNotAllowedAsChildException {
+        DocStructInterface parent = inStruct.getParent();
         if (parent == null) {
             return;
         }
-        List<DocStruct> alleDS = new ArrayList<>();
+        List<DocStructInterface> alleDS = new ArrayList<>();
 
         /* alle Elemente des Parents durchlaufen */
-        for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-            DocStruct tempDS = iter.next();
+        for (Iterator<DocStructInterface> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
+            DocStructInterface tempDS = iter.next();
 
             /* wenn das aktuelle Element das zu verschiebende ist */
             if (tempDS != inStruct) {
@@ -294,12 +291,12 @@ public class MetadatenHelper implements Comparator<Object> {
         }
 
         /* anschliessend alle Children entfernen */
-        for (DocStruct child : alleDS) {
+        for (DocStructInterface child : alleDS) {
             parent.removeChild(child);
         }
 
         /* anschliessend die neue Childliste anlegen */
-        for (DocStruct child : alleDS) {
+        for (DocStructInterface child : alleDS) {
             parent.addChild(child);
         }
     }
@@ -307,7 +304,7 @@ public class MetadatenHelper implements Comparator<Object> {
     /**
      * die MetadatenTypen zurückgeben.
      */
-    public SelectItem[] getAddableDocStructTypen(DocStruct inStruct, boolean checkTypesFromParent) {
+    public SelectItem[] getAddableDocStructTypen(DocStructInterface inStruct, boolean checkTypesFromParent) {
         /*
          * zuerst mal die addierbaren Metadatentypen ermitteln
          */
@@ -328,15 +325,15 @@ public class MetadatenHelper implements Comparator<Object> {
             return myTypes;
         }
 
-        List<DocStructType> newTypes = new ArrayList<>();
+        List<DocStructTypeInterface> newTypes = new ArrayList<>();
         for (String tempTitel : types) {
-            DocStructType dst = this.prefs.getDocStrctTypeByName(tempTitel);
+            DocStructTypeInterface dst = this.prefsInterface.getDocStrctTypeByName(tempTitel);
             if (dst != null) {
                 newTypes.add(dst);
             } else {
                 Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
-                logger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel
-                        + " nicht definiert");
+                logger.error(
+                    "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
             }
         }
 
@@ -358,9 +355,9 @@ public class MetadatenHelper implements Comparator<Object> {
          * und anschliessend alle Elemente in das Array packen
          */
         zaehler = 0;
-        Iterator<DocStructType> it = newTypes.iterator();
+        Iterator<DocStructTypeInterface> it = newTypes.iterator();
         while (it.hasNext()) {
-            DocStructType dst = it.next();
+            DocStructTypeInterface dst = it.next();
             String label = dst
                     .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
             if (label == null) {
@@ -376,10 +373,10 @@ public class MetadatenHelper implements Comparator<Object> {
      * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv
      * aufrufen.
      */
-    public void deleteAllUnusedElements(DocStruct inStruct) {
+    public void deleteAllUnusedElements(DocStructInterface inStruct) {
         inStruct.deleteUnusedPersonsAndMetadata();
         if (inStruct.getAllChildren() != null && inStruct.getAllChildren().size() > 0) {
-            for (DocStruct child : inStruct.getAllChildren()) {
+            for (DocStructInterface child : inStruct.getAllChildren()) {
                 deleteAllUnusedElements(child);
             }
         }
@@ -389,53 +386,53 @@ public class MetadatenHelper implements Comparator<Object> {
      * die erste Imagenummer zurückgeben.
      */
     // FIXME: alphanumerisch
-    public String getImageNumber(DocStruct inStrukturelement, int inPageNumber) {
+    public String getImageNumber(DocStructInterface inStrukturelement, int inPageNumber) {
         String rueckgabe = "";
 
         if (inStrukturelement == null) {
             return "";
         }
-        List<Reference> listReferenzen = inStrukturelement.getAllReferences("to");
+        List<ReferenceInterface> listReferenzen = inStrukturelement.getAllReferences("to");
         if (listReferenzen != null && listReferenzen.size() > 0) {
             /*
              * Referenzen sortieren
              */
-            Collections.sort(listReferenzen, new Comparator<Reference>() {
+            Collections.sort(listReferenzen, new Comparator<ReferenceInterface>() {
                 @Override
-                public int compare(final Reference firstObject, final Reference secondObject) {
+                public int compare(final ReferenceInterface firstObject, final ReferenceInterface secondObject) {
                     Integer firstPage = 0;
                     Integer secondPage = 0;
-                    final MetadataType mdt = MetadatenHelper.this.prefs.getMetadataTypeByName("physPageNumber");
-                    List<? extends Metadata> listMetadaten = firstObject.getTarget().getAllMetadataByType(mdt);
+                    final MetadataTypeInterface mdt = MetadatenHelper.this.prefsInterface.getMetadataTypeByName("physPageNumber");
+                    List<? extends MetadataInterface> listMetadaten = firstObject.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
-                        final Metadata meineSeite = listMetadaten.get(0);
+                        final MetadataInterface meineSeite = listMetadaten.get(0);
                         firstPage = Integer.parseInt(meineSeite.getValue());
                     }
                     listMetadaten = secondObject.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
-                        final Metadata meineSeite = listMetadaten.get(0);
+                        final MetadataInterface meineSeite = listMetadaten.get(0);
                         secondPage = Integer.parseInt(meineSeite.getValue());
                     }
                     return firstPage.compareTo(secondPage);
                 }
             });
 
-            MetadataType mdt = this.prefs.getMetadataTypeByName("physPageNumber");
-            List<? extends Metadata> listSeiten = listReferenzen.get(0).getTarget().getAllMetadataByType(mdt);
+            MetadataTypeInterface mdt = this.prefsInterface.getMetadataTypeByName("physPageNumber");
+            List<? extends MetadataInterface> listSeiten = listReferenzen.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (listSeiten != null && listSeiten.size() > 0) {
-                Metadata meineSeite = listSeiten.get(0);
+                MetadataInterface meineSeite = listSeiten.get(0);
                 rueckgabe += meineSeite.getValue();
             }
-            mdt = this.prefs.getMetadataTypeByName("logicalPageNumber");
+            mdt = this.prefsInterface.getMetadataTypeByName("logicalPageNumber");
             listSeiten = listReferenzen.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (listSeiten != null && listSeiten.size() > 0) {
-                Metadata meineSeite = listSeiten.get(0);
+                MetadataInterface meineSeite = listSeiten.get(0);
                 rueckgabe += ":" + meineSeite.getValue();
             }
         }
@@ -447,22 +444,22 @@ public class MetadatenHelper implements Comparator<Object> {
      * DefaultDisplay-Metadaten ergänzen.
      */
     @SuppressWarnings("deprecation")
-    public List<? extends Metadata> getMetadataInclDefaultDisplay(DocStruct inStruct, String inLanguage,
+    public List<? extends MetadataInterface> getMetadataInclDefaultDisplay(DocStructInterface inStruct, String inLanguage,
             boolean inIsPerson, Process inProzess) {
-        List<MetadataType> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
+        List<MetadataTypeInterface> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
         /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
         if (displayMetadataTypes != null) {
-            for (MetadataType mdt : displayMetadataTypes) {
+            for (MetadataTypeInterface mdt : displayMetadataTypes) {
                 // check, if mdt is already in the allMDs Metadata list, if not
                 // - add it
                 if (!(inStruct.getAllMetadataByType(mdt) != null && inStruct.getAllMetadataByType(mdt).size() != 0)) {
                     try {
                         if (mdt.getIsPerson()) {
-                            Person p = new Person(mdt);
+                            PersonInterface p = UghImplementation.INSTANCE.createPerson(mdt);
                             p.setRole(mdt.getName());
                             inStruct.addPerson(p);
                         } else {
-                            Metadata md = new Metadata(mdt);
+                            MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
                             inStruct.addMetadata(md); // add this new metadata
                             // element
                         }
@@ -477,15 +474,15 @@ public class MetadatenHelper implements Comparator<Object> {
          * sortieren
          */
         if (inIsPerson) {
-            List<Person> persons = inStruct.getAllPersons();
-            if (persons != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                Collections.sort(persons, new MetadataComparator(inLanguage));
+            List<PersonInterface> personInterfaces = inStruct.getAllPersons();
+            if (personInterfaces != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
+                Collections.sort(personInterfaces, new MetadataComparator(inLanguage));
             }
-            return persons;
+            return personInterfaces;
         } else {
-            List<Metadata> metadata = inStruct.getAllMetadata();
-            if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                Collections.sort(metadata, new MetadataComparator(inLanguage));
+            List<MetadataInterface> metadataInterface = inStruct.getAllMetadata();
+            if (metadataInterface != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
+                Collections.sort(metadataInterface, new MetadataComparator(inLanguage));
             }
             return getAllVisibleMetadataHack(inStruct);
 
@@ -493,14 +490,14 @@ public class MetadatenHelper implements Comparator<Object> {
     }
 
     /** TODO: Replace it, after Maven is kicked :). */
-    private List<Metadata> getAllVisibleMetadataHack(DocStruct inStruct) {
+    private List<MetadataInterface> getAllVisibleMetadataHack(DocStructInterface inStruct) {
 
         // Start with the list of all metadata.
-        List<Metadata> result = new LinkedList<>();
+        List<MetadataInterface> result = new LinkedList<>();
 
         // Iterate over all metadata.
         if (inStruct.getAllMetadata() != null) {
-            for (Metadata md : inStruct.getAllMetadata()) {
+            for (MetadataInterface md : inStruct.getAllMetadata()) {
                 // If the metadata has some value and it does not start with the
                 // HIDDEN_METADATA_CHAR, add it to the result list.
                 if (!md.getType().getName().startsWith("_")) {
@@ -528,8 +525,7 @@ public class MetadatenHelper implements Comparator<Object> {
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
         try (InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
-                StandardCharsets.UTF_8);
-             BufferedReader bufRead = new BufferedReader(input)) {
+                StandardCharsets.UTF_8); BufferedReader bufRead = new BufferedReader(input)) {
             char[] buffer = new char[200];
             while (bufRead.read(buffer) >= 0) {
                 String temp = new String(buffer).toLowerCase();
@@ -550,7 +546,7 @@ public class MetadatenHelper implements Comparator<Object> {
      *            MetadataType object
      * @return localized Title of metadata type
      */
-    public String getMetadatatypeLanguage(MetadataType inMdt) {
+    public String getMetadatatypeLanguage(MetadataTypeInterface inMdt) {
         String label = inMdt
                 .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
         if (label == null) {
@@ -576,8 +572,8 @@ public class MetadatenHelper implements Comparator<Object> {
 
         @Override
         public int compare(Object firstObject, Object secondObject) {
-            Metadata firstMetadata = (Metadata) firstObject;
-            Metadata secondMetadata = (Metadata) secondObject;
+            MetadataInterface firstMetadata = (MetadataInterface) firstObject;
+            MetadataInterface secondMetadata = (MetadataInterface) secondObject;
             if (firstMetadata == null) {
                 return -1;
             }
@@ -587,8 +583,8 @@ public class MetadatenHelper implements Comparator<Object> {
             String firstName = "";
             String secondName = "";
             try {
-                MetadataType firstMetadataType = firstMetadata.getType();
-                MetadataType secondMetadataType = secondMetadata.getType();
+                MetadataTypeInterface firstMetadataType = firstMetadata.getType();
+                MetadataTypeInterface secondMetadataType = secondMetadata.getType();
                 firstName = firstMetadataType.getNameByLanguage(this.language);
                 secondName = secondMetadataType.getNameByLanguage(this.language);
             } catch (java.lang.NullPointerException e) {
@@ -625,32 +621,32 @@ public class MetadatenHelper implements Comparator<Object> {
      *            der aktuellen Person, damit diese ggf. in die Liste mit
      *            übernommen wird
      */
-    public ArrayList<SelectItem> getAddablePersonRoles(DocStruct myDocStruct, String inRoleName) {
+    public ArrayList<SelectItem> getAddablePersonRoles(DocStructInterface myDocStruct, String inRoleName) {
         ArrayList<SelectItem> myList = new ArrayList<>();
         /*
          * zuerst mal alle addierbaren Metadatentypen ermitteln
          */
-        List<MetadataType> types = myDocStruct.getPossibleMetadataTypes();
+        List<MetadataTypeInterface> types = myDocStruct.getPossibleMetadataTypes();
         if (types == null) {
             types = new ArrayList<>();
         }
         if (inRoleName != null && inRoleName.length() > 0) {
             boolean addRole = true;
-            for (MetadataType mdt : types) {
+            for (MetadataTypeInterface mdt : types) {
                 if (mdt.getName().equals(inRoleName)) {
                     addRole = false;
                 }
             }
 
             if (addRole) {
-                types.add(this.prefs.getMetadataTypeByName(inRoleName));
+                types.add(this.prefsInterface.getMetadataTypeByName(inRoleName));
             }
         }
         /*
          * alle Metadatentypen, die keine Person sind, oder mit einem
          * Unterstrich anfangen rausnehmen
          */
-        for (MetadataType mdt : new ArrayList<>(types)) {
+        for (MetadataTypeInterface mdt : new ArrayList<>(types)) {
             if (!mdt.getIsPerson()) {
                 types.remove(mdt);
             }
@@ -663,7 +659,7 @@ public class MetadatenHelper implements Comparator<Object> {
         c.setSortType("MetadatenTypen");
         Collections.sort(types, c);
 
-        for (MetadataType mdt : types) {
+        for (MetadataTypeInterface mdt : types) {
             myList.add(new SelectItem(mdt.getName(), getMetadatatypeLanguage(mdt)));
         }
         return myList;

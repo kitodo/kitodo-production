@@ -17,12 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.constants.Parameters;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
 
 /**
  * Backing bean for a single line input box element to edit a metadatum
@@ -41,7 +40,7 @@ public class RenderableEdit extends RenderableMetadatum
     /**
      * Constructor. Creates a RenderableEdit.
      * 
-     * @param metadataType
+     * @param metadataTypeInterface
      *            metadata type editable by this drop-down list
      * @param binding
      *            metadata group that shall instantly be updated if a setter is
@@ -49,10 +48,10 @@ public class RenderableEdit extends RenderableMetadatum
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public RenderableEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
-        super(metadataType, binding, container);
+    public RenderableEdit(MetadataTypeInterface metadataTypeInterface, MetadataGroupInterface binding, RenderableMetadataGroup container) {
+        super(metadataTypeInterface, binding, container);
         if (binding != null) {
-            for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
+            for (MetadataInterface data : binding.getMetadataByType(metadataTypeInterface.getName())) {
                 addContent(data);
             }
         }
@@ -67,7 +66,7 @@ public class RenderableEdit extends RenderableMetadatum
      *            data to add
      */
     @Override
-    public void addContent(Metadata data) {
+    public void addContent(MetadataInterface data) {
         if (value == null || value.length() == 0) {
             value = data.getValue();
         } else {
@@ -108,8 +107,8 @@ public class RenderableEdit extends RenderableMetadatum
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
      */
     @Override
-    public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<>(1);
+    public List<MetadataInterface> toMetadata() {
+        List<MetadataInterface> result = new ArrayList<>(1);
         result.add(getMetadata(value));
         return result;
     }
@@ -124,12 +123,12 @@ public class RenderableEdit extends RenderableMetadatum
     @Override
     protected void updateBinding() {
         if (binding != null) {
-            String typeName = metadataType.getName();
+            String typeName = metadataTypeInterface.getName();
             String personType = RenderablePersonMetadataGroup.getPersonType(typeName);
             if (personType == null) {
                 super.updateBinding();
             } else {
-                for (Person found : binding.getPersonByType(personType)) {
+                for (PersonInterface found : binding.getPersonByType(personType)) {
                     switch (RenderablePersonMetadataGroup.getPersonField(typeName)) {
                         case FIRSTNAME:
                             found.setFirstname(value);

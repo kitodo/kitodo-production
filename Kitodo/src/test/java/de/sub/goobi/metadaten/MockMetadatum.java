@@ -17,8 +17,7 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
-
-import ugh.dl.Metadata;
+import org.kitodo.api.ugh.MetadataInterface;
 
 class MockMetadatum implements Metadatum {
 
@@ -39,7 +38,7 @@ class MockMetadatum implements Metadatum {
         return null;
     }
 
-    public Metadata getMd() {
+    public MetadataInterface getMd() {
         return null;
     }
 
@@ -73,7 +72,7 @@ class MockMetadatum implements Metadatum {
     public void setItems(List<SelectItem> items) {
     }
 
-    public void setMd(Metadata md) {
+    public void setMd(MetadataInterface md) {
     }
 
     public void setSelectedItem(String selectedItem) {

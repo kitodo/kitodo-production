@@ -50,6 +50,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -57,8 +58,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.Prefs;
 
 @Named("MassImportForm")
 @SessionScoped
@@ -223,10 +222,10 @@ public class MassImportForm implements Serializable {
             Batch batch = null;
 
             // found list with ids
-            Prefs prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
+            PrefsInterface prefsInterface = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
             String tempfolder = ConfigCore.getParameter("tempfolder");
             this.plugin.setImportFolder(tempfolder);
-            this.plugin.setPrefs(prefs);
+            this.plugin.setPrefs(prefsInterface);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
             this.plugin.setKitodoConfigDirectory(ConfigCore.getKitodoConfigDirectory());
 
