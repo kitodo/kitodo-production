@@ -24,9 +24,14 @@
                 <h3>#{msgs.prozessverwaltung}</h3>
                 <p:button value="#{msgs.einenNeuenProzessAnlegen}" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
                 <!-- filters -->
+                <p:button value="#{msgs.nachEinemBandSuchen}"
+                                 icon="fa fa-search"
+                                 iconPos="right"
+                                 styleClass="button-filled-blue"
+                                outcome="searchProcess"/>
                 <h:form id="filterMenu">
                     <div class="ui-inputgroup">
-                        <p:inputText id="filterfield" placeholder="#{msgs.filter}"/>
+                        <p:inputText forceId="true" id="filterfield" value="#{ProzessverwaltungForm.filter}" placeholder="#{msgs.filter}"/>
                         <p:commandButton onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
                         <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down" styleClass="button-filled-blue"/>
                         <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">

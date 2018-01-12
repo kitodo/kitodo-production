@@ -509,8 +509,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (UnsupportedOperationException e) {
             logger.error(e);
         }
-
-        return "/pages/ProzessverwaltungAlle";
+        return redirectToList("?faces-redirect=true");
     }
 
     private void filterProcessesWithFilter() throws DataException {
@@ -2386,4 +2385,18 @@ public class ProzessverwaltungForm extends BasisForm {
     public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
         this.selectedProcesses = selectedProcesses;
     }
+
+    // replace calls to this function with "/pages/users" once we have completely
+    // switched to the new frontend pages
+    private String redirectToList(String urlSuffix) {
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                .get("referer");
+        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+        if (!callerViewId.isEmpty() && callerViewId.contains("searchProcess.jsf")) {
+            return "/pages/processes" + urlSuffix;
+        } else {
+            return "/pages/ProzessverwaltungAlle" + urlSuffix;
+        }
+    }
+
 }
