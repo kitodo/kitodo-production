@@ -20,7 +20,6 @@ import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
-import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -1799,9 +1798,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         Fileformat gdzfile;
         Fileformat newfile;
-        FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         try {
-            URI metadataPath = fi.getMetadataFilePath();
+            URI metadataPath = fileService.getMetadataFilePath(process);
             gdzfile = readMetadataFile(metadataPath, preferences);
             switch (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport())) {
                 case METS:
@@ -1888,10 +1886,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         try {
             if (exportWithImages) {
-                imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX, fi);
-                fulltextDownload(userHome, atsPpnBand, fi);
+                imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
+                fulltextDownload(process, userHome, atsPpnBand);
             } else if (exportFullText) {
-                fulltextDownload(userHome, atsPpnBand, fi);
+                fulltextDownload(process, userHome, atsPpnBand);
             }
 
             directoryDownload(process, targetDirectory);
@@ -1963,10 +1961,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param atsPpnBand
      *            String
      */
-    private void fulltextDownload(URI userHome, String atsPpnBand, FolderInformation fi) throws IOException {
+    private void fulltextDownload(Process process, URI userHome, String atsPpnBand) throws IOException {
 
         // download sources
-        URI sources = fi.getSourceDirectory();
+        URI sources = fileService.getSourceDirectory(process);
         if (fileService.fileExist(sources) && fileService.getSubUris(sources).size() > 0) {
             URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
             if (!fileService.fileExist(destination)) {
@@ -1981,7 +1979,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        URI ocr = fi.getOcrDirectory();
+        URI ocr = fileService.getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
             ArrayList<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
@@ -2018,14 +2016,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param ordnerEndung
      *            String
      */
-    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung,
-            FolderInformation fi) throws IOException {
+    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung) throws IOException {
 
         Project project = process.getProject();
         /*
          * den Ausgangspfad ermitteln
          */
-        URI tifOrdner = fi.getImagesTifDirectory(true);
+        URI tifOrdner = getImagesTifDirectory(true, process);
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
@@ -2075,12 +2072,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     protected boolean writeMetsFile(Process process, String targetFileName, Fileformat gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException {
-        FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();
         MetsModsImportExport mm = new MetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
-        URI imageFolderPath = fi.getImagesDirectory();
+        URI imageFolderPath = fileService.getImagesDirectory(process);
         File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
@@ -2145,13 +2141,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
-        List<ProjectFileGroup> myFilegroups = project.getProjectFileGroups();
+        List<ProjectFileGroup> fileGroups = project.getProjectFileGroups();
 
-        if (myFilegroups != null && myFilegroups.size() > 0) {
-            for (ProjectFileGroup pfg : myFilegroups) {
+        if (fileGroups != null && fileGroups.size() > 0) {
+            for (ProjectFileGroup pfg : fileGroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    URI folder = new File(fi.getMethodFromName(pfg.getFolder())).toURI();
+                    URI folder = new File(pfg.getFolder()).toURI();
                     if (fileService.fileExist(folder)
                             && serviceManager.getFileService().getSubUris(folder).size() > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
@@ -2162,7 +2158,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                         mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
                     }
                 } else {
-
                     VirtualFileGroup v = new VirtualFileGroup();
                     v.setName(pfg.getName());
                     v.setPathToFiles(vp.replace(pfg.getPath()));
@@ -2208,7 +2203,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         try {
             // TODO andere Dateigruppen nicht mit image Namen ersetzen
-            List<URI> images = fi.getDataFiles();
+            List<URI> images = getDataFiles(process);
             List<String> imageStrings = new ArrayList<>();
             for (URI image : images) {
                 imageStrings.add(image.getPath());
@@ -2230,6 +2225,28 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         mm.write(targetFileName);
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
         return true;
+    }
+
+    /**
+     * Get data files.
+     *
+     * @return String
+     */
+    public List<URI> getDataFiles(Process process) throws InvalidImagesException {
+        URI dir;
+        try {
+            dir = getImagesTifDirectory(true, process);
+        } catch (Exception e) {
+            throw new InvalidImagesException(e);
+        }
+
+        ArrayList<URI> dataList = new ArrayList<>();
+        ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+        if (files.size() > 0) {
+            dataList.addAll(files);
+            Collections.sort(dataList);
+        }
+        return dataList;
     }
 
     /**

@@ -16,7 +16,6 @@ import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.IOException;
 import java.net.URI;
@@ -607,11 +606,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         DigitalDocument dd = null;
         Process po = task.getProcess();
 
-        FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
         Prefs prefs = serviceManager.getRulesetService().getPreferences(po.getRuleset());
 
         try {
-            dd = serviceManager.getProcessService().readMetadataFile(fi.getMetadataFilePath(), prefs)
+            dd = serviceManager.getProcessService().readMetadataFile(serviceManager.getFileService().getMetadataFilePath(po), prefs)
                     .getDigitalDocument();
         } catch (PreferencesException | ReadException | IOException e2) {
             logger.error(e2);
@@ -692,7 +690,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            true or false
      */
     // TODO: check why requestFromGUI is never used
-    public void close(Task task, boolean requestFromGUI) throws DataException {
+    public void close(Task task, boolean requestFromGUI) throws DataException, IOException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -722,8 +720,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         activateNextTask(allHigherTasks);
 
         Process po = task.getProcess();
-        FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-        URI imagesOrigDirectory = fi.getImagesOrigDirectory(true);
+        URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(true, po);
         Integer numberOfFiles = serviceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
         if (!po.getSortHelperImages().equals(numberOfFiles)) {
             po.setSortHelperImages(numberOfFiles);
