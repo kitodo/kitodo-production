@@ -18,7 +18,8 @@ public interface DigitalDocumentInterface {
 
     void addAllContentFiles();
 
-    DocStructInterface createDocStruct(DocStructTypeInterface docStructTypeInterface) throws TypeNotAllowedForParentException;
+    DocStructInterface createDocStruct(DocStructTypeInterface docStructTypeInterface)
+            throws TypeNotAllowedForParentException;
 
     FileSetInterface getFileSet();
 
@@ -28,10 +29,14 @@ public interface DigitalDocumentInterface {
 
     void overrideContentFiles(List<String> images);
 
-    /** @return always {@code true}. The result is never used. */
+    /**
+     * @return always {@code true}. The result is never used.
+     */
     boolean setLogicalDocStruct(DocStructInterface docStructInterface);
 
-    /** @return always {@code true}. The result is never used. */
+    /**
+     * @return always {@code true}. The result is never used.
+     */
     boolean setPhysicalDocStruct(DocStructInterface docStructInterface);
 
 }

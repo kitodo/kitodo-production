@@ -21,9 +21,13 @@ public interface MetadataInterface {
 
     public void setDocStruct(DocStructInterface docStructInterface);
 
-    /** @return always {@code true}. The result is never used. */
+    /**
+     * @return always {@code true}. The result is never used.
+     */
     public boolean setType(MetadataTypeInterface metadataTypeInterface);
 
-    /** @return always {@code true}. The result is never used. */
+    /**
+     * @return always {@code true}. The result is never used.
+     */
     public boolean setValue(String value);
 }

@@ -38,7 +38,7 @@ public interface DocStructInterface {
     void addContentFile(ContentFileInterface cf);
 
     /**
-     * @return always {@true}. The return value is never used.
+     * @return always {@code true}. The return value is never used.
      */
     boolean addMetadata(MetadataInterface newMetadata) throws MetadataTypeNotAllowedException;
 
@@ -48,12 +48,12 @@ public interface DocStructInterface {
     DocStructInterface addMetadata(String fieldName, String value) throws MetadataTypeNotAllowedException;
 
     /**
-     * @return always {@true}. The return value is never used.
+     * @return always {@code true}. The return value is never used.
      */
     boolean addMetadataGroup(MetadataGroupInterface metadataGroupInterface) throws MetadataTypeNotAllowedException;
 
     /**
-     * @return always {@true}. The return value is never used.
+     * @return always {@code true}. The return value is never used.
      */
     boolean addPerson(PersonInterface p) throws MetadataTypeNotAllowedException;
 
@@ -80,7 +80,7 @@ public interface DocStructInterface {
 
     List<DocStructInterface> getAllChildren();
 
-    List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String string, String string2);
+    List<DocStructInterface> getAllChildrenByTypeAndMetadataType(String type, String metadataType);
 
     List<ContentFileInterface> getAllContentFiles();
 
@@ -88,10 +88,10 @@ public interface DocStructInterface {
 
     List<MetadataInterface> getAllIdentifierMetadata();
 
-    List<MetadataInterface> getAllMetadata(); /*
-                                               * return type collection would be
-                                               * sufficient
-                                               */
+    /**
+     * @return type {@code Collection<>} would be sufficient.
+     */
+    List<MetadataInterface> getAllMetadata();
 
     List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface mdt);
 
@@ -101,20 +101,25 @@ public interface DocStructInterface {
 
     List<PersonInterface> getAllPersonsByType(MetadataTypeInterface authorType);
 
-    List<ReferenceInterface> getAllReferences(String string); // string seems to
-                                                              // be
-    // always "to"
+    /*
+     * @param string seems to be always "to"
+     */
+    List<ReferenceInterface> getAllReferences(String string);
 
     Collection<ReferenceInterface> getAllToReferences();
 
-    Collection<ReferenceInterface> getAllToReferences(String string); // string
-                                                                      // alway
-    // "logical_physical"
-    // ?
-    // return type would be sufficient to be iterable, but there is a check for
-    // size()=0?
+    /*
+     * @param string always "logical_physical" ?
+     * 
+     * @return type would be sufficient to be iterable, but there is a check for
+     * size()=0?
+     */
+    Collection<ReferenceInterface> getAllToReferences(String string);
 
-    Object getAllVisibleMetadata(); // is null/is non-null -check only
+    /*
+     * Is null/is non-null -check only.
+     */
+    Object getAllVisibleMetadata();
 
     String getAnchorClass();
 
@@ -124,7 +129,7 @@ public interface DocStructInterface {
 
     String getImageName();
 
-    /**
+    /*
      * @throws IndexOutOfBoundsException
      */
     DocStructInterface getNextChild(DocStructInterface tempDS);
