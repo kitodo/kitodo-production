@@ -198,30 +198,37 @@ public class SimpleLoginST {
     private void sendEmail(String user, String password, String subject, String message, File attachedFile,
             String recipient) throws EmailException, AddressException {
 
-        InternetAddress address = new InternetAddress(recipient);
+        if (user != null && password != null && recipient != null) {
+            InternetAddress address = new InternetAddress(recipient);
 
-        ArrayList<InternetAddress> addressList = new ArrayList<>();
-        addressList.add(address);
+            ArrayList<InternetAddress> addressList = new ArrayList<>();
+            addressList.add(address);
 
-        // Create the attachment
-        EmailAttachment attachment = new EmailAttachment();
-        attachment.setPath(attachedFile.getAbsolutePath());
-        attachment.setDisposition(EmailAttachment.ATTACHMENT);
-        attachment.setDescription("SeleniumScreenShot");
-        attachment.setName("screenshot.png");
+            EmailAttachment attachment = new EmailAttachment();
+            if (attachedFile != null) {
+                // Create the attachment
+                attachment.setPath(attachedFile.getAbsolutePath());
+                attachment.setDisposition(EmailAttachment.ATTACHMENT);
+                attachment.setDescription("SeleniumScreenShot");
+                attachment.setName("screenshot.png");
+            }
 
-        MultiPartEmail email = new MultiPartEmail();
-        email.setHostName("smtp.gmail.com");
-        email.setSmtpPort(465);
-        email.setAuthenticator(new DefaultAuthenticator(user, password));
-        email.setSSLOnConnect(true);
-        email.setFrom("Travis CI Screenshot <kitodo.dev@gmail.com>");
-        email.setSubject(subject);
-        email.setMsg(message);
-        email.setTo(addressList);
-        email.attach(attachment);
-
-        email.send();
+            MultiPartEmail email = new MultiPartEmail();
+            email.setHostName("smtp.gmail.com");
+            email.setSmtpPort(465);
+            email.setAuthenticator(new DefaultAuthenticator(user, password));
+            email.setSSLOnConnect(true);
+            email.setFrom("Travis CI Screenshot <kitodo.dev@gmail.com>");
+            if (subject != null) {
+                email.setSubject(subject);
+            }
+            if (message != null) {
+                email.setMsg(message);
+            }
+            email.setTo(addressList);
+            email.attach(attachment);
+            email.send();
+        }
     }
 
     private static File captureScreenShot(WebDriver driver) {
