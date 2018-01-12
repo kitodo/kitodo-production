@@ -19,12 +19,6 @@ import javax.inject.Named;
 import org.kitodo.security.SecuritySession;
 import org.kitodo.services.ServiceManager;
 
-/**
- * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions
- * 
- * @author Steffen Hankiewicz
- * @version 1.00 - 16.01.2005
- */
 @Named
 @ApplicationScoped
 public class SessionForm {

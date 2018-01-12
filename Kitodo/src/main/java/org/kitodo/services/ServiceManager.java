@@ -317,10 +317,10 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize RulesetService if it is not yet initialized and next return
+     * Initialize SessionService if it is not yet initialized and next return
      * it.
      *
-     * @return RulesetService object
+     * @return SessionService object
      */
     public SessionService getSessionService() {
         initializeSessionService();

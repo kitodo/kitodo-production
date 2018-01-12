@@ -69,10 +69,10 @@ public class SessionService {
                 try {
                     SecurityUserDetails user = (SecurityUserDetails) principal;
 
-                    List<SessionInformation> activeSessionInformations = new ArrayList<>();
-                    activeSessionInformations.addAll(sessionRegistry.getAllSessions(principal, false));
+                    List<SessionInformation> activeSessionInformation = new ArrayList<>();
+                    activeSessionInformation.addAll(sessionRegistry.getAllSessions(principal, false));
 
-                    for (SessionInformation sessionInformation : activeSessionInformations) {
+                    for (SessionInformation sessionInformation : activeSessionInformation) {
                         SecuritySession securitySession = new SecuritySession();
                         securitySession.setUserName(user.getUsername());
                         securitySession.setSessionId(sessionInformation.getSessionId());
