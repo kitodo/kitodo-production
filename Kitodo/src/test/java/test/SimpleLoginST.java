@@ -228,7 +228,10 @@ public class SimpleLoginST {
             email.setTo(addressList);
             email.attach(attachment);
             email.send();
+        } else {
+            logger.error("Email was not send due to missing environmental variables");
         }
+
     }
 
     private static File captureScreenShot(WebDriver driver) {
