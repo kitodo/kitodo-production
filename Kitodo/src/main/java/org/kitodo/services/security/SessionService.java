@@ -11,10 +11,16 @@
 
 package org.kitodo.services.security;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.LocalDateTime;
 import org.kitodo.security.SecurityConfig;
+import org.kitodo.security.SecuritySession;
+import org.kitodo.security.SecurityUserDetails;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +30,14 @@ import org.springframework.web.context.WebApplicationContext;
 public class SessionService {
 
     private static SessionService instance = null;
+    private SessionRegistry sessionRegistry = null;
+    private static final Logger logger = LogManager.getLogger(SessionService.class);
+
+    private SessionService() {
+        WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+        SecurityConfig securityConfig = context.getBean(SecurityConfig.class);
+        this.sessionRegistry = securityConfig.getSessionRegistry();
+    }
 
     /**
      * Expires all active sessions of a spring security UserDetails object.
@@ -32,14 +46,46 @@ public class SessionService {
      *      The UserDetails Object.
      */
     public void expireSessionsOfUser(UserDetails user) {
-        WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        SecurityConfig securityConfig = context.getBean(SecurityConfig.class);
-        SessionRegistry sessionRegistry = securityConfig.getSessionRegistry();
-
         List<SessionInformation> activeUserSessions = sessionRegistry.getAllSessions(user,false);
         for (SessionInformation sessionInformation : activeUserSessions) {
             sessionInformation.expireNow();
         }
+    }
+
+    /**
+     * Gets all active sessions.
+     *
+     * @return The active sessions.
+     */
+    public List<SecuritySession> getActiveSessions() {
+
+        List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
+
+        List<SecuritySession> activeSessions = new ArrayList<>();
+
+        for (final Object principal : allPrincipals) {
+            if (principal instanceof SecurityUserDetails) {
+
+                try {
+                    SecurityUserDetails user = (SecurityUserDetails) principal;
+
+                    List<SessionInformation> activeSessionInformations = new ArrayList<>();
+                    activeSessionInformations.addAll(sessionRegistry.getAllSessions(principal, false));
+
+                    for (SessionInformation sessionInformation : activeSessionInformations) {
+                        SecuritySession securitySession = new SecuritySession();
+                        securitySession.setUserName(user.getUsername());
+                        securitySession.setSessionId(sessionInformation.getSessionId());
+                        securitySession.setLastRequest(new LocalDateTime(sessionInformation.getLastRequest()));
+
+                        activeSessions.add(securitySession);
+                    }
+                } catch (Exception e) {
+                    logger.error("Error at creating list of active sessions",e);
+                }
+            }
+        }
+        return activeSessions;
     }
 
     /**
