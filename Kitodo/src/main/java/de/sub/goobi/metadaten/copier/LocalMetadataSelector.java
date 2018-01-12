@@ -20,7 +20,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.UghImplementation;
-import ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
  * A LocalMetadataSelector provides methods to retrieve or modify metadata on a

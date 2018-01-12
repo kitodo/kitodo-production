@@ -34,6 +34,8 @@ import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
@@ -43,8 +45,6 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.RulesetService;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.WriteException;
 
 public class FileService {
 

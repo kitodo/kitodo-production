@@ -51,14 +51,14 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.RomanNumeralInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-import ugh.exceptions.ContentFileNotLinkedException;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class MetadatenImagesHelper {
     private static final Logger logger = LogManager.getLogger(MetadatenImagesHelper.class);

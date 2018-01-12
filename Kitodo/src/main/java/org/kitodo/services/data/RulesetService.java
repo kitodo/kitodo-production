@@ -22,6 +22,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
@@ -31,7 +32,6 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.RulesetDTO;
 import org.kitodo.services.data.base.TitleSearchService;
-import ugh.exceptions.PreferencesException;
 
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 

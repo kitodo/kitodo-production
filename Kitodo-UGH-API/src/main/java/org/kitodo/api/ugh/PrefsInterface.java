@@ -12,14 +12,17 @@
 package org.kitodo.api.ugh;
 
 import java.util.List;
-import ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 
 public interface PrefsInterface {
+    List<DocStructTypeInterface> getAllDocStructTypes();
+
     DocStructTypeInterface getDocStrctTypeByName(String identifier);
 
     MetadataTypeInterface getMetadataTypeByName(String identifier);
 
-    void loadPrefs(String string) throws PreferencesException;
-
-    List<DocStructTypeInterface> getAllDocStructTypes();
+    /**
+     * @return always {@code true}. The return value is never used.
+     */
+    boolean loadPrefs(String string) throws PreferencesException;
 }

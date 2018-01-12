@@ -64,6 +64,14 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.UGHException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -77,14 +85,6 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.UGHException;
-import ugh.exceptions.WriteException;
 
 @Named("ProzesskopieForm")
 @SessionScoped
@@ -944,7 +944,7 @@ public class ProzesskopieForm implements Serializable {
                     serviceManager.getFileService().writeMetadataAsTemplateFile(this.rdf, this.prozessKopie);
                 }
 
-            } catch (ugh.exceptions.DocStructHasNoTypeException e) {
+            } catch (org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
                 logger.error("creation of new process throws an error: ", e);
             } catch (UghHelperException e) {

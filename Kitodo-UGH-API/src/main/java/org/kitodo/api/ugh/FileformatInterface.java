@@ -11,20 +11,26 @@
 
 package org.kitodo.api.ugh;
 
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 
 public interface FileformatInterface {
 
     DigitalDocumentInterface getDigitalDocument()
             throws PreferencesException /* Error on creating process */;
 
-    /** @return value is never used! */
+    /**
+     * @return always {@code true}. The return value is never used.
+     */
     boolean read(String path) throws PreferencesException, ReadException;
 
-    void setDigitalDocument(DigitalDocumentInterface newFile);
+    /**
+     * @return constantly {@code true} or {@code false}, depending on the
+     *         implementing class. The return value is never used.
+     */
+    boolean setDigitalDocument(DigitalDocumentInterface newFile);
 
-    boolean write(String string) throws WriteException;
+    boolean write(String string) throws PreferencesException, WriteException;
 
 }

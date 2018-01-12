@@ -27,12 +27,12 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -129,7 +129,7 @@ public class ImportRussland {
     }
 
     private void analyzeParagraph(List<String> inListe)
-            throws ugh.exceptions.MetadataTypeNotAllowedException, WrongImportFileException {
+            throws org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException, WrongImportFileException {
         if (inListe.size() == 0) {
             return;
         }

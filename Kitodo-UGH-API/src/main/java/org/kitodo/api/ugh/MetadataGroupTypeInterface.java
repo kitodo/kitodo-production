@@ -30,5 +30,11 @@ public interface MetadataGroupTypeInterface {
 
     void setName(String name);
 
-    void setNum(String num);
+    /**
+     * @param num
+     *            one of "1m", "1o", "+", or "*"
+     * @return {@code false}, if the string argument is not one of these four
+     *         string; true otherwise. The return value is never used.
+     */
+    boolean setNum(String num);
 }

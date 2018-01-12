@@ -18,10 +18,10 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-import ugh.exceptions.PreferencesException;
 
 public class XmlArtikelZaehlen {
     private final ServiceManager serviceManager = new ServiceManager();

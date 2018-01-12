@@ -26,8 +26,8 @@ import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.helper.Util;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
  * Backing bean for a set of backing beans for input elements to edit a metadata

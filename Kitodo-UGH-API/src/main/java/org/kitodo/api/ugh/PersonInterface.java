@@ -25,14 +25,26 @@ public interface PersonInterface extends MetadataInterface {
 
     String getRole();
 
-    void setAutorityFile(String authority, String authorityURI, String valueURI);
+    /**
+     * @return always {@code true}. The return value is never used.
+     */
+    boolean setAutorityFile(String authority, String authorityURI, String valueURI);
 
-    void setDisplayname(String string);
+    void setDisplayname(String displayname);
 
-    void setFirstname(String trim);
+    /**
+     * @return always {@code true}. The return value is never used.
+     */
+    boolean setFirstname(String firstname);
 
-    void setLastname(String trim);
+    /**
+     * @return always {@code true}. The return value is never used.
+     */
+    boolean setLastname(String lastname);
 
-    void setRole(String inRole);
+    /**
+     * @return always {@code true}. The return value is never used.
+     */
+    boolean setRole(String role);
 
 }

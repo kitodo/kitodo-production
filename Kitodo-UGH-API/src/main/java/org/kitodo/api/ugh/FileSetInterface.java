@@ -12,13 +12,18 @@
 package org.kitodo.api.ugh;
 
 public interface FileSetInterface {
-
-    void addFile(ContentFileInterface contentFileInterface);
+    /**
+     * @return always {@code true}. The result value is never used.
+     */
+    boolean addFile(ContentFileInterface contentFileInterface);
 
     void addVirtualFileGroup(VirtualFileGroupInterface v);
 
     Iterable<ContentFileInterface> getAllFiles();
 
-    void removeFile(ContentFileInterface contentFileInterface);
+    /**
+     * @return always {@code true}. The result value is never used.
+     */
+    boolean removeFile(ContentFileInterface contentFileInterface);
 
 }

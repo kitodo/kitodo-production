@@ -24,8 +24,8 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
  * Abstract base class for all kinds of backing beans usable to render input

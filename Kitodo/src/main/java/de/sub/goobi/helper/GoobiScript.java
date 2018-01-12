@@ -29,6 +29,12 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -38,12 +44,6 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 
 // TODO: Delete me, this should be part of the Plugins...
 // TODO: Break this up into multiple classes with a common interface
@@ -162,7 +162,7 @@ public class GoobiScript {
                 myRdf.getDigitalDocument().addAllContentFiles();
                 serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ContentFiles updated: ", proz.getTitle());
-            } catch (ugh.exceptions.DocStructHasNoTypeException e) {
+            } catch (org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
 
             } catch (Exception e) {
@@ -829,7 +829,7 @@ public class GoobiScript {
                 serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ImagePath updated: ", proz.getTitle());
 
-            } catch (ugh.exceptions.DocStructHasNoTypeException e) {
+            } catch (org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
             } catch (UghHelperException e) {
                 Helper.setFehlerMeldung("UghHelperException", e.getMessage());

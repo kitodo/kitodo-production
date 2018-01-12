@@ -20,9 +20,9 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 
 public class UghHelper {
     private static final Logger logger = LogManager.getLogger(UghHelper.class);

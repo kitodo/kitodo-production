@@ -39,11 +39,11 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class FileManipulation {
     private static final Logger logger = LogManager.getLogger(FileManipulation.class);

@@ -38,12 +38,12 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PicaPlusInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.UghImplementation;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class SRUHelper {
     private static final Logger logger = LogManager.getLogger(SRUHelper.class);

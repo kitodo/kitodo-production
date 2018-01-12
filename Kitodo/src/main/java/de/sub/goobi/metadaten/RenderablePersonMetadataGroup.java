@@ -26,7 +26,7 @@ import org.kitodo.api.ugh.MetadataGroupTypeInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.UghImplementation;
-import ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal

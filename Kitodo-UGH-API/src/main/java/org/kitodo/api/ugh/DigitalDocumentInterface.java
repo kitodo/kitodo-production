@@ -12,7 +12,7 @@
 package org.kitodo.api.ugh;
 
 import java.util.List;
-import ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 
 public interface DigitalDocumentInterface {
 

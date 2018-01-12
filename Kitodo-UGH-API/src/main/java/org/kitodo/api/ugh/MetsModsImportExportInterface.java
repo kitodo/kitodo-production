@@ -29,7 +29,7 @@ public interface MetsModsImportExportInterface extends FileformatInterface {
 
     void setMptrAnchorUrl(String pointer);
 
-    void setMptrUrl(Object object);
+    void setMptrUrl(String object);
 
     void setPurlUrl(String replace);
 

@@ -11,8 +11,8 @@
 
 package org.kitodo.api.ugh;
 
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 
 public interface FactoryInterface {
     ContentFileInterface createContentFile();
