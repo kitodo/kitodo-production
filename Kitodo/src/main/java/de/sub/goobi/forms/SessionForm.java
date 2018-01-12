@@ -38,11 +38,8 @@ import org.springframework.web.context.WebApplicationContext;
 @Named
 @ApplicationScoped
 public class SessionForm {
-    @SuppressWarnings("rawtypes")
 
     private static final Logger logger = LogManager.getLogger(SessionForm.class);
-    private final ServiceManager serviceManager = new ServiceManager();
-
     private SessionRegistry sessionRegistry;
 
     /**
@@ -65,22 +62,25 @@ public class SessionForm {
         for (final Object principal : allPrincipals) {
             if (principal instanceof SecurityUserDetails) {
 
-                SecurityUserDetails user = (SecurityUserDetails) principal;
+                try {
+                    SecurityUserDetails user = (SecurityUserDetails) principal;
 
-                List<SessionInformation> activeSessionInformations = new ArrayList<>();
-                activeSessionInformations.addAll(sessionRegistry.getAllSessions(principal, false));
+                    List<SessionInformation> activeSessionInformations = new ArrayList<>();
+                    activeSessionInformations.addAll(sessionRegistry.getAllSessions(principal, false));
 
-                for (SessionInformation sessionInformation : activeSessionInformations) {
-                    SecuritySession securitySession = new SecuritySession();
-                    securitySession.setUserName(user.getUsername());
-                    securitySession.setSessionId(sessionInformation.getSessionId());
-                    securitySession.setLastRequest(new LocalDateTime(sessionInformation.getLastRequest()));
+                    for (SessionInformation sessionInformation : activeSessionInformations) {
+                        SecuritySession securitySession = new SecuritySession();
+                        securitySession.setUserName(user.getUsername());
+                        securitySession.setSessionId(sessionInformation.getSessionId());
+                        securitySession.setLastRequest(new LocalDateTime(sessionInformation.getLastRequest()));
 
-                    activeSessions.add(securitySession);
+                        activeSessions.add(securitySession);
+                    }
+                } catch (Exception e) {
+                    logger.error("Error at creating list of active sessions",e);
                 }
             }
         }
         return activeSessions;
     }
-
 }
