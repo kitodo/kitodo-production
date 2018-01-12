@@ -42,15 +42,10 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
         if (authentication != null && authentication.getDetails() != null) {
-            try {
-                Object principal = authentication.getPrincipal();
-                if (principal instanceof UserDetails) {
-                    UserDetails user = (UserDetails) principal;
-                    serviceManager.getSessionService().expireSessionsOfUser(user);
-                }
-            } catch (Exception e) {
-                logger.error("Error at logging out. Sessions of user might still be active!");
-                throw e;
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                UserDetails user = (UserDetails) principal;
+                serviceManager.getSessionService().expireSessionsOfUser(user);
             }
         }
         redirectStrategy.sendRedirect(request, response, onSuccessUrl);

@@ -43,10 +43,10 @@ public class SessionService {
      * Expires all active sessions of a spring security UserDetails object.
      *
      * @param user
-     *      The UserDetails Object.
+     *            The UserDetails Object.
      */
     public void expireSessionsOfUser(UserDetails user) {
-        List<SessionInformation> activeUserSessions = sessionRegistry.getAllSessions(user,false);
+        List<SessionInformation> activeUserSessions = sessionRegistry.getAllSessions(user, false);
         for (SessionInformation sessionInformation : activeUserSessions) {
             sessionInformation.expireNow();
         }
@@ -66,22 +66,18 @@ public class SessionService {
         for (final Object principal : allPrincipals) {
             if (principal instanceof SecurityUserDetails) {
 
-                try {
-                    SecurityUserDetails user = (SecurityUserDetails) principal;
+                SecurityUserDetails user = (SecurityUserDetails) principal;
 
-                    List<SessionInformation> activeSessionInformation = new ArrayList<>();
-                    activeSessionInformation.addAll(sessionRegistry.getAllSessions(principal, false));
+                List<SessionInformation> activeSessionInformation = new ArrayList<>();
+                activeSessionInformation.addAll(sessionRegistry.getAllSessions(principal, false));
 
-                    for (SessionInformation sessionInformation : activeSessionInformation) {
-                        SecuritySession securitySession = new SecuritySession();
-                        securitySession.setUserName(user.getUsername());
-                        securitySession.setSessionId(sessionInformation.getSessionId());
-                        securitySession.setLastRequest(new LocalDateTime(sessionInformation.getLastRequest()));
+                for (SessionInformation sessionInformation : activeSessionInformation) {
+                    SecuritySession securitySession = new SecuritySession();
+                    securitySession.setUserName(user.getUsername());
+                    securitySession.setSessionId(sessionInformation.getSessionId());
+                    securitySession.setLastRequest(new LocalDateTime(sessionInformation.getLastRequest()));
 
-                        activeSessions.add(securitySession);
-                    }
-                } catch (Exception e) {
-                    logger.error("Error at creating list of active sessions",e);
+                    activeSessions.add(securitySession);
                 }
             }
         }
