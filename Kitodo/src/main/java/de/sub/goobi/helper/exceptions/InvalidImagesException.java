@@ -17,8 +17,4 @@ public class InvalidImagesException extends Exception {
     public InvalidImagesException(Exception e) {
         super(e);
     }
-
-    public InvalidImagesException(String string) {
-        super(string);
-    }
 }

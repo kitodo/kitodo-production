@@ -21,11 +21,9 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.ProcessService;
 
 public class ProcessConverter implements Converter {
     private final ServiceManager serviceManager = new ServiceManager();
-    public static final String CONVERTER_ID = "ProcessConverter";
     private static final Logger logger = LogManager.getLogger(ProcessConverter.class);
 
     @Override
@@ -40,15 +38,6 @@ public class ProcessConverter implements Converter {
                 return "0";
             }
         }
-    }
-
-    /**
-     * Replace ProzessDAO with ProcessService.
-     *
-     * @return a new ProzessDAO
-     */
-    public ProcessService getProzessService() {
-        return serviceManager.getProcessService();
     }
 
     @Override
