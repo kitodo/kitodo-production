@@ -113,45 +113,6 @@
                                 </ui:fragment>
                             </t:dataList>
                         </div>
-                        <!-- logout -->
-                        <h:commandLink action="#{LoginForm.Ausloggen}" id="logout2"
-                                       rendered="#{LoginForm.myBenutzer != null}"
-                                       styleClass="text_head">
-
-                            <!-- Mouse-Over für Benutzergruppenmitgliedschaft -->
-                            <t:popup
-                                    style="background-color: white; color: #000000; border:1px solid #e3c240; font-size: smaller;"
-                                    closePopupOnExitingElement="true"
-                                    closePopupOnExitingPopup="true" displayAtDistanceX="-210"
-                                    displayAtDistanceY="10">
-
-                                <h:outputText style="text-align:right;line-height:20px" value="#{msgs.logout}"/>
-
-                                <f:facet name="popup">
-                                    <h:panelGroup>
-                                        <h:panelGrid columns="1" width="200">
-                                            <h:outputText rendered="#{LoginForm.myBenutzer != null}"
-                                                          style="font-weight:bold"
-                                                          value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}"/>
-
-
-                                            <t:dataList var="intern" style="font-weight: normal"
-                                                        rendered="#{LoginForm.myBenutzer.userGroupSize != 0}"
-                                                        value="#{LoginForm.myBenutzer.userGroups}"
-                                                        layout="ordered list" rowCountVar="rowCount"
-                                                        rowIndexVar="rowIndex">
-                                                <h:outputText value="#{intern.title}"/>
-                                                <h:outputText value=";"
-                                                              rendered="#{rowIndex + 1 lt rowCount}"/>
-                                            </t:dataList>
-
-                                        </h:panelGrid>
-                                    </h:panelGroup>
-                                </f:facet>
-                            </t:popup>
-
-                        </h:commandLink>
-
                     </h:form>
 
 

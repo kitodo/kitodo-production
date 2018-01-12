@@ -23,7 +23,6 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
@@ -77,63 +76,25 @@
                                         <br/>
 
                                         <!-- Datentabelle -->
-                                        <t:dataTable id="benutzerliste" styleClass="standardTable"
-                                                     width="100%" cellspacing="1px" cellpadding="1px"
-                                                     headerClass="standardTable_Header"
-                                                     rowClasses="standardTable_Row1" var="item"
-                                                     value="#{SessionForm.alleSessions}">
+                                        <p:dataTable id="benutzerliste"
+                                                     width="100%"
+                                                     var="item" value="#{SessionForm.activeSessions}">
 
-                                            <h:column id="id11"
-                                                      rendered="#{LoginForm.maximaleBerechtigung > 0}">
+                                            <p:column id="id11"
+                                                      >
                                                 <f:facet name="header">
                                                     <h:outputText id="id12" value="#{msgs.benutzer}"/>
                                                 </f:facet>
-                                                <h:outputText id="id13" value="#{item.user}"/>
-                                            </h:column>
-
-                                            <!--
-                                            <h:column id="id14">
+                                                <h:outputText id="id13" value="#{item.userName}"/>
+                                            </p:column>
+                                            <p:column id="id17"
+                                                      >
                                                 <f:facet name="header">
-                                                    <h:outputText id="id15" value="#{msgs.id}" />
+                                                    <h:outputText id="id18" value="#{msgs.letzterZugriff}"/>
                                                 </f:facet>
-                                                <h:outputText id="id16" value="#{item.id}" />
-                                            </h:column>
-                                            -->
-
-                                            <h:column id="id17"
-                                                      rendered="#{LoginForm.maximaleBerechtigung == 1}">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id18" value="IP"/>
-                                                </f:facet>
-                                                <h:outputText id="id19" value="#{item.address}"/>
-                                            </h:column>
-
-                                            <h:column id="id20">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id21" value="Browser"/>
-                                                </f:facet>
-                                                <h:graphicImage alt="browser"
-                                                        value="/pages/images/browser/#{item.browserIcon}"
-                                                        width="30" height="30" style="float:left;margin-right:4px"/>
-                                                <h:outputText id="id22" value="#{item.browser}"/>
-                                            </h:column>
-
-                                            <h:column id="id23">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id24" value="#{msgs.aktivSeit}"/>
-                                                </f:facet>
-                                                <h:outputText id="id25" value="#{item.created}"/>
-                                            </h:column>
-
-                                            <h:column id="id26">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id27" value="#{msgs.letzterZugriff}"/>
-                                                </f:facet>
-                                                <h:outputText id="id28" value="#{item.last}"/>
-                                            </h:column>
-
-                                        </t:dataTable>
-
+                                                <h:outputText id="id19" value="#{item.lastRequestAsString}"/>
+                                            </p:column>
+                                        </p:dataTable>
                                     </td>
                                 </tr>
                             </table>

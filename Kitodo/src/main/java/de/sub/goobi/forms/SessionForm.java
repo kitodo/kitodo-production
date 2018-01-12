@@ -17,14 +17,28 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.security.SecurityConfig;
+import org.kitodo.security.SecuritySession;
+import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions
@@ -32,6 +46,8 @@ import org.kitodo.services.ServiceManager;
  * @author Steffen Hankiewicz
  * @version 1.00 - 16.01.2005
  */
+@Named
+@ApplicationScoped
 public class SessionForm {
     @SuppressWarnings("rawtypes")
     private List alleSessions = new ArrayList();
@@ -40,6 +56,41 @@ public class SessionForm {
     private String bitteAusloggen = "";
     private static final Logger logger = LogManager.getLogger(SessionForm.class);
     private final ServiceManager serviceManager = new ServiceManager();
+
+    private SessionRegistry sessionRegistry;
+
+    public List<SecuritySession> getActiveSessions() {
+
+        if (sessionRegistry == null) {
+            WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+            SecurityConfig securityConfig = context.getBean(SecurityConfig.class);
+            this.sessionRegistry = securityConfig.getSessionRegistry();
+        }
+
+        List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
+
+        List<SecuritySession> activeSessions = new ArrayList<>();
+
+        for (final Object principal : allPrincipals) {
+            if (principal instanceof SecurityUserDetails) {
+
+                SecurityUserDetails user = (SecurityUserDetails) principal;
+
+                List<SessionInformation> activeSessionInformations = new ArrayList<>();
+                activeSessionInformations.addAll(sessionRegistry.getAllSessions(principal,false));
+
+                for (SessionInformation sessionInformation : activeSessionInformations) {
+                    SecuritySession securitySession = new SecuritySession();
+                    securitySession.setUserName(user.getUsername());
+                    securitySession.setSessionId(sessionInformation.getSessionId());
+                    securitySession.setLastRequest(new LocalDateTime(sessionInformation.getLastRequest()));
+
+                    activeSessions.add(securitySession);
+                }
+            }
+        }
+        return activeSessions;
+    }
 
     /**
      * Get active sessions.
