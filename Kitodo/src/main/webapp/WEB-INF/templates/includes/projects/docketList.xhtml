@@ -34,7 +34,7 @@
         <p:column headerText="#{msgs.auswahl}"
                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                   styleClass="actionsColumn">
-            <h:link outcome="/pages/DocketEdit"
+            <h:link outcome="/pages/editDocket"
                     title="#{msgs.editDocket}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>

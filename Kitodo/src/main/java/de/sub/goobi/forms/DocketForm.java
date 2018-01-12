@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -67,7 +68,7 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return "/pages/DocketList";
+                return redirectToList("?faces-redirect=true");
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
@@ -143,5 +144,18 @@ public class DocketForm extends BasisForm {
 
     public void setDocketId(int id) {
         this.docketId = id;
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/projects" once we have completely
+    // switched to the new frontend pages
+    private String redirectToList(String urlSuffix) {
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
+        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+        if (!callerViewId.isEmpty() && callerViewId.contains("editDocket.jsf")) {
+            return "/pages/projects" + urlSuffix;
+        } else {
+            return "/pages/DocketList" + urlSuffix;
+        }
     }
 }
