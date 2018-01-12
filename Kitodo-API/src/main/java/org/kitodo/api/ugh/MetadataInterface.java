@@ -11,19 +11,67 @@
 
 package org.kitodo.api.ugh;
 
+/**
+ * A metadata object represents a single metadata entry. Each metadata entry has
+ * at least a value and a type. The type of the a metadata element is stored as
+ * a metadata type object.
+ *
+ * <p>
+ * Metadata can be any kind of data, which can be attached to a structure
+ * element. The most common metadata, which is available for almost any
+ * structure element, is a title.
+ */
 public interface MetadataInterface {
-
+    /**
+     * Returns the doc struct instance, to which this metadata object belongs.
+     * This is extremely helpful, if only the metadata instance is stored in a
+     * list; the reference to the associated doc struct instance is always kept.
+     *
+     * @return the doc struct instance
+     */
     public DocStructInterface getDocStruct();
 
+    /**
+     * Returns the type of the metadata instance. The MetadataType object which
+     * is returned, may have the same name, but be a different object than the
+     * MetadataType object from another MetadataType.
+     *
+     * @return the type of the metadata instance
+     */
     public MetadataTypeInterface getType();
 
+    /**
+     * Returns the value of the metadata object. Is always a string value all
+     * types are converted to unicode strings and must be converted by the user.
+     *
+     * @return the value of the metadata object
+     */
     public String getValue();
 
-    public void setDocStruct(DocStructInterface docStructInterface);
+    /**
+     * Sets the document structure entity to which this object belongs to.
+     *
+     * @param docStruct
+     *            document structure entity to which this object belongs
+     */
+    public void setDocStruct(DocStructInterface docStruct);
 
-    /** @return always {@code true}. The result is never used. */
-    public boolean setType(MetadataTypeInterface metadataTypeInterface);
+    /**
+     * Sets the MetadataType for this instance.
+     *
+     * @param metadataType
+     *            type to set
+     * @return always {@code true}. The result is never used.
+     */
+    public boolean setType(MetadataTypeInterface metadataType);
 
-    /** @return always {@code true}. The result is never used. */
+    /**
+     * Sets the metadata value.
+     * 
+     * @param value
+     *            value to set
+     *
+     * @return always {@code true}. The result is never used.
+     */
     public boolean setValue(String value);
 }

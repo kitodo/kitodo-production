@@ -14,6 +14,11 @@ package org.kitodo.api.ugh;
 import java.util.List;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 
+/**
+ * Reads global preferences (ruleset files) and provides methods to access
+ * information and retrieve information about <code>MetadataType</code> and
+ * <code>DocStructType</code> objects.
+ */
 public interface PrefsInterface {
     List<DocStructTypeInterface> getAllDocStructTypes();
 

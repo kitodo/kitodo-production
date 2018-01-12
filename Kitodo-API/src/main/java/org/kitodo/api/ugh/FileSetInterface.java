@@ -11,17 +11,44 @@
 
 package org.kitodo.api.ugh;
 
+/**
+ * A {@code FileSet} contains all content files which belong to a digital
+ * document. The class provides methods to add or remove content file objects.
+ * Each content file object can only be added once. Same is true for the file
+ * set.
+ *
+ * <p>
+ * Beside grouping content files, a file set can store meta-data. This metadata
+ * is valid for the all content files. In opposite to the doc struct objects,
+ * there is no validation when adding metadata objects to a file set. A file set
+ * can contain any and as many metadata as desired.
+ */
 public interface FileSetInterface {
     /**
+     * Adds a content file object to the file set, if it is not yet existing.
+     *
      * @return always {@code true}. The result value is never used.
      */
-    boolean addFile(ContentFileInterface contentFileInterface);
+    boolean addFile(ContentFileInterface contentFile);
 
-    void addVirtualFileGroup(VirtualFileGroupInterface v);
+    /**
+     * Adds a virtual file group.
+     * 
+     * @param virtualFileGroup
+     *            virtual file group to add
+     */
+    void addVirtualFileGroup(VirtualFileGroupInterface virtualFileGroup);
 
+    /**
+     * Returns an iterable over all content files of this file set.
+     * 
+     * @return an iterable over all content files of this file set
+     */
     Iterable<ContentFileInterface> getAllFiles();
 
     /**
+     * Removes a content file from the file set.
+     * 
      * @return always {@code true}. The result value is never used.
      */
     boolean removeFile(ContentFileInterface contentFileInterface);

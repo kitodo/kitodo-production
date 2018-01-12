@@ -11,6 +11,9 @@
 
 package org.kitodo.api.ugh;
 
+/**
+ * Interface to the METS-intern read-writer.
+ */
 public interface MetsModsInterface extends FileformatInterface {
 
 }

@@ -14,10 +14,17 @@ package org.kitodo.api.ugh;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.w3c.dom.Node;
 
+/**
+ * Interface to the PICA plus reader.
+ */
 public interface PicaPlusInterface extends FileformatInterface {
 
     /**
-     * @return always {@code true}. The result value is never used.
+     * Reads a file and creates a digital document instance.
+     *
+     * @param filename
+     *            full path to file which should be read
+     * @return always {@code true}. The return value is never used.
      */
     boolean read(Node node) throws ReadException;
 }
