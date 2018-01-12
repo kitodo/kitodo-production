@@ -19,15 +19,6 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui"
     >
-    <ui:fragment rendered="#{SessionForm.bitteAusloggen!=''}">
-        <tr>
-            <td>
-                <div style="border: 2px solid black; padding:7px; background-color: #ffd;position: fixed;top: 10px;left: 20px;">
-                    <h:outputText value="#{SessionForm.bitteAusloggen}" style="color: red;font-weight: bold;font-size:30px"/>
-                </div>
-            </td>
-        </tr>
-    </ui:fragment>
 
     <p:growl id="notifications" rendered="#{empty indexingForm.serverInformation}"
              widgetVar="notifications" autoUpdate="true"  showDetail="true" sticky="true"/>
