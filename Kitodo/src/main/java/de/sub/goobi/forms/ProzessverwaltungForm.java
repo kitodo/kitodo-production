@@ -2386,7 +2386,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.selectedProcesses = selectedProcesses;
     }
 
-    // replace calls to this function with "pages/processes" once we have completely
+    // replace calls to this function with "/pages/processes" once we have completely
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
         String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
