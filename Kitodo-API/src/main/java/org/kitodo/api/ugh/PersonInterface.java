@@ -12,11 +12,11 @@
 package org.kitodo.api.ugh;
 
 /**
- * A person is a very special kind of metadata. For this reason it inherits from
- * the class metadata.
+ * A person is a very special kind of meta-data. For this reason it inherits from
+ * the class meta-data.
  *
  * <p>
- * A person has several metadata and not only a single value. The person's name
+ * A person has several meta-data and not only a single value. The person's name
  * can be split into:
  *
  * <ul>
@@ -27,6 +27,7 @@ package org.kitodo.api.ugh;
  * a MetadataType.
  * </ul>
  *
+ * <p>
  * This class provides methods to store and retrieve these additional
  * information.
  *

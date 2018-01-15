@@ -15,20 +15,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * When using, storing, writing or reading metadata, groups or classes of
- * special metadata objects can be formed, which have something in common. They
+ * When using, storing, writing or reading meta-data, groups or classes of
+ * special meta-data objects can be formed, which have something in common. They
  * are all of the same kind. Meta-data of the same kind can be stored using the
  * same MetadataType object. Each MetadataType object can be identified easily
  * by using its internal name.
  *
  * <p>
  * Besides the internal name, a MetadataType object contains information about
- * it occurrences; some metadata may occur just once, other may occur many
+ * it occurrences; some meta-data may occur just once, other may occur many
  * times.
  *
  * <p>
  * E.g., for all titles of a document, there can be a separate MetadataType
- * element, which contains information about this class of metadata elements.
+ * element, which contains information about this class of meta-data elements.
  * Information which they share are information about their occurrences; each
  * structure entity can only have a single title.
  *
@@ -58,21 +58,21 @@ import java.util.Map;
 public interface MetadataTypeInterface {
 
     /**
-     * Returns all display labels of this metadata type.
+     * Returns all display labels of this meta-data type.
      *
-     * @return a map of display labels of this metadata type
+     * @return a map of display labels of this meta-data type
      */
     Map<String, String> getAllLanguages();
 
     /**
-     * Returns whether the metadata type is a person type or not.
+     * Returns whether the meta-data type is a person type or not.
      * 
-     * @return whether the metadata type is a person type
+     * @return whether the meta-data type is a person type
      */
     boolean getIsPerson();
 
     /**
-     * Returns the display label of this metadata group type in a given
+     * Returns the display label of this meta-data group type in a given
      * language.
      *
      * @param language
@@ -82,14 +82,14 @@ public interface MetadataTypeInterface {
     public String getLanguage(String language);
 
     /**
-     * Returns the internal name (that is, the ID) of this metadata group.
+     * Returns the internal name (that is, the ID) of this meta-data group.
      *
      * @return the ID of this
      */
     public String getName();
 
     /**
-     * Returns the display label of this metadata group type in a given
+     * Returns the display label of this meta-data group type in a given
      * language.
      *
      * @param language
@@ -101,7 +101,7 @@ public interface MetadataTypeInterface {
     }
 
     /**
-     * Gets the minimum required/maximum allowed quantity for this metadata
+     * Gets the minimum required/maximum allowed quantity for this meta-data
      * group type.
      *
      * @return one of "1m", "1o", "+", or "*"
@@ -109,32 +109,32 @@ public interface MetadataTypeInterface {
     public String getNum();
 
     /**
-     * Sets all display labels for this metadata type.
+     * Sets all display labels for this meta-data type.
      *
      * @param allLanguages
-     *            the map of display labels of this metadata type
+     *            the map of display labels of this meta-data type
      * @return always {@code true}. The return value is never used.
      */
     boolean setAllLanguages(HashMap<String, String> labels);
 
     /**
-     * Sets whether the metadata type is an identifier type.
+     * Sets whether the meta-data type is an identifier type.
      * 
      * @param identifier
-     *            whether the metadata type is an identifier type
+     *            whether the meta-data type is an identifier type
      */
     public void setIdentifier(boolean identifier);
 
     /**
-     * Sets whether the metadata type is a person type.
+     * Sets whether the meta-data type is a person type.
      * 
      * @param isPerson
-     *            whether the metadata type is a person type
+     *            whether the meta-data type is a person type
      */
     public void setIsPerson(boolean isPerson);
 
     /**
-     * Sets the internal name (that is, the ID) of this metadata group.
+     * Sets the internal name (that is, the ID) of this meta-data group.
      *
      * @param name
      *            the ID of this
@@ -143,7 +143,7 @@ public interface MetadataTypeInterface {
     boolean setNameReturnTrue(String name);
 
     /**
-     * Sets the minimum required/maximum allowed quantity for this metadata
+     * Sets the minimum required/maximum allowed quantity for this meta-data
      * type.
      *
      * @param quantityRestriction

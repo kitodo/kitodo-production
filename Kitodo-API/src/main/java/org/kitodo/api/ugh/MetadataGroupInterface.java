@@ -15,9 +15,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A metadata group object represents a single metadata group element. Each
- * metadata group element has at least one metadata element. The type of a
- * metadata group element is stored as a {@code} MetadataGroupType} object.
+ * A meta-data group object represents a single meta-data group element. Each
+ * meta-data group element has at least one meta-data element. The type of a
+ * meta-data group element is stored as a {@code MetadataGroupType} object.
  *
  * <p>
  * Metadata group are a list of Metadata.
@@ -25,57 +25,57 @@ import java.util.List;
 public interface MetadataGroupInterface {
 
     /**
-     * Adds a meta-data entry to this metadata group.
-     * 
-     * @param metadata
-     *            metadata entry to add
+     * Adds a meta-data entry to this meta-data group.
+     *
+     * @param meta-data
+     *            meta-data entry to add
      */
     void addMetadata(MetadataInterface metadata);
 
     /**
-     * Adds a meta-data entry of a person type to this metadata group.
-     * 
-     * @param metadata
+     * Adds a meta-data entry of a person type to this meta-data group.
+     *
+     * @param meta-data
      *            person entry to add
      */
     void addPerson(PersonInterface person);
 
     /**
-     * Returns all metadata entries of a given type.
-     * 
+     * Returns all meta-data entries of a given type.
+     *
      * @param type
-     *            type of metadata entries to return
-     * @return all metadata entries of that type
+     *            type of meta-data entries to return
+     * @return all meta-data entries of that type
      */
     List<MetadataInterface> getMetadataByType(String type);
 
     /**
-     * Returns all metadata entries.
-     * 
-     * @return all metadata entries
+     * Returns all meta-data entries.
+     *
+     * @return all meta-data entries
      */
     public List<MetadataInterface> getMetadataList();
 
     /**
-     * Returns all person-type metadata entries of a given type.
-     * 
+     * Returns all person-type meta-data entries of a given type.
+     *
      * @param type
-     *            type of metadata entries to return
-     * @return all metadata entries of that type
+     *            type of meta-data entries to return
+     * @return all meta-data entries of that type
      */
     public Iterable<PersonInterface> getPersonByType(String type);
 
     /**
-     * Returns all person-type metadata entries.
-     * 
-     * @return all person-type metadata entries
+     * Returns all person-type meta-data entries.
+     *
+     * @return all person-type meta-data entries
      */
     public Collection<PersonInterface> getPersonList();
 
     /**
-     * Returns the metadata group type of this metadata group.
-     * 
-     * @return the metadata group type
+     * Returns the meta-data group type of this meta-data group.
+     *
+     * @return the meta-data group type
      */
     public MetadataGroupTypeInterface getMetadataGroupType();
 }

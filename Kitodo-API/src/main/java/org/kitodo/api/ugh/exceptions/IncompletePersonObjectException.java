@@ -13,7 +13,7 @@ package org.kitodo.api.ugh.exceptions;
 
 /**
  * This exception is thrown, when you are dealing with an incomplete person
- * object. For example, each object of this kind must have a metadata type. If
+ * object. For example, each object of this kind must have a meta-data type. If
  * there is none, this exception may be thrown in some methods, which need the
  * type information.
  */

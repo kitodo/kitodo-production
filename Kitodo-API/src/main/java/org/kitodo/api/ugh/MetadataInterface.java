@@ -12,39 +12,39 @@
 package org.kitodo.api.ugh;
 
 /**
- * A metadata object represents a single metadata entry. Each metadata entry has
- * at least a value and a type. The type of the a metadata element is stored as
- * a metadata type object.
+ * A meta-data object represents a single meta-data entry. Each meta-data entry has
+ * at least a value and a type. The type of the a meta-data element is stored as
+ * a meta-data type object.
  *
  * <p>
  * Metadata can be any kind of data, which can be attached to a structure
- * element. The most common metadata, which is available for almost any
+ * element. The most common meta-data, which is available for almost any
  * structure element, is a title.
  */
 public interface MetadataInterface {
     /**
-     * Returns the doc struct instance, to which this metadata object belongs.
-     * This is extremely helpful, if only the metadata instance is stored in a
-     * list; the reference to the associated doc struct instance is always kept.
+     * Returns the document structure instance, to which this meta-data object belongs.
+     * This is extremely helpful, if only the meta-data instance is stored in a
+     * list; the reference to the associated document structure instance is always kept.
      *
-     * @return the doc struct instance
+     * @return the document structure instance
      */
     public DocStructInterface getDocStruct();
 
     /**
-     * Returns the type of the metadata instance. The MetadataType object which
+     * Returns the type of the meta-data instance. The MetadataType object which
      * is returned, may have the same name, but be a different object than the
      * MetadataType object from another MetadataType.
      *
-     * @return the type of the metadata instance
+     * @return the type of the meta-data instance
      */
     public MetadataTypeInterface getMetadataType();
 
     /**
-     * Returns the value of the metadata object. Is always a string value all
+     * Returns the value of the meta-data object. Is always a string value all
      * types are converted to unicode strings and must be converted by the user.
      *
-     * @return the value of the metadata object
+     * @return the value of the meta-data object
      */
     public String getValue();
 
@@ -66,7 +66,7 @@ public interface MetadataInterface {
     public boolean setType(MetadataTypeInterface metadataType);
 
     /**
-     * Sets the metadata value.
+     * Sets the meta-data value.
      * 
      * @param value
      *            value to set

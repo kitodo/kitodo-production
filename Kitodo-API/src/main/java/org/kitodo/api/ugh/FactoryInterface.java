@@ -35,22 +35,22 @@ public interface FactoryInterface {
     DigitalDocumentInterface createDigitalDocument();
 
     /**
-     * Creates a new metadata entry.
+     * Creates a new meta-data entry.
      *
      * @param metadataType
      *            the type of the entry
-     * @return the new metadata entry
+     * @return the new meta-data entry
      * @throws MetadataTypeNotAllowedException
      *             if the type is {@code null}
      */
     MetadataInterface createMetadata(MetadataTypeInterface metadataType) throws MetadataTypeNotAllowedException;
 
     /**
-     * Creates a new metadata group.
+     * Creates a new meta-data group.
      *
      * @param metadataGroupType
-     *            the type of the metadata group
-     * @return the new metadata group
+     *            the type of the meta-data group
+     * @return the new meta-data group
      * @throws MetadataTypeNotAllowedException
      *             if the type is {@code null}
      */
@@ -58,16 +58,16 @@ public interface FactoryInterface {
             throws MetadataTypeNotAllowedException;
 
     /**
-     * Creates a new, empty metadata group type.
+     * Creates a new, empty meta-data group type.
      *
-     * @return the new metadata group type
+     * @return the new meta-data group type
      */
     MetadataGroupTypeInterface createMetadataGroupType();
 
     /**
-     * Creates a new, empty metadata type.
+     * Creates a new, empty meta-data type.
      *
-     * @return the new metadata type
+     * @return the new meta-data type
      */
     MetadataTypeInterface createMetadataType();
 
@@ -75,10 +75,10 @@ public interface FactoryInterface {
      * Creates a new METS-intern read-writer.
      *
      * @param prefs
-     *            ruleset to base the read-writer on
+     *            rule set to base the read-writer on
      * @return the new METS read-writer
      * @throws PreferencesException
-     *             if there is no {@code <METS>} section in the ruleset
+     *             if there is no {@code <METS>} section in the rule set
      */
     MetsModsInterface createMetsMods(PrefsInterface prefs) throws PreferencesException;
 
@@ -86,17 +86,17 @@ public interface FactoryInterface {
      * Creates a new METS/MODS export writer.
      *
      * @param prefs
-     *            ruleset to base the writer on
+     *            rule set to base the writer on
      * @return the new METS read-writer
      * @throws PreferencesException
-     *             if there is no {@code <METS>} section in the ruleset
+     *             if there is no {@code <METS>} section in the rule set
      */
     MetsModsImportExportInterface createMetsModsImportExport(PrefsInterface prefs) throws PreferencesException;
 
     /**
-     * Creates a new person metadata type.
+     * Creates a new person meta-data type.
      *
-     * @return the new metadata type
+     * @return the new meta-data type
      */
     PersonInterface createPerson(MetadataTypeInterface metadataType) throws MetadataTypeNotAllowedException;
 
@@ -104,7 +104,7 @@ public interface FactoryInterface {
      * Creates a new PICA plus import reader.
      *
      * @param prefs
-     *            ruleset to base the reader on
+     *            rule set to base the reader on
      * @return the new PICA plus reader
      */
     PicaPlusInterface createPicaPlus(PrefsInterface prefs);
@@ -120,10 +120,10 @@ public interface FactoryInterface {
      * Creates a new Agora-RDF read-writer.
      *
      * @param prefs
-     *            ruleset to base the read-writer on
+     *            rule set to base the read-writer on
      * @return the new RDF read-writer
      * @throws PreferencesException
-     *             if there is no {@code <RDF>} section in the ruleset
+     *             if there is no {@code <RDF>} section in the rule set
      */
     FileformatInterface createRDFFile(PrefsInterface prefs) throws PreferencesException;
 
@@ -145,7 +145,7 @@ public interface FactoryInterface {
      * Creates a new XStream-intern read-writer.
      *
      * @param prefs
-     *            ruleset to base the read-writer on
+     *            rule set to base the read-writer on
      * @return the new XStream read-writer
      * @throws PreferencesException
      *             is never thrown

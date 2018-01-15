@@ -20,7 +20,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
  * </p>
  *
  * <ul>
- * <li>metadata</li>
+ * <li>meta-data</li>
  * <li>structure of a work</li>
  * <li>content</li>
  * </ul>
@@ -46,7 +46,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
  * are represented by <code>DocStruct</code> objects and may have children.
  *
  * </ul>
- * <li>metadata to this digital document is stored in structure entities</li>
+ * <li>meta-data to this digital document is stored in structure entities</li>
  * <li>the content is represented by content files</li>
  * <li>ContentFiles can be linked to structure entities</li>
  * </ul>
@@ -55,20 +55,20 @@ public interface DigitalDocumentInterface {
 
     /**
      * Add all content files to the digital document according to the
-     * pathimagefiles metadata. The pages in the physical DocStruct must already
+     * pathimagefiles meta-data. The pages in the physical DocStruct must already
      * exist!
      */
     void addAllContentFiles();
 
     /**
-     * Creates a doc struct with the given doc struct type for the Digital
+     * Creates a document structure with the given document structure type for the Digital
      * Document.
      *
      * @param docStructType
-     *            doc struct type for the new doc struct
-     * @return the new doc struct
+     *            document structure type for the new document structure
+     * @return the new document structure
      * @throws TypeNotAllowedForParentException
-     *             if this doc struct type is not allowed for the parent
+     *             if this document structure type is not allowed for the parent
      */
     DocStructInterface createDocStruct(DocStructTypeInterface docStructType) throws TypeNotAllowedForParentException;
 
@@ -80,16 +80,16 @@ public interface DigitalDocumentInterface {
     FileSetInterface getFileSet();
 
     /**
-     * Returns the logical doc struct.
+     * Returns the logical document structure.
      *
-     * @return the logical doc struct
+     * @return the logical document structure
      */
     DocStructInterface getLogicalDocStruct();
 
     /**
-     * Returns the physical doc struct
+     * Returns the physical document structure.
      *
-     * @return the physical doc struct
+     * @return the physical document structure
      */
     DocStructInterface getPhysicalDocStruct();
 
@@ -102,19 +102,19 @@ public interface DigitalDocumentInterface {
     void overrideContentFiles(List<String> images);
 
     /**
-     * Sets the logical doc struct.
+     * Sets the logical document structure.
      *
      * @param docStruct
-     *            the new doc struct
+     *            the new document structure
      * @return always {@code true}. The result is never used.
      */
     boolean setLogicalDocStruct(DocStructInterface docStruct);
 
     /**
-     * Sets the physical doc struct.
+     * Sets the physical document structure.
      *
      * @param docStruct
-     *            the new doc struct @return always {@code true}. The result is
+     *            the new document structure @return always {@code true}. The result is
      *            never used.
      */
     boolean setPhysicalDocStruct(DocStructInterface docStruct);

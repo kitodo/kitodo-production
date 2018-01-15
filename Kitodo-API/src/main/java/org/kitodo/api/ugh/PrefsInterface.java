@@ -15,21 +15,21 @@ import java.util.List;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 
 /**
- * Reads global preferences (ruleset files) and provides methods to access
+ * Reads global preferences (rule set files) and provides methods to access
  * information and retrieve information about {@code MetadataType} and
  * {@code DocStructType} objects.
  */
 public interface PrefsInterface {
     /**
-     * Returns all doc struct types defined in this rule set.
+     * Returns all document structure types defined in this rule set.
      *
-     * @return all doc struct types
+     * @return all document structure types
      */
     List<DocStructTypeInterface> getAllDocStructTypes();
 
     /**
      * Returns the {@code DocStructType} named by its identifier, if there is
-     * such in the ruleset. Otherwise returns {@code null}.
+     * such in the rule set. Otherwise returns {@code null}.
      *
      * @param identifier
      *            identifier (internal name) of the {@code DocStructType}

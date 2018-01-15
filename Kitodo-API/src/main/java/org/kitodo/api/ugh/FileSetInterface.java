@@ -18,10 +18,10 @@ package org.kitodo.api.ugh;
  * set.
  *
  * <p>
- * Beside grouping content files, a file set can store meta-data. This metadata
- * is valid for the all content files. In opposite to the doc struct objects,
- * there is no validation when adding metadata objects to a file set. A file set
- * can contain any and as many metadata as desired.
+ * Beside grouping content files, a file set can store meta-data. This meta-data
+ * is valid for the all content files. In opposite to the document structure objects,
+ * there is no validation when adding meta-data objects to a file set. A file set
+ * can contain any and as many meta-data as desired.
  */
 public interface FileSetInterface {
     /**

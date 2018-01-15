@@ -12,7 +12,7 @@
 package org.kitodo.api.ugh.exceptions;
 
 /**
- * Exception indicating that a metadata type is not allowed.
+ * Exception indicating that a meta-data type is not allowed.
  */
 public class MetadataTypeNotAllowedException extends UGHException {
     private static final long serialVersionUID = 1L;

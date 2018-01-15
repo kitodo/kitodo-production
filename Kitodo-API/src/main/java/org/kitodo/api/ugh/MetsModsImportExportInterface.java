@@ -50,34 +50,34 @@ public interface MetsModsImportExportInterface extends FileformatInterface {
     void setContentIDs(String contentIDs);
 
     /**
-     * Sets the digiprov presentation of the METS/MODS import export.
+     * Sets the digital provenience presentation of the METS/MODS import export.
      *
      * @param digiprovPresentation
-     *            the digiprov presentation to set
+     *            the digital provenience presentation to set
      */
     void setDigiprovPresentation(String digiprovPresentation);
 
     /**
-     * Sets the digiprov presentation anchor of the METS/MODS import export.
+     * Sets the digital provenience presentation anchor of the METS/MODS import export.
      *
      * @param digiprovPresentationAnchor
-     *            the digiprov presentation anchor to set
+     *            the digital provenience presentation anchor to set
      */
     void setDigiprovPresentationAnchor(String digiprovPresentationAnchor);
 
     /**
-     * Sets the digiprov reference of the METS/MODS import export.
+     * Sets the digital provenience reference of the METS/MODS import export.
      *
      * @param digiprovReference
-     *            the digiprov reference to set
+     *            the digital provenience reference to set
      */
     void setDigiprovReference(String digiprovReference);
 
     /**
-     * Sets the digiprov reference anchor of the METS/MODS import export.
+     * Sets the digital provenience reference anchor of the METS/MODS import export.
      *
      * @param digiprovReferenceAnchor
-     *            the digiprov reference anchor to set
+     *            the digital provenience reference anchor to set
      */
     void setDigiprovReferenceAnchor(String digiprovReferenceAnchor);
 

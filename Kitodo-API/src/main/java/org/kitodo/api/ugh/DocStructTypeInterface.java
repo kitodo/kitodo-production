@@ -17,25 +17,25 @@ import java.util.List;
  * A {@code DocStructType} object defines a kind of class to which a structure
  * entitiy (represented by a DocStruct object) belongs. All DocStruct objects
  * belonging to a similar class have something in common (like possible
- * children, special kind of metadata which can be available for a class, a
+ * children, special kind of meta-data which can be available for a class, a
  * naming etc.). These things are stored in a DocStructType object.
  */
 public interface DocStructTypeInterface {
 
     /**
-     * Returns a list containing the names of all doc struct types which are
+     * Returns a list containing the names of all document structure types which are
      * allowed as children.
      *
-     * @return all doc struct types which are allowed as children. Note:
+     * @return all document structure types which are allowed as children. Note:
      *         {@code List<String>}, not {@code List<DocStructTypeInterface>}!
      */
     List<String> getAllAllowedDocStructTypes();
 
     /**
-     * Retrieves all metadata type objects for this doc struct type instance.
+     * Retrieves all meta-data type objects for this document structure type instance.
      *
      *
-     * @return all metadata type objects for this doc struct type.
+     * @return all meta-data type objects for this document structure type.
      *         {@code Iterable<>} would be sufficient.
      */
     List<MetadataTypeInterface> getAllMetadataTypes();
@@ -53,29 +53,29 @@ public interface DocStructTypeInterface {
     String getAnchorClass();
 
     /**
-     * Returns the internal name (i.e. ID) of this doc struct type.
+     * Returns the internal name (i.e. ID) of this document structure type.
      *
-     * @return the name of this doc struct type
+     * @return the name of this document structure type
      */
     String getName();
 
     /**
-     * Returns the display label for this doc struct type in the given language.
+     * Returns the display label for this document structure type in the given language.
      * Returns {@code null} if no translation is available.
      *
      * @param language
      *            language code
-     * @return name the display label for this doc struct type
+     * @return name the display label for this document structure type
      */
     String getNameByLanguage(String language);
 
     /**
-     * Returns the minimal required or maximum allowed quantity for a metadata
-     * object for the given metadata type for this doc struct type. metadata
+     * Returns the minimal required or maximum allowed quantity for a meta-data
+     * object for the given meta-data type for this document structure type. meta-data
      * types are compared using the internal name.
      *
      * @param metadataType
-     *            metadata type can be a global type
+     *            meta-data type can be a global type
      * @return String representing the allowed quantity, one of "1o", "1m", "*",
      *         or "+".
      */

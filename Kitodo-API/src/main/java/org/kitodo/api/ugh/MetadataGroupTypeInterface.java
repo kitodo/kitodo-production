@@ -15,27 +15,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface of a metadata group type.
+ * Interface of a meta-data group type.
  */
 public interface MetadataGroupTypeInterface {
 
     /**
-     * Adds a metadata type to this metadata group type.
+     * Adds a meta-data type to this meta-data group type.
      *
      * @param metadataType
-     *            metadata type to add
+     *            meta-data type to add
      */
     void addMetadataType(MetadataTypeInterface metadataType);
 
     /**
-     * Returns all display labels of this metadata group type.
+     * Returns all display labels of this meta-data group type.
      *
-     * @return a map of display labels of this metadata group type
+     * @return a map of display labels of this meta-data group type
      */
     Map<String, String> getAllLanguages();
 
     /**
-     * Returns the display label of this metadata group type in a given
+     * Returns the display label of this meta-data group type in a given
      * language.
      *
      * @param language
@@ -45,29 +45,29 @@ public interface MetadataGroupTypeInterface {
     String getLanguage(String language);
 
     /**
-     * Returns the member metadata type list of this metadata group.
+     * Returns the member meta-data type list of this meta-data group.
      *
-     * @return the member metadata type list
+     * @return the member meta-data type list
      */
     List<MetadataTypeInterface> getMetadataTypeList();
 
     /**
-     * Returns the internal name (that is, the ID) of this metadata group.
+     * Returns the internal name (that is, the ID) of this meta-data group.
      *
      * @return the ID of this
      */
     String getName();
 
     /**
-     * Sets all display labels for this metadata group type.
+     * Sets all display labels for this meta-data group type.
      *
      * @param allLanguages
-     *            the map of display labels of this metadata group type
+     *            the map of display labels of this meta-data group type
      */
     void setAllLanguages(Map<String, String> allLanguages);
 
     /**
-     * Sets the internal name (that is, the ID) of this metadata group.
+     * Sets the internal name (that is, the ID) of this meta-data group.
      *
      * @param name
      *            the ID of this
@@ -75,7 +75,7 @@ public interface MetadataGroupTypeInterface {
     void setName(String name);
 
     /**
-     * Sets the minimum required/maximum allowed quantity for this metadata
+     * Sets the minimum required/maximum allowed quantity for this meta-data
      * group type.
      *
      * @param quantityRestriction

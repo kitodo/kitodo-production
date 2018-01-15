@@ -38,13 +38,14 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
  * <ul>
  * <li>Retrieve information about the structure (add, move and remove children),
  * <li>set the parent (the top element has no parent),
- * <li>set and retrieve metadata, which describe a structure entity,
+ * <li>set and retrieve meta-data, which describe a structure entity,
  * <li>handle content files, which are linked to a structure entity.
  * </ul>
  *
+ * <p>
  * Every structure entity is of a special kind. The kind of entity is stored in
  * a {@code DocStructType} element. Depending on the type of structure entities
- * certain metadata and children a permitted or forbidden.
+ * certain meta-data and children a permitted or forbidden.
  */
 public interface DocStructInterface {
 
@@ -114,7 +115,7 @@ public interface DocStructInterface {
      *
      * @param theMetadata
      *            meta-data object to add
-     * @return always {@true}. The return value is never used.
+     * @return always {@code true}. The return value is never used.
      * @throws MetadataTypeNotAllowedException
      *             if this instance does not allow the meta-data type to be
      *             added, or if the maximum allowed number of meta-data of this
@@ -148,6 +149,7 @@ public interface DocStructInterface {
      * and the method returns {@code true}, otherwise it returns {@code false}.
      * The {@code MetadataGroup} object must already include all necessary
      * information, such as {@code MetadataGroupType} and value.
+     *
      * <p>
      * For internal reasons, this method replaces the {@code MetadataGroupType}
      * object by a local copy, which is retrieved from the {@code DocStructType}
@@ -172,11 +174,11 @@ public interface DocStructInterface {
     boolean addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException;
 
     /**
-     * Adds a person to the doc struct.
+     * Adds a person to the document structure.
      *
      * @param person
      *            person to add
-     * @return always {@true}. The return value is never used.
+     * @return always {@code true}. The return value is never used.
      */
     boolean addPerson(PersonInterface person) throws MetadataTypeNotAllowedException;
 
@@ -246,7 +248,7 @@ public interface DocStructInterface {
      * meta-data instances.
      *
      * <p>
-     * An empty metadata instance is:
+     * An empty meta-data instance is:
      * <ul>
      * <li>A meta-data object with a value of null.</li>
      * <li>A person object with neither a lastname, nor a firstname, an
@@ -276,6 +278,7 @@ public interface DocStructInterface {
      * {@code Metadata}, so meta-data types which can only be available once
      * cannot be added a second time. Therefore these {@code MetadataType}s will
      * not be included in this list.
+     *
      * <p>
      * Internal meta-data groups, whose {@code MetadataGroupType} starts with
      * the {@code HIDDEN_METADATA_CHAR}, will also not be included.
@@ -350,6 +353,7 @@ public interface DocStructInterface {
     /**
      * Returns all meta-data of a given type, including persons. Can be used to
      * get all titles, authors, etc.
+     *
      * <p>
      * If no {@code MetadataGroup}s are available, an empty list is returned.
      *
@@ -464,6 +468,7 @@ public interface DocStructInterface {
     /**
      * Returns all meta-data types that shall be displayed even if they have no
      * value.
+     *
      * <p>
      * Comprises all meta-data types whose attribute
      * {@code defaultDisplay="true"} is set in the {@code Preferences}. Hidden
@@ -505,6 +510,7 @@ public interface DocStructInterface {
      * Returns all meta-data types that can be added to this instance. Includes
      * meta-data groups, whose {@code MetadataGroupType} starts with the
      * {@code HIDDEN_METADATA_CHAR}.
+     *
      * <p>
      * This method considers already added {@code Metadata}, so meta-data types
      * which can only be available once cannot be added a second time. Therefore
@@ -609,7 +615,7 @@ public interface DocStructInterface {
 
     /**
      * Sets the type of this DocStruct. When changing the type, the allowed
-     * metadata elements and children are <i>not</i> checked. Therefore it is
+     * meta-data elements and children are <i>not</i> checked. Therefore it is
      * possible to create documents that are not valid against the current
      * preferences file.
      *
