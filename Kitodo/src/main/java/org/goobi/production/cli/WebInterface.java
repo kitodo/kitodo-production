@@ -15,12 +15,10 @@ import de.sub.goobi.config.ConfigCore;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -111,9 +109,7 @@ public class WebInterface extends HttpServlet {
             // hand parameters over to command
             Map<String, String[]> map = req.getParameterMap();
             HashMap<String, String> params = new HashMap<>();
-            Iterator<Entry<String, String[]>> i = map.entrySet().iterator();
-            while (i.hasNext()) {
-                Entry<String, String[]> entry = i.next();
+            for (Entry<String, String[]> entry : map.entrySet()) {
                 if (entry.getValue()[0] != null) {
                     params.put(entry.getKey(), entry.getValue()[0]);
                 }

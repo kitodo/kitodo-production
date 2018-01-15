@@ -525,7 +525,7 @@ public class Metadaten {
     }
 
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
-        ArrayList<SelectItem> selectItems = new ArrayList<SelectItem>();
+        ArrayList<SelectItem> selectItems = new ArrayList<>();
 
         // zuerst mal alle addierbaren Metadatentypen ermitteln
 
@@ -536,7 +536,7 @@ public class Metadaten {
 
         //alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
 
-        for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
+        for (MetadataType mdt : new ArrayList<>(types)) {
             if (mdt.getIsPerson()) {
                 types.remove(mdt);
             }

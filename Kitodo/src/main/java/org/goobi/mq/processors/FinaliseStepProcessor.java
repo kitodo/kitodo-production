@@ -77,15 +77,14 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * @param propertiesToSet
      *            A Map with the properties to set
      */
-    protected void updateProperties(AktuelleSchritteForm dialog, Map<String, String> propertiesToSet) {
+    private void updateProperties(AktuelleSchritteForm dialog, Map<String, String> propertiesToSet) {
         List<Property> availableProperties = dialog.getProperties();
-        for (int position = 0; position < availableProperties.size(); position++) {
-            Property propertyAtPosition = availableProperties.get(position);
-            String key = propertyAtPosition.getTitle();
+        for (Property property : availableProperties) {
+            String key = property.getTitle();
             if (propertiesToSet.containsKey(key)) {
                 String desiredValue = propertiesToSet.get(key);
-                propertyAtPosition.setValue(desiredValue);
-                dialog.setProperty(propertyAtPosition);
+                property.setValue(desiredValue);
+                dialog.setProperty(property);
                 dialog.saveCurrentProperty();
             }
         }
