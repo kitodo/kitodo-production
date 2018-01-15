@@ -19,15 +19,6 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     xmlns:p="http://primefaces.org/ui"
     >
-    <ui:fragment rendered="#{SessionForm.bitteAusloggen!=''}">
-        <tr>
-            <td>
-                <div style="border: 2px solid black; padding:7px; background-color: #ffd;position: fixed;top: 10px;left: 20px;">
-                    <h:outputText value="#{SessionForm.bitteAusloggen}" style="color: red;font-weight: bold;font-size:30px"/>
-                </div>
-            </td>
-        </tr>
-    </ui:fragment>
 
     <p:growl id="notifications" rendered="#{empty indexingForm.serverInformation}"
              widgetVar="notifications" autoUpdate="true"  showDetail="true" sticky="true"/>
@@ -113,45 +104,6 @@
                                 </ui:fragment>
                             </t:dataList>
                         </div>
-                        <!-- logout -->
-                        <h:commandLink action="#{LoginForm.Ausloggen}" id="logout2"
-                                       rendered="#{LoginForm.myBenutzer != null}"
-                                       styleClass="text_head">
-
-                            <!-- Mouse-Over für Benutzergruppenmitgliedschaft -->
-                            <t:popup
-                                    style="background-color: white; color: #000000; border:1px solid #e3c240; font-size: smaller;"
-                                    closePopupOnExitingElement="true"
-                                    closePopupOnExitingPopup="true" displayAtDistanceX="-210"
-                                    displayAtDistanceY="10">
-
-                                <h:outputText style="text-align:right;line-height:20px" value="#{msgs.logout}"/>
-
-                                <f:facet name="popup">
-                                    <h:panelGroup>
-                                        <h:panelGrid columns="1" width="200">
-                                            <h:outputText rendered="#{LoginForm.myBenutzer != null}"
-                                                          style="font-weight:bold"
-                                                          value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}"/>
-
-
-                                            <t:dataList var="intern" style="font-weight: normal"
-                                                        rendered="#{LoginForm.myBenutzer.userGroupSize != 0}"
-                                                        value="#{LoginForm.myBenutzer.userGroups}"
-                                                        layout="ordered list" rowCountVar="rowCount"
-                                                        rowIndexVar="rowIndex">
-                                                <h:outputText value="#{intern.title}"/>
-                                                <h:outputText value=";"
-                                                              rendered="#{rowIndex + 1 lt rowCount}"/>
-                                            </t:dataList>
-
-                                        </h:panelGrid>
-                                    </h:panelGroup>
-                                </f:facet>
-                            </t:popup>
-
-                        </h:commandLink>
-
                     </h:form>
 
 

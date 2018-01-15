@@ -25,7 +25,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "user")
 public class User extends BaseIndexedBean {
@@ -78,9 +77,7 @@ public class User extends BaseIndexedBean {
     private LdapGroup ldapGroup;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "user_x_userGroup", joinColumns = {
-            @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
+    @JoinTable(name = "user_x_userGroup", joinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
@@ -90,9 +87,7 @@ public class User extends BaseIndexedBean {
     private List<Task> processingTasks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "project_x_user", joinColumns = {
-            @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) }, inverseJoinColumns = {
-            @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) })
+    @JoinTable(name = "project_x_user", joinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) })
     private List<Project> projects;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -157,7 +152,7 @@ public class User extends BaseIndexedBean {
             this.filters = new ArrayList<>();
         }
 
-        //default values
+        // default values
         if (user.sessionTimeout != null) {
             this.sessionTimeout = user.sessionTimeout;
         }
@@ -347,17 +342,15 @@ public class User extends BaseIndexedBean {
     }
 
     /**
-     * The function selfDestruct() removes a user from the environment. Since
-     * the user ID may still be referenced somewhere, the user is not hard
-     * deleted from the database, instead the account is set inactive and
-     * invisible.
+     * The function selfDestruct() removes a user from the environment. Since the
+     * user ID may still be referenced somewhere, the user is not hard deleted from
+     * the database, instead the account is set inactive and invisible.
      *
      * <p>
-     * To allow recreation of an account with the same login the login is
-     * cleaned - otherwise it would be blocked eternally by the login existence
-     * test performed in the BenutzerverwaltungForm.Speichern() function. In
-     * addition, all personally identifiable information is removed from the
-     * database as well.
+     * To allow recreation of an account with the same login the login is cleaned -
+     * otherwise it would be blocked eternally by the login existence test performed
+     * in the BenutzerverwaltungForm.Speichern() function. In addition, all
+     * personally identifiable information is removed from the database as well.
      * </p>
      */
 
@@ -403,5 +396,102 @@ public class User extends BaseIndexedBean {
         } else {
             this.setSessionTimeout(sessionTimeout * 60);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        User user = (User) o;
+
+        if (active != user.active) {
+            return false;
+        }
+        if (deleted != user.deleted) {
+            return false;
+        }
+        if (configProductionDateShow != user.configProductionDateShow) {
+            return false;
+        }
+        if (withMassDownload != user.withMassDownload) {
+            return false;
+        }
+        if (name != null ? !name.equals(user.name) : user.name != null) {
+            return false;
+        }
+        if (surname != null ? !surname.equals(user.surname) : user.surname != null) {
+            return false;
+        }
+        if (login != null ? !login.equals(user.login) : user.login != null) {
+            return false;
+        }
+        if (ldapLogin != null ? !ldapLogin.equals(user.ldapLogin) : user.ldapLogin != null) {
+            return false;
+        }
+        if (password != null ? !password.equals(user.password) : user.password != null) {
+            return false;
+        }
+        if (location != null ? !location.equals(user.location) : user.location != null) {
+            return false;
+        }
+        if (tableSize != null ? !tableSize.equals(user.tableSize) : user.tableSize != null) {
+            return false;
+        }
+        if (sessionTimeout != null ? !sessionTimeout.equals(user.sessionTimeout) : user.sessionTimeout != null) {
+            return false;
+        }
+        if (metadataLanguage != null ? !metadataLanguage.equals(user.metadataLanguage)
+                : user.metadataLanguage != null) {
+            return false;
+        }
+        if (css != null ? !css.equals(user.css) : user.css != null) {
+            return false;
+        }
+        if (ldapGroup != null ? !ldapGroup.equals(user.ldapGroup) : user.ldapGroup != null) {
+            return false;
+        }
+        if (userGroups != null ? !userGroups.equals(user.userGroups) : user.userGroups != null) {
+            return false;
+        }
+        if (tasks != null ? !tasks.equals(user.tasks) : user.tasks != null) {
+            return false;
+        }
+        if (processingTasks != null ? !processingTasks.equals(user.processingTasks) : user.processingTasks != null) {
+            return false;
+        }
+        if (projects != null ? !projects.equals(user.projects) : user.projects != null) {
+            return false;
+        }
+        return filters != null ? filters.equals(user.filters) : user.filters == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (surname != null ? surname.hashCode() : 0);
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (ldapLogin != null ? ldapLogin.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (active ? 1 : 0);
+        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (tableSize != null ? tableSize.hashCode() : 0);
+        result = 31 * result + (sessionTimeout != null ? sessionTimeout.hashCode() : 0);
+        result = 31 * result + (configProductionDateShow ? 1 : 0);
+        result = 31 * result + (metadataLanguage != null ? metadataLanguage.hashCode() : 0);
+        result = 31 * result + (withMassDownload ? 1 : 0);
+        result = 31 * result + (css != null ? css.hashCode() : 0);
+        result = 31 * result + (ldapGroup != null ? ldapGroup.hashCode() : 0);
+        result = 31 * result + (userGroups != null ? userGroups.hashCode() : 0);
+        result = 31 * result + (tasks != null ? tasks.hashCode() : 0);
+        result = 31 * result + (processingTasks != null ? processingTasks.hashCode() : 0);
+        result = 31 * result + (projects != null ? projects.hashCode() : 0);
+        result = 31 * result + (filters != null ? filters.hashCode() : 0);
+        return result;
     }
 }

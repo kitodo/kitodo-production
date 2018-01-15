@@ -30,6 +30,7 @@ import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkpieceService;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.schema.SchemaService;
+import org.kitodo.services.security.SessionService;
 import org.kitodo.services.validation.FileStructureValidationService;
 import org.kitodo.services.validation.LongTimePreservationValidationService;
 import org.kitodo.services.validation.MetadataValidationService;
@@ -58,6 +59,7 @@ public class ServiceManager {
     private FileStructureValidationService fileStructureValidationService;
     private LongTimePreservationValidationService longTimePreservationValidationService;
     private MetadataValidationService metadataValidationService;
+    private SessionService sessionService;
 
     private void initializeAuthorizationService() {
         if (authorizationService == null) {
@@ -122,6 +124,12 @@ public class ServiceManager {
     private void initializeRulesetService() {
         if (rulesetService == null) {
             rulesetService = RulesetService.getInstance();
+        }
+    }
+
+    private void initializeSessionService() {
+        if (sessionService == null) {
+            sessionService = SessionService.getInstance();
         }
     }
 
@@ -306,6 +314,17 @@ public class ServiceManager {
     public RulesetService getRulesetService() {
         initializeRulesetService();
         return rulesetService;
+    }
+
+    /**
+     * Initialize SessionService if it is not yet initialized and next return
+     * it.
+     *
+     * @return SessionService object
+     */
+    public SessionService getSessionService() {
+        initializeSessionService();
+        return sessionService;
     }
 
     /**

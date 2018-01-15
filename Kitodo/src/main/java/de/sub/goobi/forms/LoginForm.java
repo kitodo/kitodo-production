@@ -14,7 +14,6 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
-import de.sub.goobi.metadaten.MetadatenSperrung;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -23,12 +22,9 @@ import java.io.Serializable;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +44,6 @@ public class LoginForm implements Serializable {
     private String login;
     private String password;
     private User myBenutzer;
-    private User tempBenutzer;
     private boolean schonEingeloggt = false;
     private String passwortAendernAlt;
     private String passwortAendernNeu1;
@@ -57,151 +52,6 @@ public class LoginForm implements Serializable {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
     private boolean firstVisit = true;
-
-    /**
-     * Log out.
-     *
-     * @return String
-     */
-    public String Ausloggen() {
-        if (this.myBenutzer != null) {
-            new MetadatenSperrung().alleBenutzerSperrungenAufheben(this.myBenutzer.getId());
-        }
-        this.myBenutzer = null;
-        this.schonEingeloggt = false;
-        this.login = "";
-        SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-        HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-        temp.sessionBenutzerAktualisieren(mySession, this.myBenutzer);
-        if (mySession != null) {
-            mySession.invalidate();
-        }
-        return "/pages/Main";
-    }
-
-    /**
-     * Log in.
-     *
-     * @return String
-     */
-    public String Einloggen() throws IOException {
-        AlteBilderAufraeumen();
-        this.myBenutzer = null;
-        /* ohne Login gleich abbrechen */
-        if (this.login == null) {
-            Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
-        } else {
-            /* prüfen, ob schon ein Benutzer mit dem Login existiert */
-            List<User> treffer;
-            try {
-                treffer = serviceManager.getUserService().getByQuery("from User where login = :username", "username",
-                        this.login);
-            } catch (DAOException e) {
-                Helper.setFehlerMeldung("could not read database", e.getMessage());
-                return null;
-            }
-            if (treffer != null && treffer.size() > 0) {
-                /* Login vorhanden, nun passwort prüfen */
-                User b = treffer.get(0);
-                /*
-                 * wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht
-                 * mehr hier) wurde, jetzt Meldung anzeigen
-                 */
-                if (!b.isActive()) {
-                    Helper.setFehlerMeldung("login", "", Helper.getTranslation("loginInactive"));
-                    return null;
-                }
-                /* wenn passwort auch richtig ist, den benutzer übernehmen */
-                if (serviceManager.getUserService().isPasswordCorrect(b, this.password)) {
-                    /*
-                     * jetzt prüfen, ob dieser Benutzer schon in einer anderen
-                     * Session eingeloggt ist
-                     */
-                    SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-                    HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()
-                            .getSession(false);
-                    if (!temp.userActiveInOtherSession(mySession, b)) {
-                        /* in der Session den Login speichern */
-                        temp.sessionBenutzerAktualisieren(mySession, b);
-                        this.myBenutzer = b;
-                    } else {
-                        this.schonEingeloggt = true;
-                        this.tempBenutzer = b;
-                    }
-                } else {
-                    Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
-                }
-            } else {
-                /* Login nicht vorhanden, also auch keine Passwortprüfung */
-                Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
-            }
-        }
-        // checking if saved css stylesheet is available, if not replace it by
-        // something available
-        if (this.myBenutzer != null) {
-            String tempCss = this.myBenutzer.getCss();
-            String newCss = new HelperForm().getCssLinkIfExists(tempCss);
-            this.myBenutzer.setCss(newCss);
-            return null;
-        }
-        return null;
-    }
-
-    /**
-     * Again log in.
-     *
-     * @return String
-     */
-    public String NochmalEinloggen() {
-        SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-        HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-        /* in der Session den Login speichern */
-        temp.sessionBenutzerAktualisieren(mySession, this.tempBenutzer);
-        this.myBenutzer = this.tempBenutzer;
-        this.schonEingeloggt = false;
-        return null;
-    }
-
-    /**
-     * Clean session.
-     *
-     * @return empty String
-     */
-    public String EigeneAlteSessionsAufraeumen() {
-        SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-        HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-        temp.alteSessionsDesSelbenBenutzersAufraeumen(mySession, this.tempBenutzer);
-        /* in der Session den Login speichern */
-        temp.sessionBenutzerAktualisieren(mySession, this.tempBenutzer);
-        this.myBenutzer = this.tempBenutzer;
-        this.schonEingeloggt = false;
-        return null;
-    }
-
-    /**
-     * Login.
-     *
-     * @return String
-     */
-    public String EinloggenAls() {
-        if (getMaximaleBerechtigung() != 1) {
-            return "/pages/Main";
-        }
-        this.myBenutzer = null;
-        Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            this.myBenutzer = serviceManager.getUserService().getById(loginId);
-            /* in der Session den Login speichern */
-            SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-            temp.sessionBenutzerAktualisieren(
-                    (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false),
-                    this.myBenutzer);
-        } catch (DAOException e) {
-            Helper.setFehlerMeldung("could not read database", e.getMessage());
-            return null;
-        }
-        return "/pages/Main";
-    }
 
     /*
      * änderung des Passworts
