@@ -14,9 +14,6 @@ package de.sub.goobi.helper.exceptions;
 public class ImportPluginException extends Exception {
     private static final long serialVersionUID = -6443010347859488741L;
 
-    public ImportPluginException() {
-    }
-
     public ImportPluginException(String message) {
         super(message);
     }

@@ -95,21 +95,6 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
     }
 
     /**
-     * Returns a list of identifiers of the items currently selected.
-     * 
-     * @return the items currently selected
-     */
-    public List<String> getSelectedItems() {
-        List<String> result = new ArrayList<>(items.size());
-        for (Item item : items) {
-            if (item.getIsSelected()) {
-                result.add(item.getValue());
-            }
-        }
-        return result;
-    }
-
-    /**
      * Uses the passed-in list of identifiers of the items that shall be
      * selected to set the selected state on the items.
      * 

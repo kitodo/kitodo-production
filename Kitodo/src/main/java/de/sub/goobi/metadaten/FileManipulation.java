@@ -74,8 +74,6 @@ public class FileManipulation {
 
     private boolean deleteFilesAfterMove = false;
 
-    private boolean moveFilesInAllFolder = true;
-
     private List<URI> allImportFolder = new ArrayList<>();
 
     private String currentFolder = "";
@@ -467,14 +465,6 @@ public class FileManipulation {
 
     public void setDeleteFilesAfterMove(boolean deleteFilesAfterMove) {
         this.deleteFilesAfterMove = deleteFilesAfterMove;
-    }
-
-    public boolean isMoveFilesInAllFolder() {
-        return moveFilesInAllFolder;
-    }
-
-    public void setMoveFilesInAllFolder(boolean moveFilesInAllFolder) {
-        this.moveFilesInAllFolder = moveFilesInAllFolder;
     }
 
     /**

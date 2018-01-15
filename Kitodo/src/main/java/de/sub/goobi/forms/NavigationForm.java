@@ -36,10 +36,6 @@ public class NavigationForm implements Serializable {
         return null;
     }
 
-    public String BenutzerBearbeiten() {
-        return "/pages/BenutzerBearbeiten";
-    }
-
     /**
      *
      * @return true if show_taskmanager in file kitodo_config.properties is =true
