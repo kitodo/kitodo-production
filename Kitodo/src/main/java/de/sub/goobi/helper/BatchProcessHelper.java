@@ -20,15 +20,11 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.services.ServiceManager;
 
-public class BatchProcessHelper {
+public class BatchProcessHelper extends BatchHelper {
     private final List<Process> processes;
-    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BatchProcessHelper.class);
     private Process currentProcess;
-    private List<Property> properties;
-    private Property property;
     private String processName;
     private List<String> processNameList = new ArrayList<>();
 
@@ -46,53 +42,6 @@ public class BatchProcessHelper {
         this.currentProcess = processes.iterator().next();
         this.processName = this.currentProcess.getTitle();
         loadProcessProperties();
-    }
-
-    /**
-     * Get property for process.
-     *
-     * @return property for process
-     */
-    public Property getProperty() {
-        return this.property;
-    }
-
-    /**
-     * Set property for process.
-     *
-     * @param property
-     *            for process as Property object
-     */
-    public void setProperty(Property property) {
-        this.property = property;
-    }
-
-    /**
-     * Get list of process properties.
-     *
-     * @return list of process properties
-     */
-    public List<Property> getProperties() {
-        return this.properties;
-    }
-
-    /**
-     * Set list of process properties.
-     *
-     * @param properties
-     *            for process as Property objects
-     */
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
-    }
-
-    /**
-     * Get size of properties' list.
-     *
-     * @return size of properties' list
-     */
-    public int getPropertiesSize() {
-        return this.properties.size();
     }
 
     /**
@@ -186,29 +135,7 @@ public class BatchProcessHelper {
 
             for (Process process : this.processes) {
                 if (!process.equals(this.currentProcess)) {
-                    if (processProperty.getTitle() != null) {
-                        boolean match = false;
-                        for (Property processPe : process.getProperties()) {
-                            if (processPe.getTitle() != null) {
-                                if (processProperty.getTitle().equals(processPe.getTitle())
-                                        && processProperty.getContainer() == null ? processPe.getContainer() == null
-                                                : processProperty.getContainer().equals(processPe.getContainer())) {
-                                    processPe.setValue(processProperty.getValue());
-                                    match = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!match) {
-                            Property newProcessProperty = new Property();
-                            newProcessProperty.setTitle(processProperty.getTitle());
-                            newProcessProperty.setValue(processProperty.getValue());
-                            newProcessProperty.setContainer(processProperty.getContainer());
-                            newProcessProperty.setType(processProperty.getType());
-                            newProcessProperty.getProcesses().add(process);
-                            process.getProperties().add(newProcessProperty);
-                        }
-                    }
+                    process = prepareProcessWithProperty(process, processProperty);
                 } else {
                     if (!process.getProperties().contains(this.property)) {
                         process.getProperties().add(this.property);

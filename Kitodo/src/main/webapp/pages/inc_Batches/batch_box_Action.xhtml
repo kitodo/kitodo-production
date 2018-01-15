@@ -74,7 +74,7 @@
                                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
                                         <h:outputText value="#{msgs.zurueckZuArbeitsschritt}"/>
                                         <h:selectOneMenu style="width:350px"
-                                                         value="#{AktuelleSchritteForm.batchHelper.myProblemStep}">
+                                                         value="#{AktuelleSchritteForm.batchHelper.problemTask}">
                                             <f:selectItems
                                                     value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}"/>
                                         </h:selectOneMenu>
@@ -118,7 +118,7 @@
                                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
                                         <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
                                         <h:selectOneMenu style="width:350px" id="select1"
-                                                         value="#{AktuelleSchritteForm.batchHelper.mySolutionStep}">
+                                                         value="#{AktuelleSchritteForm.batchHelper.solutionTask}">
                                             <f:selectItems value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}"/>
                                         </h:selectOneMenu>
                                         <h:outputText value="#{msgs.bemerkung}"/>

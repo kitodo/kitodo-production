@@ -18,7 +18,6 @@ import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -41,23 +40,19 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.services.ServiceManager;
 
-public class BatchStepHelper {
+public class BatchStepHelper extends BatchHelper {
     private List<Task> steps;
     private static final Logger logger = LogManager.getLogger(BatchStepHelper.class);
     private Task currentStep;
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private List<Property> properties;
-    private Property property;
-    private String myProblemStep;
-    private String mySolutionStep;
+    private String problemTask;
+    private String solutionTask;
     private String problemMessage;
     private String solutionMessage;
     private String processName = "";
     private String addToWikiField = "";
     private String script;
-    private final ServiceManager serviceManager = new ServiceManager();
     private final WebDav myDav = new WebDav();
     private List<String> processNameList = new ArrayList<>();
 
@@ -93,53 +88,6 @@ public class BatchStepHelper {
 
     public void setCurrentStep(Task currentStep) {
         this.currentStep = currentStep;
-    }
-
-    /**
-     * Get property for process.
-     *
-     * @return property for process
-     */
-    public Property getProperty() {
-        return this.property;
-    }
-
-    /**
-     * Set property for process.
-     *
-     * @param property
-     *            for process as Property object
-     */
-    public void setProperty(Property property) {
-        this.property = property;
-    }
-
-    /**
-     * Get list of process properties.
-     *
-     * @return list of process properties
-     */
-    public List<Property> getProperties() {
-        return this.properties;
-    }
-
-    /**
-     * Set list of process properties.
-     *
-     * @param properties
-     *            for process as Property objects
-     */
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
-    }
-
-    /**
-     * Get size of properties' list.
-     *
-     * @return size of properties' list
-     */
-    public int getPropertiesSize() {
-        return this.properties.size();
     }
 
     public List<String> getProcessNameList() {
@@ -218,29 +166,7 @@ public class BatchStepHelper {
             for (Task task : this.steps) {
                 Process process = task.getProcess();
                 if (!task.equals(this.currentStep)) {
-                    if (processProperty.getTitle() != null) {
-                        boolean match = false;
-                        for (Property processPe : process.getProperties()) {
-                            if (processPe.getTitle() != null) {
-                                if (processProperty.getTitle().equals(processPe.getTitle())
-                                        && processProperty.getContainer() == null ? processPe.getContainer() == null
-                                                : processProperty.getContainer().equals(processPe.getContainer())) {
-                                    processPe.setValue(processProperty.getValue());
-                                    match = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!match) {
-                            Property property = new Property();
-                            property.setTitle(processProperty.getTitle());
-                            property.setValue(processProperty.getValue());
-                            property.setContainer(processProperty.getContainer());
-                            property.setType(processProperty.getType());
-                            property.getProcesses().add(process);
-                            process.getProperties().add(property);
-                        }
-                    }
+                    process = prepareProcessWithProperty(process, processProperty);
                 } else {
                     if (!process.getProperties().contains(this.property)) {
                         process.getProperties().add(this.property);
@@ -275,16 +201,6 @@ public class BatchStepHelper {
 
     }
 
-    /**
-     * Get sorted properties.
-     *
-     * @return list of sorted properties
-     */
-    public List<Property> getSortedProperties() {
-        Collections.sort(this.properties);
-        return this.properties;
-    }
-
     private void saveStep() {
         Process p = this.currentStep.getProcess();
         List<Property> props = p.getProperties();
@@ -308,7 +224,7 @@ public class BatchStepHelper {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
         reportProblem();
         this.problemMessage = "";
-        this.myProblemStep = "";
+        this.problemTask = "";
         saveStep();
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
@@ -325,7 +241,7 @@ public class BatchStepHelper {
             saveStep();
         }
         this.problemMessage = "";
-        this.myProblemStep = "";
+        this.problemTask = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
     }
@@ -344,7 +260,7 @@ public class BatchStepHelper {
         try {
             Task temp = null;
             for (Task s : this.currentStep.getProcess().getTasks()) {
-                if (s.getTitle().equals(this.myProblemStep)) {
+                if (s.getTitle().equals(this.problemTask)) {
                     temp = s;
                 }
             }
@@ -370,8 +286,8 @@ public class BatchStepHelper {
                 this.currentStep.getProcess().getHistory().add(new History(myDate, temp.getOrdering().doubleValue(),
                         temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
                 /*
-                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
-                 * wieder schliessen
+                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
+                 * schliessen
                  */
                 List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
                         this.currentStep.getOrdering(), temp.getOrdering(), this.currentStep.getProcess().getId());
@@ -382,8 +298,7 @@ public class BatchStepHelper {
                 }
             }
             /*
-             * den Prozess aktualisieren, so dass der Sortierungshelper
-             * gespeichert wird
+             * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
              */
         } catch (DataException e) {
             logger.error(e);
@@ -431,7 +346,7 @@ public class BatchStepHelper {
             solveProblem();
             saveStep();
             this.solutionMessage = "";
-            this.mySolutionStep = "";
+            this.solutionTask = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
             return asf.filterAll();
@@ -454,7 +369,7 @@ public class BatchStepHelper {
                 saveStep();
             }
             this.solutionMessage = "";
-            this.mySolutionStep = "";
+            this.solutionTask = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
             return asf.filterAll();
@@ -480,14 +395,14 @@ public class BatchStepHelper {
         try {
             Task temp = null;
             for (Task task : this.currentStep.getProcess().getTasks()) {
-                if (task.getTitle().equals(this.mySolutionStep)) {
+                if (task.getTitle().equals(this.solutionTask)) {
                     temp = task;
                 }
             }
             if (temp != null) {
                 /*
-                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
-                 * wieder schliessen
+                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
+                 * schliessen
                  */
                 List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
                         this.currentStep.getOrdering(), this.currentStep.getProcess().getId());
@@ -519,8 +434,7 @@ public class BatchStepHelper {
                 this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                         this.currentStep.getProcess().getWikiField(), "info", message));
                 /*
-                 * den Prozess aktualisieren, so dass der Sortierungshelper
-                 * gespeichert wird
+                 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
                  */
             }
         } catch (DataException e) {
@@ -536,12 +450,23 @@ public class BatchStepHelper {
         this.problemMessage = problemMessage;
     }
 
-    public String getMyProblemStep() {
-        return this.myProblemStep;
+    /**
+     * Get problem Task as String.
+     * 
+     * @return problem Task as String
+     */
+    public String getProblemTask() {
+        return this.problemTask;
     }
 
-    public void setMyProblemStep(String myProblemStep) {
-        this.myProblemStep = myProblemStep;
+    /**
+     * Set problem Task as String.
+     * 
+     * @param problemTask
+     *            as String
+     */
+    public void setProblemTask(String problemTask) {
+        this.problemTask = problemTask;
     }
 
     public String getSolutionMessage() {
@@ -552,12 +477,23 @@ public class BatchStepHelper {
         this.solutionMessage = solutionMessage;
     }
 
-    public String getMySolutionStep() {
-        return this.mySolutionStep;
+    /**
+     * Get solution Task as String.
+     * 
+     * @return solution Task as String
+     */
+    public String getSolutionTask() {
+        return this.solutionTask;
     }
 
-    public void setMySolutionStep(String mySolutionStep) {
-        this.mySolutionStep = mySolutionStep;
+    /**
+     * Set solution Task as String.
+     * 
+     * @param solutionTask
+     *            as String
+     */
+    public void setSolutionTask(String solutionTask) {
+        this.solutionTask = solutionTask;
     }
 
     /**
@@ -662,14 +598,13 @@ public class BatchStepHelper {
      */
     public String batchDurchBenutzerZurueckgeben() {
 
-        for (Task s : this.steps) {
-
-            this.myDav.uploadFromHome(s.getProcess());
-            s.setProcessingStatusEnum(TaskStatus.OPEN);
-            if (serviceManager.getTaskService().isCorrectionStep(s)) {
-                s.setProcessingBegin(null);
+        for (Task task : this.steps) {
+            this.myDav.uploadFromHome(task.getProcess());
+            task.setProcessingStatusEnum(TaskStatus.OPEN);
+            if (serviceManager.getTaskService().isCorrectionStep(task)) {
+                task.setProcessingBegin(null);
             }
-            s.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+            task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
             currentStep.setProcessingTime(new Date());
             User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             if (ben != null) {
@@ -677,7 +612,7 @@ public class BatchStepHelper {
             }
 
             try {
-                this.serviceManager.getProcessService().save(s.getProcess());
+                this.serviceManager.getProcessService().save(task.getProcess());
             } catch (DataException e) {
                 logger.error(e);
             }
