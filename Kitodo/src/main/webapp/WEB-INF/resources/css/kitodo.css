@@ -23,6 +23,9 @@ body {
     line-height: 18px;
     background: url("#{resource['/images/background-top.svg']}") no-repeat #f3f3f3 center top fixed;
     background-size: auto 300px;
+    }
+
+body.first-visit {
     animation-duration: 1s;
     animation-name: slidein;
     }

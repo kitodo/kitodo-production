@@ -56,6 +56,7 @@ public class LoginForm implements Serializable {
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
+    private boolean firstVisit = true;
 
     /**
      * Log out.
@@ -389,5 +390,21 @@ public class LoginForm implements Serializable {
             result = serviceManager.getUserService().getHomeDirectory(loginForm.getMyBenutzer());
         }
         return result;
+    }
+
+    /**
+     * Checks and returns whether this is the first time the user visits a Kitodo
+     * page in the current session or not. Makes use of the fact that "LoginForm" is
+     * a SessionScoped bean.
+     *
+     * @return whether this is the users first visit to Kitodo during the current
+     *         session or not
+     */
+    public boolean isFirstVisit() {
+        boolean visit = firstVisit;
+        if (firstVisit) {
+            firstVisit = false;
+        }
+        return visit;
     }
 }
