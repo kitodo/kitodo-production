@@ -28,8 +28,8 @@ public class ImportProperty implements IProperty {
     private String validation = "";
     private Type type = Type.TEXT;
     private String value = "";
-    private List<String> possibleValues = new ArrayList<>();
-    private List<String> projects = new ArrayList<>();
+    private List<String> possibleValues;
+    private List<String> projects;
     private boolean required = false;
 
     /**
@@ -151,9 +151,7 @@ public class ImportProperty implements IProperty {
      */
     public List<String> getValueList() {
         String[] values = this.value.split("; ");
-        List<String> answer = new ArrayList<>();
-        answer.addAll(Arrays.asList(values));
-        return answer;
+        return new ArrayList<>(Arrays.asList(values));
     }
 
     /**

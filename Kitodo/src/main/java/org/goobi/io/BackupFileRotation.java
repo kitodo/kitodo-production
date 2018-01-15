@@ -150,14 +150,10 @@ public class BackupFileRotation {
     }
 
     private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
-
-        ArrayList<URI> filteredUris = new ArrayList<>();
         FilenameFilter filter = new FileNameMatchesFilter(filterFormat);
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
-        ArrayList<URI> subUris = fileService.getSubUris(filter, processDataDirectory);
-        filteredUris.addAll(subUris);
-        return filteredUris;
+        return fileService.getSubUris(filter, processDataDirectory);
     }
 
 }
