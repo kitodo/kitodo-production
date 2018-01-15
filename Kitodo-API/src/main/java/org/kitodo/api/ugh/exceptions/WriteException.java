@@ -11,19 +11,37 @@
 
 package org.kitodo.api.ugh.exceptions;
 
+/**
+ * Exception indicating that a write operation failed.
+ */
 public class WriteException extends UGHException {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new {@code PreferencesException}.
+     */
     public WriteException() {
     }
 
+    /**
+     * Creates a new {@code PreferencesException} with a message.
+     *
+     * @param message
+     *            error message
+     */
     public WriteException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a new {@code PreferencesException} with a message and a cause.
+     *
+     * @param message
+     *            error message
+     * @param cause
+     *            error cause
+     */
     public WriteException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

@@ -11,13 +11,25 @@
 
 package org.kitodo.api.ugh.exceptions;
 
+/**
+ * This exception is thrown, if a {@code ContentFile} is not linked to a
+ * {@code ContentFile} object, but it is assumed, that it is.
+ */
 public class ContentFileNotLinkedException extends UGHException {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new {@code ContentFileNotLinkedException}.
+     */
     public ContentFileNotLinkedException() {
     }
 
+    /**
+     * Creates a new {@code ContentFileNotLinkedException} with a message.
+     * 
+     * @param message
+     *            error message
+     */
     public ContentFileNotLinkedException(String message) {
         super(message);
     }

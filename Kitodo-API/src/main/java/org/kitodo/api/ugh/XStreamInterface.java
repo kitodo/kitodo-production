@@ -11,6 +11,9 @@
 
 package org.kitodo.api.ugh;
 
+/**
+ * Interface to the XStream-intern read-writer.
+ */
 public interface XStreamInterface extends FileformatInterface {
 
 }

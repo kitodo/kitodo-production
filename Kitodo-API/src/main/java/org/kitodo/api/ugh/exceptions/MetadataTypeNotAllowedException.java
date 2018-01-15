@@ -11,17 +11,37 @@
 
 package org.kitodo.api.ugh.exceptions;
 
+/**
+ * Exception indicating that a metadata type is not allowed.
+ */
 public class MetadataTypeNotAllowedException extends UGHException {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new {@code MetadataTypeNotAllowedException}.
+     */
     public MetadataTypeNotAllowedException() {
     }
 
+    /**
+     * Creates a new {@code MetadataTypeNotAllowedException} with a message.
+     *
+     * @param message
+     *            error message
+     */
     public MetadataTypeNotAllowedException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a new {@code MetadataTypeNotAllowedException} with a message and
+     * a cause.
+     *
+     * @param message
+     *            error message
+     * @param cause
+     *            error cause
+     */
     public MetadataTypeNotAllowedException(String message, Throwable cause) {
         super(message, cause);
     }

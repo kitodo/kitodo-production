@@ -11,6 +11,9 @@
 
 package org.kitodo.api.ugh;
 
+/**
+ * Interface to the AGORA-RDF read-writer.
+ */
 public interface RDFFileInterface extends FileformatInterface {
 
 }

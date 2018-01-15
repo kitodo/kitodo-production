@@ -11,23 +11,48 @@
 
 package org.kitodo.api.ugh.exceptions;
 
+/**
+ * Exception indicating a problem with the preferences.
+ */
 public class PreferencesException extends UGHException {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new {@code PreferencesException}.
+     */
     public PreferencesException() {
     }
 
+    /**
+     * Creates a new {@code PreferencesException} with a message.
+     * 
+     * @param message
+     *            error message
+     */
     public PreferencesException(String message) {
         super(message);
     }
 
-    public PreferencesException(String message, Throwable t) {
-        super(message, t);
+    /**
+     * Creates a new {@code PreferencesException} with a message and a cause.
+     * 
+     * @param message
+     *            error message
+     * @param cause
+     *            error cause
+     */
+    public PreferencesException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public PreferencesException(Throwable t) {
-        super(t);
+    /**
+     * Creates a new {@code PreferencesException} with a cause.
+     * 
+     * @param cause
+     *            error cause
+     */
+    public PreferencesException(Throwable cause) {
+        super(cause.getClass().getSimpleName() + (cause.getMessage() != null ? ": " + cause.getMessage() : ""), cause);
     }
 
 }

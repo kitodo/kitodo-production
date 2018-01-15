@@ -11,13 +11,25 @@
 
 package org.kitodo.api.ugh.exceptions;
 
+/**
+ * Exception is thrown, if metadata should be added, but the doc struct has no
+ * doc struct type.
+ */
 public class DocStructHasNoTypeException extends RuntimeException {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new {@code DocStructHasNoTypeException}.
+     */
     public DocStructHasNoTypeException() {
     }
 
+    /**
+     * Creates a new {@code DocStructHasNoTypeException} with a message.
+     * 
+     * @param message
+     *            error message
+     */
     public DocStructHasNoTypeException(String message) {
         super(message);
     }

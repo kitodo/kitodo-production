@@ -11,10 +11,18 @@
 
 package org.kitodo.api.ugh.exceptions;
 
+/**
+ * Exception indicating that a type is not allowed as child.
+ */
 public class TypeNotAllowedAsChildException extends UGHException {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new {@code TypeNotAllowedAsChildException} with a message.
+     *
+     * @param message
+     *            error message
+     */
     public TypeNotAllowedAsChildException(String message) {
         super(message);
     }

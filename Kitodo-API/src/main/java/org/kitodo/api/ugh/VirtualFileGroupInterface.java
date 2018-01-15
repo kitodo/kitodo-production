@@ -11,15 +11,49 @@
 
 package org.kitodo.api.ugh;
 
+/**
+ * A {@code VirtualFileGroup} contains all file groups needed for the METS/MODS
+ * export writer.
+ */
 public interface VirtualFileGroupInterface {
 
+    /**
+     * Sets the file suffix of the virtual file group.
+     * 
+     * @param suffix
+     *            file suffix to set
+     */
     public void setFileSuffix(String suffix);
 
+    /**
+     * Sets the internet MIME type of the virtual file group.
+     * 
+     * @param mimeType
+     *            the MIME type
+     */
     public void setMimetype(String mimeType);
 
+    /**
+     * Sets the name of the virtual file group.
+     * 
+     * @param name
+     *            name to set
+     */
     public void setName(String name);
 
+    /**
+     * Sets the ordinary of the virtual file group.
+     * 
+     * @param ordinary
+     *            ordinary to set
+     */
     public void setOrdinary(boolean ordinary);
 
-    public void setPathToFiles(String replace);
+    /**
+     * Sets the path to files of the virtual file group.
+     * 
+     * @param path
+     *            path to set
+     */
+    public void setPathToFiles(String path);
 }

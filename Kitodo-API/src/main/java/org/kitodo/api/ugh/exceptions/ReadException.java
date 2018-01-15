@@ -11,14 +11,30 @@
 
 package org.kitodo.api.ugh.exceptions;
 
+/**
+ * Exception indicating that a read operation failed.
+ */
 public class ReadException extends UGHException {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new {@code ReadException} with a message.
+     * 
+     * @param message
+     *            error message
+     */
     public ReadException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a new {@code ReadException} with a message and a cause.
+     * 
+     * @param message
+     *            error message
+     * @param cause
+     *            error cause
+     */
     public ReadException(String message, Throwable cause) {
         super(message, cause);
     }
