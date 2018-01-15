@@ -16,6 +16,7 @@ import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -626,7 +627,7 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException {
+    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException, IOException {
         for (Task s : this.steps) {
             boolean error = false;
 

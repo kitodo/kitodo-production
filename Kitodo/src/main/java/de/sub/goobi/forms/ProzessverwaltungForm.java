@@ -1116,7 +1116,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusUpForPage() throws DAOException, DataException {
+    public void setTaskStatusUpForPage() throws DAOException, DataException, IOException {
         List<ProcessDTO> processes = this.page.getListReload();
         for (ProcessDTO process : processes) {
             setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
@@ -1127,7 +1127,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusUpForSelection() throws DAOException, DataException {
+    public void setTaskStatusUpForSelection() throws DAOException, DataException, IOException {
         List<ProcessDTO> processDTOS = this.getSelectedProcesses();
         for (ProcessDTO processDTO : processDTOS) {
             setTaskStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
@@ -1138,14 +1138,14 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusUpForHits() throws DAOException, DataException {
+    public void setTaskStatusUpForHits() throws DAOException, DataException, IOException {
         List<ProcessDTO> processes = this.page.getCompleteList();
         for (ProcessDTO process : processes) {
             setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
-    private void setTaskStatusUp(Process process) throws DataException {
+    private void setTaskStatusUp(Process process) throws DataException, IOException {
         List<Task> tasks = process.getTasks();
 
         for (Task task : tasks) {
@@ -1233,7 +1233,7 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Task status up.
      */
-    public void setTaskStatusUp() throws DAOException, DataException {
+    public void setTaskStatusUp() throws DAOException, DataException, IOException {
         if (this.task.getProcessingStatusEnum() != TaskStatus.DONE) {
             this.task = serviceManager.getTaskService().setProcessingStatusUp(this.task);
             this.task.setEditTypeEnum(TaskEditType.ADMIN);
