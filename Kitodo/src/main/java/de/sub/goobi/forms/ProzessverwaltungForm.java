@@ -2389,14 +2389,20 @@ public class ProzessverwaltungForm extends BasisForm {
     // replace calls to this function with "/pages/processes" once we have completely
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                .get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("searchProcess.jsf")) {
-            return "/pages/processes" + urlSuffix;
-        } else {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("searchProcess.jsf")) {
+                return "/pages/processes" + urlSuffix;
+            } else {
+                return "/pages/ProzessverwaltungAlle" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
+            // used from it's integration test
+            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
             return "/pages/ProzessverwaltungAlle" + urlSuffix;
         }
     }
-
 }
