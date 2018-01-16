@@ -159,7 +159,7 @@ public class XMLReader {
      *            element to wrap
      * @return a HashSet containing the element
      */
-    private static Set<ObjectType> inASet(ObjectType element) {
+    private static Set<ObjectType> wrapElementInSet(ObjectType element) {
         return new HashSet<>(Arrays.asList(new ObjectType[] {element }));
     }
 
@@ -238,7 +238,7 @@ public class XMLReader {
             if (type.equals(XML.SPACE.getIdentifier())) {
                 space = Space.resolve(attribute.getValue().toLowerCase());
             }
-            result.replace(type, inASet(storage.createLeaf(attribute.getValue(), lang)));
+            result.replace(type, wrapElementInSet(storage.createLeaf(attribute.getValue(), lang)));
         }
 
         /*
@@ -259,20 +259,20 @@ public class XMLReader {
                     result.replace(relation, parseRelationElement((Element) child, lang, space, documentNS, storage));
                 } else if (LITERAL_TYPES.containsKey(literalType)) {
                     // or a literal type
-                    result.replace(RDF.toURL(++count), inASet(parseLiteralElement((Element) child,
+                    result.replace(RDF.toURL(++count), wrapElementInSet(parseLiteralElement((Element) child,
                         LITERAL_TYPES.get(literalType), lang, space, documentNS, storage)));
                 } else {
                     // or the child is an ordered element (represents a node,
                     // linked by a numeric relation representing its element
                     // index)
                     result.replace(RDF.toURL(++count),
-                        inASet(parseNodeElement((Element) child, lang, space, documentNS, false, storage)));
+                        wrapElementInSet(parseNodeElement((Element) child, lang, space, documentNS, false, storage)));
                 }
             } else if (child instanceof Text) {
                 // or the child is an XML literal
                 String value = space.isToPreserve() ? child.getTextContent() : child.getTextContent().trim();
                 if (!value.isEmpty()) {
-                    result.replace(RDF.toURL(++count), inASet(storage.createLeaf(value, lang)));
+                    result.replace(RDF.toURL(++count), wrapElementInSet(storage.createLeaf(value, lang)));
                 }
             } else if (child instanceof Comment) {
                 // Ignore XML comments
