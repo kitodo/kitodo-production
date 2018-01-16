@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.forms.ProzessverwaltungForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -89,6 +91,8 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.enums.ObjectMode;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -145,6 +149,71 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     @Override
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    @Override
+    public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+
+        // TODO: find other way than retrieving the form bean to access "displayMode"
+        // e.g. whether templates or processes should be returned!
+        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
+        if (Objects.equals(form, null)) {
+            form = new ProzessverwaltungForm();
+        }
+        boolean isTemplate = Objects.equals(form.getDisplayMode(), ObjectMode.TEMPLATE);
+        Map<String, String> filterMap = (Map<String, String>) filters;
+
+        BoolQueryBuilder query = null;
+
+        if (Objects.equals(filters, null) || filters.isEmpty()) {
+            return convertJSONObjectsToDTOs(findBySort(false, false, isTemplate, sort, offset, size), false);
+        }
+
+        for (Map.Entry<String, String> entry : filterMap.entrySet()) {
+            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, isTemplate, false, false);
+            if (!form.isShowClosedProcesses()) {
+                query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+            }
+            if (!form.isShowArchivedProjects()) {
+                query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+            }
+        }
+
+        String queryString = "";
+        if (!Objects.equals(query, null)) {
+            queryString = query.toString();
+        }
+        return convertJSONObjectsToDTOs(searcher.findDocuments(queryString, sort, offset, size), false);
+    }
+
+    @Override
+    public String createCountQuery(Map filters) throws DataException {
+        // TODO: find other way than retrieving the form bean to access "displayMode"
+        // e.g. whether templates or processes should be returned!
+        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
+        boolean isTemplate = Objects.equals(form.getDisplayMode(), ObjectMode.TEMPLATE);
+        Map<String, String> filterMap = (Map<String, String>) filters;
+
+        BoolQueryBuilder query = null;
+
+        if (Objects.equals(filters, null) || filters.isEmpty()) {
+            query = new BoolQueryBuilder();
+            query.must(getQuerySortHelperStatus(false));
+            query.must(getQueryProjectArchived(false));
+            query.must(getQueryTemplate(isTemplate));
+        } else {
+            for (Map.Entry<String, String> entry : filterMap.entrySet()) {
+                query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, isTemplate, false, false);
+                if (!form.isShowClosedProcesses()) {
+                    query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
+                }
+                if (!form.isShowArchivedProjects()) {
+                    query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+                }
+            }
+        }
+
+        return query.toString();
     }
 
     /**
@@ -496,6 +565,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             propertyIds.add(getIdFromJSONObject(property));
         }
         return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
+    }
+
+    private List<JSONObject> findBySort(boolean closed, boolean archived, boolean template, String sort,
+            Integer offset, Integer size) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQuerySortHelperStatus(closed));
+        query.must(getQueryProjectArchived(archived));
+        query.must(getQueryTemplate(template));
+        return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
     private List<JSONObject> findBySortHelperStatusProjectArchivedAndTemplate(boolean closed, boolean archived,

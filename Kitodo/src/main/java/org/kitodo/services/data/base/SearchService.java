@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -138,12 +139,40 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            start point for get results
      * @param size
      *            amount of requested results
+     * @return list of all objects from ES
+     */
+    public List<S> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
+    }
+
+    /**
+     * Find list of all objects from ES.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
      * @param related
      *            true or false
      * @return list of all objects from ES
      */
     public List<S> findAll(String sort, Integer offset, Integer size, boolean related) throws DataException {
         return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), related);
+    }
+
+    /**
+     * This function can be overriden to implement specific filters e.g. in ProcessService.
+     * Since there are no general filters at the moment this function just returns null,
+     * but a query for general filters can be implemented here in the future.
+     *
+     * @param filters Map of parameters used for filtering
+     * @return null
+     * @throws DataException that can be caused by ElasticSearch
+     */
+    public String createCountQuery(Map filters) throws DataException {
+        return null;
     }
 
     /**
