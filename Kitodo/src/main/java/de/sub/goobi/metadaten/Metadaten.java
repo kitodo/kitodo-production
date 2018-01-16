@@ -1143,7 +1143,7 @@ public class Metadaten {
      * @return
      *      The position of new inserted DocStruc elements.
      */
-    public PositionOfNewDocStrucElement getPositionOfNewDocStrucElement () {
+    public PositionOfNewDocStrucElement getPositionOfNewDocStrucElement() {
         return this.positionOfNewDocStrucElement;
     }
 
@@ -1399,9 +1399,9 @@ public class Metadaten {
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         for (DocStruct mySeitenDocStruct : meineListe) {
             List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
-            for (Metadata meineSeite : mySeitenDocStructMetadaten) {
-                this.allPagesNew[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.process);
-                this.allPages[zaehler] = determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": " + meineSeite.getValue();
+            for (Metadata page : mySeitenDocStructMetadaten) {
+                this.allPagesNew[zaehler] = new MetadatumImpl(page, zaehler, this.myPrefs, this.process);
+                this.allPages[zaehler] = determineMetadata(page.getDocStruct(), "physPageNumber").trim() + ": " + page.getValue();
             }
             zaehler++;
         }

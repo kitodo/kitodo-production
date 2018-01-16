@@ -41,7 +41,7 @@
                         </h:commandLink>
 
                         <!-- Download-Schaltknopf für Page-->
-                        <h:commandLink action="#{AktuelleSchritteForm.DownloadToHomePage}"
+                        <h:commandLink action="#{AktuelleSchritteForm.downloadToHomePage}"
                                        title="#{msgs.alleTrefferDieserSeiteInMeinHomeverzeichnis}"
                                        onclick="if (!confirm('#{msgs.download}?')) return">
                             <h:graphicImage value="/pages/images/buttons/load_down1.gif" alt="download page"
@@ -148,7 +148,7 @@
                                 <h:outputText value="#{msgs.sperrungen}"/>
                                 <h:selectBooleanCheckbox value="#{AktuelleSchritteForm.anzeigeAnpassen['lockings']}"/>
                             </h:panelGrid>
-                            <h:commandLink action="#{NavigationForm.Reload}" style="margin-left:44px"
+                            <h:commandLink action="#{NavigationForm.reload}" style="margin-left:44px"
                                            title="#{msgs.uebernehmen}">
                                 <h:outputText value="#{msgs.uebernehmen}"/>
                             </h:commandLink>

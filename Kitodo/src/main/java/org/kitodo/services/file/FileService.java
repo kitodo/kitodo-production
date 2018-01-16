@@ -714,7 +714,8 @@ public class FileService {
      *            as String
      * @return unmapped URI
      */
-    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle, URI processDataDirectory, ProcessSubType processSubType,
+    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle,
+                                               URI processDataDirectory, ProcessSubType processSubType,
                                                String resourceName) throws DAOException {
         URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType, resourceName);
         return getSubUris(filter, processSubTypeURI);
