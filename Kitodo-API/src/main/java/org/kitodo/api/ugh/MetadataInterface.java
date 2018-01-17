@@ -12,9 +12,9 @@
 package org.kitodo.api.ugh;
 
 /**
- * A meta-data object represents a single meta-data entry. Each meta-data entry has
- * at least a value and a type. The type of the a meta-data element is stored as
- * a meta-data type object.
+ * A meta-data object represents a single meta-data entry. Each meta-data entry
+ * has at least a value and a type. The type of the a meta-data element is
+ * stored as a meta-data type object.
  *
  * <p>
  * Metadata can be any kind of data, which can be attached to a structure
@@ -23,13 +23,14 @@ package org.kitodo.api.ugh;
  */
 public interface MetadataInterface {
     /**
-     * Returns the document structure instance, to which this meta-data object belongs.
-     * This is extremely helpful, if only the meta-data instance is stored in a
-     * list; the reference to the associated document structure instance is always kept.
+     * Returns the document structure instance, to which this meta-data object
+     * belongs. This is extremely helpful, if only the meta-data instance is
+     * stored in a list; the reference to the associated document structure
+     * instance is always kept.
      *
      * @return the document structure instance
      */
-    public DocStructInterface getDocStruct();
+    DocStructInterface getDocStruct();
 
     /**
      * Returns the type of the meta-data instance. The MetadataType object which
@@ -38,7 +39,7 @@ public interface MetadataInterface {
      *
      * @return the type of the meta-data instance
      */
-    public MetadataTypeInterface getMetadataType();
+    MetadataTypeInterface getMetadataType();
 
     /**
      * Returns the value of the meta-data object. Is always a string value all
@@ -46,7 +47,7 @@ public interface MetadataInterface {
      *
      * @return the value of the meta-data object
      */
-    public String getValue();
+    String getValue();
 
     /**
      * Sets the document structure entity to which this object belongs to.
@@ -54,7 +55,7 @@ public interface MetadataInterface {
      * @param docStruct
      *            document structure entity to which this object belongs
      */
-    public void setDocStruct(DocStructInterface docStruct);
+    void setDocStruct(DocStructInterface docStruct);
 
     /**
      * Sets the MetadataType for this instance.
@@ -63,15 +64,15 @@ public interface MetadataInterface {
      *            type to set
      * @return always {@code true}. The result is never used.
      */
-    public boolean setType(MetadataTypeInterface metadataType);
+    boolean setType(MetadataTypeInterface metadataType);
 
     /**
      * Sets the meta-data value.
-     * 
+     *
      * @param value
      *            value to set
      *
      * @return always {@code true}. The result is never used.
      */
-    public boolean setStringValue(String value);
+    boolean setStringValue(String value);
 }

@@ -54,7 +54,7 @@ public interface MetadataGroupInterface {
      *
      * @return all meta-data entries
      */
-    public List<MetadataInterface> getMetadataList();
+    List<MetadataInterface> getMetadataList();
 
     /**
      * Returns all person-type meta-data entries of a given type.
@@ -63,19 +63,19 @@ public interface MetadataGroupInterface {
      *            type of meta-data entries to return
      * @return all meta-data entries of that type
      */
-    public Iterable<PersonInterface> getPersonByType(String type);
+    Iterable<PersonInterface> getPersonByType(String type);
 
     /**
      * Returns all person-type meta-data entries.
      *
      * @return all person-type meta-data entries
      */
-    public Collection<PersonInterface> getPersonList();
+    Collection<PersonInterface> getPersonList();
 
     /**
      * Returns the meta-data group type of this meta-data group.
      *
      * @return the meta-data group type
      */
-    public MetadataGroupTypeInterface getMetadataGroupType();
+    MetadataGroupTypeInterface getMetadataGroupType();
 }

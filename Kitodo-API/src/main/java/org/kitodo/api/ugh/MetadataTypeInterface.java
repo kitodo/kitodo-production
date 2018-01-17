@@ -66,7 +66,7 @@ public interface MetadataTypeInterface {
 
     /**
      * Returns whether the meta-data type is a person type or not.
-     * 
+     *
      * @return whether the meta-data type is a person type
      */
     boolean getIsPerson();
@@ -79,14 +79,14 @@ public interface MetadataTypeInterface {
      *            language of the display label to return
      * @return the display label in the given language
      */
-    public String getLanguage(String language);
+    String getLanguage(String language);
 
     /**
      * Returns the internal name (that is, the ID) of this meta-data group.
      *
      * @return the ID of this
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns the display label of this meta-data group type in a given
@@ -96,7 +96,7 @@ public interface MetadataTypeInterface {
      *            language of the display label to return
      * @return the display label in the given language
      */
-    public default String getNameByLanguage(String language) {
+    default String getNameByLanguage(String language) {
         return getLanguage(language);
     }
 
@@ -106,7 +106,7 @@ public interface MetadataTypeInterface {
      *
      * @return one of "1m", "1o", "+", or "*"
      */
-    public String getNum();
+    String getNum();
 
     /**
      * Sets all display labels for this meta-data type.
@@ -119,19 +119,19 @@ public interface MetadataTypeInterface {
 
     /**
      * Sets whether the meta-data type is an identifier type.
-     * 
+     *
      * @param identifier
      *            whether the meta-data type is an identifier type
      */
-    public void setIdentifier(boolean identifier);
+    void setIdentifier(boolean identifier);
 
     /**
      * Sets whether the meta-data type is a person type.
-     * 
+     *
      * @param isPerson
      *            whether the meta-data type is a person type
      */
-    public void setIsPerson(boolean isPerson);
+    void setIsPerson(boolean isPerson);
 
     /**
      * Sets the internal name (that is, the ID) of this meta-data group.

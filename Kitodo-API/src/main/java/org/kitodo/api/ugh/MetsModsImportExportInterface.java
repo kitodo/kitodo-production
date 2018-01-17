@@ -21,7 +21,7 @@ public interface MetsModsImportExportInterface extends FileformatInterface {
      * DocStruct element of the logical structure tree of a digital document, a
      * METS pointer element will be created during export.
      */
-    public static final String CREATE_MPTR_ELEMENT_TYPE = "MetsPointerURL";
+    static final String CREATE_MPTR_ELEMENT_TYPE = "MetsPointerURL";
 
     /**
      * If there is a meta data element of this type associated with a DocStruct
@@ -30,7 +30,7 @@ public interface MetsModsImportExportInterface extends FileformatInterface {
      * will have assigned the value assigned to the last meta data element of
      * this type associated with the DocStruct element.
      */
-    public static final String CREATE_LABEL_ATTRIBUTE_TYPE = "TitleDocMain";
+    static final String CREATE_LABEL_ATTRIBUTE_TYPE = "TitleDocMain";
 
     /**
      * If there is a meta data element of this type associated with a DocStruct
@@ -39,7 +39,7 @@ public interface MetsModsImportExportInterface extends FileformatInterface {
      * export which will have assigned the value assigned to the last meta data
      * element of this type associated with the DocStruct element.
      */
-    public static final String CREATE_ORDERLABEL_ATTRIBUTE_TYPE = "TitleDocMainShort";
+    static final String CREATE_ORDERLABEL_ATTRIBUTE_TYPE = "TitleDocMainShort";
 
     /**
      * Sets the content IDs of the METS/MODS import export.
@@ -58,7 +58,8 @@ public interface MetsModsImportExportInterface extends FileformatInterface {
     void setDigiprovPresentation(String digiprovPresentation);
 
     /**
-     * Sets the digital provenience presentation anchor of the METS/MODS import export.
+     * Sets the digital provenience presentation anchor of the METS/MODS import
+     * export.
      *
      * @param digiprovPresentationAnchor
      *            the digital provenience presentation anchor to set
@@ -74,7 +75,8 @@ public interface MetsModsImportExportInterface extends FileformatInterface {
     void setDigiprovReference(String digiprovReference);
 
     /**
-     * Sets the digital provenience reference anchor of the METS/MODS import export.
+     * Sets the digital provenience reference anchor of the METS/MODS import
+     * export.
      *
      * @param digiprovReferenceAnchor
      *            the digital provenience reference anchor to set
