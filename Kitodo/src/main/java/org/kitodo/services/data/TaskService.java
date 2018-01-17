@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -86,6 +88,32 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
         return instance;
     }
+
+    @Override
+    public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        if (login == null) {
+            return new ArrayList<>();
+        }
+
+        // TODO: find other way than retrieving the form bean to access "hideCorrectionTasks" and "showAutomaticTasks"
+        // e.g. which tasks should be returned!
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("processingUser", login.getMyBenutzer().getId(), true));
+        query.must(createSimpleQuery("processingStatus", TaskStatus.LOCKED.getValue(), false));
+        query.must(createSimpleQuery("processingStatus", TaskStatus.DONE.getValue(), false));
+        AktuelleSchritteForm form = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+        if (form.getHideCorrectionTasks()) {
+            query.must(createSimpleQuery("priority", 10, true));
+        }
+        if (!form.getShowAutomaticTasks()) {
+            query.must(createSimpleQuery("typeAutomatic", "false", true));
+        }
+
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+    }
+
 
     /**
      * Method saves or removes dependencies with process, users and user's groups
