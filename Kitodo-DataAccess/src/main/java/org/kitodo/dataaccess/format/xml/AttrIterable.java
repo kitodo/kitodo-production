@@ -12,27 +12,39 @@
 package org.kitodo.dataaccess.format.xml;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
 
 /**
- * The class provides the ability to iterate over the children of a DOM element.
+ * The class provides the ability to iterate over the attributes of a DOM
+ * element.
  */
-class GetChildren implements Iterable<Node>, Iterator<Node> {
+class AttrIterable implements Iterable<Attr>, Iterator<Attr> {
     /**
-     * The next child to offer.
+     * The attributes of the element.
      */
-    private Node next;
+    private final NamedNodeMap attributes;
 
     /**
-     * Creates a class to iterate over the children of a DOM element.
-     *
-     * @param parent
-     *            parent over whose children shall be iterated
+     * The index of the next element to return.
      */
-    GetChildren(Element parent) {
-        next = parent.getFirstChild();
+    private int i;
+
+    /**
+     * The length of the attribute collection.
+     */
+    private final int length;
+
+    /**
+     * Creates a class to iterate over the attributes of a DOM element.
+     *
+     * @param element
+     *            element over whose attributes shall be iterated
+     */
+    AttrIterable(NamedNodeMap attributes) {
+        this.attributes = attributes;
+        length = attributes != null ? attributes.getLength() : -1;
     }
 
     /**
@@ -42,14 +54,14 @@ class GetChildren implements Iterable<Node>, Iterator<Node> {
      */
     @Override
     public boolean hasNext() {
-        return next != null;
+        return i < length;
     }
 
     /**
      * Returns an iterator instance, which is this implementation.
      */
     @Override
-    public Iterator<Node> iterator() {
+    public Iterator<Attr> iterator() {
         return this;
     }
 
@@ -57,13 +69,8 @@ class GetChildren implements Iterable<Node>, Iterator<Node> {
      * Returns the next element while iterating.
      */
     @Override
-    public Node next() {
-        if (next == null) {
-            throw new NoSuchElementException();
-        }
-        Node current = next;
-        next = next.getNextSibling();
-        return current;
+    public Attr next() {
+        return (Attr) attributes.item(i++);
     }
 
     /**

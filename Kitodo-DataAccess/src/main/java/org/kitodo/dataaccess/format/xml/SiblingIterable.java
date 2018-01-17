@@ -12,39 +12,27 @@
 package org.kitodo.dataaccess.format.xml;
 
 import java.util.Iterator;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import java.util.NoSuchElementException;
+
+import org.w3c.dom.Node;
 
 /**
- * The class provides the ability to iterate over the attributes of a DOM
- * element.
+ * The class provides the ability to iterate over the children of a DOM element.
  */
-class GetAttributes implements Iterable<Attr>, Iterator<Attr> {
+class SiblingIterable implements Iterable<Node>, Iterator<Node> {
     /**
-     * The attributes of the element.
+     * The next child to offer.
      */
-    private final NamedNodeMap attributes;
+    private Node next;
 
     /**
-     * The index of the next element to return.
-     */
-    private int i;
-
-    /**
-     * The length of the attribute collection.
-     */
-    private final int length;
-
-    /**
-     * Creates a class to iterate over the attributes of a DOM element.
+     * Creates a class to iterate over the children of a DOM element.
      *
-     * @param element
-     *            element over whose attributes shall be iterated
+     * @param parent
+     *            parent over whose children shall be iterated
      */
-    GetAttributes(Element element) {
-        attributes = element.getAttributes();
-        length = attributes != null ? attributes.getLength() : -1;
+    SiblingIterable(Node firstChild) {
+        next = firstChild;
     }
 
     /**
@@ -54,14 +42,14 @@ class GetAttributes implements Iterable<Attr>, Iterator<Attr> {
      */
     @Override
     public boolean hasNext() {
-        return i < length;
+        return next != null;
     }
 
     /**
      * Returns an iterator instance, which is this implementation.
      */
     @Override
-    public Iterator<Attr> iterator() {
+    public Iterator<Node> iterator() {
         return this;
     }
 
@@ -69,8 +57,13 @@ class GetAttributes implements Iterable<Attr>, Iterator<Attr> {
      * Returns the next element while iterating.
      */
     @Override
-    public Attr next() {
-        return (Attr) attributes.item(i++);
+    public Node next() {
+        if (next == null) {
+            throw new NoSuchElementException();
+        }
+        Node current = next;
+        next = next.getNextSibling();
+        return current;
     }
 
     /**

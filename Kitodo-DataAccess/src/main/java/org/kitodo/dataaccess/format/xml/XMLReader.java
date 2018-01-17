@@ -26,9 +26,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.kitodo.dataaccess.Node;
 import org.kitodo.dataaccess.NodeReference;
 import org.kitodo.dataaccess.ObjectType;
@@ -153,17 +155,6 @@ public class XMLReader {
     }
 
     /**
-     * Wraps an element in a set.
-     *
-     * @param element
-     *            element to wrap
-     * @return a HashSet containing the element
-     */
-    private static Set<ObjectType> wrapElementInSet(ObjectType element) {
-        return new HashSet<>(Arrays.asList(new ObjectType[] {element }));
-    }
-
-    /**
      * Parse an element to a literal.
      *
      * @param element
@@ -227,7 +218,7 @@ public class XMLReader {
          * Processing the attributes: For each attribute create a literal.
          */
 
-        for (Attr attribute : new GetAttributes(element)) {
+        for (Attr attribute : new AttrIterable(element.getAttributes())) {
             String type = getType(attribute, element, documentNS);
             if (type.startsWith(Namespaces.XMLNS_NAMESPACE)) {
                 continue;
@@ -245,7 +236,7 @@ public class XMLReader {
          * Processing the children.
          */
         long count = 0;
-        for (org.w3c.dom.Node child : new GetChildren(element)) {
+        for (org.w3c.dom.Node child : new SiblingIterable(element.getFirstChild())) {
 
             // Either the child is an XML element
             if (child instanceof Element) {
@@ -310,7 +301,7 @@ public class XMLReader {
          * thus should not have any attributes to be converted.
          */
 
-        for (Attr attribute : new GetAttributes(element)) {
+        for (Attr attribute : new AttrIterable(element.getAttributes())) {
             String url = getType(attribute, element, documentNS);
             if ((url.equals(RDF.PROPERTY.getIdentifier()) && attribute.getValue().equals(RDF.BAG.getIdentifier()))
                     || url.equals(RDF.VALUE.getIdentifier()) || url.startsWith(Namespaces.XMLNS_NAMESPACE)) {
@@ -333,7 +324,7 @@ public class XMLReader {
          * element.
          */
 
-        for (org.w3c.dom.Node child : new GetChildren(element)) {
+        for (org.w3c.dom.Node child : new SiblingIterable(element.getFirstChild())) {
 
             // Either the child is an XML element
             if (child instanceof Element) {
@@ -361,7 +352,7 @@ public class XMLReader {
                 Space literalSpace = space;
                 boolean canCreateLiteralType = true;
 
-                for (Attr attribute : new GetAttributes(element)) {
+                for (Attr attribute : new AttrIterable(element.getAttributes())) {
                     String type = getType(attribute, element, documentNS);
                     if (type.startsWith(Namespaces.XMLNS_NAMESPACE)) {
                         continue;
@@ -555,5 +546,16 @@ public class XMLReader {
             String message = e.getMessage();
             throw new IllegalArgumentException(message != null ? message : e.getClass().getName(), e);
         }
+    }
+
+    /**
+     * Wraps an element in a set.
+     *
+     * @param element
+     *            element to wrap
+     * @return a HashSet containing the element
+     */
+    private static Set<ObjectType> wrapElementInSet(ObjectType element) {
+        return new HashSet<>(Arrays.asList(new ObjectType[] {element }));
     }
 }
