@@ -105,7 +105,7 @@ header {
     position: relative;
     }
 
-#portal-header {
+body.first-visit #portal-header {
     animation-duration: 2s;
     animation-name: fadein;
     }
@@ -411,6 +411,9 @@ main {
     position: relative;
     z-index: 2;
     margin-bottom: 80px;
+    }
+
+body.first-visit main {
     animation-duration: 3s;
     animation-name: fadein;
     }
