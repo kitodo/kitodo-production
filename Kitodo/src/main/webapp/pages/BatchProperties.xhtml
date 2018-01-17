@@ -88,7 +88,7 @@
                                                                                     itemValue="#{process}"/>
                                                                 </h:selectOneListbox>
 
-                                                                <h:commandLink action="#{NavigationForm.Reload}">
+                                                                <h:commandLink action="#{NavigationForm.reload}">
                                                                     <h:graphicImage alt="reload"
                                                                                     value="/pages/images/buttons/reload_doc.gif"
                                                                                     style="vertical-align:middle;margin-bottom:5px;"/>
@@ -134,7 +134,7 @@
                                                                             <h:outputText value="#{property.value}"/>
                                                                         </td>
                                                                         <td class="standardTable_ColumnCentered">
-                                                                            <h:commandLink action="#{NavigationForm.Reload}" title="#{msgs.bearbeiten}">
+                                                                            <h:commandLink action="#{NavigationForm.reload}" title="#{msgs.bearbeiten}">
                                                                                 <h:graphicImage alt="edit" value="/pages/images/buttons/edit.gif"/>
                                                                                 <t:updateActionListener
                                                                                         property="#{BatchForm.batchHelper.property}"
@@ -228,7 +228,7 @@
                                                             <tr>
                                                                 <td class="eingabeBoxen_row3" align="left">
                                                                     <h:commandButton value="#{msgs.abbrechen}"
-                                                                                     action="#{NavigationForm.Reload}"
+                                                                                     action="#{NavigationForm.reload}"
                                                                                      immediate="true">
                                                                         <t:updateActionListener
                                                                                 property="#{BatchForm.editMode}"

@@ -465,6 +465,7 @@ public class MetadatenHelper implements Comparator<Object> {
                             // element
                         }
                     } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                        logger.error(e);
                     }
                 }
             }

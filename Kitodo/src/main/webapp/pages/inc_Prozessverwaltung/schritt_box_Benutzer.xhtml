@@ -61,7 +61,7 @@
         <p:dialog widgetVar="addUserDialog" header="#{msgs.benutzerHinzufuegen}"
                   height="380px" width="430px"
                   dynamic="true" modal="true"
-                  onHide="#{NavigationForm.Reload()}">
+                  onHide="#{NavigationForm.reload()}">
             <f:subview id="addTaskToUserSubView">
                 <ui:include src="schritt_box_BenutzerPopup.xhtml"/>
             </f:subview>

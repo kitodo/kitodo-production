@@ -53,7 +53,7 @@
                                             <ui:fragment rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                                 <td rowspan="2" align="right">
                                                     <h:commandLink title="#{msgs.prozessdetailsBearbeiten}"
-                                                                   action="#{NavigationForm.Reload}" style=";margin-right:20px">
+                                                                   action="#{NavigationForm.reload}" style=";margin-right:20px">
                                                         <h:graphicImage value="/pages/images/buttons/edit_20.gif" alt="edit"/>
                                                         <t:updateActionListener property="#{ProzessverwaltungForm.editMode}"
                                                                                 value="#{objectMode.PROCESS}"/>
@@ -249,7 +249,7 @@
 
                 <tr>
                     <td class="eingabeBoxen_row3" align="left">
-                        <h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.Reload}">
+                        <h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.reload}">
                             <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                         </h:commandButton>
                     </td>

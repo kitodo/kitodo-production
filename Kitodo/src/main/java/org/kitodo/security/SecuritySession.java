@@ -11,10 +11,7 @@
 
 package org.kitodo.security;
 
-import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-
-import java.util.Date;
 
 public class SecuritySession {
     private String sessionId;
