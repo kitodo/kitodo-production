@@ -120,13 +120,11 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
                     pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.processCount.getFieldLocation()]);
                 }
 
-                // TODO remove following lines all the way to system.out
                 for (int i = 0; i < row.length; i++) {
                     message.append("|");
                     message.append(row[i]);
                 }
                 logger.debug(Integer.toString(rowCount) + message);
-
             }
         }
 

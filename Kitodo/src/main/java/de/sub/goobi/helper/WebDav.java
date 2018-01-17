@@ -91,16 +91,18 @@ public class WebDav implements Serializable {
 
     /**
      * Remove Folders from Directory.
+     *
+     * @param uris list of URI
+     * @param directory URI
      */
-    // TODO: Use generic types
-    public void removeAllFromHome(List<URI> inList, URI inVerzeichnis) {
+    public void removeAllFromHome(List<URI> uris, URI directory) {
         URI verzeichnisAlle;
         User currentUser = Helper.getCurrentUser();
         try {
             if (currentUser != null) {
                 verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser)
-                        .resolve(inVerzeichnis);
-                for (URI name : inList) {
+                        .resolve(directory);
+                for (URI name : uris) {
                     fileService.deleteSymLink(verzeichnisAlle.resolve(name));
                 }
             } else {

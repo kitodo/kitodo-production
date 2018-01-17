@@ -193,7 +193,6 @@ public class BeanHelper {
             propertyNew.getProcesses().add(processCopy);
             myProperties.add(propertyNew);
         }
-        // TODO read property configuration
         processCopy.setProperties(myProperties);
     }
 
