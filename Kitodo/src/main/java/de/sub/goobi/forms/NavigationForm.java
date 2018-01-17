@@ -32,7 +32,7 @@ public class NavigationForm implements Serializable {
         this.aktuell = aktuell;
     }
 
-    public String Reload() {
+    public String reload() {
         return null;
     }
 

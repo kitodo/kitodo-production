@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -739,7 +738,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return String
      */
-    public String DownloadToHomePage() {
+    public String downloadToHomePage() {
         download();
         // calcHomeImages();
         Helper.setMeldung(null, "Created directies in user home", "");

@@ -117,7 +117,7 @@
             </td>
             <td width="1%" valign="top" align="right" nowrap="">
                 <div style="border: 2px dashed silver">
-                    <h:commandLink target="_self" action="#{NavigationForm.Reload}"
+                    <h:commandLink target="_self" action="#{NavigationForm.reload}"
                                    style="margin:5px" title="#{msgs.verschiebenAbbrechen}">
                         <h:graphicImage value="/pages/images/buttons/cancel1.gif" alt="cancel"
                                         style="border: 0px;vertical-align:middle;"/>
@@ -129,7 +129,7 @@
                     </h:commandLink>
 
                     <h:commandButton id="docStructVerschiebenAbbrechen"
-                                     action="#{NavigationForm.Reload}" style="display:none">
+                                     action="#{NavigationForm.reload}" style="display:none">
                         <t:updateActionListener
                                 property="#{Metadaten.modeMoveStructureElement}"
                                 value="false"/>

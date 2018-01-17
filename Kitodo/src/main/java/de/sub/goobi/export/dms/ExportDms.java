@@ -445,13 +445,13 @@ public class ExportDms extends ExportMets {
     }
 
     private void copyFiles(ArrayList<URI> files, URI destination) throws IOException {
-        for (int i = 0; i < files.size(); i++) {
-            if (fileService.isFile(files.get(i))) {
+        for (URI file : files) {
+            if (fileService.isFile(file)) {
                 if (exportDmsTask != null) {
-                    exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
+                    exportDmsTask.setWorkDetail(fileService.getFileName(file));
                 }
-                URI target = destination.resolve(File.separator + fileService.getFileName(files.get(i)));
-                fileService.copyFile(files.get(i), target);
+                URI target = destination.resolve(File.separator + fileService.getFileName(file));
+                fileService.copyFile(file, target);
             }
         }
     }

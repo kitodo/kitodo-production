@@ -93,30 +93,30 @@ public class LdapUser implements DirContext {
             }
             this.myAttrs.put(oc);
 
-            this.myAttrs.put("uid", ReplaceVariables(lp.getUid(), inUser, inUidNumber));
-            this.myAttrs.put("cn", ReplaceVariables(lp.getUid(), inUser, inUidNumber));
-            this.myAttrs.put("displayName", ReplaceVariables(lp.getDisplayName(), inUser, inUidNumber));
-            this.myAttrs.put("description", ReplaceVariables(lp.getDescription(), inUser, inUidNumber));
-            this.myAttrs.put("gecos", ReplaceVariables(lp.getGecos(), inUser, inUidNumber));
-            this.myAttrs.put("loginShell", ReplaceVariables(lp.getLoginShell(), inUser, inUidNumber));
-            this.myAttrs.put("sn", ReplaceVariables(lp.getSn(), inUser, inUidNumber));
-            this.myAttrs.put("homeDirectory", ReplaceVariables(lp.getHomeDirectory(), inUser, inUidNumber));
+            this.myAttrs.put("uid", replaceVariables(lp.getUid(), inUser, inUidNumber));
+            this.myAttrs.put("cn", replaceVariables(lp.getUid(), inUser, inUidNumber));
+            this.myAttrs.put("displayName", replaceVariables(lp.getDisplayName(), inUser, inUidNumber));
+            this.myAttrs.put("description", replaceVariables(lp.getDescription(), inUser, inUidNumber));
+            this.myAttrs.put("gecos", replaceVariables(lp.getGecos(), inUser, inUidNumber));
+            this.myAttrs.put("loginShell", replaceVariables(lp.getLoginShell(), inUser, inUidNumber));
+            this.myAttrs.put("sn", replaceVariables(lp.getSn(), inUser, inUidNumber));
+            this.myAttrs.put("homeDirectory", replaceVariables(lp.getHomeDirectory(), inUser, inUidNumber));
 
-            this.myAttrs.put("sambaAcctFlags", ReplaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
-            this.myAttrs.put("sambaLogonScript", ReplaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
+            this.myAttrs.put("sambaAcctFlags", replaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
+            this.myAttrs.put("sambaLogonScript", replaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
             this.myAttrs.put("sambaPrimaryGroupSID",
-                    ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
-            this.myAttrs.put("sambaSID", ReplaceVariables(lp.getSambaSID(), inUser, inUidNumber));
+                    replaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
+            this.myAttrs.put("sambaSID", replaceVariables(lp.getSambaSID(), inUser, inUidNumber));
 
-            this.myAttrs.put("sambaPwdMustChange", ReplaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
+            this.myAttrs.put("sambaPwdMustChange", replaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
             this.myAttrs.put("sambaPasswordHistory",
-                    ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
-            this.myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
-            this.myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
+                    replaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
+            this.myAttrs.put("sambaLogonHours", replaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
+            this.myAttrs.put("sambaKickoffTime", replaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
             this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
 
             this.myAttrs.put("uidNumber", inUidNumber);
-            this.myAttrs.put("gidNumber", ReplaceVariables(lp.getGidNumber(), inUser, inUidNumber));
+            this.myAttrs.put("gidNumber", replaceVariables(lp.getGidNumber(), inUser, inUidNumber));
 
             /*
              * Samba passwords
@@ -129,7 +129,7 @@ public class LdapUser implements DirContext {
             }
             /* NTLM */
             try {
-                byte hmm[] = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
+                byte[] hmm = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
                 this.myAttrs.put("sambaNTPassword", toHexString(hmm));
             } catch (UnsupportedEncodingException e) {
                 logger.error(e);
@@ -158,7 +158,7 @@ public class LdapUser implements DirContext {
      *            String
      * @return String with replaced variables
      */
-    private String ReplaceVariables(String inString, User inUser, String inUidNumber) {
+    private String replaceVariables(String inString, User inUser, String inUidNumber) {
         if (inString == null) {
             return "";
         }

@@ -21,11 +21,8 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.services.ServiceManager;
 
 public class BeanHelper {
-
-    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Add property for process.
@@ -125,21 +122,15 @@ public class BeanHelper {
             taskNew.setHomeDirectory(task.getHomeDirectory());
             taskNew.setProcess(processCopy);
 
-            /*
-             * Benutzer übernehmen
-             */
-            List<User> users = new ArrayList<>();
-            users.addAll(task.getUsers());
+            // set up the users
+            List<User> users = new ArrayList<>(task.getUsers());
             taskNew.setUsers(users);
 
-            /*
-             * Benutzergruppen übernehmen
-             */
-            List<UserGroup> userGroups = new ArrayList<>();
-            userGroups.addAll(task.getUserGroups());
+            // set up user's groups
+            List<UserGroup> userGroups = new ArrayList<>(task.getUserGroups());
             taskNew.setUserGroups(userGroups);
 
-            /* Schritt speichern */
+            // save task
             myTasks.add(taskNew);
         }
         processCopy.setTasks(myTasks);

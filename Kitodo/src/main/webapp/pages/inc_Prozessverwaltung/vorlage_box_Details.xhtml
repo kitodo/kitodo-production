@@ -47,7 +47,7 @@
                                 <h:outputText value="#{ProzessverwaltungForm.template.origin}"/>
                             </td>
                             <td rowspan="2" align="right">
-                                <h:commandLink title="#{msgs.bearbeiten}" action="#{NavigationForm.Reload}">
+                                <h:commandLink title="#{msgs.bearbeiten}" action="#{NavigationForm.reload}">
                                     <h:graphicImage value="/pages/images/buttons/edit_20.gif" alt="edit"/>
                                     <t:updateActionListener
                                             property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.TEMPLATE}"/>
@@ -100,7 +100,7 @@
 
                 <tr>
                     <td class="eingabeBoxen_row3" align="left">
-                        <h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.Reload}">
+                        <h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.reload}">
                             <t:updateActionListener
                                     property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
                         </h:commandButton>

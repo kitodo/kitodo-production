@@ -136,10 +136,7 @@ public class SchemaService {
             if (!location.contains("://")) {
                 location = "file://" + location;
             }
-            String url = new URL(location).getFile();
-            URI uri = !url.startsWith(imageFolder.getPath()) ? imageFolder : URI.create("");
-            uri = uri.resolve(url);
-            cf.setLocation(uri.toString());
+            cf.setLocation(location);
         }
 
         metsMods.setDigitalDocument(digitalDocument);

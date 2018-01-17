@@ -46,7 +46,7 @@
                  onblur="document.getElementById('txtMoveTo2').style.display='none';
                          document.getElementById('txtMoveTo1').style.display='inline';"
                  onkeypress="return submitEnter('cmdMoveTo',event)"/>
-    <t:commandButton action="#{NavigationForm.Reload}" id="#{formName}_cmdMoveTo" forceId="true" value="go" style="display:none"/>
+    <t:commandButton action="#{NavigationForm.reload}" id="#{formName}_cmdMoveTo" forceId="true" value="go" style="display:none"/>
 
     <!-- nächste und letzte Seite -->
     <h:commandLink action="#{mypage.cmdMoveNext}" id="#{formName}_gonext">

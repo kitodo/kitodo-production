@@ -82,8 +82,7 @@ public class Multipage {
         TIFFEncodeParam param = new TIFFEncodeParam();
         param.setCompression(4);
         ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
-        Vector<RenderedImage> vector = new Vector<>();
-        vector.addAll(Arrays.asList(image).subList(1, image.length));
+        Vector<RenderedImage> vector = new Vector<>(Arrays.asList(image).subList(1, image.length));
         param.setExtraImages(vector.iterator());
         encoder.encode(image[0]);
         out.close();

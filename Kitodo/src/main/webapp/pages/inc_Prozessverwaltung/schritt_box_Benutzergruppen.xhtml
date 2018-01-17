@@ -62,7 +62,7 @@
         <p:dialog widgetVar="addUserGroupDialog" header="#{msgs.benutzergruppenHinzufuegen}"
                   height="380px" width="430px"
                   dynamic="true" modal="true"
-                  onHide="#{NavigationForm.Reload()}">
+                  onHide="#{NavigationForm.reload()}">
             <f:subview id="addTaskToUserGroupSubView">
                 <ui:include src="schritt_box_BenutzergruppenPopup.xhtml"/>
             </f:subview>

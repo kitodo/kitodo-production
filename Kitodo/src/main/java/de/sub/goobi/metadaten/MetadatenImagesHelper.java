@@ -440,7 +440,7 @@ public class MetadatenImagesHelper {
                     for (Iterator<URI> iterator = files.iterator(); iterator.hasNext(); counter++) {
                         currentFileName = fileService.getFileName(iterator.next());
                         int curFileNumber = Integer
-                                    .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
+                                    .parseInt(currentFileName);
                         if (curFileNumber != counter + myDiff) {
                             Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
                                     + " but found File " + currentFileName);
