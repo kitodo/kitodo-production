@@ -750,6 +750,7 @@ public class ProzesskopieForm implements Serializable {
         return NAVI_FIRST_PAGE;
     }
 
+    //TODO: why do we need page two?
     /**
      * Go to page 2.
      *
@@ -768,14 +769,13 @@ public class ProzesskopieForm implements Serializable {
      */
     public String createNewProcess()
             throws ReadException, IOException, PreferencesException, WriteException {
-        Helper.getHibernateSession().evict(this.prozessKopie);
 
-        this.prozessKopie.setId(null);
+        //evict set up id to null
+        Helper.getHibernateSession().evict(this.prozessKopie);
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         }
         addProperties();
-
         updateTasks();
 
         try {
@@ -979,9 +979,7 @@ public class ProzesskopieForm implements Serializable {
 
     private void updateTasks() {
         for (Task task : this.prozessKopie.getTasks()) {
-            /*
-             * always save date and user for each step
-             */
+            // always save date and user for each step
             task.setProcessingTime(this.prozessKopie.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
             LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");

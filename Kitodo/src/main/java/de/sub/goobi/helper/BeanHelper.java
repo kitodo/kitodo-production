@@ -17,6 +17,8 @@ import java.util.List;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 
 public class BeanHelper {
 
@@ -118,11 +120,13 @@ public class BeanHelper {
             taskNew.setHomeDirectory(task.getHomeDirectory());
             taskNew.setProcess(processCopy);
 
-            // set up the users
-            taskNew.setUsers(task.getUsers());
+            // set up the users - necessary to create new ArrayList in other case session problem!
+            ArrayList<User> users = new ArrayList<>(task.getUsers());
+            taskNew.setUsers(users);
 
-            // set up user's groups
-            taskNew.setUserGroups(task.getUserGroups());
+            // set up user's groups - necessary to create new ArrayList in other case session problem!
+            ArrayList<UserGroup> userGroups = new ArrayList<>(task.getUserGroups());
+            taskNew.setUserGroups(userGroups);
 
             // save task
             tasks.add(taskNew);
