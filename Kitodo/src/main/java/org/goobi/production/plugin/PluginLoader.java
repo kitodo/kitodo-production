@@ -198,7 +198,7 @@ public class PluginLoader {
     public static List<String> getImportPluginsForType(ImportType type) {
         List<String> pluginList = new ArrayList<>();
 
-        for (IPlugin p : PluginLoader.getPluginList(PluginType.Import)) {
+        for (IPlugin p : PluginLoader.getPluginList(PluginType.IMPORT)) {
             IImportPlugin ip = (IImportPlugin) p;
             if (ip.getImportTypes().contains(type)) {
                 pluginList.add(p.getTitle());

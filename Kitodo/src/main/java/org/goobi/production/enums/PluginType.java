@@ -14,16 +14,11 @@ package org.goobi.production.enums;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.goobi.production.plugin.interfaces.IStepPlugin;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 public enum PluginType {
-    // TODO: Use upper case for constants; use „CATALOGUE“ instead of „Opac“
-    Import(1, "import", IImportPlugin.class),
-    Step(2, "step", IStepPlugin.class),
-    Validation(3, "validation", IValidatorPlugin.class),
-    Command(4, "command", ICommandPlugin.class),
-    Opac(5, "opac", null);
+    IMPORT(1, "import", IImportPlugin.class),
+    COMMAND(4, "command", ICommandPlugin.class),
+    CATALOGUE(5, "opac", null);
 
     private int id;
     private String name;
@@ -34,40 +29,6 @@ public enum PluginType {
         this.id = id;
         this.name = name;
         this.interfaz = (Class<IPlugin>) inInterfaz;
-    }
-
-    /**
-     * Get type from value.
-     *
-     * @param pluginType
-     *            String
-     * @return PluginType object
-     */
-    public static PluginType getTypeFromValue(String pluginType) {
-        if (pluginType != null) {
-            for (PluginType type : PluginType.values()) {
-                if (type.getName().equals(pluginType)) {
-                    return type;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get types from id.
-     *
-     * @param pluginType
-     *            int
-     * @return PluginType object
-     */
-    public static PluginType getTypesFromId(int pluginType) {
-        for (PluginType type : PluginType.values()) {
-            if (type.getId() == pluginType) {
-                return type;
-            }
-        }
-        return null;
     }
 
     public int getId() {

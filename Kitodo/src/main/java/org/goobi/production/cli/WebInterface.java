@@ -99,7 +99,7 @@ public class WebInterface extends HttpServlet {
             }
 
             // get correct plugin from list
-            ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command,
+            ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.COMMAND,
                     command);
             if (myCommandPlugin == null) {
                 generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
@@ -142,7 +142,7 @@ public class WebInterface extends HttpServlet {
 
     private void generateHelp(HttpServletResponse resp) throws IOException {
         StringBuilder allHelp = new StringBuilder();
-        List<IPlugin> mycommands = PluginLoader.getPluginList(PluginType.Command);
+        List<IPlugin> mycommands = PluginLoader.getPluginList(PluginType.COMMAND);
         for (IPlugin iPlugin : mycommands) {
             ICommandPlugin icp = (ICommandPlugin) iPlugin;
             allHelp.append("<h4>");

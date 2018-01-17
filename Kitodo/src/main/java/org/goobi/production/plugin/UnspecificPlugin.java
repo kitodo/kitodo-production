@@ -146,20 +146,14 @@ public abstract class UnspecificPlugin {
     static UnspecificPlugin create(PluginType type, Object implementation)
             throws SecurityException, NoSuchMethodException {
         switch (type) {
-            case Command:
+            case COMMAND:
                 // return new CommandPlugin(implementation);
                 throw new NotImplementedException();
-            case Import:
+            case IMPORT:
                 // return new ImportPlugin(implementation);
                 throw new NotImplementedException();
-            case Opac:
+            case CATALOGUE:
                 return new CataloguePlugin(implementation);
-            case Step:
-                // return new StepPlugin(implementation);
-                throw new NotImplementedException();
-            case Validation:
-                // return new ValidationPlugin(implementation);
-                throw new NotImplementedException();
             default:
                 throw new UnreachableCodeException();
         }
@@ -499,14 +493,10 @@ public abstract class UnspecificPlugin {
     public static PluginType typeOf(Class<? extends UnspecificPlugin> clazz) {
         // if (ImportPlugin.class.isAssignableFrom(clazz))
         // return PluginType.Import;
-        // if (StepPlugin.class.isAssignableFrom(clazz))
-        // return PluginType.Step;
-        // if (ValidationPlugin.class.isAssignableFrom(clazz))
-        // return PluginType.Validation;
         // if (CommandPlugin.class.isAssignableFrom(clazz))
         // return PluginType.Command;
         if (CataloguePlugin.class.isAssignableFrom(clazz)) {
-            return PluginType.Opac;
+            return PluginType.CATALOGUE;
         }
         return null;
     }
