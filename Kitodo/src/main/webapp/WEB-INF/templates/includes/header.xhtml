@@ -45,13 +45,13 @@
                     </li>
                     <li>
                         <!-- List: active users -->
-                        <a href="#"><i class="fa fa-user-o fa-lg"/><h:panelGroup rendered="#{SessionForm.alleSessions.size() gt 0}" class="batch-count bc-info">#{SessionForm.alleSessions.size()}</h:panelGroup></a>
+                        <a href="#"><i class="fa fa-user-o fa-lg"/><h:panelGroup rendered="#{SessionForm.activeSessions.size() gt 0}" class="batch-count bc-info">#{SessionForm.activeSessions.size()}</h:panelGroup></a>
                         <ul>
                             <li><h3>#{msgs.aktiveBenutzer}</h3></li>
-                            <ui:repeat value="#{SessionForm.alleSessions.subList(0, (SessionForm.alleSessions.size() gt 3) ? 3 : SessionForm.alleSessions.size())}" var="activeSession">
-                                <li><a href=""><span class="nav-item-col">#{activeSession['user']}</span><span class="nav-item-col">Gruppe 2</span><span class="nav-item-col">V</span></a></li>
+                            <ui:repeat value="#{SessionForm.activeSessions.subList(0, (SessionForm.activeSessions.size() gt 3) ? 3 : SessionForm.activeSessions.size())}" var="activeSession">
+                                <li><a href=""><span class="nav-item-col">#{activeSession['userName']}</span><span class="nav-item-col">Gruppe 2</span><span class="nav-item-col">V</span></a></li>
                             </ui:repeat>
-                            <li><h:link outcome="aktiveNutzer" value="#{msgs.allActiveUsers} (#{SessionForm.alleSessions.size()})"/></li>
+                            <li><h:link outcome="aktiveNutzer" value="#{msgs.allActiveUsers} (#{SessionForm.activeSessions.size()})"/></li>
                         </ul>
                     </li>
                     <li>
@@ -76,7 +76,8 @@
                                 <li><a href="">#{msgs.Language}: #{SpracheForm.locale}</a></li>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
                                 <li><h:link value="#{msgs.passwortAendern}" outcome="changePassword"/></li>
-                                <li><h:commandLink value="#{msgs.signout}" action="#{LoginForm.Ausloggen}"/></li>
+                                <!-- FIXME: old "Ausloggen" function has been deleted; incorporate new logout method, here! -->
+                                <!--<li><h:commandLink value="#{msgs.signout}" action="#{LoginForm.Ausloggen}"/></li>-->
                             </ul>
                         </h:form>
                     </li>
