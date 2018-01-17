@@ -13,7 +13,6 @@ import de.sub.goobi.helper.Helper;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -281,14 +280,10 @@ public class RequestControlFilter implements Filter {
     private long getMaxWaitTime(HttpServletRequest request) {
         // look for a Pattern that matches the request's path
         String path = request.getRequestURI();
-        Iterator<Pattern> patternIter = this.maxWaitDurations.keySet().iterator();
-        while (patternIter.hasNext()) {
-            Pattern p = patternIter.next();
-            Matcher m = p.matcher(path);
+        for (Pattern pattern : this.maxWaitDurations.keySet()) {
+            Matcher m = pattern.matcher(path);
             if (m.matches()) {
-                // this pattern matches. At most, how long can this request
-                // wait?
-                return this.maxWaitDurations.get(p);
+                return this.maxWaitDurations.get(pattern);
             }
         }
 
@@ -308,10 +303,8 @@ public class RequestControlFilter implements Filter {
         // iterate through the exclude patterns. If one matches this path,
         // then the request is excluded.
         String path = request.getRequestURI();
-        Iterator<Pattern> patternIter = this.excludePatterns.iterator();
-        while (patternIter.hasNext()) {
-            Pattern p = patternIter.next();
-            Matcher m = p.matcher(path);
+        for (Pattern pattern : this.excludePatterns) {
+            Matcher m = pattern.matcher(path);
             if (m.matches()) {
                 // at least one of the patterns excludes this request
                 return false;

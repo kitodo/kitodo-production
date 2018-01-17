@@ -358,15 +358,13 @@ public class MetadatenHelper implements Comparator<Object> {
          * und anschliessend alle Elemente in das Array packen
          */
         zaehler = 0;
-        Iterator<DocStructType> it = newTypes.iterator();
-        while (it.hasNext()) {
-            DocStructType dst = it.next();
-            String label = dst
+        for (DocStructType docStructType : newTypes) {
+            String label = docStructType
                     .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
             if (label == null) {
-                label = dst.getName();
+                label = docStructType.getName();
             }
-            myTypes[zaehler] = new SelectItem(dst.getName(), label);
+            myTypes[zaehler] = new SelectItem(docStructType.getName(), label);
             zaehler++;
         }
         return myTypes;
