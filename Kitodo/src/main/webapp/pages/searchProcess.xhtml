@@ -1,0 +1,201 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="searchProcessform" onkeypress="ifEnterClick(event,'searchProcessform:absenden');">
+                <p:panel styleClass="content-header">
+                    <h3>#{msgs.nachEinemBandSuchen}</h3>
+                    <p:commandButton id="absenden"
+                                     value="#{msgs.filterAnwenden}"
+                                     action="#{SearchForm.filter}"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     validateClient="true"
+                                     styleClass="button-filled-blue">
+                    </p:commandButton>
+                </p:panel>
+                <p:messages id="processSearch-messages" autoUpdate="true"/>
+                <p:panelGrid id="processSearch-grid" rendered="#{ProzessverwaltungForm.initialize}">
+                    <!-- process title -->
+                    <p:row>
+                        <p:column><p:outputLabel for="processtitle" value="#{msgs.title}"/></p:column>
+                        <p:column>
+                            <p:selectOneMenu for="processtitle" value="#{SearchForm.processOperand}" style="width:200px; margin-right:3px; margin-left:3px">
+                                <f:selectItems value="#{SearchForm.operands}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column colspan="2" >
+                            <p:inputText id="processtitle" value="#{SearchForm.processTitle}" style="width:100%"/>
+                        </p:column>
+                    </p:row>
+                    <!--projects -->
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="projekt" value="#{msgs.projects}"/></p:column>
+                        <p:column>
+                            <p:selectOneMenu id="projekt" value="#{SearchForm.projectOperand}" style="width:200px; margin-right:3px; margin-left:3px">
+                                <f:selectItems value="#{SearchForm.operands}"/>
+                            </p:selectOneMenu></p:column>
+                        <p:column colspan="2">
+                            <p:selectOneMenu for="projekt" value="#{SearchForm.project}">
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                                <f:selectItems id="pcid11" value="#{SearchForm.projects}"
+                                               var="project" itemLabel="#{project}"
+                                               itemValue="#{project}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <!-- process property -->
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="processproperty" value="#{msgs.processProperties}"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.processPropertyOperand}" style="width:200px; margin-right:3px; margin-left:3px">
+                                <f:selectItems value="#{SearchForm.operands}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.processPropertyTitle}" >
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                                <f:selectItems value="#{SearchForm.processPropertyTitles}"
+                                               var="proc" itemLabel="#{proc}"
+                                               itemValue="#{proc}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="processproperty" value="#{SearchForm.processPropertyValue}" style="width:100%"/>
+                        </p:column>
+                    </p:row>
+                    <!-- masterpiece property -->
+                    <p:row>
+                        <p:column> <p:outputLabel value="#{msgs.masterpieceProperties}"/> </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.masterpiecePropertyOperand}">
+                            <f:selectItems value="#{SearchForm.operands}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.masterpiecePropertyTitle}">
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                                <f:selectItems value="#{SearchForm.masterpiecePropertyTitles}" var="work" itemLabel="#{work}" itemValue="#{work}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column> <p:inputText value="#{SearchForm.masterpiecePropertyValue}" style="width:100%"/> </p:column>
+                    </p:row>
+                    <!-- template property -->
+                    <p:row>
+                        <p:column><p:outputLabel value="#{msgs.templateProperty}"/></p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.templatePropertyOperand}">
+                                <f:selectItems value="#{SearchForm.operands}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.templatePropertyTitle}">
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                                <f:selectItems value="#{SearchForm.templatePropertyTitles}" var="temp" itemLabel="#{temp}" itemValue="#{temp}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column><p:inputText value="#{SearchForm.templatePropertyValue}" style="width:100%"/></p:column>
+                    </p:row>
+                    <!--steps -->
+                    <p:row>
+                        <p:column><p:outputLabel value="#{msgs.step}"/></p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.stepOperand}">
+                                <f:selectItems value="#{SearchForm.operands}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.status}">
+                                <f:selectItems value="#{SearchForm.stepstatus}"
+                                               var="stepstatus"
+                                               itemLabel="#{stepstatus.title}"
+                                               itemValue="#{stepstatus.searchString}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.stepname}">
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                                <f:selectItems value="#{SearchForm.stepTitles}"
+                                               var="stepTitles" itemLabel="#{stepTitles}"
+                                               itemValue="#{stepTitles}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <!--user -->
+                    <p:row rendered="#{HelperForm.userStepDoneSearchEnabled}">
+                        <p:column rendered="#{HelperForm.userStepDoneSearchEnabled}">
+                            <p:outputLabel value="#{msgs.stepDoneByUser}"/>
+                        </p:column>
+                        <p:column rendered="#{HelperForm.userStepDoneSearchEnabled}">
+                            <p:selectOneMenu value="#{SearchForm.stepdoneuser}">
+                             <f:selectItems value="#{SearchForm.user}" var="user" itemLabel="#{user.fullName}" itemValue="#{user.login}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{SearchForm.stepdonetitle}">
+                                <f:selectItems value="#{SearchForm.stepTitles}" var="stepTitles" itemLabel="#{stepTitles}" itemValue="#{stepTitles}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <!-- process id -->
+                    <p:row>
+                        <p:column><p:outputLabel value="#{msgs.id}"/></p:column>
+                        <p:column colspan="3"><p:inputText value="#{SearchForm.idin}" style="width:100%"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:outputLabel value="#{msgs.showArchivedProjects}" rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/></p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox
+                            value="#{ProzessverwaltungForm.showArchivedProjects}"
+                            rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="#{msgs.showClosedProcesses}"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox value="#{ProzessverwaltungForm.showClosedProcesses}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4">
+                            <p:commandButton value="#{msgs.clearData}"
+                                     action="searchProcess"
+                                     icon="fa fa-trash-o fa-lg"
+                                     iconPos="right"
+                                     update=":searchProcessform"
+                                     immediate="true"
+                                     onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"
+                                     style="left:100%"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.nachEinemBandSuchen}</a></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
+</ui:composition>
