@@ -2932,8 +2932,7 @@ public class Metadaten {
     public List<String> autocomplete(Object suggest) {
         String pref = (String) suggest;
         ArrayList<String> result = new ArrayList<>();
-        ArrayList<String> all = new ArrayList<>();
-        all.addAll(Arrays.asList(this.allPages));
+        ArrayList<String> all = new ArrayList<>(Arrays.asList(this.allPages));
 
         for (String element : all) {
             if (element != null && element.contains(pref) || "".equals(pref)) {

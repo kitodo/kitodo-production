@@ -38,11 +38,7 @@ public class Processes {
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public List<GoobiProcess> getProcesses() {
-        List<GoobiProcess> processes = new ArrayList<>();
-
-        processes.addAll(GoobiProcessDAO.getAllProcesses());
-
-        return processes;
+        return new ArrayList<>(GoobiProcessDAO.getAllProcesses());
     }
 
     /**

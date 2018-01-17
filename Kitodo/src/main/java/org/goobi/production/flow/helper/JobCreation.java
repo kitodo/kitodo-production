@@ -169,11 +169,7 @@ public class JobCreation {
                 imagesFolder = fileService.createResource(basepath, "_" + p.DIRECTORY_SUFFIX);
             }
             if (fileService.isDirectory(imagesFolder)) {
-                List<URI> imageDir = new ArrayList<>();
-
-                ArrayList<URI> files = fileService.getSubUris(imagesFolder);
-                imageDir.addAll(files);
-
+                List<URI> imageDir = new ArrayList<>(fileService.getSubUris(imagesFolder));
                 for (URI uri : imageDir) {
                     URI image = fileService.createResource(imagesFolder, uri.toString());
                     URI dest = fileService.createResource(
