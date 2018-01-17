@@ -51,7 +51,7 @@
                             <ui:repeat value="#{SessionForm.activeSessions.subList(0, (SessionForm.activeSessions.size() gt 3) ? 3 : SessionForm.activeSessions.size())}" var="activeSession">
                                 <li><a href=""><span class="nav-item-col">#{activeSession['userName']}</span><span class="nav-item-col">Gruppe 2</span><span class="nav-item-col">V</span></a></li>
                             </ui:repeat>
-                            <li><h:link outcome="aktiveNutzer" value="#{msgs.allActiveUsers} (#{SessionForm.activeSessions.size()})"/></li>
+                            <li><h:link outcome="activeUsers" value="#{msgs.allActiveUsers} (#{SessionForm.activeSessions.size()})"/></li>
                         </ul>
                     </li>
                     <li>
