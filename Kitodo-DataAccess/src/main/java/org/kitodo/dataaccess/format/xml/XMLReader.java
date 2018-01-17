@@ -261,7 +261,7 @@ public class XMLReader {
                 }
             } else if (child instanceof Text) {
                 // or the child is an XML literal
-                String value = space.isToPreserve() ? child.getTextContent() : child.getTextContent().trim();
+                String value = space.trim(child.getTextContent());
                 if (!value.isEmpty()) {
                     result.replace(RDF.toURL(++count), wrapElementInSet(storage.createLeaf(value, lang)));
                 }
@@ -378,7 +378,7 @@ public class XMLReader {
                 }
             } else if (child instanceof Text) {
                 // or the child is an XML literal
-                String value = space.isToPreserve() ? child.getTextContent() : child.getTextContent().trim();
+                String value = space.trim(child.getTextContent());
                 if (value.length() > 0) {
                     result.add(storage.createLeaf(value, lang));
                 }

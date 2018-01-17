@@ -27,7 +27,7 @@ enum Space {
     /**
      * Signals that white-space processing is acceptable for this element.
      */
-    DEFAULT("default", false) {
+    DEFAULT("default") {
         @Override
         /**
          * Trimming white space the XML way.
@@ -55,7 +55,7 @@ enum Space {
      * Signals the intention that in that element the white space should be
      * preserved.
      */
-    PRESERVE("preserve", true) {
+    PRESERVE("preserve") {
         @Override
         /**
          * Trimming is doing nothing.
@@ -147,11 +147,6 @@ enum Space {
     private final String enumeratedValue;
 
     /**
-     * Whether the white-space is to preserve.
-     */
-    private final boolean toPreserve;
-
-    /**
      * Creates the enumeration’s elements. Populates their private fields.
      *
      * @param enumeratedValue
@@ -159,9 +154,8 @@ enum Space {
      * @param toPreserve
      *            whether the white-space is to preserve
      */
-    private Space(String enumeratedValue, boolean toPreserve) {
+    private Space(String enumeratedValue) {
         this.enumeratedValue = enumeratedValue;
-        this.toPreserve = toPreserve;
     }
 
     /**
@@ -171,15 +165,6 @@ enum Space {
      */
     public String getValue() {
         return enumeratedValue;
-    }
-
-    /**
-     * Whether the white-space is to preserve.
-     *
-     * @return whether the white-space is to preserve
-     */
-    boolean isToPreserve() {
-        return toPreserve;
     }
 
     /**
