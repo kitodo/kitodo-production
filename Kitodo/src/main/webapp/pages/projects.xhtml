@@ -22,17 +22,17 @@
             <p:panel styleClass="content-header">
                 <h3>#{msgs.projekte}</h3>
                 <h:form>
-                    <p:menuButton value="#{msgs.Create}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+                    <p:menuButton value="#{msgs.neu}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
                         <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick" />
                         <p:menuitem value="#{msgs.neueProzessvorlage}" action="#{ProzessverwaltungForm.newTemplate}"
-                                    immediate="true"
+                                    immediate="true" style="width: inherit;"
                                     rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}"
                                     icon="ui-icon-plusthick"/>
-                        <p:menuitem value="#{msgs.neuenLaufzettel}" action="#{DocketForm.newDocket}"
+                        <p:menuitem value="#{msgs.neuerLaufzettel}" action="#{DocketForm.newDocket}"
                                     immediate="true"
                                     rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                                     icon="ui-icon-plusthick"/>
-                        <p:menuitem value="#{msgs.neuenRegelsatz}" action="#{RulesetForm.createNewRuleset}"
+                        <p:menuitem value="#{msgs.neuerRegelsatz}" action="#{RulesetForm.createNewRuleset}"
                                     rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                                     icon="ui-icon-plusthick"/>
                     </p:menuButton>
