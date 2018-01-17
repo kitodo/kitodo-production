@@ -17,7 +17,6 @@ import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,14 +28,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
-import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
@@ -46,7 +42,6 @@ public class BatchStepHelper extends BatchHelper {
     private List<Task> steps;
     private static final Logger logger = LogManager.getLogger(BatchStepHelper.class);
     private Task currentStep;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String problemTask;
     private String solutionTask;
     private String problemMessage;
@@ -220,9 +215,9 @@ public class BatchStepHelper extends BatchHelper {
      * Error management for single.
      */
     public String reportProblemForSingle() {
-
         this.myDav.uploadFromHome(this.currentStep.getProcess());
-        reportProblem();
+        serviceManager.getWorkflowService().setProblemMessage(getProblemMessage());
+        this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
         this.problemMessage = "";
         this.problemTask = "";
         saveStep();
@@ -237,72 +232,14 @@ public class BatchStepHelper extends BatchHelper {
         for (Task s : this.steps) {
             this.currentStep = s;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
-            reportProblem();
+            serviceManager.getWorkflowService().setProblemMessage(getProblemMessage());
+            this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
             saveStep();
         }
         this.problemMessage = "";
         this.problemTask = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
-    }
-
-    private void reportProblem() {
-        Date myDate = new Date();
-        this.currentStep.setProcessingStatusEnum(TaskStatus.LOCKED);
-        this.currentStep.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentStep.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            currentStep.setProcessingUser(ben);
-        }
-        this.currentStep.setProcessingBegin(null);
-
-        try {
-            Task temp = null;
-            for (Task s : this.currentStep.getProcess().getTasks()) {
-                if (s.getTitle().equals(this.problemTask)) {
-                    temp = s;
-                }
-            }
-            if (temp != null) {
-                temp.setProcessingStatusEnum(TaskStatus.OPEN);
-                temp = serviceManager.getTaskService().setCorrectionStep(temp);
-                temp.setProcessingEnd(null);
-
-                Property processProperty = new Property();
-                processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
-                processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
-                        + serviceManager.getUserService().getFullName(ben) + "] " + this.problemMessage);
-                processProperty.setType(PropertyType.messageError);
-                processProperty.getProcesses().add(this.currentStep.getProcess());
-                this.currentStep.getProcess().getProperties().add(processProperty);
-
-                String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                        + this.problemMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
-                this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
-                        this.currentStep.getProcess().getWikiField(), "error", message));
-
-                this.serviceManager.getTaskService().save(temp);
-                this.currentStep.getProcess().getHistory().add(new History(myDate, temp.getOrdering().doubleValue(),
-                        temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
-                /*
-                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
-                 * schliessen
-                 */
-                List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-                        this.currentStep.getOrdering(), temp.getOrdering(), this.currentStep.getProcess().getId());
-                for (Task task : tasksInBetween) {
-                    task.setProcessingStatusEnum(TaskStatus.LOCKED);
-                    task = serviceManager.getTaskService().setCorrectionStep(task);
-                    task.setProcessingEnd(null);
-                }
-            }
-            /*
-             * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-             */
-        } catch (DataException e) {
-            logger.error(e);
-        }
     }
 
     /**
@@ -343,7 +280,8 @@ public class BatchStepHelper extends BatchHelper {
      */
     public String solveProblemForSingle() {
         try {
-            solveProblem();
+            serviceManager.getWorkflowService().setSolutionMessage(getSolutionMessage());
+            this.currentStep = serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav);
             saveStep();
             this.solutionMessage = "";
             this.solutionTask = "";
@@ -365,7 +303,8 @@ public class BatchStepHelper extends BatchHelper {
         try {
             for (Task s : this.steps) {
                 this.currentStep = s;
-                solveProblem();
+                serviceManager.getWorkflowService().setSolutionMessage(getSolutionMessage());
+                this.currentStep = serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav);
                 saveStep();
             }
             this.solutionMessage = "";
@@ -376,69 +315,6 @@ public class BatchStepHelper extends BatchHelper {
         } catch (AuthenticationException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return "";
-        }
-    }
-
-    private void solveProblem() throws AuthenticationException {
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben == null) {
-            throw new AuthenticationException("userNotFound");
-        }
-        Date now = new Date();
-        this.myDav.uploadFromHome(this.currentStep.getProcess());
-        this.currentStep.setProcessingStatusEnum(TaskStatus.DONE);
-        this.currentStep.setProcessingEnd(now);
-        this.currentStep.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentStep.setProcessingTime(new Date());
-        currentStep.setProcessingUser(ben);
-
-        try {
-            Task temp = null;
-            for (Task task : this.currentStep.getProcess().getTasks()) {
-                if (task.getTitle().equals(this.solutionTask)) {
-                    temp = task;
-                }
-            }
-            if (temp != null) {
-                /*
-                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
-                 * schliessen
-                 */
-                List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
-                        this.currentStep.getOrdering(), this.currentStep.getProcess().getId());
-                for (Task task : tasksInBetween) {
-                    task.setProcessingStatusEnum(TaskStatus.DONE);
-                    task.setProcessingEnd(now);
-                    task.setPriority(0);
-                    if (task.getId().intValue() == temp.getId().intValue()) {
-                        task.setProcessingStatusEnum(TaskStatus.OPEN);
-                        task = serviceManager.getTaskService().setCorrectionStep(task);
-                        task.setProcessingEnd(null);
-                        task.setProcessingTime(now);
-                    }
-                    this.serviceManager.getTaskService().save(task);
-                }
-
-                Property processProperty = new Property();
-                processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-                processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
-                        + serviceManager.getUserService().getFullName(ben) + "] "
-                        + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solutionMessage);
-                processProperty.getProcesses().add(this.currentStep.getProcess());
-                processProperty.setType(PropertyType.messageImportant);
-                this.currentStep.getProcess().getProperties().add(processProperty);
-
-                String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solutionMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
-                this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
-                        this.currentStep.getProcess().getWikiField(), "info", message));
-                /*
-                 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-                 */
-            }
-        } catch (DataException e) {
-            logger.error(e);
         }
     }
 
@@ -674,7 +550,7 @@ public class BatchStepHelper extends BatchHelper {
                 TaskDAO taskDAO = new TaskDAO();
                 Task task = taskDAO.getById(s.getId());
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                serviceManager.getTaskService().close(s, true);
+                serviceManager.getWorkflowService().close(s);
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
