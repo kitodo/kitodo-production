@@ -56,7 +56,7 @@ public class DocketForm extends BasisForm {
     public String newDocket() {
         this.myDocket = new Docket();
         this.docketId = 0;
-        return "/pages/DocketEdit?faces-redirect=true";
+        return redirectToEdit("?faces-redirect=true");
     }
 
     /**
@@ -145,6 +145,27 @@ public class DocketForm extends BasisForm {
     public void setDocketId(int id) {
         this.docketId = id;
     }
+
+    // replace calls to this function with "/pages/DocketEdit" once we have
+    // completely switched to the new frontend pages
+    private String redirectToEdit(String urlSuffix) {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
+                return "/pages/editDocket" + urlSuffix;
+            } else {
+                return "/pages/DocketEdit" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "DocketForm" is
+            // used from it's integration test
+            // class "DocketFormIT", where no "FacesContext" is available!
+            return "/pages/DocketEdit" + urlSuffix;
+        }
+    }
+
 
     // TODO:
     // replace calls to this function with "/pages/projects" once we have completely
