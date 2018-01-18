@@ -151,8 +151,6 @@ enum Space {
      *
      * @param enumeratedValue
      *            String value as by specification
-     * @param toPreserve
-     *            whether the white-space is to preserve
      */
     private Space(String enumeratedValue) {
         this.enumeratedValue = enumeratedValue;
@@ -171,9 +169,9 @@ enum Space {
      * Trims a String the XML way, if Space.DEFAULT is chosen. Does nothing if
      * Space.PRESERVE is chosen.
      *
-     * @param s
+     * @param stringToTrim
      *            string to process
      * @return trimmed string
      */
-    public abstract String trim(String s);
+    public abstract String trim(String stringToTrim);
 }
