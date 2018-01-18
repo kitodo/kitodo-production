@@ -12,7 +12,6 @@
 package org.kitodo.services.workflow;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.tasks.TaskManager;
@@ -56,6 +55,7 @@ public class WorkflowService {
     private List<Task> tasksToFinish;
     private Problem problem = new Problem();
     private Solution solution = new Solution();
+    private User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static WorkflowService instance = null;
     private transient ServiceManager serviceManager = new ServiceManager();
@@ -130,9 +130,8 @@ public class WorkflowService {
                 close(task);
             } else {
                 task.setProcessingTime(new Date());
-                User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (user != null) {
-                    task.setProcessingUser(user);
+                if (this.user != null) {
+                    task.setProcessingUser(this.user);
                 }
             }
         }
@@ -149,9 +148,8 @@ public class WorkflowService {
     public Task setTaskStatusDown(Task task) {
         task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (user != null) {
-            task.setProcessingUser(user);
+        if (this.user != null) {
+            task.setProcessingUser(this.user);
         }
         task = serviceManager.getTaskService().setProcessingStatusDown(task);
         return task;
@@ -173,9 +171,8 @@ public class WorkflowService {
                 if (task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
                     close(task);
                 } else {
-                    User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                    if (user != null) {
-                        task.setProcessingUser(user);
+                    if (this.user != null) {
+                        task.setProcessingUser(this.user);
                         serviceManager.getTaskService().save(task);
                     }
                 }
@@ -198,9 +195,8 @@ public class WorkflowService {
             if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
                 task.setEditTypeEnum(TaskEditType.ADMIN);
                 task.setProcessingTime(new Date());
-                User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (user != null) {
-                    task.setProcessingUser(user);
+                if (this.user != null) {
+                    task.setProcessingUser(this.user);
                 }
                 task = serviceManager.getTaskService().setProcessingStatusDown(task);
                 serviceManager.getTaskService().save(task);
@@ -269,12 +265,8 @@ public class WorkflowService {
     public void close(Task task) throws DataException, IOException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
-        LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (loginForm != null) {
-            User user = loginForm.getMyBenutzer();
-            if (user != null) {
-                task.setProcessingUser(user);
-            }
+        if (this.user != null) {
+            task.setProcessingUser(this.user);
         }
         task.setProcessingEnd(new Date());
 
@@ -318,8 +310,7 @@ public class WorkflowService {
      * @return Task
      */
     public Task reportProblem(Task task, WebDav webDav) {
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (user == null) {
+        if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
@@ -329,7 +320,7 @@ public class WorkflowService {
         task.setProcessingStatusEnum(TaskStatus.LOCKED);
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(date);
-        task.setProcessingUser(user);
+        task.setProcessingUser(this.user);
         task.setProcessingBegin(null);
 
         try {
@@ -338,12 +329,12 @@ public class WorkflowService {
             temp = serviceManager.getTaskService().setCorrectionStep(temp);
             temp.setProcessingEnd(null);
 
-            Property processProperty = prepareProblemMessageProperty(date, user);
+            Property processProperty = prepareProblemMessageProperty(date);
             processProperty.getProcesses().add(task.getProcess());
             task.getProcess().getProperties().add(processProperty);
 
             String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                    + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
+                    + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
             task.getProcess().setWikiField(
                 WikiFieldHelper.getWikiMessage(task.getProcess(), task.getProcess().getWikiField(), "error", message));
             serviceManager.getTaskService().save(temp);
@@ -377,9 +368,8 @@ public class WorkflowService {
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (user != null) {
-            currentTask.setProcessingUser(user);
+        if (this.user != null) {
+            currentTask.setProcessingUser(this.user);
         }
         currentTask.setProcessingBegin(null);
 
@@ -395,12 +385,12 @@ public class WorkflowService {
                 temp = serviceManager.getTaskService().setCorrectionStep(temp);
                 temp.setProcessingEnd(null);
 
-                Property processProperty = prepareProblemMessageProperty(date, user);
+                Property processProperty = prepareProblemMessageProperty(date);
                 processProperty.getProcesses().add(currentTask.getProcess());
                 currentTask.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                        + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
+                        + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
                 currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
                     currentTask.getProcess().getWikiField(), "error", message));
 
@@ -424,8 +414,7 @@ public class WorkflowService {
      * @return Task
      */
     public Task solveProblem(Task task, WebDav webDav) {
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (user == null) {
+        if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
@@ -435,20 +424,20 @@ public class WorkflowService {
         task.setProcessingEnd(date);
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(new Date());
-        task.setProcessingUser(user);
+        task.setProcessingUser(this.user);
 
         try {
             Task temp = serviceManager.getTaskService().getById(this.solution.getId());
             // close all tasks between the current and the correction task
-            closeTasksBetweenCurrentAndCorrectionTask1(task, temp, date, user);
+            closeTasksBetweenCurrentAndCorrectionTask1(task, temp, date);
 
             // update the process so that the sort helper is saved
             String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                    + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
+                    + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
             task.getProcess().setWikiField(
                 WikiFieldHelper.getWikiMessage(task.getProcess(), task.getProcess().getWikiField(), "info", message));
 
-            Property processProperty = prepareSolveMessageProperty(temp, user);
+            Property processProperty = prepareSolveMessageProperty(temp);
             processProperty.getProcesses().add(task.getProcess());
             task.getProcess().getProperties().add(processProperty);
             serviceManager.getProcessService().save(task.getProcess());
@@ -472,8 +461,7 @@ public class WorkflowService {
      *            WebDav
      */
     public Task solveProblem(Task currentTask, String solutionTask, WebDav webDav) throws AuthenticationException {
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (user == null) {
+        if (this.user == null) {
             throw new AuthenticationException("userNotFound");
         }
         Date date = new Date();
@@ -482,7 +470,7 @@ public class WorkflowService {
         currentTask.setProcessingEnd(date);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        currentTask.setProcessingUser(user);
+        currentTask.setProcessingUser(this.user);
 
         try {
             Task temp = null;
@@ -495,12 +483,12 @@ public class WorkflowService {
                 // close tasks between the current and the correction task
                 closeTasksBetweenCurrentAndCorrectionTask2(currentTask, temp, date);
 
-                Property processProperty = prepareSolveMessageProperty(temp, user);
+                Property processProperty = prepareSolveMessageProperty(temp);
                 processProperty.getProcesses().add(currentTask.getProcess());
                 currentTask.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
+                        + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
                 currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
                     currentTask.getProcess().getWikiField(), "info", message));
                 // update the process so that the collation helper is saved
@@ -535,7 +523,7 @@ public class WorkflowService {
 
     // TODO: shouldn't both methods be the same?! Why for batch is different than
     // for form?!
-    private void closeTasksBetweenCurrentAndCorrectionTask1(Task currentTask, Task correctionTask, Date date, User user)
+    private void closeTasksBetweenCurrentAndCorrectionTask1(Task currentTask, Task correctionTask, Date date)
             throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
@@ -550,7 +538,7 @@ public class WorkflowService {
                 taskInBetween.setProcessingTime(date);
             }
             currentTask.setProcessingTime(date);
-            currentTask.setProcessingUser(user);
+            currentTask.setProcessingUser(this.user);
             serviceManager.getTaskService().save(taskInBetween);
         }
     }
@@ -573,20 +561,20 @@ public class WorkflowService {
         }
     }
 
-    private Property prepareProblemMessageProperty(Date date, User user) {
+    private Property prepareProblemMessageProperty(Date date) {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
         processProperty.setValue("[" + this.formatter.format(date) + ", "
-                + serviceManager.getUserService().getFullName(user) + "] " + this.problem.getMessage());
+                + serviceManager.getUserService().getFullName(this.user) + "] " + this.problem.getMessage());
         processProperty.setType(PropertyType.messageError);
         return processProperty;
     }
 
-    private Property prepareSolveMessageProperty(Task correctionTask, User user) {
+    private Property prepareSolveMessageProperty(Task correctionTask) {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
         processProperty.setValue(
-                "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(user)
+                "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(this.user)
                         + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
                         + this.solution.getMessage());
         processProperty.setType(PropertyType.messageImportant);
