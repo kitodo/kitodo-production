@@ -23,6 +23,10 @@
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorPosition="bottom">
 
+        <p:column style="width: 16px;">
+            <p:rowToggler/>
+        </p:column>
+
         <p:column headerText="#{msgs.titel}">
             <h:outputText value="#{item.title}"/>
         </p:column>
@@ -51,6 +55,16 @@
             <h:link><i class="fa fa-clone fa-lg"/></h:link>
             <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
         </p:column>
+
+        <p:rowExpansion styleClass="expansion-class">
+            <p:panelGrid columns="2" columnClasses="label,value">
+                <h:outputText value="#{msgs.internesSpeicherformat}:"/>
+                <h:outputText value="#{item.fileFormatInternal}"/>
+
+                <h:outputText value="#{msgs.dmsExportformat}:"/>
+                <h:outputText value="#{item.fileFormatDmsExport}"/>
+            </p:panelGrid>
+        </p:rowExpansion>
 
     </p:dataTable>
 </ui:composition>
