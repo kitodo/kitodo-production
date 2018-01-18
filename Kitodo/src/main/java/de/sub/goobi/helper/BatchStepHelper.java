@@ -37,6 +37,8 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.workflow.Problem;
+import org.kitodo.workflow.Solution;
 
 public class BatchStepHelper extends BatchHelper {
     private List<Task> steps;
@@ -44,8 +46,8 @@ public class BatchStepHelper extends BatchHelper {
     private Task currentStep;
     private String problemTask;
     private String solutionTask;
-    private String problemMessage;
-    private String solutionMessage;
+    private Problem problem = new Problem();
+    private Solution solution = new Solution();
     private String processName = "";
     private String addToWikiField = "";
     private String script;
@@ -216,9 +218,9 @@ public class BatchStepHelper extends BatchHelper {
      */
     public String reportProblemForSingle() {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
-        serviceManager.getWorkflowService().setProblemMessage(getProblemMessage());
+        serviceManager.getWorkflowService().setProblem(getProblem());
         this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
-        this.problemMessage = "";
+        this.problem.setMessage("");
         this.problemTask = "";
         saveStep();
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
@@ -232,11 +234,11 @@ public class BatchStepHelper extends BatchHelper {
         for (Task s : this.steps) {
             this.currentStep = s;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
-            serviceManager.getWorkflowService().setProblemMessage(getProblemMessage());
+            serviceManager.getWorkflowService().setProblem(getProblem());
             this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
             saveStep();
         }
-        this.problemMessage = "";
+        this.problem.setMessage("");
         this.problemTask = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
@@ -280,10 +282,10 @@ public class BatchStepHelper extends BatchHelper {
      */
     public String solveProblemForSingle() {
         try {
-            serviceManager.getWorkflowService().setSolutionMessage(getSolutionMessage());
+            serviceManager.getWorkflowService().setSolution(getSolution());
             this.currentStep = serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav);
             saveStep();
-            this.solutionMessage = "";
+            this.solution.setMessage("");
             this.solutionTask = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
@@ -303,11 +305,11 @@ public class BatchStepHelper extends BatchHelper {
         try {
             for (Task s : this.steps) {
                 this.currentStep = s;
-                serviceManager.getWorkflowService().setSolutionMessage(getSolutionMessage());
-                this.currentStep = serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav);
+                serviceManager.getWorkflowService().setSolution(getSolution());
+                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav));
                 saveStep();
             }
-            this.solutionMessage = "";
+            this.solution.setMessage("");
             this.solutionTask = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
@@ -318,12 +320,23 @@ public class BatchStepHelper extends BatchHelper {
         }
     }
 
-    public String getProblemMessage() {
-        return this.problemMessage;
+    /**
+     * Get problem.
+     *
+     * @return Problem object
+     */
+    public Problem getProblem() {
+        return problem;
     }
 
-    public void setProblemMessage(String problemMessage) {
-        this.problemMessage = problemMessage;
+    /**
+     * Set problem.
+     *
+     * @param problem
+     *            object
+     */
+    public void setProblem(Problem problem) {
+        this.problem = problem;
     }
 
     /**
@@ -345,12 +358,23 @@ public class BatchStepHelper extends BatchHelper {
         this.problemTask = problemTask;
     }
 
-    public String getSolutionMessage() {
-        return this.solutionMessage;
+    /**
+     * Get solution.
+     *
+     * @return Solution object
+     */
+    public Solution getSolution() {
+        return solution;
     }
 
-    public void setSolutionMessage(String solutionMessage) {
-        this.solutionMessage = solutionMessage;
+    /**
+     * Set solution.
+     *
+     * @param solution
+     *            object
+     */
+    public void setSolution(Solution solution) {
+        this.solution = solution;
     }
 
     /**

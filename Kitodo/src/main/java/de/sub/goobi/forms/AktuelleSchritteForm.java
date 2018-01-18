@@ -54,6 +54,8 @@ import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectMode;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.workflow.Problem;
+import org.kitodo.workflow.Solution;
 
 @Named("AktuelleSchritteForm")
 @SessionScoped
@@ -62,10 +64,8 @@ public class AktuelleSchritteForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
     private Process myProcess = new Process();
     private Task mySchritt = new Task();
-    private Integer myProblemID;
-    private Integer mySolutionID;
-    private String problemMessage;
-    private String solutionMessage;
+    private Problem problem = new Problem();
+    private Solution solution = new Solution();
     private ObjectMode editMode = ObjectMode.NONE;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
@@ -456,11 +456,9 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return problem as String
      */
     public String reportProblem() {
-        serviceManager.getWorkflowService().setProblemId(getMyProblemID());
-        serviceManager.getWorkflowService().setProblemMessage(getProblemMessage());
+        serviceManager.getWorkflowService().setProblem(getProblem());
         setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt, this.myDav));
-        setMyProblemID(serviceManager.getWorkflowService().getProblemId());
-        setProblemMessage(serviceManager.getWorkflowService().getProblemMessage());
+        setProblem(serviceManager.getWorkflowService().getProblem());
         return filterAll();
     }
 
@@ -482,11 +480,9 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     public String solveProblem() {
-        serviceManager.getWorkflowService().setSolutionId(getMySolutionID());
-        serviceManager.getWorkflowService().setSolutionMessage(getSolutionMessage());
+        serviceManager.getWorkflowService().setSolution(getSolution());
         setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt, this.myDav));
-        setMySolutionID(serviceManager.getWorkflowService().getSolutionId());
-        setSolutionMessage(serviceManager.getWorkflowService().getSolutionMessage());
+        setSolution(serviceManager.getWorkflowService().getSolution());
         return filterAll();
     }
 
@@ -721,36 +717,42 @@ public class AktuelleSchritteForm extends BasisForm {
         this.editMode = editMode;
     }
 
-    public Integer getMyProblemID() {
-        return this.myProblemID;
+    /**
+     * Get problem.
+     *
+     * @return Problem object
+     */
+    public Problem getProblem() {
+        return problem;
     }
 
-    public void setMyProblemID(Integer myProblemID) {
-        this.myProblemID = myProblemID;
+    /**
+     * Set problem.
+     *
+     * @param problem
+     *            object
+     */
+    public void setProblem(Problem problem) {
+        this.problem = problem;
     }
 
-    public Integer getMySolutionID() {
-        return this.mySolutionID;
+    /**
+     * Get solution.
+     *
+     * @return Solution object
+     */
+    public Solution getSolution() {
+        return solution;
     }
 
-    public void setMySolutionID(Integer mySolutionID) {
-        this.mySolutionID = mySolutionID;
-    }
-
-    public String getProblemMessage() {
-        return this.problemMessage;
-    }
-
-    public void setProblemMessage(String problemMessage) {
-        this.problemMessage = problemMessage;
-    }
-
-    public String getSolutionMessage() {
-        return this.solutionMessage;
-    }
-
-    public void setSolutionMessage(String solutionMessage) {
-        this.solutionMessage = solutionMessage;
+    /**
+     * Set solution.
+     *
+     * @param solution
+     *            object
+     */
+    public void setSolution(Solution solution) {
+        this.solution = solution;
     }
 
     private void setAttributesForProcess() {

@@ -46,16 +46,16 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.workflow.Problem;
+import org.kitodo.workflow.Solution;
 
 public class WorkflowService {
 
     private int openTasksWithTheSameOrdering;
     private List<Task> automaticTasks;
     private List<Task> tasksToFinish;
-    private Integer problemId;
-    private Integer solutionId;
-    private String problemMessage;
-    private String solutionMessage;
+    private Problem problem = new Problem();
+    private Solution solution = new Solution();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static WorkflowService instance = null;
     private transient ServiceManager serviceManager = new ServiceManager();
@@ -77,36 +77,42 @@ public class WorkflowService {
         return instance;
     }
 
-    public Integer getProblemId() {
-        return problemId;
+    /**
+     * Get problem.
+     * 
+     * @return Problem object
+     */
+    public Problem getProblem() {
+        return problem;
     }
 
-    public void setProblemId(Integer problemId) {
-        this.problemId = problemId;
+    /**
+     * Set problem.
+     * 
+     * @param problem
+     *            object
+     */
+    public void setProblem(Problem problem) {
+        this.problem = problem;
     }
 
-    public Integer getSolutionId() {
-        return solutionId;
+    /**
+     * Get solution.
+     * 
+     * @return Solution object
+     */
+    public Solution getSolution() {
+        return solution;
     }
 
-    public void setSolutionId(Integer solutionId) {
-        this.solutionId = solutionId;
-    }
-
-    public String getProblemMessage() {
-        return problemMessage;
-    }
-
-    public void setProblemMessage(String problemMessage) {
-        this.problemMessage = problemMessage;
-    }
-
-    public String getSolutionMessage() {
-        return solutionMessage;
-    }
-
-    public void setSolutionMessage(String solutionMessage) {
-        this.solutionMessage = solutionMessage;
+    /**
+     * Set solution.
+     * 
+     * @param solution
+     *            object
+     */
+    public void setSolution(Solution solution) {
+        this.solution = solution;
     }
 
     /**
@@ -325,7 +331,7 @@ public class WorkflowService {
         }
         if (logger.isDebugEnabled()) {
             logger.debug("mySchritt.ID: " + task.getId());
-            logger.debug("Korrekturschritt.ID: " + this.problemId);
+            logger.debug("Korrekturschritt.ID: " + this.problem.getId());
         }
         webDav.uploadFromHome(task.getProcess());
         Date date = new Date();
@@ -336,7 +342,7 @@ public class WorkflowService {
         task.setProcessingBegin(null);
 
         try {
-            Task temp = serviceManager.getTaskService().getById(this.problemId);
+            Task temp = serviceManager.getTaskService().getById(this.problem.getId());
             temp.setProcessingStatusEnum(TaskStatus.OPEN);
             temp = serviceManager.getTaskService().setCorrectionStep(temp);
             temp.setProcessingEnd(null);
@@ -344,13 +350,13 @@ public class WorkflowService {
             Property processProperty = new Property();
             processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
             processProperty.setValue("[" + this.formatter.format(date) + ", "
-                    + serviceManager.getUserService().getFullName(user) + "] " + this.problemMessage);
+                    + serviceManager.getUserService().getFullName(user) + "] " + this.problem.getMessage());
             processProperty.setType(PropertyType.messageError);
             processProperty.getProcesses().add(task.getProcess());
             task.getProcess().getProperties().add(processProperty);
 
-            String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": " + this.problemMessage
-                    + " (" + serviceManager.getUserService().getFullName(user) + ")";
+            String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
+                    + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
             task.getProcess().setWikiField(
                 WikiFieldHelper.getWikiMessage(task.getProcess(), task.getProcess().getWikiField(), "error", message));
             serviceManager.getTaskService().save(temp);
@@ -375,8 +381,8 @@ public class WorkflowService {
             logger.error("Task couldn't get saved/inserted", e);
         }
 
-        this.problemMessage = "";
-        this.problemId = 0;
+        this.problem.setMessage("");
+        this.problem.setId(0);
         return task;
     }
 
@@ -414,13 +420,13 @@ public class WorkflowService {
                 Property processProperty = new Property();
                 processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
                 processProperty.setValue("[" + this.formatter.format(date) + ", "
-                        + serviceManager.getUserService().getFullName(ben) + "] " + this.problemMessage);
+                        + serviceManager.getUserService().getFullName(ben) + "] " + this.problem.getMessage());
                 processProperty.setType(PropertyType.messageError);
                 processProperty.getProcesses().add(currentTask.getProcess());
                 currentTask.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                        + this.problemMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
+                        + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(ben) + ")";
                 currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
                     currentTask.getProcess().getWikiField(), "error", message));
 
@@ -466,7 +472,7 @@ public class WorkflowService {
         task.setProcessingUser(user);
 
         try {
-            Task temp = serviceManager.getTaskService().getById(this.solutionId);
+            Task temp = serviceManager.getTaskService().getById(this.solution.getId());
             /*
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
              * schliessen
@@ -491,7 +497,7 @@ public class WorkflowService {
 
             // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
             String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                    + this.solutionMessage + " (" + serviceManager.getUserService().getFullName(user) + ")";
+                    + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
             task.getProcess().setWikiField(
                 WikiFieldHelper.getWikiMessage(task.getProcess(), task.getProcess().getWikiField(), "info", message));
 
@@ -500,7 +506,7 @@ public class WorkflowService {
             processProperty.setValue(
                 "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(user)
                         + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solutionMessage);
+                        + this.solution.getMessage());
             processProperty.setType(PropertyType.messageImportant);
             processProperty.getProcesses().add(task.getProcess());
             task.getProcess().getProperties().add(processProperty);
@@ -509,8 +515,8 @@ public class WorkflowService {
             logger.error("task couldn't get saved/inserted", e);
         }
 
-        this.solutionMessage = "";
-        this.solutionId = 0;
+        this.solution.setMessage("");
+        this.solution.setId(0);
         return task;
     }
 
@@ -569,13 +575,13 @@ public class WorkflowService {
                 processProperty.setValue(
                     "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(user)
                             + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                            + this.solutionMessage);
+                            + this.solution.getMessage());
                 processProperty.getProcesses().add(currentTask.getProcess());
                 processProperty.setType(PropertyType.messageImportant);
                 currentTask.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solutionMessage + " (" + serviceManager.getUserService().getFullName(user) + ")";
+                        + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
                 currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
                     currentTask.getProcess().getWikiField(), "info", message));
                 // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
