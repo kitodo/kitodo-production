@@ -228,12 +228,10 @@ public class WorkflowService {
             }
         }
 
-        /*
-         * wenn das Resultat des Arbeitsschrittes zunÃ¤chst verifiziert werden soll,
-         * dann ggf. das Abschliessen abbrechen
-         */
+        // if the result of the task is to be verified first, then if necessary, cancel
+        // the completion
         if (task.isTypeCloseVerify()) {
-            /* Metadatenvalidierung */
+            // metadata validation
             if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
                 serviceManager.getMetadataValidationService().setAutoSave(true);
                 if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
@@ -254,10 +252,8 @@ public class WorkflowService {
                 }
             }
         }
-        /*
-         * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten schon
-         * vorher draussen
-         */
+        // if the result of the verification is ok, then continue, otherwise it is not
+        // reached
         webDav.uploadFromHome(task.getProcess());
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         close(task);
@@ -290,24 +286,22 @@ public class WorkflowService {
                 task.getProcess());
         serviceManager.getHistoryService().save(history);
 
-        /*
-         * prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht
-         * abgeschlossen sind
-         */
+        // check if there are tasks that take place in parallel but are not yet
+        // completed
         List<Task> tasks = task.getProcess().getTasks();
         List<Task> allHigherTasks = getAllHigherTasks(tasks, task);
 
         activateNextTask(allHigherTasks);
 
-        Process po = task.getProcess();
-        URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(true, po);
+        Process process = task.getProcess();
+        URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(true, process);
         Integer numberOfFiles = serviceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
-        if (!po.getSortHelperImages().equals(numberOfFiles)) {
-            po.setSortHelperImages(numberOfFiles);
-            serviceManager.getProcessService().save(po);
+        if (!process.getSortHelperImages().equals(numberOfFiles)) {
+            process.setSortHelperImages(numberOfFiles);
+            serviceManager.getProcessService().save(process);
         }
 
-        updateProcessStatus(po);
+        updateProcessStatus(process);
 
         for (Task automaticTask : automaticTasks) {
             TaskScriptThread thread = new TaskScriptThread(automaticTask);
@@ -329,10 +323,7 @@ public class WorkflowService {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("mySchritt.ID: " + task.getId());
-            logger.debug("Korrekturschritt.ID: " + this.problem.getId());
-        }
+
         webDav.uploadFromHome(task.getProcess());
         Date date = new Date();
         task.setProcessingStatusEnum(TaskStatus.LOCKED);
@@ -347,11 +338,7 @@ public class WorkflowService {
             temp = serviceManager.getTaskService().setCorrectionStep(temp);
             temp.setProcessingEnd(null);
 
-            Property processProperty = new Property();
-            processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
-            processProperty.setValue("[" + this.formatter.format(date) + ", "
-                    + serviceManager.getUserService().getFullName(user) + "] " + this.problem.getMessage());
-            processProperty.setType(PropertyType.messageError);
+            Property processProperty = prepareProblemMessageProperty(date, user);
             processProperty.getProcesses().add(task.getProcess());
             task.getProcess().getProperties().add(processProperty);
 
@@ -362,20 +349,11 @@ public class WorkflowService {
             serviceManager.getTaskService().save(temp);
             task.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(), temp.getTitle(),
                     HistoryTypeEnum.taskError, temp.getProcess()));
-            /*
-             * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
-             * schliessen
-             */
-            List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
-                task.getOrdering(), task.getProcess().getId());
-            for (Task taskInBetween : allTasksInBetween) {
-                taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
-                taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
-                taskInBetween.setProcessingEnd(null);
-                serviceManager.getTaskService().save(taskInBetween);
-            }
 
-            // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
+            // close tasks between the current and the correction task
+            closeTasksBetweenCurrentAndCorrectionTask1_(task, temp);
+
+            // update the process so that the sort helper is saved
             this.serviceManager.getProcessService().save(task.getProcess());
         } catch (DAOException | DataException e) {
             logger.error("Task couldn't get saved/inserted", e);
@@ -399,9 +377,9 @@ public class WorkflowService {
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            currentTask.setProcessingUser(ben);
+        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        if (user != null) {
+            currentTask.setProcessingUser(user);
         }
         currentTask.setProcessingBegin(null);
 
@@ -417,35 +395,23 @@ public class WorkflowService {
                 temp = serviceManager.getTaskService().setCorrectionStep(temp);
                 temp.setProcessingEnd(null);
 
-                Property processProperty = new Property();
-                processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
-                processProperty.setValue("[" + this.formatter.format(date) + ", "
-                        + serviceManager.getUserService().getFullName(ben) + "] " + this.problem.getMessage());
-                processProperty.setType(PropertyType.messageError);
+                Property processProperty = prepareProblemMessageProperty(date, user);
                 processProperty.getProcesses().add(currentTask.getProcess());
                 currentTask.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                        + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(ben) + ")";
+                        + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
                 currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
                     currentTask.getProcess().getWikiField(), "error", message));
 
                 this.serviceManager.getTaskService().save(temp);
                 currentTask.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(),
                         temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
-                /*
-                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
-                 * schliessen
-                 */
-                List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-                    currentTask.getOrdering(), temp.getOrdering(), currentTask.getProcess().getId());
-                for (Task task : tasksInBetween) {
-                    task.setProcessingStatusEnum(TaskStatus.LOCKED);
-                    task = serviceManager.getTaskService().setCorrectionStep(task);
-                    task.setProcessingEnd(null);
-                }
+
+                // close all tasks between the current and the correction task
+                closeTasksBetweenCurrentAndCorrectionTask2_(currentTask, temp);
             }
-            // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
+            // update the process so that the sort helper is saved
         } catch (DataException e) {
             logger.error(e);
         }
@@ -463,51 +429,26 @@ public class WorkflowService {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
-        Date now = new Date();
+        Date date = new Date();
         webDav.uploadFromHome(task.getProcess());
         task.setProcessingStatusEnum(TaskStatus.DONE);
-        task.setProcessingEnd(now);
+        task.setProcessingEnd(date);
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(new Date());
         task.setProcessingUser(user);
 
         try {
             Task temp = serviceManager.getTaskService().getById(this.solution.getId());
-            /*
-             * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
-             * schliessen
-             */
-            List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
-                task.getOrdering(), task.getProcess().getId());
-            for (Task taskInBetween : allTasksInBetween) {
-                taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
-                taskInBetween.setProcessingEnd(now);
-                taskInBetween.setPriority(0);
-                if (taskInBetween.getId().intValue() == temp.getId().intValue()) {
-                    taskInBetween.setProcessingStatusEnum(TaskStatus.OPEN);
-                    taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
-                    // taskInBetween.setProcessingBegin(null);
-                    taskInBetween.setProcessingEnd(null);
-                    taskInBetween.setProcessingTime(now);
-                }
-                task.setProcessingTime(new Date());
-                task.setProcessingUser(user);
-                serviceManager.getTaskService().save(taskInBetween);
-            }
+            // close all tasks between the current and the correction task
+            closeTasksBetweenCurrentAndCorrectionTask1(task, temp, date, user);
 
-            // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
+            // update the process so that the sort helper is saved
             String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
                     + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
             task.getProcess().setWikiField(
                 WikiFieldHelper.getWikiMessage(task.getProcess(), task.getProcess().getWikiField(), "info", message));
 
-            Property processProperty = new Property();
-            processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-            processProperty.setValue(
-                "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(user)
-                        + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solution.getMessage());
-            processProperty.setType(PropertyType.messageImportant);
+            Property processProperty = prepareSolveMessageProperty(temp, user);
             processProperty.getProcesses().add(task.getProcess());
             task.getProcess().getProperties().add(processProperty);
             serviceManager.getProcessService().save(task.getProcess());
@@ -551,45 +492,105 @@ public class WorkflowService {
                 }
             }
             if (temp != null) {
-                /*
-                 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder
-                 * schliessen
-                 */
-                List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
-                    currentTask.getOrdering(), currentTask.getProcess().getId());
-                for (Task task : tasksInBetween) {
-                    task.setProcessingStatusEnum(TaskStatus.DONE);
-                    task.setProcessingEnd(date);
-                    task.setPriority(0);
-                    if (task.getId().intValue() == temp.getId().intValue()) {
-                        task.setProcessingStatusEnum(TaskStatus.OPEN);
-                        task = serviceManager.getTaskService().setCorrectionStep(task);
-                        task.setProcessingEnd(null);
-                        task.setProcessingTime(date);
-                    }
-                    this.serviceManager.getTaskService().save(task);
-                }
+                // close tasks between the current and the correction task
+                closeTasksBetweenCurrentAndCorrectionTask2(currentTask, temp, date);
 
-                Property processProperty = new Property();
-                processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-                processProperty.setValue(
-                    "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(user)
-                            + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                            + this.solution.getMessage());
+                Property processProperty = prepareSolveMessageProperty(temp, user);
                 processProperty.getProcesses().add(currentTask.getProcess());
-                processProperty.setType(PropertyType.messageImportant);
                 currentTask.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
                         + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(user) + ")";
                 currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
                     currentTask.getProcess().getWikiField(), "info", message));
-                // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
+                // update the process so that the collation helper is saved
             }
         } catch (DataException e) {
             logger.error(e);
         }
         return currentTask;
+    }
+
+    //TODO: find out if method should save or not task
+    private void closeTasksBetweenCurrentAndCorrectionTask1_(Task currentTask, Task correctionTask) throws DataException {
+        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(correctionTask.getOrdering(),
+                currentTask.getOrdering(), currentTask.getProcess().getId());
+        for (Task taskInBetween : allTasksInBetween) {
+            taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
+            taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
+            taskInBetween.setProcessingEnd(null);
+            serviceManager.getTaskService().save(taskInBetween);
+        }
+    }
+
+    private void closeTasksBetweenCurrentAndCorrectionTask2_(Task currentTask, Task correctionTask) {
+        List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
+                currentTask.getOrdering(), correctionTask.getOrdering(), currentTask.getProcess().getId());
+        for (Task task : tasksInBetween) {
+            task.setProcessingStatusEnum(TaskStatus.LOCKED);
+            task = serviceManager.getTaskService().setCorrectionStep(task);
+            task.setProcessingEnd(null);
+        }
+    }
+
+    // TODO: shouldn't both methods be the same?! Why for batch is different than
+    // for form?!
+    private void closeTasksBetweenCurrentAndCorrectionTask1(Task currentTask, Task correctionTask, Date date, User user)
+            throws DataException {
+        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
+            correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
+        for (Task taskInBetween : allTasksInBetween) {
+            taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
+            taskInBetween.setProcessingEnd(date);
+            taskInBetween.setPriority(0);
+            if (taskInBetween.getId().intValue() == currentTask.getId().intValue()) {
+                taskInBetween.setProcessingStatusEnum(TaskStatus.OPEN);
+                taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
+                taskInBetween.setProcessingEnd(null);
+                taskInBetween.setProcessingTime(date);
+            }
+            currentTask.setProcessingTime(date);
+            currentTask.setProcessingUser(user);
+            serviceManager.getTaskService().save(taskInBetween);
+        }
+    }
+
+    private void closeTasksBetweenCurrentAndCorrectionTask2(Task currentTask, Task correctionTask, Date date)
+            throws DataException {
+        List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(correctionTask.getOrdering(),
+            currentTask.getOrdering(), currentTask.getProcess().getId());
+        for (Task task : tasksInBetween) {
+            task.setProcessingStatusEnum(TaskStatus.DONE);
+            task.setProcessingEnd(date);
+            task.setPriority(0);
+            if (task.getId().intValue() == correctionTask.getId().intValue()) {
+                task.setProcessingStatusEnum(TaskStatus.OPEN);
+                task = serviceManager.getTaskService().setCorrectionStep(task);
+                task.setProcessingEnd(null);
+                task.setProcessingTime(date);
+            }
+            this.serviceManager.getTaskService().save(task);
+        }
+    }
+
+    private Property prepareProblemMessageProperty(Date date, User user) {
+        Property processProperty = new Property();
+        processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
+        processProperty.setValue("[" + this.formatter.format(date) + ", "
+                + serviceManager.getUserService().getFullName(user) + "] " + this.problem.getMessage());
+        processProperty.setType(PropertyType.messageError);
+        return processProperty;
+    }
+
+    private Property prepareSolveMessageProperty(Task correctionTask, User user) {
+        Property processProperty = new Property();
+        processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
+        processProperty.setValue(
+                "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(user)
+                        + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
+                        + this.solution.getMessage());
+        processProperty.setType(PropertyType.messageImportant);
+        return processProperty;
     }
 
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
@@ -620,7 +621,7 @@ public class WorkflowService {
 
                 if (ordering == task.getOrdering() && task.getProcessingStatus() != 3
                         && task.getProcessingStatus() != 2) {
-                    // den Schritt aktivieren, wenn es kein vollautomatischer ist
+                    // activate the task if it is not fully automatic
                     task.setProcessingStatus(1);
                     task.setProcessingTime(new Date());
                     task.setEditType(4);
@@ -629,7 +630,7 @@ public class WorkflowService {
                             HistoryTypeEnum.taskOpen, task.getProcess());
                     serviceManager.getHistoryService().save(historyOpen);
 
-                    // wenn es ein automatischer Schritt mit Script ist
+                    // if it is an automatic task with script
                     if (task.isTypeAutomatic()) {
                         automaticTasks.add(task);
                     } else if (task.isTypeAcceptClose()) {
