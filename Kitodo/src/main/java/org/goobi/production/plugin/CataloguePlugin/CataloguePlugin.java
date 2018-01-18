@@ -292,7 +292,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      */
     @Override
     public PluginType getType() {
-        return PluginType.Opac;
+        return PluginType.CATALOGUE;
     }
 
     /**

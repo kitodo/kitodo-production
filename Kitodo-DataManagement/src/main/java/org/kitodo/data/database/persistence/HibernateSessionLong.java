@@ -21,10 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-// TODO: Fix for Hibernate-Session-Management, old Version reactivated
 
 @Named("HibernateSessionLong")
 @SessionScoped
@@ -59,35 +56,5 @@ public class HibernateSessionLong implements Serializable {
         }
 
         return this.sess;
-    }
-
-    /**
-     * Get Session Factory.
-     *
-     * @return the hibernate session factory
-     */
-    @SuppressWarnings("deprecation")
-    public static SessionFactory getSessionFactory() {
-        if (factory == null) {
-            logger.debug("getSessionFactory() - hibernate-Factory initialisation");
-            factory = new Configuration().configure().buildSessionFactory();
-        }
-        return factory;
-    }
-
-    /**
-     * This is a simple method to reduce the amount of code that needs to be
-     * written every time hibernate is used.
-     */
-    public static void rollback(Transaction tx) {
-        if (tx != null) {
-            try {
-                tx.rollback();
-            } catch (HibernateException ex) {
-                // Probably don't need to do anything - this is likely being
-                // called because of another exception, and we don't want to
-                // mask it with yet another exception.
-            }
-        }
     }
 }

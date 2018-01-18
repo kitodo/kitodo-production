@@ -193,9 +193,9 @@ public class MetadatenHelper implements Comparator<Object> {
          */
         inOldDocstruct.getParent().addChild(newDocstruct);
         int i = 1;
-        // TODO: get rid of Iterators, use a for Loop instead
-        for (Iterator<DocStruct> iter = newDocstruct.getParent().getAllChildren().iterator(); iter.hasNext(); i++) {
-            if (iter.next() == inOldDocstruct) {
+        List<DocStruct> children = newDocstruct.getParent().getAllChildren();
+        for (DocStruct child : children) {
+            if (child == inOldDocstruct) {
                 break;
             }
         }

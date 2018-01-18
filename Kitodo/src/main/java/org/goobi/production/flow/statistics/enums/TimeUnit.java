@@ -13,6 +13,8 @@ package org.goobi.production.flow.statistics.enums;
 
 import de.sub.goobi.helper.Helper;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -126,13 +128,13 @@ public enum TimeUnit {
      * @return list of TimeUnit objects
      */
     public static List<TimeUnit> getAllVisibleValues() {
-        ArrayList<TimeUnit> mylist = new ArrayList<>();
+        ArrayList<TimeUnit> list = new ArrayList<>();
         for (TimeUnit tu : TimeUnit.values()) {
             if (tu.visible) {
-                mylist.add(tu);
+                list.add(tu);
             }
         }
-        return mylist;
+        return list;
     }
 
     /**
@@ -165,39 +167,37 @@ public enum TimeUnit {
         return dateRow;
     }
 
-    @SuppressWarnings("deprecation")
-    private String getTimeFormat(Date inDate) {
-
+    private String getTimeFormat(Date date) {
         switch (this) {
             case days:
             case months:
             case weeks:
             case years:
-                return new DateTime(inDate).toString(getFormatter());
+                return new DateTime(date).toString(getFormatter());
             case quarters:
-                // TODO: Remove use of deprecated method
-                return new DateTime(inDate).toString(getFormatter()) + "/"
-                        + Integer.toString((inDate.getMonth() - 1) / 3 + 1);
+                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                return new DateTime(date).toString(getFormatter()) + "/"
+                        + Integer.toString((localDate.getMonthValue() - 2) / 3 + 1);
+            default:
+                return date.toString();
         }
-        return inDate.toString();
-
     }
 
-    private Date getNextDate(Date inDate) {
-
+    private Date getNextDate(Date date) {
         switch (this) {
             case days:
-                return new DateTime(inDate).plusDays(1).toDate();
+                return new DateTime(date).plusDays(1).toDate();
             case months:
-                return new DateTime(inDate).plusMonths(1).toDate();
+                return new DateTime(date).plusMonths(1).toDate();
             case quarters:
-                return new DateTime(inDate).plusMonths(3).toDate();
+                return new DateTime(date).plusMonths(3).toDate();
             case weeks:
-                return new DateTime(inDate).plusWeeks(1).toDate();
+                return new DateTime(date).plusWeeks(1).toDate();
             case years:
-                return new DateTime(inDate).plusYears(1).toDate();
+                return new DateTime(date).plusYears(1).toDate();
+            default:
+                return date;
         }
-        return inDate;
     }
 
     private DateTimeFormatter getFormatter() {
@@ -213,8 +213,9 @@ public enum TimeUnit {
             case quarters:
                 // has to be extended by the calling function
                 return DateTimeFormat.forPattern("yyyy");
+            default:
+                return null;
         }
-        return null;
     }
 
 }

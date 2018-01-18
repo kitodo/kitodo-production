@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -119,10 +120,9 @@ class UGHUtils {
             return;
         }
         if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
-            // TODO: Use for loops
-            for (Iterator<? extends Metadata> iter = inStruct.getAllMetadataByType(mdt).iterator(); iter.hasNext();) {
-                Metadata md = iter.next();
-                inStruct.removeMetadata(md);
+            List<? extends Metadata> metadataList = inStruct.getAllMetadataByType(mdt);
+            for (Metadata metadata : metadataList) {
+                inStruct.removeMetadata(metadata);
             }
         }
         /* Element neu hinzufügen */
@@ -152,10 +152,9 @@ class UGHUtils {
             return;
         }
         if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
-            // TODO: Use for loops
-            for (Iterator<? extends Metadata> iter = inStruct.getAllMetadataByType(mdt).iterator(); iter.hasNext();) {
-                Metadata md = iter.next();
-                inStruct.removeMetadata(md);
+            List<? extends Metadata> metadataList = inStruct.getAllMetadataByType(mdt);
+            for (Metadata metadata : metadataList) {
+                inStruct.removeMetadata(metadata);
             }
         }
         /* Element neu hinzufügen */

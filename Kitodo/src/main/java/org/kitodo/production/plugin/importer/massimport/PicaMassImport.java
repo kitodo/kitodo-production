@@ -116,7 +116,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public PluginType getType() {
-        return PluginType.Import;
+        return PluginType.IMPORT;
     }
 
     @Override

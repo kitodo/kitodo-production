@@ -268,7 +268,7 @@ public class HelperForm implements Serializable {
      */
     public boolean getMassImportAllowed() {
         return ConfigCore.getBooleanParameter("massImportAllowed", false)
-                && !PluginLoader.getPluginList(PluginType.Import).isEmpty();
+                && !PluginLoader.getPluginList(PluginType.IMPORT).isEmpty();
     }
 
     /**

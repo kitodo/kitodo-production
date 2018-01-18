@@ -661,7 +661,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return user.getCss();
     }
 
-    // TODO: check if this class should be here or in some other place
     /**
      * Check if password is correct.
      * 
