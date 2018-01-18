@@ -28,8 +28,6 @@ import java.util.Objects;
 
 import javax.naming.AuthenticationException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.kitodo.data.database.beans.History;
@@ -59,7 +57,6 @@ public class WorkflowService {
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static WorkflowService instance = null;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(WorkflowService.class);
 
     /**
      * Return singleton variable of type TaskService.
@@ -308,7 +305,7 @@ public class WorkflowService {
      *
      * @return Task
      */
-    public Task reportProblem(Task task, WebDav webDav) {
+    public Task reportProblem(Task task, WebDav webDav) throws DAOException, DataException {
         if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
@@ -322,30 +319,26 @@ public class WorkflowService {
         task.setProcessingUser(this.user);
         task.setProcessingBegin(null);
 
-        try {
-            Task temp = serviceManager.getTaskService().getById(this.problem.getId());
-            temp.setProcessingStatusEnum(TaskStatus.OPEN);
-            temp = serviceManager.getTaskService().setCorrectionStep(temp);
-            temp.setProcessingEnd(null);
+        Task temp = serviceManager.getTaskService().getById(this.problem.getId());
+        temp.setProcessingStatusEnum(TaskStatus.OPEN);
+        temp = serviceManager.getTaskService().setCorrectionStep(temp);
+        temp.setProcessingEnd(null);
 
-            Property processProperty = prepareProblemMessageProperty(date);
-            processProperty.getProcesses().add(task.getProcess());
-            task.getProcess().getProperties().add(processProperty);
+        Property processProperty = prepareProblemMessageProperty(date);
+        processProperty.getProcesses().add(task.getProcess());
+        task.getProcess().getProperties().add(processProperty);
 
-            task.getProcess().setWikiField(prepareProblemWikiField(task.getProcess(), temp));
+        task.getProcess().setWikiField(prepareProblemWikiField(task.getProcess(), temp));
 
-            serviceManager.getTaskService().save(temp);
-            task.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(), temp.getTitle(),
+        serviceManager.getTaskService().save(temp);
+        task.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(), temp.getTitle(),
                     HistoryTypeEnum.taskError, temp.getProcess()));
 
-            // close tasks between the current and the correction task
-            closeTasksBetweenCurrentAndCorrectionTask(task, temp);
+        // close tasks between the current and the correction task
+        closeTasksBetweenCurrentAndCorrectionTask(task, temp);
 
-            // update the process so that the sort helper is saved
-            this.serviceManager.getProcessService().save(task.getProcess());
-        } catch (DAOException | DataException e) {
-            logger.error("Task couldn't get saved/inserted", e);
-        }
+        // update the process so that the sort helper is saved
+        this.serviceManager.getProcessService().save(task.getProcess());
 
         this.problem.setMessage("");
         this.problem.setId(0);
@@ -360,7 +353,7 @@ public class WorkflowService {
      * @param problemTask
      *            String
      */
-    public Task reportProblem(Task currentTask, String problemTask) {
+    public Task reportProblem(Task currentTask, String problemTask) throws DataException {
         Date date = new Date();
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -370,35 +363,32 @@ public class WorkflowService {
         }
         currentTask.setProcessingBegin(null);
 
-        try {
-            Task temp = null;
-            for (Task task : currentTask.getProcess().getTasks()) {
-                if (task.getTitle().equals(problemTask)) {
-                    temp = task;
-                }
+        Task temp = null;
+        for (Task task : currentTask.getProcess().getTasks()) {
+            if (task.getTitle().equals(problemTask)) {
+                temp = task;
             }
-            if (temp != null) {
-                temp.setProcessingStatusEnum(TaskStatus.OPEN);
-                temp = serviceManager.getTaskService().setCorrectionStep(temp);
-                temp.setProcessingEnd(null);
+        }
+        if (temp != null) {
+            temp.setProcessingStatusEnum(TaskStatus.OPEN);
+            temp = serviceManager.getTaskService().setCorrectionStep(temp);
+            temp.setProcessingEnd(null);
 
-                Property processProperty = prepareProblemMessageProperty(date);
-                processProperty.getProcesses().add(currentTask.getProcess());
-                currentTask.getProcess().getProperties().add(processProperty);
+            Property processProperty = prepareProblemMessageProperty(date);
+            processProperty.getProcesses().add(currentTask.getProcess());
+            currentTask.getProcess().getProperties().add(processProperty);
 
-                currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), temp));
+            currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), temp));
 
-                this.serviceManager.getTaskService().save(temp);
-                currentTask.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(),
+            this.serviceManager.getTaskService().save(temp);
+            currentTask.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(),
                         temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
 
-                // close all tasks between the current and the correction task
-                closeTasksBetweenCurrentAndCorrectionTask(currentTask, temp);
-            }
-            // update the process so that the sort helper is saved
-        } catch (DataException e) {
-            logger.error(e);
+            // close all tasks between the current and the correction task
+            closeTasksBetweenCurrentAndCorrectionTask(currentTask, temp);
         }
+        // update the process so that the sort helper is saved
+        //TODO: why comment is here but no process save here?!
         return currentTask;
     }
 
@@ -407,7 +397,7 @@ public class WorkflowService {
      *
      * @return Task
      */
-    public Task solveProblem(Task task, WebDav webDav) {
+    public Task solveProblem(Task task, WebDav webDav) throws DAOException, DataException {
         if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
@@ -420,21 +410,17 @@ public class WorkflowService {
         task.setProcessingTime(new Date());
         task.setProcessingUser(this.user);
 
-        try {
-            Task temp = serviceManager.getTaskService().getById(this.solution.getId());
-            // close all tasks between the current and the correction task
-            closeTasksBetweenCurrentAndCorrectionTaskA(task, temp, date);
+        Task temp = serviceManager.getTaskService().getById(this.solution.getId());
+        // close all tasks between the current and the correction task
+        closeTasksBetweenCurrentAndCorrectionTaskA(task, temp, date);
 
-            // update the process so that the sort helper is saved
-            task.getProcess().setWikiField(prepareSolutionWikiField(task.getProcess(), temp));
+        // update the process so that the sort helper is saved
+        task.getProcess().setWikiField(prepareSolutionWikiField(task.getProcess(), temp));
 
-            Property processProperty = prepareSolveMessageProperty(temp);
-            processProperty.getProcesses().add(task.getProcess());
-            task.getProcess().getProperties().add(processProperty);
-            serviceManager.getProcessService().save(task.getProcess());
-        } catch (DAOException | DataException e) {
-            logger.error("task couldn't get saved/inserted", e);
-        }
+        Property processProperty = prepareSolveMessageProperty(temp);
+        processProperty.getProcesses().add(task.getProcess());
+        task.getProcess().getProperties().add(processProperty);
+        serviceManager.getProcessService().save(task.getProcess());
 
         this.solution.setMessage("");
         this.solution.setId(0);
@@ -451,8 +437,9 @@ public class WorkflowService {
      * @param webDav
      *            WebDav
      */
-    public Task solveProblem(Task currentTask, String solutionTask, WebDav webDav) throws AuthenticationException {
+    public Task solveProblem(Task currentTask, String solutionTask, WebDav webDav) throws AuthenticationException, DataException {
         if (this.user == null) {
+            //TODO: should be now it thrown every where where user is not found?
             throw new AuthenticationException("userNotFound");
         }
         Date date = new Date();
@@ -463,26 +450,22 @@ public class WorkflowService {
         currentTask.setProcessingTime(date);
         currentTask.setProcessingUser(this.user);
 
-        try {
-            Task temp = null;
-            for (Task task : currentTask.getProcess().getTasks()) {
-                if (task.getTitle().equals(solutionTask)) {
-                    temp = task;
-                }
+        Task temp = null;
+        for (Task task : currentTask.getProcess().getTasks()) {
+            if (task.getTitle().equals(solutionTask)) {
+                temp = task;
             }
-            if (temp != null) {
-                // close tasks between the current and the correction task
-                closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, temp, date);
+        }
+        if (temp != null) {
+            // close tasks between the current and the correction task
+            closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, temp, date);
 
-                Property processProperty = prepareSolveMessageProperty(temp);
-                processProperty.getProcesses().add(currentTask.getProcess());
-                currentTask.getProcess().getProperties().add(processProperty);
+            Property processProperty = prepareSolveMessageProperty(temp);
+            processProperty.getProcesses().add(currentTask.getProcess());
+            currentTask.getProcess().getProperties().add(processProperty);
 
-                currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), temp));
-                // update the process so that the collation helper is saved
-            }
-        } catch (DataException e) {
-            logger.error(e);
+            currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), temp));
+            // update the process so that the collation helper is saved
         }
         return currentTask;
     }

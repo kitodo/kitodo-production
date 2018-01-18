@@ -219,7 +219,11 @@ public class BatchStepHelper extends BatchHelper {
     public String reportProblemForSingle() {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
         serviceManager.getWorkflowService().setProblem(getProblem());
-        this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
+        try {
+            this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
+        } catch (DataException e) {
+            logger.error("Problem couldn't be reported: " + e);
+        }
         this.problem.setMessage("");
         this.problemTask = "";
         saveStep();
@@ -235,7 +239,11 @@ public class BatchStepHelper extends BatchHelper {
             this.currentStep = s;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
             serviceManager.getWorkflowService().setProblem(getProblem());
-            this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
+            try {
+                setCurrentStep(serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask));
+            } catch (DataException e) {
+                logger.error("Problem couldn't be reported: " + e);
+            }
             saveStep();
         }
         this.problem.setMessage("");
@@ -283,7 +291,11 @@ public class BatchStepHelper extends BatchHelper {
     public String solveProblemForSingle() {
         try {
             serviceManager.getWorkflowService().setSolution(getSolution());
-            this.currentStep = serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav);
+            try {
+                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav));
+            } catch (DataException e) {
+                logger.error("Problem couldn't be solved: " + e);
+            }
             saveStep();
             this.solution.setMessage("");
             this.solutionTask = "";
@@ -306,7 +318,11 @@ public class BatchStepHelper extends BatchHelper {
             for (Task s : this.steps) {
                 this.currentStep = s;
                 serviceManager.getWorkflowService().setSolution(getSolution());
-                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav));
+                try {
+                    setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav));
+                } catch (DataException e) {
+                    logger.error("Problem couldn't be solved: " + e);
+                }
                 saveStep();
             }
             this.solution.setMessage("");

@@ -457,7 +457,11 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String reportProblem() {
         serviceManager.getWorkflowService().setProblem(getProblem());
-        setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt, this.myDav));
+        try {
+            setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt, this.myDav));
+        } catch (DAOException | DataException e) {
+            logger.error("Problem couldn't be reported: " + e);
+        }
         setProblem(serviceManager.getWorkflowService().getProblem());
         return filterAll();
     }
@@ -481,7 +485,11 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String solveProblem() {
         serviceManager.getWorkflowService().setSolution(getSolution());
-        setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt, this.myDav));
+        try {
+            setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt, this.myDav));
+        } catch (DAOException | DataException e) {
+            logger.error("Problem couldn't be solved: " + e);
+        }
         setSolution(serviceManager.getWorkflowService().getSolution());
         return filterAll();
     }
