@@ -21,6 +21,7 @@
                  lazy="true"
                  paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
+                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
         <p:column headerText="#{msgs.titel}">
@@ -31,7 +32,7 @@
             <h:outputText value="#{item.file}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.metadatenSortierungNachRegelsatz}" styleClass="checkboxColumn">
+        <p:column headerText="#{msgs.metadatenSortierungNachRegelsatz}" styleClass="checkboxColumn" style="width: initial">
             <ui:fragment rendered="#{item.orderMetadataByRuleset}">
                 <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
             </ui:fragment>
