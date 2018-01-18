@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.TreeMap;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +37,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.kitodo.dataaccess.AccessibleObject;
 import org.kitodo.dataaccess.IdentifiableNode;
 import org.kitodo.dataaccess.LangString;
@@ -84,12 +86,12 @@ public class XMLWriter {
      *
      * @param node
      *            node to transform
-     * @param out
-     *            element to populate
      * @param xml
      *            the dom document, needed to create the children
      * @param abbr
      *            the namespace handler initialized at the root node
+     * @param out
+     *            element to populate
      * @throws NoSuchElementException
      *             if a relation links to an empty set of objects. (If so, the
      *             object model is corrupt.)
@@ -258,24 +260,19 @@ public class XMLWriter {
      *             if the writing fails
      */
     public static void toFile(Node node, File file, int indent, Map<String, String> namespaces) throws IOException {
-        OutputStream out = null;
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             if (indent > -1) {
                 transformer.setOutputProperty(OutputKeys.INDENT, TRANSFORMER_INDENT_TRUE);
                 transformer.setOutputProperty(TRANSFORMER_INDENT_VALUE, Integer.toString(indent));
             }
-            out = new FileOutputStream(file);
-            transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(out));
-            out.flush();
-
+            try (OutputStream out = new FileOutputStream(file)) {
+                transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(out));
+                out.flush();
+            }
         } catch (TransformerException e) {
             String message = e.getMessage();
             throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
     }
 
@@ -334,7 +331,7 @@ public class XMLWriter {
             return new String(buffer.toByteArray(), charset);
         } catch (TransformerException | UnsupportedEncodingException e) {
             String message = e.getMessage();
-            throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
+            throw new IllegalArgumentException(message != null ? message : e.getClass().getSimpleName(), e);
         }
     }
 }

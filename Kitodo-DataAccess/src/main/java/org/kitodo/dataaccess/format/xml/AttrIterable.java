@@ -39,8 +39,8 @@ class AttrIterable implements Iterable<Attr>, Iterator<Attr> {
     /**
      * Creates a class to iterate over the attributes of a DOM element.
      *
-     * @param element
-     *            element over whose attributes shall be iterated
+     * @param attributes
+     *            attributes list over which shall be iterated
      */
     AttrIterable(NamedNodeMap attributes) {
         this.attributes = attributes;

@@ -155,6 +155,44 @@ public class XMLReader {
     }
 
     /**
+     * Returns the globally unique resource identifier (URI) for a local file as
+     * a {@code String}. The URI is formed with the host name of the machine the
+     * program is running on.
+     *
+     * @param file
+     *            file to create an URI for
+     * @return unique resource identifier for the file
+     * @throws IOException
+     *             if it fails
+     */
+    public static String globallyUniqueIdentifierForFile(File file) throws IOException {
+        URI uri = file.getCanonicalFile().toURI();
+        try {
+            String host = uri.getHost();
+            String path = uri.getPath();
+            if (host == null) {
+                host = InetAddress.getLocalHost().getCanonicalHostName();
+                if ((path != null) && path.startsWith("//")) {
+                    int pathStart = path.indexOf('/', 2);
+                    String remote = path.substring(2, pathStart);
+                    path = path.substring(pathStart);
+                    host = remote.contains(".") ? remote
+                            : remote.concat(host.substring(InetAddress.getLocalHost().getHostName().length()));
+                }
+            }
+            String scheme = uri.getScheme();
+            if ((scheme == null) || !scheme.toLowerCase().startsWith("http")) {
+                scheme = "http";
+            }
+            return new URI(scheme, uri.getUserInfo(), host, uri.getPort(), path, uri.getQuery(), uri.getFragment())
+                    .toASCIIString();
+        } catch (URISyntaxException e) {
+            String message = e.getMessage();
+            throw new IllegalArgumentException(message != null ? message : e.getClass().getName(), e);
+        }
+    }
+
+    /**
      * Parse an element to a literal.
      *
      * @param element
@@ -169,6 +207,8 @@ public class XMLReader {
      *            whether or not to trim white space around the element
      * @param documentNS
      *            the namespace of the document
+     * @param storage
+     *            storage to read the XML into
      * @return the literal node
      */
     private static ObjectType parseLiteralElement(Element element, NodeReference type, String lang, Space space,
@@ -197,6 +237,10 @@ public class XMLReader {
      * @param documentNS
      *            the address of the document, as fall-back namespace for local
      *            XML elements and attributes
+     * @param root
+     *            whether this is the XML’s root (top) element
+     * @param storage
+     *            storage to read the XML into
      * @return the populated node
      */
     private static Node parseNodeElement(Element element, String lang, Space space, String documentNS, boolean root,
@@ -290,6 +334,8 @@ public class XMLReader {
      * @param documentNS
      *            the address of the document, as fall-back namespace for local
      *            XML elements and attributes
+     * @param storage
+     *            storage to read the XML into
      * @return the populated node
      */
     private static Set<ObjectType> parseRelationElement(Element element, String lang, Space space, String documentNS,
@@ -438,6 +484,8 @@ public class XMLReader {
      * @param documentNS
      *            the address of the document, as fall-back namespace for local
      *            XML elements and attributes
+     * @param storage
+     *            storage to read the XML into
      * @return the root node of a linked data tree
      */
     private static Node toNode(Element root, String documentNS, Storage storage) {
@@ -458,7 +506,8 @@ public class XMLReader {
      *             if the reading fails
      */
     public static Node toNode(File path, Storage storage) throws SAXException, IOException {
-        return toNode(parseXML(new FileInputStream(path), Optional.empty()), uriForFile(path), storage);
+        return toNode(parseXML(new FileInputStream(path), Optional.empty()), globallyUniqueIdentifierForFile(path),
+            storage);
     }
 
     /**
@@ -508,43 +557,6 @@ public class XMLReader {
         } catch (IOException e) {
             /* there is no IOException to expect when reading from a String */
             throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Returns an URI for a local file, with the host name of the machine the
-     * program is running on.
-     *
-     * @param file
-     *            file to create an URI for
-     * @return URI for file
-     * @throws IOException
-     *             if it fails
-     */
-    public static String uriForFile(File file) throws IOException {
-        URI uri = file.getCanonicalFile().toURI();
-        try {
-            String host = uri.getHost();
-            String path = uri.getPath();
-            if (host == null) {
-                host = InetAddress.getLocalHost().getCanonicalHostName();
-                if ((path != null) && path.startsWith("//")) {
-                    int pathStart = path.indexOf('/', 2);
-                    String remote = path.substring(2, pathStart);
-                    path = path.substring(pathStart);
-                    host = remote.contains(".") ? remote
-                            : remote.concat(host.substring(InetAddress.getLocalHost().getHostName().length()));
-                }
-            }
-            String scheme = uri.getScheme();
-            if ((scheme == null) || !scheme.toLowerCase().startsWith("http")) {
-                scheme = "http";
-            }
-            return new URI(scheme, uri.getUserInfo(), host, uri.getPort(), path, uri.getQuery(), uri.getFragment())
-                    .toASCIIString();
-        } catch (URISyntaxException e) {
-            String message = e.getMessage();
-            throw new IllegalArgumentException(message != null ? message : e.getClass().getName(), e);
         }
     }
 

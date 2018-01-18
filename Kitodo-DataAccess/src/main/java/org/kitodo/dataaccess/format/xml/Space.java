@@ -32,11 +32,11 @@ enum Space {
         /**
          * Trimming white space the XML way.
          */
-        public String trim(String s) {
+        public String trim(String input) {
             State state = State.INITIAL;
-            StringBuilder result = new StringBuilder(s.length());
-            for (int i = 0; i < s.length(); i++) {
-                int codePoint = s.codePointAt(i);
+            StringBuilder result = new StringBuilder(input.length());
+            for (int i = 0; i < input.length(); i++) {
+                int codePoint = input.codePointAt(i);
                 if (!WHITE_SPACE.contains(codePoint)) {
                     if (state.equals(State.WHITE_SPACE)) {
                         result.append(' ');
@@ -60,8 +60,8 @@ enum Space {
         /**
          * Trimming is doing nothing.
          */
-        public String trim(String s) {
-            return s;
+        public String trim(String input) {
+            return input;
         }
     };
 
@@ -107,14 +107,14 @@ enum Space {
      * Returns whether white space must be preserved to correctly represent this
      * string in XML.
      *
-     * @param s
+     * @param testString
      *            string to examine
      * @return if preservation of white space is necessary
      */
-    public static boolean requiresPreservation(String s) {
+    public static boolean requiresPreservation(String testString) {
         boolean result = true;
-        for (int i = 0; i < s.length(); i++) {
-            int codePoint = s.codePointAt(i);
+        for (int i = 0; i < testString.length(); i++) {
+            int codePoint = testString.codePointAt(i);
             if (!WHITE_SPACE.contains(codePoint)) {
                 result = false;
             } else if ((codePoint == ' ') && !result) {
