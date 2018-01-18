@@ -89,45 +89,6 @@
                 }
             }
         },
-        "workpiece": {
-            "dynamic": "strict",
-            "properties": {
-                "process": {
-                    "type": "long"
-                },
-                "properties": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        }
-                    }
-                }
-            }
-        },
-        "template": {
-            "dynamic": "strict",
-            "properties": {
-                "process": {
-                    "type": "long"
-                },
-                "origin": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
-                "properties": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        }
-                    }
-                }
-            }
-        },
         "project": {
             "dynamic": "strict",
             "properties": {
@@ -380,6 +341,13 @@
                                     "ignore_above": 256
                                 }
                             }
+                        }
+                    }
+                },
+                "templates": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
                         }
                     }
                 },

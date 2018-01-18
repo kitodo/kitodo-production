@@ -20,7 +20,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.kitodo.data.database.helper.enums.PropertyType;
 
@@ -53,14 +52,11 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
     private List<Process> processes;
 
-    @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
-    private List<Template> templates;
+    @ManyToMany(mappedBy = "templates", cascade = CascadeType.PERSIST)
+    private List<Process> templates;
 
-    @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
-    private List<Workpiece> workpieces;
-
-    @Transient
-    private List<String> valueList;
+    @ManyToMany(mappedBy = "workpieces", cascade = CascadeType.PERSIST)
+    private List<Process> workpieces;
 
     /**
      * Constructor.
@@ -215,28 +211,6 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     }
 
     /**
-     * Get value list or new empty list.
-     *
-     * @return value list or new empty list
-     */
-    public List<String> getValueList() {
-        if (this.valueList == null) {
-            this.valueList = new ArrayList<>();
-        }
-        return this.valueList;
-    }
-
-    /**
-     * Not know usage method.
-     * 
-     * @param valueList
-     *            list of Strings
-     */
-    public void setValueList(List<String> valueList) {
-        this.valueList = valueList;
-    }
-
-    /**
      * Get container value.
      *
      * @return value from database or 0
@@ -286,9 +260,9 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     /**
      * Get templates list or new empty list.
      *
-     * @return templates list or new empty list
+     * @return as list of Process objects or new empty list
      */
-    public List<Template> getTemplates() {
+    public List<Process> getTemplates() {
         if (this.templates == null) {
             this.templates = new ArrayList<>();
         }
@@ -299,18 +273,18 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      * Set templates.
      * 
      * @param templates
-     *            as List
+     *            as List of Process objects
      */
-    public void setTemplates(List<Template> templates) {
+    public void setTemplates(List<Process> templates) {
         this.templates = templates;
     }
 
     /**
      * Get workpieces list or new empty list.
      *
-     * @return workpieces list or new empty list
+     * @return as list of Process objects or new empty list
      */
-    public List<Workpiece> getWorkpieces() {
+    public List<Process> getWorkpieces() {
         if (this.workpieces == null) {
             this.workpieces = new ArrayList<>();
         }
@@ -321,9 +295,9 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      * Set workpieces.
      * 
      * @param workpieces
-     *            as List
+     *            as List of Process objects
      */
-    public void setWorkpieces(List<Workpiece> workpieces) {
+    public void setWorkpieces(List<Process> workpieces) {
         this.workpieces = workpieces;
     }
 

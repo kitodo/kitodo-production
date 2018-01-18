@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -52,18 +51,15 @@ public class TiffHeader {
      */
     public TiffHeader(Process process) {
         if (serviceManager.getProcessService().getWorkpiecesSize(process) > 0) {
-            Workpiece myWerkstueck = process.getWorkpieces().get(0);
-            if (serviceManager.getWorkpieceService().getPropertiesSize(myWerkstueck) > 0) {
-                for (Property workpieceProperty : myWerkstueck.getProperties()) {
-                    if (workpieceProperty.getTitle().equals("TifHeaderDocumentname")) {
-                        this.tifHeaderDocumentName = workpieceProperty.getValue();
-                    }
-                    if (workpieceProperty.getTitle().equals("TifHeaderImagedescription")) {
-                        this.tifHeaderImageDescription = workpieceProperty.getValue();
-                    }
-                    if (workpieceProperty.getTitle().equals("Artist")) {
-                        this.artist = workpieceProperty.getValue();
-                    }
+            for (Property workpieceProperty : process.getWorkpieces()) {
+                if (workpieceProperty.getTitle().equals("TifHeaderDocumentname")) {
+                    this.tifHeaderDocumentName = workpieceProperty.getValue();
+                }
+                if (workpieceProperty.getTitle().equals("TifHeaderImagedescription")) {
+                    this.tifHeaderImageDescription = workpieceProperty.getValue();
+                }
+                if (workpieceProperty.getTitle().equals("Artist")) {
+                    this.artist = workpieceProperty.getValue();
                 }
             }
         }

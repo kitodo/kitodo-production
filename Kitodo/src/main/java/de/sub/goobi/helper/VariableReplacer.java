@@ -28,8 +28,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -162,12 +160,10 @@ public class VariableReplacer {
             // replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE)
             for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
-                for (Workpiece ws : this.process.getWorkpieces()) {
-                    for (Property workpieceProperty : ws.getProperties()) {
-                        if (workpieceProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
-                            inString = inString.replace(r.group(), workpieceProperty.getValue());
-                            break;
-                        }
+                for (Property workpieceProperty : this.process.getWorkpieces()) {
+                    if (workpieceProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
+                        inString = inString.replace(r.group(), workpieceProperty.getValue());
+                        break;
                     }
                 }
             }
@@ -175,13 +171,12 @@ public class VariableReplacer {
             // replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE)
             for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
-                for (Template v : this.process.getTemplates()) {
-                    for (Property templateProperty : v.getProperties()) {
-                        if (templateProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
-                            inString = inString.replace(r.group(), templateProperty.getValue());
-                            break;
-                        }
+                for (Property templateProperty : this.process.getTemplates()) {
+                    if (templateProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
+                        inString = inString.replace(r.group(), templateProperty.getValue());
+                        break;
                     }
+
                 }
             }
 

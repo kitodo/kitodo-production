@@ -205,17 +205,17 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProperty() throws Exception {
-        List<JSONObject> processes = processService.findByProperty("Korrektur notwendig", null, true);
+        List<JSONObject> processes = processService.findByProcessProperty("Korrektur notwendig", null, true);
         Integer actual = processes.size();
         Integer expected = 2;
         assertEquals("Processes were not found in index!", expected, actual);
 
-        processes = processService.findByProperty("Process Property", "first value", true);
+        processes = processService.findByProcessProperty("Process Property", "first value", true);
         actual = processes.size();
         expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
 
-        processes = processService.findByProperty("firstTemplate title", "first value", true);
+        processes = processService.findByProcessProperty("firstTemplate title", "first value", true);
         actual = processes.size();
         expected = 0;
         assertEquals("Process was not found in index!", expected, actual);

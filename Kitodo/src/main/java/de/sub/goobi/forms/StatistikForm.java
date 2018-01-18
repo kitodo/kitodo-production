@@ -100,22 +100,7 @@ public class StatistikForm {
      */
     public Long getAmountTemplates() {
         try {
-            return serviceManager.getTemplateService().count();
-        } catch (DataException e) {
-            logger.error("ElasticSearch problem: ", e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
-            return null;
-        }
-    }
-
-    /**
-     * Get amount of workpieces.
-     *
-     * @return amount of workpieces
-     */
-    public Long getAmountWorkpieces() {
-        try {
-            return serviceManager.getWorkpieceService().count();
+            return serviceManager.getProcessService().countTemplates();
         } catch (DataException e) {
             logger.error("ElasticSearch problem: ", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);

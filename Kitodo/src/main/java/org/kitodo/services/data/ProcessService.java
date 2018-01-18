@@ -72,9 +72,7 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
@@ -351,13 +349,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void manageTemplatesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Template template : process.getTemplates()) {
-                serviceManager.getTemplateService().removeFromIndex(template);
+            for (Property template : process.getTemplates()) {
+                serviceManager.getPropertyService().removeFromIndex(template);
             }
         } else {
-            for (Template template : process.getTemplates()) {
-                serviceManager.getTemplateService().saveToIndex(template);
-                saveDependantProperties(template.getProperties());
+            for (Property template : process.getTemplates()) {
+                serviceManager.getPropertyService().saveToIndex(template);
             }
         }
     }
@@ -371,13 +368,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void manageWorkpiecesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Workpiece workpiece : process.getWorkpieces()) {
-                serviceManager.getWorkpieceService().removeFromIndex(workpiece);
+            for (Property workpiece : process.getWorkpieces()) {
+                serviceManager.getPropertyService().removeFromIndex(workpiece);
             }
         } else {
-            for (Workpiece workpiece : process.getWorkpieces()) {
-                serviceManager.getWorkpieceService().saveToIndex(workpiece);
-                saveDependantProperties(workpiece.getProperties());
+            for (Property workpiece : process.getWorkpieces()) {
+                serviceManager.getPropertyService().saveToIndex(workpiece);
             }
         }
     }
@@ -395,18 +391,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         List<Integer> newList = new ArrayList<>(firstList);
         newList.removeAll(secondList);
         return newList;
-    }
-
-    /**
-     * Save to index dependant properties.
-     *
-     * @param properties
-     *            List
-     */
-    private void saveDependantProperties(List<Property> properties) throws CustomResponseException, IOException {
-        for (Property property : properties) {
-            serviceManager.getPropertyService().saveToIndex(property);
-        }
     }
 
     /**
@@ -539,6 +523,51 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Find process by property.
+     * 
+     * @param title
+     *            of property as String
+     * @param value
+     *            of property as String
+     * @param contains
+     *            true or false
+     * @return list of process JSONObjects
+     */
+    public List<JSONObject> findByProcessProperty(String title, String value, boolean contains) throws DataException {
+        return findByProperty(title, value, "process", "properties.id", contains);
+    }
+
+    /**
+     * Find process by template.
+     * 
+     * @param title
+     *            of property as String
+     * @param value
+     *            of property as String
+     * @param contains
+     *            true or false
+     * @return list of process JSONObjects
+     */
+    public List<JSONObject> findByTemplateProperty(String title, String value, boolean contains) throws DataException {
+        return findByProperty(title, value, "template", "templates.id", contains);
+    }
+
+    /**
+     * Find process by workpiece.
+     * 
+     * @param title
+     *            of property as String
+     * @param value
+     *            of property as String
+     * @param contains
+     *            true or false
+     * @return list of process JSONObjects
+     */
+    public List<JSONObject> findByWorkpieceProperty(String title, String value, boolean contains) throws DataException {
+        return findByProperty(title, value, "workpiece", "workpieces.id", contains);
+    }
+
+    /**
      * Find processes by property.
      *
      * @param title
@@ -549,22 +578,23 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of JSON objects with processes for specific property
      */
-    List<JSONObject> findByProperty(String title, String value, boolean contains) throws DataException {
+    private List<JSONObject> findByProperty(String title, String value, String type, String key, boolean contains)
+            throws DataException {
         Set<Integer> propertyIds = new HashSet<>();
 
         List<JSONObject> properties;
         if (value == null) {
-            properties = serviceManager.getPropertyService().findByTitle(title, "process", contains);
+            properties = serviceManager.getPropertyService().findByTitle(title, type, contains);
         } else if (title == null) {
-            properties = serviceManager.getPropertyService().findByValue(value, "process", contains);
+            properties = serviceManager.getPropertyService().findByValue(value, type, contains);
         } else {
-            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, "process", contains);
+            properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
         }
 
         for (JSONObject property : properties) {
             propertyIds.add(getIdFromJSONObject(property));
         }
-        return searcher.findDocuments(createSetQuery("properties.id", propertyIds, true).toString());
+        return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
     }
 
     private List<JSONObject> findBySort(boolean closed, boolean archived, boolean template, String sort,
@@ -714,8 +744,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(processJSONObject, "sortHelperDocstructs"));
         processDTO.setSortHelperImages(getIntegerPropertyForDTO(processJSONObject, "sortHelperImages"));
         processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(processJSONObject, "sortHelperMetadata"));
-        processDTO.setTifDirectoryExists(checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(),
-                processDTO.getProcessBaseUri()));
+        processDTO.setTifDirectoryExists(
+                checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         if (!related) {
             processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
@@ -1788,6 +1818,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Count amount of templates for process.
+     * 
+     * @return amount of templates for process as Long
+     */
+    public Long countTemplates() throws DataException {
+        return count(getQueryTemplate(true).toString());
+    }
+
+    /**
      * Find amount of processes for given title.
      * 
      * @param title
@@ -2384,11 +2423,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         docketdata.setComment(process.getWikiField());
 
         if (!process.getTemplates().isEmpty() && process.getTemplates().get(0) != null) {
-            docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates().get(0).getProperties()));
+            docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates()));
         }
         if (!process.getWorkpieces().isEmpty() && process.getWorkpieces().get(0) != null) {
-            docketdata
-                    .setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces().get(0).getProperties()));
+            docketdata.setWorkpieceProperties(getDocketDataForProperties(process.getWorkpieces()));
         }
         docketdata.setProcessProperties(getDocketDataForProperties(process.getProperties()));
 
@@ -2452,7 +2490,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return the list of sorted processes as ProcessDTO objects
      */
     public List<ProcessDTO> findNotClosedAndNotArchivedProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, false, sort), false);
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, false, sort),
+                false);
     }
 
     /**

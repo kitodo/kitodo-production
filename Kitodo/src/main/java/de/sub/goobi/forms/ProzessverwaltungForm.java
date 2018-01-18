@@ -73,10 +73,8 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -107,9 +105,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private StatisticsManager statisticsManager;
     private List<ProcessCounterObject> processCounterObjects;
     private HashMap<String, Integer> counterSummary;
-    private Template template;
     private Property templateProperty;
-    private Workpiece workpiece;
     private Property workpieceProperty;
     private ObjectMode displayMode = ObjectMode.PROCESS;
     private ObjectMode editMode = ObjectMode.NONE;
@@ -121,6 +117,8 @@ public class ProzessverwaltungForm extends BasisForm {
     private boolean showClosedProcesses = false;
     private boolean showArchivedProjects = false;
     private List<Property> properties;
+    private List<Property> templates;
+    private List<Property> workpieces;
     private Property property;
     private String addToWikiField = "";
     private List<ProcessDTO> processDTOS = new ArrayList<>();
@@ -293,21 +291,17 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
             // template properties
-            for (Template template : this.process.getTemplates()) {
-                for (Property templateProperty : template.getProperties()) {
-                    if (templateProperty.getValue().contains(this.process.getTitle())) {
-                        templateProperty.setValue(templateProperty.getValue()
-                                .replaceAll(this.process.getTitle(), this.newProcessTitle));
-                    }
+            for (Property templateProperty : this.process.getTemplates()) {
+                if (templateProperty.getValue().contains(this.process.getTitle())) {
+                    templateProperty.setValue(templateProperty.getValue()
+                            .replaceAll(this.process.getTitle(), this.newProcessTitle));
                 }
             }
             // workpiece properties
-            for (Workpiece workpiece : this.process.getWorkpieces()) {
-                for (Property workpieceProperty : workpiece.getProperties()) {
-                    if (workpieceProperty.getValue().contains(this.process.getTitle())) {
-                        workpieceProperty.setValue(workpieceProperty.getValue()
-                                .replaceAll(this.process.getTitle(), this.newProcessTitle));
-                    }
+            for (Property workpieceProperty : this.process.getWorkpieces()) {
+                if (workpieceProperty.getValue().contains(this.process.getTitle())) {
+                    workpieceProperty.setValue(workpieceProperty.getValue()
+                            .replaceAll(this.process.getTitle(), this.newProcessTitle));
                 }
             }
 
@@ -605,65 +599,97 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Remove properties.
+     * Remove template properties.
      */
-    public String VorlageEigenschaftLoeschen() {
+    public void deleteTemplateProperty() {
         try {
-            template.getProperties().remove(templateProperty);
-            serviceManager.getProcessService().save(process);
+            this.templateProperty.getProcesses().clear();
+            this.process.getTemplates().remove(this.templateProperty);
+            serviceManager.getProcessService().save(this.process);
+            serviceManager.getPropertyService().remove(this.templateProperty);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-            logger.error(e);
+            logger.error("Template property couldn't be removed: " + e.getMessage());
+            Helper.setFehlerMeldung("propertiesNotDeleted");
         }
-        return null;
+        loadTemplateProperties();
     }
 
     /**
      * Remove workpiece properties.
      */
-    public String WerkstueckEigenschaftLoeschen() {
+    public void deleteWorkpieceProperty() {
         try {
-            workpiece.getProperties().remove(workpieceProperty);
-            serviceManager.getProcessService().save(process);
+            this.workpieceProperty.getProcesses().clear();
+            this.process.getWorkpieces().remove(this.workpieceProperty);
+            serviceManager.getProcessService().save(this.process);
+            serviceManager.getPropertyService().remove(this.workpieceProperty);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-            logger.error(e);
+            logger.error("Workpiece property couldn't be removed: " + e.getMessage());
+            Helper.setFehlerMeldung("propertiesNotDeleted");
         }
-        return null;
-    }
-
-    public String VorlageEigenschaftNeu() {
-        templateProperty = new Property();
-        return null;
-    }
-
-    public String WerkstueckEigenschaftNeu() {
-        workpieceProperty = new Property();
-        return null;
+        loadWorkpieceProperties();
     }
 
     /**
-     * Take template property.
-     *
-     * @return empty String
+     * Create new template property.
      */
-    public String VorlageEigenschaftUebernehmen() {
-        template.getProperties().add(templateProperty);
-        templateProperty.getTemplates().add(template);
-        save();
-        return null;
+    public void createTemplateProperty() {
+        if (this.templates == null) {
+            this.templates = new ArrayList<>();
+        }
+        Property property = new Property();
+        property.setType(PropertyType.String);
+        this.templates.add(property);
+        this.templateProperty = property;
     }
 
     /**
-     * Take workpiece property.
-     *
-     * @return empty String
+     * Create new workpiece property.
      */
-    public String WerkstueckEigenschaftUebernehmen() {
-        workpiece.getProperties().add(workpieceProperty);
-        workpieceProperty.getWorkpieces().add(workpiece);
-        save();
-        return null;
+    public void createWorkpieceProperty() {
+        if (this.workpieces == null) {
+            this.workpieces = new ArrayList<>();
+        }
+        Property property = new Property();
+        property.setType(PropertyType.String);
+        this.workpieces.add(property);
+        this.workpieceProperty = property;
+    }
+
+    /**
+     * Save template property.
+     */
+    public void saveTemplateProperty() {
+        try {
+            serviceManager.getPropertyService().save(this.templateProperty);
+            if (!this.process.getTemplates().contains(this.templateProperty)) {
+                this.process.getTemplates().add(this.templateProperty);
+            }
+            serviceManager.getProcessService().save(this.process);
+            Helper.setMeldung("propertiesSaved");
+        } catch (DataException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("propertiesNotSaved");
+        }
+        loadTemplateProperties();
+    }
+
+    /**
+     * Save workpiece property.
+     */
+    public void saveWorkpieceProperty() {
+        try {
+            serviceManager.getPropertyService().save(this.workpieceProperty);
+            if (!this.process.getWorkpieces().contains(this.workpieceProperty)) {
+                this.process.getWorkpieces().add(this.workpieceProperty);
+            }
+            serviceManager.getProcessService().save(this.process);
+            Helper.setMeldung("propertiesSaved");
+        } catch (DataException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("propertiesNotSaved");
+        }
+        loadWorkpieceProperties();
     }
 
     /**
@@ -826,66 +852,6 @@ public class ProzessverwaltungForm extends BasisForm {
             return null;
         }
         return null;
-    }
-
-    /**
-     * Create new template.
-     */
-    public String VorlageNeu() {
-        this.template = new Template();
-        this.process.getTemplates().add(this.template);
-        this.template.setProcess(this.process);
-        save();
-        return "/pages/inc_Prozessverwaltung/vorlage";
-    }
-
-    /**
-     * Take Vorlagen.
-     */
-    public String VorlageUebernehmen() {
-        this.process.getTemplates().add(this.template);
-        this.template.setProcess(this.process);
-        save();
-        return null;
-    }
-
-    /**
-     * Remove Vorlagen.
-     */
-    public String VorlageLoeschen() {
-        this.process.getTemplates().remove(this.template);
-        save();
-        return "/pages/ProzessverwaltungBearbeiten";
-    }
-
-    /**
-     * New werkstücke.
-     */
-    public String WerkstueckNeu() {
-        this.workpiece = new Workpiece();
-        this.process.getWorkpieces().add(this.workpiece);
-        this.workpiece.setProcess(this.process);
-        save();
-        return "/pages/ProzessverwaltungBearbeitenWerkstueck";
-    }
-
-    /**
-     * Take werkstücke.
-     */
-    public String WerkstueckUebernehmen() {
-        this.process.getWorkpieces().add(this.workpiece);
-        this.workpiece.setProcess(this.process);
-        save();
-        return null;
-    }
-
-    /**
-     * Remove werkstücke.
-     */
-    public String WerkstueckLoeschen() {
-        this.process.getWorkpieces().remove(this.workpiece);
-        save();
-        return "/pages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -1288,12 +1254,25 @@ public class ProzessverwaltungForm extends BasisForm {
         this.process = process;
         this.newProcessTitle = process.getTitle();
         loadProcessProperties();
+        loadTemplateProperties();
+        loadWorkpieceProperties();
     }
 
+    /**
+     * Get task object.
+     *
+     * @return Task object
+     */
     public Task getTask() {
         return this.task;
     }
 
+    /**
+     * Set task.
+     *
+     * @param task
+     *            Task object
+     */
     public void setTask(Task task) {
         this.task = task;
         this.task.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
@@ -1304,37 +1283,12 @@ public class ProzessverwaltungForm extends BasisForm {
         this.task = task;
     }
 
-    public Template getTemplate() {
-        return this.template;
-    }
-
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
-
-    // TODO: why second setter for template
-    public void setTemplateReload(Template template) {
-        this.template = template;
-    }
-
     public Property getTemplateProperty() {
         return this.templateProperty;
     }
 
     public void setTemplateProperty(Property templateProperty) {
         this.templateProperty = templateProperty;
-    }
-
-    public Workpiece getWorkpiece() {
-        return this.workpiece;
-    }
-
-    public void setWorkpiece(Workpiece workpiece) {
-        this.workpiece = workpiece;
-    }
-
-    public void setWorkpieceReload(Workpiece workpiece) {
-        this.workpiece = workpiece;
     }
 
     public Property getWorkpieceProperty() {
@@ -2154,7 +2108,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Get list of process properties.
+     * Get list of properties for process.
      *
      * @return list of process properties
      */
@@ -2163,7 +2117,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Set list of process properties.
+     * Set list of properties for process.
      *
      * @param properties
      *            for process as Property objects
@@ -2172,9 +2126,57 @@ public class ProzessverwaltungForm extends BasisForm {
         this.properties = properties;
     }
 
+    /**
+     * Get list of templates for process.
+     *
+     * @return list of templates for process
+     */
+    public List<Property> getTemplates() {
+        return this.templates;
+    }
+
+    /**
+     * Set list of templates for process.
+     *
+     * @param templates
+     *            for process as Property objects
+     */
+    public void setTemplates(List<Property> templates) {
+        this.templates = templates;
+    }
+
+    /**
+     * Get list of workpieces for process.
+     *
+     * @return list of workpieces for process
+     */
+    public List<Property> getWorkpieces() {
+        return this.workpieces;
+    }
+
+    /**
+     * Set list of workpieces for process.
+     *
+     * @param workpieces
+     *            for process as Property objects
+     */
+    public void setWorkpieces(List<Property> workpieces) {
+        this.workpieces = workpieces;
+    }
+
     private void loadProcessProperties() {
         serviceManager.getProcessService().refresh(this.process);
         this.properties = this.process.getProperties();
+    }
+
+    private void loadTemplateProperties() {
+        serviceManager.getProcessService().refresh(this.process);
+        this.templates = this.process.getTemplates();
+    }
+
+    private void loadWorkpieceProperties() {
+        serviceManager.getProcessService().refresh(this.process);
+        this.workpieces = this.process.getWorkpieces();
     }
 
     /**

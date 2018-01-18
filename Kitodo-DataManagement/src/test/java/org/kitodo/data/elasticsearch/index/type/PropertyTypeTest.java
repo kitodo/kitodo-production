@@ -26,7 +26,6 @@ import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Template;
 
 /**
  * Test class for PropertyType.
@@ -37,19 +36,19 @@ public class PropertyTypeTest {
 
         List<Property> properties = new ArrayList<>();
         List<Process> processes = new ArrayList<>();
-        List<Template> templates = new ArrayList<>();
+        List<Process> templates = new ArrayList<>();
+
+        Process template = new Process();
+        template.setId(1);
+        templates.add(template);
 
         Process firstProcess = new Process();
-        firstProcess.setId(1);
+        firstProcess.setId(2);
         processes.add(firstProcess);
 
         Process secondProcess = new Process();
-        secondProcess.setId(2);
+        secondProcess.setId(3);
         processes.add(secondProcess);
-
-        Template template = new Template();
-        template.setId(1);
-        templates.add(template);
 
         Property firstProperty = new Property();
         firstProperty.setId(1);
@@ -78,8 +77,8 @@ public class PropertyTypeTest {
         HttpEntity document = propertyType.createDocument(property);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser
-                .parse("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":1},"
-                        + "{\"id\":2}],\"type\":\"process\",\"templates\":[],\"creationDate\":\""
+                .parse("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":2},"
+                        + "{\"id\":3}],\"type\":\"process\",\"templates\":[],\"creationDate\":\""
                         + dateFormat.format(property.getCreationDate()) + "\"}");
         assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
 

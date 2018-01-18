@@ -11,72 +11,159 @@
  *
 -->
 
-<!-- ===================== GROSSE Werkstuecke- BOX IM GELADENEN PROZESS ====================== -->
-
+<!-- Property table -->
 <ui:composition
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
-    <h4 style="margin-top:15px">
-        <h:outputText value="#{msgs.werkstuecke}"/>
-    </h4>
 
-    <t:dataTable id="werkstuecke" styleClass="standardTable" width="100%"
-                 cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
-                 rowClasses="standardTable_Row1,standardTable_Row2"
-                 columnClasses="standardTable_ColumnCentered,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
-                 var="item" value="#{ProzessverwaltungForm.process.workpieces}"
-                 rowIndexVar="index">
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
 
-    <!-- ===================== Nr ====================== -->
-    <h:column>
-        <f:facet name="header">
-            <h:outputText value="#{msgs.nr}"/>
-        </f:facet>
-        <h:outputText value="#{index+1}"/>
-    </h:column>
-    <!-- ===================== // Nr ====================== -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode != 'workpieceProperty'}">
+        <h4 style="margin-top:15px">
+            <h:outputText value="#{msgs.werkstuecke}"/>
+        </h4>
+    </ui:fragment>
 
-    <!-- ===================== Eigenschaften ====================== -->
-    <h:column>
-        <f:facet name="header">
-            <h:outputText value="#{msgs.eigenschaften}"/>
-        </f:facet>
-        <t:dataTable value="#{item.properties}" var="prop">
-            <h:column>
-                <h:outputText value="#{prop.title}:" style="color:grey"/>
-            </h:column>
-            <h:column>
-                <h:outputText value="#{prop.value}"/>
-            </h:column>
-        </t:dataTable>
-    </h:column>
-    <!-- ===================== // Eigenschaften ====================== -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode != 'workpieceProperty'}">
+        <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
 
-    <h:column
-            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-        <f:facet name="header">
-            <h:outputText value="#{msgs.auswahl}"/>
-        </f:facet>
-        <!-- Bearbeiten-Schaltknopf -->
-        <h:commandLink action="ProzessverwaltungBearbeitenWerkstueck"
-                       title="#{msgs.werkstueckBearbeiten}">
-            <h:graphicImage value="/pages/images/buttons/goInto.gif" alt="edit"/>
-            <t:updateActionListener
-                    property="#{ProzessverwaltungForm.workpieceReload}"
-                    value="#{item}"/>
-        </h:commandLink>
-    </h:column>
+            <thead class="standardTable_Header">
+            <tr>
+                <th>
+                    <h:outputText value="#{msgs.title}"/>
+                </th>
+                <th>
+                    <h:outputText value="#{msgs.value}"/>
+                </th>
+                <th>
+                    <h:outputText value="#{msgs.choice}"/>
+                </th>
+            </tr>
+            </thead>
+            <t:dataList var="property" value="#{ProzessverwaltungForm.workpieces}" rowCountVar="propCount"
+                        rowIndexVar="propInd">
+                <tr class="standardTable_Row1">
+                    <td>
+                        <h:outputText value="#{property.title}"/>
+                    </td>
+                    <td>
+                        <h:outputText value="#{property.value}" rendered="#{property.type.name !=  'link'}"/>
+                        <h:outputLink title="#{property.value}" value="#{property.value}" rendered="#{property.type.name ==  'link'}"
+                                      target="_blank">
+                            <h:outputText value="#{property.value}"/>
+                        </h:outputLink>
+                    </td>
+                    <td class="standardTable_ColumnCentered">
+                        <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
+                            <h:graphicImage value="/pages/images/buttons/edit.gif" alt="edit"/>
+                            <t:updateActionListener property="#{ProzessverwaltungForm.workpieceProperty}" value="#{property}"/>
+                            <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.WORKPIECEPROPERTY}"/>
+                        </h:commandLink>
+                    </td>
+                </tr>
+            </t:dataList>
+        </table>
+    </ui:fragment>
 
-    </t:dataTable>
 
-    <!-- newUser-Schaltknopf -->
-    <h:commandLink action="#{ProzessverwaltungForm.WerkstueckNeu}"
-                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                   value="#{msgs.werkstueckHinzufuegen}"
-                   title="#{msgs.werkstueckHinzufuegen}">
+    <!-- Add new workpiece -->
+    <h:commandLink action="#{ProzessverwaltungForm.createWorkpieceProperty}" value="#{msgs.eigenschaftHinzufuegen}"
+                   title="#{msgs.eigenschaftHinzufuegen}"
+                   rendered="#{ProzessverwaltungForm.editMode.mode != 'workpieceProperty'}">
+        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.WORKPIECEPROPERTY}"/>
     </h:commandLink>
+
+    <!-- Edit workpieces for process -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'workpieceProperty'}">
+        <h4 style="margin-top:15px">
+            <h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
+        </h4>
+    </ui:fragment>
+
+    <!-- Box for edit of workipece's details -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.editMode.mode == 'workpieceProperty'}">
+        <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
+            <tr>
+                <td class="eingabeBoxen_row1" colspan="2">
+                    <h:outputText value="#{msgs.eigenschaft}"/>
+                </td>
+            </tr>
+
+            <!-- Form for edit of workpiece -->
+            <tr>
+                <td class="eingabeBoxen_row2" colspan="2">
+                    <table>
+                        <t:dataList var="workpiece" value="#{ProzessverwaltungForm.workpieceProperty}">
+                            <tr>
+                                <td>
+                                    <h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px"
+                                                  value="#{workpiece.title}: "/>
+                                </td>
+                                <td>
+                                    <h:inputText id="title" value="#{workpiece.title}" required="true"/>
+                                    <t:message for="title" style="color: red" detailFormat="#{msgs.keinTitelAngegeben}"/>
+
+                                    <!-- textarea -->
+                                    <h:panelGroup id="prpvw15_1"
+                                                  rendered="#{((workpiece.type.name == 'string') || (workpiece.type.name == 'null'))}">
+                                        <h:inputText id="file" style="width: 500px;margin-right:15px"
+                                                     value="#{workpiece.value}"/>
+                                    </h:panelGroup>
+
+                                    <!-- numbers only -->
+                                    <h:panelGroup id="prpvw15_1mnk"
+                                                  rendered="#{workpiece.type.name == 'integer' || workpiece.type.name == 'number'}">
+
+                                        <h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px"
+                                                     value="#{workpiece.value}">
+                                            <f:validateLongRange minimum="0"/>
+                                        </h:inputText>
+                                    </h:panelGroup>
+
+                                    <!--  Boolean -->
+                                    <h:panelGroup id="prpvw15_4" rendered="#{(workpiece.type.name == 'boolean')}">
+                                        <h:selectBooleanCheckbox value="#{workpiece.value}">
+                                        </h:selectBooleanCheckbox>
+                                    </h:panelGroup>
+
+                                    <!--  Date  -->
+                                    <h:panelGroup id="prpvw15_5" rendered="#{(workpiece.type.name == 'date')}">
+                                        <p:calendar id="prpvw15_5_1" value="#{workpiece.value}"
+                                                    locale="#{SpracheForm.locale}" navigator="true"
+                                                    pattern="dd.MM.yyyy" style="width: 500px;margin-right:15px" />
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                        </t:dataList>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="eingabeBoxen_row3" align="left">
+                    <h:commandButton value="#{msgs.abbrechen}" action="#{NavigationForm.Reload}" immediate="true">
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
+                    </h:commandButton>
+                </td>
+                <td class="eingabeBoxen_row3" align="right">
+
+                    <h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteWorkpieceProperty}"
+                                     onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')">
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
+                    </h:commandButton>
+
+
+                    <h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveWorkpieceProperty}">
+                        <t:updateActionListener property="#{ProzessverwaltungForm.editMode}" value="#{objectMode.NONE}"/>
+                    </h:commandButton>
+                </td>
+            </tr>
+
+        </table>
+    </ui:fragment>
 </ui:composition>

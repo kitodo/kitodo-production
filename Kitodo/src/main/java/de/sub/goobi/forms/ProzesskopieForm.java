@@ -62,9 +62,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -620,9 +618,7 @@ public class ProzesskopieForm implements Serializable {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
-            /* erstes Werkstück durchlaufen */
-            Workpiece werk = tempProzess.getWorkpieces().get(0);
-            for (Property workpieceProperty : werk.getProperties()) {
+            for (Property workpieceProperty : tempProzess.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
                         field.setValue(workpieceProperty.getValue());
@@ -635,9 +631,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
-            /* erste Vorlage durchlaufen */
-            Template vor = tempProzess.getTemplates().get(0);
-            for (Property templateProperty : vor.getProperties()) {
+            for (Property templateProperty : tempProzess.getTemplates()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(templateProperty.getTitle())) {
                         field.setValue(templateProperty.getValue());
@@ -756,6 +750,7 @@ public class ProzesskopieForm implements Serializable {
         return NAVI_FIRST_PAGE;
     }
 
+    //TODO: why do we need page two?
     /**
      * Go to page 2.
      *
@@ -774,14 +769,13 @@ public class ProzesskopieForm implements Serializable {
      */
     public String createNewProcess()
             throws ReadException, IOException, PreferencesException, WriteException {
-        Helper.getHibernateSession().evict(this.prozessKopie);
 
-        this.prozessKopie.setId(null);
+        //evict set up id to null
+        Helper.getHibernateSession().evict(this.prozessKopie);
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         }
         addProperties();
-
         updateTasks();
 
         try {
@@ -985,9 +979,7 @@ public class ProzesskopieForm implements Serializable {
 
     private void updateTasks() {
         for (Task task : this.prozessKopie.getTasks()) {
-            /*
-             * always save date and user for each step
-             */
+            // always save date and user for each step
             task.setProcessingTime(this.prozessKopie.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
             LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -1188,58 +1180,29 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void addProperties() {
-        /*
-         * Vorlageneigenschaften initialisieren
-         */
-        Template vor;
-        if (serviceManager.getProcessService().getTemplatesSize(this.prozessKopie) > 0) {
-            vor = this.prozessKopie.getTemplates().get(0);
-        } else {
-            vor = new Template();
-            vor.setProcess(this.prozessKopie);
-            List<Template> vorlagen = new ArrayList<>();
-            vorlagen.add(vor);
-            this.prozessKopie.setTemplates(vorlagen);
-        }
-
-        /*
-         * Werkstückeigenschaften initialisieren
-         */
-        Workpiece werk;
-        if (serviceManager.getProcessService().getWorkpiecesSize(this.prozessKopie) > 0) {
-            werk = this.prozessKopie.getWorkpieces().get(0);
-        } else {
-            werk = new Workpiece();
-            werk.setProcess(this.prozessKopie);
-            List<Workpiece> werkstuecke = new ArrayList<>();
-            werkstuecke.add(werk);
-            this.prozessKopie.setWorkpieces(werkstuecke);
-        }
-
         for (AdditionalField field : this.additionalFields) {
             if (field.getShowDependingOnDoctype()) {
                 if (field.getFrom().equals("werk")) {
-                    BeanHelper.addProperty(werk, field.getTitle(), field.getValue());
+                    BeanHelper.addPropertyForWorkpiece(this.prozessKopie, field.getTitle(), field.getValue());
                 }
                 if (field.getFrom().equals("vorlage")) {
-                    BeanHelper.addProperty(vor, field.getTitle(), field.getValue());
+                    BeanHelper.addPropertyForTemplate(this.prozessKopie, field.getTitle(), field.getValue());
                 }
                 if (field.getFrom().equals("prozess")) {
-                    BeanHelper.addProperty(this.prozessKopie, field.getTitle(), field.getValue());
+                    BeanHelper.addPropertyForProcess(this.prozessKopie, field.getTitle(), field.getValue());
                 }
             }
         }
 
         for (String col : digitalCollections) {
-            BeanHelper.addProperty(prozessKopie, "digitalCollection", col);
+            BeanHelper.addPropertyForProcess(this.prozessKopie, "digitalCollection", col);
         }
-        /* Doctype */
-        BeanHelper.addProperty(werk, "DocType", this.docType);
-        /* Tiffheader */
-        BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
-        BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
-        BeanHelper.addProperty(prozessKopie, "Template", prozessVorlage.getTitle());
-        BeanHelper.addProperty(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+
+        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
+        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
+        BeanHelper.addPropertyForProcess(this.prozessKopie, "Template", prozessVorlage.getTitle());
+        BeanHelper.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
     }
 
     public String getDocType() {
