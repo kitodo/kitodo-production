@@ -27,6 +27,10 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
 
+        <p:column headerText="#{msgs.metsRightsOwner}">
+            <h:outputText value="#{item.metsRightsOwner}"/>
+        </p:column>
+
         <p:column headerText="aktiv" styleClass="checkboxColumn">
             <h:outputText>
                 <ui:fragment rendered="#{not item.projectIsArchived}">
