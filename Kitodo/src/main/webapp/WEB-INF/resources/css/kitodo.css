@@ -706,6 +706,7 @@ footer {
 }
 
 .ui-commandlink.button-filled-green,
+.button-filled-green > .ui-button,
 .ui-button.button-filled-green {
     background: #00C62F !important;
 }

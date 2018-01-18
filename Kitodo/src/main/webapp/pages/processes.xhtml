@@ -22,7 +22,12 @@
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>#{msgs.prozessverwaltung}</h3>
-                <p:button value="#{msgs.einenNeuenProzessAnlegen}" outcome="/pages/ProzessverwaltungBearbeiten" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green"/>
+                <h:form>
+                    <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+                        <p:menuitem value="#{msgs.newProcess}" outcome="/pages/ProzessverwaltungBearbeiten" icon="ui-icon-plusthick" />
+                        <p:menuitem value="#{msgs.newBatch}" icon="ui-icon-plusthick" />
+                    </p:menuButton>
+                </h:form>
                 <!-- filters -->
                 <p:button value="#{msgs.nachEinemBandSuchen}"
                                  icon="fa fa-search"
