@@ -132,12 +132,19 @@ public class LdapGruppenForm extends BasisForm {
     // replace calls to this function with "/pages/ldapgroupEdit" once we have
     // completely switched to the new frontend pages
     private String redirectToEdit(String urlSuffix) {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                .get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-            return "/pages/ldapgroupEdit" + urlSuffix;
-        } else {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
+                return "/pages/ldapgroupEdit" + urlSuffix;
+            } else {
+                return "/pages/LdapGruppeBearbeiten" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "LdapGruppenForm" is
+            // used from it's integration test
+            // class "LdapGruppenFormIT", where no "FacesContext" is available!
             return "/pages/LdapGruppeBearbeiten" + urlSuffix;
         }
     }
@@ -146,12 +153,19 @@ public class LdapGruppenForm extends BasisForm {
     // replace calls to this function with "/pages/users" once we have completely
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                .get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("ldapgroupEdit.jsf")) {
-            return "/pages/users" + urlSuffix;
-        } else {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("ldapgroupEdit.jsf")) {
+                return "/pages/users" + urlSuffix;
+            } else {
+                return "/pages/LdapGruppenAlle" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "LdapGruppenForm" is
+            // used from it's integration test
+            // class "LdapGruppenFormIT", where no "FacesContext" is available!
             return "/pages/LdapGruppenAlle" + urlSuffix;
         }
     }
