@@ -17,9 +17,9 @@ import java.util.NoSuchElementException;
 import org.w3c.dom.Node;
 
 /**
- * The class provides the ability to iterate over the children of a DOM element.
+ * The class provides the ability to iterate over the siblings of a DOM node.
  */
-class SiblingIterable implements Iterable<Node>, Iterator<Node> {
+class NodeIterable implements Iterable<Node>, Iterator<Node> {
     /**
      * The next child to offer.
      */
@@ -31,7 +31,7 @@ class SiblingIterable implements Iterable<Node>, Iterator<Node> {
      * @param parent
      *            parent over whose children shall be iterated
      */
-    SiblingIterable(Node firstChild) {
+    NodeIterable(Node firstChild) {
         next = firstChild;
     }
 

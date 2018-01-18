@@ -236,7 +236,7 @@ public class XMLReader {
          * Processing the children.
          */
         long count = 0;
-        for (org.w3c.dom.Node child : new SiblingIterable(element.getFirstChild())) {
+        for (org.w3c.dom.Node child : new NodeIterable(element.getFirstChild())) {
 
             // Either the child is an XML element
             if (child instanceof Element) {
@@ -324,7 +324,7 @@ public class XMLReader {
          * element.
          */
 
-        for (org.w3c.dom.Node child : new SiblingIterable(element.getFirstChild())) {
+        for (org.w3c.dom.Node child : new NodeIterable(element.getFirstChild())) {
 
             // Either the child is an XML element
             if (child instanceof Element) {
