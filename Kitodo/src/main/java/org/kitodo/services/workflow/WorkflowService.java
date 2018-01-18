@@ -151,8 +151,7 @@ public class WorkflowService {
         if (this.user != null) {
             task.setProcessingUser(this.user);
         }
-        task = serviceManager.getTaskService().setProcessingStatusDown(task);
-        return task;
+        return serviceManager.getTaskService().setProcessingStatusDown(task);
     }
 
     /**
@@ -333,16 +332,14 @@ public class WorkflowService {
             processProperty.getProcesses().add(task.getProcess());
             task.getProcess().getProperties().add(processProperty);
 
-            String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                    + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
-            task.getProcess().setWikiField(
-                WikiFieldHelper.getWikiMessage(task.getProcess(), task.getProcess().getWikiField(), "error", message));
+            task.getProcess().setWikiField(prepareProblemWikiField(task.getProcess(), temp));
+
             serviceManager.getTaskService().save(temp);
             task.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(), temp.getTitle(),
                     HistoryTypeEnum.taskError, temp.getProcess()));
 
             // close tasks between the current and the correction task
-            closeTasksBetweenCurrentAndCorrectionTask1_(task, temp);
+            closeTasksBetweenCurrentAndCorrectionTask(task, temp);
 
             // update the process so that the sort helper is saved
             this.serviceManager.getProcessService().save(task.getProcess());
@@ -389,17 +386,14 @@ public class WorkflowService {
                 processProperty.getProcesses().add(currentTask.getProcess());
                 currentTask.getProcess().getProperties().add(processProperty);
 
-                String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                        + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
-                currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
-                    currentTask.getProcess().getWikiField(), "error", message));
+                currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), temp));
 
                 this.serviceManager.getTaskService().save(temp);
                 currentTask.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(),
                         temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
 
                 // close all tasks between the current and the correction task
-                closeTasksBetweenCurrentAndCorrectionTask2_(currentTask, temp);
+                closeTasksBetweenCurrentAndCorrectionTask(currentTask, temp);
             }
             // update the process so that the sort helper is saved
         } catch (DataException e) {
@@ -429,13 +423,10 @@ public class WorkflowService {
         try {
             Task temp = serviceManager.getTaskService().getById(this.solution.getId());
             // close all tasks between the current and the correction task
-            closeTasksBetweenCurrentAndCorrectionTask1(task, temp, date);
+            closeTasksBetweenCurrentAndCorrectionTaskA(task, temp, date);
 
             // update the process so that the sort helper is saved
-            String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                    + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
-            task.getProcess().setWikiField(
-                WikiFieldHelper.getWikiMessage(task.getProcess(), task.getProcess().getWikiField(), "info", message));
+            task.getProcess().setWikiField(prepareSolutionWikiField(task.getProcess(), temp));
 
             Property processProperty = prepareSolveMessageProperty(temp);
             processProperty.getProcesses().add(task.getProcess());
@@ -481,16 +472,13 @@ public class WorkflowService {
             }
             if (temp != null) {
                 // close tasks between the current and the correction task
-                closeTasksBetweenCurrentAndCorrectionTask2(currentTask, temp, date);
+                closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, temp, date);
 
                 Property processProperty = prepareSolveMessageProperty(temp);
                 processProperty.getProcesses().add(currentTask.getProcess());
                 currentTask.getProcess().getProperties().add(processProperty);
 
-                String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
-                currentTask.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(currentTask.getProcess(),
-                    currentTask.getProcess().getWikiField(), "info", message));
+                currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), temp));
                 // update the process so that the collation helper is saved
             }
         } catch (DataException e) {
@@ -499,10 +487,10 @@ public class WorkflowService {
         return currentTask;
     }
 
-    //TODO: find out if method should save or not task
-    private void closeTasksBetweenCurrentAndCorrectionTask1_(Task currentTask, Task correctionTask) throws DataException {
-        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(correctionTask.getOrdering(),
-                currentTask.getOrdering(), currentTask.getProcess().getId());
+    // TODO: find out if method should save or not task
+    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
+        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
+            correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
             taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
@@ -511,19 +499,9 @@ public class WorkflowService {
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTask2_(Task currentTask, Task correctionTask) {
-        List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-                currentTask.getOrdering(), correctionTask.getOrdering(), currentTask.getProcess().getId());
-        for (Task task : tasksInBetween) {
-            task.setProcessingStatusEnum(TaskStatus.LOCKED);
-            task = serviceManager.getTaskService().setCorrectionStep(task);
-            task.setProcessingEnd(null);
-        }
-    }
-
     // TODO: shouldn't both methods be the same?! Why for batch is different than
     // for form?!
-    private void closeTasksBetweenCurrentAndCorrectionTask1(Task currentTask, Task correctionTask, Date date)
+    private void closeTasksBetweenCurrentAndCorrectionTaskA(Task currentTask, Task correctionTask, Date date)
             throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
@@ -531,34 +509,36 @@ public class WorkflowService {
             taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
-            if (taskInBetween.getId().intValue() == currentTask.getId().intValue()) {
-                taskInBetween.setProcessingStatusEnum(TaskStatus.OPEN);
-                taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
-                taskInBetween.setProcessingEnd(null);
-                taskInBetween.setProcessingTime(date);
-            }
+
+            // this two lines differs both methods
             currentTask.setProcessingTime(date);
             currentTask.setProcessingUser(this.user);
-            serviceManager.getTaskService().save(taskInBetween);
+            // this two lines differs both methods
+
+            serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTask2(Task currentTask, Task correctionTask, Date date)
+    private void closeTasksBetweenCurrentAndCorrectionTaskB(Task currentTask, Task correctionTask, Date date)
             throws DataException {
         List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(correctionTask.getOrdering(),
             currentTask.getOrdering(), currentTask.getProcess().getId());
-        for (Task task : tasksInBetween) {
-            task.setProcessingStatusEnum(TaskStatus.DONE);
-            task.setProcessingEnd(date);
-            task.setPriority(0);
-            if (task.getId().intValue() == correctionTask.getId().intValue()) {
-                task.setProcessingStatusEnum(TaskStatus.OPEN);
-                task = serviceManager.getTaskService().setCorrectionStep(task);
-                task.setProcessingEnd(null);
-                task.setProcessingTime(date);
-            }
-            this.serviceManager.getTaskService().save(task);
+        for (Task taskInBetween : tasksInBetween) {
+            taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
+            taskInBetween.setProcessingEnd(date);
+            taskInBetween.setPriority(0);
+            this.serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
         }
+    }
+
+    private Task prepareTaskForClose(Task currentTask, Task taskInBetween, Date date) {
+        if (taskInBetween.getId().intValue() == currentTask.getId().intValue()) {
+            taskInBetween.setProcessingStatusEnum(TaskStatus.OPEN);
+            taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
+            taskInBetween.setProcessingEnd(null);
+            taskInBetween.setProcessingTime(date);
+        }
+        return taskInBetween;
     }
 
     private Property prepareProblemMessageProperty(Date date) {
@@ -574,11 +554,23 @@ public class WorkflowService {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
         processProperty.setValue(
-                "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(this.user)
-                        + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
-                        + this.solution.getMessage());
+            "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(this.user)
+                    + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
+                    + this.solution.getMessage());
         processProperty.setType(PropertyType.messageImportant);
         return processProperty;
+    }
+
+    private String prepareProblemWikiField(Process process, Task correctionTask) {
+        String message = Helper.getTranslation("KorrekturFuer") + " " + correctionTask.getTitle() + ": "
+                + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
+        return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "error", message);
+    }
+
+    private String prepareSolutionWikiField(Process process, Task correctionTask) {
+        String message = Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
+                + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
+        return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "info", message);
     }
 
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
