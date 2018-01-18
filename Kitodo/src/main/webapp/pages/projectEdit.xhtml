@@ -30,6 +30,7 @@
                         <h:outputText value="#{msgs.newProject}" rendered="#{ProjekteForm.itemId eq 0}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" iconPos="right" onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});" update="notifications"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="projects"/>
                 </p:panel>
                 <p:tabView id="tabs">
                     <p:tab title="#{msgs.details}">

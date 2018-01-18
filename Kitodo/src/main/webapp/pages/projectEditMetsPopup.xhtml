@@ -21,7 +21,7 @@
         <h:body>
             <!-- edit dialog -->
             <p:dialog widgetVar="editFileGroupDialog"
-                      header="#{msgs.filegroupBearbeiten}"
+                      header="#{ProjekteForm.myFilegroup eq null ? msgs.filegroupHinzufuegen : msgs.filegroupBearbeiten}"
                       width="700px"
                       modal="true"
                       dynamic="true">
@@ -59,6 +59,8 @@
                                      oncomplete="PF('editFileGroupDialog').hide()"
                                      value="#{msgs.uebernehmen}"
                                      styleClass="button-filled-blue right"/>
+                    <p:commandButton value="#{msgs.abbrechen}"
+                                     onclick="PF('editFileGroupDialog').hide()"/>
                 </h:form>
             </p:dialog>
         </h:body>
