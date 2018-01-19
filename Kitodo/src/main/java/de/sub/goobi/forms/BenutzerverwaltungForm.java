@@ -456,12 +456,19 @@ public class BenutzerverwaltungForm extends BasisForm {
     // replace calls to this function with "/pages/userEdit" once we have
     // completely switched to the new frontend pages
     private String redirectToEdit(String urlSuffix) {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                .get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-            return "/pages/userEdit" + urlSuffix;
-        } else {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
+                return "/pages/userEdit" + urlSuffix;
+            } else {
+                return "/pages/BenutzerBearbeiten" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
+            // used from it's integration test
+            // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
             return "/pages/BenutzerBearbeiten" + urlSuffix;
         }
     }
@@ -470,12 +477,19 @@ public class BenutzerverwaltungForm extends BasisForm {
     // replace calls to this function with "/pages/users" once we have completely
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                .get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("userEdit.jsf")) {
-            return "/pages/users" + urlSuffix;
-        } else {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("userEdit.jsf")) {
+                return "/pages/users" + urlSuffix;
+            } else {
+                return "/pages/BenutzerAlle" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
+            // used from it's integration test
+            // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
             return "/pages/BenutzerAlle" + urlSuffix;
         }
     }

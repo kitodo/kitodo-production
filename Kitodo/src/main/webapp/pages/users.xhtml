@@ -20,11 +20,13 @@
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>#{msgs.users}</h3>
-                <p:commandButton action="#{BenutzerverwaltungForm.newUser}"
-                                 value="#{msgs.neuenBenutzerAnlegen}"
-                                 icon="fa fa-plus-circle fa-lg"
-                                 iconPos="right"
-                                 styleClass="button-filled-green"/>
+                <h:form>
+                    <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+                        <p:menuitem value="#{msgs.newUser}" action="#{BenutzerverwaltungForm.newUser}" icon="ui-icon-plusthick" />
+                        <p:menuitem value="#{msgs.newUserGroup}" action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick" />
+                        <p:menuitem value="#{msgs.newLdapGroup}" action="#{LdapGruppenForm.Neu}" icon="ui-icon-plusthick" />
+                    </p:menuButton>
+                </h:form>
             </p:panel>
             <p:tabView>
                 <p:tab title="#{msgs.benutzerverwaltung}">
