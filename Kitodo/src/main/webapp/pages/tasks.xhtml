@@ -24,10 +24,11 @@
             <h:form>
                 <p:panel styleClass="content-wrapper">
                     <p:dataTable var="item"
-                                 value="#{AktuelleSchritteForm.page.listReload}"
+                                 value="#{AktuelleSchritteForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"
                                  rows="#{LoginForm.myBenutzer.tableSize}"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                  paginatorPosition="bottom">
                         <p:column headerText="#{msgs.arbeitsschritt}">
                             <h:outputText value="#{item.title}"/>

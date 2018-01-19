@@ -21,6 +21,7 @@
                  lazy="true"
                  paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
+                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
         <p:column headerText="#{msgs.ldapgruppe}">
             <h:outputText value="#{item.title}"/>

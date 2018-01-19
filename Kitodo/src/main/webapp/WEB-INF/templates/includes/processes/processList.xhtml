@@ -23,6 +23,7 @@
                      lazy="true"
                      paginator="true"
                      rows="#{LoginForm.myBenutzer.tableSize}"
+                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      paginatorPosition="bottom">
 
             <p:column id="titleColumn" headerText="#{msgs.prozessTitel}" filterBy="#{item.title}">

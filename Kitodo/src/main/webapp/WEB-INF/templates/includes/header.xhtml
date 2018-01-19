@@ -37,7 +37,7 @@
                         <a href="#"><i class="fa fa-bell-o fa-lg"/><h:panelGroup rendered="#{AktuelleSchritteForm.lazyDTOModel.rowCount gt 0}" styleClass="batch-count bc-alert">#{AktuelleSchritteForm.lazyDTOModel.rowCount}</h:panelGroup></a>
                         <ul>
                             <li><h3>#{msgs.aktuelleSchritte}</h3></li>
-                            <ui:repeat value="#{AktuelleSchritteForm.lazyDTOModel.load(0,3, null, null, null)}" var="task">
+                            <ui:repeat value="#{AktuelleSchritteForm.lazyDTOModel.load(0,3, 'title', null, null)}" var="task">
                                 <li><a href=""><span class="nav-item-col">#{task.title}</span><span class="nav-item-col">#{task.process.title}</span><span class="nav-item-col"><i class="fa fa-check-square-o fa-lg nc-info"/></span></a></li>
                             </ui:repeat>
                             <li><h:link outcome="tasks" value="#{msgs.allMyTasks} (#{AktuelleSchritteForm.lazyDTOModel.rowCount})"/></li>
@@ -49,7 +49,7 @@
                         <ul>
                             <li><h3>#{msgs.aktiveBenutzer}</h3></li>
                             <ui:repeat value="#{SessionForm.activeSessions.subList(0, (SessionForm.activeSessions.size() gt 3) ? 3 : SessionForm.activeSessions.size())}" var="activeSession">
-                                <li><a href=""><span class="nav-item-col">#{activeSession['userName']}</span><span class="nav-item-col">Gruppe 2</span><span class="nav-item-col">V</span></a></li>
+                                <li><a href=""><span class="nav-item-col">#{activeSession['userName']}</span></a></li>
                             </ui:repeat>
                             <li><h:link outcome="activeUsers" value="#{msgs.allActiveUsers} (#{SessionForm.activeSessions.size()})"/></li>
                         </ul>

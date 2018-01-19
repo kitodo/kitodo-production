@@ -38,20 +38,20 @@
                     </p:menuButton>
                 </h:form>
             </p:panel>
-            <p:tabView activeIndex="#{param.id}">
-                <p:tab title="#{msgs.projectList}">
+            <p:tabView activeIndex="#{param.id}" id="projectsTabView">
+                <p:tab title="#{msgs.projectList}" id="projectTab">
                     <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
                 </p:tab>
-                <p:tab title="#{msgs.prozessvorlagen}">
+                <p:tab title="#{msgs.prozessvorlagen}" id="templateTab">
                     <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
                 </p:tab>
-                <p:tab title="#{msgs.workflows}">
+                <p:tab title="#{msgs.workflows}" id="workflowTab">
                     <ui:include src="/WEB-INF/templates/includes/projects/workflowList.xhtml"/>
                 </p:tab>
-                <p:tab title="#{msgs.docket}">
+                <p:tab title="#{msgs.docket}" id="docketTab">
                     <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
                 </p:tab>
-                <p:tab title="#{msgs.regelsaetze}">
+                <p:tab title="#{msgs.regelsaetze}" id="rulesetTab">
                     <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
                 </p:tab>
             </p:tabView>
