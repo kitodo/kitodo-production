@@ -380,42 +380,42 @@ public class WorkflowService {
      *
      * @return Task
      */
-    public Task reportProblem(Task task) throws DAOException, DataException {
+    public Task reportProblem(Task currentTask) throws DAOException, DataException {
         if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
 
-        this.webDav.uploadFromHome(task.getProcess());
+        this.webDav.uploadFromHome(currentTask.getProcess());
         Date date = new Date();
-        task.setProcessingStatusEnum(TaskStatus.LOCKED);
-        task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        task.setProcessingTime(date);
-        task.setProcessingUser(this.user);
-        task.setProcessingBegin(null);
+        currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
+        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        currentTask.setProcessingTime(date);
+        currentTask.setProcessingUser(this.user);
+        currentTask.setProcessingBegin(null);
 
-        Task temp = serviceManager.getTaskService().getById(this.problem.getId());
-        temp.setProcessingStatusEnum(TaskStatus.OPEN);
-        temp = serviceManager.getTaskService().setCorrectionStep(temp);
-        temp.setProcessingEnd(null);
+        Task correctionTask = serviceManager.getTaskService().getById(this.problem.getId());
+        correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        correctionTask = serviceManager.getTaskService().setCorrectionStep(correctionTask);
+        correctionTask.setProcessingEnd(null);
 
         Property processProperty = prepareProblemMessageProperty(date);
-        processProperty.getProcesses().add(task.getProcess());
-        task.getProcess().getProperties().add(processProperty);
+        processProperty.getProcesses().add(currentTask.getProcess());
+        currentTask.getProcess().getProperties().add(processProperty);
 
-        task.getProcess().setWikiField(prepareProblemWikiField(task.getProcess(), temp));
+        currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
 
-        serviceManager.getTaskService().save(temp);
-        task.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(), temp.getTitle(),
-                HistoryTypeEnum.taskError, temp.getProcess()));
+        serviceManager.getTaskService().save(correctionTask);
+        currentTask.getProcess().getHistory().add(new History(date, correctionTask.getOrdering().doubleValue(), correctionTask.getTitle(),
+                HistoryTypeEnum.taskError, correctionTask.getProcess()));
 
-        closeTasksBetweenCurrentAndCorrectionTask(task, temp);
+        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
 
-        updateProcessSortHelperStatus(task.getProcess());
+        updateProcessSortHelperStatus(currentTask.getProcess());
 
         this.problem.setMessage("");
         this.problem.setId(0);
-        return task;
+        return currentTask;
     }
 
     /**
@@ -436,28 +436,28 @@ public class WorkflowService {
         }
         currentTask.setProcessingBegin(null);
 
-        Task temp = null;
+        Task correctionTask = null;
         for (Task task : currentTask.getProcess().getTasks()) {
             if (task.getTitle().equals(problemTask)) {
-                temp = task;
+                correctionTask = task;
             }
         }
-        if (temp != null) {
-            temp.setProcessingStatusEnum(TaskStatus.OPEN);
-            temp = serviceManager.getTaskService().setCorrectionStep(temp);
-            temp.setProcessingEnd(null);
+        if (correctionTask != null) {
+            correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
+            correctionTask = serviceManager.getTaskService().setCorrectionStep(correctionTask);
+            correctionTask.setProcessingEnd(null);
 
             Property processProperty = prepareProblemMessageProperty(date);
             processProperty.getProcesses().add(currentTask.getProcess());
             currentTask.getProcess().getProperties().add(processProperty);
 
-            currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), temp));
+            currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
 
-            this.serviceManager.getTaskService().save(temp);
-            currentTask.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(),
-                    temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
+            this.serviceManager.getTaskService().save(correctionTask);
+            currentTask.getProcess().getHistory().add(new History(date, correctionTask.getOrdering().doubleValue(),
+                    correctionTask.getTitle(), HistoryTypeEnum.taskError, correctionTask.getProcess()));
 
-            closeTasksBetweenCurrentAndCorrectionTask(currentTask, temp);
+            closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
 
             updateProcessSortHelperStatus(currentTask.getProcess());
         }
@@ -470,34 +470,34 @@ public class WorkflowService {
      *
      * @return Task
      */
-    public Task solveProblem(Task task) throws DAOException, DataException {
+    public Task solveProblem(Task currentTask) throws DAOException, DataException {
         if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
         Date date = new Date();
-        this.webDav.uploadFromHome(task.getProcess());
-        task.setProcessingStatusEnum(TaskStatus.DONE);
-        task.setProcessingEnd(date);
-        task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        task.setProcessingTime(new Date());
-        task.setProcessingUser(this.user);
+        this.webDav.uploadFromHome(currentTask.getProcess());
+        currentTask.setProcessingStatusEnum(TaskStatus.DONE);
+        currentTask.setProcessingEnd(date);
+        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        currentTask.setProcessingTime(new Date());
+        currentTask.setProcessingUser(this.user);
 
-        Task temp = serviceManager.getTaskService().getById(this.solution.getId());
+        Task correctionTask = serviceManager.getTaskService().getById(this.solution.getId());
 
-        closeTasksBetweenCurrentAndCorrectionTaskA(task, temp, date);
+        closeTasksBetweenCurrentAndCorrectionTaskA(currentTask, correctionTask, date);
 
-        task.getProcess().setWikiField(prepareSolutionWikiField(task.getProcess(), temp));
+        currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
 
-        Property processProperty = prepareSolveMessageProperty(temp);
-        processProperty.getProcesses().add(task.getProcess());
-        task.getProcess().getProperties().add(processProperty);
+        Property processProperty = prepareSolveMessageProperty(correctionTask);
+        processProperty.getProcesses().add(currentTask.getProcess());
+        currentTask.getProcess().getProperties().add(processProperty);
 
-        updateProcessSortHelperStatus(task.getProcess());
+        updateProcessSortHelperStatus(currentTask.getProcess());
 
         this.solution.setMessage("");
         this.solution.setId(0);
-        return task;
+        return currentTask;
     }
 
     /**
@@ -521,20 +521,20 @@ public class WorkflowService {
         currentTask.setProcessingTime(date);
         currentTask.setProcessingUser(this.user);
 
-        Task temp = null;
+        Task correctionTask = null;
         for (Task task : currentTask.getProcess().getTasks()) {
             if (task.getTitle().equals(solutionTask)) {
-                temp = task;
+                correctionTask = task;
             }
         }
-        if (temp != null) {
-            closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, temp, date);
+        if (correctionTask != null) {
+            closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, correctionTask, date);
 
-            Property processProperty = prepareSolveMessageProperty(temp);
+            Property processProperty = prepareSolveMessageProperty(correctionTask);
             processProperty.getProcesses().add(currentTask.getProcess());
             currentTask.getProcess().getProperties().add(processProperty);
 
-            currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), temp));
+            currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
 
             updateProcessSortHelperStatus(currentTask.getProcess());
         }
