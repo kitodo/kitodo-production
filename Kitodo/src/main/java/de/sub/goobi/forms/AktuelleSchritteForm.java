@@ -883,6 +883,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public void setStep(Task task) {
         this.mySchritt = task;
         this.mySchritt.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
+        this.myProcess = this.mySchritt.getProcess();
         loadProcessProperties();
         setAttributesForProcess();
     }
