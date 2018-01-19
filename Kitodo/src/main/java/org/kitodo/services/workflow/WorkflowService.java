@@ -353,6 +353,29 @@ public class WorkflowService {
     }
 
     /**
+     *Unassing user from task.
+     * 
+     * @param task
+     *            object
+     * @return Task object
+     */
+    public Task unassignTaskFromUser(Task task) throws DataException {
+        this.webDav.uploadFromHome(task.getProcess());
+        task.setProcessingStatusEnum(TaskStatus.OPEN);
+        task.setProcessingUser(null);
+        // if we have a correction task here then never remove startdate
+        if (serviceManager.getTaskService().isCorrectionStep(task)) {
+            task.setProcessingBegin(null);
+        }
+        task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        task.setProcessingTime(new Date());
+
+        updateProcessSortHelperStatus(task.getProcess());
+
+        return task;
+    }
+
+    /**
      * Report the problem.
      *
      * @return Task

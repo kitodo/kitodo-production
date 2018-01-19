@@ -337,39 +337,18 @@ public class AktuelleSchritteForm extends BasisForm {
         return "/pages/batchesEdit";
     }
 
-    @Deprecated
-    public void saveProperties() {
-    }
-
     /**
      * Not sure.
      *
      * @return page
      */
     public String schrittDurchBenutzerZurueckgeben() {
-        this.myDav.uploadFromHome(this.mySchritt.getProcess());
-        this.mySchritt.setProcessingStatusEnum(TaskStatus.OPEN);
-        // mySchritt.setBearbeitungsbenutzer(null);
-        // if we have a correction-step here then never remove startdate
-        if (serviceManager.getTaskService().isCorrectionStep(this.mySchritt)) {
-            this.mySchritt.setProcessingBegin(null);
-        }
-        this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        mySchritt.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            mySchritt.setProcessingUser(ben);
-        }
-
         try {
-            /*
-             * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-             */
-            this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
+            setMySchritt(serviceManager.getWorkflowService().unassignTaskFromUser(this.mySchritt));
         } catch (DataException e) {
             logger.error("Task couldn't get saved/inserted", e);
         }
-        // calcHomeImages();
+
         return filterAll();
     }
 
