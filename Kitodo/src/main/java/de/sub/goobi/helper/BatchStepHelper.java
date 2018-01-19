@@ -162,7 +162,6 @@ public class BatchStepHelper extends BatchHelper {
             Property processProperty = new Property();
             processProperty.setTitle(this.property.getTitle());
             processProperty.setValue(this.property.getValue());
-            processProperty.setContainer(this.property.getContainer());
 
             for (Task task : this.steps) {
                 Process process = task.getProcess();

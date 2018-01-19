@@ -27,43 +27,6 @@
     <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
 
     <h:form id="propform2" rendered="#{AktuelleSchritteForm.propertiesSize>0}">
-        <!-- Box für die Bearbeitung der Details -->
-        <!--
-        <htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
-
-        <htm:tr>
-            <htm:td styleClass="eingabeBoxen_row1" colspan="2">
-                <h:outputText value="#{msgs.erweiterteEigenschaften}" />
-            </htm:td>
-        </htm:tr>
-
-        <htm:tr>
-        <htm:td styleClass="eingabeBoxen_row2" colspan="3">
-
-        <x:dataTable id="eigenschaften" var="prop" value="#{AktuelleSchritteForm.processProperties}" style="border-bottom: 1px solid #F4BBA5;">
-
-            <h:column>
-                <h:outputText value="#{prop.name}" />
-            </h:column>
-
-            <h:column>
-                <h:outputText value="#{prop.type}" />
-            </h:column>
-
-            <h:column>
-                <h:inputText value="#{prop.value}" />
-            </h:column>
-
-            <h:column>
-                <h:outputText value="#{prop.possibleValues}" />
-            </h:column>
-
-            <h:column>
-                <h:outputText value="#{prop.container}" />
-            </h:column>
-
-        </x:dataTable>
-        -->
         <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode != 'processProperty' and AktuelleSchritteForm.propertiesSize>0}">
             <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
                 <thead class="standardTable_Header">
@@ -127,8 +90,6 @@
                         <table>
 
                             <t:dataList var="myprocess_item" value="#{AktuelleSchritteForm.properties}">
-
-                                <!-- 	<t:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.processProperty}">-->
                                 <tr>
                                     <td>
                                         <h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px"
