@@ -34,7 +34,7 @@
                 <ul>
                     <li>
                         <!-- List: my tasks -->
-                        <a href="#"><i class="fa fa-bell-o fa-lg"/><h:panelGroup rendered="#{AktuelleSchritteForm.lazyDTOModel.rowCount gt 0}" styleClass="batch-count bc-alert">#{AktuelleSchritteForm.page.totalResults}</h:panelGroup></a>
+                        <a href="#"><i class="fa fa-bell-o fa-lg"/><h:panelGroup rendered="#{AktuelleSchritteForm.lazyDTOModel.rowCount gt 0}" styleClass="batch-count bc-alert">#{AktuelleSchritteForm.lazyDTOModel.rowCount}</h:panelGroup></a>
                         <ul>
                             <li><h3>#{msgs.aktuelleSchritte}</h3></li>
                             <ui:repeat value="#{AktuelleSchritteForm.lazyDTOModel.load(0,3, null, null, null)}" var="task">
