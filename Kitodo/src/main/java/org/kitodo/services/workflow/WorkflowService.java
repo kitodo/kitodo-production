@@ -296,7 +296,7 @@ public class WorkflowService {
             serviceManager.getProcessService().save(process);
         }
 
-        updateProcessStatus(process);
+        updateProcessSortHelperStatus(process);
 
         for (Task automaticTask : automaticTasks) {
             TaskScriptThread thread = new TaskScriptThread(automaticTask);
@@ -310,7 +310,8 @@ public class WorkflowService {
     /**
      * Taken from AktuelleSchritteForm.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return Task object
      */
     public Task assignTaskToUser(Task task) {
@@ -329,21 +330,12 @@ public class WorkflowService {
                     task.setProcessingBegin(new Date());
                 }
                 task.getProcess().getHistory()
-                            .add(new History(task.getProcessingBegin(),
-                                    task.getOrdering().doubleValue(), task.getTitle(),
-                                    HistoryTypeEnum.taskInWork, task.getProcess()));
+                        .add(new History(task.getProcessingBegin(), task.getOrdering().doubleValue(), task.getTitle(),
+                                HistoryTypeEnum.taskInWork, task.getProcess()));
 
-                // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-                try {
-                    this.serviceManager.getProcessService().save(task.getProcess());
-                } catch (DataException e) {
-                    Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                    logger.error("Task couldn't get saved", e);
-                } finally {
-                    this.flagWait = false;
-                }
+                updateProcessSortHelperStatus(task.getProcess());
 
-                // wenn es ein Image-Schritt ist, dann gleich die Images ins Home
+                // if it is an image task, then download the images into the user home directory
                 if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                     downloadToHome(task);
                 }
@@ -351,6 +343,9 @@ public class WorkflowService {
                 Helper.setFehlerMeldung("stepInWorkError");
             }
             this.flagWait = false;
+        } catch (DataException e) {
+            Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
+            logger.error("Task couldn't get saved", e);
         } finally {
             this.flagWaitLock.unlock();
         }
@@ -389,13 +384,11 @@ public class WorkflowService {
 
         serviceManager.getTaskService().save(temp);
         task.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(), temp.getTitle(),
-                    HistoryTypeEnum.taskError, temp.getProcess()));
+                HistoryTypeEnum.taskError, temp.getProcess()));
 
-        // close tasks between the current and the correction task
         closeTasksBetweenCurrentAndCorrectionTask(task, temp);
 
-        // update the process so that the sort helper is saved
-        this.serviceManager.getProcessService().save(task.getProcess());
+        updateProcessSortHelperStatus(task.getProcess());
 
         this.problem.setMessage("");
         this.problem.setId(0);
@@ -439,13 +432,13 @@ public class WorkflowService {
 
             this.serviceManager.getTaskService().save(temp);
             currentTask.getProcess().getHistory().add(new History(date, temp.getOrdering().doubleValue(),
-                        temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
+                    temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
 
-            // close all tasks between the current and the correction task
             closeTasksBetweenCurrentAndCorrectionTask(currentTask, temp);
+
+            updateProcessSortHelperStatus(currentTask.getProcess());
         }
-        // update the process so that the sort helper is saved
-        //TODO: why comment is here but no process save here?!
+
         return currentTask;
     }
 
@@ -468,16 +461,16 @@ public class WorkflowService {
         task.setProcessingUser(this.user);
 
         Task temp = serviceManager.getTaskService().getById(this.solution.getId());
-        // close all tasks between the current and the correction task
+
         closeTasksBetweenCurrentAndCorrectionTaskA(task, temp, date);
 
-        // update the process so that the sort helper is saved
         task.getProcess().setWikiField(prepareSolutionWikiField(task.getProcess(), temp));
 
         Property processProperty = prepareSolveMessageProperty(temp);
         processProperty.getProcesses().add(task.getProcess());
         task.getProcess().getProperties().add(processProperty);
-        serviceManager.getProcessService().save(task.getProcess());
+
+        updateProcessSortHelperStatus(task.getProcess());
 
         this.solution.setMessage("");
         this.solution.setId(0);
@@ -494,7 +487,7 @@ public class WorkflowService {
      */
     public Task solveProblem(Task currentTask, String solutionTask) throws AuthenticationException, DataException {
         if (this.user == null) {
-            //TODO: should be now it thrown every where where user is not found?
+            // TODO: should be now it thrown every where where user is not found?
             throw new AuthenticationException("userNotFound");
         }
         Date date = new Date();
@@ -512,7 +505,6 @@ public class WorkflowService {
             }
         }
         if (temp != null) {
-            // close tasks between the current and the correction task
             closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, temp, date);
 
             Property processProperty = prepareSolveMessageProperty(temp);
@@ -520,7 +512,8 @@ public class WorkflowService {
             currentTask.getProcess().getProperties().add(processProperty);
 
             currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), temp));
-            // update the process so that the collation helper is saved
+
+            updateProcessSortHelperStatus(currentTask.getProcess());
         }
         return currentTask;
     }
@@ -667,12 +660,12 @@ public class WorkflowService {
     }
 
     /**
-     * Update process status.
+     * Update process sort helper status.
      *
      * @param process
-     *            the process
+     *            object
      */
-    private void updateProcessStatus(Process process) throws DataException {
+    private void updateProcessSortHelperStatus(Process process) throws DataException {
         String value = serviceManager.getProcessService().getProgress(process, null);
         process.setSortHelperStatus(value);
         serviceManager.getProcessService().save(process);
@@ -680,6 +673,9 @@ public class WorkflowService {
 
     /**
      * Download to user home directory.
+     * 
+     * @param task
+     *            object
      */
     private void downloadToHome(Task task) {
         task.setProcessingTime(new Date());
