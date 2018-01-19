@@ -379,7 +379,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
-        setMySchritt(serviceManager.getWorkflowService().closeTaskByUser(this.mySchritt, this.myDav));
+        setMySchritt(serviceManager.getWorkflowService().closeTaskByUser(this.mySchritt));
         return filterAll();
     }
 
@@ -408,7 +408,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String reportProblem() {
         serviceManager.getWorkflowService().setProblem(getProblem());
         try {
-            setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt, this.myDav));
+            setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
             logger.error("Problem couldn't be reported: " + e);
         }
@@ -436,7 +436,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String solveProblem() {
         serviceManager.getWorkflowService().setSolution(getSolution());
         try {
-            setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt, this.myDav));
+            setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
             logger.error("Problem couldn't be solved: " + e);
         }

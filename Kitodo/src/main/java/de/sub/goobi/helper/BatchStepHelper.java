@@ -292,7 +292,7 @@ public class BatchStepHelper extends BatchHelper {
         try {
             serviceManager.getWorkflowService().setSolution(getSolution());
             try {
-                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav));
+                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
             } catch (DataException e) {
                 logger.error("Problem couldn't be solved: " + e);
             }
@@ -319,7 +319,7 @@ public class BatchStepHelper extends BatchHelper {
                 this.currentStep = s;
                 serviceManager.getWorkflowService().setSolution(getSolution());
                 try {
-                    setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask, this.myDav));
+                    setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
                 } catch (DataException e) {
                     logger.error("Problem couldn't be solved: " + e);
                 }

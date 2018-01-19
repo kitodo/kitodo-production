@@ -60,6 +60,7 @@ public class WorkflowService {
     private Boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowService.class);
     private static WorkflowService instance = null;
     private transient ServiceManager serviceManager = new ServiceManager();
@@ -212,7 +213,7 @@ public class WorkflowService {
      *
      * @return closed Task
      */
-    public Task closeTaskByUser(Task task, WebDav webDav) throws DataException, IOException {
+    public Task closeTaskByUser(Task task) throws DataException, IOException {
 
         // if step allows writing of images, then count all images here
         if (task.isTypeImagesWrite()) {
@@ -252,7 +253,7 @@ public class WorkflowService {
         }
         // if the result of the verification is ok, then continue, otherwise it is not
         // reached
-        webDav.uploadFromHome(task.getProcess());
+        this.webDav.uploadFromHome(task.getProcess());
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         close(task);
         return task;
@@ -361,13 +362,13 @@ public class WorkflowService {
      *
      * @return Task
      */
-    public Task reportProblem(Task task, WebDav webDav) throws DAOException, DataException {
+    public Task reportProblem(Task task) throws DAOException, DataException {
         if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
 
-        webDav.uploadFromHome(task.getProcess());
+        this.webDav.uploadFromHome(task.getProcess());
         Date date = new Date();
         task.setProcessingStatusEnum(TaskStatus.LOCKED);
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -453,13 +454,13 @@ public class WorkflowService {
      *
      * @return Task
      */
-    public Task solveProblem(Task task, WebDav webDav) throws DAOException, DataException {
+    public Task solveProblem(Task task) throws DAOException, DataException {
         if (this.user == null) {
             Helper.setFehlerMeldung("userNotFound");
             return null;
         }
         Date date = new Date();
-        webDav.uploadFromHome(task.getProcess());
+        this.webDav.uploadFromHome(task.getProcess());
         task.setProcessingStatusEnum(TaskStatus.DONE);
         task.setProcessingEnd(date);
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -490,16 +491,14 @@ public class WorkflowService {
      *            Task
      * @param solutionTask
      *            String
-     * @param webDav
-     *            WebDav
      */
-    public Task solveProblem(Task currentTask, String solutionTask, WebDav webDav) throws AuthenticationException, DataException {
+    public Task solveProblem(Task currentTask, String solutionTask) throws AuthenticationException, DataException {
         if (this.user == null) {
             //TODO: should be now it thrown every where where user is not found?
             throw new AuthenticationException("userNotFound");
         }
         Date date = new Date();
-        webDav.uploadFromHome(currentTask.getProcess());
+        this.webDav.uploadFromHome(currentTask.getProcess());
         currentTask.setProcessingStatusEnum(TaskStatus.DONE);
         currentTask.setProcessingEnd(date);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -687,6 +686,6 @@ public class WorkflowService {
         if (this.user != null) {
             task.setProcessingUser(this.user);
         }
-        //this.myDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
+        this.webDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
     }
 }
