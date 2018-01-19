@@ -25,9 +25,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.naming.AuthenticationException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.kitodo.data.database.beans.History;
@@ -54,7 +57,10 @@ public class WorkflowService {
     private Problem problem = new Problem();
     private Solution solution = new Solution();
     private User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+    private Boolean flagWait = false;
+    private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final Logger logger = LogManager.getLogger(WorkflowService.class);
     private static WorkflowService instance = null;
     private transient ServiceManager serviceManager = new ServiceManager();
 
@@ -298,6 +304,56 @@ public class WorkflowService {
         for (Task finish : tasksToFinish) {
             close(finish);
         }
+    }
+
+    /**
+     * Taken from AktuelleSchritteForm.
+     *
+     * @param task object
+     * @return Task object
+     */
+    public Task assignTaskToUser(Task task) {
+        this.flagWaitLock.lock();
+        try {
+            if (!this.flagWait) {
+                this.flagWait = true;
+
+                task.setProcessingStatusEnum(TaskStatus.INWORK);
+                task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+                task.setProcessingTime(new Date());
+                if (this.user != null) {
+                    task.setProcessingUser(this.user);
+                }
+                if (task.getProcessingBegin() == null) {
+                    task.setProcessingBegin(new Date());
+                }
+                task.getProcess().getHistory()
+                            .add(new History(task.getProcessingBegin(),
+                                    task.getOrdering().doubleValue(), task.getTitle(),
+                                    HistoryTypeEnum.taskInWork, task.getProcess()));
+
+                // den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
+                try {
+                    this.serviceManager.getProcessService().save(task.getProcess());
+                } catch (DataException e) {
+                    Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
+                    logger.error("Task couldn't get saved", e);
+                } finally {
+                    this.flagWait = false;
+                }
+
+                // wenn es ein Image-Schritt ist, dann gleich die Images ins Home
+                if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+                    downloadToHome(task);
+                }
+            } else {
+                Helper.setFehlerMeldung("stepInWorkError");
+            }
+            this.flagWait = false;
+        } finally {
+            this.flagWaitLock.unlock();
+        }
+        return task;
     }
 
     /**
@@ -621,5 +677,16 @@ public class WorkflowService {
         String value = serviceManager.getProcessService().getProgress(process, null);
         process.setSortHelperStatus(value);
         serviceManager.getProcessService().save(process);
+    }
+
+    /**
+     * Download to user home directory.
+     */
+    private void downloadToHome(Task task) {
+        task.setProcessingTime(new Date());
+        if (this.user != null) {
+            task.setProcessingUser(this.user);
+        }
+        //this.myDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
     }
 }

@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -78,8 +77,6 @@ public class AktuelleSchritteForm extends BasisForm {
     private String scriptPath;
     private String addToWikiField = "";
     private static String DONEDIRECTORYNAME = "fertig/";
-    private Boolean flagWait = false;
-    private final ReentrantLock flagWaitLock = new ReentrantLock();
     private BatchStepHelper batchHelper;
     private List<Property> properties;
     private Property property;
@@ -206,60 +203,13 @@ public class AktuelleSchritteForm extends BasisForm {
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        this.flagWaitLock.lock();
-        try {
-            if (!this.flagWait) {
-                this.flagWait = true;
+        Helper.getHibernateSession().refresh(this.mySchritt);
 
-                // Helper.getHibernateSession().clear();
-                Helper.getHibernateSession().refresh(this.mySchritt);
-
-                if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
-                    Helper.setFehlerMeldung("stepInWorkError");
-                    this.flagWait = false;
-                    return null;
-                } else {
-                    this.mySchritt.setProcessingStatusEnum(TaskStatus.INWORK);
-                    this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-                    mySchritt.setProcessingTime(new Date());
-                    User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                    if (ben != null) {
-                        mySchritt.setProcessingUser(ben);
-                    }
-                    if (this.mySchritt.getProcessingBegin() == null) {
-                        Date myDate = new Date();
-                        this.mySchritt.setProcessingBegin(myDate);
-                    }
-                    this.mySchritt.getProcess().getHistory()
-                            .add(new History(this.mySchritt.getProcessingBegin(),
-                                    this.mySchritt.getOrdering().doubleValue(), this.mySchritt.getTitle(),
-                                    HistoryTypeEnum.taskInWork, this.mySchritt.getProcess()));
-                    try {
-                        /*
-                         * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-                         */
-                        this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-                    } catch (DataException e) {
-                        Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                        logger.error("Task couldn't get saved", e);
-                    } finally {
-                        this.flagWait = false;
-                    }
-                    /*
-                     * wenn es ein Image-Schritt ist, dann gleich die Images ins Home
-                     */
-
-                    if (this.mySchritt.isTypeImagesRead() || this.mySchritt.isTypeImagesWrite()) {
-                        downloadToHome();
-                    }
-                }
-            } else {
-                Helper.setFehlerMeldung("stepInWorkError");
-                return null;
-            }
-            this.flagWait = false;
-        } finally {
-            this.flagWaitLock.unlock();
+        if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
+            Helper.setFehlerMeldung("stepInWorkError");
+            return null;
+        } else {
+            this.setMySchritt(serviceManager.getWorkflowService().assignTaskToUser(this.getMySchritt()));
         }
         return "/pages/AktuelleSchritteBearbeiten";
     }
@@ -492,27 +442,6 @@ public class AktuelleSchritteForm extends BasisForm {
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
         return filterAll();
-    }
-
-    /**
-     * Download to home.
-     *
-     * @return String
-     */
-    public String downloadToHome() {
-        try {
-            new File(serviceManager.getProcessService().getImagesOrigDirectory(false, this.mySchritt.getProcess()));
-        } catch (Exception e1) {
-            logger.error(e1);
-        }
-        mySchritt.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            mySchritt.setProcessingUser(ben);
-        }
-        this.myDav.downloadToHome(this.mySchritt.getProcess(), !this.mySchritt.isTypeImagesWrite());
-
-        return null;
     }
 
     /**
