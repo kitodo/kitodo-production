@@ -208,9 +208,11 @@ public class ExportDms extends ExportMets {
         /*
          * Speicherort vorbereiten und downloaden
          */
+        //TODO: why create again zielVerzeichnis if it is already given as an input??
         URI zielVerzeichnis;
         URI userHome;
         if (process.getProject().isUseDmsImport()) {
+            //TODO: I have got here value usr/local/kitodo/hotfolder
             zielVerzeichnis = URI.create(process.getProject().getDmsImportImagesPath());
             userHome = zielVerzeichnis;
 
@@ -247,7 +249,7 @@ public class ExportDms extends ExportMets {
             }
 
         } else {
-            zielVerzeichnis = URI.create(inZielVerzeichnis + atsPpnBand + File.separator);
+            zielVerzeichnis = URI.create(inZielVerzeichnis + atsPpnBand + "/");
             // wenn das Home existiert, erst löschen und dann neu anlegen
             userHome = zielVerzeichnis;
             if (!fileService.delete(userHome)) {
@@ -480,7 +482,7 @@ public class ExportDms extends ExportMets {
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
         if (fileService.fileExist(tifOrdner) && fileService.getSubUris(tifOrdner).size() > 0) {
-            URI zielTif = userHome.resolve(File.separator + atsPpnBand + ordnerEndung);
+            URI zielTif = userHome.resolve(atsPpnBand + ordnerEndung + "/");
 
             /* bei Agora-Import einfach den Ordner anlegen */
             if (process.getProject().isUseDmsImport()) {
@@ -521,8 +523,8 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setWorkDetail(fileService.getFileName(dateien.get(i)));
                 }
-                URI meinZiel = zielTif.resolve(File.separator + fileService.getFileName(dateien.get(i)));
-                fileService.copyFile(dateien.get(i), meinZiel);
+
+                fileService.copyFile(dateien.get(i), zielTif);
                 if (exportDmsTask != null) {
                     exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.size() + 1));
                     if (exportDmsTask.isInterrupted()) {
