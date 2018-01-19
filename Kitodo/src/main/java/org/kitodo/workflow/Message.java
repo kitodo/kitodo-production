@@ -16,18 +16,40 @@ public class Message {
     protected Integer id;
     protected String message;
 
+    /**
+     * Get id.
+     * 
+     * @return id as Integer
+     */
     public Integer getId() {
         return id;
     }
 
+    /**
+     * Set id.
+     * 
+     * @param id
+     *            as Integer
+     */
     public void setId(Integer id) {
         this.id = id;
     }
 
+    /**
+     * Get message.
+     * 
+     * @return message as String
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Set message.
+     * 
+     * @param message
+     *            as String
+     */
     public void setMessage(String message) {
         this.message = message;
     }

@@ -159,7 +159,7 @@ public class WorkflowService {
     }
 
     /**
-     * .
+     * Change Task status up for list of tasks assigned to given Process.
      * 
      * @param process
      *            object
@@ -185,7 +185,7 @@ public class WorkflowService {
     }
 
     /**
-     * .
+     * Change Task status down for list of tasks assigned to given Process.
      * 
      * @param process
      *            object
@@ -211,6 +211,8 @@ public class WorkflowService {
     /**
      * Not sure.
      *
+     * @param task
+     *            object
      * @return closed Task
      */
     public Task closeTaskByUser(Task task) throws DataException, IOException {
@@ -353,7 +355,7 @@ public class WorkflowService {
     }
 
     /**
-     *Unassing user from task.
+     * Unassing user from task.
      * 
      * @param task
      *            object
@@ -378,6 +380,8 @@ public class WorkflowService {
     /**
      * Report the problem.
      *
+     * @param currentTask
+     *            as Task object
      * @return Task
      */
     public Task reportProblem(Task currentTask) throws DAOException, DataException {
@@ -406,8 +410,8 @@ public class WorkflowService {
         currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
 
         serviceManager.getTaskService().save(correctionTask);
-        currentTask.getProcess().getHistory().add(new History(date, correctionTask.getOrdering().doubleValue(), correctionTask.getTitle(),
-                HistoryTypeEnum.taskError, correctionTask.getProcess()));
+        currentTask.getProcess().getHistory().add(new History(date, correctionTask.getOrdering().doubleValue(),
+                correctionTask.getTitle(), HistoryTypeEnum.taskError, correctionTask.getProcess()));
 
         closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
 
@@ -422,9 +426,9 @@ public class WorkflowService {
      * THis one is taken out of BatchStepHelper.
      *
      * @param currentTask
-     *            Task
+     *            as Task object
      * @param problemTask
-     *            String
+     *            title of problem task as String
      */
     public Task reportProblem(Task currentTask, String problemTask) throws DataException {
         Date date = new Date();
@@ -466,8 +470,10 @@ public class WorkflowService {
     }
 
     /**
-     * Solve problem. This one is taken from AktuelleSchritteForm
+     * Solve problem. This one is taken from AktuelleSchritteForm.
      *
+     * @param currentTask
+     *            as Task object
      * @return Task
      */
     public Task solveProblem(Task currentTask) throws DAOException, DataException {
@@ -504,9 +510,9 @@ public class WorkflowService {
      * This one is taken out of BatchStepHelper.
      *
      * @param currentTask
-     *            Task
+     *            as Task object
      * @param solutionTask
-     *            String
+     *            title of problematic task as String
      */
     public Task solveProblem(Task currentTask, String solutionTask) throws AuthenticationException, DataException {
         if (this.user == null) {
