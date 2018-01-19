@@ -1,0 +1,69 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <f:metadata>
+        <f:viewParam name="id" value="#{ProzessverwaltungForm.processId}"/>
+        <f:viewAction action="#{ProzessverwaltungForm.loadProcess}" />
+    </f:metadata>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="processEditForm">
+                <p:panel styleClass="content-header">
+                    <h3>
+                        <h:outputText value="#{msgs.schrittHinzufuegen}"
+                                      rendered="#{ProzessverwaltungForm.task.id eq null}"/>
+                        <h:outputText value="#{msgs.schrittDetails}"
+                                      rendered="#{ProzessverwaltungForm.task.id ne null}"/>
+                    </h3>
+                    <!-- TODO commandButton anpassen -->
+                    <p:commandButton value="#{msgs.speichern}"
+                                     action="#{ProzessverwaltungForm.saveAndRedirect}"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                                     update="notifications"/>
+                </p:panel>
+                <p:messages autoUpdate="true"/>
+                <p:tabView id="tabs">
+                    <p:tab title="#{msgs.details}">
+                        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditDetails.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.benutzer}">
+                        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsers.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.benutzergruppen}">
+                        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsergroups.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsergroupsPopup.xhtml"/>
+    </ui:define>
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsersPopup.xhtml"/>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><a href="">#{msgs.schrittDetails}</a></li>
+        <li><h:link value="#{msgs.prozessBearbeiten}" outcome="processEdit"/></li>
+        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+    </ui:define>
+</ui:composition>

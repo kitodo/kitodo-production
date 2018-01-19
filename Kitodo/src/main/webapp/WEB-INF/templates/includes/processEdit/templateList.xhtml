@@ -1,0 +1,59 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h4>
+        <h:outputText value="#{msgs.vorlagen}"/>
+    </h4>
+    <p:dataTable var="item"
+                 value="#{ProzessverwaltungForm.process.templates}"
+                 rowIndexVar="index">
+        <!-- number -->
+        <p:column headerText="#{msgs.nr}">
+            <h:outputText value="#{index+1}"/>
+        </p:column>
+
+        <!-- properties -->
+        <p:column headerText="#{msgs.eigenschaften}">
+            <p:dataTable var="property"
+                         value="#{item.properties}">
+                <p:column>
+                    <h:outputText value="#{property.title}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{property.value}"/>
+                </p:column>
+            </p:dataTable>
+        </p:column>
+
+        <!-- actions -->
+        <p:column headerText="#{msgs.auswahl}"
+                  rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}">
+            <h:link outcome="templateEdit"
+                    title="#{msgs.vorlageBearbeiten}">
+                <f:param name="id" value="#{item.id}"/>
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+            <h:commandLink action="#{ProzessverwaltungForm.VorlageNeu}"
+                           rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
+                           title="#{msgs.vorlageHinzufuegen}">
+                <i class="fa fa-plus-circle fa-lg"/>
+            </h:commandLink>
+        </p:column>
+
+    </p:dataTable>
+</ui:composition>

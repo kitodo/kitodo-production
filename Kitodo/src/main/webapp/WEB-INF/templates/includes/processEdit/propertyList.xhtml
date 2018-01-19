@@ -1,0 +1,48 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable var="item"
+                 value="#{ProzessverwaltungForm.properties}">
+        <p:column headerText="#{msgs.title}">
+            <h:outputText value="#{item.title}"/>
+        </p:column>
+        <p:column headerText="#{msgs.value}">
+            <h:outputText value="#{item.value}" rendered="#{item.type.name ne 'link'}"/>
+            <h:outputLink title="#{item.value}" value="#{item.value}" rendered="#{item.type.name eq 'link'}"/>
+        </p:column>
+        <p:column headerText="#{msgs.choice}">
+            <p:commandLink title="#{msgs.bearbeiten}" oncomplete="PF('editPropertyDialog').show()">
+                <i class="fa fa-pencil-square-o fa-lg"/>
+                <f:setPropertyActionListener target="#{ProzessverwaltungForm.property}" value="#{item}"/>
+                <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}" value="#{objectMode.PROCESSPROPERTY}"/>
+            </p:commandLink>
+            <p:commandLink title="#{msgs.duplicate}" action="#{ProzessverwaltungForm.duplicateProperty}">
+                <h:outputText><i class="fa fa-files-o fa-lg"/></h:outputText>
+                <f:setPropertyActionListener target="#{ProzessverwaltungForm.property}" value="#{item}"/>
+            </p:commandLink>
+        </p:column>
+    </p:dataTable>
+    <p:commandButton actionListener="#{ProzessverwaltungForm.createNewProperty()}"
+                     oncomplete="PF('editPropertyDialog').show()"
+                     value="#{msgs.eigenschaftHinzufuegen}"
+                     icon="fa fa-plus-circle fa-lg"
+                     iconPos="right"
+                     styleClass="button-filled-green">
+        <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}" value="#{objectMode.PROCESSPROPERTY}"/>
+    </p:commandButton>
+</ui:composition>

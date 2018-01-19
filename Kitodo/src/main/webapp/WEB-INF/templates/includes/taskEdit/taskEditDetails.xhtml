@@ -1,0 +1,64 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:panelGrid columns="2">
+            <p:outputLabel for="title" value="#{msgs.titel}"/>
+            <p:inputText id="title" value="#{ProzessverwaltungForm.task.title}" required="true"/>
+
+            <p:outputLabel for="ordering" value="#{msgs.reihenfolge}"/>
+            <p:inputText id="ordering" value="#{ProzessverwaltungForm.task.ordering}" required="true"/>
+
+            <p:outputLabel for="priority" value="#{msgs.prioritaet}"/>
+            <p:inputText id="priority" value="#{ProzessverwaltungForm.task.priority}" required="true"/>
+
+            <p:outputLabel for="typeMetaData" value="#{msgs.metadaten}"/>
+            <p:selectBooleanCheckbox id="typeMetaData" value="#{ProzessverwaltungForm.task.typeMetadata}"/>
+
+            <p:outputLabel for="typeImportFileUpload" value="#{msgs.importMittelsFileUpload}"/>
+            <p:selectBooleanCheckbox id="typeImportFileUpload" value="#{ProzessverwaltungForm.task.typeImportFileUpload}"/>
+
+            <p:outputLabel for="typeImagesRead" value="#{msgs.imagesLesen}"/>
+            <p:selectBooleanCheckbox id="typeImagesRead" value="#{ProzessverwaltungForm.task.typeImagesRead}"/>
+
+            <p:outputLabel for="typeImagesWrite" value="#{msgs.imagesSchreiben}"/>
+            <p:selectBooleanCheckbox id="typeImagesWrite" value="#{ProzessverwaltungForm.task.typeImagesWrite}"/>
+
+            <p:outputLabel for="typeCloseVerify" value="#{msgs.beimAbschliessenVerifizieren}"/>
+            <p:selectBooleanCheckbox id="typeCloseVerify" value="#{ProzessverwaltungForm.task.typeCloseVerify}"/>
+
+            <p:outputLabel for="typeExportDMS" value="#{msgs.exportDMS}"/>
+            <p:selectBooleanCheckbox id="typeExportDMS" value="#{ProzessverwaltungForm.task.typeExportDMS}"/>
+
+            <p:outputLabel for="typeAcceptClose" value="#{msgs.schrittBeimAnnehmenAbschliessen}"/>
+            <p:selectBooleanCheckbox id="typeAcceptClose" value="#{ProzessverwaltungForm.task.typeAcceptClose}"/>
+
+            <p:outputLabel for="typeAutomatic" value="#{msgs.automatischerSchritt}"/>
+            <p:selectBooleanCheckbox id="typeAutomatic" value="#{ProzessverwaltungForm.task.typeAutomatic}"/>
+
+            <p:outputLabel for="status" value="#{msgs.status}"/>
+            <p:selectOneMenu id="status" value="#{ProzessverwaltungForm.task.processingStatusAsString}" required="true">
+                <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
+                <f:selectItem itemValue="0" itemLabel="#{msgs.statusGesperrt}"/>
+                <f:selectItem itemValue="1" itemLabel="#{msgs.statusOffen}"/>
+                <f:selectItem itemValue="2" itemLabel="#{msgs.statusInBearbeitung}"/>
+                <f:selectItem itemValue="3" itemLabel="#{msgs.statusAbgeschlossen}"/>
+            </p:selectOneMenu>
+
+            <p:outputLabel for="batchStep" value="#{msgs.batchStep}"/>
+            <p:selectBooleanCheckbox id="batchStep" value="#{ProzessverwaltungForm.task.batchStep}"/>
+    </p:panelGrid>
+</ui:composition>

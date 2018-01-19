@@ -165,7 +165,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.process = new Process();
         this.newProcessTitle = "";
         this.editMode = ObjectMode.PROCESS;
-        return "/pages/ProzessverwaltungBearbeiten";
+        return redirectToEdit("?faces-redirect=true");
     }
 
     /**
@@ -218,6 +218,31 @@ public class ProzessverwaltungForm extends BasisForm {
             Helper.setFehlerMeldung("titleEmpty");
         }
         return reload();
+    }
+
+    /**
+     * Save process and redirect to list view.
+     *
+     * @return url to list view
+     */
+    public String saveAndRedirect() {
+        if (this.process != null && this.process.getTitle() != null) {
+            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null) {
+                if (!renameAfterProcessTitleChanged()) {
+                    return null;
+                }
+            }
+
+            try {
+                serviceManager.getProcessService().save(this.process);
+            } catch (DataException e) {
+                Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+                logger.error(e);
+            }
+        } else {
+            Helper.setFehlerMeldung("titleEmpty");
+        }
+        return redirectToList("?faces-redirect=true");
     }
 
     /**
@@ -2301,6 +2326,28 @@ public class ProzessverwaltungForm extends BasisForm {
         this.selectedProcesses = selectedProcesses;
     }
 
+    // TODO:
+    // replace calls to this function with "/pages/processEdit" once we have
+    // completely switched to the new frontend pages
+    private String redirectToEdit(String urlSuffix) {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("processes.jsf")) {
+                return "/pages/processEdit" + urlSuffix;
+            } else {
+                return "/pages/ProzessverwaltungBearbeiten" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
+            // used from it's integration test
+            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
+            return "/pages/ProzessverwaltungBearbeiten" + urlSuffix;
+        }
+    }
+
+    // TODO:
     // replace calls to this function with "/pages/processes" once we have completely
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
@@ -2308,7 +2355,8 @@ public class ProzessverwaltungForm extends BasisForm {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("searchProcess.jsf")) {
+            if (!callerViewId.isEmpty() &&
+                    (callerViewId.contains("searchProcess.jsf") ||callerViewId.contains("processEdit.jsf"))) {
                 return "/pages/processes" + urlSuffix;
             } else {
                 return "/pages/ProzessverwaltungAlle" + urlSuffix;

@@ -1,0 +1,122 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable id="vorgaenge"
+                 var="item"
+                 value="#{ProzessverwaltungForm.process.tasks}"
+                 sortBy="#{item.ordering}">
+
+        <!-- ordering -->
+        <p:column headerText="#{msgs.nr}" style="width: 60px">
+            <!-- TODO funktioniert der Link? -->
+            <h:outputText value="#{item.ordering}"/>
+            <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
+                             update="@form"
+                             rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
+                             icon="fa fa-long-arrow-up">
+                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
+            </p:commandButton>
+            <p:commandButton action="#{ProzessverwaltungForm.setOrderungDown}"
+                             update="@form"
+                             rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
+                             icon="fa fa-long-arrow-down">
+                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
+            </p:commandButton>
+        </p:column>
+
+        <!-- title -->
+        <p:column headerText="#{msgs.title}">
+            <p:rowToggler />
+            <h:outputText value="#{item.title}"/>
+        </p:column>
+
+        <!-- status -->
+        <p:column headerText="#{msgs.status}">
+            <p:panelGrid columns="2" id="statusColumn" styleClass="ui-noborder" style="background: transparent">
+                <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
+                                title="#{item.processingStatusEnum.title}"
+                                alt="status"/>
+                <p:panelGrid columns="1" cellpadding="0" cellspacing="0" style="background: transparent"
+                             rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                    <!-- Bearbeitungsstatus hoch und runter -->
+                    <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusUp}"
+                                   title="#{msgs.statusHoeherSetzen}"
+                                   update="statusColumn">
+                        <h:graphicImage alt="status up"
+                                        value="/pages/images/buttons/order_right_klein.gif"/>
+                        <f:setPropertyActionListener
+                                target="#{ProzessverwaltungForm.taskReload}"
+                                value="#{item}"/>
+                    </p:commandLink>
+                    <!-- Bearbeitungsstatus hoch und runter -->
+                    <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusDown}"
+                                   title="#{msgs.statusRunterSetzen}"
+                                   update="statusColumn">
+                        <h:graphicImage alt="status down"
+                                        value="/pages/images/buttons/order_left_klein.gif"/>
+                        <f:setPropertyActionListener
+                                target="#{ProzessverwaltungForm.taskReload}"
+                                value="#{item}"/>
+                    </p:commandLink>
+                </p:panelGrid>
+            </p:panelGrid>
+        </p:column>
+
+        <!-- actions -->
+        <p:column rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                  headerText="#{msgs.auswahl}">
+            <h:link outcome="taskEdit"
+                    title="#{msgs.detailsDesSchritts}">
+                <f:param name="id" value="#{item.id}"/>
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+        </p:column>
+
+        <p:rowExpansion>
+            <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.eigenschaften}">
+                <h:outputText value="#{msgs.title}: "/>
+                <h:outputText value="#{item.localizedTitle}"/>
+
+                <h:outputText value="#{msgs.prioritaet}: "/>
+                <h:outputText value="#{item.priority}"/>
+
+                <h:outputText value="#{msgs.bearbeitungsbeginn}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                <h:outputText value="#{item.processingBeginAsFormattedString}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+
+                <h:outputText value="#{msgs.zuletztBearbeitet}: "  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+
+                <h:outputText value="#{msgs.bearbeitungsende}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                <h:outputText value="#{item.processingEndAsFormattedString}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+
+                <h:outputText value="#{msgs.letzteAktualisierungDurch}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+                <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+
+                <h:outputText value="#{msgs.aktualisierungstyp}: " rendered="#{item.editTypeEnum ne null}"/>
+                <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
+
+                <h:outputText value="#{msgs.automatischerSchritt}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+                <h:outputText value="#{item.scriptPath}" rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+
+            </p:panelGrid>
+        </p:rowExpansion>
+
+    </p:dataTable>
+
+
+</ui:composition>

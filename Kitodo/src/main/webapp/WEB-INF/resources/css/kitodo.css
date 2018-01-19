@@ -608,6 +608,7 @@ section#content-section {
     margin: 1.5em;
 }
 
+<<<<<<< HEAD
 main i.fa {
     font-size: 20px;
 }
@@ -620,6 +621,11 @@ main i.fa {
 
 .login-box {
     height: 70vh;
+}
+
+#processEditForm\:tabs\:processEditDetails label,
+#processEditForm\:tabs\:processEditDetails input {
+    display: block;
 }
 
 /*----------------------------------------------------------------------
