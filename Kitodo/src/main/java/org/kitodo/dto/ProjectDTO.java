@@ -12,6 +12,7 @@
 package org.kitodo.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Project DTO object.
@@ -32,7 +33,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get title.
-     * 
+     *
      * @return title as String
      */
     public String getTitle() {
@@ -41,7 +42,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set title.
-     * 
+     *
      * @param title
      *            as String
      */
@@ -51,7 +52,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get start date.
-     * 
+     *
      * @return start date as String
      */
     public String getStartDate() {
@@ -60,7 +61,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set start date.
-     * 
+     *
      * @param startDate
      *            as String
      */
@@ -70,7 +71,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get end date.
-     * 
+     *
      * @return end date as String
      */
     public String getEndDate() {
@@ -79,7 +80,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set end date.
-     * 
+     *
      * @param endDate
      *            as String
      */
@@ -108,7 +109,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get internal file format.
-     * 
+     *
      * @return internal file format as String
      */
     public String getFileFormatInternal() {
@@ -117,7 +118,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set internal file format.
-     * 
+     *
      * @param fileFormatInternal
      *            as String
      */
@@ -127,7 +128,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get mets rights owner.
-     * 
+     *
      * @return metsRightsOwner as String
      */
     public String getMetsRightsOwner() {
@@ -136,7 +137,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set mets right owner.
-     * 
+     *
      * @param metsRightsOwner
      *            as String
      */
@@ -146,7 +147,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get number of pages.
-     * 
+     *
      * @return number of pages as Integer
      */
     public Integer getNumberOfPages() {
@@ -155,7 +156,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set number of pages.
-     * 
+     *
      * @param numberOfPages
      *            as Integer
      */
@@ -165,7 +166,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get number of volumes.
-     * 
+     *
      * @return number of volumes as Integer
      */
     public Integer getNumberOfVolumes() {
@@ -174,7 +175,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set number of volumes.
-     * 
+     *
      * @param numberOfVolumes
      *            as Integer
      */
@@ -184,7 +185,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get if project is archived.
-     * 
+     *
      * @return true or false
      */
     public Boolean getProjectIsArchived() {
@@ -203,7 +204,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get list of processes.
-     * 
+     *
      * @return list of processes as ProcessDTO
      */
     public List<ProcessDTO> getProcesses() {
@@ -212,7 +213,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set list of processes.
-     * 
+     *
      * @param processes
      *            as list of ProcessDTO
      */
@@ -222,7 +223,7 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Get list of users.
-     * 
+     *
      * @return list of users as UserDTO
      */
     public List<UserDTO> getUsers() {
@@ -231,11 +232,21 @@ public class ProjectDTO extends BaseDTO {
 
     /**
      * Set list of users.
-     * 
+     *
      * @param users
      *            as list of UserDTO
      */
     public void setUsers(List<UserDTO> users) {
         this.users = users;
+    }
+
+    /**
+     * Return a string containing a comma separated list of process templates
+     * associated with this project.
+     *
+     * @return process templates associated with this project
+     */
+    public String getProcessTitles() {
+        return String.join(", ", this.processes.stream().map(ProcessDTO::getTitle).collect(Collectors.toList()));
     }
 }

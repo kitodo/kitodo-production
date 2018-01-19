@@ -24,8 +24,16 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
+        <p:column style="width: 16px;">
+            <p:rowToggler/>
+        </p:column>
+
         <p:column headerText="#{msgs.titel}">
             <h:outputText value="#{item.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.metsRightsOwner}">
+            <h:outputText value="#{item.metsRightsOwner}"/>
         </p:column>
 
         <p:column headerText="aktiv" styleClass="checkboxColumn">
@@ -48,6 +56,19 @@
             <h:link><i class="fa fa-clone fa-lg"/></h:link>
             <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
         </p:column>
+
+        <p:rowExpansion styleClass="expansion-class">
+            <p:panelGrid columns="2" columnClasses="label,value">
+                <h:outputText value="#{msgs.internesSpeicherformat}:"/>
+                <h:outputText value="#{item.fileFormatInternal}"/>
+
+                <h:outputText value="#{msgs.dmsExportformat}:"/>
+                <h:outputText value="#{item.fileFormatDmsExport}"/>
+
+                <h:outputText value="#{msgs.prozessvorlagen}:"/>
+                <h:outputText value="#{item.processTitles}"/>
+            </p:panelGrid>
+        </p:rowExpansion>
 
     </p:dataTable>
 </ui:composition>
