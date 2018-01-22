@@ -94,8 +94,8 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of Task objects
      */
     public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
-        return getByQuery("FROM Task WHERE process_id = " + processId + " AND ordering <= " + orderingMin
-                + " AND ordering >= " + orderingMax + " ORDER BY ordering ASC");
+        return getByQuery("FROM Task WHERE process_id = " + processId + " AND ordering < " + orderingMin
+                + " AND ordering > " + orderingMax + " ORDER BY ordering ASC");
     }
 
     /**

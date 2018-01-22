@@ -265,9 +265,9 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetAllTasksInBetween() {
-        List<Task> tasks = taskService.getAllTasksInBetween(2, 3, 2);
+        List<Task> tasks = taskService.getAllTasksInBetween(2, 4, 2);
         int actual = tasks.size();
-        int expected = 2;
+        int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
     }
 
