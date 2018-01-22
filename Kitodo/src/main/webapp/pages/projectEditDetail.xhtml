@@ -14,33 +14,41 @@
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:panelGrid columns="2" cellpadding="10" layout="grid">
+    <p:panel>
+        <p:selectBooleanButton
+                onLabel="Locked" offLabel="Unlocked"
+                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg"
+                style="left:90%" value="#{ProjekteForm.locked}">
+            <p:ajax event="change" update="editDetailForm" />
+        </p:selectBooleanButton>
+    </p:panel>
+    <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.titel}" />
-                <p:inputText id="title" placeholder="#{msgs.titel}" class="input" value="#{ProjekteForm.myProjekt.title}"/>
+                <p:inputText id="title" placeholder="#{msgs.titel}" class="input" value="#{ProjekteForm.myProjekt.title}" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />
-                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjekteForm.myProjekt.numberOfPages}"/>
+                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjekteForm.myProjekt.numberOfPages}" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="band" value="#{msgs.numberVolumes}" />
-                <p:inputText id="band" placeholder="1" class="input" value="#{ProjekteForm.myProjekt.numberOfVolumes}"/>
+                <p:inputText id="band" placeholder="1" class="input" value="#{ProjekteForm.myProjekt.numberOfVolumes}" disabled="#{ProjekteForm.locked}"/>
             </div>
         </p:row>
         <p:row>
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startdate}" />
-                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.startDate}" showOn="button"/>
+                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.startDate}" showOn="button" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="enddate" value="#{msgs.enddate}" />
-                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.endDate}" showOn="button"/>
+                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.endDate}" showOn="button" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="projectIsArchived" value="#{msgs.projectIsArchived}" />
-                <p:selectBooleanCheckbox id="projectIsArchived" class="input" value="#{ProjekteForm.myProjekt.projectIsArchived}" />
+                <p:selectBooleanCheckbox id="projectIsArchived" class="input" value="#{ProjekteForm.myProjekt.projectIsArchived}" disabled="#{ProjekteForm.locked}"/>
             </div>
         </p:row>
     </p:panelGrid>

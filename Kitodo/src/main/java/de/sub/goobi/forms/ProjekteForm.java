@@ -68,7 +68,7 @@ import org.kitodo.services.ServiceManager;
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
-
+    private boolean locked;
     private Project myProjekt = new Project();
     private ProjectFileGroup myFilegroup;
     private transient ServiceManager serviceManager = new ServiceManager();
@@ -290,6 +290,14 @@ public class ProjekteForm extends BasisForm {
         // has to be called if a page back move was done
         this.cancel();
         this.myProjekt = inProjekt;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     /**
