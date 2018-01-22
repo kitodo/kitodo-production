@@ -165,7 +165,7 @@ public class XMLReader {
      * @throws IOException
      *             if it fails
      */
-    public static String globallyUniqueIdentifierForFile(File file) throws IOException {
+    private static String globallyUniqueIdentifierForFile(File file) throws IOException {
         URI uri = file.getCanonicalFile().toURI();
         try {
             String host = uri.getHost();

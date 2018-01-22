@@ -30,7 +30,7 @@ public class XMLReaderTest {
 
         Node ruleset = XMLReader.toNode(testfile, MemoryStorage.INSTANCE);
 
-        String rulesetNamespace = XMLReader.globallyUniqueIdentifierForFile(testfile);
+        String rulesetNamespace = Namespaces.namespaceOf(ruleset.getType());
         String metadataTypeUri = Namespaces.concat(rulesetNamespace, "MetadataType");
         assertThat((int) ruleset.getByType(metadataTypeUri).countUntil(Integer.MAX_VALUE),
             is(equalTo(numberOfMetadataTypes)));
