@@ -549,8 +549,9 @@ public class XMLReader {
      */
     public static Node toNode(String data, String documentNS, Storage storage) throws SAXException {
         try {
-            return toNode(new ByteArrayInputStream(data.getBytes("UTF-16")), Optional.of("UTF-16"), documentNS,
-                storage);
+            try (ByteArrayInputStream bytes = new ByteArrayInputStream(data.getBytes("UTF-16"))) {
+                return toNode(bytes, Optional.of("UTF-16"), documentNS, storage);
+            }
         } catch (UnsupportedEncodingException e) {
             /* "UTF-16" is always supported by Java */
             throw new IllegalStateException(e.getMessage(), e);

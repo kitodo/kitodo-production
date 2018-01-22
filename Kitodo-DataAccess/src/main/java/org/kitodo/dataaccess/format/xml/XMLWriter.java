@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
@@ -326,10 +325,11 @@ public class XMLWriter {
                 transformer.setOutputProperty(TRANSFORMER_INDENT_VALUE, Integer.toString(indent));
             }
             transformer.setOutputProperty(OutputKeys.ENCODING, charset);
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(buffer));
-            return new String(buffer.toByteArray(), charset);
-        } catch (TransformerException | UnsupportedEncodingException e) {
+            try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+                transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(buffer));
+                return new String(buffer.toByteArray(), charset);
+            }
+        } catch (TransformerException | IOException e) {
             String message = e.getMessage();
             throw new IllegalArgumentException(message != null ? message : e.getClass().getSimpleName(), e);
         }
