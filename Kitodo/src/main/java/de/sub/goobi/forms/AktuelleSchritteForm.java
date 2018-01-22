@@ -659,20 +659,6 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Upload und Download der Images.
-     */
-    public String uploadFromHome() {
-        mySchritt.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            mySchritt.setProcessingUser(ben);
-        }
-        this.myDav.uploadFromHome(this.mySchritt.getProcess());
-        Helper.setMeldung(null, "Removed directory from user home", this.mySchritt.getProcess().getTitle());
-        return null;
-    }
-
-    /**
      * Download to home.
      *
      * @return String
@@ -839,14 +825,6 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
             }
         }
-    }
-
-    public Process getMyProzess() {
-        return this.myProcess;
-    }
-
-    public void setMyProzess(Process myProzess) {
-        this.myProcess = myProzess;
     }
 
     /**
