@@ -14,6 +14,7 @@ package org.kitodo.api.ugh;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.IncompletePersonObjectException;
@@ -57,9 +58,9 @@ public interface DocStructInterface {
      * {@code TypeNotAllowedAsChildException} is thrown. The parent of this
      * child (this instance) is set automatically.
      *
-     * @param inchild
+     * @param child
      *            DocStruct to be added
-     * @return whether inchild isn’t null and its type isn’t null. The return
+     * @return whether child isn’t null and its type isn’t null. The return
      *         value is never used.
      * @throws TypeNotAllowedAsChildException
      *             if a child should be added, but it's DocStruct type isn't
@@ -73,13 +74,13 @@ public interface DocStructInterface {
      * element currently at that position (if any) and any subsequent elements
      * are shifted to the right (so that one gets added to their indices), or
      * the last child in the list if index is null. When adding a DocStruct,
-     * configuration is checked, wether a DocStruct of this type can be added.
+     * configuration is checked, whether a DocStruct of this type can be added.
      * If not, a TypeNotAllowedAsChildException is thrown. The parent of this
      * child (this instance) is set automatically.
      *
      * @param index
      *            index at which the child is to be inserted
-     * @param inchild
+     * @param child
      *            DocStruct to be added
      * @return {@code false} if {@code child} is {@code null} or does not have a
      *         type, true otherwise. The return value is never used.
@@ -357,11 +358,11 @@ public interface DocStructInterface {
      * <p>
      * If no {@code MetadataGroup}s are available, an empty list is returned.
      *
-     * @param inType
+     * @param metadataType
      *            meta-data type to look for
      * @return all meta-data of the given type
      */
-    List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface mdt);
+    List<? extends MetadataInterface> getAllMetadataByType(MetadataTypeInterface metadataType);
 
     /**
      * Returns all meta-data groups from this instance. If no
@@ -491,12 +492,12 @@ public interface DocStructInterface {
      * {@code DocStruct} isn’t a child of the current instance, {@code null} is
      * returned.
      *
-     * @param inChild
+     * @param predecessor
      *            {@code DocStruct} whose successor shall be returned
      * @return the next {@code DocStruct} after {@code inChild}, {@code null}
      *         otherwise
      */
-    DocStructInterface getNextChild(DocStructInterface tempDS);
+    DocStructInterface getNextChild(DocStructInterface predecessor);
 
     /**
      * Returns the parent of this instance. Returns {@code null} if this
@@ -532,7 +533,7 @@ public interface DocStructInterface {
      * Returns whether a {@code DocStruct} of the given {@code DocStructType} is
      * allowed to be added to this instance.
      *
-     * @param inType
+     * @param type
      *            the {@code DocStructType} in question
      * @return true, if {@code DocStruct} of this type can be added; otherwise
      *         false
@@ -542,17 +543,12 @@ public interface DocStructInterface {
     /**
      * Removes a child from this instance.
      *
+     * @param docStruct
+     *            to be removed
      * @return whether the list contained that child. The return value is never
      *         used.
      */
-    boolean removeChild(DocStructInterface docStructInterface);
-
-    /**
-     * @return whether the content file references list was initialized with an
-     *         list instance before the function call. The return value is never
-     *         used.
-     */
-    boolean removeContentFile(ContentFileInterface contentFileInterface) throws ContentFileNotLinkedException;
+    boolean removeChild(DocStructInterface docStruct);
 
     /**
      * Removes all links from this instance to a given content file. If the
@@ -562,9 +558,19 @@ public interface DocStructInterface {
      *
      * @param theContentFile
      *            the content file to be removed
+     */
+    boolean removeContentFile(ContentFileInterface contentFile) throws ContentFileNotLinkedException;
+
+    /**
+     * Removes a meta-datum from this instance. If (according to configuration)
+     * at least one {@code Metadata} of this type is required on this instance,
+     * the meta-datum will <i>not be removed</i>.
+     *
+     * @param metaDatum
+     *            meta-datum which should be removed
      * @return always {@code true}. The return value is never used.
      */
-    boolean removeMetadata(MetadataInterface md);
+    boolean removeMetadata(MetadataInterface metaDatum);
 
     /**
      * Removes a meta-data group from this instance. If (according to
@@ -573,8 +579,7 @@ public interface DocStructInterface {
      *
      * <p>
      * If you want to remove a meta-data group just to replace it, use the
-     * method {{@code changeMetadataGroup(MetadataGroup, MetadataGroup)}
-     * instead.
+     * method {@code changeMetadataGroup(MetadataGroup, MetadataGroup)} instead.
      *
      * @param metadataGroup
      *            meta-data group which should be removed
@@ -585,14 +590,14 @@ public interface DocStructInterface {
     /**
      * Removes a person from this instance.
      *
-     * @param in
+     * @param person
      *            person which should be removed
      * @return whether the persons list was initialized with an list instance
      *         before the function call. The return value is never used.
      * @throws IncompletePersonObjectException
      *             if {@code in} does not have a {@code MetadataType}
      */
-    boolean removePerson(PersonInterface p);
+    boolean removePerson(PersonInterface person);
 
     /**
      * Removes an outgoing reference. An outgoing reference is a reference to
@@ -603,7 +608,7 @@ public interface DocStructInterface {
      *            {@code DocStruct}
      * @return always {@code true}. The return value is never used.
      */
-    boolean removeReferenceTo(DocStructInterface docStruct);
+    boolean removeReferenceTo(DocStructInterface target);
 
     /**
      * Sets the image name.

@@ -12,7 +12,7 @@
 package org.kitodo.api.ugh;
 
 /**
- * // * Interface to the METS/MODS export writer.
+ * Interface to the METS/MODS export writer.
  */
 public interface MetsModsImportExportInterface extends FileformatInterface {
 

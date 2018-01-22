@@ -54,7 +54,7 @@ public interface FactoryInterface {
      * @throws MetadataTypeNotAllowedException
      *             if the type is {@code null}
      */
-    MetadataGroupInterface createMetadataGroup(MetadataGroupTypeInterface metadataGroupTypeInterface)
+    MetadataGroupInterface createMetadataGroup(MetadataGroupTypeInterface metadataGroupType)
             throws MetadataTypeNotAllowedException;
 
     /**
@@ -94,9 +94,13 @@ public interface FactoryInterface {
     MetsModsImportExportInterface createMetsModsImportExport(PrefsInterface prefs) throws PreferencesException;
 
     /**
-     * Creates a new person meta-data type.
+     * Creates a new person-type meta-data entry.
      *
-     * @return the new meta-data type
+     * @param metadataType
+     *            the type of the entry
+     * @return the new person entry
+     * @throws MetadataTypeNotAllowedException
+     *             if the type is {@code null}
      */
     PersonInterface createPerson(MetadataTypeInterface metadataType) throws MetadataTypeNotAllowedException;
 

@@ -27,7 +27,7 @@ public interface MetadataGroupInterface {
     /**
      * Adds a meta-data entry to this meta-data group.
      *
-     * @param meta-data
+     * @param metadata
      *            meta-data entry to add
      */
     void addMetadata(MetadataInterface metadata);

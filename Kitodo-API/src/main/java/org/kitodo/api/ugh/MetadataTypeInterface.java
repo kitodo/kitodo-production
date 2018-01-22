@@ -111,7 +111,7 @@ public interface MetadataTypeInterface {
     /**
      * Sets all display labels for this meta-data type.
      *
-     * @param allLanguages
+     * @param labels
      *            the map of display labels of this meta-data type
      * @return always {@code true}. The return value is never used.
      */

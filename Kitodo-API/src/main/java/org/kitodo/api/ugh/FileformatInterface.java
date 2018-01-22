@@ -60,7 +60,7 @@ public interface FileformatInterface {
     /**
      * Reads a file and creates a digital document instance.
      *
-     * @param filename
+     * @param path
      *            full path to file which should be read
      * @return always {@code true}. The return value is never used.
      */
@@ -70,10 +70,12 @@ public interface FileformatInterface {
      * Sets a DigitalDocument instance. This instance must be available before a
      * file can be written or updated.
      *
+     * @param digitalDocument
+     *            digital document instance to be set
      * @return constantly {@code true} or {@code false}, depending on the
      *         implementing class. The return value is never used.
      */
-    boolean setDigitalDocument(DigitalDocumentInterface newFile);
+    boolean setDigitalDocument(DigitalDocumentInterface digitalDocument);
 
     /**
      * Writes the content of the DigitalDocument instance to a file. The file
