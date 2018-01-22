@@ -120,6 +120,15 @@ public class WorkflowService {
     }
 
     /**
+     * Set user for test purpose.
+     *
+     * @param user as User object
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
      * Set Task status up.
      *
      * @param task
@@ -195,6 +204,7 @@ public class WorkflowService {
         Collections.reverse(tasks);
 
         for (Task task : tasks) {
+            //TODO: check if this behaviour is correct
             if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
                 task.setEditTypeEnum(TaskEditType.ADMIN);
                 task.setProcessingTime(new Date());
@@ -390,7 +400,7 @@ public class WorkflowService {
             return null;
         }
 
-        this.webDav.uploadFromHome(currentTask.getProcess());
+        this.webDav.uploadFromHome(this.user, currentTask.getProcess());
         Date date = new Date();
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
