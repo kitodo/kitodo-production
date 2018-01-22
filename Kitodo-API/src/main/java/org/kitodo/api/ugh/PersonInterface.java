@@ -12,8 +12,8 @@
 package org.kitodo.api.ugh;
 
 /**
- * A person is a very special kind of meta-data. For this reason it inherits from
- * the class meta-data.
+ * A person is a very special kind of meta-data. For this reason it inherits
+ * from the class meta-data.
  *
  * <p>
  * A person has several meta-data and not only a single value. The person's name
@@ -56,21 +56,21 @@ public interface PersonInterface extends MetadataInterface {
      *
      * @return the display name
      */
-    String getDisplayname();
+    String getDisplayName();
 
     /**
      * Returns the first name of the person.
      *
      * @return the first name
      */
-    String getFirstname();
+    String getFirstName();
 
     /**
      * Returns the last name of the person.
      *
      * @return the last name
      */
-    String getLastname();
+    String getLastName();
 
     /**
      * Returns the role of the person.
@@ -88,43 +88,39 @@ public interface PersonInterface extends MetadataInterface {
      *            the authority URI
      * @param valueURI
      *            the value URI
-     * @return always {@code true}. The return value is never used.
      */
-    boolean setAutorityFile(String authority, String authorityURI, String valueURI);
+    void setAutorityFile(String authority, String authorityURI, String valueURI);
 
     /**
      * Sets the display name of the person.
      *
-     * @param displayname
+     * @param displayName
      *            the display name
      */
-    void setDisplayname(String displayname);
+    void setDisplayName(String displayName);
 
     /**
      * Sets the first name of the person.
      *
-     * @param firstname
+     * @param firstName
      *            the first name
-     * @return always {@code true}. The return value is never used.
      */
-    boolean setFirstname(String firstname);
+    void setFirstName(String firstName);
 
     /**
      * Sets the last name of the person.
      *
-     * @param lastname
+     * @param lastName
      *            the last name
-     * @return always {@code true}. The return value is never used.
      */
-    boolean setLastname(String lastname);
+    void setLastName(String lastName);
 
     /**
      * Sets the role of the person.
      *
      * @param role
      *            the role
-     * @return always {@code true}. The return value is never used.
      */
-    boolean setRole(String role);
+    void setRole(String role);
 
 }

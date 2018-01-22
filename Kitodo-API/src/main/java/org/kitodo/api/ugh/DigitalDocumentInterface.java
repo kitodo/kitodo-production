@@ -12,7 +12,6 @@
 package org.kitodo.api.ugh;
 
 import java.util.List;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 
 /**
  * A DigitalDocument represents a digital version of a work. This representation
@@ -55,22 +54,20 @@ public interface DigitalDocumentInterface {
 
     /**
      * Add all content files to the digital document according to the
-     * pathimagefiles meta-data. The pages in the physical DocStruct must already
-     * exist!
+     * pathimagefiles meta-data. The pages in the physical DocStruct must
+     * already exist!
      */
     void addAllContentFiles();
 
     /**
-     * Creates a document structure with the given document structure type for the Digital
-     * Document.
+     * Creates a document structure with the given document structure type for
+     * the Digital Document.
      *
      * @param docStructType
      *            document structure type for the new document structure
      * @return the new document structure
-     * @throws TypeNotAllowedForParentException
-     *             if this document structure type is not allowed for the parent
      */
-    DocStructInterface createDocStruct(DocStructTypeInterface docStructType) throws TypeNotAllowedForParentException;
+    DocStructInterface createDocStruct(DocStructTypeInterface docStructType);
 
     /**
      * Returns the file set.
@@ -106,17 +103,16 @@ public interface DigitalDocumentInterface {
      *
      * @param docStruct
      *            the new document structure
-     * @return always {@code true}. The result is never used.
      */
-    boolean setLogicalDocStruct(DocStructInterface docStruct);
+    void setLogicalDocStruct(DocStructInterface docStruct);
 
     /**
      * Sets the physical document structure.
      *
      * @param docStruct
-     *            the new document structure @return always {@code true}. The result is
-     *            never used.
+     *            the new document structure @return always {@code true}. The
+     *            result is never used.
      */
-    boolean setPhysicalDocStruct(DocStructInterface docStruct);
+    void setPhysicalDocStruct(DocStructInterface docStruct);
 
 }

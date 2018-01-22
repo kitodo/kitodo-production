@@ -12,6 +12,7 @@
 package org.kitodo.api.ugh;
 
 import java.util.List;
+
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 
 /**
@@ -48,10 +49,11 @@ public interface PrefsInterface {
 
     /**
      * Loads all known DocStruct types from the prefs XML file.
-     * 
+     *
      * @param fileName
      *            file to load
-     * @return always {@code true}. The return value is never used.
+     * @throws PreferencesException
+     *             if the preferences file has none, or the wrong root tag
      */
-    boolean loadPrefs(String fileName) throws PreferencesException;
+    void loadPrefs(String fileName) throws PreferencesException;
 }

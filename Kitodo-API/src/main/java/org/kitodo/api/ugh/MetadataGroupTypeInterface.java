@@ -80,8 +80,6 @@ public interface MetadataGroupTypeInterface {
      *
      * @param quantityRestriction
      *            one of "1m", "1o", "+", or "*"
-     * @return {@code false}, if the string argument is not one of these four
-     *         string; {@code true} otherwise. The return value is never used.
      */
-    boolean setNum(String quantityRestriction);
+    void setNum(String quantityRestriction);
 }

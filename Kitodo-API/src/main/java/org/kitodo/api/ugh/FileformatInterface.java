@@ -62,9 +62,10 @@ public interface FileformatInterface {
      *
      * @param path
      *            full path to file which should be read
-     * @return always {@code true}. The return value is never used.
+     * @throws ReadException
+     *             may be thrown if reading fails
      */
-    boolean read(String path) throws PreferencesException, ReadException;
+    void read(String path) throws ReadException;
 
     /**
      * Sets a DigitalDocument instance. This instance must be available before a
@@ -72,10 +73,8 @@ public interface FileformatInterface {
      *
      * @param digitalDocument
      *            digital document instance to be set
-     * @return constantly {@code true} or {@code false}, depending on the
-     *         implementing class. The return value is never used.
      */
-    boolean setDigitalDocument(DigitalDocumentInterface digitalDocument);
+    void setDigitalDocument(DigitalDocumentInterface digitalDocument);
 
     /**
      * Writes the content of the DigitalDocument instance to a file. The file
@@ -83,7 +82,11 @@ public interface FileformatInterface {
      *
      * @param filename
      *            full path to the file
+     * @throws PreferencesException
+     *             may be thrown if there is a problem with the preferences
+     * @throws WriteException
+     *             may be thrown if writing fails
      */
-    boolean write(String filename) throws PreferencesException, WriteException;
+    void write(String filename) throws PreferencesException, WriteException;
 
 }

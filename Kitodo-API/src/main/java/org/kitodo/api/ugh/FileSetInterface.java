@@ -29,9 +29,8 @@ public interface FileSetInterface {
      *
      * @param contentFile
      *            content file to be added
-     * @return always {@code true}. The result value is never used.
      */
-    boolean addFile(ContentFileInterface contentFile);
+    void addFile(ContentFileInterface contentFile);
 
     /**
      * Adds a virtual file group.
@@ -53,8 +52,7 @@ public interface FileSetInterface {
      *
      * @param contentFile
      *            content file to be removed
-     * @return always {@code true}. The result value is never used.
      */
-    boolean removeFile(ContentFileInterface contentFile);
+    void removeFile(ContentFileInterface contentFile);
 
 }

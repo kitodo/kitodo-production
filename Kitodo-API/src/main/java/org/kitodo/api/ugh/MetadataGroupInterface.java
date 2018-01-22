@@ -35,7 +35,7 @@ public interface MetadataGroupInterface {
     /**
      * Adds a meta-data entry of a person type to this meta-data group.
      *
-     * @param meta-data
+     * @param person
      *            person entry to add
      */
     void addPerson(PersonInterface person);

@@ -22,9 +22,9 @@ public interface PicaPlusInterface extends FileformatInterface {
     /**
      * Reads a file and creates a digital document instance.
      *
-     * @param filename
-     *            full path to file which should be read
+     * @param node
+     *            node which should be read
      * @return always {@code true}. The return value is never used.
      */
-    boolean read(Node node) throws ReadException;
+    void read(Node node) throws ReadException;
 }

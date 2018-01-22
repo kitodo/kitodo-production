@@ -62,17 +62,14 @@ public interface MetadataInterface {
      *
      * @param metadataType
      *            type to set
-     * @return always {@code true}. The result is never used.
      */
-    boolean setType(MetadataTypeInterface metadataType);
+    void setType(MetadataTypeInterface metadataType);
 
     /**
      * Sets the meta-data value.
      *
      * @param value
      *            value to set
-     *
-     * @return always {@code true}. The result is never used.
      */
-    boolean setStringValue(String value);
+    void setStringValue(String value);
 }

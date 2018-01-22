@@ -34,7 +34,6 @@ public interface ContentFileInterface {
      *
      * @param fileName
      *            the location of the content file
-     * @return always {@code true}. Return value is never used.
      */
-    boolean setLocation(String fileName);
+    void setLocation(String fileName);
 }

@@ -60,13 +60,11 @@ public interface DocStructInterface {
      *
      * @param child
      *            DocStruct to be added
-     * @return whether child isn’t null and its type isn’t null. The return
-     *         value is never used.
      * @throws TypeNotAllowedAsChildException
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    boolean addChild(DocStructInterface child) throws TypeNotAllowedAsChildException;
+    void addChild(DocStructInterface child) throws TypeNotAllowedAsChildException;
 
     /**
      * Adds a DocStruct object as a child to this instance. The new child will
@@ -82,13 +80,11 @@ public interface DocStructInterface {
      *            index at which the child is to be inserted
      * @param child
      *            DocStruct to be added
-     * @return {@code false} if {@code child} is {@code null} or does not have a
-     *         type, true otherwise. The return value is never used.
      * @throws TypeNotAllowedAsChildException
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
      */
-    boolean addChild(Integer index, DocStructInterface child) throws TypeNotAllowedAsChildException;
+    void addChild(Integer index, DocStructInterface child) throws TypeNotAllowedAsChildException;
 
     /**
      * Adds a new reference to a content file, and adds the content file to the
@@ -114,9 +110,8 @@ public interface DocStructInterface {
      * which means that the meta-data type is invalid on this instance, false is
      * returned.
      *
-     * @param theMetadata
+     * @param metadata
      *            meta-data object to add
-     * @return always {@code true}. The return value is never used.
      * @throws MetadataTypeNotAllowedException
      *             if this instance does not allow the meta-data type to be
      *             added, or if the maximum allowed number of meta-data of this
@@ -126,7 +121,7 @@ public interface DocStructInterface {
      *             case, the meta-data element cannot be added because we cannot
      *             check whether the the meta-data type is allowed or not.
      */
-    boolean addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException;
+    void addMetadata(MetadataInterface metadata) throws MetadataTypeNotAllowedException;
 
     /**
      * Adds a meta data field with the given name to this DocStruct and sets it
@@ -161,8 +156,6 @@ public interface DocStructInterface {
      *
      * @param metadataGroup
      *            meta-data group to be added
-     * @return true, if the meta-data group was successfully added, false
-     *         otherwise
      * @throws MetadataTypeNotAllowedException
      *             if the {@code DocStructType} of this instance does not allow
      *             the {@code MetadataGroupType}, or if the maximum number of
@@ -172,16 +165,18 @@ public interface DocStructInterface {
      *             case, the meta-data group cannot be added because we cannot
      *             check whether the the meta-data group type is allowed or not.
      */
-    boolean addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException;
+    void addMetadataGroup(MetadataGroupInterface metadataGroup) throws MetadataTypeNotAllowedException;
 
     /**
      * Adds a person to the document structure.
      *
      * @param person
      *            person to add
-     * @return always {@code true}. The return value is never used.
+     * @throws MetadataTypeNotAllowedException
+     *             if no corresponding MetadataType object is returned by
+     *             getAddableMetadataTypes()
      */
-    boolean addPerson(PersonInterface person) throws MetadataTypeNotAllowedException;
+    void addPerson(PersonInterface person) throws MetadataTypeNotAllowedException;
 
     /**
      * Adds an outgoing reference to another {@code DocStruct} instance.
@@ -545,10 +540,8 @@ public interface DocStructInterface {
      *
      * @param docStruct
      *            to be removed
-     * @return whether the list contained that child. The return value is never
-     *         used.
      */
-    boolean removeChild(DocStructInterface docStruct);
+    void removeChild(DocStructInterface docStruct);
 
     /**
      * Removes all links from this instance to a given content file. If the
@@ -556,10 +549,12 @@ public interface DocStructInterface {
      * instance, all links are removed. For that reason, all attached
      * {@code ContentFileReference} objects are searched.
      *
-     * @param theContentFile
+     * @param contentFile
      *            the content file to be removed
+     * @throws ContentFileNotLinkedException
+     *             if the content file to be removed is not referenced
      */
-    boolean removeContentFile(ContentFileInterface contentFile) throws ContentFileNotLinkedException;
+    void removeContentFile(ContentFileInterface contentFile) throws ContentFileNotLinkedException;
 
     /**
      * Removes a meta-datum from this instance. If (according to configuration)
@@ -568,9 +563,8 @@ public interface DocStructInterface {
      *
      * @param metaDatum
      *            meta-datum which should be removed
-     * @return always {@code true}. The return value is never used.
      */
-    boolean removeMetadata(MetadataInterface metaDatum);
+    void removeMetadata(MetadataInterface metaDatum);
 
     /**
      * Removes a meta-data group from this instance. If (according to
@@ -583,21 +577,18 @@ public interface DocStructInterface {
      *
      * @param metadataGroup
      *            meta-data group which should be removed
-     * @return always {@code true}. The return value is never used.
      */
-    boolean removeMetadataGroup(MetadataGroupInterface metadataGroup);
+    void removeMetadataGroup(MetadataGroupInterface metadataGroup);
 
     /**
      * Removes a person from this instance.
      *
      * @param person
      *            person which should be removed
-     * @return whether the persons list was initialized with an list instance
-     *         before the function call. The return value is never used.
      * @throws IncompletePersonObjectException
      *             if {@code in} does not have a {@code MetadataType}
      */
-    boolean removePerson(PersonInterface person);
+    void removePerson(PersonInterface person);
 
     /**
      * Removes an outgoing reference. An outgoing reference is a reference to
@@ -606,9 +597,8 @@ public interface DocStructInterface {
      *
      * @param target
      *            {@code DocStruct}
-     * @return always {@code true}. The return value is never used.
      */
-    boolean removeReferenceTo(DocStructInterface target);
+    void removeReferenceTo(DocStructInterface target);
 
     /**
      * Sets the image name.
@@ -626,8 +616,7 @@ public interface DocStructInterface {
      *
      * @param docStructType
      *            type to set
-     * @return always {@code true}. The return value is never used.
      */
-    boolean setType(DocStructTypeInterface docStructType);
+    void setType(DocStructTypeInterface docStructType);
 
 }

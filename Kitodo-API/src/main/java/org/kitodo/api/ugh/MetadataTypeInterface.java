@@ -66,10 +66,8 @@ public interface MetadataTypeInterface {
 
     /**
      * Returns whether the meta-data type is a person type or not.
-     *
-     * @return whether the meta-data type is a person type
      */
-    boolean getIsPerson();
+    boolean isPerson();
 
     /**
      * Returns the display label of this meta-data group type in a given
@@ -113,9 +111,8 @@ public interface MetadataTypeInterface {
      *
      * @param labels
      *            the map of display labels of this meta-data type
-     * @return always {@code true}. The return value is never used.
      */
-    boolean setAllLanguages(HashMap<String, String> labels);
+    void setAllLanguages(HashMap<String, String> labels);
 
     /**
      * Sets whether the meta-data type is an identifier type.
@@ -128,19 +125,18 @@ public interface MetadataTypeInterface {
     /**
      * Sets whether the meta-data type is a person type.
      *
-     * @param isPerson
+     * @param person
      *            whether the meta-data type is a person type
      */
-    void setIsPerson(boolean isPerson);
+    void setPerson(boolean person);
 
     /**
      * Sets the internal name (that is, the ID) of this meta-data group.
      *
      * @param name
      *            the ID of this
-     * @return always {@code true}. The return value is never used.
      */
-    boolean setNameReturnTrue(String name);
+    void setName(String name);
 
     /**
      * Sets the minimum required/maximum allowed quantity for this meta-data
@@ -148,8 +144,6 @@ public interface MetadataTypeInterface {
      *
      * @param quantityRestriction
      *            one of "1m", "1o", "+", or "*"
-     * @return {@code false}, if the string argument is not one of these four
-     *         string; {@code true} otherwise. The return value is never used.
      */
-    boolean setNum(String quantityRestriction);
+    void setNum(String quantityRestriction);
 }
