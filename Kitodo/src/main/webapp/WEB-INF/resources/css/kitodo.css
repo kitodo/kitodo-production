@@ -160,7 +160,8 @@ body.first-visit #portal-header {
     width: -webkit-calc(100% - 50px);
     width: -moz-calc(100% - 50px);
     width: calc(100% - 50px);
-    padding: 17px 15px;
+    height: 36px;
+    padding: 9px 15px;
     border: 0px none;
     background: transparent;
     color: #fff;
@@ -170,7 +171,7 @@ body.first-visit #portal-header {
 #portal-search button {
     display: table-cell;
     width: 50px;
-    padding: 17px 0px;
+    padding: 9px 0px;
     text-align: center;
     background: transparent;
     border: 0px none;
@@ -365,7 +366,7 @@ body.first-visit #portal-header {
 #breadcrumb {
     display: block !important;
     clear: both;
-    margin: 15px auto;
+    margin: 10px auto;
     max-width: -webkit-calc(100% - 60px);
     max-width: -moz-calc(100% - 60px);
     max-width: calc(100% - 60px);
@@ -389,13 +390,13 @@ body.first-visit #portal-header {
     color: #1b2b36;
     }
 
-#breadcrumb li a:before {
+#breadcrumb li a:after {
     font-family: FontAwesome;
-    content: "\f104";
+    content: "\f054";
     padding: 0px 10px;
     }
 
-#breadcrumb li:first-child a:before {
+#breadcrumb li:last-child a:after {
     content: " " !important;
     padding: 0px;
     }
@@ -411,6 +412,7 @@ main {
     position: relative;
     z-index: 2;
     margin-bottom: 80px;
+    padding: 0 16px;
     }
 
 body.first-visit main {
@@ -429,7 +431,6 @@ body.first-visit main {
     }
 
 #listWrapper {
-    width: 95%;
     margin: auto;
     border-radius: 5px;
     padding: 0;
@@ -440,8 +441,8 @@ body.first-visit main {
 }
 
 .content-header {
-    height: 30px;
-    padding: 1.3em 1.5em;
+    height: 36px;
+    padding: 1.0em 1.5em;
 }
 
 .content-header .ui-panel-content {
@@ -450,7 +451,7 @@ body.first-visit main {
 
 .content-header .ui-panel-content > h3 {
     display: inline;
-    line-height: 30px;
+    line-height: 36px;
 }
 
 .content-header .ui-panel-content > form,
@@ -595,6 +596,10 @@ body.first-visit main {
 
 .mets-file-groups > div > button {
     margin: 1.5em;
+}
+
+main i.fa {
+    font-size: 20px;
 }
 
 /*----------------------------------------------------------------------
@@ -742,7 +747,7 @@ footer {
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list-item {
-    padding: 10px;
+    padding: 8px;
     border-radius: 0;
 }
 
@@ -802,7 +807,7 @@ min 700px
 @media only screen and (min-width: 700px) {
 
     #portal-header {
-        margin-top: 30px;
+        margin-top: 20px;
         }
 
     #portal-header .wrapper {

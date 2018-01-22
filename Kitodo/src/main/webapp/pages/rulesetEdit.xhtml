@@ -38,27 +38,34 @@
                                      iconPos="right"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      styleClass="button-filled-blue"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="projects"/>
                 </p:panel>
                 <p:messages autoUpdate="true" />
-                <p:panelGrid columns="2">
-                    <p:outputLabel for="title" value="#{msgs.titel}"/>
-                    <p:inputText id="title"
-                                 placeholder="#{msgs.titel}"
-                                 value="#{RulesetForm.ruleset.title}"
-                                 required="true"/>
-                    <p:outputLabel for="file" value="#{msgs.datei}"/>
-                    <p:inputText id="file"
-                                 placeholder="#{msgs.datei}"
-                                 value="#{RulesetForm.ruleset.file}"
-                                 required="true"/>
-                    <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
-                    <p:selectBooleanCheckbox id="sortByRuleset"
-                                             value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
-                </p:panelGrid>
+                <p:tabView id="rulesetTabView">
+                    <p:tab id="rulesetTab" title="#{msgs.details}">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="title" value="#{msgs.titel}"/>
+                            <p:inputText id="title"
+                                         placeholder="#{msgs.titel}"
+                                         value="#{RulesetForm.ruleset.title}"
+                                         required="true"/>
+                            <p:outputLabel for="file" value="#{msgs.datei}"/>
+                            <p:inputText id="file"
+                                         placeholder="#{msgs.datei}"
+                                         value="#{RulesetForm.ruleset.file}"
+                                         required="true"/>
+                            <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
+                            <p:selectBooleanCheckbox id="sortByRuleset"
+                                                     value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
+                        </p:panelGrid>
+                    </p:tab>
+                </p:tabView>
             </h:form>
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
         <li>
             <a href="">
                 <h:outputText value="#{msgs.regelsatzBearbeiten}"
@@ -67,7 +74,5 @@
                               rendered="#{RulesetForm.ruleset.id eq null}"/>
             </a>
         </li>
-        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
     </ui:define>
 </ui:composition>

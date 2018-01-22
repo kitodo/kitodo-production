@@ -41,25 +41,30 @@
                                         'summary':'#{msgs.docketSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="projects"/>
                 </p:panel>
                 <!-- main form -->
                 <p:messages id="docket-messages" autoUpdate="true" />
-                <p:panelGrid id="docket-grid" columns="2">
-                    <p:outputLabel for="title" value="#{msgs.titel}"/>
-                    <p:inputText id="title"
-                                 value="#{DocketForm.myDocket.title}"
-                                 placeholder="#{msgs.titel}"
-                                 required="true"/>
-                    <p:outputLabel for="file" value="#{msgs.datei}"/>
-                    <p:inputText id="file" value="#{DocketForm.myDocket.file}"
-                                 required="true"/>
-                </p:panelGrid>
+                <p:tabView id="docketTabView">
+                    <p:tab id="docketTab" title="#{msgs.details}">
+                        <p:panelGrid id="docket-grid" columns="2">
+                            <p:outputLabel for="title" value="#{msgs.titel}"/>
+                            <p:inputText id="title"
+                                         value="#{DocketForm.myDocket.title}"
+                                         placeholder="#{msgs.titel}"
+                                         required="true"/>
+                            <p:outputLabel for="file" value="#{msgs.datei}"/>
+                            <p:inputText id="file" value="#{DocketForm.myDocket.file}"
+                                         required="true"/>
+                        </p:panelGrid>
+                    </p:tab>
+                </p:tabView>
             </h:form>
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">
-        <li><a href="">#{msgs.editDocket}</a></li>
-        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+        <li><a href="">#{msgs.editDocket}</a></li>
     </ui:define>
 </ui:composition>

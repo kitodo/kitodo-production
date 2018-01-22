@@ -21,8 +21,8 @@
             <p:panel styleClass="content-header">
                 <h3>#{msgs.aktuelleSchritte}</h3>
             </p:panel>
-            <h:form>
-                <p:panel styleClass="content-wrapper">
+            <p:tabView id="tasksTabView">
+                <p:tab id="tasksTab" title="#{msgs.tasklist}">
                     <p:dataTable var="item"
                                  value="#{AktuelleSchritteForm.lazyDTOModel}"
                                  lazy="true"
@@ -48,12 +48,12 @@
                             <!-- TODO add actions -->
                         </p:column>
                     </p:dataTable>
-                </p:panel>
-            </h:form>
+                </p:tab>
+            </p:tabView>
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">
-        <li><a href="">#{msgs.schritte}</a></li>
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><a href="">#{msgs.schritte}</a></li>
     </ui:define>
 </ui:composition>

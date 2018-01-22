@@ -68,17 +68,17 @@ button .ui-icon {
 }
 
 .ui-button-text-icon-left .ui-button-text {
-    padding: .7em .7em .7em 2.1em;
+    padding: .5em .7em .5em 2.1em;
 }
 
 .ui-button-text-icon-right .ui-button-text {
-    padding: .7em 2.1em .7em .7em;
+    padding: .5em 2.1em .5em .7em;
 }
 
 .ui-button-icon-only .ui-button-text,
 .ui-button-text-only .ui-button-text,
 .ui-datepicker-trigger.ui-button-icon-only .ui-button-text {
-    padding: .7em;
+    padding: .5em;
 }
 
 .ui-menu, .ui-menu .ui-menu-child {
@@ -105,7 +105,7 @@ button .ui-icon {
 .ui-widget-content .ui-inputfield
 {
     border: 1px solid #004f81;
-    padding: .7em;
+    padding: .5em;
     color: #0971b8;
     box-shadow: 0 0 0 transparent;
 }
@@ -129,13 +129,13 @@ button .ui-icon {
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label,
 .ui-selectonemenu .ui-selectonemenu-label {
     border: 1px solid #004f81;
-    padding: .7em;
+    padding: .5em;
     background: #fff;
 }
 
 .ui-selectonemenu .ui-selectonemenu-trigger {
     border: 1px solid #004f81;
-    padding: .7em;
+    padding: .5em;
     width: auto;
     box-sizing: border-box;
 }
@@ -332,7 +332,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 
 .ui-tabs .ui-tabs-nav li a,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
-    padding: .7em 1.2em;
+    padding: .5em 1.2em;
 }
 
 .ui-tabs-nav .ui-state-default a,
