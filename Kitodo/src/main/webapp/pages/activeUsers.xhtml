@@ -21,17 +21,21 @@
             <p:panel styleClass="content-header">
                 <h3>#{msgs.aktiveBenutzer}</h3>
             </p:panel>
-            <h:form id="activeUsersForm">
-                <p:poll interval="10" update="tableActiveSessions"/>
-                <p:dataTable id="tableActiveSessions" value="#{SessionForm.activeSessions}" var="userItem">
-                    <p:column id="userName" headerText="#{msgs.benutzer}">
-                        <h:outputText value="#{userItem.userName}"/>
-                    </p:column>
-                    <p:column id="lastRequest" headerText="#{msgs.letzterZugriff}">
-                        <h:outputText value="#{userItem.lastRequest}"/>
-                    </p:column>
-                </p:dataTable>
-            </h:form>
+            <p:tabView id="activeUsersTabView">
+                <p:tab id="activeUsersTab" title="#{msgs.userList}">
+                    <h:form id="activeUsersForm">
+                        <p:poll interval="10" update="tableActiveSessions"/>
+                        <p:dataTable id="tableActiveSessions" value="#{SessionForm.activeSessions}" var="userItem">
+                            <p:column id="userName" headerText="#{msgs.benutzer}">
+                                <h:outputText value="#{userItem.userName}"/>
+                            </p:column>
+                            <p:column id="lastRequest" headerText="#{msgs.letzterZugriff}">
+                                <h:outputText value="#{userItem.lastRequest}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">
