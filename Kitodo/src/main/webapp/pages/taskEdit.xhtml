@@ -18,8 +18,8 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
-        <f:viewParam name="id" value="#{ProzessverwaltungForm.processId}"/>
-        <f:viewAction action="#{ProzessverwaltungForm.loadProcess}" />
+        <f:viewParam name="id" value="#{ProzessverwaltungForm.taskId}"/>
+        <f:viewAction action="#{ProzessverwaltungForm.loadTask}" />
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
@@ -27,20 +27,21 @@
                 <p:panel styleClass="content-header">
                     <h3>
                         <h:outputText value="#{msgs.schrittHinzufuegen}"
-                                      rendered="#{ProzessverwaltungForm.task.id eq null}"/>
+                                      rendered="#{ProzessverwaltungForm.taskId eq null}"/>
                         <h:outputText value="#{msgs.schrittDetails}"
-                                      rendered="#{ProzessverwaltungForm.task.id ne null}"/>
+                                      rendered="#{ProzessverwaltungForm.taskId ne null}"/>
                     </h3>
                     <!-- TODO commandButton anpassen -->
                     <p:commandButton value="#{msgs.speichern}"
-                                     action="#{ProzessverwaltungForm.saveAndRedirect}"
+                                     action="#{ProzessverwaltungForm.saveTask()}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
+                                     immediate="true"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      update="notifications"/>
                 </p:panel>
                 <p:messages autoUpdate="true"/>
-                <p:tabView id="tabs">
+                <p:tabView id="tabs" activeIndex="#{param.tabId}">
                     <p:tab title="#{msgs.details}">
                         <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditDetails.xhtml"/>
                     </p:tab>
@@ -60,7 +61,7 @@
     </ui:define>
     <ui:define name="breadcrumbs">
         <li><a href="">#{msgs.schrittDetails}</a></li>
-        <li><h:link value="#{msgs.prozessBearbeiten}" outcome="processEdit"/></li>
+        <li><h:link value="#{msgs.prozessBearbeiten}" outcome="processEdit?id=#{ProzessverwaltungForm.process.id}"/></li>
         <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
     </ui:define>

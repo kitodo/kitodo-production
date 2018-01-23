@@ -31,7 +31,7 @@
                              icon="fa fa-long-arrow-up">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
             </p:commandButton>
-            <p:commandButton action="#{ProzessverwaltungForm.setOrderungDown}"
+            <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
                              update="@form"
                              rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
                              icon="fa fa-long-arrow-down">
@@ -40,7 +40,7 @@
         </p:column>
 
         <!-- title -->
-        <p:column headerText="#{msgs.title}">
+        <p:column headerText="#{msgs.arbeitsschritt}">
             <p:rowToggler />
             <h:outputText value="#{item.title}"/>
         </p:column>
@@ -102,7 +102,7 @@
                 <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
 
                 <h:outputText value="#{msgs.bearbeitungsende}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
-                <h:outputText value="#{item.processingEndAsFormattedString}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
 
                 <h:outputText value="#{msgs.letzteAktualisierungDurch}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
                 <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>

@@ -1262,7 +1262,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     /**
      * Get mode for edition.
-     * 
+     *
      * @return mode for edition as ObjectMode objects
      */
     public ObjectMode getEditMode() {
@@ -1271,7 +1271,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     /**
      * Set mode for edition.
-     * 
+     *
      * @param editMode
      *            mode for edition as ObjectMode objects
      */
@@ -2352,9 +2352,9 @@ public class ProzessverwaltungForm extends BasisForm {
     // switched to the new frontend pages
     private String redirectToList(String urlSuffix) {
         try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() &&
                     (callerViewId.contains("searchProcess.jsf") ||callerViewId.contains("processEdit.jsf"))) {
                 return "/pages/processes" + urlSuffix;
