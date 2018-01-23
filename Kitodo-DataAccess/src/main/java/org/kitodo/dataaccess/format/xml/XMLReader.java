@@ -17,9 +17,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -151,44 +148,6 @@ public class XMLReader {
         } else {
             String type = ns.endsWith("/") ? ns.concat(name) : ns + '#' + name;
             return Optional.ofNullable(type.equals(RDF.DESCRIPTION) ? null : type);
-        }
-    }
-
-    /**
-     * Returns the globally unique resource identifier (URI) for a local file as
-     * a {@code String}. The URI is formed with the host name of the machine the
-     * program is running on.
-     *
-     * @param file
-     *            file to create an URI for
-     * @return unique resource identifier for the file
-     * @throws IOException
-     *             if it fails
-     */
-    private static String globallyUniqueIdentifierForFile(File file) throws IOException {
-        URI uri = file.getCanonicalFile().toURI();
-        try {
-            String host = uri.getHost();
-            String path = uri.getPath();
-            if (host == null) {
-                host = InetAddress.getLocalHost().getCanonicalHostName();
-                if ((path != null) && path.startsWith("//")) {
-                    int pathStart = path.indexOf('/', 2);
-                    String remote = path.substring(2, pathStart);
-                    path = path.substring(pathStart);
-                    host = remote.contains(".") ? remote
-                            : remote.concat(host.substring(InetAddress.getLocalHost().getHostName().length()));
-                }
-            }
-            String scheme = uri.getScheme();
-            if ((scheme == null) || !scheme.toLowerCase().startsWith("http")) {
-                scheme = "http";
-            }
-            return new URI(scheme, uri.getUserInfo(), host, uri.getPort(), path, uri.getQuery(), uri.getFragment())
-                    .toASCIIString();
-        } catch (URISyntaxException e) {
-            String message = e.getMessage();
-            throw new IllegalArgumentException(message != null ? message : e.getClass().getName(), e);
         }
     }
 
@@ -506,8 +465,8 @@ public class XMLReader {
      *             if the reading fails
      */
     public static Node toNode(File path, Storage storage) throws SAXException, IOException {
-        return toNode(parseXML(new FileInputStream(path), Optional.empty()), globallyUniqueIdentifierForFile(path),
-            storage);
+        String namespace = Namespaces.namespaceFromURI(path.getCanonicalFile().toURI());
+        return toNode(parseXML(new FileInputStream(path), Optional.empty()), namespace, storage);
     }
 
     /**

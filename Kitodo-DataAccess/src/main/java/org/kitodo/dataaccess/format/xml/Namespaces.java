@@ -11,9 +11,14 @@
 
 package org.kitodo.dataaccess.format.xml;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.kitodo.dataaccess.RDF;
@@ -299,6 +304,41 @@ public class Namespaces extends DualHashBidiMap<String, String> {
     }
 
     /**
+     * Converts a URI to a globally unique name space. The name space is formed
+     * with the host name of the machine the program is running on.
+     *
+     * @param uri
+     *            URI to create a globally unique URI for
+     * @return globally unique namespace
+     * @throws IOException
+     *             if it fails
+     */
+    public static String namespaceFromURI(URI uri) throws IOException {
+        try {
+            String host = uri.getHost();
+            String path = uri.getPath();
+            if (host == null) {
+                host = InetAddress.getLocalHost().getCanonicalHostName();
+                if ((path != null) && path.startsWith("//")) {
+                    int pathStart = path.indexOf('/', 2);
+                    String remote = path.substring(2, pathStart);
+                    path = path.substring(pathStart);
+                    host = remote.contains(".") ? remote
+                            : remote.concat(host.substring(InetAddress.getLocalHost().getHostName().length()));
+                }
+            }
+            String scheme = uri.getScheme();
+            if ((scheme == null) || !scheme.toLowerCase().startsWith("http")) {
+                scheme = "http";
+            }
+            return new URI(scheme, uri.getUserInfo(), host, uri.getPort(), path, uri.getQuery(), "").toASCIIString();
+        } catch (URISyntaxException e) {
+            String message = e.getMessage();
+            throw new IllegalArgumentException(message != null ? message : e.getClass().getName(), e);
+        }
+    }
+
+    /**
      * Returns the namespace part of an URL. If the URL contains an anchor
      * symbol the namespace is considered the sequence up to and including it,
      * otherwise the namespace is considered the sequence up to and including
@@ -312,6 +352,24 @@ public class Namespaces extends DualHashBidiMap<String, String> {
         int numberSign = url.indexOf('#');
         if (numberSign > -1) {
             return url.substring(0, numberSign + 1);
+        }
+        return url.substring(0, url.lastIndexOf('/') + 1);
+    }
+
+    /**
+     * Returns the namespace part of an URL. If the URL contains an anchor
+     * symbol the namespace is considered the sequence before it, omitting the
+     * anchor symbol, otherwise the namespace is considered the sequence up to
+     * and including the last slash.
+     *
+     * @param url
+     *            url to return the namespace from
+     * @return the namespace
+     */
+    static String namespaceOfForXMLFile(String url) {
+        int numberSign = url.indexOf('#');
+        if (numberSign > -1) {
+            return url.substring(0, numberSign);
         }
         return url.substring(0, url.lastIndexOf('/') + 1);
     }
@@ -332,23 +390,5 @@ public class Namespaces extends DualHashBidiMap<String, String> {
             result.put(PREFIX_XMLNS + ':' + entry.getValue(), prefix);
         }
         return result.entrySet();
-    }
-
-    /**
-     * Returns the namespace part of an URL. If the URL contains an anchor
-     * symbol the namespace is considered the sequence before it, omitting the
-     * anchor symbol, otherwise the namespace is considered the sequence up to
-     * and including the last slash.
-     *
-     * @param url
-     *            url to return the namespace from
-     * @return the namespace
-     */
-    static String namespaceOfForXMLFile(String url) {
-        int numberSign = url.indexOf('#');
-        if (numberSign > -1) {
-            return url.substring(0, numberSign);
-        }
-        return url.substring(0, url.lastIndexOf('/') + 1);
     }
 }
