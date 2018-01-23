@@ -74,8 +74,7 @@
                             <ul id="nav-user">
                                 <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}<h:outputText rendered="#{LoginForm.maximaleBerechtigung == 1}"> <i>(Admin)</i></h:outputText></h3></li>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
-                                <!-- FIXME: old "LoginForm.Ausloggen" function has been deleted; incorporate new logout method, here! -->
-                                <li><h:commandLink value="#{msgs.signout}"/></li>
+                                <li><h:outputLink value="#{request.contextPath}/logout">#{msgs.signout}</h:outputLink></li>
                             </ul>
                         </h:form>
                     </li>
