@@ -247,7 +247,6 @@ public class XMLWriter {
      *
      * @param node
      *            node to convert
-     *
      * @param file
      *            File to write to.
      * @param indent
@@ -259,19 +258,9 @@ public class XMLWriter {
      *             if the writing fails
      */
     public static void toFile(Node node, File file, int indent, Map<String, String> namespaces) throws IOException {
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            if (indent > -1) {
-                transformer.setOutputProperty(OutputKeys.INDENT, TRANSFORMER_INDENT_TRUE);
-                transformer.setOutputProperty(TRANSFORMER_INDENT_VALUE, Integer.toString(indent));
-            }
-            try (OutputStream out = new FileOutputStream(file)) {
-                transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(out));
-                out.flush();
-            }
-        } catch (TransformerException e) {
-            String message = e.getMessage();
-            throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
+        try (OutputStream out = new FileOutputStream(file)) {
+            toStream(node, out, indent, namespaces, Optional.empty());
+            out.flush();
         }
     }
 
@@ -298,6 +287,38 @@ public class XMLWriter {
     }
 
     /**
+     * Outputs this node as an XML document to an output stream. The output
+     * stream will typically be provided from an implementation of the file
+     * management interface.
+     *
+     * @param node
+     *            node to convert
+     * @param out
+     *            File to write to.
+     * @param indent
+     *            number of spaces of each indent level. A negative number
+     *            disables wrapping
+     * @param namespaces
+     *            an external defined mapping of namespaces to abbreviations
+     */
+    public static void toStream(Node node, OutputStream out, int indent, Map<String, String> namespaces,
+            Optional<String> optionalCharset) {
+        String charset = optionalCharset.orElse(StandardCharsets.UTF_8.toString());
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            if (indent > -1) {
+                transformer.setOutputProperty(OutputKeys.INDENT, TRANSFORMER_INDENT_TRUE);
+                transformer.setOutputProperty(TRANSFORMER_INDENT_VALUE, Integer.toString(indent));
+            }
+            transformer.setOutputProperty(OutputKeys.ENCODING, charset);
+            transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(out));
+        } catch (TransformerException e) {
+            String message = e.getMessage();
+            throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
+        }
+    }
+
+    /**
      * Outputs this node as an XML document to a String.
      *
      * @param node
@@ -319,17 +340,11 @@ public class XMLWriter {
         String charset = optionalCharset.orElse(StandardCharsets.UTF_8.toString());
 
         try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            if (indent > -1) {
-                transformer.setOutputProperty(OutputKeys.INDENT, TRANSFORMER_INDENT_TRUE);
-                transformer.setOutputProperty(TRANSFORMER_INDENT_VALUE, Integer.toString(indent));
-            }
-            transformer.setOutputProperty(OutputKeys.ENCODING, charset);
             try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-                transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(buffer));
+                toStream(node, buffer, indent, namespaces, optionalCharset);
                 return new String(buffer.toByteArray(), charset);
             }
-        } catch (TransformerException | IOException e) {
+        } catch (IOException e) {
             String message = e.getMessage();
             throw new IllegalArgumentException(message != null ? message : e.getClass().getSimpleName(), e);
         }
