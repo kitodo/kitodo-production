@@ -144,7 +144,7 @@ public class WorkflowServiceIT {
         Task correctionTask = taskService.getById(1);
         assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN, correctionTask.getProcessingStatusEnum());
 
-        assertTrue("Report of problem was incorrect - task is not a correction task!", serviceManager.getTaskService().isCorrectionStep(correctionTask));
+        assertTrue("Report of problem was incorrect - task is not a correction task!", workflowService.isCorrectionTask(correctionTask));
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {
@@ -170,7 +170,7 @@ public class WorkflowServiceIT {
         Task correctionTask = taskService.getByQuery("FROM Task WHERE title = 'Testing'").get(0);
         assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN, correctionTask.getProcessingStatusEnum());
 
-        assertTrue("Report of problem was incorrect - task is not a correction task!", taskService.isCorrectionStep(correctionTask));
+        assertTrue("Report of problem was incorrect - task is not a correction task!", workflowService.isCorrectionTask(correctionTask));
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {

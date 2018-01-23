@@ -433,20 +433,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * If you change anything in the logic of priorities make sure that you catch
-     * dependencies on this system which are not directly related to priorities.
-     * TODO: check it!
-     */
-    public Boolean isCorrectionStep(Task task) {
-        return (task.getPriority() == 10);
-    }
-
-    public Task setCorrectionStep(Task task) {
-        task.setPriority(10);
-        return task;
-    }
-
-    /**
      * Get localized (translated) title of task.
      * 
      * @param title

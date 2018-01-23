@@ -371,7 +371,7 @@ public class WorkflowService {
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         task.setProcessingUser(null);
         // if we have a correction task here then never remove startdate
-        if (serviceManager.getTaskService().isCorrectionStep(task)) {
+        if (isCorrectionTask(task)) {
             task.setProcessingBegin(null);
         }
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -379,6 +379,21 @@ public class WorkflowService {
 
         updateProcessSortHelperStatus(task.getProcess());
 
+        return task;
+    }
+
+    /**
+     * Priority equal 10 means correction task.
+     *
+     * @param task Task object
+     * @return true or false
+     */
+    public boolean isCorrectionTask(Task task) {
+        return (task.getPriority() == 10);
+    }
+
+    public Task setCorrectionTask(Task task) {
+        task.setPriority(10);
         return task;
     }
 
@@ -400,7 +415,7 @@ public class WorkflowService {
 
         Task correctionTask = serviceManager.getTaskService().getById(this.problem.getId());
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        correctionTask = serviceManager.getTaskService().setCorrectionStep(correctionTask);
+        correctionTask = setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
 
         Property processProperty = prepareProblemMessageProperty(date);
@@ -446,7 +461,7 @@ public class WorkflowService {
         }
         if (correctionTask != null) {
             correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
-            correctionTask = serviceManager.getTaskService().setCorrectionStep(correctionTask);
+            correctionTask = setCorrectionTask(correctionTask);
             correctionTask.setProcessingEnd(null);
 
             Property processProperty = prepareProblemMessageProperty(date);
@@ -547,7 +562,7 @@ public class WorkflowService {
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
-            taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
+            taskInBetween = setCorrectionTask(taskInBetween);
             taskInBetween.setProcessingEnd(null);
             serviceManager.getTaskService().save(taskInBetween);
         }
@@ -588,7 +603,7 @@ public class WorkflowService {
     private Task prepareTaskForClose(Task currentTask, Task taskInBetween, Date date) {
         if (taskInBetween.getId().intValue() == currentTask.getId().intValue()) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.OPEN);
-            taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
+            taskInBetween = setCorrectionTask(taskInBetween);
             taskInBetween.setProcessingEnd(null);
             taskInBetween.setProcessingTime(date);
         }

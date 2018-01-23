@@ -517,7 +517,7 @@ public class BatchStepHelper extends BatchHelper {
         for (Task task : this.steps) {
             this.myDav.uploadFromHome(task.getProcess());
             task.setProcessingStatusEnum(TaskStatus.OPEN);
-            if (serviceManager.getTaskService().isCorrectionStep(task)) {
+            if (serviceManager.getWorkflowService().isCorrectionTask(task)) {
                 task.setProcessingBegin(null);
             }
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
