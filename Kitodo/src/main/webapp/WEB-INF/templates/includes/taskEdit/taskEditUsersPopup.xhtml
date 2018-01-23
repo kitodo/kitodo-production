@@ -18,32 +18,30 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:view locale="#{SpracheForm.locale}">
-        <h:body>
-            <!-- edit dialog -->
-            <p:dialog widgetVar="addUserDialog"
-                      header="#{ProjekteForm.myFilegroup eq null ? msgs.filegroupHinzufuegen : msgs.filegroupBearbeiten}"
-                      width="700px"
-                      modal="true"
-                      dynamic="true">
-                <h:form>
-                    <p:dataTable var="user"
-                                 value="#{BenutzerverwaltungForm.lazyDTOModel}"
-                                 lazy="true"
-                                 rows="#{LoginForm.myBenutzer.tableSize}"
-                                 paginator="true">
-                        <p:column headerText="#{msgs.benutzer}">
-                            <h:outputText value="#{user.surname}, #{user.name}"/>
-                        </p:column>
-                        <p:column headerText="#{msgs.auswahl}">
-                            <h:commandLink action="#{ProzessverwaltungForm.addUser}">
-                                <h:graphicImage alt="add task to user" value="/pages/images/buttons/addUser.gif"/>
-                                <f:param name="ID" value="#{user.id}"/>
-                            </h:commandLink>
-                        </p:column>
-                    </p:dataTable>
-                    <p:commandButton onclick="PF('addUserDialog').hide()" value="#{msgs.close}"/>
-                </h:form>
-            </p:dialog>
-        </h:body>
+        <!-- edit dialog -->
+        <p:dialog widgetVar="addUserDialog"
+                  header="#{msgs.benutzerHinzufuegen}"
+                  width="700px"
+                  modal="true"
+                  dynamic="true">
+            <h:form>
+                <p:dataTable var="user"
+                             value="#{BenutzerverwaltungForm.lazyDTOModel}"
+                             lazy="true"
+                             rows="#{LoginForm.myBenutzer.tableSize}"
+                             paginator="true">
+                    <p:column headerText="#{msgs.benutzer}">
+                        <h:outputText value="#{user.surname}, #{user.name}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.auswahl}">
+                        <h:commandLink action="#{ProzessverwaltungForm.addUser}">
+                            <h:graphicImage alt="add task to user" value="/pages/images/buttons/addUser.gif"/>
+                            <f:param name="ID" value="#{user.id}"/>
+                        </h:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton onclick="PF('addUserDialog').hide()" value="#{msgs.close}"/>
+            </h:form>
+        </p:dialog>
     </f:view>
 </ui:composition>

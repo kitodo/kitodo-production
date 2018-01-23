@@ -18,32 +18,30 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:view locale="#{SpracheForm.locale}">
-        <h:body>
-            <!-- edit dialog -->
-            <p:dialog widgetVar="addUsergroupDialog"
-                      header="#{ProjekteForm.myFilegroup eq null ? msgs.filegroupHinzufuegen : msgs.filegroupBearbeiten}"
-                      width="700px"
-                      modal="true"
-                      dynamic="true">
-                <h:form>
-                    <p:dataTable var="usergroup"
-                                 value="#{BenutzergruppenForm.lazyDTOModel}"
-                                 lazy="true"
-                                 rows="#{LoginForm.myBenutzer.tableSize}"
-                                 paginator="true">
-                        <p:column headerText="#{msgs.benutzergruppe}">
-                            <h:outputText value="#{usergroup.title}"/>
-                        </p:column>
-                        <p:column headerText="#{msgs.auswahl}">
-                            <h:commandLink action="#{ProzessverwaltungForm.addUserGroup}">
-                                <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
-                                <f:param name="ID" value="#{user.id}"/>
-                            </h:commandLink>
-                        </p:column>
-                    </p:dataTable>
-                    <p:commandButton onclick="PF('addUsergroupDialog').hide()" value="#{msgs.close}"/>
-                </h:form>
-            </p:dialog>
-        </h:body>
+        <!-- edit dialog -->
+        <p:dialog widgetVar="addUsergroupDialog"
+                  header="#{msgs.benutzergruppenHinzufuegen}"
+                  width="700px"
+                  modal="true"
+                  dynamic="true">
+            <h:form>
+                <p:dataTable var="usergroup"
+                             value="#{BenutzergruppenForm.lazyDTOModel}"
+                             lazy="true"
+                             rows="#{LoginForm.myBenutzer.tableSize}"
+                             paginator="true">
+                    <p:column headerText="#{msgs.benutzergruppe}">
+                        <h:outputText value="#{usergroup.title}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.auswahl}">
+                        <h:commandLink action="#{ProzessverwaltungForm.addUserGroup}">
+                            <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
+                            <f:param name="ID" value="#{user.id}"/>
+                        </h:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton onclick="PF('addUsergroupDialog').hide()" value="#{msgs.close}"/>
+            </h:form>
+        </p:dialog>
     </f:view>
 </ui:composition>
