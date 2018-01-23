@@ -396,7 +396,7 @@ public class WorkflowService {
     }
 
     /**
-     * Report the problem.
+     * Unified method for report problem with task.
      *
      * @param currentTask
      *            as Task object
@@ -436,52 +436,7 @@ public class WorkflowService {
     }
 
     /**
-     * This one is taken out of BatchStepHelper.
-     *
-     * @param currentTask
-     *            as Task object
-     * @param problemTask
-     *            title of problem task as String
-     */
-    public Task reportProblem(Task currentTask, String problemTask) throws DataException {
-        Date date = new Date();
-        currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(date);
-        currentTask.setProcessingUser(this.user);
-        currentTask.setProcessingBegin(null);
-
-        Task correctionTask = null;
-        for (Task task : currentTask.getProcess().getTasks()) {
-            if (task.getTitle().equals(problemTask)) {
-                correctionTask = task;
-            }
-        }
-        if (correctionTask != null) {
-            correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
-            correctionTask = setCorrectionTask(correctionTask);
-            correctionTask.setProcessingEnd(null);
-
-            Property processProperty = prepareProblemMessageProperty(date);
-            processProperty.getProcesses().add(currentTask.getProcess());
-            currentTask.getProcess().getProperties().add(processProperty);
-
-            currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
-
-            this.serviceManager.getTaskService().save(correctionTask);
-            currentTask.getProcess().getHistory().add(new History(date, correctionTask.getOrdering().doubleValue(),
-                    correctionTask.getTitle(), HistoryTypeEnum.taskError, correctionTask.getProcess()));
-
-            closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
-
-            updateProcessSortHelperStatus(currentTask.getProcess());
-        }
-
-        return currentTask;
-    }
-
-    /**
-     * Solve problem. This one is taken from AktuelleSchritteForm.
+     * Unified method for solve problem with task.
      *
      * @param currentTask
      *            as Task object
@@ -493,12 +448,12 @@ public class WorkflowService {
         currentTask.setProcessingStatusEnum(TaskStatus.DONE);
         currentTask.setProcessingEnd(date);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(new Date());
+        currentTask.setProcessingTime(date);
         currentTask.setProcessingUser(this.user);
 
         Task correctionTask = serviceManager.getTaskService().getById(this.solution.getId());
 
-        closeTasksBetweenCurrentAndCorrectionTaskA(currentTask, correctionTask, date);
+        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
 
         currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
 
@@ -510,43 +465,6 @@ public class WorkflowService {
 
         this.solution.setMessage("");
         this.solution.setId(0);
-        return currentTask;
-    }
-
-    /**
-     * This one is taken out of BatchStepHelper.
-     *
-     * @param currentTask
-     *            as Task object
-     * @param solutionTask
-     *            title of problematic task as String
-     */
-    public Task solveProblem(Task currentTask, String solutionTask) throws DataException {
-        Date date = new Date();
-        this.webDav.uploadFromHome(currentTask.getProcess());
-        currentTask.setProcessingStatusEnum(TaskStatus.DONE);
-        currentTask.setProcessingEnd(date);
-        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(date);
-        currentTask.setProcessingUser(this.user);
-
-        Task correctionTask = null;
-        for (Task task : currentTask.getProcess().getTasks()) {
-            if (task.getTitle().equals(solutionTask)) {
-                correctionTask = task;
-            }
-        }
-        if (correctionTask != null) {
-            closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, correctionTask, date);
-
-            Property processProperty = prepareSolveMessageProperty(correctionTask);
-            processProperty.getProcesses().add(currentTask.getProcess());
-            currentTask.getProcess().getProperties().add(processProperty);
-
-            currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
-
-            updateProcessSortHelperStatus(currentTask.getProcess());
-        }
         return currentTask;
     }
 
@@ -562,9 +480,7 @@ public class WorkflowService {
         }
     }
 
-    // TODO: shouldn't both methods be the same?! Why for batch is different than
-    // for form?!
-    private void closeTasksBetweenCurrentAndCorrectionTaskA(Task currentTask, Task correctionTask, Date date)
+    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date)
             throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
@@ -573,24 +489,13 @@ public class WorkflowService {
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
 
+            //TODO: check if this two lines are needed
             // this two lines differs both methods
             currentTask.setProcessingTime(date);
             currentTask.setProcessingUser(this.user);
             // this two lines differs both methods
 
             serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
-        }
-    }
-
-    private void closeTasksBetweenCurrentAndCorrectionTaskB(Task currentTask, Task correctionTask, Date date)
-            throws DataException {
-        List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(correctionTask.getOrdering(),
-            currentTask.getOrdering(), currentTask.getProcess().getId());
-        for (Task taskInBetween : tasksInBetween) {
-            taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
-            taskInBetween.setProcessingEnd(date);
-            taskInBetween.setPriority(0);
-            this.serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
         }
     }
 
