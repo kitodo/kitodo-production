@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
-import javax.naming.AuthenticationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -289,23 +288,18 @@ public class BatchStepHelper extends BatchHelper {
      * @return String
      */
     public String solveProblemForSingle() {
+        serviceManager.getWorkflowService().setSolution(getSolution());
         try {
-            serviceManager.getWorkflowService().setSolution(getSolution());
-            try {
-                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
-                saveStep();
-            } catch (DataException e) {
-                logger.error("Problem couldn't be solved: " + e);
-            }
-            this.solution.setMessage("");
-            this.solutionTask = "";
-
-            AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.filterAll();
-        } catch (AuthenticationException e) {
-            Helper.setFehlerMeldung(e.getMessage());
-            return "";
+            setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
+            saveStep();
+        } catch (DataException e) {
+            logger.error("Problem couldn't be solved: " + e);
         }
+        this.solution.setMessage("");
+        this.solutionTask = "";
+
+        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+        return asf.filterAll();
     }
 
     /**
@@ -314,26 +308,22 @@ public class BatchStepHelper extends BatchHelper {
      * @return String
      */
     public String solveProblemForAll() {
-        try {
-            for (Task s : this.steps) {
-                this.currentStep = s;
-                serviceManager.getWorkflowService().setSolution(getSolution());
-                try {
-                    setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
-                    saveStep();
-                } catch (DataException e) {
-                    logger.error("Problem couldn't be solved: " + e);
-                }
+        for (Task task : this.steps) {
+            this.currentStep = task;
+            serviceManager.getWorkflowService().setSolution(getSolution());
+            try {
+                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
+                saveStep();
+            } catch (DataException e) {
+                logger.error("Problem couldn't be solved: " + e);
             }
-            this.solution.setMessage("");
-            this.solutionTask = "";
-
-            AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.filterAll();
-        } catch (AuthenticationException e) {
-            Helper.setFehlerMeldung(e.getMessage());
-            return "";
+            saveStep();
         }
+        this.solution.setMessage("");
+        this.solutionTask = "";
+
+        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+        return asf.filterAll();
     }
 
     /**

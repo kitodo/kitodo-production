@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.naming.AuthenticationException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -523,11 +521,7 @@ public class WorkflowService {
      * @param solutionTask
      *            title of problematic task as String
      */
-    public Task solveProblem(Task currentTask, String solutionTask) throws AuthenticationException, DataException {
-        if (this.user == null) {
-            // TODO: this one is removed in next PR
-            throw new AuthenticationException("userNotFound");
-        }
+    public Task solveProblem(Task currentTask, String solutionTask) throws DataException {
         Date date = new Date();
         this.webDav.uploadFromHome(currentTask.getProcess());
         currentTask.setProcessingStatusEnum(TaskStatus.DONE);
