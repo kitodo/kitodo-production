@@ -99,8 +99,15 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
         // TODO: find other way than retrieving the form bean to access "hideCorrectionTasks" and "showAutomaticTasks"
         // e.g. which tasks should be returned!
+        BoolQueryBuilder subquery = new BoolQueryBuilder();
+        subquery.should(createSimpleQuery("processingUser", login.getMyBenutzer().getId(), true));
+        subquery.should(createSimpleQuery("users.id", login.getMyBenutzer().getId(), true));
+        for (UserGroup userGroup : login.getMyBenutzer().getUserGroups()) {
+            subquery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+        }
+
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("processingUser", login.getMyBenutzer().getId(), true));
+        query.must(subquery);
         query.must(createSimpleQuery("processingStatus", TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery("processingStatus", TaskStatus.DONE.getValue(), false));
         AktuelleSchritteForm form = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
