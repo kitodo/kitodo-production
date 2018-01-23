@@ -231,13 +231,10 @@ public class WorkflowService {
             // image validation
             if (task.isTypeImagesWrite()) {
                 MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
-                try {
-                    if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
-                        serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
-                        return null;
-                    }
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("Error on image validation: ", e);
+                URI imageFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
+                if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
+                    Helper.setFehlerMeldung("Error on image validation!");
+                    return null;
                 }
             }
         }
