@@ -70,7 +70,7 @@ public class XMLWriterTest {
             "http://www.loc.gov/mods/v3#titleInfo");
 
     @Test
-    public void testXMLReader() throws Exception {
+    public void testXMLWriter() throws Exception {
         Node data = new MemoryNode(METS_METS)
                 .add(new MemoryNode(METS_METS_HDR)
                         .put(METS_CREATEDATE, new MemoryLiteral("2018-01-10T11:35:45", RDF.PLAIN_LITERAL))
@@ -113,7 +113,7 @@ public class XMLWriterTest {
         File testfile = File.createTempFile("xmlWriterTest-", ".xml");
         try {
             SerializationFormat.XML.write(data, namespaces, testfile);
-            assertThat(FileUtils.contentEquals(testfile, expectedResult), is(true));
+            assertThat(FileUtils.contentEqualsIgnoreEOL(testfile, expectedResult, "UTF-8"), is(true));
         } finally {
             if (testfile.exists()) {
                 testfile.delete();

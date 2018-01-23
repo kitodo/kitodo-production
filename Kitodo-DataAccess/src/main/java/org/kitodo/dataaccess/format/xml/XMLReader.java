@@ -448,6 +448,9 @@ public class XMLReader {
      * @return the root node of a linked data tree
      */
     private static Node toNode(Element root, String documentNS, Storage storage) {
+        if (documentNS.endsWith("#")) {
+            documentNS = documentNS.substring(0, documentNS.length() - 1);
+        }
         return parseNodeElement(root, "", Space.DEFAULT, documentNS, true, storage);
     }
 
