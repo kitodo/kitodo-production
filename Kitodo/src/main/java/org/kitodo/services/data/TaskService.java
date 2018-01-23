@@ -485,34 +485,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Set processing status up.
-     *
-     * @param task
-     *            object
-     * @return task object
-     */
-    public Task setProcessingStatusUp(Task task) {
-        if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
-            task.setProcessingStatus(task.getProcessingStatus() + 1);
-        }
-        return task;
-    }
-
-    /**
-     * Set processing status down.
-     *
-     * @param task
-     *            object
-     * @return task object
-     */
-    public Task setProcessingStatusDown(Task task) {
-        if (task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
-            task.setProcessingStatus(task.getProcessingStatus() - 1);
-        }
-        return task;
-    }
-
-    /**
      * Get title with user.
      *
      * @return des Schritttitels sowie (sofern vorhanden) den Benutzer mit

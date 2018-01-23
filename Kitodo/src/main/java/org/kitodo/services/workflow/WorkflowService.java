@@ -120,7 +120,8 @@ public class WorkflowService {
     /**
      * Set user for test purpose.
      *
-     * @param user as User object
+     * @param user
+     *            as User object
      */
     public void setUser(User user) {
         this.user = user;
@@ -135,7 +136,7 @@ public class WorkflowService {
      */
     public Task setTaskStatusUp(Task task) throws DataException, IOException {
         if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
-            task = serviceManager.getTaskService().setProcessingStatusUp(task);
+            task = setProcessingStatusUp(task);
             task.setEditTypeEnum(TaskEditType.ADMIN);
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
                 close(task);
@@ -162,7 +163,7 @@ public class WorkflowService {
         if (this.user != null) {
             task.setProcessingUser(this.user);
         }
-        return serviceManager.getTaskService().setProcessingStatusDown(task);
+        return setProcessingStatusDown(task);
     }
 
     /**
@@ -175,19 +176,7 @@ public class WorkflowService {
         List<Task> tasks = process.getTasks();
 
         for (Task task : tasks) {
-            if (!task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                task.setProcessingStatus(task.getProcessingStatus() + 1);
-                task.setEditType(TaskEditType.ADMIN.getValue());
-                if (task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                    close(task);
-                } else {
-                    if (this.user != null) {
-                        task.setProcessingUser(this.user);
-                        serviceManager.getTaskService().save(task);
-                    }
-                }
-                break;
-            }
+            setTaskStatusUp(task);
         }
     }
 
@@ -202,15 +191,9 @@ public class WorkflowService {
         Collections.reverse(tasks);
 
         for (Task task : tasks) {
-            //TODO: check if this behaviour is correct
+            // TODO: check if this behaviour is correct
             if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
-                task.setEditTypeEnum(TaskEditType.ADMIN);
-                task.setProcessingTime(new Date());
-                if (this.user != null) {
-                    task.setProcessingUser(this.user);
-                }
-                task = serviceManager.getTaskService().setProcessingStatusDown(task);
-                serviceManager.getTaskService().save(task);
+                serviceManager.getTaskService().save(setTaskStatusDown(task));
                 break;
             }
         }
@@ -383,7 +366,8 @@ public class WorkflowService {
     /**
      * Priority equal 10 means correction task.
      *
-     * @param task Task object
+     * @param task
+     *            Task object
      * @return true or false
      */
     public boolean isCorrectionTask(Task task) {
@@ -468,6 +452,34 @@ public class WorkflowService {
         return currentTask;
     }
 
+    /**
+     * Set processing status up. This method adds double check of task status.
+     *
+     * @param task
+     *            object
+     * @return task object
+     */
+    private Task setProcessingStatusUp(Task task) {
+        if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
+            task.setProcessingStatus(task.getProcessingStatus() + 1);
+        }
+        return task;
+    }
+
+    /**
+     * Set processing status down. This method adds double check of task status.
+     *
+     * @param task
+     *            object
+     * @return task object
+     */
+    private Task setProcessingStatusDown(Task task) {
+        if (task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
+            task.setProcessingStatus(task.getProcessingStatus() - 1);
+        }
+        return task;
+    }
+
     // TODO: find out if method should save or not task
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
@@ -489,7 +501,7 @@ public class WorkflowService {
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
 
-            //TODO: check if this two lines are needed
+            // TODO: check if this two lines are needed
             // this two lines differs both methods
             currentTask.setProcessingTime(date);
             currentTask.setProcessingUser(this.user);
