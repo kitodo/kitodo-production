@@ -598,6 +598,21 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
+     * Get task with specific id.
+     *
+     * @param id passed as int
+     * @return task
+     */
+    public Task getTaskById(int id) {
+        try {
+            return serviceManager.getTaskService().getById(id);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Set my task.
      *
      * @param task

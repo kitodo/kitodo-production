@@ -133,7 +133,7 @@
                            rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchSize)}"
                            title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                 <h:graphicImage value="/pages/images/buttons/admin2a.gif" alt="edit"/>
-                <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
+                <t:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{AktuelleSchritteForm.getTaskById(item.id)}"/>
             </h:commandLink>
 
             <!-- already assigned task (this user) -->
