@@ -2365,8 +2365,8 @@ public class ProzessverwaltungForm extends BasisForm {
             String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty() &&
-                    (callerViewId.contains("searchProcess.jsf") ||callerViewId.contains("processEdit.jsf"))) {
+            if (!callerViewId.isEmpty()
+                    && (callerViewId.contains("searchProcess.jsf") || callerViewId.contains("processEdit.jsf"))) {
                 return "/pages/processes" + urlSuffix;
             } else {
                 return "/pages/ProzessverwaltungAlle" + urlSuffix;
