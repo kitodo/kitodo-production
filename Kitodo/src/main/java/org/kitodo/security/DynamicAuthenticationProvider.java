@@ -87,4 +87,10 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         return instance;
     }
 
+    public void readLocalConfig() {
+        ldapUrl = ConfigCore.getParameter("ldap_url");
+
+
+    }
+
 }

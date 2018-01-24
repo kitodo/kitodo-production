@@ -39,6 +39,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
@@ -506,5 +507,11 @@ public class UserServiceIT {
         newUser.setLogin("kowal");
         exception.expect(DataException.class);
         userService.save(newUser);
+    }
+
+    @Test
+    public void shouldGetLdapServerOfUser() throws DAOException {
+        User user = userService.getById(2);
+        assertEquals("LdapServer title is incorrect!","FirstLdapServer",user.getLdapGroup().getLdapServer().getTitle());
     }
 }

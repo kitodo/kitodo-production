@@ -45,6 +45,7 @@
         <mapping class="org.kitodo.data.database.beans.Filter"/>
         <mapping class="org.kitodo.data.database.beans.History"/>
         <mapping class="org.kitodo.data.database.beans.LdapGroup"/>
+        <mapping class="org.kitodo.data.database.beans.LdapServer"/>
         <mapping class="org.kitodo.data.database.beans.Process"/>
         <mapping class="org.kitodo.data.database.beans.Property"/>
         <mapping class="org.kitodo.data.database.beans.Project"/>
