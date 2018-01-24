@@ -31,9 +31,8 @@
                         <h:outputText value="#{msgs.schrittDetails}"
                                       rendered="#{ProzessverwaltungForm.taskId ne null}"/>
                     </h3>
-                    <!-- TODO commandButton anpassen -->
                     <p:commandButton value="#{msgs.speichern}"
-                                     action="#{ProzessverwaltungForm.saveTask()}"
+                                     action="#{ProzessverwaltungForm.saveTaskAndRedirect()}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
                                      immediate="true"

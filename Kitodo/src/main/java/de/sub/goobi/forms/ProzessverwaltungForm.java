@@ -745,6 +745,16 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
+     * Save task and redirect to processEdit view.
+     *
+     * @return url to processEdit view
+     */
+    public String saveTaskAndRedirect() {
+        saveTask();
+        return "processEdit?faces-redirect=true";
+    }
+
+    /**
      * Remove task.
      *
      * @return page
