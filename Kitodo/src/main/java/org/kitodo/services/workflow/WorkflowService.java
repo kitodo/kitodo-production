@@ -277,9 +277,7 @@ public class WorkflowService {
     public void close(Task task) throws DataException, IOException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
-        if (this.user != null) {
-            task.setProcessingUser(this.user);
-        }
+        task.setProcessingUser(this.user);
         task.setProcessingEnd(new Date());
 
         serviceManager.getTaskService().save(task);
@@ -392,11 +390,6 @@ public class WorkflowService {
      * @return Task
      */
     public Task reportProblem(Task currentTask) throws DAOException, DataException {
-        if (this.user == null) {
-            Helper.setFehlerMeldung("userNotFound");
-            return null;
-        }
-
         this.webDav.uploadFromHome(this.user, currentTask.getProcess());
         Date date = new Date();
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
@@ -442,9 +435,7 @@ public class WorkflowService {
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        if (this.user != null) {
-            currentTask.setProcessingUser(this.user);
-        }
+        currentTask.setProcessingUser(this.user);
         currentTask.setProcessingBegin(null);
 
         Task correctionTask = null;
@@ -484,10 +475,6 @@ public class WorkflowService {
      * @return Task
      */
     public Task solveProblem(Task currentTask) throws DAOException, DataException {
-        if (this.user == null) {
-            Helper.setFehlerMeldung("userNotFound");
-            return null;
-        }
         Date date = new Date();
         this.webDav.uploadFromHome(currentTask.getProcess());
         currentTask.setProcessingStatusEnum(TaskStatus.DONE);
@@ -523,7 +510,7 @@ public class WorkflowService {
      */
     public Task solveProblem(Task currentTask, String solutionTask) throws AuthenticationException, DataException {
         if (this.user == null) {
-            // TODO: should be now it thrown every where where user is not found?
+            // TODO: this one is removed in next PR
             throw new AuthenticationException("userNotFound");
         }
         Date date = new Date();
@@ -717,7 +704,7 @@ public class WorkflowService {
         task.setProcessingTime(new Date());
         if (this.user != null) {
             task.setProcessingUser(this.user);
+            this.webDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
         }
-        this.webDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
     }
 }
