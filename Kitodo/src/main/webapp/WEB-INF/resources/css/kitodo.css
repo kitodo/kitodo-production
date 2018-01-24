@@ -70,10 +70,10 @@ sup {
     }
 
 .wrapper {
-    margin: 0px auto;
-    max-width: -webkit-calc(100% - 60px);
-    max-width: -moz-calc(100% - 60px);
-    max-width: calc(100% - 60px);
+    margin: 0 auto;
+    max-width: -webkit-calc(100% - 32px);
+    max-width: -moz-calc(100% - 32px);
+    max-width: calc(100% - 32px);
     }
 
 .clear:after {
@@ -81,7 +81,7 @@ sup {
     clear: both;
     display: block;
     visibility: hidden;
-    height: 0px;
+    height: 0;
     }
 
 @keyframes slidein {
@@ -130,7 +130,7 @@ body.first-visit #portal-header {
 
 #kitodo-icon {
     display: inline-block;
-    margin: 15px 0px;
+    margin: 15px 0;
     }
 
 #portal-header #portal-search {
@@ -150,9 +150,9 @@ body.first-visit #portal-header {
     background: -webkit-linear-gradient(#064f80, #043759);
     background: -ms-linear-gradient(#064f80, #043759);
     background: -o-linear-gradient(#064f80, #043759);
-    -webkit-box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.5) inset;
-    -moz-box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.5) inset;
-    box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.5) inset;
+    -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
+    -moz-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
+    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
     }
 
 #portal-search input {
@@ -162,7 +162,7 @@ body.first-visit #portal-header {
     width: calc(100% - 50px);
     height: 36px;
     padding: 9px 15px;
-    border: 0px none;
+    border: 0 none;
     background: transparent;
     color: #fff;
     box-shadow: inherit;
@@ -367,9 +367,9 @@ body.first-visit #portal-header {
     display: block !important;
     clear: both;
     margin: 10px auto;
-    max-width: -webkit-calc(100% - 60px);
-    max-width: -moz-calc(100% - 60px);
-    max-width: calc(100% - 60px);
+    max-width: -webkit-calc(100% - 32px);
+    max-width: -moz-calc(100% - 32px);
+    max-width: calc(100% - 32px);
     text-align: right;
     color: #fff;
     font-size: 0px;
@@ -575,6 +575,10 @@ body.first-visit main {
     padding: 0;
 }
 
+.ui-tabs-panel thead {
+    border-top: 3px solid #999;
+}
+
 .mets-file-groups .ui-datatable table {
     border-top: solid 1px #d8d8d8;
 }
@@ -646,7 +650,7 @@ footer {
 }
 
 .ui-datatable thead th.ui-state-default {
-    background: #fff;
+    background: #d8d8d8;
 }
 
 .ui-datatable tbody tr:last-child td {
@@ -686,14 +690,11 @@ footer {
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     color: #999;
-}
-
-.ui-tabs .ui-tabs-panels {
-    padding: 0 1.5em 1.3em 1.5em;
+    border-top: 3px solid #999;
 }
 
 .ui-tabs .ui-tabs-panel {
-    padding: 1.5em;
+    padding: 3px 0 0 0;
     background: #fff;
 }
 
