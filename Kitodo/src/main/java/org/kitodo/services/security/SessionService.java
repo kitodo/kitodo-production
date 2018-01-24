@@ -34,8 +34,7 @@ public class SessionService {
     private static final Logger logger = LogManager.getLogger(SessionService.class);
 
     private SessionService() {
-        WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        SecurityConfig securityConfig = context.getBean(SecurityConfig.class);
+        SecurityConfig securityConfig = SecurityConfig.getInstance();
         this.sessionRegistry = securityConfig.getSessionRegistry();
     }
 
