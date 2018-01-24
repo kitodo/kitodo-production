@@ -80,7 +80,7 @@
                             <ul id="nav-user">
                                 <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}<h:outputText rendered="#{LoginForm.maximaleBerechtigung == 1}"> <i>(Admin)</i></h:outputText></h3></li>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
-                                <li><h:outputLink value="#{request.contextPath}/logout" id="logout">#{msgs.signout}</h:outputLink></li>
+                                <li><h:outputLink value="#{request.contextPath}/logout" id="logout">#{msgs.logout}</h:outputLink></li>
                             </ul>
                         </h:form>
                     </li>

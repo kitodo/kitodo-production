@@ -48,7 +48,7 @@
                 <h:panelGroup>
                     <p:selectOneRadio layout="grid" columns="1" value="#{Metadaten.addServeralStructuralElementsMode}">
                         <f:selectItem itemLabel="#{msgs.seitenzuordnung}" itemValue="#{false}" />
-                        <f:selectItem itemLabel="#{msgs.metadaten}" itemValue="#{true}" />
+                        <f:selectItem itemLabel="#{msgs.metadata}" itemValue="#{true}" />
                         <p:ajax event="click" update="AddDocStrucTypeSpecs" />
                     </p:selectOneRadio>
                 </h:panelGroup>
@@ -85,7 +85,7 @@
                             <f:selectItems value="#{Metadaten.addableMetadataTypesFromTempType}" />
                         </p:selectOneMenu>
 
-                        <h:outputLabel value="#{msgs.wert}:" for="inputMetaDataValue"/>
+                        <h:outputLabel value="#{msgs.value}:" for="inputMetaDataValue"/>
                         <h:inputTextarea id="inputMetaDataValue" value="#{Metadaten.addMetaDataValue}"/>
 
                         <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSeveralNodesWithMetadata}"

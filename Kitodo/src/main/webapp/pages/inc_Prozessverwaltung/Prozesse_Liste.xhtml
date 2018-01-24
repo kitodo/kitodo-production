@@ -320,7 +320,7 @@
                 </h:commandLink>
 
                 <!-- MassenImport -->
-                <h:commandLink action="#{MassImportForm.prepare(item.id)}" id="action222" title="#{msgs.MassenImport}"
+                <h:commandLink action="#{MassImportForm.prepare(item.id)}" id="action222" title="#{msgs.massImport}"
                                rendered="#{ProzessverwaltungForm.displayMode.mode == 'template' and HelperForm.massImportAllowed}">
                     <h:graphicImage value="/pages/images/buttons/star_blue_multi.png" style="margin-right:3px"
                                     alt="mass import" rendered="#{!item.containsUnreachableSteps}"/>
