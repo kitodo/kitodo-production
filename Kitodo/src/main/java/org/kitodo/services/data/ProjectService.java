@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,7 +88,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     /**
      * Management od processes for project object.
-     * 
+     *
      * @param project
      *            object
      */
@@ -129,13 +130,13 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     /**
      * Find archived or not archived projects.
-     * 
+     *
      * @param archived
      *            if true - find archived projects, if false - find not archived
      *            projects
      * @param related
-     *            if true - found project is related to some other DTO object,
-     *            if false - not and it collects all related objects
+     *            if true - found project is related to some other DTO object, if
+     *            false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
@@ -281,5 +282,51 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
         return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
                 && project.getFileFormatInternal() != null && digitalCollectionsXmlExists && projectsXmlExists;
+    }
+
+    /**
+     * Duplicate the project with the given ID 'itemId'.
+     *
+     * @return the duplicated Project
+     */
+    public Project duplicateProject(Integer itemId) throws DAOException {
+        Project duplicatedProject = new Project();
+
+        Project baseProject = getById(itemId);
+
+        // Project _title_ should explicitly _not_ be duplicated!
+        duplicatedProject.setStartDate(baseProject.getStartDate());
+        duplicatedProject.setEndDate(baseProject.getEndDate());
+        duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());
+        duplicatedProject.setNumberOfVolumes(baseProject.getNumberOfVolumes());
+
+        duplicatedProject.setFileFormatInternal(baseProject.getFileFormatInternal());
+        duplicatedProject.setFileFormatDmsExport(baseProject.getFileFormatDmsExport());
+        duplicatedProject.setDmsImportErrorPath(baseProject.getDmsImportErrorPath());
+        duplicatedProject.setDmsImportSuccessPath(baseProject.getDmsImportSuccessPath());
+
+        duplicatedProject.setDmsImportTimeOut(baseProject.getDmsImportTimeOut());
+        duplicatedProject.setUseDmsImport(baseProject.isUseDmsImport());
+        duplicatedProject.setDmsImportCreateProcessFolder(baseProject.isDmsImportCreateProcessFolder());
+
+        duplicatedProject.setMetsRightsOwner(baseProject.getMetsRightsOwner());
+        duplicatedProject.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());
+        duplicatedProject.setMetsRightsOwnerSite(baseProject.getMetsRightsOwnerSite());
+        duplicatedProject.setMetsRightsOwnerMail(baseProject.getMetsRightsOwnerMail());
+
+        duplicatedProject.setMetsDigiprovPresentation(baseProject.getMetsDigiprovPresentation());
+        duplicatedProject.setMetsDigiprovPresentationAnchor(baseProject.getMetsDigiprovPresentationAnchor());
+        duplicatedProject.setMetsDigiprovReference(baseProject.getMetsDigiprovReference());
+        duplicatedProject.setMetsDigiprovReferenceAnchor(baseProject.getMetsDigiprovReferenceAnchor());
+
+        duplicatedProject.setMetsPointerPath(baseProject.getMetsPointerPath());
+        duplicatedProject.setMetsPointerPathAnchor(baseProject.getMetsPointerPathAnchor());
+        duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
+        duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
+
+        // only duplicate templates, not all processes, of given base project
+        duplicatedProject.setProcesses(new ArrayList<>(
+                baseProject.getProcesses().stream().filter(Process::isTemplate).collect(Collectors.toList())));
+        return duplicatedProject;
     }
 }
