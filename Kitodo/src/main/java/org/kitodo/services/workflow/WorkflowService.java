@@ -230,9 +230,6 @@ public class WorkflowService {
         // if step allows writing of images, then count all images here
         if (task.isTypeImagesWrite()) {
             try {
-                // this.mySchritt.getProzess().setSortHelperImages(
-                // FileUtils.getNumberOfFiles(new
-                // File(this.mySchritt.getProzess().getImagesOrigDirectory())));
                 HistoryAnalyserJob.updateHistory(task.getProcess());
             } catch (Exception e) {
                 Helper.setFehlerMeldung("Error while calculation of storage and images", e);
@@ -433,7 +430,7 @@ public class WorkflowService {
     }
 
     /**
-     * THis one is taken out of BatchStepHelper.
+     * This one is taken out of BatchStepHelper.
      *
      * @param currentTask
      *            as Task object

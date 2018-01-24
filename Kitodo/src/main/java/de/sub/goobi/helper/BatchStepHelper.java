@@ -221,12 +221,12 @@ public class BatchStepHelper extends BatchHelper {
         serviceManager.getWorkflowService().setProblem(getProblem());
         try {
             this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
+            saveStep();
         } catch (DataException e) {
             logger.error("Problem couldn't be reported: " + e);
         }
         this.problem.setMessage("");
         this.problemTask = "";
-        saveStep();
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
     }
@@ -241,10 +241,10 @@ public class BatchStepHelper extends BatchHelper {
             serviceManager.getWorkflowService().setProblem(getProblem());
             try {
                 setCurrentStep(serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask));
+                saveStep();
             } catch (DataException e) {
                 logger.error("Problem couldn't be reported: " + e);
             }
-            saveStep();
         }
         this.problem.setMessage("");
         this.problemTask = "";
@@ -293,10 +293,10 @@ public class BatchStepHelper extends BatchHelper {
             serviceManager.getWorkflowService().setSolution(getSolution());
             try {
                 setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
+                saveStep();
             } catch (DataException e) {
                 logger.error("Problem couldn't be solved: " + e);
             }
-            saveStep();
             this.solution.setMessage("");
             this.solutionTask = "";
 
@@ -320,10 +320,10 @@ public class BatchStepHelper extends BatchHelper {
                 serviceManager.getWorkflowService().setSolution(getSolution());
                 try {
                     setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
+                    saveStep();
                 } catch (DataException e) {
                     logger.error("Problem couldn't be solved: " + e);
                 }
-                saveStep();
             }
             this.solution.setMessage("");
             this.solutionTask = "";

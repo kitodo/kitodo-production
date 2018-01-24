@@ -11,5 +11,5 @@
 
 package org.kitodo.workflow;
 
-public class Solution extends Message{
+public class Solution extends Message {
 }
