@@ -121,6 +121,41 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
+    @Override
+    public String createCountQuery(Map filters) {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        if (login == null) {
+            return null;
+        }
+
+        // TODO: find other way than retrieving the form bean to access "hideCorrectionTasks" and "showAutomaticTasks"
+        // e.g. which tasks should be returned!
+        BoolQueryBuilder subquery = new BoolQueryBuilder();
+        subquery.should(createSimpleQuery("processingUser", login.getMyBenutzer().getId(), true));
+        subquery.should(createSimpleQuery("users.id", login.getMyBenutzer().getId(), true));
+        for (UserGroup userGroup : login.getMyBenutzer().getUserGroups()) {
+            subquery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+        }
+
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(subquery);
+        query.must(createSimpleQuery("processingStatus", TaskStatus.LOCKED.getValue(), false));
+        query.must(createSimpleQuery("processingStatus", TaskStatus.DONE.getValue(), false));
+        AktuelleSchritteForm form = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+        if (Objects.equals(form, null)) {
+            form = new AktuelleSchritteForm();
+        }
+        if (form.getHideCorrectionTasks()) {
+            query.must(createSimpleQuery("priority", 10, true));
+        }
+        if (!form.getShowAutomaticTasks()) {
+            query.must(createSimpleQuery("typeAutomatic", "false", true));
+        }
+
+        return query.toString();
+
+    }
+
 
     /**
      * Method saves or removes dependencies with process, users and user's groups
