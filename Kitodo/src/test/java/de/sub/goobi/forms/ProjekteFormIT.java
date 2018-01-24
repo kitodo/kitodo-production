@@ -13,7 +13,6 @@ package de.sub.goobi.forms;
 
 import static org.junit.Assert.assertEquals;
 
-import org.goobi.production.flow.statistics.StatisticsManager;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -73,5 +72,17 @@ public class ProjekteFormIT {
 
         //assertEquals("Statistics Manager was not counted correctly!", Integer.valueOf(50), statisticsManager.getNumberOfPages());
         //assertEquals("Statistics Manager was not counted correctly!", Integer.valueOf(3), statisticsManager.getNumberOfVolumes());
+    }
+
+    @Test
+    public void shouldDuplicateProject() throws Exception {
+        ProjekteForm projekteForm = new ProjekteForm();
+        ProjectService projectService = new ServiceManager().getProjectService();
+
+        Project initialProject = projectService.getById(1);
+
+        projekteForm.duplicateProject(initialProject.getId());
+
+        assertEquals(projekteForm.getMyProjekt().getFileFormatDmsExport(), initialProject.getFileFormatDmsExport());
     }
 }

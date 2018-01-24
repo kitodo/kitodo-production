@@ -15,7 +15,6 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -28,8 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
@@ -162,6 +161,60 @@ public class ProjekteForm extends BasisForm {
         this.myProjekt = new Project();
         this.itemId = 0;
         return redirectToEdit("?faces-redirect=true");
+    }
+
+    /**
+     * Duplicate the selected project.
+     *
+     * @return page address
+     */
+    public String duplicateProject(Integer itemId) {
+        this.myProjekt = new Project();
+        this.itemId = 0;
+        try {
+            Project baseProject = serviceManager.getProjectService().getById(itemId);
+
+            // Project _title_ should explicitly _not_ be duplicated!
+            this.myProjekt.setStartDate(baseProject.getStartDate());
+            this.myProjekt.setEndDate(baseProject.getEndDate());
+            this.myProjekt.setNumberOfPages(baseProject.getNumberOfPages());
+            this.myProjekt.setNumberOfVolumes(baseProject.getNumberOfVolumes());
+
+            this.myProjekt.setFileFormatInternal(baseProject.getFileFormatInternal());
+            this.myProjekt.setFileFormatDmsExport(baseProject.getFileFormatDmsExport());
+            this.myProjekt.setDmsImportErrorPath(baseProject.getDmsImportErrorPath());
+            this.myProjekt.setDmsImportSuccessPath(baseProject.getDmsImportSuccessPath());
+
+            this.myProjekt.setDmsImportTimeOut(baseProject.getDmsImportTimeOut());
+            this.myProjekt.setUseDmsImport(baseProject.isUseDmsImport());
+            this.myProjekt.setDmsImportCreateProcessFolder(baseProject.isDmsImportCreateProcessFolder());
+
+            this.myProjekt.setMetsRightsOwner(baseProject.getMetsRightsOwner());
+            this.myProjekt.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());
+            this.myProjekt.setMetsRightsOwnerSite(baseProject.getMetsRightsOwnerSite());
+            this.myProjekt.setMetsRightsOwnerMail(baseProject.getMetsRightsOwnerMail());
+
+            this.myProjekt.setMetsDigiprovPresentation(baseProject.getMetsDigiprovPresentation());
+            this.myProjekt.setMetsDigiprovPresentationAnchor(baseProject.getMetsDigiprovPresentationAnchor());
+            this.myProjekt.setMetsDigiprovReference(baseProject.getMetsDigiprovReference());
+            this.myProjekt.setMetsDigiprovReferenceAnchor(baseProject.getMetsDigiprovReferenceAnchor());
+
+            this.myProjekt.setMetsPointerPath(baseProject.getMetsPointerPath());
+            this.myProjekt.setMetsPointerPathAnchor(baseProject.getMetsPointerPathAnchor());
+            this.myProjekt.setMetsPurl(baseProject.getMetsPurl());
+            this.myProjekt.setMetsContentIDs(baseProject.getMetsContentIDs());
+
+            this.myProjekt.setProcesses(new ArrayList<>(baseProject.getProcesses()));
+
+            return redirectToEdit("?faces-redirect=true");
+
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage("ERROR: Unable to duplicate selected project!");
+            facesContext.addMessage(null, facesMessage);
+            return null;
+        }
     }
 
     /**
