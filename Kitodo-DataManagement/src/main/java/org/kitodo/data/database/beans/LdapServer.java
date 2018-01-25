@@ -39,8 +39,8 @@ public class LdapServer extends BaseBean {
     @OneToMany(mappedBy = "ldapServer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LdapGroup> ldapGroups;
 
-    @Column(name = "nextFreeUnixId")
-    private String nextFreeUnixId;
+    @Column(name = "nextFreeUnixIdPattern")
+    private String nextFreeUnixIdPattern;
 
     @Column(name = "useSsl")
     private boolean useSsl = false;
@@ -142,21 +142,21 @@ public class LdapServer extends BaseBean {
     }
 
     /**
-     * Gets nextFreeUnixId.
+     * Gets nextFreeUnixIdPattern.
      *
-     * @return The nextFreeUnixId.
+     * @return The nextFreeUnixIdPattern.
      */
-    public String getNextFreeUnixId() {
-        return nextFreeUnixId;
+    public String getNextFreeUnixIdPattern() {
+        return nextFreeUnixIdPattern;
     }
 
     /**
-     * Sets nextFreeUnixId.
+     * Sets nextFreeUnixIdPattern.
      *
-     * @param nextFreeUnixId The nextFreeUnixId.
+     * @param nextFreeUnixIdPattern The nextFreeUnixIdPattern.
      */
-    public void setNextFreeUnixId(String nextFreeUnixId) {
-        this.nextFreeUnixId = nextFreeUnixId;
+    public void setNextFreeUnixIdPattern(String nextFreeUnixIdPattern) {
+        this.nextFreeUnixIdPattern = nextFreeUnixIdPattern;
     }
 
     /**

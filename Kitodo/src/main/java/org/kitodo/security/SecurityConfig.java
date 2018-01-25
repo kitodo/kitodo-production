@@ -89,8 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        DynamicAuthenticationProvider authenticationProvider = DynamicAuthenticationProvider.getInstance();
-//        authenticationProvider.configureLdap("ldap://192.168.56.101","cn={0},cn=users,ou=kitodo,dc=ldap,dc=com");
+        DynamicAuthenticationProvider authenticationProvider = new DynamicAuthenticationProvider();
         authenticationProvider.readLocalConfig();
         auth.authenticationProvider(authenticationProvider);
     }
