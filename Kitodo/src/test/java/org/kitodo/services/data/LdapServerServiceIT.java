@@ -35,8 +35,9 @@ public class LdapServerServiceIT {
     }
 
     @Test
-    public void shouldFindLdapGroup() throws Exception {
+    public void shouldFindLdapServer() throws Exception {
         LdapServer ldapServer = ldapServerService.getById(1);
         assertEquals("LpadServer title is not matching","FirstLdapServer",ldapServer.getTitle());
+        assertEquals("LpadServer useSsl is not matching",false,ldapServer.isUseSsl());
     }
 }

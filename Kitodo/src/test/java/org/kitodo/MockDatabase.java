@@ -303,6 +303,8 @@ public class MockDatabase {
         ldapServer.setManagerLogin("LdapManager");
         ldapServer.setManagerPassword("LdapManagerPasswort");
         ldapServer.setUrl("LdapUrl");
+        ldapServer.setPasswordEncryption("SHA");
+        ldapServer.setUseSsl(false);
 
         serviceManager.getLdapServerService().save(ldapServer);
     }
@@ -317,6 +319,7 @@ public class MockDatabase {
         firstLdapGroup.setDescription("Test LDAP group");
         firstLdapGroup.setDisplayName("Name");
         firstLdapGroup.setLdapServer(serviceManager.getLdapServerService().getById(1));
+
         serviceManager.getLdapGroupService().save(firstLdapGroup);
     }
 

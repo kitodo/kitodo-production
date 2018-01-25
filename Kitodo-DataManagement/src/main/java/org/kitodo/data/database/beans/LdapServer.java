@@ -39,6 +39,18 @@ public class LdapServer extends BaseBean {
     @OneToMany(mappedBy = "ldapServer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LdapGroup> ldapGroups;
 
+    @Column(name = "nextFreeUnixId")
+    private String nextFreeUnixId;
+
+    @Column(name = "useSsl")
+    private boolean useSsl = false;
+
+    @Column(name = "readonly")
+    private boolean readonly = false;
+
+    @Column(name = "passwordEncryption")
+    private String passwordEncryption;
+
     /**
      * Gets title.
      *
@@ -127,5 +139,77 @@ public class LdapServer extends BaseBean {
      */
     private void setLdapGroups(List<LdapGroup> ldapGroups) {
         this.ldapGroups = ldapGroups;
+    }
+
+    /**
+     * Gets nextFreeUnixId.
+     *
+     * @return The nextFreeUnixId.
+     */
+    public String getNextFreeUnixId() {
+        return nextFreeUnixId;
+    }
+
+    /**
+     * Sets nextFreeUnixId.
+     *
+     * @param nextFreeUnixId The nextFreeUnixId.
+     */
+    public void setNextFreeUnixId(String nextFreeUnixId) {
+        this.nextFreeUnixId = nextFreeUnixId;
+    }
+
+    /**
+     * Gets useSsl.
+     *
+     * @return The useSsl.
+     */
+    public boolean isUseSsl() {
+        return useSsl;
+    }
+
+    /**
+     * Sets useSsl.
+     *
+     * @param useSsl The useSsl.
+     */
+    public void setUseSsl(boolean useSsl) {
+        this.useSsl = useSsl;
+    }
+
+    /**
+     * Gets readonly.
+     *
+     * @return The readonly.
+     */
+    public boolean isReadonly() {
+        return readonly;
+    }
+
+    /**
+     * Sets readonly.
+     *
+     * @param readonly The readonly.
+     */
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
+    }
+
+    /**
+     * Gets passwordEncryption.
+     *
+     * @return The passwordEncryption.
+     */
+    public String getPasswordEncryption() {
+        return passwordEncryption;
+    }
+
+    /**
+     * Sets passwordEncryption.
+     *
+     * @param passwordEncryption The passwordEncryption.
+     */
+    public void setPasswordEncryption(String passwordEncryption) {
+        this.passwordEncryption = passwordEncryption;
     }
 }
