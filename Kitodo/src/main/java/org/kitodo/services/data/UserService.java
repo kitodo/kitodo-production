@@ -216,9 +216,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (users.size() == 1)  {
             return users.get(0);
         } else if (users.size() == 0) {
-            throw new UsernameNotFoundException("Username " + login + "not found!");
+            throw new UsernameNotFoundException("Username " + login + " not found!");
         } else {
-            throw new UsernameNotFoundException("Username " + login + "was found more than once");
+            throw new UsernameNotFoundException("Username " + login + " was found more than once");
         }
     }
 

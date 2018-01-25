@@ -29,8 +29,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
-import org.springframework.security.ldap.userdetails.LdapUserDetails;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsImpl;
 
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
@@ -41,8 +39,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * package-private Constructor for DynamicAuthenticationProvider which also sets instance
-     * variable for singleton usage.
+     * Package-private Constructor for DynamicAuthenticationProvider which also sets
+     * instance variable for singleton usage.
      */
     DynamicAuthenticationProvider() {
         if (Objects.equals(instance, null)) {
@@ -57,25 +55,14 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (ldapAuthentication) {
-            Object principal = authentication.getPrincipal();
-
-            LdapUserDetailsImpl user = null;
-
-            if (principal instanceof LdapUserDetails) {
-                user = (LdapUserDetailsImpl) principal;
-            }
-
-            if (user != null) {
-                try {
-                    User userBean = serviceManager.getUserService().getByLogin(user.getUsername());
-                    configureLdapAuthentication(userBean.getLdapGroup());
-                } catch (DAOException e) {
-                    // using getByLogin(), DAOExeption is thrown when username is not found on
-                    // database
-                    // it must be converted in UsernameNotFoundException in order to match interface
-                    // method signature
-                    throw new UsernameNotFoundException("Username " + user.getUsername() + " was not found!");
-                }
+            try {
+                User user = serviceManager.getUserService().getByLogin(authentication.getName());
+                configureAndActivateLdapAuthentication(user.getLdapGroup());
+            } catch (DAOException e) {
+                // getByLogin() throws DAOExeption, it must be converted in UsernameNotFoundException
+                // in order to match interface method signature
+                logger.error(e.getMessage());
+                throw new UsernameNotFoundException("Could not read Username from database!");
             }
         }
         return authenticationProvider.authenticate(authentication);
@@ -86,20 +73,33 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         return authenticationProvider.supports(authentication);
     }
 
-    public void configureLdapAuthentication(LdapGroup ldapGroup) {
+    /**
+     * This method activates ldap authentication and configures ldap url and userDn
+     * pattern.
+     *
+     * @param ldapGroup
+     *            The ldapGroup Object.
+     */
+    public void configureAndActivateLdapAuthentication(LdapGroup ldapGroup) {
 
         DefaultSpringSecurityContextSource ldapContextSource = new DefaultSpringSecurityContextSource(
                 ldapGroup.getLdapServer().getUrl());
         ldapContextSource.afterPropertiesSet();
 
         BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
-        authenticator.setUserDnPatterns(new String[] {ldapGroup.getUserDN() });
+
+        String userDN = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
+
+        authenticator.setUserDnPatterns(new String[] {userDN });
 
         this.authenticationProvider = new LdapAuthenticationProvider(authenticator,
-            new CustomLdapAuthoritiesPopulator());
+                new CustomLdapAuthoritiesPopulator());
     }
 
-    public void configureDatabaseAuthentication() {
+    /**
+     * This method activates database authentication.
+     */
+    public void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(serviceManager.getUserService());
         daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
@@ -115,18 +115,25 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         return instance;
     }
 
+    /**
+     * This method reads local config and sets authentication flag.
+     */
     public void readLocalConfig() {
         String ldapUse = ConfigCore.getParameter("ldap_use");
         if (ldapUse != null && ldapUse.equals("true")) {
             ldapAuthentication = true;
-            try {
-                configureLdapAuthentication(serviceManager.getLdapGroupService().getById(2));
-            } catch (DAOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            configureDatabaseAuthentication();
         }
+    }
+
+    /**
+     * This method initializes the authentication provider with database authentication.
+     */
+    public void initializeAuthenticationProvider() {
+        activateDatabaseAuthentication();
+    }
+
+    private String convertKitodoLdapUserDnToSpringSecurityPattern(String userDn) {
+        return userDn.replaceFirst("\\{login}", "{0}");
     }
 
     /**

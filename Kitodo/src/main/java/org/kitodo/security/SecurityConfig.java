@@ -28,8 +28,6 @@ import java.util.Objects;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static SecurityConfig instance = null;
-    private transient ServiceManager serviceManager = new ServiceManager();
-    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private SessionRegistry sessionRegistry;
 
     /**
@@ -91,6 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         DynamicAuthenticationProvider authenticationProvider = new DynamicAuthenticationProvider();
         authenticationProvider.readLocalConfig();
+        authenticationProvider.initializeAuthenticationProvider();
         auth.authenticationProvider(authenticationProvider);
     }
 
