@@ -117,7 +117,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     public void readLocalConfig() {
         String ldapUse = ConfigCore.getParameter("ldap_use");
-        if (ldapUse.equals("true")) {
+        if (ldapUse != null && ldapUse.equals("true")) {
             ldapAuthentication = true;
             try {
                 configureLdapAuthentication(serviceManager.getLdapGroupService().getById(2));
