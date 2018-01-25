@@ -9,7 +9,7 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
-CREATE TABLE ldapserver (
+CREATE TABLE ldapServer (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) DEFAULT NULL,
   `url` VARCHAR(255) DEFAULT NULL,
@@ -19,11 +19,15 @@ CREATE TABLE ldapserver (
   `useSsl` TINYINT(1) DEFAULT NULL,
   `readonly` TINYINT(1) DEFAULT NULL,
   `passwordEncryption` VARCHAR(6) DEFAULT NULL,
-  PRIMARY KEY (`id`)),
+  `rootCertificate` VARCHAR(255) DEFAULT NULL,
+  `pdcCertificate` VARCHAR(255) DEFAULT NULL,
+  `keystore` VARCHAR(255) DEFAULT NULL,
+  `keystorePassword` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`id`))
   DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-ALTER TABLE ldapgroup
+ALTER TABLE ldapGroup
 ADD COLUMN `ldapserver_id` INT(11) NULL DEFAULT NULL;
 
-ALTER TABLE ldapgroup ADD CONSTRAINT `FK_ldapGroup_ldapServer_id`
-foreign key (ldapserver_id) REFERENCES ldapserver(id);
+ALTER TABLE ldapGroup ADD CONSTRAINT `FK_ldapGroup_ldapServer_id`
+foreign key (ldapserver_id) REFERENCES ldapServer(id);

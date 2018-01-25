@@ -51,6 +51,18 @@ public class LdapServer extends BaseBean {
     @Column(name = "passwordEncryption")
     private String passwordEncryption;
 
+    @Column(name = "rootCertificate")
+    private String rootCertificate;
+
+    @Column(name = "pdcCertificate")
+    private String pdcCertificate;
+
+    @Column(name = "keystore")
+    private String keystore;
+
+    @Column(name = "keystorePassword")
+    private String keystorePassword;
+
     /**
      * Gets title.
      *
@@ -211,5 +223,77 @@ public class LdapServer extends BaseBean {
      */
     public void setPasswordEncryption(String passwordEncryption) {
         this.passwordEncryption = passwordEncryption;
+    }
+
+    /**
+     * Gets rootCertificate.
+     *
+     * @return The rootCertificate.
+     */
+    public String getRootCertificate() {
+        return rootCertificate;
+    }
+
+    /**
+     * Sets rootCertificate.
+     *
+     * @param rootCertificate The rootCertificate.
+     */
+    public void setRootCertificate(String rootCertificate) {
+        this.rootCertificate = rootCertificate;
+    }
+
+    /**
+     * Gets pdcCertificate.
+     *
+     * @return The pdcCertificate.
+     */
+    public String getPdcCertificate() {
+        return pdcCertificate;
+    }
+
+    /**
+     * Sets pdcCertificate.
+     *
+     * @param pdcCertificate The pdcCertificate.
+     */
+    public void setPdcCertificate(String pdcCertificate) {
+        this.pdcCertificate = pdcCertificate;
+    }
+
+    /**
+     * Gets keystore.
+     *
+     * @return The keystore.
+     */
+    public String getKeystore() {
+        return keystore;
+    }
+
+    /**
+     * Sets keystore.
+     *
+     * @param keystore The keystore.
+     */
+    public void setKeystore(String keystore) {
+        this.keystore = keystore;
+    }
+
+    /**
+     * Gets keystorePassword.
+     *
+     * @return The keystorePassword.
+     */
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    /**
+     * Sets keystorePassword.
+     *
+     * @param keystorePassword The keystorePassword.
+     */
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
     }
 }
