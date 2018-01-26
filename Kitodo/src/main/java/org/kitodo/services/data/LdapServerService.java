@@ -14,19 +14,21 @@ package org.kitodo.services.data;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.LdapUser;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.JDKMessageDigest;
-import org.kitodo.data.database.beans.LdapServer;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.PasswordEncryption;
-import org.kitodo.data.database.persistence.LdapServerDAO;
-import org.kitodo.security.SecurityPasswordEncoder;
-import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.base.SearchDatabaseService;
-import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Hashtable;
+import java.util.Objects;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -43,20 +45,19 @@ import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Hashtable;
-import java.util.Objects;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.provider.JDKMessageDigest;
+import org.kitodo.data.database.beans.LdapServer;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.PasswordEncryption;
+import org.kitodo.data.database.persistence.LdapServerDAO;
+import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.SearchDatabaseService;
 
 public class LdapServerService extends SearchDatabaseService<LdapServer, LdapServerDAO> {
 
@@ -150,10 +151,11 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      *            String
      */
     public void createNewUser(User user, String password)
-        throws NamingException, NoSuchAlgorithmException, IOException {
+            throws NamingException, NoSuchAlgorithmException, IOException {
 
         if (!user.getLdapGroup().getLdapServer().isReadonly()) {
-            Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
+            Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
+                user.getLdapGroup().getLdapServer());
 
             LdapUser ldapUser = new LdapUser();
             ldapUser.configure(user, password, getNextUidNumber(user.getLdapGroup().getLdapServer()));
@@ -161,8 +163,8 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             ctx.bind(buildUserDN(user), ldapUser);
             ctx.close();
             setNextUidNumber(user.getLdapGroup().getLdapServer());
-            Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " "
-                + serviceManager.getUserService().getFullName(user), "");
+            Helper.setMeldung(null,
+                Helper.getTranslation("ldapWritten") + " " + serviceManager.getUserService().getFullName(user), "");
             /*
              * check if HomeDir exists, else create it
              */
@@ -289,8 +291,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         }
     }
 
-
-    //TODO Test this method
+    // TODO Test this method
     /**
      * retrieve home directory of given user.
      *
@@ -305,9 +306,9 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
 
-//            env = new Hashtable<>();
-//            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-//            env.put(Context.PROVIDER_URL, user.getLdapGroup().getLdapServer().getUrl());
+            // env = new Hashtable<>();
+            // env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+            // env.put(Context.PROVIDER_URL, user.getLdapGroup().getLdapServer().getUrl());
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;
             StartTlsResponse tls = null;
@@ -318,11 +319,13 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
                 tls.negotiate();
 
-//                // Authenticate via SASL EXTERNAL mechanism using client X.509
-//                // certificate contained in JVM keystore
-//                ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
-//                ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-//                ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
+                // // Authenticate via SASL EXTERNAL mechanism using client X.509
+                // // certificate contained in JVM keystore
+                // ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
+                // ctx.addToEnvironment(Context.SECURITY_PRINCIPAL,
+                // ConfigCore.getParameter("ldap_adminLogin"));
+                // ctx.addToEnvironment(Context.SECURITY_CREDENTIALS,
+                // ConfigCore.getParameter("ldap_adminPassword"));
 
                 ctx.reconnect(null);
 
@@ -363,8 +366,10 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         } else if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
             env.put(Context.SECURITY_AUTHENTICATION, "none");
         } else {
-//            env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-//            env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
+            // env.put(Context.SECURITY_PRINCIPAL,
+            // ConfigCore.getParameter("ldap_adminLogin"));
+            // env.put(Context.SECURITY_CREDENTIALS,
+            // ConfigCore.getParameter("ldap_adminPassword"));
 
         }
         DirContext ctx;
@@ -381,7 +386,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         return rueckgabe;
     }
 
-    //TODO Test this method
+    // TODO Test this method
     /**
      * Check if User already exists on system.
      *
@@ -390,14 +395,14 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      * @return result as boolean
      */
     public boolean isUserAlreadyExists(User user) {
-        Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
+        Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
+            user.getLdapGroup().getLdapServer());
         DirContext ctx;
         boolean rueckgabe = false;
         try {
             ctx = new InitialDirContext(ldapEnvironment);
             Attributes matchAttrs = new BasicAttributes(true);
-            NamingEnumeration<SearchResult> answer = ctx.search(buildUserDN(user),
-                matchAttrs);
+            NamingEnumeration<SearchResult> answer = ctx.search(buildUserDN(user), matchAttrs);
             rueckgabe = answer.hasMoreElements();
 
             while (answer.hasMore()) {
@@ -508,27 +513,25 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      *            String
      * @return boolean about result of change
      */
-    public boolean changeUserPassword(User user, String inNewPassword)
-        throws NoSuchAlgorithmException {
+    public boolean changeUserPassword(User user, String inNewPassword) throws NoSuchAlgorithmException {
         JDKMessageDigest.MD4 digester = new JDKMessageDigest.MD4();
         PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryptionEnum();
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadonly()) {
             try {
-                DirContext ctx = new InitialDirContext(env);
 
                 /*
                  * Encryption of password and Base64-Encoding
                  */
                 MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
+                String encryptedPassword = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
 
                 /*
                  * UserPasswort-Attribut ändern
                  */
                 BasicAttribute userpassword = new BasicAttribute("userPassword",
-                    "{" + passwordEncryption + "}" + digestBase64);
+                        "{" + passwordEncryption + "}" + encryptedPassword);
 
                 /*
                  * LanMgr-Passwort-Attribut ändern
@@ -536,7 +539,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 BasicAttribute lanmgrpassword = null;
                 try {
                     lanmgrpassword = new BasicAttribute("sambaLMPassword",
-                        LdapUser.toHexString(LdapUser.lmHash(inNewPassword)));
+                            LdapUser.toHexString(LdapUser.lmHash(inNewPassword)));
                     // TODO: Don't catch super class exception, make sure that
                     // the password isn't logged here
                 } catch (Exception e) {
@@ -556,13 +559,15 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 }
 
                 BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
-                    String.valueOf(System.currentTimeMillis() / 1000L));
+                        String.valueOf(System.currentTimeMillis() / 1000L));
 
                 ModificationItem[] mods = new ModificationItem[4];
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userpassword);
                 mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
                 mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);
                 mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
+
+                DirContext ctx = new InitialDirContext(env);
                 ctx.modifyAttributes(buildUserDN(user), mods);
 
                 // Close the context when we're done
@@ -576,18 +581,16 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         return false;
     }
 
-
-
     // TODO test if this methods works
     private void loadCertificates(String path, String passwd, LdapServer ldapServer) {
         /* wenn die Zertifikate noch nicht im Keystore sind, jetzt einlesen */
         File myPfad = new File(path);
         if (!myPfad.exists()) {
             try (FileOutputStream ksos = (FileOutputStream) serviceManager.getFileService().write(myPfad.toURI());
-                 // TODO: Rename parameters to something more meaningful,
-                 // this is quite specific for the GDZ
-                 FileInputStream cacertFile = new FileInputStream(ldapServer.getRootCertificate());
-                 FileInputStream certFile2 = new FileInputStream(ldapServer.getPdcCertificate())) {
+                    // TODO: Rename parameters to something more meaningful,
+                    // this is quite specific for the GDZ
+                    FileInputStream cacertFile = new FileInputStream(ldapServer.getRootCertificate());
+                    FileInputStream certFile2 = new FileInputStream(ldapServer.getPdcCertificate())) {
 
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 X509Certificate cacert = (X509Certificate) cf.generateCertificate(cacertFile);
