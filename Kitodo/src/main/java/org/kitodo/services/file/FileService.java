@@ -778,6 +778,15 @@ public class FileService {
         return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toUri();
     }
 
+    /**
+     * Gets the URI to the users directory.
+     *
+     * @return the URI to the users directory.
+     */
+    public URI getUsersDirectory() {
+        return Paths.get(ConfigCore.getParameter("dir_Users", "/usr/local/kitodo/users/")).toUri();
+    }
+
     public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
             throws WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
@@ -818,5 +827,13 @@ public class FileService {
         KitodoServiceLoader<FileManagementInterface> loader = new KitodoServiceLoader<>(FileManagementInterface.class,
                 ConfigCore.getParameter("moduleFolder"));
         return loader.loadModule();
+    }
+
+    public URI deleteFirstSlashFromPath(URI uri) {
+        String uriString = uri.getPath();
+        if (uriString.startsWith("/")) {
+            uriString = uriString.replaceFirst("/","");
+        }
+        return URI.create(uriString);
     }
 }

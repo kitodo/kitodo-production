@@ -187,7 +187,9 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
              * check if HomeDir exists, else create it
              */
             logger.debug("HomeVerzeichnis pruefen");
-            URI homePath = URI.create(getUserHomeDirectory(user));
+
+            URI homePath = getUserHomeDirectory(user);
+
             if (!new File(homePath).exists()) {
                 logger.debug("HomeVerzeichnis existiert noch nicht");
                 serviceManager.getFileService().createDirectoryForUser(homePath, user.getLogin());
@@ -309,24 +311,23 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         }
     }
 
-    // TODO Test this method
     /**
-     * retrieve home directory of given user.
+     * Retrieve home directory of given user.
      *
      * @param user
      *            User object
-     * @return path as string
+     * @return path as URI
      */
-    public String getUserHomeDirectory(User user) {
+    public URI getUserHomeDirectory(User user) {
+
+        URI userFolderBasePath = URI.create("file:///" + ConfigCore.getParameter("dir_Users"));
+
         if (ConfigCore.getBooleanParameter("useLocalDirectory", false)) {
-            return ConfigCore.getParameter("dir_Users") + user.getLogin();
+            return userFolderBasePath.resolve(user.getLogin());
         }
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
 
-            // env = new Hashtable<>();
-            // env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            // env.put(Context.PROVIDER_URL, user.getLdapGroup().getLdapServer().getUrl());
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;
             StartTlsResponse tls = null;
@@ -337,19 +338,11 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
                 tls.negotiate();
 
-                // // Authenticate via SASL EXTERNAL mechanism using client X.509
-                // // certificate contained in JVM keystore
-                // ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
-                // ctx.addToEnvironment(Context.SECURITY_PRINCIPAL,
-                // ConfigCore.getParameter("ldap_adminLogin"));
-                // ctx.addToEnvironment(Context.SECURITY_CREDENTIALS,
-                // ConfigCore.getParameter("ldap_adminPassword"));
-
                 ctx.reconnect(null);
 
                 Attributes attrs = ctx.getAttributes(buildUserDN(user));
                 Attribute la = attrs.get("homeDirectory");
-                return (String) la.get(0);
+                return URI.create((String) la.get(0));
 
                 // Perform search for privileged attributes under authenticated
                 // context
@@ -357,12 +350,12 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             } catch (IOException e) {
                 logger.error("TLS negotiation error:", e);
 
-                return ConfigCore.getParameter("dir_Users") + user.getLogin();
+                return userFolderBasePath.resolve(user.getLogin());
             } catch (NamingException e) {
 
                 logger.error("JNDI error:", e);
 
-                return ConfigCore.getParameter("dir_Users") + user.getLogin();
+                return userFolderBasePath.resolve(user.getLogin());
             } finally {
                 if (tls != null) {
                     try {
@@ -381,27 +374,30 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                     }
                 }
             }
-        } else if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
+        }
+        if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
             env.put(Context.SECURITY_AUTHENTICATION, "none");
-        } else {
-            // env.put(Context.SECURITY_PRINCIPAL,
-            // ConfigCore.getParameter("ldap_adminLogin"));
-            // env.put(Context.SECURITY_CREDENTIALS,
-            // ConfigCore.getParameter("ldap_adminPassword"));
-
         }
         DirContext ctx;
-        String rueckgabe = "";
+        URI userFolderPath = null;
         try {
             ctx = new InitialDirContext(env);
             Attributes attrs = ctx.getAttributes(buildUserDN(user));
-            Attribute la = attrs.get("homeDirectory");
-            rueckgabe = (String) la.get(0);
+            Attribute ldapAttribute = attrs.get("homeDirectory");
+            userFolderPath = URI.create((String) ldapAttribute.get(0));
             ctx.close();
         } catch (NamingException e) {
             logger.error(e);
         }
-        return rueckgabe;
+
+        if (userFolderPath != null && !userFolderPath.isAbsolute()) {
+            if (userFolderPath.getPath().startsWith("/")) {
+                userFolderPath = serviceManager.getFileService().deleteFirstSlashFromPath(userFolderPath);
+            }
+            return userFolderBasePath.resolve(userFolderPath);
+        } else {
+            return userFolderPath;
+        }
     }
 
     /**

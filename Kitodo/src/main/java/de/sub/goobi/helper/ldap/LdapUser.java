@@ -63,7 +63,7 @@ public class LdapUser implements DirContext {
     }
 
     /**
-     * configure LdapUser with Userdetails.
+     * configure LdapUser with User data.
      *
      * @param user
      *            User object
