@@ -13,7 +13,6 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -67,9 +66,8 @@ public class LoginForm implements Serializable {
             Helper.setFehlerMeldung(Helper.getTranslation("passwordsDontMatch"));
         } else {
             try {
-                /* wenn alles korrekt, dann jetzt speichern */
-                Ldap myLdap = new Ldap();
-                myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
+                /* wenn alles korrekt, dann jetzt speichern */;
+                serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
                 User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
                 temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
                 serviceManager.getUserService().save(temp);

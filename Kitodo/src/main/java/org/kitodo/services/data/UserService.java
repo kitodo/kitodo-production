@@ -13,7 +13,6 @@ package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.File;
 import java.io.IOException;
@@ -675,8 +674,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             return false;
         } else {
             if (ConfigCore.getBooleanParameter("ldap_use")) {
-                Ldap ldap = new Ldap();
-                return ldap.isUserPasswordCorrect(user, inputPassword);
+                return serviceManager.getLdapServerService().isUserPasswordCorrect(user, inputPassword);
             } else {
                 SecurityPasswordEncoder encrypter = new SecurityPasswordEncoder();
                 String encoded = encrypter.encrypt(inputPassword);
@@ -712,8 +710,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     public URI getHomeDirectory(User user) throws IOException {
         URI result;
         if (ConfigCore.getBooleanParameter("ldap_use")) {
-            Ldap ldap = new Ldap();
-            result = Paths.get(ldap.getUserHomeDirectory(user)).toUri();
+            result = Paths.get(serviceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
         } else {
             result = Paths.get(ConfigCore.getParameter("dir_Users"), user.getLogin()).toUri();
         }

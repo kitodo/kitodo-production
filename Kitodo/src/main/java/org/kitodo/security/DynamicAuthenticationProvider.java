@@ -119,10 +119,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      * This method reads local config and sets authentication flag.
      */
     public void readLocalConfig() {
-        String ldapUse = ConfigCore.getParameter("ldap_use");
-        if (ldapUse != null && ldapUse.equals("true")) {
-            ldapAuthentication = true;
-        }
+        ldapAuthentication = ConfigCore.getBooleanParameter("ldap_use",false);
     }
 
     /**

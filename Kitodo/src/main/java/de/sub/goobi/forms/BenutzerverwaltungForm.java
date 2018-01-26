@@ -14,7 +14,6 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -359,9 +358,8 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Ldap-Konfiguration für den Benutzer schreiben.
      */
     public String ldapKonfigurationSchreiben() {
-        Ldap myLdap = new Ldap();
         try {
-            myLdap.createNewUser(this.userObject, passwordEncoder.decrypt(this.userObject.getPassword()));
+            serviceManager.getLdapServerService().createNewUser(this.userObject, passwordEncoder.decrypt(this.userObject.getPassword()));
         } catch (Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Could not generate ldap entry: " + e.getMessage());
