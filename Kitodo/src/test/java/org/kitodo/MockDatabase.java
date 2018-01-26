@@ -89,7 +89,7 @@ public class MockDatabase {
         tcpServer = Server.createTcpServer().start();
     }
 
-    public static void stopDatabaseServer() throws SQLException {
+    public static void stopDatabaseServer() {
         if(tcpServer.isRunning(true)){
             tcpServer.shutdown();
         }
@@ -143,6 +143,25 @@ public class MockDatabase {
         insertTemplateProperties();
         insertUserFilters();
         insertTasks();
+        insertHistory();
+    }
+
+    public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
+        insertAuthorizations();
+        insertBatches();
+        insertDockets();
+        insertRulesets();
+        insertLdapGroups();
+        insertUsers();
+        insertUserGroups();
+        insertProjects();
+        insertProjectFileGroups();
+        insertProcessesForWorkflow();
+        insertProcessProperties();
+        insertWorkpieceProperties();
+        insertTemplateProperties();
+        insertUserFilters();
+        insertTasksForWorkflow();
         insertHistory();
     }
 
@@ -364,6 +383,48 @@ public class MockDatabase {
         fifthProcess.setInChoiceListShown(true);
         serviceManager.getProcessService().save(fifthProcess);
         serviceManager.getProjectService().save(thirdProject);
+    }
+
+    private static void insertProcessesForWorkflow() throws DAOException, DataException {
+        Project project = serviceManager.getProjectService().getById(1);
+
+        Process firstProcess = new Process();
+        firstProcess.setTitle("First process");
+        firstProcess.setOutputName("Test");
+        firstProcess.setWikiField("wiki");
+        LocalDate localDate = new LocalDate(2016, 10, 20);
+        firstProcess.setCreationDate(localDate.toDate());
+        firstProcess.setSortHelperImages(20);
+        List<Batch> batches = new ArrayList<>();
+        Batch firstBatch = serviceManager.getBatchService().getById(1);
+        Batch secondBatch = serviceManager.getBatchService().getById(3);
+        List<Process> processes = new ArrayList<>();
+        processes.add(firstProcess);
+        firstBatch.setProcesses(processes);
+        secondBatch.setProcesses(processes);
+        batches.add(firstBatch);
+        batches.add(secondBatch);
+        firstProcess.setBatches(batches);
+        firstProcess.setTemplate(true);
+        firstProcess.setInChoiceListShown(true);
+        firstProcess.setDocket(serviceManager.getDocketService().getById(1));
+        firstProcess.setProject(project);
+        firstProcess.setRuleset(serviceManager.getRulesetService().getById(1));
+        serviceManager.getProcessService().save(firstProcess);
+
+        Process secondProcess = new Process();
+        secondProcess.setTitle("Second process");
+        secondProcess.setOutputName("Testowy");
+        secondProcess.setWikiField("field");
+        localDate = new LocalDate(2017, 1, 20);
+        secondProcess.setCreationDate(localDate.toDate());
+        secondProcess.setInChoiceListShown(true);
+        secondProcess.setSortHelperImages(30);
+        secondProcess.setDocket(serviceManager.getDocketService().getById(1));
+        secondProcess.setProject(project);
+        secondProcess.setRuleset(serviceManager.getRulesetService().getById(1));
+        secondProcess.setSortHelperStatus("100000000");
+        serviceManager.getProcessService().save(secondProcess);
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {
@@ -663,6 +724,132 @@ public class MockDatabase {
         fifthProcess.getTasks().add(fifthTask);
         fifthProcess.getTasks().add(sixthTask);
         serviceManager.getProcessService().save(fifthProcess);
+
+        secondUser.getProcessingTasks().add(fifthTask);
+        secondUser.getProcessingTasks().add(sixthTask);
+        serviceManager.getUserService().save(secondUser);
+    }
+
+    private static void insertTasksForWorkflow() throws DAOException, DataException {
+        Process firstProcess = serviceManager.getProcessService().getById(1);
+
+        Task firstTask = new Task();
+        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        firstTask.setTitle("Testing");
+        firstTask.setPriority(1);
+        firstTask.setOrdering(1);
+        firstTask.setEditTypeEnum(TaskEditType.ADMIN);
+        LocalDate localDate = new LocalDate(2016, 10, 20);
+        firstTask.setProcessingBegin(localDate.toDate());
+        localDate = new LocalDate(2016, 12, 24);
+        firstTask.setProcessingTime(localDate.toDate());
+        localDate = new LocalDate(2016, 12, 24);
+        firstTask.setProcessingEnd(localDate.toDate());
+        User firstUser = serviceManager.getUserService().getById(1);
+        firstTask.setProcessingUser(firstUser);
+        firstTask.setProcessingStatusEnum(TaskStatus.DONE);
+        firstTask.setProcess(firstProcess);
+        firstTask.setUsers(serviceManager.getUserService().getAll());
+        firstTask.getUserGroups().add(userGroup);
+        serviceManager.getTaskService().save(firstTask);
+        serviceManager.getProcessService().save(firstProcess);
+        firstUser.getProcessingTasks().add(firstTask);
+        serviceManager.getUserService().save(firstUser);
+
+        User blockedUser = serviceManager.getUserService().getById(3);
+        User secondUser = serviceManager.getUserService().getById(2);
+
+        Task secondTask = new Task();
+        secondTask.setTitle("Blocking");
+        secondTask.setOrdering(2);
+        secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2016, 9, 25);
+        secondTask.setProcessingBegin(localDate.toDate());
+        secondTask.setProcessingUser(blockedUser);
+        secondTask.setProcessingStatusEnum(TaskStatus.DONE);
+        secondTask.setProcess(firstProcess);
+        secondTask.getUsers().add(blockedUser);
+        secondTask.getUsers().add(secondUser);
+        secondTask.getUserGroups().add(userGroup);
+        secondTask.setScriptName("scriptName");
+        secondTask.setScriptPath("../type/automatic/script/path");
+        serviceManager.getTaskService().save(secondTask);
+
+        Task thirdTask = new Task();
+        thirdTask.setTitle("Testing and Blocking");
+        thirdTask.setOrdering(3);
+        thirdTask.setPriority(10);
+        thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2017, 1, 25);
+        thirdTask.setProcessingBegin(localDate.toDate());
+        thirdTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        thirdTask.setProcess(firstProcess);
+        thirdTask.getUsers().add(secondUser);
+        serviceManager.getTaskService().save(thirdTask);
+
+        Task fourthTask = new Task();
+        fourthTask.setTitle("Progress");
+        fourthTask.setOrdering(4);
+        fourthTask.setPriority(10);
+        fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        fourthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 1, 29);
+        fourthTask.setProcessingBegin(localDate.toDate());
+        fourthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
+        fourthTask.setProcessingUser(secondUser);
+        fourthTask.setProcess(firstProcess);
+        fourthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(fourthTask);
+
+        firstProcess.getTasks().add(firstTask);
+        firstProcess.getTasks().add(secondTask);
+        firstProcess.getTasks().add(thirdTask);
+        firstProcess.getTasks().add(fourthTask);
+        serviceManager.getProcessService().save(firstProcess);
+
+        secondUser.getProcessingTasks().add(fourthTask);
+        blockedUser.getProcessingTasks().add(secondTask);
+        blockedUser.getTasks().add(secondTask);
+        secondUser.getTasks().add(secondTask);
+        secondUser.getTasks().add(thirdTask);
+        serviceManager.getUserService().save(blockedUser);
+        serviceManager.getUserService().save(secondUser);
+
+        userGroup.getTasks().add(firstTask);
+        userGroup.getTasks().add(secondTask);
+        serviceManager.getUserGroupService().save(userGroup);
+
+        Process secondProcess = serviceManager.getProcessService().getById(2);
+
+        Task fifthTask = new Task();
+        fifthTask.setTitle("Closed");
+        fifthTask.setOrdering(1);
+        fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        fifthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 6, 27);
+        fifthTask.setProcessingBegin(localDate.toDate());
+        fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
+        fifthTask.setProcessingUser(secondUser);
+        fifthTask.setProcess(secondProcess);
+        fifthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(fifthTask);
+
+        Task sixthTask = new Task();
+        sixthTask.setTitle("Progress");
+        sixthTask.setOrdering(2);
+        sixthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        sixthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 7, 27);
+        sixthTask.setProcessingBegin(localDate.toDate());
+        sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        sixthTask.setProcessingUser(secondUser);
+        sixthTask.setProcess(secondProcess);
+        sixthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(sixthTask);
+
+        secondProcess.getTasks().add(fifthTask);
+        secondProcess.getTasks().add(sixthTask);
+        serviceManager.getProcessService().save(secondProcess);
 
         secondUser.getProcessingTasks().add(fifthTask);
         secondUser.getProcessingTasks().add(sixthTask);

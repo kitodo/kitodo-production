@@ -32,6 +32,7 @@ import org.kitodo.services.security.SessionService;
 import org.kitodo.services.validation.FileStructureValidationService;
 import org.kitodo.services.validation.LongTimePreservationValidationService;
 import org.kitodo.services.validation.MetadataValidationService;
+import org.kitodo.services.workflow.WorkflowService;
 
 public class ServiceManager {
 
@@ -56,6 +57,7 @@ public class ServiceManager {
     private LongTimePreservationValidationService longTimePreservationValidationService;
     private MetadataValidationService metadataValidationService;
     private SessionService sessionService;
+    private WorkflowService workflowService;
 
     private void initializeAuthorizationService() {
         if (authorizationService == null) {
@@ -180,6 +182,12 @@ public class ServiceManager {
     private void initializeMetadataValidationService() {
         if (metadataValidationService == null) {
             metadataValidationService = new MetadataValidationService();
+        }
+    }
+
+    private void initializeWorkflowService() {
+        if (workflowService == null) {
+            workflowService = new WorkflowService();
         }
     }
 
@@ -400,5 +408,15 @@ public class ServiceManager {
     public MetadataValidationService getMetadataValidationService() {
         initializeMetadataValidationService();
         return metadataValidationService;
+    }
+
+    /**
+     * Initialize WorkflowService if it is not yet initialized and next return it.
+     *
+     * @return WorkflowService object
+     */
+    public WorkflowService getWorkflowService() {
+        initializeWorkflowService();
+        return workflowService;
     }
 }

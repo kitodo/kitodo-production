@@ -15,10 +15,8 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.tasks.TaskManager;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,13 +32,11 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.api.command.CommandResult;
-import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -52,7 +48,6 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
-import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -65,9 +60,6 @@ import ugh.exceptions.WriteException;
 
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
-    private int openTasksWithTheSameOrdering;
-    private List<Task> automaticTasks;
-    private List<Task> tasksToFinish;
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static TaskService instance = null;
@@ -682,132 +674,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Close task.
-     *
-     * @param task
-     *            as Task object
-     * @param requestFromGUI
-     *            true or false
-     */
-    // TODO: check why requestFromGUI is never used
-    public void close(Task task, boolean requestFromGUI) throws DataException, IOException {
-        task.setProcessingStatus(3);
-        task.setProcessingTime(new Date());
-        LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (loginForm != null) {
-            User user = loginForm.getMyBenutzer();
-            if (user != null) {
-                task.setProcessingUser(user);
-            }
-        }
-        task.setProcessingEnd(new Date());
-
-        serviceManager.getTaskService().save(task);
-        automaticTasks = new ArrayList<>();
-        tasksToFinish = new ArrayList<>();
-
-        History history = new History(new Date(), task.getOrdering(), task.getTitle(), HistoryTypeEnum.taskDone,
-                task.getProcess());
-        serviceManager.getHistoryService().save(history);
-
-        /*
-         * prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht
-         * abgeschlossen sind
-         */
-        List<Task> tasks = task.getProcess().getTasks();
-        List<Task> allHigherTasks = getAllHigherTasks(tasks, task);
-
-        activateNextTask(allHigherTasks);
-
-        Process po = task.getProcess();
-        URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(true, po);
-        Integer numberOfFiles = serviceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
-        if (!po.getSortHelperImages().equals(numberOfFiles)) {
-            po.setSortHelperImages(numberOfFiles);
-            serviceManager.getProcessService().save(po);
-        }
-
-        updateProcessStatus(po);
-
-        for (Task automaticTask : automaticTasks) {
-            TaskScriptThread thread = new TaskScriptThread(automaticTask);
-            TaskManager.addTask(thread);
-        }
-        for (Task finish : tasksToFinish) {
-            serviceManager.getTaskService().close(finish, false);
-        }
-    }
-
-    private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
-        List<Task> allHigherTasks = new ArrayList<>();
-        this.openTasksWithTheSameOrdering = 0;
-        for (Task tempTask : tasks) {
-            if (tempTask.getOrdering().equals(task.getOrdering()) && tempTask.getProcessingStatus() != 3
-                    && !tempTask.getId().equals(task.getId())) {
-                openTasksWithTheSameOrdering++;
-            } else if (tempTask.getOrdering() > task.getOrdering()) {
-                allHigherTasks.add(tempTask);
-            }
-        }
-        return allHigherTasks;
-    }
-
-    /**
-     * If no open parallel tasks are available, activate the next tasks.
-     */
-    private void activateNextTask(List<Task> allHigherTasks) throws DataException {
-        if (openTasksWithTheSameOrdering == 0) {
-            int ordering = 0;
-            boolean matched = false;
-            for (Task task : allHigherTasks) {
-                if (ordering < task.getOrdering() && !matched) {
-                    ordering = task.getOrdering();
-                }
-
-                if (ordering == task.getOrdering() && task.getProcessingStatus() != 3
-                        && task.getProcessingStatus() != 2) {
-                    /*
-                     * den Schritt aktivieren, wenn es kein vollautomatischer ist
-                     */
-                    task.setProcessingStatus(1);
-                    task.setProcessingTime(new Date());
-                    task.setEditType(4);
-
-                    History historyOpen = new History(new Date(), task.getOrdering(), task.getTitle(),
-                            HistoryTypeEnum.taskOpen, task.getProcess());
-                    serviceManager.getHistoryService().save(historyOpen);
-
-                    /* wenn es ein automatischer Schritt mit Script ist */
-                    if (task.isTypeAutomatic()) {
-                        automaticTasks.add(task);
-                    } else if (task.isTypeAcceptClose()) {
-                        tasksToFinish.add(task);
-                    }
-
-                    serviceManager.getTaskService().save(task);
-                    matched = true;
-                } else {
-                    if (matched) {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Update process status.
-     *
-     * @param process
-     *            the process
-     */
-    private void updateProcessStatus(Process process) throws DataException {
-        String value = serviceManager.getProcessService().getProgress(process, null);
-        process.setSortHelperStatus(value);
-        serviceManager.getProcessService().save(process);
-    }
-
-    /**
      * Execute DMS export.
      *
      * @param step
@@ -825,7 +691,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             boolean validate = serviceManager.getProcessService().startDmsExport(po,
                     ConfigCore.getBooleanParameter("automaticExportWithImages", true), false);
             if (validate) {
-                close(step, true);
+                serviceManager.getWorkflowService().close(step);
             } else {
                 abortTask(step);
             }

@@ -215,7 +215,7 @@
                                                      columnClasses="standardTable_Column,standardTable_ColumnRight">
                                             <h:outputText value="#{msgs.zurueckZuArbeitsschritt}"/>
                                             <h:selectOneMenu style="width:350px"
-                                                             value="#{AktuelleSchritteForm.myProblemID}">
+                                                             value="#{AktuelleSchritteForm.problem.id}">
                                                 <f:selectItems
                                                         value="#{AktuelleSchritteForm.previousStepsForProblemReporting}"
                                                         var="step1" itemLabel="#{step1.titleWithUserName}"
@@ -223,7 +223,7 @@
                                             </h:selectOneMenu>
                                             <h:outputText value="#{msgs.bemerkung}"/>
                                             <h:inputTextarea style="width:350px;height:80px"
-                                                             value="#{AktuelleSchritteForm.problemMessage}"/>
+                                                             value="#{AktuelleSchritteForm.problem.message}"/>
                                             <!-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset -->
                                             <h:outputText value=""/>
                                             <h:commandLink id="action13"
@@ -256,7 +256,7 @@
                                                      columnClasses="standardTable_Column,standardTable_ColumnRight">
                                             <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
                                             <h:selectOneMenu style="width:350px" id="select1"
-                                                             value="#{AktuelleSchritteForm.mySolutionID}">
+                                                             value="#{AktuelleSchritteForm.solution.id}">
                                                 <f:selectItems
                                                         value="#{AktuelleSchritteForm.nextStepsForProblemSolution}"
                                                         var="step2" itemLabel="#{step2.titleWithUserName}"
@@ -264,7 +264,7 @@
                                             </h:selectOneMenu>
                                             <h:outputText value="#{msgs.bemerkung}"/>
                                             <h:inputTextarea style="width:350px;height:80px" id="input1"
-                                                             value="#{AktuelleSchritteForm.solutionMessage}"/>
+                                                             value="#{AktuelleSchritteForm.solution.message}"/>
                                             <!-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset -->
                                             <h:outputText value=""/>
                                             <h:commandLink id="action14"

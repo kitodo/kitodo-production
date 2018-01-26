@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,7 +77,6 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
@@ -88,6 +86,7 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.kitodo.services.workflow.WorkflowService;
 
 /**
  * ProzessverwaltungForm class.
@@ -125,6 +124,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private boolean showStatistics = false;
     private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
+    private transient WorkflowService workflowService = serviceManager.getWorkflowService();
     private static String DONEDIRECTORYNAME = "fertig/";
     private int processId;
     private int taskId;
@@ -1084,18 +1084,17 @@ public class ProzessverwaltungForm extends BasisForm {
     public void setTaskStatusUpForPage() throws DAOException, DataException, IOException {
         List<ProcessDTO> processes = this.page.getListReload();
         for (ProcessDTO process : processes) {
-            setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
+            workflowService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
     /**
      * Set up processing status selection.
      */
-    @SuppressWarnings("unchecked")
     public void setTaskStatusUpForSelection() throws DAOException, DataException, IOException {
         List<ProcessDTO> processDTOS = this.getSelectedProcesses();
         for (ProcessDTO processDTO : processDTOS) {
-            setTaskStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
+            workflowService.setTasksStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
@@ -1106,81 +1105,28 @@ public class ProzessverwaltungForm extends BasisForm {
     public void setTaskStatusUpForHits() throws DAOException, DataException, IOException {
         List<ProcessDTO> processes = this.page.getCompleteList();
         for (ProcessDTO process : processes) {
-            setTaskStatusUp(serviceManager.getProcessService().getById(process.getId()));
+            workflowService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
-    }
-
-    private void setTaskStatusUp(Process process) throws DataException, IOException {
-        List<Task> tasks = process.getTasks();
-
-        for (Task task : tasks) {
-            if (!task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                task.setProcessingStatus(task.getProcessingStatus() + 1);
-                task.setEditType(TaskEditType.ADMIN.getValue());
-                if (task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                    serviceManager.getTaskService().close(task, true);
-                } else {
-                    User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                    if (user != null) {
-                        task.setProcessingUser(user);
-                        serviceManager.getTaskService().save(task);
-                    }
-                }
-                break;
-            }
-        }
-    }
-
-    private void debug(String message, List<Task> bla) {
-        if (!logger.isWarnEnabled()) {
-            return;
-        }
-        for (Task s : bla) {
-            logger.warn(message + " " + s.getTitle() + "   " + s.getOrdering());
-        }
-    }
-
-    private void setTaskStatusDown(Process process) {
-        List<Task> tempList = new ArrayList<>(process.getTasks());
-        debug("templist: ", tempList);
-
-        Collections.reverse(tempList);
-        debug("reverse: ", tempList);
-
-        for (Task task : tempList) {
-            if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
-                task.setEditTypeEnum(TaskEditType.ADMIN);
-                this.task.setProcessingTime(new Date());
-                User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (user != null) {
-                    task.setProcessingUser(user);
-                }
-                task = serviceManager.getTaskService().setProcessingStatusDown(task);
-                break;
-            }
-        }
-        save();
     }
 
     /**
      * Set down processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForPage() throws DAOException {
+    public void setTaskStatusDownForPage() throws DAOException, DataException {
         List<ProcessDTO> processes = this.page.getListReload();
         for (ProcessDTO process : processes) {
-            setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
+            workflowService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
     /**
      * Set down processing status selection.
      */
-    @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForSelection() throws DAOException {
+    public void setTaskStatusDownForSelection() throws DAOException, DataException {
         List<ProcessDTO> processDTOS = this.getSelectedProcesses();
         for (ProcessDTO processDTO : processDTOS) {
-            setTaskStatusDown(serviceManager.getProcessService().getById(processDTO.getId()));
+            workflowService.setTasksStatusDown(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
@@ -1188,51 +1134,29 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForHits() throws DAOException {
+    public void setTaskStatusDownForHits() throws DAOException, DataException {
         List<ProcessDTO> processes = this.page.getCompleteList();
         for (ProcessDTO process : processes) {
-            setTaskStatusDown(serviceManager.getProcessService().getById(process.getId()));
+            workflowService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
     /**
      * Task status up.
      */
-    public void setTaskStatusUp() throws DAOException, DataException, IOException {
-        if (this.task.getProcessingStatusEnum() != TaskStatus.DONE) {
-            this.task = serviceManager.getTaskService().setProcessingStatusUp(this.task);
-            this.task.setEditTypeEnum(TaskEditType.ADMIN);
-            Task task = serviceManager.getTaskService().getById(this.task.getId());
-            if (this.task.getProcessingStatusEnum() == TaskStatus.DONE) {
-                serviceManager.getTaskService().close(task, true);
-            } else {
-                this.task.setProcessingTime(new Date());
-                User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (user != null) {
-                    this.task.setProcessingUser(user);
-                }
-            }
-        }
+    public void setTaskStatusUp() throws DataException, IOException {
+        setTask(workflowService.setTaskStatusUp(this.task));
         save();
         deleteSymlinksFromUserHomes();
     }
 
     /**
      * Task status down.
-     *
-     * @return empty String
      */
-    public String setTaskStatusDown() {
-        this.task.setEditTypeEnum(TaskEditType.ADMIN);
-        task.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            task.setProcessingUser(ben);
-        }
-        this.task = serviceManager.getTaskService().setProcessingStatusDown(this.task);
+    public void setTaskStatusDown() {
+        setTask(workflowService.setTaskStatusDown(this.task));
         save();
         deleteSymlinksFromUserHomes();
-        return null;
     }
 
     /**
@@ -1454,7 +1378,6 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Calculate metadata and images selection.
      */
-    @SuppressWarnings("unchecked")
     public void calculateMetadataAndImagesSelection() {
         calculateMetadataAndImages(this.getSelectedProcesses());
     }

@@ -18,19 +18,16 @@ import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -40,8 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
@@ -51,7 +46,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
-import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
@@ -59,6 +53,8 @@ import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectMode;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.workflow.Problem;
+import org.kitodo.workflow.Solution;
 
 @Named("AktuelleSchritteForm")
 @SessionScoped
@@ -67,10 +63,8 @@ public class AktuelleSchritteForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
     private Process myProcess = new Process();
     private Task mySchritt = new Task();
-    private Integer myProblemID;
-    private Integer mySolutionID;
-    private String problemMessage;
-    private String solutionMessage;
+    private Problem problem = new Problem();
+    private Solution solution = new Solution();
     private ObjectMode editMode = ObjectMode.NONE;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
@@ -81,11 +75,8 @@ public class AktuelleSchritteForm extends BasisForm {
     private boolean hideCorrectionTasks = false;
     private HashMap<String, Boolean> anzeigeAnpassen;
     private String scriptPath;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String addToWikiField = "";
     private static String DONEDIRECTORYNAME = "fertig/";
-    private Boolean flagWait = false;
-    private final ReentrantLock flagWaitLock = new ReentrantLock();
     private BatchStepHelper batchHelper;
     private List<Property> properties;
     private Property property;
@@ -212,60 +203,13 @@ public class AktuelleSchritteForm extends BasisForm {
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        this.flagWaitLock.lock();
-        try {
-            if (!this.flagWait) {
-                this.flagWait = true;
+        Helper.getHibernateSession().refresh(this.mySchritt);
 
-                // Helper.getHibernateSession().clear();
-                Helper.getHibernateSession().refresh(this.mySchritt);
-
-                if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
-                    Helper.setFehlerMeldung("stepInWorkError");
-                    this.flagWait = false;
-                    return null;
-                } else {
-                    this.mySchritt.setProcessingStatusEnum(TaskStatus.INWORK);
-                    this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-                    mySchritt.setProcessingTime(new Date());
-                    User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                    if (ben != null) {
-                        mySchritt.setProcessingUser(ben);
-                    }
-                    if (this.mySchritt.getProcessingBegin() == null) {
-                        Date myDate = new Date();
-                        this.mySchritt.setProcessingBegin(myDate);
-                    }
-                    this.mySchritt.getProcess().getHistory()
-                            .add(new History(this.mySchritt.getProcessingBegin(),
-                                    this.mySchritt.getOrdering().doubleValue(), this.mySchritt.getTitle(),
-                                    HistoryTypeEnum.taskInWork, this.mySchritt.getProcess()));
-                    try {
-                        /*
-                         * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-                         */
-                        this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-                    } catch (DataException e) {
-                        Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                        logger.error("Task couldn't get saved", e);
-                    } finally {
-                        this.flagWait = false;
-                    }
-                    /*
-                     * wenn es ein Image-Schritt ist, dann gleich die Images ins Home
-                     */
-
-                    if (this.mySchritt.isTypeImagesRead() || this.mySchritt.isTypeImagesWrite()) {
-                        downloadToHome();
-                    }
-                }
-            } else {
-                Helper.setFehlerMeldung("stepInWorkError");
-                return null;
-            }
-            this.flagWait = false;
-        } finally {
-            this.flagWaitLock.unlock();
+        if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
+            Helper.setFehlerMeldung("stepInWorkError");
+            return null;
+        } else {
+            this.setMySchritt(serviceManager.getWorkflowService().assignTaskToUser(this.getMySchritt()));
         }
         return "/pages/AktuelleSchritteBearbeiten";
     }
@@ -393,39 +337,18 @@ public class AktuelleSchritteForm extends BasisForm {
         return "/pages/batchesEdit";
     }
 
-    @Deprecated
-    public void saveProperties() {
-    }
-
     /**
      * Not sure.
      *
      * @return page
      */
     public String schrittDurchBenutzerZurueckgeben() {
-        this.myDav.uploadFromHome(this.mySchritt.getProcess());
-        this.mySchritt.setProcessingStatusEnum(TaskStatus.OPEN);
-        // mySchritt.setBearbeitungsbenutzer(null);
-        // if we have a correction-step here then never remove startdate
-        if (serviceManager.getTaskService().isCorrectionStep(this.mySchritt)) {
-            this.mySchritt.setProcessingBegin(null);
-        }
-        this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        mySchritt.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            mySchritt.setProcessingUser(ben);
-        }
-
         try {
-            /*
-             * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-             */
-            this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
+            setMySchritt(serviceManager.getWorkflowService().unassignTaskFromUser(this.mySchritt));
         } catch (DataException e) {
             logger.error("Task couldn't get saved/inserted", e);
         }
-        // calcHomeImages();
+
         return filterAll();
     }
 
@@ -434,57 +357,8 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() throws DAOException, DataException, IOException {
-
-        /*
-         * if step allows writing of images, then count all images here
-         */
-        if (this.mySchritt.isTypeImagesWrite()) {
-            try {
-                // this.mySchritt.getProzess().setSortHelperImages(
-                // FileUtils.getNumberOfFiles(new
-                // File(this.mySchritt.getProzess().getImagesOrigDirectory())));
-                HistoryAnalyserJob.updateHistory(this.mySchritt.getProcess());
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("Error while calculation of storage and images", e);
-            }
-        }
-
-        /*
-         * wenn das Resultat des Arbeitsschrittes zunÃ¤chst verifiziert werden soll,
-         * dann ggf. das Abschliessen abbrechen
-         */
-        if (this.mySchritt.isTypeCloseVerify()) {
-            /* Metadatenvalidierung */
-            if (this.mySchritt.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-                serviceManager.getMetadataValidationService().setAutoSave(true);
-                if (!serviceManager.getMetadataValidationService().validate(this.mySchritt.getProcess())) {
-                    return null;
-                }
-            }
-
-            /* Imagevalidierung */
-            if (this.mySchritt.isTypeImagesWrite()) {
-                MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
-                try {
-                    if (!mih.checkIfImagesValid(this.mySchritt.getProcess().getTitle(), serviceManager
-                            .getProcessService().getImagesOrigDirectory(false, this.mySchritt.getProcess()))) {
-                        return null;
-                    }
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("Error on image validation: ", e);
-                }
-            }
-        }
-        /*
-         * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten schon
-         * vorher draussen
-         */
-        this.myDav.uploadFromHome(this.mySchritt.getProcess());
-        this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        // it returns null! - not possible to close task
-        Task t = serviceManager.getTaskService().getById(this.mySchritt.getId());
-        serviceManager.getTaskService().close(t, true);
+    public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
+        setMySchritt(serviceManager.getWorkflowService().closeTaskByUser(this.mySchritt));
         return filterAll();
     }
 
@@ -511,67 +385,13 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return problem as String
      */
     public String reportProblem() {
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben == null) {
-            Helper.setFehlerMeldung("userNotFound");
-            return null;
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("mySchritt.ID: " + this.mySchritt.getId());
-            logger.debug("Korrekturschritt.ID: " + this.myProblemID);
-        }
-        this.myDav.uploadFromHome(this.mySchritt.getProcess());
-        Date myDate = new Date();
-        this.mySchritt.setProcessingStatusEnum(TaskStatus.LOCKED);
-        this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        mySchritt.setProcessingTime(new Date());
-        mySchritt.setProcessingUser(ben);
-        this.mySchritt.setProcessingBegin(null);
-
+        serviceManager.getWorkflowService().setProblem(getProblem());
         try {
-            Task temp = serviceManager.getTaskService().getById(this.myProblemID);
-            temp.setProcessingStatusEnum(TaskStatus.OPEN);
-            temp = serviceManager.getTaskService().setCorrectionStep(temp);
-            temp.setProcessingEnd(null);
-
-            Property processProperty = new Property();
-            processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
-            processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
-                    + serviceManager.getUserService().getFullName(ben) + "] " + this.problemMessage);
-            processProperty.setType(PropertyType.messageError);
-            processProperty.getProcesses().add(this.mySchritt.getProcess());
-            this.mySchritt.getProcess().getProperties().add(processProperty);
-
-            String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": " + this.problemMessage
-                    + " (" + serviceManager.getUserService().getFullName(ben) + ")";
-            this.mySchritt.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.mySchritt.getProcess(),
-                    this.mySchritt.getProcess().getWikiField(), "error", message));
-            serviceManager.getTaskService().save(temp);
-            this.mySchritt.getProcess().getHistory().add(new History(myDate, temp.getOrdering().doubleValue(),
-                    temp.getTitle(), HistoryTypeEnum.taskError, temp.getProcess()));
-            /*
-             * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
-             * wieder schliessen
-             */
-            List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
-                    this.mySchritt.getOrdering(), this.mySchritt.getProcess().getId());
-            for (Task task : allTasksInBetween) {
-                task.setProcessingStatusEnum(TaskStatus.LOCKED);
-                task = serviceManager.getTaskService().setCorrectionStep(task);
-                task.setProcessingEnd(null);
-                serviceManager.getTaskService().save(task);
-            }
-
-            /*
-             * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-             */
-            this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
+            setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
-            logger.error("Task couldn't get saved/inserted", e);
+            logger.error("Problem couldn't be reported: " + e);
         }
-
-        this.problemMessage = "";
-        this.myProblemID = 0;
+        setProblem(serviceManager.getWorkflowService().getProblem());
         return filterAll();
     }
 
@@ -593,90 +413,14 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     public String solveProblem() {
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben == null) {
-            Helper.setFehlerMeldung("userNotFound");
-            return null;
-        }
-        Date now = new Date();
-        this.myDav.uploadFromHome(this.mySchritt.getProcess());
-        this.mySchritt.setProcessingStatusEnum(TaskStatus.DONE);
-        this.mySchritt.setProcessingEnd(now);
-        this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        mySchritt.setProcessingTime(new Date());
-        mySchritt.setProcessingUser(ben);
-
+        serviceManager.getWorkflowService().setSolution(getSolution());
         try {
-            Task temp = serviceManager.getTaskService().getById(this.mySolutionID);
-            /*
-             * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
-             * wieder schliessen
-             */
-            List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(temp.getOrdering(),
-                    this.mySchritt.getOrdering(), this.mySchritt.getProcess().getId());
-            for (Task task : allTasksInBetween) {
-                task.setProcessingStatusEnum(TaskStatus.DONE);
-                task.setProcessingEnd(now);
-                task.setPriority(0);
-                if (task.getId().intValue() == temp.getId().intValue()) {
-                    task.setProcessingStatusEnum(TaskStatus.OPEN);
-                    task = serviceManager.getTaskService().setCorrectionStep(task);
-                    task.setProcessingEnd(null);
-                    // step.setBearbeitungsbeginn(null);
-                    task.setProcessingTime(now);
-                }
-                mySchritt.setProcessingTime(new Date());
-                mySchritt.setProcessingUser(ben);
-                serviceManager.getTaskService().save(task);
-            }
-
-            /*
-             * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-             */
-            String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                    + this.solutionMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
-            this.mySchritt.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.mySchritt.getProcess(),
-                    this.mySchritt.getProcess().getWikiField(), "info", message));
-
-            Property processProperty = new Property();
-            processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-            processProperty.setValue(
-                    "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(ben)
-                            + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                            + this.solutionMessage);
-            processProperty.setType(PropertyType.messageImportant);
-            processProperty.getProcesses().add(this.mySchritt.getProcess());
-            this.mySchritt.getProcess().getProperties().add(processProperty);
-
-            this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
+            setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
-            logger.error("task couldn't get saved/inserted", e);
+            logger.error("Problem couldn't be solved: " + e);
         }
-
-        this.solutionMessage = "";
-        this.mySolutionID = 0;
+        setSolution(serviceManager.getWorkflowService().getSolution());
         return filterAll();
-    }
-
-    /**
-     * Download to home.
-     *
-     * @return String
-     */
-    public String downloadToHome() {
-        try {
-            new File(serviceManager.getProcessService().getImagesOrigDirectory(false, this.mySchritt.getProcess()));
-        } catch (Exception e1) {
-            logger.error(e1);
-        }
-        mySchritt.setProcessingTime(new Date());
-        User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (ben != null) {
-            mySchritt.setProcessingUser(ben);
-        }
-        this.myDav.downloadToHome(this.mySchritt.getProcess(), !this.mySchritt.isTypeImagesWrite());
-
-        return null;
     }
 
     /**
@@ -685,7 +429,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws NumberFormatException, DAOException, DataException, IOException {
+    public String uploadFromHomeAlle() throws NumberFormatException, DataException, IOException {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<URI> geprueft = new ArrayList<>();
         /*
@@ -889,36 +633,42 @@ public class AktuelleSchritteForm extends BasisForm {
         this.editMode = editMode;
     }
 
-    public Integer getMyProblemID() {
-        return this.myProblemID;
+    /**
+     * Get problem.
+     *
+     * @return Problem object
+     */
+    public Problem getProblem() {
+        return problem;
     }
 
-    public void setMyProblemID(Integer myProblemID) {
-        this.myProblemID = myProblemID;
+    /**
+     * Set problem.
+     *
+     * @param problem
+     *            object
+     */
+    public void setProblem(Problem problem) {
+        this.problem = problem;
     }
 
-    public Integer getMySolutionID() {
-        return this.mySolutionID;
+    /**
+     * Get solution.
+     *
+     * @return Solution object
+     */
+    public Solution getSolution() {
+        return solution;
     }
 
-    public void setMySolutionID(Integer mySolutionID) {
-        this.mySolutionID = mySolutionID;
-    }
-
-    public String getProblemMessage() {
-        return this.problemMessage;
-    }
-
-    public void setProblemMessage(String problemMessage) {
-        this.problemMessage = problemMessage;
-    }
-
-    public String getSolutionMessage() {
-        return this.solutionMessage;
-    }
-
-    public void setSolutionMessage(String solutionMessage) {
-        this.solutionMessage = solutionMessage;
+    /**
+     * Set solution.
+     *
+     * @param solution
+     *            object
+     */
+    public void setSolution(Solution solution) {
+        this.solution = solution;
     }
 
     private void setAttributesForProcess() {
