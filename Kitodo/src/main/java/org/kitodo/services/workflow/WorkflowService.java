@@ -371,6 +371,12 @@ public class WorkflowService {
         return (task.getPriority() == 10);
     }
 
+    /**
+     * Set Priority equal 10 means correction task.
+     * @param task
+     *            Task object
+     * @return correction Task
+     */
     public Task setCorrectionTask(Task task) {
         task.setPriority(10);
         return task;
