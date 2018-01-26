@@ -197,7 +197,7 @@ public class BatchStepHelper extends BatchHelper {
 
     }
 
-    private void saveStep() {
+    private void saveStep() throws DataException {
         Process p = this.currentStep.getProcess();
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
@@ -205,11 +205,7 @@ public class BatchStepHelper extends BatchHelper {
                 p.getProperties().remove(processProperty);
             }
         }
-        try {
-            this.serviceManager.getProcessService().save(this.currentStep.getProcess());
-        } catch (DataException e) {
-            logger.error(e);
-        }
+        this.serviceManager.getProcessService().save(this.currentStep.getProcess());
     }
 
     /**
@@ -223,7 +219,8 @@ public class BatchStepHelper extends BatchHelper {
             this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep);
             saveStep();
         } catch (DAOException | DataException e) {
-            logger.error("Problem couldn't be reported: " + e);
+            Helper.setFehlerMeldung("correctionReportProblem");
+            logger.error(e);
         }
         setProblem(serviceManager.getWorkflowService().getProblem());
         this.problemTask = "";
@@ -244,7 +241,8 @@ public class BatchStepHelper extends BatchHelper {
                 setCurrentStep(serviceManager.getWorkflowService().reportProblem(this.currentStep));
                 saveStep();
             } catch (DAOException | DataException e) {
-                logger.error("Problem couldn't be reported: " + e);
+                Helper.setFehlerMeldung("correctionReportProblem");
+                logger.error(e);
             }
         }
         setProblem(serviceManager.getWorkflowService().getProblem());
@@ -296,7 +294,8 @@ public class BatchStepHelper extends BatchHelper {
             setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
             saveStep();
         } catch (DAOException | DataException e) {
-            logger.error("Problem couldn't be solved: " + e);
+            Helper.setFehlerMeldung("correctionSolveProblem");
+            logger.error(e);
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
         this.solutionTask = "";
@@ -319,9 +318,9 @@ public class BatchStepHelper extends BatchHelper {
                 setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
                 saveStep();
             } catch (DAOException | DataException e) {
-                logger.error("Problem couldn't be solved: " + e);
+                Helper.setFehlerMeldung("correctionSolveProblem");
+                logger.error(e);
             }
-            saveStep();
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
         this.solutionTask = "";
