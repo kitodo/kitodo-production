@@ -11,14 +11,14 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.services.ServiceManager;
-
-import static org.junit.Assert.assertEquals;
 
 public class LdapServerServiceIT {
 
@@ -37,7 +37,9 @@ public class LdapServerServiceIT {
     @Test
     public void shouldFindLdapServer() throws Exception {
         LdapServer ldapServer = ldapServerService.getById(1);
-        assertEquals("LpadServer title is not matching","FirstLdapServer",ldapServer.getTitle());
-        assertEquals("LpadServer useSsl is not matching",false,ldapServer.isUseSsl());
+        assertEquals("LpadServer title is not matching", "FirstLdapServer", ldapServer.getTitle());
+        assertEquals("LpadServer useSsl is not matching", false, ldapServer.isUseSsl());
+        assertEquals("LdapServer password encoding is not matching", "SHA",
+            ldapServer.getPasswordEncryptionEnum().getTitle());
     }
 }
