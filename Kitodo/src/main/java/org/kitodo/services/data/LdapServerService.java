@@ -82,18 +82,36 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         return instance;
     }
 
-    public LdapServerService() {
+    private LdapServerService() {
         super(new LdapServerDAO());
     }
 
+    /**
+     * Saves ldap server to database.
+     * 
+     * @param ldapServer
+     *            The ldap server.
+     */
     public void save(LdapServer ldapServer) throws DAOException {
         dao.save(ldapServer);
     }
 
+    /**
+     * Removes ldap server from database.
+     * 
+     * @param ldapServer
+     *            The ldap server.
+     */
     public void remove(LdapServer ldapServer) throws DAOException {
         dao.remove(ldapServer);
     }
 
+    /**
+     * Removes ldap server from database by id.
+     * 
+     * @param id
+     *            The ldap server id.
+     */
     public void remove(Integer id) throws DAOException {
         dao.remove(id);
     }
@@ -386,7 +404,6 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         return rueckgabe;
     }
 
-    // TODO Test this method
     /**
      * Check if User already exists on system.
      *
