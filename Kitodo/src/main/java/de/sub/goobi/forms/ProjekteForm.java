@@ -292,10 +292,21 @@ public class ProjekteForm extends BasisForm {
         this.myProjekt = inProjekt;
     }
 
+    /**
+     * Getter for locked.
+     *
+     * @return the locked
+     */
     public boolean isLocked() {
         return locked;
     }
 
+    /**
+     * Setter for locked.
+     *
+     * @param locked
+     *            the locked to set
+     */
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
