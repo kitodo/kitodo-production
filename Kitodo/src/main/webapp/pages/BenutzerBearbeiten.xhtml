@@ -174,7 +174,7 @@
                                                                        detailFormat="#{msgs.keineLdapgruppeAngegeben}"/>
                                                             <!-- ldap configuration schreiben -->
                                                             <h:commandLink id="id32" title="#{msgs.ldapKonfigurationSchreiben}"
-                                                                           action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}"
+                                                                           action="#{BenutzerverwaltungForm.writeUserAtLdapServer}"
                                                                            rendered="#{BenutzerverwaltungForm.userObject.id != null}">
                                                                 <h:graphicImage alt="save configuration" id="id33"
                                                                                 value="/pages/images/buttons/key3.gif"/>

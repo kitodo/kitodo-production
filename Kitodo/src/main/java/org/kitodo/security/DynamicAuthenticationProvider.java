@@ -81,16 +81,13 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      *            The ldapGroup Object.
      */
     public void configureAndActivateLdapAuthentication(LdapGroup ldapGroup) {
-
         DefaultSpringSecurityContextSource ldapContextSource = new DefaultSpringSecurityContextSource(
                 ldapGroup.getLdapServer().getUrl());
         ldapContextSource.afterPropertiesSet();
 
         BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
-
-        String userDN = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
-
-        authenticator.setUserDnPatterns(new String[] {userDN });
+        String userDn = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
+        authenticator.setUserDnPatterns(new String[] { userDn });
 
         this.authenticationProvider = new LdapAuthenticationProvider(authenticator,
                 new CustomLdapAuthoritiesPopulator());

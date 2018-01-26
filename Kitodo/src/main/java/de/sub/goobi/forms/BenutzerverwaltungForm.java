@@ -355,9 +355,9 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * Ldap-Konfiguration für den Benutzer schreiben.
+     * Writes the user at ldap server.
      */
-    public String ldapKonfigurationSchreiben() {
+    public String writeUserAtLdapServer() {
         try {
             serviceManager.getLdapServerService().createNewUser(this.userObject, passwordEncoder.decrypt(this.userObject.getPassword()));
         } catch (Exception e) {
