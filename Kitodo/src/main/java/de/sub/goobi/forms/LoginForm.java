@@ -67,7 +67,7 @@ public class LoginForm implements Serializable {
         } else {
             try {
                 /* wenn alles korrekt, dann jetzt speichern */;
-                serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
+                serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwortAendernNeu1);
                 User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
                 temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
                 serviceManager.getUserService().save(temp);

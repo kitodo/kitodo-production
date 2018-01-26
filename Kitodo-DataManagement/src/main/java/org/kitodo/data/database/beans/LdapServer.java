@@ -11,12 +11,15 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.kitodo.data.database.helper.enums.PasswordEncryption;
 
 @Entity
 @Table(name = "ldapServer")
@@ -49,7 +52,7 @@ public class LdapServer extends BaseBean {
     private boolean readonly = false;
 
     @Column(name = "passwordEncryption")
-    private String passwordEncryption;
+    private Integer passwordEncryption;
 
     @Column(name = "rootCertificate")
     private String rootCertificate;
@@ -75,7 +78,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets title.
      *
-     * @param title The title.
+     * @param title
+     *            The title.
      */
     public void setTitle(String title) {
         this.title = title;
@@ -93,7 +97,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets url.
      *
-     * @param url The url.
+     * @param url
+     *            The url.
      */
     public void setUrl(String url) {
         this.url = url;
@@ -111,7 +116,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets managerLogin.
      *
-     * @param managerLogin The managerLogin.
+     * @param managerLogin
+     *            The managerLogin.
      */
     public void setManagerLogin(String managerLogin) {
         this.managerLogin = managerLogin;
@@ -129,7 +135,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets managerPassword.
      *
-     * @param managerPassword The managerPassword.
+     * @param managerPassword
+     *            The managerPassword.
      */
     public void setManagerPassword(String managerPassword) {
         this.managerPassword = managerPassword;
@@ -147,7 +154,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets ldapGroups.
      *
-     * @param ldapGroups The ldapGroups.
+     * @param ldapGroups
+     *            The ldapGroups.
      */
     private void setLdapGroups(List<LdapGroup> ldapGroups) {
         this.ldapGroups = ldapGroups;
@@ -165,7 +173,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets nextFreeUnixIdPattern.
      *
-     * @param nextFreeUnixIdPattern The nextFreeUnixIdPattern.
+     * @param nextFreeUnixIdPattern
+     *            The nextFreeUnixIdPattern.
      */
     public void setNextFreeUnixIdPattern(String nextFreeUnixIdPattern) {
         this.nextFreeUnixIdPattern = nextFreeUnixIdPattern;
@@ -183,7 +192,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets useSsl.
      *
-     * @param useSsl The useSsl.
+     * @param useSsl
+     *            The useSsl.
      */
     public void setUseSsl(boolean useSsl) {
         this.useSsl = useSsl;
@@ -201,7 +211,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets readonly.
      *
-     * @param readonly The readonly.
+     * @param readonly
+     *            The readonly.
      */
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
@@ -212,17 +223,37 @@ public class LdapServer extends BaseBean {
      *
      * @return The passwordEncryption.
      */
-    public String getPasswordEncryption() {
+    public Integer getPasswordEncryption() {
         return passwordEncryption;
     }
 
     /**
      * Sets passwordEncryption.
      *
-     * @param passwordEncryption The passwordEncryption.
+     * @param passwordEncryption
+     *            The passwordEncryption.
      */
-    public void setPasswordEncryption(String passwordEncryption) {
+    public void setPasswordEncryption(Integer passwordEncryption) {
         this.passwordEncryption = passwordEncryption;
+    }
+
+    /**
+     * Get password encryption as {@link PasswordEncryption}.
+     *
+     * @return The passwordEncryption.
+     */
+    public PasswordEncryption getPasswordEncryptionEnum() {
+        return PasswordEncryption.getEncryptionFromValue(passwordEncryption);
+    }
+
+    /**
+     * Set password encryption to specific value from {@link PasswordEncryption}.
+     *
+     * @param passwordEncryptionEnum
+     *            The passwordEncryptionEnum.
+     */
+    public void setPasswordEncryptionEnum(PasswordEncryption passwordEncryptionEnum) {
+        this.passwordEncryption = passwordEncryptionEnum.getValue();
     }
 
     /**
@@ -237,7 +268,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets rootCertificate.
      *
-     * @param rootCertificate The rootCertificate.
+     * @param rootCertificate
+     *            The rootCertificate.
      */
     public void setRootCertificate(String rootCertificate) {
         this.rootCertificate = rootCertificate;
@@ -255,7 +287,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets pdcCertificate.
      *
-     * @param pdcCertificate The pdcCertificate.
+     * @param pdcCertificate
+     *            The pdcCertificate.
      */
     public void setPdcCertificate(String pdcCertificate) {
         this.pdcCertificate = pdcCertificate;
@@ -273,7 +306,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets keystore.
      *
-     * @param keystore The keystore.
+     * @param keystore
+     *            The keystore.
      */
     public void setKeystore(String keystore) {
         this.keystore = keystore;
@@ -291,7 +325,8 @@ public class LdapServer extends BaseBean {
     /**
      * Sets keystorePassword.
      *
-     * @param keystorePassword The keystorePassword.
+     * @param keystorePassword
+     *            The keystorePassword.
      */
     public void setKeystorePassword(String keystorePassword) {
         this.keystorePassword = keystorePassword;

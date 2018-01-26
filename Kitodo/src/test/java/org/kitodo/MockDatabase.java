@@ -65,6 +65,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -303,7 +304,7 @@ public class MockDatabase {
         ldapServer.setManagerLogin("LdapManager");
         ldapServer.setManagerPassword("LdapManagerPasswort");
         ldapServer.setUrl("LdapUrl");
-        ldapServer.setPasswordEncryption("SHA");
+        ldapServer.setPasswordEncryptionEnum(PasswordEncryption.SHA);
         ldapServer.setUseSsl(false);
 
         serviceManager.getLdapServerService().save(ldapServer);

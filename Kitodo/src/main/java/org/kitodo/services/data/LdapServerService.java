@@ -21,10 +21,12 @@ import org.bouncycastle.jce.provider.JDKMessageDigest;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.persistence.LdapServerDAO;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
+import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -150,7 +152,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     public void createNewUser(User user, String password)
         throws NamingException, NoSuchAlgorithmException, IOException {
 
-        if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
+        if (!user.getLdapGroup().getLdapServer().isReadonly()) {
             Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
 
             LdapUser ldapUser = new LdapUser();
@@ -361,8 +363,8 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         } else if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
             env.put(Context.SECURITY_AUTHENTICATION, "none");
         } else {
-            env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-            env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
+//            env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
+//            env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
 
         }
         DirContext ctx;
@@ -502,18 +504,14 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      *
      * @param user
      *            User object
-     * @param inOldPassword
-     *            String
      * @param inNewPassword
      *            String
      * @return boolean about result of change
      */
-    public boolean changeUserPassword(User user, String inOldPassword, String inNewPassword)
+    public boolean changeUserPassword(User user, String inNewPassword)
         throws NoSuchAlgorithmException {
         JDKMessageDigest.MD4 digester = new JDKMessageDigest.MD4();
-
-        String passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryption();
-
+        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryptionEnum();
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadonly()) {
             try {
@@ -522,10 +520,9 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 /*
                  * Encryption of password and Base64-Encoding
                  */
-                MessageDigest md = MessageDigest.getInstance(passwordEncryption);
+                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
                 String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-                ModificationItem[] mods = new ModificationItem[4];
 
                 /*
                  * UserPasswort-Attribut ändern
@@ -561,6 +558,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
                     String.valueOf(System.currentTimeMillis() / 1000L));
 
+                ModificationItem[] mods = new ModificationItem[4];
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userpassword);
                 mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
                 mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);

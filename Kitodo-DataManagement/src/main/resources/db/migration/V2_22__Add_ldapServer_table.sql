@@ -18,7 +18,7 @@ CREATE TABLE ldapServer (
   `nextFreeUnixIdPattern` VARCHAR(255) DEFAULT NULL,
   `useSsl` TINYINT(1) NOT NULL DEFAULT 0,
   `readonly` TINYINT(1) NOT NULL DEFAULT 0,
-  `passwordEncryption` VARCHAR(6) NOT NULL DEFAULT 'SHA',
+  `passwordEncryption` INT NOT NULL DEFAULT 0,
   `rootCertificate` VARCHAR(255) DEFAULT NULL,
   `pdcCertificate` VARCHAR(255) DEFAULT NULL,
   `keystore` VARCHAR(255) DEFAULT NULL,
