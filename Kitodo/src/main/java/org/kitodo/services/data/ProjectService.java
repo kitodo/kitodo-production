@@ -329,4 +329,16 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
                 baseProject.getProcesses().stream().filter(Process::isTemplate).collect(Collectors.toList())));
         return duplicatedProject;
     }
+
+    /**
+     * Return a string containing a comma separated list of process templates
+     * associated with this project.
+     *
+     * @return process templates associated with this project
+     */
+    public String getProjectTemplatesTitlesAsString(int id) throws DAOException {
+        Project project = serviceManager.getProjectService().getById(id);
+        return String.join(", ", project.getProcesses().stream().filter(Process::isTemplate).map(Process::getTitle)
+                .collect(Collectors.toList()));
+    }
 }

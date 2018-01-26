@@ -829,6 +829,26 @@ public class ProjekteForm extends BasisForm {
         }
     }
 
+    /**
+     * Return the template titles of the project with the given ID "id".
+     *
+     * @param id
+     *            ID of the project for which the template titles are returned.
+     * @return String containing the templates titles of the project with the given
+     *         ID
+     */
+    public String getProjectTemplateTitles(int id) {
+        try {
+            return serviceManager.getProjectService().getProjectTemplatesTitlesAsString(id);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage("ERROR: Unable to retrieve templates for project!");
+            facesContext.addMessage(null, facesMessage);
+            return null;
+        }
+    }
+
     // TODO:
     // replace calls to this function with "/pages/projectEdit" once we have
     // completely switched to the new frontend pages

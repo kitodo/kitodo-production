@@ -12,7 +12,6 @@
 package org.kitodo.dto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Project DTO object.
@@ -238,15 +237,5 @@ public class ProjectDTO extends BaseDTO {
      */
     public void setUsers(List<UserDTO> users) {
         this.users = users;
-    }
-
-    /**
-     * Return a string containing a comma separated list of process templates
-     * associated with this project.
-     *
-     * @return process templates associated with this project
-     */
-    public String getProcessTitles() {
-        return String.join(", ", this.processes.stream().map(ProcessDTO::getTitle).collect(Collectors.toList()));
     }
 }
