@@ -177,11 +177,16 @@ button .ui-icon {
 .ui-treetable head th,
 .ui-treetable tfoot th,
 .ui-treetable tbody td,
-.ui-treetable tfoot td,
+.ui-treetable tfoot td {
+    border: 0px;
+    padding: 8px 16px;
+}
+
 .ui-panelgrid .ui-panelgrid-cell {
     border: 0px;
-    padding: 8px 10px;
+    padding: 8px;
 }
+
 
 tr.ui-widget-content {
     border: 0px;
@@ -375,4 +380,8 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-growl-item {
     background: #004f81;
     text-shadow: 0 0 0 transparent;
+}
+
+.ui-grid .ui-grid-row {
+    padding: 0 8px;
 }

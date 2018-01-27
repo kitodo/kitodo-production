@@ -363,16 +363,18 @@ body.first-visit #portal-header {
     padding-bottom: 20px;
     }
 
+#breadcrumb-wrapper {
+    padding: 0 16px;
+    }
+
 #breadcrumb {
     display: block !important;
     clear: both;
     margin: 10px auto;
-    max-width: -webkit-calc(100% - 32px);
-    max-width: -moz-calc(100% - 32px);
-    max-width: calc(100% - 32px);
-    text-align: right;
+    text-align: left;
     color: #fff;
     font-size: 0px;
+    width: 50%;
     }
 
 #breadcrumb li {
@@ -442,7 +444,7 @@ body.first-visit main {
 
 .content-header {
     height: 36px;
-    padding: 1.0em 1.5em;
+    padding: 1.0em 16px;
 }
 
 .content-header .ui-panel-content {
