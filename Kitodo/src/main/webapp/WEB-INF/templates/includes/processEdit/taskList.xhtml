@@ -90,7 +90,7 @@
         <p:rowExpansion>
             <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.eigenschaften}">
                 <h:outputText value="#{msgs.title}: "/>
-                <h:outputText value="#{item.localizedTitle}"/>
+                <h:outputText value="#{item.process.title}"/>
 
                 <h:outputText value="#{msgs.prioritaet}: "/>
                 <h:outputText value="#{item.priority}"/>
@@ -118,5 +118,11 @@
 
     </p:dataTable>
 
+    <p:commandButton action="#{ProzessverwaltungForm.newTask}"
+                     value="#{msgs.schrittHinzufuegen}"
+                     icon="fa fa-plus-circle fa-lg"
+                     iconPos="right"
+                     styleClass="button-filled-green"
+                     id="addStepButton"/>
 
 </ui:composition>
