@@ -333,7 +333,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 
 .ui-tabs .ui-tabs-nav li a,
 .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem-hasicon a {
-    padding: .5em 1.2em;
+    padding: .5em 16px;
 }
 
 .ui-tabs-nav .ui-state-default a,
