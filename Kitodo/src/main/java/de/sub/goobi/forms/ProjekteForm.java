@@ -166,7 +166,11 @@ public class ProjekteForm extends BasisForm {
     /**
      * Duplicate the selected project.
      *
-     * @return page address
+     * @param itemId
+     *            ID of the project to duplicate
+     * @return page address; either redirect to the edit project page or return
+     *         'null' if the project could not be retrieved, which will prompt JSF
+     *         to remain on the same page and reuse the bean.
      */
     public String duplicateProject(Integer itemId) {
         this.itemId = 0;
