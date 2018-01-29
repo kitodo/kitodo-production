@@ -169,14 +169,6 @@ public class AktuelleSchritteForm extends BasisForm {
         if (this.sortierung.equals("prozessDesc")) {
             sort += ", " + SortBuilders.fieldSort("process").order(SortOrder.DESC).toString();
         }
-        /*
-         * if (this.sortierung.equals("batchAsc")) { order = Order.asc("proc.batchID");
-         * } if (this.sortierung.equals("batchDesc")) { order =
-         * Order.desc("proc.batchID"); } if (this.sortierung.equals("prozessdateAsc")) {
-         * order = Order.asc("proc.creationDate"); } if
-         * (this.sortierung.equals("prozessdateDesc")) { order =
-         * Order.desc("proc.creationDate"); }
-         */
         if (this.sortierung.equals("projektAsc")) {
             sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
         }
@@ -609,7 +601,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage("ERROR: unable to retrieve the requested task!");
+            FacesMessage facesMessage = new FacesMessage("ERROR: " + Helper.getTranslation("unableToRetrieveTask"));
             facesContext.addMessage(null, facesMessage);
             return null;
         }
