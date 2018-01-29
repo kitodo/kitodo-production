@@ -535,7 +535,7 @@ public class FileServiceTest {
     public void testDeleteFirstSlashFromPath() {
         URI uri = URI.create("/test/test");
         URI actualUri = fileService.deleteFirstSlashFromPath(uri);
-        Assert.assertEquals("Paths of Uri did not match","test/test",actualUri.getPath());
+        Assert.assertEquals("Paths of Uri did not match", "test/test", actualUri.getPath());
     }
 
 }

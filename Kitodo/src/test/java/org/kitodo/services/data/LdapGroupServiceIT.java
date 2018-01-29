@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
@@ -18,8 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapGroup;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for LdapGroupService class.
@@ -44,6 +43,6 @@ public class LdapGroupServiceIT {
         boolean condition = ldapGroup.getTitle().equals("LG") && ldapGroup.getDisplayName().equals("Name");
         assertTrue("LDAP group was not found in database!", condition);
 
-        assertEquals("Title of Ldap server is not matching","FirstLdapServer",ldapGroup.getLdapServer().getTitle());
+        assertEquals("Title of Ldap server is not matching", "FirstLdapServer", ldapGroup.getLdapServer().getTitle());
     }
 }

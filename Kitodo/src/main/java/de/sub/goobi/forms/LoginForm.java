@@ -66,7 +66,7 @@ public class LoginForm implements Serializable {
             Helper.setFehlerMeldung(Helper.getTranslation("passwordsDontMatch"));
         } else {
             try {
-                /* wenn alles korrekt, dann jetzt speichern */;
+                /* wenn alles korrekt, dann jetzt speichern */
                 serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwortAendernNeu1);
                 User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
                 temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));

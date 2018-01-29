@@ -12,11 +12,12 @@
 package org.kitodo.data.database.helper.enums;
 
 /**
- * Enum for type of password encryption, each one with integer value for database.
+ * Enum for type of password encryption, each one with integer value for
+ * database.
  */
 public enum PasswordEncryption {
-    SHA(0,"SHA"),
-    MD5(1,"MD5");
+    SHA(0, "SHA"),
+    MD5(1, "MD5");
 
     private int value;
     private String title;
@@ -48,8 +49,8 @@ public enum PasswordEncryption {
     }
 
     /**
-     * Retrieve password encryption by integer value, necessary for database handlings,
-     * where only integer is saved but not type safe.
+     * Retrieve password encryption by integer value, necessary for database
+     * handlings, where only integer is saved but not type safe.
      *
      * @param value
      *            as integer value

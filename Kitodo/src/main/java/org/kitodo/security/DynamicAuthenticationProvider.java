@@ -61,7 +61,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
                 User user = serviceManager.getUserService().getByLogin(authentication.getName());
                 configureAndActivateLdapAuthentication(user.getLdapGroup());
             } catch (DAOException e) {
-                // getByLogin() throws DAOExeption, it must be converted in UsernameNotFoundException
+                // getByLogin() throws DAOExeption, it must be converted in
+                // UsernameNotFoundException
                 // in order to match interface method signature
                 throw new UsernameNotFoundException("Could not read Username from database!");
             }
@@ -87,15 +88,15 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
         if (ldapServer != null) {
             DefaultSpringSecurityContextSource ldapContextSource = new DefaultSpringSecurityContextSource(
-                ldapServer.getUrl());
+                    ldapServer.getUrl());
             ldapContextSource.afterPropertiesSet();
 
             BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
             String userDn = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
-            authenticator.setUserDnPatterns(new String[] { userDn });
+            authenticator.setUserDnPatterns(new String[] {userDn });
 
             this.authenticationProvider = new LdapAuthenticationProvider(authenticator,
-                new CustomLdapAuthoritiesPopulator());
+                    new CustomLdapAuthoritiesPopulator());
         } else {
             throw new AuthenticationServiceException("No ldap-server specified on users ldap-group");
         }
@@ -124,11 +125,12 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      * This method reads local config and sets authentication flag.
      */
     public void readLocalConfig() {
-        ldapAuthentication = ConfigCore.getBooleanParameter("ldap_use",false);
+        ldapAuthentication = ConfigCore.getBooleanParameter("ldap_use", false);
     }
 
     /**
-     * This method initializes the authentication provider with database authentication.
+     * This method initializes the authentication provider with database
+     * authentication.
      */
     public void initializeAuthenticationProvider() {
         activateDatabaseAuthentication();
