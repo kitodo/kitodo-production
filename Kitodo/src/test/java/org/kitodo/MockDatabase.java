@@ -50,6 +50,7 @@ import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authorization;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.History;
@@ -137,6 +138,7 @@ public class MockDatabase {
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
+        insertClients();
         insertProjects();
         insertProjectFileGroups();
         insertProcesses();
@@ -504,7 +506,20 @@ public class MockDatabase {
 
     }
 
+    public static void insertClients() throws DAOException {
+        Client client = new Client();
+        client.setName("First client");
+        serviceManager.getClientService().save(client);
+
+        Client secondClient = new Client();
+        secondClient.setName("Second client");
+        serviceManager.getClientService().save(secondClient);
+    }
+
     private static void insertProjects() throws DAOException, DataException {
+
+        int clientsCount = serviceManager.getClientService().getAll().size();
+
         User firstUser = serviceManager.getUserService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
 
@@ -519,6 +534,12 @@ public class MockDatabase {
         firstProject.setNumberOfVolumes(2);
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
+
+        if (clientsCount > 0) {
+            Client client = serviceManager.getClientService().getById(1);
+            client.getProjects().add(firstProject);
+            firstProject.setClient(client);
+        }
         serviceManager.getProjectService().save(firstProject);
 
         Project secondProject = new Project();
@@ -531,6 +552,11 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
+        if (clientsCount > 0) {
+            Client client = serviceManager.getClientService().getById(1);
+            client.getProjects().add(secondProject);
+            secondProject.setClient(client);
+        }
         serviceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
@@ -548,6 +574,10 @@ public class MockDatabase {
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
         thirdProject.setProjectIsArchived(true);
+        if (clientsCount > 0) {
+            Client client = serviceManager.getClientService().getById(2);
+            thirdProject.setClient(client);
+        }
         serviceManager.getProjectService().save(thirdProject);
     }
 

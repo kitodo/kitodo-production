@@ -14,6 +14,7 @@ package org.kitodo.services;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.AuthorizationService;
 import org.kitodo.services.data.BatchService;
+import org.kitodo.services.data.ClientService;
 import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
 import org.kitodo.services.data.HistoryService;
@@ -39,6 +40,7 @@ public class ServiceManager {
 
     private AuthorizationService authorizationService;
     private BatchService batchService;
+    private ClientService clientService;
     private DocketService docketService;
     private FilterService filterService;
     private HistoryService historyService;
@@ -70,6 +72,12 @@ public class ServiceManager {
     private void initializeBatchService() {
         if (batchService == null) {
             batchService = BatchService.getInstance();
+        }
+    }
+
+    private void initializeClientService() {
+        if (clientService == null) {
+            clientService = ClientService.getInstance();
         }
     }
 
@@ -217,6 +225,16 @@ public class ServiceManager {
     public BatchService getBatchService() {
         initializeBatchService();
         return batchService;
+    }
+
+    /**
+     * Initialize ClientService if it is not yet initialized and next return it.
+     *
+     * @return ClientService object
+     */
+    public ClientService getClientService() {
+        initializeClientService();
+        return clientService;
     }
 
     /**

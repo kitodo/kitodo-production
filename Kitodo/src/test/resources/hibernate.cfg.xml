@@ -38,6 +38,7 @@
         <!-- Die einzelnen Mappings -->
         <mapping class="org.kitodo.data.database.beans.Authorization"/>
         <mapping class="org.kitodo.data.database.beans.Batch"/>
+        <mapping class="org.kitodo.data.database.beans.Client"/>
         <mapping class="org.kitodo.data.database.beans.Docket"/>
         <mapping class="org.kitodo.data.database.beans.Filter"/>
         <mapping class="org.kitodo.data.database.beans.History"/>
