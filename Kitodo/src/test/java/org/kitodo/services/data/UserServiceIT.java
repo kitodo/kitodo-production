@@ -514,4 +514,10 @@ public class UserServiceIT {
         User user = userService.getById(2);
         assertEquals("LdapServer title is incorrect!","FirstLdapServer",user.getLdapGroup().getLdapServer().getTitle());
     }
+
+    @Test
+    public void shouldGetUserByLdapLogin() throws DAOException {
+        User user = userService.getByLdapLogin("kowalLDP");
+        assertEquals("User surname is incorrect!","Kowalski",user.getSurname());
+    }
 }

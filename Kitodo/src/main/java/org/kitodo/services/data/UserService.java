@@ -222,6 +222,25 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
+     * Gets user by ldap login.
+     *
+     * @param ldapLogin
+     *      The ldapLogin.
+     * @return
+     *      The user.
+     */
+    public User getByLdapLogin(String ldapLogin) throws DAOException {
+        List<User> users = getByQuery("from User where ldapLogin = :username", "username", ldapLogin);
+        if (users.size() == 1)  {
+            return users.get(0);
+        } else if (users.size() == 0) {
+            throw new UsernameNotFoundException("Username " + ldapLogin + " not found!");
+        } else {
+            throw new UsernameNotFoundException("Username " + ldapLogin + " was found more than once");
+        }
+    }
+
+    /**
      * Gets the current authenticated user and loads object from database.
      *
      * @return

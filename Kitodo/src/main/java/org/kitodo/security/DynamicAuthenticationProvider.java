@@ -61,7 +61,6 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
             } catch (DAOException e) {
                 // getByLogin() throws DAOExeption, it must be converted in UsernameNotFoundException
                 // in order to match interface method signature
-                logger.error(e.getMessage());
                 throw new UsernameNotFoundException("Could not read Username from database!");
             }
         }
