@@ -19,7 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProjectService;
@@ -73,27 +72,5 @@ public class ProjekteFormIT {
 
         //assertEquals("Statistics Manager was not counted correctly!", Integer.valueOf(50), statisticsManager.getNumberOfPages());
         //assertEquals("Statistics Manager was not counted correctly!", Integer.valueOf(3), statisticsManager.getNumberOfVolumes());
-    }
-
-    @Test
-    public void shouldDuplicateProject() throws Exception {
-        ProjekteForm projekteForm = new ProjekteForm();
-        ProjectService projectService = new ServiceManager().getProjectService();
-
-        Project initialProject = projectService.getById(1);
-
-        projekteForm.duplicateProject(initialProject.getId());
-
-        long templateCountOriginal = initialProject.getProcesses().stream().filter(Process::isTemplate).count();
-        long templateCountDuplicate = projekteForm.getMyProjekt().getProcesses().stream().filter(Process::isTemplate)
-                .count();
-
-        assertEquals(
-            "DMS export file format of duplicated project does not match DMS export file format of original project!",
-            projekteForm.getMyProjekt().getFileFormatDmsExport(), initialProject.getFileFormatDmsExport());
-
-        assertEquals(
-            "Number of process templates in duplicated project does not match number of process templates in original project!",
-            templateCountDuplicate, templateCountOriginal);
     }
 }
