@@ -48,7 +48,7 @@ public class LdapServer extends BaseBean {
     @Column(name = "useSsl")
     private boolean useSsl = false;
 
-    @Column(name = "readonly")
+    @Column(name = "readOnly")
     private boolean readOnly = false;
 
     @Column(name = "passwordEncryption")

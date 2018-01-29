@@ -18,10 +18,12 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -80,16 +82,23 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      *            The ldapGroup Object.
      */
     public void configureAndActivateLdapAuthentication(LdapGroup ldapGroup) {
-        DefaultSpringSecurityContextSource ldapContextSource = new DefaultSpringSecurityContextSource(
-                ldapGroup.getLdapServer().getUrl());
-        ldapContextSource.afterPropertiesSet();
 
-        BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
-        String userDn = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
-        authenticator.setUserDnPatterns(new String[] { userDn });
+        LdapServer ldapServer = ldapGroup.getLdapServer();
 
-        this.authenticationProvider = new LdapAuthenticationProvider(authenticator,
+        if (ldapServer != null) {
+            DefaultSpringSecurityContextSource ldapContextSource = new DefaultSpringSecurityContextSource(
+                ldapServer.getUrl());
+            ldapContextSource.afterPropertiesSet();
+
+            BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
+            String userDn = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
+            authenticator.setUserDnPatterns(new String[] { userDn });
+
+            this.authenticationProvider = new LdapAuthenticationProvider(authenticator,
                 new CustomLdapAuthoritiesPopulator());
+        } else {
+            throw new AuthenticationServiceException("No ldap-server specified on users ldap-group");
+        }
     }
 
     /**

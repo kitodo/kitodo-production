@@ -17,7 +17,7 @@ CREATE TABLE ldapServer (
   `managerPassword` VARCHAR(255) DEFAULT NULL,
   `nextFreeUnixIdPattern` VARCHAR(255) DEFAULT NULL,
   `useSsl` TINYINT(1) NOT NULL DEFAULT 0,
-  `readonly` TINYINT(1) NOT NULL DEFAULT 0,
+  `readOnly` TINYINT(1) NOT NULL DEFAULT 0,
   `passwordEncryption` INT NOT NULL DEFAULT 0,
   `rootCertificate` VARCHAR(255) DEFAULT NULL,
   `pdcCertificate` VARCHAR(255) DEFAULT NULL,
