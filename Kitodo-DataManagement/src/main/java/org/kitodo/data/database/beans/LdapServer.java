@@ -49,7 +49,7 @@ public class LdapServer extends BaseBean {
     private boolean useSsl = false;
 
     @Column(name = "readonly")
-    private boolean readonly = false;
+    private boolean readOnly = false;
 
     @Column(name = "passwordEncryption")
     private Integer passwordEncryption;
@@ -204,18 +204,18 @@ public class LdapServer extends BaseBean {
      *
      * @return The readonly.
      */
-    public boolean isReadonly() {
-        return readonly;
+    public boolean isReadOnly() {
+        return readOnly;
     }
 
     /**
      * Sets readonly.
      *
-     * @param readonly
+     * @param readOnly
      *            The readonly.
      */
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     /**

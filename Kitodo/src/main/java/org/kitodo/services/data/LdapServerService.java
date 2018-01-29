@@ -171,7 +171,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     public void createNewUser(User user, String password)
             throws NamingException, NoSuchAlgorithmException, IOException {
 
-        if (!user.getLdapGroup().getLdapServer().isReadonly()) {
+        if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
                 user.getLdapGroup().getLdapServer());
 
@@ -530,7 +530,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         JDKMessageDigest.MD4 digester = new JDKMessageDigest.MD4();
         PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryptionEnum();
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
-        if (!user.getLdapGroup().getLdapServer().isReadonly()) {
+        if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
 
                 /*

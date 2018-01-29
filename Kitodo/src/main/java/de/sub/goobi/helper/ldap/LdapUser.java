@@ -75,7 +75,7 @@ public class LdapUser implements DirContext {
     public void configure(User user, String inPassword, String inUidNumber)
             throws NamingException, NoSuchAlgorithmException {
         MD4 digester = new MD4();
-        if (!user.getLdapGroup().getLdapServer().isReadonly()) {
+        if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
 
             this.type = user.getLogin();
             LdapGroup ldapGroup = user.getLdapGroup();

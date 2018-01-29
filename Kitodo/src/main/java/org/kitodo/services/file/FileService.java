@@ -829,6 +829,13 @@ public class FileService {
         return loader.loadModule();
     }
 
+    /**
+     * Deletes the slash as first character from an uri object.
+     * @param uri
+     *          The uri object.
+     * @return
+     *          The new uri object without first slash.
+     */
     public URI deleteFirstSlashFromPath(URI uri) {
         String uriString = uri.getPath();
         if (uriString.startsWith("/")) {
