@@ -31,6 +31,7 @@ import org.goobi.production.flow.statistics.StepInformation;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -323,6 +324,21 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setMetsPointerPathAnchor(baseProject.getMetsPointerPathAnchor());
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
+
+        ArrayList<ProjectFileGroup> duplicatedFileGroups = new ArrayList<>();
+        for (ProjectFileGroup projectFileGroup : baseProject.getProjectFileGroups()) {
+            ProjectFileGroup duplicatedGroup = new ProjectFileGroup();
+            duplicatedGroup.setMimeType(projectFileGroup.getMimeType());
+            duplicatedGroup.setName(projectFileGroup.getName());
+            duplicatedGroup.setPath(projectFileGroup.getPath());
+            duplicatedGroup.setPreviewImage(projectFileGroup.isPreviewImage());
+            duplicatedGroup.setSuffix(projectFileGroup.getSuffix());
+            duplicatedGroup.setFolder(projectFileGroup.getFolder());
+
+            duplicatedGroup.setProject(duplicatedProject);
+            duplicatedFileGroups.add(duplicatedGroup);
+        }
+        duplicatedProject.setProjectFileGroups(duplicatedFileGroups);
 
         // only duplicate templates, not all processes, of given base project
         duplicatedProject.setProcesses(new ArrayList<>(

@@ -49,6 +49,7 @@ import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
@@ -180,7 +181,7 @@ public class ProjekteForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage("ERROR: " + Helper.getTranslation("unableToDuplicateProject"));
+            FacesMessage facesMessage = new FacesMessage(Helper.getTranslation("unableToDuplicateProject"));
             facesContext.addMessage(null, facesMessage);
             return null;
         }
@@ -192,6 +193,8 @@ public class ProjekteForm extends BasisForm {
      * @return page or empty String
      */
     public String save() {
+        Session session = Helper.getHibernateSession();
+        session.evict(this.myProjekt);
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
@@ -847,8 +850,7 @@ public class ProjekteForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(
-                    "ERROR: " + Helper.getTranslation("unableToRetrieveTemplates"));
+            FacesMessage facesMessage = new FacesMessage(Helper.getTranslation("unableToRetrieveTemplates"));
             facesContext.addMessage(null, facesMessage);
             return null;
         }
