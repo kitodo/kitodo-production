@@ -180,7 +180,7 @@ public class ProjekteForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage("ERROR: Unable to duplicate selected project!");
+            FacesMessage facesMessage = new FacesMessage("ERROR: " + Helper.getTranslation("unableToDuplicateProject"));
             facesContext.addMessage(null, facesMessage);
             return null;
         }
@@ -847,7 +847,8 @@ public class ProjekteForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage("ERROR: Unable to retrieve templates for project!");
+            FacesMessage facesMessage = new FacesMessage(
+                    "ERROR: " + Helper.getTranslation("unableToRetrieveTemplates"));
             facesContext.addMessage(null, facesMessage);
             return null;
         }
