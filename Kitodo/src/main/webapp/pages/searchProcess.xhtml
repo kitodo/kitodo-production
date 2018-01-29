@@ -89,7 +89,7 @@
                         <p:column> <p:outputLabel value="#{msgs.masterpieceProperties}"/> </p:column>
                         <p:column>
                             <p:selectOneMenu value="#{SearchForm.masterpiecePropertyOperand}">
-                            <f:selectItems value="#{SearchForm.operands}"/>
+                                <f:selectItems value="#{SearchForm.operands}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
@@ -148,7 +148,7 @@
                         </p:column>
                         <p:column rendered="#{HelperForm.userStepDoneSearchEnabled}">
                             <p:selectOneMenu value="#{SearchForm.stepdoneuser}">
-                             <f:selectItems value="#{SearchForm.user}" var="user" itemLabel="#{user.fullName}" itemValue="#{user.login}"/>
+                                <f:selectItems value="#{SearchForm.user}" var="user" itemLabel="#{user.fullName}" itemValue="#{user.login}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
@@ -166,8 +166,8 @@
                         <p:column><p:outputLabel value="#{msgs.showArchivedProjects}" rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/></p:column>
                         <p:column>
                             <p:selectBooleanCheckbox
-                            value="#{ProzessverwaltungForm.showArchivedProjects}"
-                            rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
+                                    value="#{ProzessverwaltungForm.showArchivedProjects}"
+                                    rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
                         </p:column>
                     </p:row>
                     <p:row>
@@ -178,24 +178,23 @@
                             <p:selectBooleanCheckbox value="#{ProzessverwaltungForm.showClosedProcesses}"/>
                         </p:column>
                     </p:row>
-                    <p:row>
-                        <p:column colspan="4">
-                            <p:commandButton value="#{msgs.clearData}"
+                </p:panelGrid>
+                <p:panel styleClass="content-header">
+                    <p:commandButton value="#{msgs.clearData}"
                                      action="searchProcess"
                                      icon="fa fa-trash-o fa-lg"
                                      iconPos="right"
                                      update=":searchProcessform"
                                      immediate="true"
-                                     onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"
-                                     style="left:100%"/>
-                        </p:column>
-                    </p:row>
-                </p:panelGrid>
+                                     onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"/>
+                </p:panel>
             </h:form>
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+
+        <li><a href="">#{msgs.prozesse}</a></li>
         <li><a href="">#{msgs.nachEinemBandSuchen}</a></li>
     </ui:define>
 </ui:composition>
