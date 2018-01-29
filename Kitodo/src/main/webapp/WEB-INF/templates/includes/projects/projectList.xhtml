@@ -54,9 +54,7 @@
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink action="#{ProjekteForm.duplicateProject(item.id)}" immediate="true">
-                    <i class="fa fa-clone fa-lg"/>
-                </h:commandLink>
+                <h:commandLink action="#{ProjekteForm.duplicateProject(item.id)}" immediate="true" title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
             </h:form>
         </p:column>
