@@ -16,83 +16,114 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
-    <p:panelGrid columns="2" cellpadding="10" layout="grid">
+    <p:selectBooleanButton
+            onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
+            onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg"
+            style="left:90%" value="#{ProjekteForm.locked}">
+        <p:ajax event="change" update="metsParamaterForm mets-file-groups" />
+    </p:selectBooleanButton>
+    <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwner" value="#{msgs.metsRightsOwner}" />
-                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwner}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwner')"/>
+                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwner}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwner')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerUrl" value="#{msgs.metsRightsOwnerSite}" />
-                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerUrl')"/>
+                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerUrl')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReference" value="#{msgs.metsDigiprovReference}" />
-                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovReference}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovReference')"/>
+                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovReference}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovReference')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReferenceAnchor" value="#{msgs.metsDigiprovReferenceAnchor}" />
-                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovReferenceAnchor')"/>
+                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovReferenceAnchor')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPointerPath" value="#{msgs.metsPointerPath}" />
-                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPointerPath}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPointerPath')"/>
+                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPointerPath}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPointerPath')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPurl" value="#{msgs.metsPurl}" />
-                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPurl}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPurl')"/>
+                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPurl}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPurl')" disabled="#{ProjekteForm.locked}"/>
             </div>
         </p:row>
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwnerLogo" value="#{msgs.metsRightsOwnerLogo}" />
-                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerLogo')"/>
+                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerLogo')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerContact" value="#{msgs.metsRightsOwnerMail}" />
-                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerContact')"/>
+                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsRightsOwnerContact')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovPresentation" value="#{msgs.metsDigiprovPresentation}" />
-                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovPresentation')"/>
+                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsDigiprovPresentation')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPresentationAnchor" value="#{msgs.metsDigiprovPresentationAnchor}" />
-                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPresentationAnchor')"/>
+                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPresentationAnchor')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsPointerPathAnchor" value="#{msgs.metsPointerPathAnchor}" />
-                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPointerPathAnchor')"/>
+                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsPointerPathAnchor')" disabled="#{ProjekteForm.locked}"/>
             </div>
             <div>
                 <p:outputLabel for="metsContentId" value="#{msgs.metsContentIDs}" />
-                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsContentIDs}"/>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsContentId')"/>
+                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.metsContentIDs}" disabled="#{ProjekteForm.locked}">
+                    <p:ajax event="change"/>
+                </p:inputText>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('projectEditForm:tabs:metsContentId')" disabled="#{ProjekteForm.locked}"/>
             </div>
         </p:row>
     </p:panelGrid>
     <!-- mets file groups -->
-    <p:panel styleClass="mets-file-groups">
+    <p:panel id="mets-file-groups" styleClass="mets-file-groups">
         <p:dataTable var="filegroup" value="#{ProjekteForm.fileGroupList}">
             <p:column headerText="#{msgs.metsfilegroups}">
-                <h:outputText value="#{filegroup.name}"/>
+                <h:outputText value="#{filegroup.name}" />
             </p:column>
             <p:column>
                 <!-- edit button -->
                 <p:commandLink oncomplete="PF('editFileGroupDialog').show()"
                                styleClass="buttonset button-blue"
-                               update="@(.editDialog)">
+                               update="@(.editDialog)"
+                               disabled="#{ProjekteForm.locked}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
                                                  value="#{filegroup}"/>
@@ -102,7 +133,8 @@
                                update="projectEditForm"
                                title="#{msgs.filegroupLoeschen}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
-                               styleClass="buttonset button-blue"><i class="fa fa-trash fa-lg"/>
+                               styleClass="buttonset button-blue" disabled="#{ProjekteForm.locked}">
+                    <i class="fa fa-trash fa-lg"/>
                     <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
                                                  value="#{filegroup}"/>
                 </p:commandLink>
@@ -115,7 +147,8 @@
                          value="#{msgs.filegroupHinzufuegen}"
                          styleClass="button-filled-green"
                          icon="fa fa-plus-circle fa-lg"
-                         iconPos="right">
+                         iconPos="right"
+                         disabled="#{ProjekteForm.locked}">
             <f:setPropertyActionListener target="#{ProjekteForm.zurueck}"
                                          value="/pages/projectEditMetsPopup"/>
         </p:commandButton>
