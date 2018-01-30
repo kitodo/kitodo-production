@@ -18,23 +18,23 @@ import javax.faces.convert.ConverterException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
-public class AuthorizationConverter implements Converter {
+public class AuthorityConverter implements Converter {
 
     private ServiceManager serviceManager;
-    private static final Logger logger = LogManager.getLogger(AuthorizationConverter.class);
+    private static final Logger logger = LogManager.getLogger(AuthorityConverter.class);
 
-    public AuthorizationConverter() {
+    public AuthorityConverter() {
         this.serviceManager = new ServiceManager();
     }
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) throws ConverterException {
         try {
-            return serviceManager.getAuthorizationService().getById(Integer.parseInt(s));
+            return serviceManager.getAuthorityService().getById(Integer.parseInt(s));
         } catch (DAOException e) {
             logger.error(e.getMessage());
             return null;
@@ -43,6 +43,6 @@ public class AuthorizationConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) throws ConverterException {
-        return ((Authorization) o).getId().toString();
+        return ((Authority) o).getId().toString();
     }
 }

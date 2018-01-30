@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,9 +37,9 @@ public class SecurityUserDetails extends User implements UserDetails {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         for (UserGroup userGroup : userGroups) {
-            List<Authorization> authorizations = userGroup.getAuthorizations();
-            for (Authorization authorization : authorizations) {
-                grantedAuthorities.add(new SimpleGrantedAuthority(authorization.getTitle()));
+            List<Authority> authorities = userGroup.getAuthorities();
+            for (Authority authority : authorities) {
+                grantedAuthorities.add(new SimpleGrantedAuthority(authority.getTitle()));
             }
         }
         return grantedAuthorities;

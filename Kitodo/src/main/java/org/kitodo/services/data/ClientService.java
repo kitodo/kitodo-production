@@ -63,9 +63,9 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     }
 
     /**
-     * Return singleton variable of type AuthorizationService.
+     * Return singleton variable of type AuthorityService.
      *
-     * @return unique instance of AuthorizationService
+     * @return unique instance of AuthorityService
      */
     public static ClientService getInstance() {
         if (Objects.equals(instance, null)) {

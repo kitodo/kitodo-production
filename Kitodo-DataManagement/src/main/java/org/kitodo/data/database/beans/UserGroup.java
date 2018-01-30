@@ -48,7 +48,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     private List<Task> tasks;
 
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
-    private List<Authorization> authorizations;
+    private List<Authority> authorities;
 
     /**
      * The Constructor.
@@ -56,7 +56,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public UserGroup() {
         this.tasks = new ArrayList<>();
         this.users = new ArrayList<>();
-        this.authorizations = new ArrayList<>();
+        this.authorities = new ArrayList<>();
     }
 
     /**
@@ -83,25 +83,25 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     }
 
     /**
-     * Gets authorizations.
+     * Gets authorities.
      *
-     * @return The authorizations.
+     * @return The authorities.
      */
-    public List<Authorization> getAuthorizations() {
-        if (this.authorizations == null) {
-            this.authorizations = new ArrayList<>();
+    public List<Authority> getAuthorities() {
+        if (this.authorities == null) {
+            this.authorities = new ArrayList<>();
         }
-        return this.authorizations;
+        return this.authorities;
     }
 
     /**
-     * Sets authorizations.
+     * Sets authorities.
      *
-     * @param authorizations
-     *            The authorizations.
+     * @param authorities
+     *            The authorities.
      */
-    public void setAuthorizations(List<Authorization> authorizations) {
-        this.authorizations = authorizations;
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     /**

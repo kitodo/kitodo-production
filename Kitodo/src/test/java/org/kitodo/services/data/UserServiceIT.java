@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -498,8 +498,8 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetAuthorizationOfUser()throws Exception {
-        Authorization authorization = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorizations().get(0);
-        assertEquals("Authorization title is incorrect!","admin",authorization.getTitle());
+        Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorities().get(0);
+        assertEquals("Authority title is incorrect!", "admin", authority.getTitle());
     }
 
     @Test

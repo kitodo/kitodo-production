@@ -12,7 +12,7 @@
 package org.kitodo.services;
 
 import org.kitodo.services.command.CommandService;
-import org.kitodo.services.data.AuthorizationService;
+import org.kitodo.services.data.AuthorityService;
 import org.kitodo.services.data.BatchService;
 import org.kitodo.services.data.ClientService;
 import org.kitodo.services.data.DocketService;
@@ -38,7 +38,7 @@ import org.kitodo.services.workflow.WorkflowService;
 
 public class ServiceManager {
 
-    private AuthorizationService authorizationService;
+    private AuthorityService authorityService;
     private BatchService batchService;
     private ClientService clientService;
     private DocketService docketService;
@@ -64,8 +64,8 @@ public class ServiceManager {
     private WorkflowService workflowService;
 
     private void initializeAuthorizationService() {
-        if (authorizationService == null) {
-            authorizationService = AuthorizationService.getInstance();
+        if (authorityService == null) {
+            authorityService = AuthorityService.getInstance();
         }
     }
 
@@ -208,13 +208,13 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize AuthorizationService if it is not yet initialized and next return it.
+     * Initialize AuthorityService if it is not yet initialized and next return it.
      *
-     * @return AuthorizationService object
+     * @return AuthorityService object
      */
-    public AuthorizationService getAuthorizationService() {
+    public AuthorityService getAuthorityService() {
         initializeAuthorizationService();
-        return authorizationService;
+        return authorityService;
     }
 
     /**

@@ -15,17 +15,17 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.json.simple.JSONObject;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 
-public class AuthorizationType extends BaseType<Authorization> {
+public class AuthorityType extends BaseType<Authority> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public HttpEntity createDocument(Authorization authorization) {
+    public HttpEntity createDocument(Authority authority) {
 
         JSONObject authorizationObject = new JSONObject();
-        authorizationObject.put("title", authorization.getTitle());
-        authorizationObject.put("userGroups", addObjectRelation(authorization.getUserGroups(), true));
+        authorizationObject.put("title", authority.getTitle());
+        authorizationObject.put("userGroups", addObjectRelation(authority.getUserGroups(), true));
 
         return new NStringEntity(authorizationObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

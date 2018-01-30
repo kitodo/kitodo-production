@@ -25,12 +25,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.AuthorizationDTO;
+import org.kitodo.dto.AuthorityDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.services.ServiceManager;
 
@@ -82,7 +82,8 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        boolean condition = userGroup.getTitle().equals("Admin") && userGroup.getAuthorizations().get(0).getTitle().equals("admin");
+        boolean condition = userGroup.getTitle().equals("Admin")
+                && userGroup.getAuthorities().get(0).getTitle().equals("admin");
         assertTrue("User group was not found in database!", condition);
     }
 
@@ -225,7 +226,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetAuthorizations() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<Authorization> actual = userGroup.getAuthorizations();
+        List<Authority> actual = userGroup.getAuthorities();
         assertEquals("Permission strings doesn't match to given plain text!", "admin", actual.get(0).getTitle());
     }
 
@@ -242,7 +243,7 @@ public class UserGroupServiceIT {
         List<UserGroupDTO> userGroupDTOS = userGroupService.convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
         assertEquals("Incorrect amount of found user groups", 1, userGroupDTOS.size());
 
-        AuthorizationDTO authorizationDTO = userGroupDTOS.get(0).getAuthorizations().get(0);
-        assertEquals("Incorrect authorization!", "admin", authorizationDTO.getTitle());
+        AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorizations().get(0);
+        assertEquals("Incorrect authorization!", "admin", authorityDTO.getTitle());
     }
 }

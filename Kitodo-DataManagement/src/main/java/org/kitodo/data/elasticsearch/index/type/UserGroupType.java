@@ -18,7 +18,7 @@ import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.UserGroup;
 
 /**
- * Implementation of BatchGroup Type.
+ * Implementation of UserGroup Type.
  */
 public class UserGroupType extends BaseType<UserGroup> {
 
@@ -28,7 +28,7 @@ public class UserGroupType extends BaseType<UserGroup> {
 
         JSONObject userGroupObject = new JSONObject();
         userGroupObject.put("title", userGroup.getTitle());
-        userGroupObject.put("authorizations", addObjectRelation(userGroup.getAuthorizations(),true));
+        userGroupObject.put("authorities", addObjectRelation(userGroup.getAuthorities(), true));
         userGroupObject.put("users", addObjectRelation(userGroup.getUsers(), true));
 
         return new NStringEntity(userGroupObject.toJSONString(), ContentType.APPLICATION_JSON);

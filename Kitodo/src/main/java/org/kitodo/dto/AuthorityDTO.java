@@ -14,9 +14,9 @@ package org.kitodo.dto;
 import java.util.List;
 
 /**
- * Authorization DTO object.
+ * Authority DTO object.
  */
-public class AuthorizationDTO extends BaseDTO {
+public class AuthorityDTO extends BaseDTO {
     private String title;
     private List<UserGroupDTO> userGroups;
     private Integer userGroupsSize;

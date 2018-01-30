@@ -24,8 +24,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "authorization")
-public class Authorization extends BaseIndexedBean {
+@Table(name = "authority")
+public class Authority extends BaseIndexedBean {
 
     private static final long serialVersionUID = -5187947220333987498L;
 
@@ -33,11 +33,11 @@ public class Authorization extends BaseIndexedBean {
     private String title;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "userGroup_x_authorization",
+    @JoinTable(name = "userGroup_x_authority",
         joinColumns = {
-            @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authorization_userGroup_id")) },
+                           @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) },
         inverseJoinColumns = {
-            @JoinColumn(name = "authorization_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authorization_authorization_id")) })
+                                  @JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
     private List<UserGroup> userGroups;
 
     /**
@@ -61,10 +61,9 @@ public class Authorization extends BaseIndexedBean {
     }
 
     /**
-     * Gets all user groups in which this authorization is used.
+     * Gets all user groups in which this authority is used.
      *
-     * @return
-     *      The user groups.
+     * @return The user groups.
      */
     public List<UserGroup> getUserGroups() {
         if (this.userGroups == null) {

@@ -20,46 +20,46 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
-import org.kitodo.data.database.persistence.AuthorizationDAO;
+import org.kitodo.data.database.persistence.AuthorityDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.AuthorizationType;
+import org.kitodo.data.elasticsearch.index.type.AuthorityType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.AuthorizationDTO;
+import org.kitodo.dto.AuthorityDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class AuthorizationService extends TitleSearchService<Authorization, AuthorizationDTO, AuthorizationDAO> {
+public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO, AuthorityDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(AuthorizationService.class);
-    private static AuthorizationService instance = null;
+    private static final Logger logger = LogManager.getLogger(AuthorityService.class);
+    private static AuthorityService instance = null;
 
     /**
      * Constructor with Searcher and Indexer assigning.
      */
-    private AuthorizationService() {
-        super(new AuthorizationDAO(), new AuthorizationType(), new Indexer<>(Authorization.class), new Searcher(Authorization.class));
-        this.indexer = new Indexer<>(Authorization.class);
+    private AuthorityService() {
+        super(new AuthorityDAO(), new AuthorityType(), new Indexer<>(Authority.class), new Searcher(Authority.class));
+        this.indexer = new Indexer<>(Authority.class);
     }
 
     /**
-     * Return singleton variable of type AuthorizationService.
+     * Return singleton variable of type AuthorityService.
      *
-     * @return unique instance of AuthorizationService
+     * @return unique instance of AuthorityService
      */
-    public static AuthorizationService getInstance() {
+    public static AuthorityService getInstance() {
         if (Objects.equals(instance, null)) {
-            synchronized (AuthorizationService.class) {
+            synchronized (AuthorityService.class) {
                 if (Objects.equals(instance, null)) {
-                    instance = new AuthorizationService();
+                    instance = new AuthorityService();
                 }
             }
         }
@@ -70,10 +70,10 @@ public class AuthorizationService extends TitleSearchService<Authorization, Auth
      * Get all authorizations from index and covert results to format accepted by
      * frontend. Right now there is no usage which demands all relations.
      *
-     * @return list of AuthorizationDTO objects
+     * @return list of AuthorityDTO objects
      */
     @Override
-    public List<AuthorizationDTO> findAll() throws DataException {
+    public List<AuthorityDTO> findAll() throws DataException {
         return findAll(true);
     }
 
@@ -87,21 +87,21 @@ public class AuthorizationService extends TitleSearchService<Authorization, Auth
      *            start point for get results
      * @param size
      *            amount of requested results
-     * @return list of AuthorizationDTO objects
+     * @return list of AuthorityDTO objects
      */
     @Override
-    public List<AuthorizationDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+    public List<AuthorityDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return findAll(sort, offset, size, true);
     }
 
     /**
      * Refresh user's group object after update.
      *
-     * @param authorization
+     * @param authority
      *            object
      */
-    public void refresh(Authorization authorization) {
-        dao.refresh(authorization);
+    public void refresh(Authority authority) {
+        dao.refresh(authority);
     }
 
     /**
@@ -118,62 +118,65 @@ public class AuthorizationService extends TitleSearchService<Authorization, Auth
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Authorization");
+        return countDatabaseRows("FROM Authority");
     }
 
     /**
-     * Method saves user groups related to modified authorization.
+     * Method saves user groups related to modified authority.
      *
-     * @param authorization
+     * @param authority
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Authorization authorization) throws CustomResponseException, IOException {
-        manageUserGroupsDependenciesForIndex(authorization);
+    protected void manageDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
+        manageUserGroupsDependenciesForIndex(authority);
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove authorization from list
-     * of authorizations and re-save user group, if false only re-save authorization object.
+     * Check if IndexAction flag is delete. If true remove authority from list of
+     * authorizations and re-save user group, if false only re-save authority
+     * object.
      *
-     * @param authorization
+     * @param authority
      *            object
      */
-    private void manageUserGroupsDependenciesForIndex(Authorization authorization) throws CustomResponseException, IOException {
-        if (authorization.getIndexAction() == IndexAction.DELETE) {
-            for (UserGroup userGroup : authorization.getUserGroups()) {
-                userGroup.getAuthorizations().remove(authorization);
+    private void manageUserGroupsDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
+        if (authority.getIndexAction() == IndexAction.DELETE) {
+            for (UserGroup userGroup : authority.getUserGroups()) {
+                userGroup.getAuthorities().remove(authority);
                 serviceManager.getUserGroupService().saveToIndex(userGroup);
             }
         } else {
-            for (UserGroup userGroup : authorization.getUserGroups()) {
+            for (UserGroup userGroup : authority.getUserGroups()) {
                 serviceManager.getUserGroupService().saveToIndex(userGroup);
             }
         }
     }
 
     @Override
-    public AuthorizationDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
-        AuthorizationDTO authorizationDTO = new AuthorizationDTO();
-        authorizationDTO.setId(getIdFromJSONObject(jsonObject));
+    public AuthorityDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        AuthorityDTO authorityDTO = new AuthorityDTO();
+        authorityDTO.setId(getIdFromJSONObject(jsonObject));
         JSONObject authorizationJSONObject = getSource(jsonObject);
-        authorizationDTO.setTitle(getStringPropertyForDTO(authorizationJSONObject, "title"));
-        authorizationDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(authorizationJSONObject, "userGroups"));
+        authorityDTO.setTitle(getStringPropertyForDTO(authorizationJSONObject, "title"));
+        authorityDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(authorizationJSONObject, "userGroups"));
         if (!related) {
-            authorizationDTO = convertRelatedJSONObjects(authorizationJSONObject, authorizationDTO);
+            authorityDTO = convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
         } else {
-            authorizationDTO = addBasicUserGroupRelation(authorizationDTO, authorizationJSONObject);
+            authorityDTO = addBasicUserGroupRelation(authorityDTO, authorizationJSONObject);
         }
-        return authorizationDTO;
+        return authorityDTO;
     }
 
-    private AuthorizationDTO convertRelatedJSONObjects(JSONObject jsonObject, AuthorizationDTO authorizationDTO) throws DataException {
-        authorizationDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
-        return authorizationDTO;
+    private AuthorityDTO convertRelatedJSONObjects(JSONObject jsonObject, AuthorityDTO authorityDTO)
+            throws DataException {
+        authorityDTO.setUserGroups(
+            convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+        return authorityDTO;
     }
 
-    private AuthorizationDTO addBasicUserGroupRelation(AuthorizationDTO authorizationDTO, JSONObject jsonObject) {
-        if (authorizationDTO.getUserGroupsSize() > 0) {
+    private AuthorityDTO addBasicUserGroupRelation(AuthorityDTO authorityDTO, JSONObject jsonObject) {
+        if (authorityDTO.getUserGroupsSize() > 0) {
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add("title");
@@ -186,8 +189,8 @@ public class AuthorizationService extends TitleSearchService<Authorization, Auth
                 }
                 userGroups.add(userGroup);
             }
-            authorizationDTO.setUserGroups(userGroups);
+            authorityDTO.setUserGroups(userGroups);
         }
-        return authorizationDTO;
+        return authorityDTO;
     }
 }

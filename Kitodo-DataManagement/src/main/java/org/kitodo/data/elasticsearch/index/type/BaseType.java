@@ -20,7 +20,7 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Filter;
@@ -81,8 +81,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
                         jsonObject.put("title", ((Task) property).getTitle());
                     } else if (property instanceof Filter) {
                         jsonObject.put("value", ((Filter) property).getValue());
-                    } else if (property instanceof Authorization) {
-                        jsonObject.put("title", ((Authorization) property).getTitle());
+                    } else if (property instanceof Authority) {
+                        jsonObject.put("title", ((Authority) property).getTitle());
                     }
                 }
                 result.add(jsonObject);

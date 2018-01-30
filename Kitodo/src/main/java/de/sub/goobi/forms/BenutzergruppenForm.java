@@ -24,7 +24,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -152,11 +152,11 @@ public class BenutzergruppenForm extends BasisForm {
      *
      * @return DualListModel of available and assigned authorization levels
      */
-    public DualListModel<Authorization> getAuthorizations() {
-        List<Authorization> assignedAuthorizations = this.myBenutzergruppe.getAuthorizations();
-        List<Authorization> availableAuthorizations = serviceManager.getAuthorizationService().getAll();
-        availableAuthorizations.removeAll(assignedAuthorizations);
-        return new DualListModel<>(availableAuthorizations, assignedAuthorizations);
+    public DualListModel<Authority> getAuthorizations() {
+        List<Authority> assignedAuthorities = this.myBenutzergruppe.getAuthorities();
+        List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
+        availableAuthorities.removeAll(assignedAuthorities);
+        return new DualListModel<>(availableAuthorities, assignedAuthorities);
     }
 
     /**
@@ -166,9 +166,9 @@ public class BenutzergruppenForm extends BasisForm {
      * @param authorizations
      *            list of authorizations assigned to 'myBenutzergruppe'
      */
-    public void setAuthorizations(DualListModel<Authorization> authorizations) {
+    public void setAuthorizations(DualListModel<Authority> authorizations) {
         authorizations.getTarget().removeIf(Objects::isNull);
-        this.myBenutzergruppe.setAuthorizations(authorizations.getTarget());
+        this.myBenutzergruppe.setAuthorities(authorizations.getTarget());
     }
 
     // TODO:

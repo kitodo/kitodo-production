@@ -36,7 +36,7 @@
         <property name="hbm2ddl.auto">create-drop</property>
 
         <!-- Die einzelnen Mappings -->
-        <mapping class="org.kitodo.data.database.beans.Authorization"/>
+        <mapping class="org.kitodo.data.database.beans.Authority"/>
         <mapping class="org.kitodo.data.database.beans.Batch"/>
         <mapping class="org.kitodo.data.database.beans.Client"/>
         <mapping class="org.kitodo.data.database.beans.Docket"/>
@@ -45,8 +45,8 @@
         <mapping class="org.kitodo.data.database.beans.LdapGroup"/>
         <mapping class="org.kitodo.data.database.beans.LdapServer"/>
         <mapping class="org.kitodo.data.database.beans.Process"/>
-        <mapping class="org.kitodo.data.database.beans.Project"/>
         <mapping class="org.kitodo.data.database.beans.Property"/>
+        <mapping class="org.kitodo.data.database.beans.Project"/>
         <mapping class="org.kitodo.data.database.beans.ProjectFileGroup"/>
         <mapping class="org.kitodo.data.database.beans.Ruleset"/>
         <mapping class="org.kitodo.data.database.beans.Task"/>

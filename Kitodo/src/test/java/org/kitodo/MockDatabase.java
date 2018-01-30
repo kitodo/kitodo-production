@@ -48,7 +48,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
@@ -131,7 +131,7 @@ public class MockDatabase {
     }
 
     public static void insertProcessesFull() throws DAOException, DataException {
-        insertAuthorizations();
+        insertAuthorities();
         insertBatches();
         insertDockets();
         insertRulesets();
@@ -151,7 +151,7 @@ public class MockDatabase {
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
-        insertAuthorizations();
+        insertAuthorities();
         insertBatches();
         insertDockets();
         insertRulesets();
@@ -170,7 +170,7 @@ public class MockDatabase {
     }
 
     public static void insertUserGroupsFull() throws DAOException, DataException {
-        insertAuthorizations();
+        insertAuthorities();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
@@ -239,18 +239,18 @@ public class MockDatabase {
         return settingsMap;
     }
 
-    private static void insertAuthorizations() throws DataException {
-        Authorization adminAuthorization = new Authorization();
-        adminAuthorization.setTitle("admin");
-        serviceManager.getAuthorizationService().save(adminAuthorization);
+    private static void insertAuthorities() throws DataException {
+        Authority adminAuthority = new Authority();
+        adminAuthority.setTitle("admin");
+        serviceManager.getAuthorityService().save(adminAuthority);
 
-        Authorization managerAuthorization = new Authorization();
-        managerAuthorization.setTitle("manager");
-        serviceManager.getAuthorizationService().save(managerAuthorization);
+        Authority managerAuthority = new Authority();
+        managerAuthority.setTitle("manager");
+        serviceManager.getAuthorityService().save(managerAuthority);
 
-        Authorization userAuthorization = new Authorization();
-        userAuthorization.setTitle("user");
-        serviceManager.getAuthorizationService().save(userAuthorization);
+        Authority userAuthority = new Authority();
+        userAuthority.setTitle("user");
+        serviceManager.getAuthorityService().save(userAuthority);
     }
 
     private static void insertBatches() throws DataException {
@@ -970,17 +970,17 @@ public class MockDatabase {
     }
 
     private static void insertUserGroups() throws DAOException, DataException {
-        List<Authorization> adminAuthorizations = new ArrayList<>();
-        Authorization adminAuthorization = serviceManager.getAuthorizationService().getById(1); //admin
-        Authorization managerAuthorization = serviceManager.getAuthorizationService().getById(2); //manager
-        Authorization userAuthorization = serviceManager.getAuthorizationService().getById(3); //user
-        adminAuthorizations.add(adminAuthorization);
-        adminAuthorizations.add(managerAuthorization);
-        adminAuthorizations.add(userAuthorization);
+        List<Authority> adminAuthorities = new ArrayList<>();
+        Authority adminAuthority = serviceManager.getAuthorityService().getById(1); // admin
+        Authority managerAuthority = serviceManager.getAuthorityService().getById(2); // manager
+        Authority userAuthority = serviceManager.getAuthorityService().getById(3); // user
+        adminAuthorities.add(adminAuthority);
+        adminAuthorities.add(managerAuthority);
+        adminAuthorities.add(userAuthority);
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
-        firstUserGroup.setAuthorizations(adminAuthorizations);
+        firstUserGroup.setAuthorities(adminAuthorities);
 
         List<User> users = new ArrayList<>();
         User firstUser = serviceManager.getUserService().getById(1);
@@ -993,19 +993,19 @@ public class MockDatabase {
         users.add(secondUser);
         firstUserGroup.setUsers(users);
         serviceManager.getUserGroupService().save(firstUserGroup);
-        adminAuthorization.getUserGroups().add(firstUserGroup);
-        serviceManager.getAuthorizationService().save(adminAuthorization);
+        adminAuthority.getUserGroups().add(firstUserGroup);
+        serviceManager.getAuthorityService().save(adminAuthority);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setTitle("Random");
 
-        List<Authorization> userAuthorizations = new ArrayList<>();
-        userAuthorizations.add(userAuthorization);
-        secondUserGroup.setAuthorizations(userAuthorizations);
+        List<Authority> userAuthorities = new ArrayList<>();
+        userAuthorities.add(userAuthority);
+        secondUserGroup.setAuthorities(userAuthorities);
         serviceManager.getUserGroupService().save(secondUserGroup);
 
         UserGroup thirdUserGroup = new UserGroup();
-        thirdUserGroup.setTitle("Without authorizations");
+        thirdUserGroup.setTitle("Without authorities");
         serviceManager.getUserGroupService().save(thirdUserGroup);
     }
 
