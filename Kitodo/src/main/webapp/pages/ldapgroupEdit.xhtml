@@ -165,4 +165,9 @@
             </h:form>
         </p:panel>
     </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.users}" outcome="users"/></li>
+        <li><a href="">#{msgs.ldapgruppeBearbeiten}</a></li>
+    </ui:define>
 </ui:composition>

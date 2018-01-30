@@ -59,7 +59,7 @@
             </p:panel>
 
             <p:tabView id="tabs">
-                <p:tab title="#{msgs.uebersicht}">
+                <p:tab title="#{msgs.processList}">
                     <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
                 </p:tab>
                 <p:tab title="#{msgs.batches}">
@@ -70,7 +70,7 @@
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">
-        <li><a href="">#{msgs.prozesse}</a></li>
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><a href="">#{msgs.prozesse}</a></li>
     </ui:define>
 </ui:composition>
