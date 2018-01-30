@@ -340,9 +340,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         }
         duplicatedProject.setProjectFileGroups(duplicatedFileGroups);
 
-        // only duplicate templates, not all processes, of given base project
-        duplicatedProject.setProcesses(new ArrayList<>(
-                baseProject.getProcesses().stream().filter(Process::isTemplate).collect(Collectors.toList())));
         return duplicatedProject;
     }
 
