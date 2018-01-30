@@ -27,7 +27,7 @@ ALTER TABLE userGroup_x_authority
   REFERENCES authority (id),
   ADD CONSTRAINT FK_userGroup_x_authority_userGroup_id
   FOREIGN KEY (userGroup_id)
-  REFERENCES usergroup (id);
+  REFERENCES userGroup (id);
 
 CREATE TABLE client (
   id INT NOT NULL AUTO_INCREMENT,
