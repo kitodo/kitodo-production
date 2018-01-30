@@ -174,6 +174,7 @@ public class ProjekteForm extends BasisForm {
      *         to remain on the same page and reuse the bean.
      */
     public String duplicateProject(Integer itemId) {
+        setLocked(false);
         this.itemId = 0;
         try {
             this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
