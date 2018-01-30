@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.naming.AuthenticationException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -122,7 +120,8 @@ public class WorkflowService {
     /**
      * Set user for test purpose.
      *
-     * @param user as User object
+     * @param user
+     *            as User object
      */
     public void setUser(User user) {
         this.user = user;
@@ -137,7 +136,7 @@ public class WorkflowService {
      */
     public Task setTaskStatusUp(Task task) throws DataException, IOException {
         if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
-            task = serviceManager.getTaskService().setProcessingStatusUp(task);
+            task = setProcessingStatusUp(task);
             task.setEditTypeEnum(TaskEditType.ADMIN);
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
                 close(task);
@@ -164,7 +163,7 @@ public class WorkflowService {
         if (this.user != null) {
             task.setProcessingUser(this.user);
         }
-        return serviceManager.getTaskService().setProcessingStatusDown(task);
+        return setProcessingStatusDown(task);
     }
 
     /**
@@ -177,19 +176,7 @@ public class WorkflowService {
         List<Task> tasks = process.getTasks();
 
         for (Task task : tasks) {
-            if (!task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                task.setProcessingStatus(task.getProcessingStatus() + 1);
-                task.setEditType(TaskEditType.ADMIN.getValue());
-                if (task.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
-                    close(task);
-                } else {
-                    if (this.user != null) {
-                        task.setProcessingUser(this.user);
-                        serviceManager.getTaskService().save(task);
-                    }
-                }
-                break;
-            }
+            setTaskStatusUp(task);
         }
     }
 
@@ -204,15 +191,9 @@ public class WorkflowService {
         Collections.reverse(tasks);
 
         for (Task task : tasks) {
-            //TODO: check if this behaviour is correct
+            // TODO: check if this behaviour is correct
             if (process.getTasks().get(0) != task && task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
-                task.setEditTypeEnum(TaskEditType.ADMIN);
-                task.setProcessingTime(new Date());
-                if (this.user != null) {
-                    task.setProcessingUser(this.user);
-                }
-                task = serviceManager.getTaskService().setProcessingStatusDown(task);
-                serviceManager.getTaskService().save(task);
+                serviceManager.getTaskService().save(setTaskStatusDown(task));
                 break;
             }
         }
@@ -250,13 +231,10 @@ public class WorkflowService {
             // image validation
             if (task.isTypeImagesWrite()) {
                 MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
-                try {
-                    if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
-                        serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
-                        return null;
-                    }
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("Error on image validation: ", e);
+                URI imageFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
+                if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
+                    Helper.setFehlerMeldung("Error on image validation!");
+                    return null;
                 }
             }
         }
@@ -371,7 +349,7 @@ public class WorkflowService {
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         task.setProcessingUser(null);
         // if we have a correction task here then never remove startdate
-        if (serviceManager.getTaskService().isCorrectionStep(task)) {
+        if (isCorrectionTask(task)) {
             task.setProcessingBegin(null);
         }
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -383,7 +361,29 @@ public class WorkflowService {
     }
 
     /**
-     * Report the problem.
+     * Priority equal 10 means correction task.
+     *
+     * @param task
+     *            Task object
+     * @return true or false
+     */
+    public boolean isCorrectionTask(Task task) {
+        return (task.getPriority() == 10);
+    }
+
+    /**
+     * Set Priority equal 10 means correction task.
+     * @param task
+     *            Task object
+     * @return correction Task
+     */
+    public Task setCorrectionTask(Task task) {
+        task.setPriority(10);
+        return task;
+    }
+
+    /**
+     * Unified method for report problem with task.
      *
      * @param currentTask
      *            as Task object
@@ -400,7 +400,7 @@ public class WorkflowService {
 
         Task correctionTask = serviceManager.getTaskService().getById(this.problem.getId());
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        correctionTask = serviceManager.getTaskService().setCorrectionStep(correctionTask);
+        correctionTask = setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
 
         Property processProperty = prepareProblemMessageProperty(date);
@@ -423,52 +423,7 @@ public class WorkflowService {
     }
 
     /**
-     * This one is taken out of BatchStepHelper.
-     *
-     * @param currentTask
-     *            as Task object
-     * @param problemTask
-     *            title of problem task as String
-     */
-    public Task reportProblem(Task currentTask, String problemTask) throws DataException {
-        Date date = new Date();
-        currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(date);
-        currentTask.setProcessingUser(this.user);
-        currentTask.setProcessingBegin(null);
-
-        Task correctionTask = null;
-        for (Task task : currentTask.getProcess().getTasks()) {
-            if (task.getTitle().equals(problemTask)) {
-                correctionTask = task;
-            }
-        }
-        if (correctionTask != null) {
-            correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
-            correctionTask = serviceManager.getTaskService().setCorrectionStep(correctionTask);
-            correctionTask.setProcessingEnd(null);
-
-            Property processProperty = prepareProblemMessageProperty(date);
-            processProperty.getProcesses().add(currentTask.getProcess());
-            currentTask.getProcess().getProperties().add(processProperty);
-
-            currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
-
-            this.serviceManager.getTaskService().save(correctionTask);
-            currentTask.getProcess().getHistory().add(new History(date, correctionTask.getOrdering().doubleValue(),
-                    correctionTask.getTitle(), HistoryTypeEnum.taskError, correctionTask.getProcess()));
-
-            closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
-
-            updateProcessSortHelperStatus(currentTask.getProcess());
-        }
-
-        return currentTask;
-    }
-
-    /**
-     * Solve problem. This one is taken from AktuelleSchritteForm.
+     * Unified method for solve problem with task.
      *
      * @param currentTask
      *            as Task object
@@ -480,12 +435,12 @@ public class WorkflowService {
         currentTask.setProcessingStatusEnum(TaskStatus.DONE);
         currentTask.setProcessingEnd(date);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(new Date());
+        currentTask.setProcessingTime(date);
         currentTask.setProcessingUser(this.user);
 
         Task correctionTask = serviceManager.getTaskService().getById(this.solution.getId());
 
-        closeTasksBetweenCurrentAndCorrectionTaskA(currentTask, correctionTask, date);
+        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
 
         currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
 
@@ -501,44 +456,31 @@ public class WorkflowService {
     }
 
     /**
-     * This one is taken out of BatchStepHelper.
+     * Set processing status up. This method adds double check of task status.
      *
-     * @param currentTask
-     *            as Task object
-     * @param solutionTask
-     *            title of problematic task as String
+     * @param task
+     *            object
+     * @return task object
      */
-    public Task solveProblem(Task currentTask, String solutionTask) throws AuthenticationException, DataException {
-        if (this.user == null) {
-            // TODO: this one is removed in next PR
-            throw new AuthenticationException("userNotFound");
+    private Task setProcessingStatusUp(Task task) {
+        if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
+            task.setProcessingStatus(task.getProcessingStatus() + 1);
         }
-        Date date = new Date();
-        this.webDav.uploadFromHome(currentTask.getProcess());
-        currentTask.setProcessingStatusEnum(TaskStatus.DONE);
-        currentTask.setProcessingEnd(date);
-        currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        currentTask.setProcessingTime(date);
-        currentTask.setProcessingUser(this.user);
+        return task;
+    }
 
-        Task correctionTask = null;
-        for (Task task : currentTask.getProcess().getTasks()) {
-            if (task.getTitle().equals(solutionTask)) {
-                correctionTask = task;
-            }
+    /**
+     * Set processing status down. This method adds double check of task status.
+     *
+     * @param task
+     *            object
+     * @return task object
+     */
+    private Task setProcessingStatusDown(Task task) {
+        if (task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
+            task.setProcessingStatus(task.getProcessingStatus() - 1);
         }
-        if (correctionTask != null) {
-            closeTasksBetweenCurrentAndCorrectionTaskB(currentTask, correctionTask, date);
-
-            Property processProperty = prepareSolveMessageProperty(correctionTask);
-            processProperty.getProcesses().add(currentTask.getProcess());
-            currentTask.getProcess().getProperties().add(processProperty);
-
-            currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
-
-            updateProcessSortHelperStatus(currentTask.getProcess());
-        }
-        return currentTask;
+        return task;
     }
 
     // TODO: find out if method should save or not task
@@ -547,15 +489,13 @@ public class WorkflowService {
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
-            taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
+            taskInBetween = setCorrectionTask(taskInBetween);
             taskInBetween.setProcessingEnd(null);
             serviceManager.getTaskService().save(taskInBetween);
         }
     }
 
-    // TODO: shouldn't both methods be the same?! Why for batch is different than
-    // for form?!
-    private void closeTasksBetweenCurrentAndCorrectionTaskA(Task currentTask, Task correctionTask, Date date)
+    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date)
             throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
@@ -564,6 +504,7 @@ public class WorkflowService {
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
 
+            // TODO: check if this two lines are needed
             // this two lines differs both methods
             currentTask.setProcessingTime(date);
             currentTask.setProcessingUser(this.user);
@@ -573,22 +514,10 @@ public class WorkflowService {
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTaskB(Task currentTask, Task correctionTask, Date date)
-            throws DataException {
-        List<Task> tasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(correctionTask.getOrdering(),
-            currentTask.getOrdering(), currentTask.getProcess().getId());
-        for (Task taskInBetween : tasksInBetween) {
-            taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
-            taskInBetween.setProcessingEnd(date);
-            taskInBetween.setPriority(0);
-            this.serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
-        }
-    }
-
     private Task prepareTaskForClose(Task currentTask, Task taskInBetween, Date date) {
         if (taskInBetween.getId().intValue() == currentTask.getId().intValue()) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.OPEN);
-            taskInBetween = serviceManager.getTaskService().setCorrectionStep(taskInBetween);
+            taskInBetween = setCorrectionTask(taskInBetween);
             taskInBetween.setProcessingEnd(null);
             taskInBetween.setProcessingTime(date);
         }

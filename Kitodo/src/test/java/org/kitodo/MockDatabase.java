@@ -635,7 +635,7 @@ public class MockDatabase {
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
-        secondTask = serviceManager.getTaskService().setCorrectionStep(secondTask);
+        secondTask = serviceManager.getWorkflowService().setCorrectionTask(secondTask);
         secondTask.setOrdering(1);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 9, 25);

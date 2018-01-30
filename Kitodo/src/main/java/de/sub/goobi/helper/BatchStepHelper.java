@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
-import javax.naming.AuthenticationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -198,7 +197,7 @@ public class BatchStepHelper extends BatchHelper {
 
     }
 
-    private void saveStep() {
+    private void saveStep() throws DataException {
         Process p = this.currentStep.getProcess();
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
@@ -206,11 +205,7 @@ public class BatchStepHelper extends BatchHelper {
                 p.getProperties().remove(processProperty);
             }
         }
-        try {
-            this.serviceManager.getProcessService().save(this.currentStep.getProcess());
-        } catch (DataException e) {
-            logger.error(e);
-        }
+        this.serviceManager.getProcessService().save(this.currentStep.getProcess());
     }
 
     /**
@@ -218,14 +213,16 @@ public class BatchStepHelper extends BatchHelper {
      */
     public String reportProblemForSingle() {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
+        this.problem.setId(getIdForCorrection(this.problemTask));
         serviceManager.getWorkflowService().setProblem(getProblem());
         try {
-            this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask);
+            this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep);
             saveStep();
-        } catch (DataException e) {
-            logger.error("Problem couldn't be reported: " + e);
+        } catch (DAOException | DataException e) {
+            Helper.setFehlerMeldung("correctionReportProblem");
+            logger.error(e);
         }
-        this.problem.setMessage("");
+        setProblem(serviceManager.getWorkflowService().getProblem());
         this.problemTask = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
@@ -235,18 +232,20 @@ public class BatchStepHelper extends BatchHelper {
      * Error management for all.
      */
     public String reportProblemForAll() {
-        for (Task s : this.steps) {
-            this.currentStep = s;
+        for (Task task : this.steps) {
+            this.currentStep = task;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
+            this.problem.setId(getIdForCorrection(this.problemTask));
             serviceManager.getWorkflowService().setProblem(getProblem());
             try {
-                setCurrentStep(serviceManager.getWorkflowService().reportProblem(this.currentStep, this.problemTask));
+                setCurrentStep(serviceManager.getWorkflowService().reportProblem(this.currentStep));
                 saveStep();
-            } catch (DataException e) {
-                logger.error("Problem couldn't be reported: " + e);
+            } catch (DAOException | DataException e) {
+                Helper.setFehlerMeldung("correctionReportProblem");
+                logger.error(e);
             }
         }
-        this.problem.setMessage("");
+        setProblem(serviceManager.getWorkflowService().getProblem());
         this.problemTask = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
@@ -289,23 +288,20 @@ public class BatchStepHelper extends BatchHelper {
      * @return String
      */
     public String solveProblemForSingle() {
+        this.solution.setId(getIdForCorrection(this.solutionTask));
+        serviceManager.getWorkflowService().setSolution(getSolution());
         try {
-            serviceManager.getWorkflowService().setSolution(getSolution());
-            try {
-                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
-                saveStep();
-            } catch (DataException e) {
-                logger.error("Problem couldn't be solved: " + e);
-            }
-            this.solution.setMessage("");
-            this.solutionTask = "";
-
-            AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.filterAll();
-        } catch (AuthenticationException e) {
-            Helper.setFehlerMeldung(e.getMessage());
-            return "";
+            setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
+            saveStep();
+        } catch (DAOException | DataException e) {
+            Helper.setFehlerMeldung("correctionSolveProblem");
+            logger.error(e);
         }
+        setSolution(serviceManager.getWorkflowService().getSolution());
+        this.solutionTask = "";
+
+        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+        return asf.filterAll();
     }
 
     /**
@@ -314,26 +310,36 @@ public class BatchStepHelper extends BatchHelper {
      * @return String
      */
     public String solveProblemForAll() {
-        try {
-            for (Task s : this.steps) {
-                this.currentStep = s;
-                serviceManager.getWorkflowService().setSolution(getSolution());
-                try {
-                    setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep, this.solutionTask));
-                    saveStep();
-                } catch (DataException e) {
-                    logger.error("Problem couldn't be solved: " + e);
-                }
+        for (Task task : this.steps) {
+            this.currentStep = task;
+            this.solution.setId(getIdForCorrection(this.solutionTask));
+            serviceManager.getWorkflowService().setSolution(getSolution());
+            try {
+                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
+                saveStep();
+            } catch (DAOException | DataException e) {
+                Helper.setFehlerMeldung("correctionSolveProblem");
+                logger.error(e);
             }
-            this.solution.setMessage("");
-            this.solutionTask = "";
-
-            AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.filterAll();
-        } catch (AuthenticationException e) {
-            Helper.setFehlerMeldung(e.getMessage());
-            return "";
         }
+        setSolution(serviceManager.getWorkflowService().getSolution());
+        this.solutionTask = "";
+
+        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+        return asf.filterAll();
+    }
+
+    /**
+     * Temporal method to unify reportProblem and solveProblem methods in WorkflowService.
+     * @return id of task to set for problem/solution
+     */
+    private Integer getIdForCorrection(String taskTitle) {
+        for (Task task : this.currentStep.getProcess().getTasks()) {
+            if (task.getTitle().equals(taskTitle)) {
+                return task.getId();
+            }
+        }
+        return 0;
     }
 
     /**
@@ -517,7 +523,7 @@ public class BatchStepHelper extends BatchHelper {
         for (Task task : this.steps) {
             this.myDav.uploadFromHome(task.getProcess());
             task.setProcessingStatusEnum(TaskStatus.OPEN);
-            if (serviceManager.getTaskService().isCorrectionStep(task)) {
+            if (serviceManager.getWorkflowService().isCorrectionTask(task)) {
                 task.setProcessingBegin(null);
             }
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);

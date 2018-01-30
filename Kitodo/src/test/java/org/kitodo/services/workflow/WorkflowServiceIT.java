@@ -144,33 +144,7 @@ public class WorkflowServiceIT {
         Task correctionTask = taskService.getById(1);
         assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN, correctionTask.getProcessingStatusEnum());
 
-        assertTrue("Report of problem was incorrect - task is not a correction task!", serviceManager.getTaskService().isCorrectionStep(correctionTask));
-
-        Process process = currentTask.getProcess();
-        for (Task task : process.getTasks()) {
-            if (correctionTask.getOrdering() < task.getOrdering() && task.getOrdering() < currentTask.getOrdering()) {
-                assertEquals("Report of problem was incorrect - tasks between were not set up to locked!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
-            }
-        }
-
-        // set up tasks to previous states
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesForWorkflowFull();
-    }
-
-    @Test
-    public void shouldReportProblemBatch() throws Exception {
-        Problem problem = new Problem();
-        problem.setMessage("Fix it!");
-        workflowService.setProblem(problem);
-
-        Task currentTask = taskService.getById(3);
-        workflowService.reportProblem(currentTask, "Testing");
-
-        Task correctionTask = taskService.getByQuery("FROM Task WHERE title = 'Testing'").get(0);
-        assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN, correctionTask.getProcessingStatusEnum());
-
-        assertTrue("Report of problem was incorrect - task is not a correction task!", taskService.isCorrectionStep(correctionTask));
+        assertTrue("Report of problem was incorrect - task is not a correction task!", workflowService.isCorrectionTask(correctionTask));
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {
@@ -202,35 +176,6 @@ public class WorkflowServiceIT {
         workflowService.solveProblem(currentTask);
 
         Task correctionTask = taskService.getById(1);
-
-        Process process = currentTask.getProcess();
-        for (Task task : process.getTasks()) {
-            if (correctionTask.getOrdering() < task.getOrdering() && task.getOrdering() < currentTask.getOrdering()) {
-                assertEquals("Solve of problem was incorrect - tasks between were not set up to done!", TaskStatus.DONE, task.getProcessingStatusEnum());
-            }
-        }
-
-        // set up tasks to previous states
-        MockDatabase.cleanDatabase();
-        MockDatabase.insertProcessesForWorkflowFull();
-    }
-
-    @Test
-    public void shouldSolveProblemBatch() throws Exception {
-        Problem problem = new Problem();
-        problem.setMessage("Fix it!");
-
-        Solution solution = new Solution();
-        solution.setMessage("Fixed");
-
-        workflowService.setProblem(problem);
-        workflowService.setSolution(solution);
-
-        Task currentTask = taskService.getById(3);
-        workflowService.reportProblem(currentTask, "Testing");
-        workflowService.solveProblem(currentTask, "Testing");
-
-        Task correctionTask = taskService.getByQuery("FROM Task WHERE title = 'Testing'").get(0);
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {
