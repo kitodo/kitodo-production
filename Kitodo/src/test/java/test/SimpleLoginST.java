@@ -90,7 +90,7 @@ public class SimpleLoginST {
         String userDir = System.getProperty("user.dir");
         provideGeckoDriver(GECKO_DRIVER_VERSION, userDir + "/target/downloads/", userDir + "/target/extracts/");
         driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
     }
 
@@ -358,6 +358,16 @@ public class SimpleLoginST {
             FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-win64.zip"),
                     geckoDriverZipFile);
             extractZipFileToFolder(geckoDriverZipFile, new File(extractFolder));
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            geckoDriverFileName = "geckodriver";
+            File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
+            FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-macos.tar.gz"),
+                    geckoDriverTarFile);
+            File theDir = new File(extractFolder);
+            if (!theDir.exists()) {
+                theDir.mkdir();
+            }
+            extractTarFileToFolder(geckoDriverTarFile, theDir, true);
         } else {
             geckoDriverFileName = "geckodriver";
             File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
