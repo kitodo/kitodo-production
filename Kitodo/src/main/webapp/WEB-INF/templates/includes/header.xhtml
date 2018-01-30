@@ -61,7 +61,7 @@
                             <li><h3>#{msgs.dashboard}<h:outputText rendered="#{LoginForm.maximaleBerechtigung == 1}"> <i>(Admin)</i></h:outputText></h3></li>
                             <li class="nav-pic-text"><h:link value="#{msgs.schritte}" outcome="tasks"><i class="fa fa-bell fa-lg"/></h:link></li>
                             <li class="nav-pic-text"><h:link value="#{msgs.prozesse}" outcome="processes"><i class="fa fa-hourglass-3 fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.projekte}" outcome="projects" onclick="#{ProjekteForm.setLocked(true)}"><i class="fa fa-folder-open fa-lg"/></h:link></li>
+                            <li class="nav-pic-text"><h:link value="#{msgs.projekte}" outcome="projects"><i class="fa fa-folder-open fa-lg"/></h:link></li>
                             <li class="nav-pic-text"><h:link value="#{msgs.benutzer}" outcome="users"><i class="fa fa-user fa-lg"/></h:link></li>
                             <li class="nav-pic-text"><h:link value="#{msgs.modules}" outcome="newTaskManager"><i class="fa fa-puzzle-piece fa-lg"/></h:link></li>
                             <li class="nav-pic-text"><h:link value="#{msgs.help}" outcome="userInstructions"><i class="fa fa-life-ring fa-lg"/></h:link></li>
