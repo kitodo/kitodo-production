@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -186,27 +185,23 @@ public class XMLWriter {
      * @return the DOM document
      */
     private static Document toDocument(Node node, Map<String, String> namespaces) {
-        Namespaces abbr = namespaces instanceof Namespaces ? (Namespaces) namespaces : new Namespaces(namespaces);
-        DocumentBuilder builder;
         try {
-            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Namespaces abbr = namespaces instanceof Namespaces ? (Namespaces) namespaces : new Namespaces(namespaces);
+            String qualifiedName = abbr.abbreviateElement(getTypeOrDefault(node));
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation()
+                    .createDocument(Namespaces.namespaceOfForXMLFile(getTypeOrDefault(node)), qualifiedName, null);
+            Element root = document.getDocumentElement();
+            if ((node instanceof Node) && (node instanceof IdentifiableNode)) {
+                root.setAttribute(abbr.abbreviateAttribute(getTypeOrDefault(node), RDF.ABOUT),
+                    ((IdentifiableNode) node).getIdentifier());
+            }
+            nodeToElement(node, document, abbr, root);
+            abbr.namespaceSetForXMLFile().forEach(nsAttr -> root.setAttribute(nsAttr.getKey(), nsAttr.getValue()));
+            return document;
         } catch (ParserConfigurationException e) {
-            String message = e.getMessage();
-            throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
+            // Java can be assumed to support the parser’s default configuration
+            throw new IllegalStateException(e.getMessage(), e);
         }
-        String qualifiedName = abbr.abbreviateElement(getTypeOrDefault(node));
-        Document document = builder.getDOMImplementation()
-                .createDocument(Namespaces.namespaceOfForXMLFile(getTypeOrDefault(node)), qualifiedName, null);
-        Element root = document.getDocumentElement();
-        if ((node instanceof Node) && (node instanceof IdentifiableNode)) {
-            root.setAttribute(abbr.abbreviateAttribute(getTypeOrDefault(node), RDF.ABOUT),
-                ((IdentifiableNode) node).getIdentifier());
-        }
-        nodeToElement(node, document, abbr, root);
-        for (Entry<String, String> nsAttr : abbr.namespaceSetForXMLFile()) {
-            root.setAttribute(nsAttr.getKey(), nsAttr.getValue());
-        }
-        return document;
     }
 
     /**
@@ -300,9 +295,11 @@ public class XMLWriter {
      *            disables wrapping
      * @param namespaces
      *            an external defined mapping of namespaces to abbreviations
+     * @throws IOException
+     *             if writing to the output stream fails
      */
     public static void toStream(Node node, OutputStream out, int indent, Map<String, String> namespaces,
-            Optional<String> optionalCharset) {
+            Optional<String> optionalCharset) throws IOException {
         String charset = optionalCharset.orElse(StandardCharsets.UTF_8.toString());
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -312,9 +309,12 @@ public class XMLWriter {
             }
             transformer.setOutputProperty(OutputKeys.ENCODING, charset);
             transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(out));
-        } catch (TransformerException e) {
-            String message = e.getMessage();
-            throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
+        } catch (TransformerException transformerException) {
+            if ((transformerException.getCause() != null) && (transformerException.getCause() instanceof IOException)) {
+                throw (IOException) transformerException.getCause();
+            } else {
+                throw new IOException(transformerException.getMessage(), transformerException);
+            }
         }
     }
 

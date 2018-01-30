@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -409,29 +407,21 @@ public class XMLReader {
      *            character encoding to use
      * @return the root element
      * @throws SAXException
-     *             if the document is not well formed
+     *             if the XML is not well-formed
      * @throws IOException
-     *             if there are reading issues
+     *             if a read operation fails
      */
     private static final Element parseXML(InputStream input, Optional<String> encoding)
             throws SAXException, IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder;
-            try {
-                documentBuilder = factory.newDocumentBuilder();
-            } catch (ParserConfigurationException e) {
-                String message = e.getMessage();
-                throw new RuntimeException(message != null ? message : e.getClass().getSimpleName(), e);
-            }
             InputSource source = new InputSource(input);
-            encoding.ifPresent((value) -> {
-                source.setEncoding(value);
-            });
-            return documentBuilder.parse(source).getDocumentElement();
-        } finally {
-            input.close();
+            encoding.ifPresent(value -> source.setEncoding(value));
+            return factory.newDocumentBuilder().parse(source).getDocumentElement();
+        } catch (ParserConfigurationException e) {
+            // Java can be assumed to support the parser’s default configuration
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
@@ -469,7 +459,9 @@ public class XMLReader {
      */
     public static Node toNode(File path, Storage storage) throws SAXException, IOException {
         String namespace = Namespaces.namespaceFromURI(path.getCanonicalFile().toURI());
-        return toNode(parseXML(new FileInputStream(path), Optional.empty()), namespace, storage);
+        try (FileInputStream inputStream = new FileInputStream(path)) {
+            return toNode(parseXML(inputStream, Optional.empty()), namespace, storage);
+        }
     }
 
     /**
@@ -510,16 +502,11 @@ public class XMLReader {
      *             if the XML is semantically wrong
      */
     public static Node toNode(String data, String documentNS, Storage storage) throws SAXException {
-        try {
-            try (ByteArrayInputStream bytes = new ByteArrayInputStream(data.getBytes("UTF-16"))) {
-                return toNode(bytes, Optional.of("UTF-16"), documentNS, storage);
-            }
-        } catch (UnsupportedEncodingException e) {
-            /* "UTF-16" is always supported by Java */
-            throw new IllegalStateException(e.getMessage(), e);
+        try (ByteArrayInputStream bytes = new ByteArrayInputStream(data.getBytes("UTF-16"))) {
+            return toNode(bytes, Optional.of("UTF-16"), documentNS, storage);
         } catch (IOException e) {
-            /* there is no IOException to expect when reading from a String */
-            throw new RuntimeException(e.getMessage(), e);
+            // there is no IOException to expect when reading from a String
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
