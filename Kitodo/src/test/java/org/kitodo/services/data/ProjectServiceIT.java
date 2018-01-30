@@ -29,7 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -250,15 +249,8 @@ public class ProjectServiceIT {
 
         Project duplicatedProject = projectService.duplicateProject(1);
 
-        long templateCountOriginal = initialProject.getProcesses().stream().filter(Process::isTemplate).count();
-        long templateCountDuplicate = duplicatedProject.getProcesses().stream().filter(Process::isTemplate).count();
-
         assertEquals(
             "DMS export file format of duplicated project does not match DMS export file format of original project!",
             duplicatedProject.getFileFormatDmsExport(), initialProject.getFileFormatDmsExport());
-
-        assertEquals(
-            "Number of process templates in duplicated project does not match number of process templates in original project!",
-            templateCountDuplicate, templateCountOriginal);
     }
 }
