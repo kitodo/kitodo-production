@@ -9,10 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.ldap;
+package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ldap.LdapUser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Hashtable;
+import java.util.Objects;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -47,19 +49,79 @@ import javax.naming.ldap.StartTlsResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
+import org.bouncycastle.jce.provider.JDKMessageDigest;
+import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.PasswordEncryption;
+import org.kitodo.data.database.persistence.LdapServerDAO;
+import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class Ldap {
-    private static final Logger logger = LogManager.getLogger(Ldap.class);
+public class LdapServerService extends SearchDatabaseService<LdapServer, LdapServerDAO> {
+
     private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(LdapServerService.class);
+    private static LdapServerService instance = null;
+    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
-    public Ldap() {
-
+    /**
+     * Return singleton variable of type LdapServerService.
+     *
+     * @return unique instance of LdapServerService
+     */
+    public static LdapServerService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (HistoryService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new LdapServerService();
+                }
+            }
+        }
+        return instance;
     }
 
-    private String getUserDN(User inUser) {
+    private LdapServerService() {
+        super(new LdapServerDAO());
+    }
+
+    /**
+     * Saves ldap server to database.
+     * 
+     * @param ldapServer
+     *            The ldap server.
+     */
+    public void save(LdapServer ldapServer) throws DAOException {
+        dao.save(ldapServer);
+    }
+
+    /**
+     * Removes ldap server from database.
+     * 
+     * @param ldapServer
+     *            The ldap server.
+     */
+    public void remove(LdapServer ldapServer) throws DAOException {
+        dao.remove(ldapServer);
+    }
+
+    /**
+     * Removes ldap server from database by id.
+     * 
+     * @param id
+     *            The ldap server id.
+     */
+    public void remove(Integer id) throws DAOException {
+        dao.remove(id);
+    }
+
+    @Override
+    public Long countDatabaseRows() throws DAOException {
+        return countDatabaseRows("FROM LdapServer");
+    }
+
+    private String buildUserDN(User inUser) {
         String userDN = inUser.getLdapGroup().getUserDN();
         userDN = userDN.replaceAll("\\{login\\}", inUser.getLogin());
         if (inUser.getLdapLogin() != null) {
@@ -70,38 +132,67 @@ public class Ldap {
         return userDN;
     }
 
+    private Hashtable<String, String> initializeWithLdapConnectionSettings(LdapServer ldapServer) {
+        Hashtable<String, String> env = new Hashtable<>(11);
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, ldapServer.getUrl());
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_PRINCIPAL, ldapServer.getManagerLogin());
+
+        String encryptedManagerPassword = ldapServer.getManagerPassword();
+        String decryptedManagerPassword = passwordEncoder.decrypt(encryptedManagerPassword);
+
+        env.put(Context.SECURITY_CREDENTIALS, decryptedManagerPassword);
+
+        if (ldapServer.isUseSsl()) {
+            String keystorepath = ldapServer.getKeystore();
+            String keystorepasswd = ldapServer.getKeystorePassword();
+
+            // add all necessary certificates first
+            loadCertificates(keystorepath, keystorepasswd, ldapServer);
+
+            // set properties, so that the current keystore is used for SSL
+            System.setProperty("javax.net.ssl.keyStore", keystorepath);
+            System.setProperty("javax.net.ssl.trustStore", keystorepath);
+            System.setProperty("javax.net.ssl.keyStorePassword", keystorepasswd);
+            env.put(Context.SECURITY_PROTOCOL, "ssl");
+        }
+        return env;
+    }
+
     /**
      * create new user in LDAP-directory.
      *
-     * @param inBenutzer
+     * @param user
      *            User object
-     * @param inPasswort
+     * @param password
      *            String
      */
-    public void createNewUser(User inBenutzer, String inPasswort)
+    public void createNewUser(User user, String password)
             throws NamingException, NoSuchAlgorithmException, IOException {
 
-        if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
-            Hashtable<String, String> env = getLdapConnectionSettings();
-            env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-            env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
+        if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
+            Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
+                user.getLdapGroup().getLdapServer());
 
-            LdapUser dr = new LdapUser();
-            dr.configure(inBenutzer, inPasswort, getNextUidNumber());
-            DirContext ctx = new InitialDirContext(env);
-            ctx.bind(getUserDN(inBenutzer), dr);
+            LdapUser ldapUser = new LdapUser();
+            ldapUser.configure(user, password, getNextUidNumber(user.getLdapGroup().getLdapServer()));
+            DirContext ctx = new InitialDirContext(ldapEnvironment);
+            ctx.bind(buildUserDN(user), ldapUser);
             ctx.close();
-            setNextUidNumber();
-            Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " "
-                    + serviceManager.getUserService().getFullName(inBenutzer), "");
+            setNextUidNumber(user.getLdapGroup().getLdapServer());
+            Helper.setMeldung(null,
+                Helper.getTranslation("ldapWritten") + " " + serviceManager.getUserService().getFullName(user), "");
             /*
              * check if HomeDir exists, else create it
              */
             logger.debug("HomeVerzeichnis pruefen");
-            URI homePath = URI.create(getUserHomeDirectory(inBenutzer));
+
+            URI homePath = getUserHomeDirectory(user);
+
             if (!new File(homePath).exists()) {
                 logger.debug("HomeVerzeichnis existiert noch nicht");
-                serviceManager.getFileService().createDirectoryForUser(homePath, inBenutzer.getLogin());
+                serviceManager.getFileService().createDirectoryForUser(homePath, user.getLogin());
                 logger.debug("HomeVerzeichnis angelegt");
             } else {
                 logger.debug("HomeVerzeichnis existiert schon");
@@ -114,22 +205,19 @@ public class Ldap {
     /**
      * Check if connection with login and password possible.
      *
-     * @param inBenutzer
+     * @param user
      *            User object
-     * @param inPasswort
+     * @param password
      *            String
      * @return Login correct or not
      */
-    public boolean isUserPasswordCorrect(User inBenutzer, String inPasswort) {
+    public boolean isUserPasswordCorrect(User user, String password) {
         logger.debug("start login session with ldap");
-        Hashtable<String, String> env = getLdapConnectionSettings();
+        Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
 
         // Start TLS
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
             logger.debug("use TLS for auth");
-            env = new Hashtable<>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, ConfigCore.getParameter("ldap_url"));
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;
             StartTlsResponse tls = null;
@@ -143,8 +231,8 @@ public class Ldap {
                 // Authenticate via SASL EXTERNAL mechanism using client X.509
                 // certificate contained in JVM keystore
                 ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
-                ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, getUserDN(inBenutzer));
-                ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, inPasswort);
+                ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, buildUserDN(user));
+                ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, password);
                 ctx.reconnect(null);
                 return true;
                 // Perform search for privileged attributes under authenticated
@@ -180,15 +268,15 @@ public class Ldap {
                 env.put(Context.SECURITY_AUTHENTICATION, "none");
                 // TODO auf passwort testen
             } else {
-                env.put(Context.SECURITY_PRINCIPAL, getUserDN(inBenutzer));
-                env.put(Context.SECURITY_CREDENTIALS, inPasswort);
+                env.put(Context.SECURITY_PRINCIPAL, buildUserDN(user));
+                env.put(Context.SECURITY_CREDENTIALS, password);
             }
             logger.debug("ldap environment set");
 
             try {
                 if (logger.isDebugEnabled()) {
                     logger.debug("start classic ldap authentification");
-                    logger.debug("user DN is " + getUserDN(inBenutzer));
+                    logger.debug("user DN is " + buildUserDN(user));
                 }
 
                 if (ConfigCore.getParameter("ldap_AttributeToTest") == null) {
@@ -200,7 +288,7 @@ public class Ldap {
                     logger.debug("ldap attribute to test is not null");
                     DirContext ctx = new InitialDirContext(env);
 
-                    Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
+                    Attributes attrs = ctx.getAttributes(buildUserDN(user));
                     Attribute la = attrs.get(ConfigCore.getParameter("ldap_AttributeToTest"));
                     logger.debug("ldap attributes set");
                     String test = (String) la.get(0);
@@ -216,7 +304,7 @@ public class Ldap {
                 }
             } catch (NamingException e) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("login not allowed for " + inBenutzer.getLogin(), e);
+                    logger.debug("login not allowed for " + user.getLogin(), e);
                 }
                 return false;
             }
@@ -224,22 +312,22 @@ public class Ldap {
     }
 
     /**
-     * retrieve home directory of given user.
+     * Retrieve home directory of given user.
      *
-     * @param inBenutzer
+     * @param user
      *            User object
-     * @return path as string
+     * @return path as URI
      */
-    public String getUserHomeDirectory(User inBenutzer) {
+    public URI getUserHomeDirectory(User user) {
+
+        URI userFolderBasePath = URI.create("file:///" + ConfigCore.getParameter("dir_Users"));
+
         if (ConfigCore.getBooleanParameter("useLocalDirectory", false)) {
-            return ConfigCore.getParameter("dir_Users") + inBenutzer.getLogin();
+            return userFolderBasePath.resolve(user.getLogin());
         }
-        Hashtable<String, String> env = getLdapConnectionSettings();
+        Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
 
-            env = new Hashtable<>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, ConfigCore.getParameter("ldap_url"));
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;
             StartTlsResponse tls = null;
@@ -250,17 +338,11 @@ public class Ldap {
                 tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
                 tls.negotiate();
 
-                // Authenticate via SASL EXTERNAL mechanism using client X.509
-                // certificate contained in JVM keystore
-                ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
-                ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-                ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
-
                 ctx.reconnect(null);
 
-                Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
+                Attributes attrs = ctx.getAttributes(buildUserDN(user));
                 Attribute la = attrs.get("homeDirectory");
-                return (String) la.get(0);
+                return URI.create((String) la.get(0));
 
                 // Perform search for privileged attributes under authenticated
                 // context
@@ -268,12 +350,12 @@ public class Ldap {
             } catch (IOException e) {
                 logger.error("TLS negotiation error:", e);
 
-                return ConfigCore.getParameter("dir_Users") + inBenutzer.getLogin();
+                return userFolderBasePath.resolve(user.getLogin());
             } catch (NamingException e) {
 
                 logger.error("JNDI error:", e);
 
-                return ConfigCore.getParameter("dir_Users") + inBenutzer.getLogin();
+                return userFolderBasePath.resolve(user.getLogin());
             } finally {
                 if (tls != null) {
                     try {
@@ -292,45 +374,48 @@ public class Ldap {
                     }
                 }
             }
-        } else if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
+        }
+        if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
             env.put(Context.SECURITY_AUTHENTICATION, "none");
-        } else {
-            env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-            env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
-
         }
         DirContext ctx;
-        String rueckgabe = "";
+        URI userFolderPath = null;
         try {
             ctx = new InitialDirContext(env);
-            Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
-            Attribute la = attrs.get("homeDirectory");
-            rueckgabe = (String) la.get(0);
+            Attributes attrs = ctx.getAttributes(buildUserDN(user));
+            Attribute ldapAttribute = attrs.get("homeDirectory");
+            userFolderPath = URI.create((String) ldapAttribute.get(0));
             ctx.close();
         } catch (NamingException e) {
             logger.error(e);
         }
-        return rueckgabe;
+
+        if (userFolderPath != null && !userFolderPath.isAbsolute()) {
+            if (userFolderPath.getPath().startsWith("/")) {
+                userFolderPath = serviceManager.getFileService().deleteFirstSlashFromPath(userFolderPath);
+            }
+            return userFolderBasePath.resolve(userFolderPath);
+        } else {
+            return userFolderPath;
+        }
     }
 
     /**
-     * check if User already exists on system.
+     * Check if User already exists on system.
      *
-     * @param inLogin
-     *            String
-     * @return path as string
+     * @param user
+     *            The User.
+     * @return result as boolean
      */
-    public boolean isUserAlreadyExists(String inLogin) {
-        Hashtable<String, String> env = getLdapConnectionSettings();
-        env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-        env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
+    public boolean isUserAlreadyExists(User user) {
+        Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
+            user.getLdapGroup().getLdapServer());
         DirContext ctx;
         boolean rueckgabe = false;
         try {
-            ctx = new InitialDirContext(env);
+            ctx = new InitialDirContext(ldapEnvironment);
             Attributes matchAttrs = new BasicAttributes(true);
-            NamingEnumeration<SearchResult> answer = ctx.search("ou=users,dc=gdz,dc=sub,dc=uni-goettingen,dc=de",
-                    matchAttrs);
+            NamingEnumeration<SearchResult> answer = ctx.search(buildUserDN(user), matchAttrs);
             rueckgabe = answer.hasMoreElements();
 
             while (answer.hasMore()) {
@@ -389,15 +474,13 @@ public class Ldap {
      *
      * @return next free uidNumber
      */
-    private String getNextUidNumber() {
-        Hashtable<String, String> env = getLdapConnectionSettings();
-        env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-        env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
+    private String getNextUidNumber(LdapServer ldapServer) {
+        Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(ldapServer);
         DirContext ctx;
         String rueckgabe = "";
         try {
-            ctx = new InitialDirContext(env);
-            Attributes attrs = ctx.getAttributes(ConfigCore.getParameter("ldap_nextFreeUnixId"));
+            ctx = new InitialDirContext(ldapEnvironment);
+            Attributes attrs = ctx.getAttributes(ldapServer.getNextFreeUnixIdPattern());
             Attribute la = attrs.get("uidNumber");
             rueckgabe = (String) la.get(0);
             ctx.close();
@@ -411,15 +494,13 @@ public class Ldap {
     /**
      * Set next free uidNumber.
      */
-    private void setNextUidNumber() {
-        Hashtable<String, String> env = getLdapConnectionSettings();
-        env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-        env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
+    private void setNextUidNumber(LdapServer ldapServer) {
+        Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(ldapServer);
         DirContext ctx;
 
         try {
-            ctx = new InitialDirContext(env);
-            Attributes attrs = ctx.getAttributes(ConfigCore.getParameter("ldap_nextFreeUnixId"));
+            ctx = new InitialDirContext(ldapEnvironment);
+            Attributes attrs = ctx.getAttributes(ldapServer.getNextFreeUnixIdPattern());
             Attribute la = attrs.get("uidNumber");
             String oldValue = (String) la.get(0);
             int bla = Integer.parseInt(oldValue) + 1;
@@ -427,7 +508,7 @@ public class Ldap {
             BasicAttribute attrNeu = new BasicAttribute("uidNumber", String.valueOf(bla));
             ModificationItem[] mods = new ModificationItem[1];
             mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attrNeu);
-            ctx.modifyAttributes(ConfigCore.getParameter("ldap_nextFreeUnixId"), mods);
+            ctx.modifyAttributes(ldapServer.getNextFreeUnixIdPattern(), mods);
 
             ctx.close();
         } catch (NamingException e) {
@@ -439,38 +520,31 @@ public class Ldap {
     /**
      * change password of given user, needs old password for authentication.
      *
-     * @param inUser
+     * @param user
      *            User object
-     * @param inOldPassword
-     *            String
      * @param inNewPassword
      *            String
      * @return boolean about result of change
      */
-    public boolean changeUserPassword(User inUser, String inOldPassword, String inNewPassword)
-            throws NoSuchAlgorithmException {
-        MD4 digester = new MD4();
-        Hashtable<String, String> env = getLdapConnectionSettings();
-        if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
-            env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
-            env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
-
+    public boolean changeUserPassword(User user, String inNewPassword) throws NoSuchAlgorithmException {
+        JDKMessageDigest.MD4 digester = new JDKMessageDigest.MD4();
+        PasswordEncryption passwordEncryption = user.getLdapGroup().getLdapServer().getPasswordEncryptionEnum();
+        Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
+        if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
-                DirContext ctx = new InitialDirContext(env);
 
                 /*
                  * Encryption of password and Base64-Encoding
                  */
-                MessageDigest md = MessageDigest.getInstance(ConfigCore.getParameter("ldap_encryption", "SHA"));
+                MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
-                String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-                ModificationItem[] mods = new ModificationItem[4];
+                String encryptedPassword = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
 
                 /*
                  * UserPasswort-Attribut ändern
                  */
                 BasicAttribute userpassword = new BasicAttribute("userPassword",
-                        "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+                        "{" + passwordEncryption + "}" + encryptedPassword);
 
                 /*
                  * LanMgr-Passwort-Attribut ändern
@@ -500,11 +574,14 @@ public class Ldap {
                 BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
                         String.valueOf(System.currentTimeMillis() / 1000L));
 
+                ModificationItem[] mods = new ModificationItem[4];
                 mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userpassword);
                 mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
                 mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);
                 mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
-                ctx.modifyAttributes(getUserDN(inUser), mods);
+
+                DirContext ctx = new InitialDirContext(env);
+                ctx.modifyAttributes(buildUserDN(user), mods);
 
                 // Close the context when we're done
                 ctx.close();
@@ -517,38 +594,16 @@ public class Ldap {
         return false;
     }
 
-    private Hashtable<String, String> getLdapConnectionSettings() {
-        // Set up environment for creating initial context
-        Hashtable<String, String> env = new Hashtable<>(11);
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, ConfigCore.getParameter("ldap_url"));
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        /* wenn die Verbindung über ssl laufen soll */
-        if (ConfigCore.getBooleanParameter("ldap_sslconnection")) {
-            String keystorepath = ConfigCore.getParameter("ldap_keystore");
-            String keystorepasswd = ConfigCore.getParameter("ldap_keystore_password");
-
-            // add all necessary certificates first
-            loadCertificates(keystorepath, keystorepasswd);
-
-            // set properties, so that the current keystore is used for SSL
-            System.setProperty("javax.net.ssl.keyStore", keystorepath);
-            System.setProperty("javax.net.ssl.trustStore", keystorepath);
-            System.setProperty("javax.net.ssl.keyStorePassword", keystorepasswd);
-            env.put(Context.SECURITY_PROTOCOL, "ssl");
-        }
-        return env;
-    }
-
-    private void loadCertificates(String path, String passwd) {
+    // TODO test if this methods works
+    private void loadCertificates(String path, String passwd, LdapServer ldapServer) {
         /* wenn die Zertifikate noch nicht im Keystore sind, jetzt einlesen */
         File myPfad = new File(path);
         if (!myPfad.exists()) {
             try (FileOutputStream ksos = (FileOutputStream) serviceManager.getFileService().write(myPfad.toURI());
                     // TODO: Rename parameters to something more meaningful,
                     // this is quite specific for the GDZ
-                    FileInputStream cacertFile = new FileInputStream(ConfigCore.getParameter("ldap_cert_root"));
-                    FileInputStream certFile2 = new FileInputStream(ConfigCore.getParameter("ldap_cert_pdc"))) {
+                    FileInputStream cacertFile = new FileInputStream(ldapServer.getRootCertificate());
+                    FileInputStream certFile2 = new FileInputStream(ldapServer.getPdcCertificate())) {
 
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 X509Certificate cacert = (X509Certificate) cf.generateCertificate(cacertFile);
@@ -571,5 +626,4 @@ public class Ldap {
 
         }
     }
-
 }

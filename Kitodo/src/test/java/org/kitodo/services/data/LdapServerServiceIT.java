@@ -12,18 +12,17 @@
 package org.kitodo.services.data;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.LdapServer;
+import org.kitodo.services.ServiceManager;
 
-/**
- * Tests for LdapGroupService class.
- */
-public class LdapGroupServiceIT {
+public class LdapServerServiceIT {
+
+    private static final LdapServerService ldapServerService = new ServiceManager().getLdapServerService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -36,13 +35,11 @@ public class LdapGroupServiceIT {
     }
 
     @Test
-    public void shouldFindLdapGroup() throws Exception {
-        LdapGroupService ldapGroupService = new LdapGroupService();
-
-        LdapGroup ldapGroup = ldapGroupService.getById(1);
-        boolean condition = ldapGroup.getTitle().equals("LG") && ldapGroup.getDisplayName().equals("Name");
-        assertTrue("LDAP group was not found in database!", condition);
-
-        assertEquals("Title of Ldap server is not matching", "FirstLdapServer", ldapGroup.getLdapServer().getTitle());
+    public void shouldFindLdapServer() throws Exception {
+        LdapServer ldapServer = ldapServerService.getById(1);
+        assertEquals("LpadServer title is not matching", "FirstLdapServer", ldapServer.getTitle());
+        assertEquals("LpadServer useSsl is not matching", false, ldapServer.isUseSsl());
+        assertEquals("LdapServer password encoding is not matching", "SHA",
+            ldapServer.getPasswordEncryptionEnum().getTitle());
     }
 }

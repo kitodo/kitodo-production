@@ -21,13 +21,27 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 
+import java.util.Objects;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private transient ServiceManager serviceManager = new ServiceManager();
-    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+    private static SecurityConfig instance = null;
     private SessionRegistry sessionRegistry;
+
+    /**
+     * Constructor for SecurityConfig which also sets instance variable for singleton usage.
+     */
+    public SecurityConfig() {
+        if (Objects.equals(instance, null)) {
+            synchronized (SecurityConfig.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = this;
+                }
+            }
+        }
+    }
 
     /**
      * Gets sessionRegistry.
@@ -73,6 +87,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(serviceManager.getUserService()).passwordEncoder(passwordEncoder);
+        DynamicAuthenticationProvider authenticationProvider = new DynamicAuthenticationProvider();
+        authenticationProvider.readLocalConfig();
+        authenticationProvider.initializeAuthenticationProvider();
+        auth.authenticationProvider(authenticationProvider);
+    }
+
+    /**
+     * Return singleton variable of type SecurityConfig.
+     *
+     * @return unique instance of SecurityConfig
+     */
+    public static SecurityConfig getInstance() {
+        return instance;
     }
 }

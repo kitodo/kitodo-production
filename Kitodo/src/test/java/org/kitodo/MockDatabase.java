@@ -54,6 +54,7 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -64,6 +65,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -296,12 +298,29 @@ public class MockDatabase {
         serviceManager.getProcessService().save(firstProcess);
     }
 
+    private static void insertLdapServers() throws DAOException {
+        LdapServer ldapServer = new LdapServer();
+        ldapServer.setTitle("FirstLdapServer");
+        ldapServer.setManagerLogin("LdapManager");
+        ldapServer.setManagerPassword("LdapManagerPasswort");
+        ldapServer.setUrl("LdapUrl");
+        ldapServer.setPasswordEncryptionEnum(PasswordEncryption.SHA);
+        ldapServer.setUseSsl(false);
+
+        serviceManager.getLdapServerService().save(ldapServer);
+    }
+
     public static void insertLdapGroups() throws DAOException {
+
+        insertLdapServers();
+
         LdapGroup firstLdapGroup = new LdapGroup();
         firstLdapGroup.setTitle("LG");
         firstLdapGroup.setHomeDirectory("..//test_directory/");
         firstLdapGroup.setDescription("Test LDAP group");
         firstLdapGroup.setDisplayName("Name");
+        firstLdapGroup.setLdapServer(serviceManager.getLdapServerService().getById(1));
+
         serviceManager.getLdapGroupService().save(firstLdapGroup);
     }
 

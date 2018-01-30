@@ -11,8 +11,6 @@
 
 package de.sub.goobi.helper.ldap;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -65,58 +63,59 @@ public class LdapUser implements DirContext {
     }
 
     /**
-     * configure LdapUser with Userdetails.
+     * configure LdapUser with User data.
      *
-     * @param inUser
+     * @param user
      *            User object
      * @param inPassword
      *            String
      * @param inUidNumber
      *            String
      */
-    public void configure(User inUser, String inPassword, String inUidNumber)
+    public void configure(User user, String inPassword, String inUidNumber)
             throws NamingException, NoSuchAlgorithmException {
         MD4 digester = new MD4();
-        if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
+        if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
 
-            this.type = inUser.getLogin();
-            LdapGroup lp = inUser.getLdapGroup();
-            if (lp.getObjectClasses() == null) {
+            this.type = user.getLogin();
+            LdapGroup ldapGroup = user.getLdapGroup();
+            if (ldapGroup.getObjectClasses() == null) {
                 throw new NamingException("no objectclass defined");
             }
 
             /* ObjectClasses */
             Attribute oc = new BasicAttribute("objectclass");
-            StringTokenizer tokenizer = new StringTokenizer(lp.getObjectClasses(), ",");
+            StringTokenizer tokenizer = new StringTokenizer(ldapGroup.getObjectClasses(), ",");
             while (tokenizer.hasMoreTokens()) {
                 oc.add(tokenizer.nextToken());
             }
             this.myAttrs.put(oc);
 
-            this.myAttrs.put("uid", replaceVariables(lp.getUid(), inUser, inUidNumber));
-            this.myAttrs.put("cn", replaceVariables(lp.getUid(), inUser, inUidNumber));
-            this.myAttrs.put("displayName", replaceVariables(lp.getDisplayName(), inUser, inUidNumber));
-            this.myAttrs.put("description", replaceVariables(lp.getDescription(), inUser, inUidNumber));
-            this.myAttrs.put("gecos", replaceVariables(lp.getGecos(), inUser, inUidNumber));
-            this.myAttrs.put("loginShell", replaceVariables(lp.getLoginShell(), inUser, inUidNumber));
-            this.myAttrs.put("sn", replaceVariables(lp.getSn(), inUser, inUidNumber));
-            this.myAttrs.put("homeDirectory", replaceVariables(lp.getHomeDirectory(), inUser, inUidNumber));
+            this.myAttrs.put("uid", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
+            this.myAttrs.put("cn", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
+            this.myAttrs.put("displayName", replaceVariables(ldapGroup.getDisplayName(), user, inUidNumber));
+            this.myAttrs.put("description", replaceVariables(ldapGroup.getDescription(), user, inUidNumber));
+            this.myAttrs.put("gecos", replaceVariables(ldapGroup.getGecos(), user, inUidNumber));
+            this.myAttrs.put("loginShell", replaceVariables(ldapGroup.getLoginShell(), user, inUidNumber));
+            this.myAttrs.put("sn", replaceVariables(ldapGroup.getSn(), user, inUidNumber));
+            this.myAttrs.put("homeDirectory", replaceVariables(ldapGroup.getHomeDirectory(), user, inUidNumber));
 
-            this.myAttrs.put("sambaAcctFlags", replaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
-            this.myAttrs.put("sambaLogonScript", replaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
+            this.myAttrs.put("sambaAcctFlags", replaceVariables(ldapGroup.getSambaAcctFlags(), user, inUidNumber));
+            this.myAttrs.put("sambaLogonScript", replaceVariables(ldapGroup.getSambaLogonScript(), user, inUidNumber));
             this.myAttrs.put("sambaPrimaryGroupSID",
-                    replaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
-            this.myAttrs.put("sambaSID", replaceVariables(lp.getSambaSID(), inUser, inUidNumber));
+                replaceVariables(ldapGroup.getSambaPrimaryGroupSID(), user, inUidNumber));
+            this.myAttrs.put("sambaSID", replaceVariables(ldapGroup.getSambaSID(), user, inUidNumber));
 
-            this.myAttrs.put("sambaPwdMustChange", replaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
+            this.myAttrs.put("sambaPwdMustChange",
+                replaceVariables(ldapGroup.getSambaPwdMustChange(), user, inUidNumber));
             this.myAttrs.put("sambaPasswordHistory",
-                    replaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
-            this.myAttrs.put("sambaLogonHours", replaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
-            this.myAttrs.put("sambaKickoffTime", replaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
+                replaceVariables(ldapGroup.getSambaPasswordHistory(), user, inUidNumber));
+            this.myAttrs.put("sambaLogonHours", replaceVariables(ldapGroup.getSambaLogonHours(), user, inUidNumber));
+            this.myAttrs.put("sambaKickoffTime", replaceVariables(ldapGroup.getSambaKickoffTime(), user, inUidNumber));
             this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
 
             this.myAttrs.put("uidNumber", inUidNumber);
-            this.myAttrs.put("gidNumber", replaceVariables(lp.getGidNumber(), inUser, inUidNumber));
+            this.myAttrs.put("gidNumber", replaceVariables(ldapGroup.getGidNumber(), user, inUidNumber));
 
             /*
              * Samba passwords
@@ -139,11 +138,12 @@ public class LdapUser implements DirContext {
              * Encryption of password und Base64-Enconding
              */
 
-            MessageDigest md = MessageDigest.getInstance(ConfigCore.getParameter("ldap_encryption", "SHA"));
+            String passwordEncrytion = ldapGroup.getLdapServer().getPasswordEncryptionEnum().getTitle();
+
+            MessageDigest md = MessageDigest.getInstance(passwordEncrytion);
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
             String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-            this.myAttrs.put("userPassword",
-                    "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+            this.myAttrs.put("userPassword", "{" + passwordEncrytion + "}" + digestBase64);
         }
     }
 
@@ -165,9 +165,9 @@ public class LdapUser implements DirContext {
         String result = inString.replaceAll("\\{login\\}", inUser.getLogin());
         result = result.replaceAll("\\{user full name\\}", inUser.getName() + " " + inUser.getSurname());
         result = result.replaceAll("\\{uidnumber\\*2\\+1000\\}",
-                String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
+            String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
         result = result.replaceAll("\\{uidnumber\\*2\\+1001\\}",
-                String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
+            String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
         if (logger.isDebugEnabled()) {
             logger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
             logger.debug("Replace outstring: " + result);
@@ -180,8 +180,8 @@ public class LdapUser implements DirContext {
      *
      * @param password
      *            The password.
-     * @return The LM Hash of the given password, used in the calculation of the
-     *         LM Response.
+     * @return The LM Hash of the given password, used in the calculation of the LM
+     *         Response.
      */
     public static byte[] lmHash(String password) throws Exception {
         byte[] oemPassword = password.toUpperCase().getBytes("US-ASCII");
@@ -210,8 +210,8 @@ public class LdapUser implements DirContext {
      * @param offset
      *            The offset in the given byte array at which the 7-byte key
      *            material starts.
-     * @return A DES encryption key created from the key material starting at
-     *         the specified offset in the given byte array.
+     * @return A DES encryption key created from the key material starting at the
+     *         specified offset in the given byte array.
      */
     private static Key createDESKey(byte[] bytes, int offset) {
         byte[] keyBytes = new byte[7];

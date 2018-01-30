@@ -18,6 +18,7 @@ import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
 import org.kitodo.services.data.HistoryService;
 import org.kitodo.services.data.LdapGroupService;
+import org.kitodo.services.data.LdapServerService;
 import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.data.ProjectFileGroupService;
 import org.kitodo.services.data.ProjectService;
@@ -42,6 +43,7 @@ public class ServiceManager {
     private FilterService filterService;
     private HistoryService historyService;
     private LdapGroupService ldapGroupService;
+    private LdapServerService ldapServerService;
     private PropertyService propertyService;
     private ProcessService processService;
     private ProjectFileGroupService projectFileGroupService;
@@ -92,6 +94,12 @@ public class ServiceManager {
     private void initializeLdapGroupService() {
         if (ldapGroupService == null) {
             ldapGroupService = new LdapGroupService();
+        }
+    }
+
+    private void initializeLdapServerService() {
+        if (ldapServerService == null) {
+            ldapServerService = LdapServerService.getInstance();
         }
     }
 
@@ -251,6 +259,17 @@ public class ServiceManager {
     public LdapGroupService getLdapGroupService() {
         initializeLdapGroupService();
         return ldapGroupService;
+    }
+
+    /**
+     * Initialize LdapServerService if it is not yet initialized and next return
+     * it.
+     *
+     * @return LdapServerService object
+     */
+    public LdapServerService getLdapServerService() {
+        initializeLdapServerService();
+        return ldapServerService;
     }
 
     /**

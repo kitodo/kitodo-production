@@ -24,6 +24,8 @@ import org.kitodo.security.SecurityUserDetails;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.ldap.userdetails.LdapUserDetails;
+import org.springframework.security.ldap.userdetails.LdapUserDetailsImpl;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -34,8 +36,7 @@ public class SessionService {
     private static final Logger logger = LogManager.getLogger(SessionService.class);
 
     private SessionService() {
-        WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        SecurityConfig securityConfig = context.getBean(SecurityConfig.class);
+        SecurityConfig securityConfig = SecurityConfig.getInstance();
         this.sessionRegistry = securityConfig.getSessionRegistry();
     }
 
@@ -63,11 +64,17 @@ public class SessionService {
 
         List<SecuritySession> activeSessions = new ArrayList<>();
 
+        UserDetails user = null;
+
         for (final Object principal : allPrincipals) {
+
+            if (principal instanceof LdapUserDetails) {
+                user = (LdapUserDetailsImpl) principal;
+            }
             if (principal instanceof SecurityUserDetails) {
-
-                SecurityUserDetails user = (SecurityUserDetails) principal;
-
+                user = (SecurityUserDetails) principal;
+            }
+            if (user != null) {
                 List<SessionInformation> activeSessionInformation = new ArrayList<>();
                 activeSessionInformation.addAll(sessionRegistry.getAllSessions(principal, false));
 

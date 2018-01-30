@@ -531,4 +531,11 @@ public class FileServiceTest {
         Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.3")));
     }
 
+    @Test
+    public void testDeleteFirstSlashFromPath() {
+        URI uri = URI.create("/test/test");
+        URI actualUri = fileService.deleteFirstSlashFromPath(uri);
+        Assert.assertEquals("Paths of Uri did not match", "test/test", actualUri.getPath());
+    }
+
 }
