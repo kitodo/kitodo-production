@@ -57,6 +57,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
 
@@ -182,15 +183,12 @@ public class SimpleLoginST {
         LoginButton.click();
         Thread.sleep(500);
 
-        WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
-        VorgaengeButton.click();
-        Thread.sleep(2000);
+        Actions action = new Actions(driver);
+        WebElement UserMenuLink = driver.findElement(By.id("user-menu"));
 
-        WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
-        RulesetsButton.click();
-        Thread.sleep(500);
+        action.moveToElement(UserMenuLink).perform();
 
-        WebElement LogoutButton = driver.findElement(By.id("logout"));
+        WebElement LogoutButton = driver.findElement(By.id("logout-form:logout"));
         Assert.assertNotNull(LogoutButton);
 
     }
