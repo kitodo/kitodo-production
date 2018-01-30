@@ -159,7 +159,7 @@ public class SimpleLoginST {
     @Test
     public void seleniumTest() throws Exception {
 
-        String appUrl = "http://localhost:8080/kitodo";
+        String appUrl = "http://localhost:8080/kitodo/pages/login.jsf";
 
         driver.get(appUrl);
         Thread.sleep(2000);
