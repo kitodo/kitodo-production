@@ -21,6 +21,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -39,6 +40,9 @@ public class Authority extends BaseIndexedBean {
         inverseJoinColumns = {
                                   @JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
     private List<UserGroup> userGroups;
+
+    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
+    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
 
     /**
      * Gets the title.
@@ -80,5 +84,28 @@ public class Authority extends BaseIndexedBean {
      */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
+    }
+
+    /**
+     * Gets userGroupClientAuthorityRelations.
+     *
+     * @return The userGroupClientAuthorityRelations.
+     */
+    public List<UserGroupClientAuthorityRelation> getUserGroupClientAuthorityRelations() {
+        if (this.userGroupClientAuthorityRelations == null) {
+            this.userGroupClientAuthorityRelations = new ArrayList<>();
+        }
+        return userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupClientAuthorityRelations.
+     *
+     * @param userGroupClientAuthorityRelations
+     *            The userGroupClientAuthorityRelations.
+     */
+    public void setUserGroupClientAuthorityRelations(
+            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
+        this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
     }
 }

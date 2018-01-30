@@ -72,6 +72,7 @@
         <mapping class="org.kitodo.data.database.beans.Ruleset"/>
         <mapping class="org.kitodo.data.database.beans.Task"/>
         <mapping class="org.kitodo.data.database.beans.UserGroup"/>
+        <mapping class="org.kitodo.data.database.beans.UserGroupClientAuthorityRelation"/>
         <mapping class="org.kitodo.data.database.beans.User"/>
 
     </session-factory>

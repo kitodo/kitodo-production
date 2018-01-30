@@ -26,6 +26,7 @@ import org.kitodo.services.data.ProjectService;
 import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
+import org.kitodo.services.data.UserGroupClientAuthorityRelationService;
 import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.file.FileService;
@@ -53,6 +54,7 @@ public class ServiceManager {
     private RulesetService rulesetService;
     private TaskService taskService;
     private UserGroupService userGroupService;
+    private UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService;
     private UserService userService;
     private FileService fileService;
     private CommandService commandService;
@@ -156,6 +158,12 @@ public class ServiceManager {
     private void initializeUserGroupService() {
         if (userGroupService == null) {
             userGroupService = UserGroupService.getInstance();
+        }
+    }
+
+    private void initializeUserGroupClientAuthorityRelationService() {
+        if (userGroupClientAuthorityRelationService == null) {
+            userGroupClientAuthorityRelationService = UserGroupClientAuthorityRelationService.getInstance();
         }
     }
 
@@ -375,6 +383,17 @@ public class ServiceManager {
     public UserGroupService getUserGroupService() {
         initializeUserGroupService();
         return userGroupService;
+    }
+
+    /**
+     * Initialize UserGroupClientAuthorityRelationService if it is not yet
+     * initialized and next return it.
+     *
+     * @return UserGroupClientAuthorityRelationService object
+     */
+    public UserGroupClientAuthorityRelationService getUserGroupClientAuthorityRelationService() {
+        initializeUserGroupClientAuthorityRelationService();
+        return userGroupClientAuthorityRelationService;
     }
 
     /**

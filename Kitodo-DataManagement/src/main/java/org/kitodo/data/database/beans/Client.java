@@ -32,6 +32,9 @@ public class Client extends BaseBean {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
+
     /**
      * Gets name.
      *
@@ -71,5 +74,28 @@ public class Client extends BaseBean {
      */
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    /**
+     * Gets userGroupClientAuthorityRelations.
+     *
+     * @return The userGroupClientAuthorityRelations.
+     */
+    public List<UserGroupClientAuthorityRelation> getUserGroupClientAuthorityRelations() {
+        if (this.userGroupClientAuthorityRelations == null) {
+            this.userGroupClientAuthorityRelations = new ArrayList<>();
+        }
+        return userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupClientAuthorityRelations.
+     *
+     * @param userGroupClientAuthorityRelations
+     *            The userGroupClientAuthorityRelations.
+     */
+    public void setUserGroupClientAuthorityRelations(
+            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
+        this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
     }
 }

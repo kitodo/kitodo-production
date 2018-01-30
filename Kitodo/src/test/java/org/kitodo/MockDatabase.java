@@ -64,6 +64,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -148,6 +149,7 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertHistory();
+        insertUserGroupAuthorityRelations();
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
@@ -174,6 +176,16 @@ public class MockDatabase {
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
+    }
+
+    public static void insertForAuthenticationTesting() throws DAOException, DataException {
+        insertAuthorities();
+        insertLdapGroups();
+        insertUsers();
+        insertUserGroups();
+        insertClients();
+        insertProjects();
+        insertUserGroupAuthorityRelations();
     }
 
     private static class ExtendedNode extends Node {
@@ -237,6 +249,45 @@ public class MockDatabase {
         // disable automatic index creation
         settingsMap.put("action.auto_create_index", "false");
         return settingsMap;
+    }
+
+    private static void insertUserGroupAuthorityRelations() throws DAOException {
+        UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(2));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
     }
 
     private static void insertAuthorities() throws DataException {

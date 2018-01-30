@@ -18,6 +18,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -49,6 +50,9 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
 
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<Authority> authorities;
+
+    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
+    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
 
     /**
      * The Constructor.
@@ -140,6 +144,29 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      */
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    /**
+     * Gets userGroupClientAuthorityRelations.
+     *
+     * @return The userGroupClientAuthorityRelations.
+     */
+    public List<UserGroupClientAuthorityRelation> getUserGroupClientAuthorityRelations() {
+        if (this.userGroupClientAuthorityRelations == null) {
+            this.userGroupClientAuthorityRelations = new ArrayList<>();
+        }
+        return userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupClientAuthorityRelations.
+     *
+     * @param userGroupClientAuthorityRelations
+     *            The userGroupClientAuthorityRelations.
+     */
+    public void setUserGroupClientAuthorityRelations(
+            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
+        this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
     }
 
     @Override
