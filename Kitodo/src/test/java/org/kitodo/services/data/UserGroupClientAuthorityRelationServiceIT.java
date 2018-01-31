@@ -13,10 +13,13 @@ package org.kitodo.services.data;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.services.ServiceManager;
 
@@ -53,6 +56,21 @@ public class UserGroupClientAuthorityRelationServiceIT {
     public void shouldCountDataBaseRows() throws Exception {
         long rows = userGroupClientAuthorityRelationService.countDatabaseRows();
         assertEquals("Client name is not matching", 6L, rows);
+    }
+
+    @Test
+    public void shouldgetAutorities() throws Exception {
+        List<Authority> authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAnClient(1, 1);
+        assertEquals("Number of returned authorities is not matching", 3, authorites.size());
+
+        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAnClient(2, 1);
+        assertEquals("Number of returned authorities is not matching", 2, authorites.size());
+
+        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAnClient(1, 2);
+        assertEquals("Number of returned authorities is not matching", 0, authorites.size());
+
+        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAnClient(3, 2);
+        assertEquals("Number of returned authorities is not matching", 1, authorites.size());
 
     }
 }

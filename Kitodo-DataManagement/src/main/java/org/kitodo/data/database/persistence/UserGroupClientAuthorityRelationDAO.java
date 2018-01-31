@@ -60,4 +60,15 @@ public class UserGroupClientAuthorityRelationDAO extends BaseDAO<UserGroupClient
     public void refresh(UserGroupClientAuthorityRelation userGroupClientAuthorityRelation) {
         refreshObject(userGroupClientAuthorityRelation);
     }
+
+    /**
+     * Get all active users sorted by surname and name.
+     *
+     * @return sorted list of all active users as User objects
+     */
+    public List<UserGroupClientAuthorityRelation> getAuthoritiesByUserGroupAnClient(int userGroupId, int clientId) {
+
+        return getByQuery(
+            "FROM UserGroupClientAuthorityRelation WHERE userGroup = " + userGroupId + " AND client = " + clientId);
+    }
 }
