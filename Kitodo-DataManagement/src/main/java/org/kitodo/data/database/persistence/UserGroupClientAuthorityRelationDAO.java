@@ -62,11 +62,15 @@ public class UserGroupClientAuthorityRelationDAO extends BaseDAO<UserGroupClient
     }
 
     /**
-     * Get all active users sorted by surname and name.
-     *
-     * @return sorted list of all active users as User objects
+     * Get all authorities with are related to given client and user group id.
+     * 
+     * @param userGroupId
+     *            The user group id.
+     * @param clientId
+     *            The client id.
+     * @return The list of authorities.
      */
-    public List<UserGroupClientAuthorityRelation> getAuthoritiesByUserGroupAnClient(int userGroupId, int clientId) {
+    public List<UserGroupClientAuthorityRelation> getAuthoritiesByUserGroupAndClientId(int userGroupId, int clientId) {
 
         return getByQuery(
             "FROM UserGroupClientAuthorityRelation WHERE userGroup = " + userGroupId + " AND client = " + clientId);

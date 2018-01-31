@@ -27,6 +27,7 @@ import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
 import org.kitodo.services.data.UserGroupClientAuthorityRelationService;
+import org.kitodo.services.data.UserGroupProjectAuthorityRelationService;
 import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.file.FileService;
@@ -55,6 +56,7 @@ public class ServiceManager {
     private TaskService taskService;
     private UserGroupService userGroupService;
     private UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService;
+    private UserGroupProjectAuthorityRelationService userGroupProjectAuthorityRelationService;
     private UserService userService;
     private FileService fileService;
     private CommandService commandService;
@@ -164,6 +166,12 @@ public class ServiceManager {
     private void initializeUserGroupClientAuthorityRelationService() {
         if (userGroupClientAuthorityRelationService == null) {
             userGroupClientAuthorityRelationService = UserGroupClientAuthorityRelationService.getInstance();
+        }
+    }
+
+    private void initializeUserGroupProjectAuthorityRelationService() {
+        if (userGroupProjectAuthorityRelationService == null) {
+            userGroupProjectAuthorityRelationService = UserGroupProjectAuthorityRelationService.getInstance();
         }
     }
 
@@ -394,6 +402,17 @@ public class ServiceManager {
     public UserGroupClientAuthorityRelationService getUserGroupClientAuthorityRelationService() {
         initializeUserGroupClientAuthorityRelationService();
         return userGroupClientAuthorityRelationService;
+    }
+
+    /**
+     * Initialize UserGroupProjectAuthorityRelationService if it is not yet
+     * initialized and next return it.
+     *
+     * @return UserGroupProjectAuthorityRelationService object
+     */
+    public UserGroupProjectAuthorityRelationService getUserGroupProjectAuthorityRelationService() {
+        initializeUserGroupProjectAuthorityRelationService();
+        return userGroupProjectAuthorityRelationService;
     }
 
     /**

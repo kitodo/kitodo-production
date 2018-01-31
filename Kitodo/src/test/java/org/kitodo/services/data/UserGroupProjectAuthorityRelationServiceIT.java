@@ -20,12 +20,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
+import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.services.ServiceManager;
 
-public class UserGroupClientAuthorityRelationServiceIT {
-    private static final UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService = new ServiceManager()
-            .getUserGroupClientAuthorityRelationService();
+public class UserGroupProjectAuthorityRelationServiceIT {
+    private static final UserGroupProjectAuthorityRelationService userGroupProjectAuthorityRelationService = new ServiceManager()
+            .getUserGroupProjectAuthorityRelationService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -41,35 +41,39 @@ public class UserGroupClientAuthorityRelationServiceIT {
 
     @Test
     public void shouldGetRelation() throws Exception {
-        UserGroupClientAuthorityRelation relation = userGroupClientAuthorityRelationService.getById(1);
-        assertEquals("Client name is not matching", "First client", relation.getClient().getName());
+        UserGroupProjectAuthorityRelation relation = userGroupProjectAuthorityRelationService.getById(1);
+        assertEquals("Project title is not matching", "First project", relation.getProject().getTitle());
         assertEquals("Authority title is not matching", "admin", relation.getAuthority().getTitle());
         assertEquals("UserGroup title is not matching", "Admin", relation.getUserGroup().getTitle());
 
-        relation = userGroupClientAuthorityRelationService.getById(6);
-        assertEquals("Client title is not matching", "Second client", relation.getClient().getName());
+        relation = userGroupProjectAuthorityRelationService.getById(6);
+        assertEquals("Project title is not matching", "Second project", relation.getProject().getTitle());
         assertEquals("UserGroup title is not matching", "Without authorities", relation.getUserGroup().getTitle());
         assertEquals("Authority title is not matching", "admin", relation.getAuthority().getTitle());
     }
 
     @Test
     public void shouldCountDataBaseRows() throws Exception {
-        long rows = userGroupClientAuthorityRelationService.countDatabaseRows();
-        assertEquals("Client name is not matching", 6L, rows);
+        long rows = userGroupProjectAuthorityRelationService.countDatabaseRows();
+        assertEquals("Client name is not matching", 7L, rows);
     }
 
     @Test
     public void shouldgetAutorities() throws Exception {
-        List<Authority> authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 1);
+        List<Authority> authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(1,
+            1);
         assertEquals("Number of returned authorities is not matching", 3, authorites.size());
 
-        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(2, 1);
-        assertEquals("Number of returned authorities is not matching", 2, authorites.size());
+        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(2, 1);
+        assertEquals("Number of returned authorities is not matching", 1, authorites.size());
 
-        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 2);
+        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(1, 2);
         assertEquals("Number of returned authorities is not matching", 0, authorites.size());
 
-        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(3, 2);
+        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(3, 2);
+        assertEquals("Number of returned authorities is not matching", 1, authorites.size());
+
+        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(3, 3);
         assertEquals("Number of returned authorities is not matching", 1, authorites.size());
 
     }

@@ -18,21 +18,21 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
-import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
+import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.UserGroupClientAuthorityRelationDAO;
+import org.kitodo.data.database.persistence.UserGroupProjectAuthorityRelationDAO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class UserGroupClientAuthorityRelationService
-        extends SearchDatabaseService<UserGroupClientAuthorityRelation, UserGroupClientAuthorityRelationDAO> {
+public class UserGroupProjectAuthorityRelationService
+        extends SearchDatabaseService<UserGroupProjectAuthorityRelation, UserGroupProjectAuthorityRelationDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private final Logger logger = LogManager.getLogger(this.getClass());
-    private static UserGroupClientAuthorityRelationService instance = null;
+    private static UserGroupProjectAuthorityRelationService instance = null;
 
-    private UserGroupClientAuthorityRelationService() {
-        super(new UserGroupClientAuthorityRelationDAO());
+    private UserGroupProjectAuthorityRelationService() {
+        super(new UserGroupProjectAuthorityRelationDAO());
     }
 
     /**
@@ -40,11 +40,11 @@ public class UserGroupClientAuthorityRelationService
      *
      * @return unique instance of UserGroupClientAuthorityRelationService
      */
-    public static UserGroupClientAuthorityRelationService getInstance() {
+    public static UserGroupProjectAuthorityRelationService getInstance() {
         if (Objects.equals(instance, null)) {
-            synchronized (UserGroupClientAuthorityRelationService.class) {
+            synchronized (UserGroupProjectAuthorityRelationService.class) {
                 if (Objects.equals(instance, null)) {
-                    instance = new UserGroupClientAuthorityRelationService();
+                    instance = new UserGroupProjectAuthorityRelationService();
                 }
             }
         }
@@ -53,14 +53,14 @@ public class UserGroupClientAuthorityRelationService
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM UserGroupClientAuthorityRelation");
+        return countDatabaseRows("FROM UserGroupProjectAuthorityRelation");
     }
 
-    public List<Authority> getAuthoritiesByUserGroupAndClient(int userGroupId, int clientId) {
-        List<UserGroupClientAuthorityRelation> relations = dao.getAuthoritiesByUserGroupAndClientId(userGroupId,
+    public List<Authority> getAuthoritiesByUserGroupAndProjectId(int userGroupId, int clientId) {
+        List<UserGroupProjectAuthorityRelation> relations = dao.getAuthoritiesByUserGroupAndProjectId(userGroupId,
             clientId);
         List<Authority> authorities = new ArrayList<>();
-        for (UserGroupClientAuthorityRelation relation : relations) {
+        for (UserGroupProjectAuthorityRelation relation : relations) {
             authorities.add(relation.getAuthority());
         }
         return authorities;
@@ -69,21 +69,21 @@ public class UserGroupClientAuthorityRelationService
     /**
      * Saves UserGroupProjectAuthorityRelation to database.
      *
-     * @param userGroupClientAuthorityRelation
+     * @param userGroupProjectAuthorityRelation
      *            The UserGroupProjectAuthorityRelation.
      */
-    public void save(UserGroupClientAuthorityRelation userGroupClientAuthorityRelation) throws DAOException {
-        dao.save(userGroupClientAuthorityRelation);
+    public void save(UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation) throws DAOException {
+        dao.save(userGroupProjectAuthorityRelation);
     }
 
     /**
      * Removes UserGroupProjectAuthorityRelation from database.
      *
-     * @param userGroupClientAuthorityRelation
+     * @param userGroupProjectAuthorityRelation
      *            The UserGroupProjectAuthorityRelation.
      */
-    public void remove(UserGroupClientAuthorityRelation userGroupClientAuthorityRelation) throws DAOException {
-        dao.remove(userGroupClientAuthorityRelation);
+    public void remove(UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation) throws DAOException {
+        dao.remove(userGroupProjectAuthorityRelation);
     }
 
     /**

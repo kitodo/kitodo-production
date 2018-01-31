@@ -65,6 +65,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
+import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -149,7 +150,8 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertHistory();
-        insertUserGroupAuthorityRelations();
+        insertUserGroupClientAuthorityRelations();
+        insertUserGroupProjectAuthorityRelations();
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
@@ -185,7 +187,8 @@ public class MockDatabase {
         insertUserGroups();
         insertClients();
         insertProjects();
-        insertUserGroupAuthorityRelations();
+        insertUserGroupClientAuthorityRelations();
+        insertUserGroupProjectAuthorityRelations();
     }
 
     private static class ExtendedNode extends Node {
@@ -251,7 +254,7 @@ public class MockDatabase {
         return settingsMap;
     }
 
-    private static void insertUserGroupAuthorityRelations() throws DAOException {
+    private static void insertUserGroupClientAuthorityRelations() throws DAOException {
         UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
 
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
@@ -288,6 +291,51 @@ public class MockDatabase {
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(2));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
         serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+    }
+
+    private static void insertUserGroupProjectAuthorityRelations() throws DAOException {
+        UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(3));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
     }
 
     private static void insertAuthorities() throws DataException {

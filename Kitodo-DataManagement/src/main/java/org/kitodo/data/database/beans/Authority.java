@@ -34,21 +34,19 @@ public class Authority extends BaseIndexedBean {
     private String title;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "userGroup_x_authority",
-        joinColumns = {
-                           @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) },
-        inverseJoinColumns = {
-                                  @JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
+    @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) }, inverseJoinColumns = {@JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
     private List<UserGroup> userGroups;
 
     @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
     private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
 
+    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
+    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
+
     /**
      * Gets the title.
      *
-     * @return
-     *      The title.
+     * @return The title.
      */
     public String getTitle() {
         return title;
@@ -58,7 +56,7 @@ public class Authority extends BaseIndexedBean {
      * Sets the title.
      *
      * @param title
-     *      The titel.
+     *            The titel.
      */
     public void setTitle(String title) {
         this.title = title;
@@ -80,7 +78,7 @@ public class Authority extends BaseIndexedBean {
      * Sets the user groups.
      *
      * @param userGroups
-     *      The user groups.
+     *            The user groups.
      */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
@@ -107,5 +105,28 @@ public class Authority extends BaseIndexedBean {
     public void setUserGroupClientAuthorityRelations(
             List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
         this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Gets userGroupProjectAuthorityRelations.
+     *
+     * @return The userGroupProjectAuthorityRelations.
+     */
+    public List<UserGroupProjectAuthorityRelation> getUserGroupProjectAuthorityRelations() {
+        if (this.userGroupProjectAuthorityRelations == null) {
+            this.userGroupProjectAuthorityRelations = new ArrayList<>();
+        }
+        return userGroupProjectAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupProjectAuthorityRelations.
+     *
+     * @param userGroupProjectAuthorityRelations
+     *            The userGroupProjectAuthorityRelations.
+     */
+    public void setUserGroupProjectAuthorityRelations(
+            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
+        this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
     }
 }

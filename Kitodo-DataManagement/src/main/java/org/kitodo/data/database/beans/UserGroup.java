@@ -54,6 +54,9 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
     private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
 
+    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
+    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
+
     /**
      * The Constructor.
      */
@@ -167,6 +170,29 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public void setUserGroupClientAuthorityRelations(
             List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
         this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Gets userGroupProjectAuthorityRelations.
+     *
+     * @return The userGroupProjectAuthorityRelations.
+     */
+    public List<UserGroupProjectAuthorityRelation> getUserGroupProjectAuthorityRelations() {
+        if (this.userGroupProjectAuthorityRelations == null) {
+            this.userGroupProjectAuthorityRelations = new ArrayList<>();
+        }
+        return userGroupProjectAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupProjectAuthorityRelations.
+     *
+     * @param userGroupProjectAuthorityRelations
+     *            The userGroupProjectAuthorityRelations.
+     */
+    public void setUserGroupProjectAuthorityRelations(
+            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
+        this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
     }
 
     @Override
