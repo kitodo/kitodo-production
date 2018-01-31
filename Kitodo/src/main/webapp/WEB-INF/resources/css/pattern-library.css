@@ -14,7 +14,7 @@ body {
 }
 
 a {
-    color: #0971b8;
+    color: #0071bc;
 }
 
 a:hover {
@@ -37,8 +37,22 @@ a:hover {
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger,
 .ui-widget-content button.ui-state-default,
 .timeline-content .ui-state-default {
-    background: #0971b8;
+    background: #0071bc;
     color: #fff;
+}
+
+button.secondary-button {
+    border: 1px solid #0071bc !important;
+}
+
+button.secondary-button,
+button.secondary-button span.ui-icon {
+    background: #fff !important;
+    color: #0071bc !important;
+}
+
+button.secondary-button.ui-state-hover {
+    background: #f3f3f3 !important;
 }
 
 .ui-state-default,
@@ -53,7 +67,7 @@ a:hover {
 .ui-state-default a:link,
 .ui-state-default a:visited {
     text-shadow: 0 0 0 transparent;
-    color: #0971b8;
+    color: #0071bc;
 }
 
 button .ui-icon {
@@ -106,7 +120,7 @@ button .ui-icon {
 {
     border: 1px solid #004f81;
     padding: .5em;
-    color: #0971b8;
+    color: #0071bc;
     box-shadow: 0 0 0 transparent;
 }
 
@@ -167,7 +181,7 @@ button .ui-icon {
 }
 
 .ui-slider .ui-slider-handle {
-    background: #0971b8;
+    background: #0071bc;
 }
 
 .ui-datatable thead th,
@@ -226,8 +240,9 @@ tbody.ui-widget-content {
 .ui-treetable .ui-corner-top,
 .ui-treetable .ui-corner-bottom,
 .ui-tabs-nav .ui-corner-top,
-.ui-tabmenu .ui-corner-all {
-    border-radius: 0px;
+.ui-tabmenu .ui-corner-all,
+.ui-datatable-tablewrapper {
+    border-radius: 0 0 3px 3px;
 }
 
 .ui-datatable-odd,
@@ -261,7 +276,7 @@ tr.ui-widget-content,
 }
 
 .ui-paginator .ui-state-active {
-    background: #0971b8;
+    background: #0071bc;
     color: #fff;
 }
 
@@ -285,6 +300,12 @@ tr.ui-expanded-row-content tr.ui-widget-header,
     border-bottom: 1px solid #000 !important;
     color: #000;
 }
+
+.ui-picklist-buttons-cell .ui-button {
+    background-color: #d8d8d8 !important;
+    border: 1px solid #999999;
+}
+
 
 tr.ui-expanded-row-content .ui-panelgrid {
     width: 70%;
@@ -364,7 +385,8 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
 .ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active a {
-    color: #0971b8;
+    color: #0071bc;
+    cursor: default;
 }
 
 .ui-breadcrumb.ui-widget-header {
@@ -372,7 +394,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 }
 
 .ui-stack .openStack li span {
-    background: #0971b8;
+    background: #0071bc;
     text-shadow: 0 0 0;
     padding: 5px 10px;
 }

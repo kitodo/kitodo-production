@@ -26,7 +26,7 @@
             <h:form id="usergroupEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.benutzergruppeBearbeiten}"
+                        <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.myBenutzergruppe.title})"
                                       rendered="#{BenutzergruppenForm.myBenutzergruppe.id ne null}"/>
                         <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
                                       rendered="#{BenutzergruppenForm.myBenutzergruppe.id eq null}"/>
@@ -41,24 +41,38 @@
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"
                                      update="notifications"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="users"
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
 
                 <!-- main form -->
                 <p:messages id="usergroupedit-messages" autoUpdate="true" />
-                <p:panelGrid columns="2">
-                    <p:outputLabel for="title" value="#{msgs.titel}"/>
-                    <p:inputText id="title"
-                                 value="#{BenutzergruppenForm.myBenutzergruppe.title}"
-                                 placeholder="#{msgs.titel}"
-                                 required="true"/>
-                    <p:outputLabel for="authorizations" value="#{msgs.berechtigungen}"/>
-                    <p:pickList id="authorizations"
-                                value="#{BenutzergruppenForm.authorizations}" converter="AuthorizationConverter"
-                                var="authorization" itemLabel="#{authorization.title}" itemValue="#{authorization}">
-                        <f:facet name="sourceCaption" style="color: #000;">#{msgs.available}</f:facet>
-                        <f:facet name="targetCaption" style="color: #000;">#{msgs.assigned}</f:facet>
-                    </p:pickList>
-                </p:panelGrid>
+                <p:tabView id="usergroupTabView">
+                    <p:tab id="usergroupTab" title="#{msgs.details}">
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:row>
+                                <div>
+                                    <p:outputLabel for="title" value="#{msgs.titel}"/>
+                                    <p:inputText id="title"
+                                                 class="input"
+                                                 value="#{BenutzergruppenForm.myBenutzergruppe.title}"
+                                                 placeholder="#{msgs.titel}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="authorizations" value="#{msgs.berechtigungen}"/>
+                                    <p:pickList id="authorizations"
+                                                value="#{BenutzergruppenForm.authorizations}" converter="AuthorizationConverter"
+                                                var="authorization" itemLabel="#{authorization.title}" itemValue="#{authorization}">
+                                        <f:facet name="sourceCaption" style="color: #000;">#{msgs.available}</f:facet>
+                                        <f:facet name="targetCaption" style="color: #000;">#{msgs.assigned}</f:facet>
+                                    </p:pickList>
+                                </div>
+                            </p:row>
+                            <p:row/>
+                        </p:panelGrid>
+                    </p:tab>
+                </p:tabView>
             </h:form>
         </p:panel>
     </ui:define>

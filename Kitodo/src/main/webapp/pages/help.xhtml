@@ -18,19 +18,24 @@
         template="/WEB-INF/templates/base.xhtml">
     <ui:define name="content">
         <p:panel id="listWrapper">
+
             <p:panel styleClass="content-header">
-                <h3>
-                    #{msgs.bedienungshinweise}
-                </h3>
+                <h3>#{msgs.help}</h3>
             </p:panel>
-            <p:panel styleClass="text-align: justify;">
-                <h:outputText styleClass="text-align: justify;"
-                              value="#{msgs.bedienungshinweiseText}" escape="false"/>
-            </p:panel>
+
+            <p:tabView>
+                <p:tab title="#{msgs.bedienungshinweise}">
+                    <p:panel styleClass="text-align: justify;">
+                        <h:outputText styleClass="text-align: justify;"
+                                      value="#{msgs.bedienungshinweiseText}" escape="false"/>
+                    </p:panel>
+                </p:tab>
+            </p:tabView>
+
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-        <li><a href="">#{msgs.bedienungshinweise}</a></li>
+        <li><a href="">#{msgs.help}</a></li>
     </ui:define>
 </ui:composition>
