@@ -26,7 +26,7 @@
             <h:form id="processEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.prozessBearbeiten}" rendered="#{ProzessverwaltungForm.process.id ne 0}"/>
+                        <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{ProzessverwaltungForm.process.id ne 0}"/>
                         <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{ProzessverwaltungForm.process.id eq 0}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}"
@@ -65,8 +65,8 @@
         <ui:include src="/WEB-INF/templates/includes/processEdit/propertyEditPopup.xhtml"/>
     </ui:define>
     <ui:define name="breadcrumbs">
-        <li><a href="">#{msgs.prozessBearbeiten}</a></li>
-        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
+        <li><a href="">#{msgs.prozessBearbeiten}</a></li>
     </ui:define>
 </ui:composition>

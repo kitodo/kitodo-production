@@ -15,28 +15,46 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:outputLabel for="title" value="#{msgs.prozessTitel}"/>
-    <p:inputText id="title" placeholder="#{msgs.prozessTitel}" value="#{ProzessverwaltungForm.newProcessTitle}" required="true"/>
+    <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="title" value="#{msgs.prozessTitel}"/>
+                <p:inputText id="title" placeholder="#{msgs.prozessTitel}" value="#{ProzessverwaltungForm.newProcessTitle}" required="true"/>
+            </div>
 
-    <p:outputLabel for="project" value="#{msgs.projekt}"/>
-    <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projektAuswahl}" required="true">
-        <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
-        <f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}"/>
-    </p:selectOneMenu>
+            <div>
+                <p:outputLabel for="project" value="#{msgs.projekt}"/>
+                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projektAuswahl}" required="true">
+                    <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
+                    <f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}"/>
+                </p:selectOneMenu>
+            </div>
 
-    <p:outputLabel for="ruleset" value="#{msgs.regelsatz}"/>
-    <p:selectOneMenu id="ruleset" value="#{ProzessverwaltungForm.process.ruleset}" required="true" converter="RegelsatzConverter">
-        <f:selectItems value="#{HelperForm.regelsaetze}"/>
-    </p:selectOneMenu>
+            <div>
+                <p:outputLabel for="showInList" value="#{msgs.inAuswahllisteAnzeigen}"/>
+                <p:selectBooleanCheckbox id="showInList" value="#{ProzessverwaltungForm.process.inChoiceListShown}"/>
+            </div>
+        </p:row>
 
-    <p:outputLabel for="docket" value="#{msgs.docket}"/>
-    <p:selectOneMenu id="docket" value="#{ProzessverwaltungForm.process.docket}" required="true" converter="DocketConverter">
-        <f:selectItems value="#{HelperForm.dockets}"/>
-    </p:selectOneMenu>
+        <p:row>
+            <div>
+                <p:outputLabel for="ruleset" value="#{msgs.regelsatz}"/>
+                <p:selectOneMenu id="ruleset" value="#{ProzessverwaltungForm.process.ruleset}" required="true" converter="RegelsatzConverter">
+                    <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                </p:selectOneMenu>
+            </div>
 
-    <p:outputLabel for="showInList" value="#{msgs.inAuswahllisteAnzeigen}"/>
-    <p:selectBooleanCheckbox id="showInList" value="#{ProzessverwaltungForm.process.inChoiceListShown}"/>
+            <div>
+                <p:outputLabel for="docket" value="#{msgs.docket}"/>
+                <p:selectOneMenu id="docket" value="#{ProzessverwaltungForm.process.docket}" required="true" converter="DocketConverter">
+                    <f:selectItems value="#{HelperForm.dockets}"/>
+                </p:selectOneMenu>
+            </div>
 
-    <p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>
-    <p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}"/>
+            <div>
+                <p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>
+                <p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}"/>
+            </div>
+        </p:row>
+    </p:panelGrid>
 </ui:composition>
