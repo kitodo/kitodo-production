@@ -62,13 +62,14 @@ public class UserGroupClientAuthorityRelationDAO extends BaseDAO<UserGroupClient
     }
 
     /**
-     * Get all authorities with are related to given client and user group id.
+     * Get all UserGroupClientAuthorityRelations which contains given client and
+     * user group id.
      * 
      * @param userGroupId
      *            The user group id.
      * @param clientId
      *            The client id.
-     * @return The list of authorities.
+     * @return The list of UserGroupClientAuthorityRelations.
      */
     public List<UserGroupClientAuthorityRelation> getAuthoritiesByUserGroupAndClientId(int userGroupId, int clientId) {
 

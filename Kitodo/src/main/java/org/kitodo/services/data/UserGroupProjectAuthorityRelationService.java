@@ -56,9 +56,18 @@ public class UserGroupProjectAuthorityRelationService
         return countDatabaseRows("FROM UserGroupProjectAuthorityRelation");
     }
 
-    public List<Authority> getAuthoritiesByUserGroupAndProjectId(int userGroupId, int clientId) {
+    /**
+     * Get all authorities with are related to given project and user group id.
+     *
+     * @param userGroupId
+     *            The user group id.
+     * @param projectId
+     *            The project id.
+     * @return The list of authorities.
+     */
+    public List<Authority> getAuthoritiesByUserGroupAndProjectId(int userGroupId, int projectId) {
         List<UserGroupProjectAuthorityRelation> relations = dao.getAuthoritiesByUserGroupAndProjectId(userGroupId,
-            clientId);
+            projectId);
         List<Authority> authorities = new ArrayList<>();
         for (UserGroupProjectAuthorityRelation relation : relations) {
             authorities.add(relation.getAuthority());

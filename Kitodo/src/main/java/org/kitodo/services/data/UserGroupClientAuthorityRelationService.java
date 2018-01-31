@@ -56,6 +56,15 @@ public class UserGroupClientAuthorityRelationService
         return countDatabaseRows("FROM UserGroupClientAuthorityRelation");
     }
 
+    /**
+     * Get all authorities with are related to given client and user group id.
+     *
+     * @param userGroupId
+     *            The user group id.
+     * @param clientId
+     *            The client id.
+     * @return The list of authorities.
+     */
     public List<Authority> getAuthoritiesByUserGroupAndClient(int userGroupId, int clientId) {
         List<UserGroupClientAuthorityRelation> relations = dao.getAuthoritiesByUserGroupAndClientId(userGroupId,
             clientId);

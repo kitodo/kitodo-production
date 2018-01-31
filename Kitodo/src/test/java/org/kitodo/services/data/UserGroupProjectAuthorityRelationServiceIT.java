@@ -55,7 +55,7 @@ public class UserGroupProjectAuthorityRelationServiceIT {
     @Test
     public void shouldCountDataBaseRows() throws Exception {
         long rows = userGroupProjectAuthorityRelationService.countDatabaseRows();
-        assertEquals("Client name is not matching", 7L, rows);
+        assertEquals("Number of database rows is not matching", 7L, rows);
     }
 
     @Test

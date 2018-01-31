@@ -62,13 +62,14 @@ public class UserGroupProjectAuthorityRelationDAO extends BaseDAO<UserGroupProje
     }
 
     /**
-     * Get all authorities with are related to given project and user group id.
+     * Get all UserGroupProjectAuthorityRelations which contains given project and
+     * user group id.
      *
      * @param userGroupId
      *            The user group id.
      * @param projectId
      *            The project id.
-     * @return The list of authorities.
+     * @return The list of UserGroupProjectAuthorityRelations.
      */
     public List<UserGroupProjectAuthorityRelation> getAuthoritiesByUserGroupAndProjectId(int userGroupId,
             int projectId) {
