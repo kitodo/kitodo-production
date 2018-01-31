@@ -57,6 +57,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
 
@@ -89,7 +90,7 @@ public class SimpleLoginST {
         String userDir = System.getProperty("user.dir");
         provideGeckoDriver(GECKO_DRIVER_VERSION, userDir + "/target/downloads/", userDir + "/target/extracts/");
         driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
     }
 
@@ -159,7 +160,7 @@ public class SimpleLoginST {
     @Test
     public void seleniumTest() throws Exception {
 
-        String appUrl = "http://localhost:8080/kitodo";
+        String appUrl = "http://localhost:8080/kitodo/pages/login.jsf";
 
         driver.get(appUrl);
         Thread.sleep(2000);
@@ -182,15 +183,12 @@ public class SimpleLoginST {
         LoginButton.click();
         Thread.sleep(500);
 
-        WebElement VorgaengeButton = driver.findElement(By.linkText("Vorgänge"));
-        VorgaengeButton.click();
-        Thread.sleep(2000);
+        Actions action = new Actions(driver);
+        WebElement UserMenuLink = driver.findElement(By.id("user-menu"));
 
-        WebElement RulesetsButton = driver.findElement(By.linkText("Regelsätze"));
-        RulesetsButton.click();
-        Thread.sleep(500);
+        action.moveToElement(UserMenuLink).perform();
 
-        WebElement LogoutButton = driver.findElement(By.id("logout"));
+        WebElement LogoutButton = driver.findElement(By.id("logout-form:logout"));
         Assert.assertNotNull(LogoutButton);
 
     }
@@ -360,6 +358,16 @@ public class SimpleLoginST {
             FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-win64.zip"),
                     geckoDriverZipFile);
             extractZipFileToFolder(geckoDriverZipFile, new File(extractFolder));
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            geckoDriverFileName = "geckodriver";
+            File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
+            FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-macos.tar.gz"),
+                    geckoDriverTarFile);
+            File theDir = new File(extractFolder);
+            if (!theDir.exists()) {
+                theDir.mkdir();
+            }
+            extractTarFileToFolder(geckoDriverTarFile, theDir, true);
         } else {
             geckoDriverFileName = "geckodriver";
             File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");

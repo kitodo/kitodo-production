@@ -94,7 +94,7 @@ public class GUIExceptionWrapper extends Exception {
             if (ConfigCore.getBooleanParameter("err_userHandling")) {
                 this.errLinkText = Helper.getTranslation("err_linkText");
                 this.errLinkText = this.errLinkText.replace("{0}",
-                        ConfigCore.getParameter("err_linkToPage", "./Main.jsf"));
+                        ConfigCore.getParameter("err_linkToPage", "./start.jsf"));
 
                 if (ConfigCore.getBooleanParameter("err_emailEnabled")) {
 

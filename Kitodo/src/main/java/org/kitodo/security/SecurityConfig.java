@@ -75,14 +75,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
-                .loginPage("/pages/Main.jsf")
+                .loginPage("/pages/login.jsf")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/pages/Main.jsf")
+                .defaultSuccessUrl("/pages/start.jsf")
                 .permitAll()
                 .and()
             .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler("/pages/Main.jsf"));
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler("/pages/start.jsf"));
     }
 
     @Autowired

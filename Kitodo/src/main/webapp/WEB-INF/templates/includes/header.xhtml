@@ -69,13 +69,12 @@
                     </li>
                     <li>
                         <!-- User menu -->
-                        <a href="#"><i class="fa fa-user-circle-o fa-lg"/></a>
+                        <a href="#" id="user-menu"><i class="fa fa-user-circle-o fa-lg"/></a>
                         <h:form id="logout-form">
                             <ul id="nav-user">
                                 <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}<h:outputText rendered="#{LoginForm.maximaleBerechtigung == 1}"> <i>(Admin)</i></h:outputText></h3></li>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
-                                <!-- FIXME: old "LoginForm.Ausloggen" function has been deleted; incorporate new logout method, here! -->
-                                <li><h:commandLink value="#{msgs.signout}"/></li>
+                                <li><h:outputLink value="#{request.contextPath}/logout" id="logout">#{msgs.signout}</h:outputLink></li>
                             </ul>
                         </h:form>
                     </li>

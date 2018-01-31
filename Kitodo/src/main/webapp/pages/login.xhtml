@@ -1,0 +1,99 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition template="/WEB-INF/templates/base.xhtml"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/tags"
+      >
+    <ui:define name="header">
+        <div class="wrapper">
+            <section id="portal-logo">
+                <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" width="160"/>
+                <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
+            </section>
+        </div>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <p:panel styleClass="content-header" style="height:auto;">
+                <sec:authorize access="isAuthenticated()">
+                    <h:panelGrid columns="2" width="100%" style="margin-bottom:0px;">
+                        <h:panelGroup>
+                            <h:outputText style="font-weight: normal"
+                                          value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <form action="${request.contextPath}/logout" method="POST">
+                                <input id="logout" type="submit" value="#{msgs.logout}"/>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </sec:authorize>
+
+                <sec:authorize access="isAnonymous()">
+                    <h:panelGrid columns="1" width="90%"
+                                 styleClass="loginBorder login-box">
+                        <h:panelGroup id="logintable" styleClass="login-form">
+
+                            <form action="${request.contextPath}/login" method="POST">
+                                <font color="red">
+                                    <h:outputText value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
+                                </font>
+                                <h:panelGrid columns="2" style="">
+                                    <h:outputText value="#{msgs.login}"/>
+                                    <h:panelGroup>
+                                        <input id="username" type="text" name="username"/>
+                                    </h:panelGroup>
+
+                                    <h:outputText value="#{msgs.password}"/>
+                                    <h:panelGroup>
+                                        <input id="password" type="password" name="password"/>
+                                    </h:panelGroup>
+
+                                </h:panelGrid>
+                                <input id="login" type="submit" value="Login"/>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </h:panelGroup>
+
+                        <h:panelGroup
+                                rendered="#{LoginForm.myBenutzer == null and LoginForm.schonEingeloggt}">
+
+                            <h:outputText value="#{msgs.sieSindBereitsEingeloggt}"/>
+                            <br/>
+                            <br/>
+                            <h:commandLink value="#{msgs.abbrechen}" id="login-cancel"
+                                           action="#{LoginForm.Ausloggen}"/>
+                            <br/>
+                            <h:commandLink value="#{msgs.alteSessionsAufraeumen}" id="login-clean"
+                                           action="#{LoginForm.EigeneAlteSessionsAufraeumen}"/>
+                            <br/>
+                            <h:commandLink value="#{msgs.dennochEinloggen}" id="login-go"
+                                           action="#{LoginForm.NochmalEinloggen}"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </sec:authorize>
+            </p:panel>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>
