@@ -12,20 +12,25 @@
 package org.kitodo.data.database.beans;
 
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "userGroupClientAuthorityRelation")
+@Table(name = "userGroup_x_client_x_authority")
 public class UserGroupClientAuthorityRelation extends BaseBean {
 
     @ManyToOne
+    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_client_x_authority_userGroup_id"))
     private UserGroup userGroup;
 
     @ManyToOne
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_client_x_authority_client_id"))
     private Client client;
 
     @ManyToOne
+    @JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_client_x_authority_authority_id"))
     private Authority authority;
 
     /**

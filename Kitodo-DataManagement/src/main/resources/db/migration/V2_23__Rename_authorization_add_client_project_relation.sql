@@ -9,6 +9,8 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
+
+-- Rename authorization to authority
 ALTER TABLE authorization RENAME TO authority;
 
 ALTER TABLE userGroup_x_authorization
@@ -29,6 +31,8 @@ ALTER TABLE userGroup_x_authority
   FOREIGN KEY (userGroup_id)
   REFERENCES userGroup (id);
 
+-- Add client table
+
 CREATE TABLE client (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NULL,
@@ -36,7 +40,44 @@ CREATE TABLE client (
   DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ALTER TABLE project
-  ADD COLUMN `client_id` INT(11) NULL DEFAULT NULL;
+  ADD COLUMN client_id INT(11) NULL DEFAULT NULL;
 
-ALTER TABLE project ADD CONSTRAINT `FK_project_client_id`
+ALTER TABLE project ADD CONSTRAINT FK_project_client_id
+  foreign key (client_id) REFERENCES client(id);
+
+-- Add authority relation tables
+
+CREATE TABLE userGroup_x_client_x_authority (
+  id INT NOT NULL AUTO_INCREMENT,
+  userGroup_id INT NOT NULL,
+  client_id INT NOT NULL,
+  authority_id INT NOT NULL,
+  PRIMARY KEY (id))
+  DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE userGroup_x_client_x_authority add constraint `FK_userGroup_x_client_x_authority_userGroup_id`
+foreign key (userGroup_id) REFERENCES userGroup(id);
+
+ALTER TABLE userGroup_x_client_x_authority add constraint `FK_userGroup_x_client_x_authority_client_id`
 foreign key (client_id) REFERENCES client(id);
+
+ALTER TABLE userGroup_x_client_x_authority add constraint `FK_userGroup_x_client_x_authority_authority_id`
+foreign key (authority_id) REFERENCES authority(id);
+
+
+CREATE TABLE userGroup_x_project_x_authority (
+  id INT NOT NULL AUTO_INCREMENT,
+  userGroup_id INT NOT NULL,
+  project_id INT NOT NULL,
+  authority_id INT NOT NULL,
+  PRIMARY KEY (id))
+  DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE userGroup_x_project_x_authority add constraint `FK_userGroup_x_project_x_authority_userGroup_id`
+foreign key (userGroup_id) REFERENCES userGroup(id);
+
+ALTER TABLE userGroup_x_project_x_authority add constraint `FK_userGroup_x_project_x_authority_project_id`
+foreign key (project_id) REFERENCES project(id);
+
+ALTER TABLE userGroup_x_project_x_authority add constraint `FK_userGroup_x_project_x_authority_authority_id`
+foreign key (authority_id) REFERENCES authority(id);
