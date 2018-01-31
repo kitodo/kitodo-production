@@ -12,39 +12,33 @@
 -->
 
 <ui:composition
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:t="http://myfaces.apache.org/tomahawk"
-    xmlns:p="http://primefaces.org/ui"
-    >
-
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:t="http://myfaces.apache.org/tomahawk"
+        xmlns:p="http://primefaces.org/ui">
     <h:form id="imageForm">
         <p:messages id="messagesImage" showDetail="true" closable="true" />
-
         <!--Primefaces workaround for preventing to execute the first commandButton when pressing enter on selectes spinner -->
         <!--Inserted dummy button with no functionality  https://stackoverflow.com/a/27268362-->
         <p:commandButton id="dummy" style="display:none;"/>
-
         <h:panelGrid colums="1">
             <h:outputText value="#{msgs.aktuellerOrdner}: "/>
             <p:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}" converter="URIConverter">
                 <f:selectItems value="#{Metadaten.allTifFolders}"/>
                 <p:ajax update="currentImage,imageNumberSpinner" listener="#{Metadaten.goToFirstImage}"/>
             </p:selectOneMenu>
-
             <!-- image number -->
             <h:outputText value="#{msgs.imageNumber}:"/>
             <h:panelGroup>
-                <p:commandButton action="#{Metadaten.goToFirstImage}" icon="ui-icon-seek-first"
+                <p:commandButton action="#{Metadaten.goToFirstImage}" icon="fa fa-step-backward"
                                  id="firstImage" update="imageForm" partialSubmit="true"/>
                 <p:spinner id="imageNumberSpinner" value="#{Metadaten.imageNumber}"
                            min="1" max="#{Metadaten.lastImage}" suffix="/#{Metadaten.lastImage}" size="10">
                     <p:ajax update="imageForm" process="@this" listener="#{Metadaten.goToCurrentImageNumber}"/>
                 </p:spinner>
-                <p:commandButton action="#{Metadaten.goToLastImage}" icon="ui-icon-seek-end"
-                                 id="lastImage" update="imageForm" partialSubmit="true"/>
+                <p:commandButton action="#{Metadaten.goToLastImage}" icon="fa fa-step-forward" id="lastImage" update="imageForm" partialSubmit="true"/>
             </h:panelGroup>
             <h:outputText value="#{msgs.imageVisualization}:"/>
             <h:panelGroup>
@@ -60,67 +54,52 @@
                                  id="rotateRight" update="imageForm" icon="fa fa-rotate-right">
                 </p:commandButton>
             </h:panelGroup>
-
             <h:graphicImage id="currentImage" alt="" value="#{Metadaten.bild}" />
-
             <h:panelGroup>
                 <h:outputText value="#{msgs.bildVerlinken}: "
                               title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
                 <p:selectBooleanCheckbox id="CheckImageToStructuralElement" value="#{Metadaten.imageToStructuralElement}" partialSubmit="true"/>
             </h:panelGroup>
-
-
-
         </h:panelGrid>
-
-            <h:panelGroup rendered="#{Metadaten.imageNumber != '-1' and Metadaten.ocrResult!=''}">
-                <div style="background-color: #ffffff;border-style: solid; border-width: 1px; border-color: #CCCCCC;margin-bottom:15px;padding:5px;">
-                    <h3>
-                        <h:outputText value="OCR"/>
-                    </h3>
-                    <h:outputText value="#{Metadaten.ocrResult}" escape="false"/>
-                </div>
-            </h:panelGroup>
+        <h:panelGroup rendered="#{Metadaten.imageNumber != '-1' and Metadaten.ocrResult!=''}">
+            <div style="background-color: #ffffff;border-style: solid; border-width: 1px; border-color: #CCCCCC;margin-bottom:15px;padding:5px;">
+                <h3>
+                    <h:outputText value="OCR"/>
+                </h3>
+                <h:outputText value="#{Metadaten.ocrResult}" escape="false"/>
+            </div>
+        </h:panelGroup>
     </h:form>
-        <t:panelGrid id="BildArea" forceId="true" columns="1" rendered="#{Metadaten.imageNumber != '-1'}">
-            <h:panelGroup style="text-align: center">
-
-                <!-- OCR -->
-                <h:commandLink id="ocrButton" action="#{Metadaten.showOcrResult}"
-                                 rendered="#{Metadaten.showOcrButton}">
-                    <f:ajax render="BildArea myBild"/>
-                    <h:graphicImage alt="ocr" value="/pages/images/buttons/ocr.png"
-                                    style="margin-left:14px;vertical-align:middle"/>
-                </h:commandLink>
-
-                <!-- //OCR -->
-
-
-            </h:panelGroup>
-        </t:panelGrid>
-
-
-
+    <t:panelGrid id="BildArea" forceId="true" columns="1" rendered="#{Metadaten.imageNumber != '-1'}">
+        <h:panelGroup style="text-align: center">
+            <!-- OCR -->
+            <h:commandLink id="ocrButton" action="#{Metadaten.showOcrResult}"
+                           rendered="#{Metadaten.showOcrButton}">
+                <f:ajax render="BildArea myBild"/>
+                <h:graphicImage alt="ocr" value="/pages/images/buttons/ocr.png"
+                                style="margin-left:14px;vertical-align:middle"/>
+            </h:commandLink>
+            <!-- //OCR -->
+        </h:panelGroup>
+    </t:panelGrid>
     <h:form id="formularOrdner" style="margin-top:15px">
-    <h:panelGrid columns="3">
-        <h:outputText value="#{msgs.currentRepresentative}"
-                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
-        <h:outputText value="#{msgs.noFileSelected}"
-                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative and empty Metadaten.currentRepresentativePage}"/>
-        <h:outputText value="#{Metadaten.allPages[Metadaten.currentRepresentativePage].label}"
-                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative and not empty Metadaten.currentRepresentativePage}"/>
-        <h:outputText value="" rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
+        <h:panelGrid columns="3">
+            <h:outputText value="#{msgs.currentRepresentative}"
+                          rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
+            <h:outputText value="#{msgs.noFileSelected}"
+                          rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative and empty Metadaten.currentRepresentativePage}"/>
+            <h:outputText value="#{Metadaten.allPages[Metadaten.currentRepresentativePage].label}"
+                          rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative and not empty Metadaten.currentRepresentativePage}"/>
+            <h:outputText value="" rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
 
-        <h:outputText value="#{msgs.setRepresentative} "
-                      rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
-        <h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}"
-                         rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}">
-            <f:selectItems value="#{Metadaten.allPages}"/>
-        </h:selectOneMenu>
-        <h:commandButton action="#{Metadaten.saveMetadataToXml}" value="#{msgs.uebernehmen}"
-                         rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
-    </h:panelGrid>
-
+            <h:outputText value="#{msgs.setRepresentative} "
+                          rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
+            <h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}"
+                             rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}">
+                <f:selectItems value="#{Metadaten.allPages}"/>
+            </h:selectOneMenu>
+            <h:commandButton action="#{Metadaten.saveMetadataToXml}" value="#{msgs.uebernehmen}"
+                             rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
+        </h:panelGrid>
     </h:form>
-
 </ui:composition>
