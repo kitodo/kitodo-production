@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -85,6 +87,65 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             }
         }
         return instance;
+    }
+
+    /**
+     * Creates and returns a query to retrieve tasks for which the currently logged
+     * in user is eligible.
+     *
+     * @param loginForm
+     *            The login form used to determine the currently logged in user.
+     * @return query to retrieve tasks for which the user eligible.
+     */
+    private BoolQueryBuilder createUserTaskQuery(LoginForm loginForm) {
+
+        BoolQueryBuilder subquery = new BoolQueryBuilder();
+        subquery.should(createSimpleQuery("processingUser", loginForm.getMyBenutzer().getId(), true));
+        subquery.should(createSimpleQuery("users.id", loginForm.getMyBenutzer().getId(), true));
+        for (UserGroup userGroup : loginForm.getMyBenutzer().getUserGroups()) {
+            subquery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+        }
+
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(subquery);
+        query.must(createSimpleQuery("processingStatus", TaskStatus.LOCKED.getValue(), false));
+        query.must(createSimpleQuery("processingStatus", TaskStatus.DONE.getValue(), false));
+
+        // TODO: find other way than retrieving the form bean to access
+        // "hideCorrectionTasks" and "showAutomaticTasks"
+        // e.g. which tasks should be returned!
+        AktuelleSchritteForm form = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+        if (Objects.equals(form, null)) {
+            form = new AktuelleSchritteForm();
+        }
+        if (form.getHideCorrectionTasks()) {
+            query.must(createSimpleQuery("priority", 10, true));
+        }
+        if (!form.getShowAutomaticTasks()) {
+            query.must(createSimpleQuery("typeAutomatic", "false", true));
+        }
+
+        return query;
+    }
+
+    @Override
+    public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        if (login == null) {
+            return new ArrayList<>();
+        }
+        BoolQueryBuilder query = createUserTaskQuery(login);
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+    }
+
+    @Override
+    public String createCountQuery(Map filters) {
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        if (login == null) {
+            return "";
+        }
+        BoolQueryBuilder query = createUserTaskQuery(login);
+        return query.toString();
     }
 
     /**
@@ -169,7 +230,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Find the distinct task titles.
-     * 
+     *
      * @return a list of titles
      */
     public List<String> findTaskTitlesDistinct() throws DataException {
@@ -183,7 +244,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Get amount of current tasks for current user.
-     * 
+     *
      * @param open
      *            true or false
      * @param inProcessing
@@ -266,7 +327,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Find tasks by four parameters.
-     * 
+     *
      * @param taskStatus
      *            as String
      * @param processingUser
@@ -283,7 +344,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Find tasks by four parameters.
-     * 
+     *
      * @param taskStatus
      *            as String
      * @param processingUser
@@ -303,7 +364,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Find tasks by three parameters.
-     * 
+     *
      * @param taskStatus
      *            as String
      * @param processingUser
@@ -323,7 +384,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Find tasks by four parameters.
-     * 
+     *
      * @param taskStatus
      *            as String
      * @param processingUser
@@ -434,7 +495,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Get localized (translated) title of task.
-     * 
+     *
      * @param title
      *            as String
      * @return localized title
@@ -445,7 +506,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Get normalized title of task.
-     * 
+     *
      * @param title
      *            as String
      * @return normalized title
@@ -661,10 +722,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Find open tasks for current user sorted according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
-     * 
+     *
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenTasksForCurrentUser(String sort) throws DataException {
@@ -680,7 +741,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Find open tasks without correction for current user sorted according to sort
      * query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted tasks as TaskDTO objects
@@ -698,7 +759,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Find open not automatic tasks for current user sorted according to sort
      * query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted tasks as TaskDTO objects
@@ -716,7 +777,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Find open not automatic tasks without correction for current user sorted
      * according to sort query.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of tasks as TaskDTO objects

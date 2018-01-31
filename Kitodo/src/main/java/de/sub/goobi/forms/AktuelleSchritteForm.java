@@ -31,6 +31,8 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -65,6 +67,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private Task mySchritt = new Task();
     private Problem problem = new Problem();
     private Solution solution = new Solution();
+    private List<TaskDTO> selectedTasks;
     private ObjectMode editMode = ObjectMode.NONE;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
@@ -136,8 +139,8 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * This method initializes the task list without any filter whenever the
-     * bean is created.
+     * This method initializes the task list without any filter whenever the bean is
+     * created.
      */
     @PostConstruct
     public void initializeTaskList() {
@@ -166,18 +169,6 @@ public class AktuelleSchritteForm extends BasisForm {
         if (this.sortierung.equals("prozessDesc")) {
             sort += ", " + SortBuilders.fieldSort("process").order(SortOrder.DESC).toString();
         }
-        /*if (this.sortierung.equals("batchAsc")) {
-            order = Order.asc("proc.batchID");
-        }
-        if (this.sortierung.equals("batchDesc")) {
-            order = Order.desc("proc.batchID");
-        }
-        if (this.sortierung.equals("prozessdateAsc")) {
-            order = Order.asc("proc.creationDate");
-        }
-        if (this.sortierung.equals("prozessdateDesc")) {
-            order = Order.desc("proc.creationDate");
-        }*/
         if (this.sortierung.equals("projektAsc")) {
             sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
         }
@@ -236,7 +227,7 @@ public class AktuelleSchritteForm extends BasisForm {
         List<Task> currentStepsOfBatch;
         String taskTitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
-                Type.LOGISTIC);
+            Type.LOGISTIC);
         if (batches.size() > 1) {
             Helper.setFehlerMeldung("multipleBatchesAssigned");
             return null;
@@ -313,7 +304,7 @@ public class AktuelleSchritteForm extends BasisForm {
         List<Task> currentStepsOfBatch;
         String taskTitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
-                Type.LOGISTIC);
+            Type.LOGISTIC);
         if (batches.size() > 1) {
             Helper.setFehlerMeldung("multipleBatchesAssigned");
             return null;
@@ -372,7 +363,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public List<Task> getPreviousStepsForProblemReporting() {
         return serviceManager.getTaskService().getPreviousTasksForProblemReporting(this.mySchritt.getOrdering(),
-                this.mySchritt.getProcess().getId());
+            this.mySchritt.getProcess().getId());
     }
 
     public int getSizeOfPreviousStepsForProblemReporting() {
@@ -400,7 +391,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public List<Task> getNextStepsForProblemSolution() {
         return serviceManager.getTaskService().getNextTasksForProblemSolution(this.mySchritt.getOrdering(),
-                this.mySchritt.getProcess().getId());
+            this.mySchritt.getProcess().getId());
     }
 
     public int getSizeOfNextStepsForProblemSolution() {
@@ -560,8 +551,9 @@ public class AktuelleSchritteForm extends BasisForm {
                     if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         // gesamtAnzahlImages +=
                         // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
-                        this.gesamtAnzahlImages += serviceManager.getFileService().getSubUris(
-                                serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))
+                        this.gesamtAnzahlImages += serviceManager.getFileService()
+                                .getSubUris(
+                                    serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))
                                 .size();
                     }
                 } catch (DAOException | IOException e) {
@@ -594,6 +586,25 @@ public class AktuelleSchritteForm extends BasisForm {
     public void setMySchritt(Task task) {
         this.editMode = ObjectMode.NONE;
         setStep(task);
+    }
+
+    /**
+     * Get task with specific id.
+     *
+     * @param id
+     *            passed as int
+     * @return task
+     */
+    public Task getTaskById(int id) {
+        try {
+            return serviceManager.getTaskService().getById(id);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage("ERROR: " + Helper.getTranslation("unableToRetrieveTask"));
+            facesContext.addMessage(null, facesMessage);
+            return null;
+        }
     }
 
     /**
@@ -703,23 +714,30 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Auswahl mittels Selectboxen.
+     * Get list of selected Tasks.
+     *
+     * @return List of selected Tasks
      */
-    @SuppressWarnings("unchecked")
-    public void selectionAll() {
-        for (TaskDTO task : (List<TaskDTO>) this.page.getList()) {
-            task.setSelected(true);
-        }
+    public List<TaskDTO> getSelectedTasks() {
+        return this.selectedTasks;
     }
 
     /**
-     * Selection none.
+     * Set selected tasks: Set tasks in old list to false and set new list to true.
+     *
+     * @param selectedTasks
+     *            provided by data table
      */
-    @SuppressWarnings("unchecked")
-    public void selectionNone() {
-        for (TaskDTO task : (List<TaskDTO>) this.page.getList()) {
-            task.setSelected(false);
+    public void setSelectedTasks(List<TaskDTO> selectedTasks) {
+        if (this.selectedTasks != null && !this.selectedTasks.isEmpty()) {
+            for (TaskDTO task : this.selectedTasks) {
+                task.setSelected(false);
+            }
         }
+        for (TaskDTO task : selectedTasks) {
+            task.setSelected(true);
+        }
+        this.selectedTasks = selectedTasks;
     }
 
     /**
@@ -802,8 +820,8 @@ public class AktuelleSchritteForm extends BasisForm {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             // TODO: why this not used variable is here?
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-            this.mySchritt.setProcess(serviceManager.getProcessService().addToWikiField(this.addToWikiField,
-                    this.mySchritt.getProcess()));
+            this.mySchritt.setProcess(
+                serviceManager.getProcessService().addToWikiField(this.addToWikiField, this.mySchritt.getProcess()));
             this.addToWikiField = "";
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
@@ -824,7 +842,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     /**
      * Set property for process.
-     * 
+     *
      * @param property
      *            for process as Property object
      */
@@ -834,7 +852,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     /**
      * Get list of process properties.
-     * 
+     *
      * @return list of process properties
      */
     public List<Property> getProperties() {
@@ -843,7 +861,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     /**
      * Set list of process properties.
-     * 
+     *
      * @param properties
      *            for process as Property objects
      */
@@ -853,7 +871,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     /**
      * Get size of properties' list.
-     * 
+     *
      * @return size of properties' list
      */
     public int getPropertiesSize() {
@@ -902,7 +920,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     /**
      * Get batch helper.
-     * 
+     *
      * @return batch helper as BatchHelper object
      */
     public BatchStepHelper getBatchHelper() {
@@ -911,7 +929,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     /**
      * Set batch helper.
-     * 
+     *
      * @param batchHelper
      *            as BatchHelper object
      */
