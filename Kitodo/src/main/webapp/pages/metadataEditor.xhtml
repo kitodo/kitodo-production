@@ -18,20 +18,22 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
         <p:panel id="listWrapper">
-            <p:layout fullPage="false" style="height:100%" >
-                <p:layoutUnit position="north" size="100">
-                    <ui:include src="/pages/incMeta/metadataEditorHeader.xhtml" />
-                </p:layoutUnit>
-                <p:layoutUnit position="west" resizable="true" size="200" minSize="100" maxSize="600">
-                    <ui:include src="/pages/incMeta/metadataStructureView.xhtml" />
-                </p:layoutUnit>
-                <p:layoutUnit position="center">
-                    <ui:include src="/pages/incMeta/metadataCenter.xhtml" />
-                </p:layoutUnit>
-                <p:layoutUnit position="east" size="300" resizable="true" header="#{msgs.metadatenBildAnzeigen}" collapsible="true">
-                    <ui:include src="/pages/incMeta/imageContol.xhtml" />
-                </p:layoutUnit>
-            </p:layout>
+            <p:panel style="height:700px;">
+                <p:layout fullPage="false">
+                    <p:layoutUnit position="north" size="80">
+                        <ui:include src="/pages/incMeta/metadataEditorHeader.xhtml" />
+                    </p:layoutUnit>
+                    <p:layoutUnit position="west" resizable="true" size="200" minSize="100" maxSize="600">
+                        <ui:include src="/pages/incMeta/metadataStructureView.xhtml" />
+                    </p:layoutUnit>
+                    <p:layoutUnit position="center">
+                        <ui:include src="/pages/incMeta/metadataCenter.xhtml" />
+                    </p:layoutUnit>
+                    <p:layoutUnit position="east" size="300" resizable="true" header="#{msgs.metadatenBildAnzeigen}" collapsible="true">
+                        <ui:include src="/pages/incMeta/imageContol.xhtml" />
+                    </p:layoutUnit>
+                </p:layout>
+            </p:panel>
         </p:panel>
     </ui:define>
     <ui:define name="breadcrumbs">

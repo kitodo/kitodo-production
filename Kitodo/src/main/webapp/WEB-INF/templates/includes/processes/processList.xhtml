@@ -25,11 +25,9 @@
                      rows="#{LoginForm.myBenutzer.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      paginatorPosition="bottom">
-
             <p:column id="titleColumn" headerText="#{msgs.prozessTitel}" filterBy="#{item.title}">
                 <h:outputText value="#{item.title}"/>
             </p:column>
-
             <p:column style="width:120px;" headerText="#{msgs.status}">
                 <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
                 <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
@@ -42,19 +40,23 @@
                                 style="width:#{item.progressLocked * 0.8}px;height:10px"/>
                 <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
             </p:column>
-
             <p:column headerText="#{msgs.projekt}">
                 <h:outputText value="#{item.project.title}"/>
             </p:column>
-
             <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
                 <h:link outcome="/pages/ProzessverwaltungBearbeiten"
                         title="#{msgs.prozessBearbeiten}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{item.id}" />
                 </h:link>
+                <h:commandLink action="#{Metadaten.readXml}" title="#{msgs.metadatenBearbeiten}"
+                               rendered="#{ProzessverwaltungForm.displayMode.mode != 'template'}">
+                    <h:graphicImage><i class="fa fa-file-o"/></h:graphicImage>
+                    <f:param name="ProzesseID" value="#{item.id}"/>
+                    <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
+                    <f:param name="zurueck" value="ProzessverwaltungAlle"/>
+                </h:commandLink>
             </p:column>
-
         </p:dataTable>
     </h:form>
 </ui:composition>
