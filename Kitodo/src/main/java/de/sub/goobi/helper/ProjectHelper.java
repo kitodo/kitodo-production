@@ -11,9 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -112,23 +110,7 @@ public class ProjectHelper {
             }
         }
 
-        Comparator<StepInformation> comp = new compareWorkflowSteps();
-        Collections.sort(workFlow, comp);
+        workFlow.sort(Comparator.comparing(StepInformation::getAverageStepOrder));
         return workFlow;
-    }
-
-    // TODO: move this class to StepInformation
-    private static class compareWorkflowSteps implements Comparator<StepInformation>, Serializable {
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * uses the field "stepOrder".
-         */
-        @Override
-        public int compare(StepInformation firstStepInformation, StepInformation secondStepInformation) {
-            Double firstAverageStepOrder = firstStepInformation.getAverageStepOrder();
-            Double secondAverageStepOrder = secondStepInformation.getAverageStepOrder();
-            return firstAverageStepOrder.compareTo(secondAverageStepOrder);
-        }
     }
 }
