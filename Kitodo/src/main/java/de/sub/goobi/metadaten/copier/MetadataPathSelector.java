@@ -105,7 +105,7 @@ public class MetadataPathSelector extends MetadataSelector {
             docStructType = pathSegment;
             index = null;
         }
-        selector = super.create(path.substring(pathSegment.length() + 1));
+        selector = MetadataSelector.create(path.substring(pathSegment.length() + 1));
     }
 
     /**

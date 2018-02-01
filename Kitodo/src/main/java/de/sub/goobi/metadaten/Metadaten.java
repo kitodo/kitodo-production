@@ -1164,7 +1164,7 @@ public class Metadaten {
      *      The positions of new DocStruct elements.
      */
     public PositionOfNewDocStrucElement[] getPositionsOfNewDocStrucElement() {
-        return this.positionOfNewDocStrucElement.values();
+        return PositionOfNewDocStrucElement.values();
     }
 
     /**
