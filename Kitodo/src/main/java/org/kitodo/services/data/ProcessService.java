@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -796,12 +795,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         List<Batch> batches = process.getBatches();
         if (type != null) {
             List<Batch> result = new ArrayList<>(batches);
-            Iterator<Batch> indicator = result.iterator();
-            while (indicator.hasNext()) {
-                if (!type.equals(indicator.next().getType())) {
-                    indicator.remove();
-                }
-            }
+            result.removeIf(batch -> !(batch.getType().equals(type)));
             return result;
         }
         return batches;
