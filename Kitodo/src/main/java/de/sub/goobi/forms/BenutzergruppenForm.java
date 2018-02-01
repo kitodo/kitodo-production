@@ -152,7 +152,7 @@ public class BenutzergruppenForm extends BasisForm {
      *
      * @return DualListModel of available and assigned authorization levels
      */
-    public DualListModel<Authority> getAuthorizations() {
+    public DualListModel<Authority> getAuthorities() {
         List<Authority> assignedAuthorities = this.myBenutzergruppe.getAuthorities();
         List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
         availableAuthorities.removeAll(assignedAuthorities);
@@ -166,7 +166,7 @@ public class BenutzergruppenForm extends BasisForm {
      * @param authorizations
      *            list of authorizations assigned to 'myBenutzergruppe'
      */
-    public void setAuthorizations(DualListModel<Authority> authorizations) {
+    public void setAuthorities(DualListModel<Authority> authorizations) {
         authorizations.getTarget().removeIf(Objects::isNull);
         this.myBenutzergruppe.setAuthorities(authorizations.getTarget());
     }

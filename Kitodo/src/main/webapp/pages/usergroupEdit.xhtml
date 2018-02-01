@@ -63,7 +63,7 @@
                                     <p:outputLabel for="authorities" value="#{msgs.berechtigungen}"/>
                                     <p:pickList id="authorities"
                                                 value="#{BenutzergruppenForm.authorities}"
-                                                converter="AuthorizationConverter"
+                                                converter="AuthorityConverter"
                                                 var="authority" itemLabel="#{authority.title}" itemValue="#{authority}">
                                         <f:facet name="sourceCaption" style="color: #000;">#{msgs.available}</f:facet>
                                         <f:facet name="targetCaption" style="color: #000;">#{msgs.assigned}</f:facet>

@@ -72,7 +72,7 @@
 
     <!-- AuthorityConverter -->
     <converter>
-        <converter-id>AuthorizationConverter</converter-id>
+        <converter-id>AuthorityConverter</converter-id>
         <converter-class>de.sub.goobi.converter.AuthorityConverter</converter-class>
     </converter>
 

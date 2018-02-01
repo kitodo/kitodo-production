@@ -243,7 +243,36 @@ public class UserGroupServiceIT {
         List<UserGroupDTO> userGroupDTOS = userGroupService.convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
         assertEquals("Incorrect amount of found user groups", 1, userGroupDTOS.size());
 
-        AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorizations().get(0);
+        AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);
         assertEquals("Incorrect authorization!", "admin", authorityDTO.getTitle());
     }
+
+    @Test
+    public void shouldSaveAndRemoveAuthorizationForUsergroup() throws Exception {
+        UserGroup userGroup = userGroupService.getById(1);
+        List<Authority> authorities = userGroup.getAuthorities();
+
+        Authority authority = new Authority();
+        authority.setTitle("newAuthorization");
+        ServiceManager serviceManager = new ServiceManager();
+        serviceManager.getAuthorityService().save(authority);
+
+        authorities.add(authority);
+
+        userGroup.setAuthorities(authorities);
+        userGroupService.save(userGroup);
+
+        userGroup = userGroupService.getById(1);
+
+        List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
+        List<String> expected = Arrays.asList("admin", "manager", "user", "newAuthorization");
+        assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
+
+        authorities = userGroup.getAuthorities();
+
+        assertEquals("Permission strings doesn't match to given plain text!", "newAuthorization",
+            authorities.get(3).getTitle());
+
+    }
+
 }

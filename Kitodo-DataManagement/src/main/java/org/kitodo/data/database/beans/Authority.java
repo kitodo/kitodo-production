@@ -17,9 +17,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -33,8 +30,7 @@ public class Authority extends BaseIndexedBean {
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) }, inverseJoinColumns = {@JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
+    @ManyToMany(mappedBy = "authorities", cascade = CascadeType.PERSIST)
     private List<UserGroup> userGroups;
 
     @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
@@ -128,5 +124,22 @@ public class Authority extends BaseIndexedBean {
     public void setUserGroupProjectAuthorityRelations(
             List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
         this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Authority authority = (Authority) o;
+
+        return title != null ? title.equals(authority.title) : authority.title == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return title != null ? title.hashCode() : 0;
     }
 }

@@ -272,7 +272,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
                 }
                 authorizations.add(authorization);
             }
-            userGroupDTO.setAuthorizations(authorizations);
+            userGroupDTO.setAuthorities(authorizations);
         }
         return userGroupDTO;
     }
