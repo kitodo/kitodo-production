@@ -2161,7 +2161,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     if (user != null) {
                         fileService.createDirectoryForUser(zielTif, user.getLogin());
                     } else {
-                        throw new IOException("noLoggedUser");
+                        throw new IOException("No logged user!");
                     }
                 } catch (Exception e) {
                     Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");

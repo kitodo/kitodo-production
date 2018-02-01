@@ -24,7 +24,6 @@ import de.sub.goobi.metadaten.copier.DataCopier;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -499,7 +498,7 @@ public class ExportDms extends ExportMets {
                     if (user != null) {
                         fileService.createDirectoryForUser(zielTif, user.getLogin());
                     } else {
-                        throw new IOException("noLoggedUser");
+                        throw new IOException("No logged user!");
                     }
                 } catch (Exception e) {
                     if (exportDmsTask != null) {
@@ -510,18 +509,11 @@ public class ExportDms extends ExportMets {
                     logger.error("could not create destination directory", e);
                     if (e instanceof IOException) {
                         throw (IOException) e;
-                    } else if (e instanceof InterruptedException) {
-                        throw (InterruptedException) e;
-                    } else if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    } else {
-                        throw new UndeclaredThrowableException(e);
                     }
                 }
             }
 
             /* jetzt den eigentlichen Kopiervorgang */
-
             ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
             for (int i = 0; i < dateien.size(); i++) {
                 if (exportDmsTask != null) {
