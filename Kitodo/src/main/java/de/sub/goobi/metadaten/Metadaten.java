@@ -628,8 +628,8 @@ public class Metadaten {
         if (xmlReadingLock.tryLock()) {
             try {
                 readXmlAndBuildTree();
-            } catch (RuntimeException rte) {
-                throw rte;
+            } catch (RuntimeException e) {
+                logger.error(e);
             } finally {
                 xmlReadingLock.unlock();
             }
