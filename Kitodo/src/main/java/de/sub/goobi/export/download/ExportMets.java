@@ -14,7 +14,6 @@ package de.sub.goobi.export.download;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.copier.CopierData;
@@ -59,9 +58,9 @@ public class ExportMets {
     public boolean startExport(Process process)
             throws IOException, DocStructHasNoTypeException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login != null) {
-            URI userHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
+        User user = Helper.getCurrentUser();
+        if (user != null) {
+            URI userHome = serviceManager.getUserService().getHomeDirectory(user);
             return startExport(process, userHome);
         }
         return false;
@@ -120,7 +119,7 @@ public class ExportMets {
      *            the folder to prove and maybe create it
      */
     protected void prepareUserDirectory(URI targetFolder) {
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        User user = Helper.getCurrentUser();
         if (user != null) {
             try {
                 fileService.createDirectoryForUser(targetFolder, user.getLogin());

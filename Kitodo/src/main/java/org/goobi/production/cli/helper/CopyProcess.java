@@ -14,7 +14,6 @@ package org.goobi.production.cli.helper;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.forms.AdditionalField;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
@@ -47,6 +46,7 @@ import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -650,9 +650,9 @@ public class CopyProcess extends ProzesskopieForm {
              */
             task.setProcessingTime(this.prozessKopie.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            if (loginForm != null) {
-                task.setProcessingUser(loginForm.getMyBenutzer());
+            User user = Helper.getCurrentUser();
+            if (user != null) {
+                task.setProcessingUser(user);
             }
 
             /*

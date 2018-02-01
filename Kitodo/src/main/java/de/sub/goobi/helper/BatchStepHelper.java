@@ -445,7 +445,7 @@ public class BatchStepHelper extends BatchHelper {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+            User user = Helper.getCurrentUser();
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                     this.currentStep.getProcess().getWikiField(), "user", message));
@@ -463,7 +463,7 @@ public class BatchStepHelper extends BatchHelper {
      */
     public void addToWikiFieldForAll() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+            User user = Helper.getCurrentUser();
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             for (Task s : this.steps) {
                 s.getProcess().setWikiField(
@@ -528,9 +528,9 @@ public class BatchStepHelper extends BatchHelper {
             }
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
             currentStep.setProcessingTime(new Date());
-            User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-            if (ben != null) {
-                currentStep.setProcessingUser(ben);
+            User user = Helper.getCurrentUser();
+            if (user != null) {
+                currentStep.setProcessingUser(user);
             }
 
             try {

@@ -13,7 +13,6 @@ package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AktuelleSchritteForm;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 
@@ -93,16 +92,16 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * Creates and returns a query to retrieve tasks for which the currently logged
      * in user is eligible.
      *
-     * @param loginForm
-     *            The login form used to determine the currently logged in user.
+     * @param user
+     *            currently logged in user
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery(LoginForm loginForm) {
+    private BoolQueryBuilder createUserTaskQuery(User user) {
 
         BoolQueryBuilder subquery = new BoolQueryBuilder();
-        subquery.should(createSimpleQuery("processingUser", loginForm.getMyBenutzer().getId(), true));
-        subquery.should(createSimpleQuery("users.id", loginForm.getMyBenutzer().getId(), true));
-        for (UserGroup userGroup : loginForm.getMyBenutzer().getUserGroups()) {
+        subquery.should(createSimpleQuery("processingUser", user.getId(), true));
+        subquery.should(createSimpleQuery("users.id", user.getId(), true));
+        for (UserGroup userGroup : user.getUserGroups()) {
             subquery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
         }
 
@@ -130,21 +129,21 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null) {
+        User user = Helper.getCurrentUser();
+        if (user == null) {
             return new ArrayList<>();
         }
-        BoolQueryBuilder query = createUserTaskQuery(login);
+        BoolQueryBuilder query = createUserTaskQuery(user);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
     @Override
     public String createCountQuery(Map filters) {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null) {
+        User user = Helper.getCurrentUser();
+        if (user == null) {
             return "";
         }
-        BoolQueryBuilder query = createUserTaskQuery(login);
+        BoolQueryBuilder query = createUserTaskQuery(user);
         return query.toString();
     }
 
@@ -729,12 +728,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenTasksForCurrentUser(String sort) throws DataException {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null) {
+        User user = Helper.getCurrentUser();
+        if (user == null) {
             return new ArrayList<>();
         }
-        List<JSONObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, login.getMyBenutzer().getId(),
-                sort);
+        List<JSONObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -747,12 +745,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null) {
+        User user = Helper.getCurrentUser();
+        if (user == null) {
             return new ArrayList<>();
         }
-        List<JSONObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK,
-                login.getMyBenutzer().getId(), 10, sort);
+        List<JSONObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -765,12 +762,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null) {
+        User user = Helper.getCurrentUser();
+        if (user == null) {
             return new ArrayList<>();
         }
         List<JSONObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK,
-                login.getMyBenutzer().getId(), false, sort);
+                user.getId(), false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -783,12 +780,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null) {
+        User user = Helper.getCurrentUser();
+        if (user == null) {
             return new ArrayList<>();
         }
         List<JSONObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK,
-                login.getMyBenutzer().getId(), 10, false, sort);
+                user.getId(), 10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 

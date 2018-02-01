@@ -2156,17 +2156,20 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 /*
                  * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
                  */
-                User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+                User user = Helper.getCurrentUser();
                 try {
-                    fileService.createDirectoryForUser(zielTif, myUser.getLogin());
+                    if (user != null) {
+                        fileService.createDirectoryForUser(zielTif, user.getLogin());
+                    } else {
+                        throw new IOException("noLoggedUser");
+                    }
                 } catch (Exception e) {
                     Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
                     logger.error("could not create destination directory", e);
                 }
             }
 
-            /* jetzt den eigentlichen Kopiervorgang */
-
+            // jetzt den eigentlichen Kopiervorgang
             ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
             for (URI file : dateien) {
                 if (fileService.isFile(file)) {

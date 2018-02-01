@@ -494,9 +494,13 @@ public class ExportDms extends ExportMets {
                  * wenn kein Agora-Import, dann den Ordner mit
                  * Benutzerberechtigung neu anlegen
                  */
-                User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+                User user = Helper.getCurrentUser();
                 try {
-                    fileService.createDirectoryForUser(zielTif, myUser.getLogin());
+                    if (user != null) {
+                        fileService.createDirectoryForUser(zielTif, user.getLogin());
+                    } else {
+                        throw new IOException("noLoggedUser");
+                    }
                 } catch (Exception e) {
                     if (exportDmsTask != null) {
                         exportDmsTask.setException(e);
