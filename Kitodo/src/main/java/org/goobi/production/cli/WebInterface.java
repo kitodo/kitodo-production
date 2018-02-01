@@ -41,8 +41,8 @@ public class WebInterface extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
         if (ConfigCore.getBooleanParameter("useWebApi", false)) {
-            String ip = "";
-            String password = "";
+            String ip;
+            String password;
             try {
                 ip = req.getRemoteHost();
                 if (ip.startsWith("127.0.0.1")) {

@@ -124,7 +124,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
     protected void registerListeners(ActiveMQProcessor[] processors) {
         for (ActiveMQProcessor processor : processors) {
             if (processor.getQueueName() != null) {
-                MessageConsumer messageChecker = null;
+                MessageConsumer messageChecker;
                 try {
                     Destination queue = session.createQueue(processor.getQueueName());
                     messageChecker = session.createConsumer(queue);

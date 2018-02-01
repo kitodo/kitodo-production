@@ -74,10 +74,10 @@ public class MassImportForm implements Serializable {
     private ImportFormat format = null;
     private String idList = "";
     private String records = "";
-    private List<String> usablePluginsForRecords = new ArrayList<>();
-    private List<String> usablePluginsForIDs = new ArrayList<>();
-    private List<String> usablePluginsForFiles = new ArrayList<>();
-    private List<String> usablePluginsForFolder = new ArrayList<>();
+    private List<String> usablePluginsForRecords;
+    private List<String> usablePluginsForIDs;
+    private List<String> usablePluginsForFiles;
+    private List<String> usablePluginsForFolder;
     private String currentPlugin = "";
     private IImportPlugin plugin;
     private File importFile = null;

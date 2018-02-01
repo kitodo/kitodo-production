@@ -38,14 +38,10 @@ public class HibernateSessionFilter2 implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException {
         HttpServletRequest myRequest = (HttpServletRequest) request;
-        HibernateSessionLong hsl = null;
+        // das Managed Bean aus der Session holen
+        HibernateSessionLong hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
         Session session = null;
 
-        /*
-         * die Hibernate-Session connecten
-         */
-        // das Managed Bean aus der Session holen
-        hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
         // wenn das Managed Bean bereits in der Http-Session war,
         // dann daraus die Hibernate-Session ermitteln
         if (hsl != null) {

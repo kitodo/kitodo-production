@@ -37,8 +37,6 @@ class SQLProduction extends SQLGenerator {
      */
     @Override
     public String getSQL() {
-
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -55,7 +53,7 @@ class SQLProduction extends SQLGenerator {
             outerWhereClause = "WHERE (" + outerWhereClauseTimeFrame + ") ";
         }
 
-        subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
+        String subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
                 + getIntervallExpression(myTimeUnit, "processingEnd") + " AS intervall, processingEnd AS timeLimiter "
                 + "FROM task inner join process on task.process_id=process.id " + "WHERE " + innerWhereClause
                 + "GROUP BY process.id) AS table_1";
@@ -79,7 +77,6 @@ class SQLProduction extends SQLGenerator {
             return getSQL();
         }
 
-        String subQuery = "";
         String outerWhereClause = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
 
@@ -98,7 +95,7 @@ class SQLProduction extends SQLGenerator {
         }
 
         // building the inner SQL
-        subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
+        String subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
                 + getIntervallExpression(myTimeUnit, "processingEnd") + " AS intervall, processingEnd AS timeLimiter "
                 + "FROM task inner join process on task.process_id=process.id " + innerWhereClause
                 + "GROUP BY process.id) AS table_1";

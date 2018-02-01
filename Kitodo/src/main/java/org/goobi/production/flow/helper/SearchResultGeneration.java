@@ -34,9 +34,9 @@ import org.kitodo.services.ServiceManager;
 
 public class SearchResultGeneration {
 
-    private String filter = "";
-    private boolean showClosedProcesses = false;
-    private boolean showArchivedProjects = false;
+    private String filter;
+    private boolean showClosedProcesses;
+    private boolean showArchivedProjects;
     private static ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(SearchResultGeneration.class);
 

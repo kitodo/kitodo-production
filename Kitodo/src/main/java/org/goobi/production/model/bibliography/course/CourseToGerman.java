@@ -198,7 +198,7 @@ public class CourseToGerman {
         LocalDate next = datesIterator.hasNext() ? datesIterator.next() : null;
         LocalDate overNext = datesIterator.hasNext() ? datesIterator.next() : null;
         int previousYear = Integer.MIN_VALUE;
-        boolean nextInSameMonth = false;
+        boolean nextInSameMonth;
         boolean nextBothInSameMonth = next != null && DateUtils.sameMonth(current, next);
         int lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, current.getYear());
 

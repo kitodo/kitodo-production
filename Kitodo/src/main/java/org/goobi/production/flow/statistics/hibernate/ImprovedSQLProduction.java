@@ -36,7 +36,6 @@ class ImprovedSQLProduction extends SQLGenerator {
     @Override
     public String getSQL() {
         super.setMyIdFieldName("process.id");
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -53,7 +52,7 @@ class ImprovedSQLProduction extends SQLGenerator {
             outerWhereClause = "WHERE (" + outerWhereClauseTimeFrame + ") ";
         }
 
-        subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
+        String subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
                 + getIntervallExpression(this.myTimeUnit, "processingEnd")
                 + " AS intervall, processingEnd AS timeLimiter "
                 + "FROM task inner join process on task.process_id=process.id " + "WHERE " + innerWhereClause
@@ -79,7 +78,6 @@ class ImprovedSQLProduction extends SQLGenerator {
             return getSQL();
         }
 
-        String subQuery = "";
         String outerWhereClause = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo, "timeLimiter");
 
@@ -98,7 +96,7 @@ class ImprovedSQLProduction extends SQLGenerator {
         }
 
         // building the inner SQL
-        subQuery = "(SELECT table1.id AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
+        String subQuery = "(SELECT table1.id AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
                 + getIntervallExpression(this.myTimeUnit, "h.date") + "  AS intervall from history h "
                 + " JOIN process AS table1 ON  h.process_id=table1.id  " + innerWhereClause
                 + "GROUP BY h.process_id order by h.date) AS table_1";
@@ -110,7 +108,6 @@ class ImprovedSQLProduction extends SQLGenerator {
     }
 
     public String getSQL(String stepname) {
-        String subQuery = "";
         String outerWhereClause = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo, "timeLimiter");
 
@@ -129,7 +126,7 @@ class ImprovedSQLProduction extends SQLGenerator {
         }
 
         // building the inner SQL
-        subQuery = "(SELECT table1.id AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
+        String subQuery = "(SELECT table1.id AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
                 + getIntervallExpression(this.myTimeUnit, "h.date") + "  AS intervall from history h "
                 + " JOIN process AS table1 ON  h.process_id=table1.id  " + innerWhereClause
                 + " GROUP BY h.processID order by h.date) AS table_1";

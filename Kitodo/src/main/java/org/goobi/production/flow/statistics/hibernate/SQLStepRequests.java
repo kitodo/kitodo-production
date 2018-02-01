@@ -67,7 +67,6 @@ public class SQLStepRequests extends SQLGenerator {
             groupInnerSelect = " group by history.process_id, history.numericValue ";
         }
 
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -91,7 +90,7 @@ public class SQLStepRequests extends SQLGenerator {
             innerWhereClause = innerWhereClause + " AND history.numericValue=" + stepOrder.toString() + " ";
         }
 
-        subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(this.myTimeUnit, "history.date")
+        String subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(this.myTimeUnit, "history.date")
                 + " " + "AS 'intervall', " + timeLimiter + " AS 'timeLimiter', history.stringValue AS 'stepName' "
                 + "FROM history WHERE " + innerWhereClause + groupInnerSelect + ") AS table_1";
 
@@ -173,7 +172,7 @@ public class SQLStepRequests extends SQLGenerator {
     public String getSQLMaxStepOrder(HistoryTypeEnum eventSelection) {
 
         String timeRestriction;
-        String innerWhereClause = null;
+        String innerWhereClause;
         if (this.myIdsCondition != null) {
             // adding ids to the where clause
             innerWhereClause = "(history.type=" + eventSelection.getValue().toString() + ")  AND ("
@@ -202,7 +201,7 @@ public class SQLStepRequests extends SQLGenerator {
     public String getSQLMinStepOrder(HistoryTypeEnum eventSelection) {
 
         String timeRestriction;
-        String innerWhereClause = null;
+        String innerWhereClause;
         if (this.myIdsCondition != null) {
             // adding ids to the where clause
             innerWhereClause = "(history.type=" + eventSelection.getValue().toString() + ")  AND ("

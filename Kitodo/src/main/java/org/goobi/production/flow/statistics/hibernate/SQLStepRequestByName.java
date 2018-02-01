@@ -77,7 +77,6 @@ public class SQLStepRequestByName extends SQLGenerator {
             groupInnerSelect = " GROUP BY process_id, numericValue, stringValue ";
         }
 
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -100,7 +99,7 @@ public class SQLStepRequestByName extends SQLGenerator {
             innerWhereClause = innerWhereClause + " AND h.stringValue='" + stepName + "' ";
         }
 
-        subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(myTimeUnit, "history.date") + " "
+        String subQuery = "(SELECT numericValue AS 'stepOrder', " + getIntervallExpression(myTimeUnit, "history.date") + " "
                 + "AS 'intervall', history.date AS 'timeLimiter', history.stringValue AS 'stepName' " + "FROM "
                 + "(SELECT DISTINCT h.numericValue, h.stringValue, " + timeLimiter + " as date, h.process_id, h.type "
                 + "FROM history h " + "WHERE " + innerWhereClause + groupInnerSelect + ") AS history " + ") AS table_1";
@@ -183,7 +182,7 @@ public class SQLStepRequestByName extends SQLGenerator {
     public String getSQLMaxStepOrder(HistoryTypeEnum eventSelection) {
 
         String timeRestriction;
-        String innerWhereClause = null;
+        String innerWhereClause;
         if (myIdsCondition != null) {
             // adding ids to the where clause
             innerWhereClause = "(history.type=" + eventSelection.getValue().toString() + ")  AND (" + myIdsCondition
@@ -212,7 +211,7 @@ public class SQLStepRequestByName extends SQLGenerator {
     public String getSQLMinStepOrder(HistoryTypeEnum eventSelection) {
 
         String timeRestriction;
-        String innerWhereClause = null;
+        String innerWhereClause;
         if (myIdsCondition != null) {
             // adding ids to the where clause
             innerWhereClause = "(history.type=" + eventSelection.getValue().toString() + ")  AND (" + myIdsCondition

@@ -126,7 +126,7 @@ public class SpracheForm implements Serializable {
     @SuppressWarnings("unchecked")
     public void switchLanguage(String langCodeCombined) throws IOException {
         String[] languageCode = langCodeCombined.split("_");
-        Locale locale = null;
+        Locale locale;
         if (languageCode.length == 2) {
             locale = new Locale(languageCode[0], languageCode[1]);
         } else {

@@ -24,11 +24,11 @@ import org.goobi.webapi.beans.Label.KeyAttribute;
 import org.kitodo.production.exceptions.NotImplementedException;
 
 public class ConfigOpacDoctype {
-    private String title = "";
-    private String rulesetType = "";
-    private String tifHeaderType = "";
-    private boolean periodical = false;
-    private boolean multiVolume = false;
+    private String title;
+    private String rulesetType;
+    private String tifHeaderType;
+    private boolean periodical;
+    private boolean multiVolume;
     private HashMap<String, String> labels;
     private ArrayList<String> mappings;
     private boolean newspaper;

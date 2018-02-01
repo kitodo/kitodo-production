@@ -101,7 +101,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         if (idList == null || idList.size() == 0) {
             return null;
         }
-        String natSQL = "";
+        String natSQL;
         // adding time restrictions
         if (stepname == null) {
             natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, idList)

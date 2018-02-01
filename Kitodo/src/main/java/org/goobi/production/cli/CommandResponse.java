@@ -12,7 +12,7 @@
 package org.goobi.production.cli;
 
 public class CommandResponse {
-    private int status = 200;
+    private int status;
     private String title;
     private String message;
 

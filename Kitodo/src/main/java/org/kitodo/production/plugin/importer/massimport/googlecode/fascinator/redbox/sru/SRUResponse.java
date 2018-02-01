@@ -38,9 +38,8 @@ import org.dom4j.Node;
 public class SRUResponse {
     private static Logger logger = LogManager.getLogger(SRUResponse.class);
 
-    private int totalRecords = 0;
-    private int recordsReturned = 0;
-
+    private int totalRecords;
+    private int recordsReturned;
     private List<Node> resultsList;
 
     /**

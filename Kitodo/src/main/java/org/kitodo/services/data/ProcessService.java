@@ -1397,7 +1397,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private Fileformat determineFileFormat(String type, Process process) throws PreferencesException {
-        Fileformat fileFormat = null;
+        Fileformat fileFormat;
         RulesetService rulesetService = serviceManager.getRulesetService();
 
         switch (type) {

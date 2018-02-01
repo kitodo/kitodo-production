@@ -36,8 +36,6 @@ public class SQLStorage extends SQLGenerator {
      */
     @Override
     public String getSQL() {
-
-        String subQuery = "";
         String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
@@ -56,7 +54,7 @@ public class SQLStorage extends SQLGenerator {
             innerWhereClause = "(history.type=" + HistoryTypeEnum.storageDifference.getValue().toString() + ") ";
         }
 
-        subQuery = "(SELECT numericValue AS 'storage', " + getIntervallExpression(myTimeUnit, "history.date") + " "
+        String subQuery = "(SELECT numericValue AS 'storage', " + getIntervallExpression(myTimeUnit, "history.date") + " "
                 + "AS 'intervall', history.date AS 'timeLimiter' FROM history WHERE " + innerWhereClause
                 + ") AS table_1";
 
