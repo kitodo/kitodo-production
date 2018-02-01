@@ -19,6 +19,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
@@ -120,20 +121,16 @@ public class StatistikForm {
         return getAmountOfCurrentTasks(false, true);
     }
 
-    private int getAmountOfCurrentTasks(boolean open, boolean inProcessing) {
+    private int getAmountOfCurrentTasks(boolean open, boolean processing) {
         Long amount = 0L;
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        User user = Helper.getCurrentUser();
 
-        if (login == null) {
+        if (user == null) {
             return 0;
-        } else {
-            if (login.getMyBenutzer() == null) {
-                return 0;
-            }
         }
 
         try {
-            amount = serviceManager.getTaskService().getAmountOfCurrentTasks(open, inProcessing, login.getMyBenutzer());
+            amount = serviceManager.getTaskService().getAmountOfCurrentTasks(open, processing, user);
         } catch (DataException e) {
             logger.error("ElasticSearch problem: ", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
