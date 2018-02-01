@@ -15,7 +15,6 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -28,8 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
@@ -50,6 +49,7 @@ import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
@@ -165,11 +165,37 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
+     * Duplicate the selected project.
+     *
+     * @param itemId
+     *            ID of the project to duplicate
+     * @return page address; either redirect to the edit project page or return
+     *         'null' if the project could not be retrieved, which will prompt JSF
+     *         to remain on the same page and reuse the bean.
+     */
+    public String duplicateProject(Integer itemId) {
+        setLocked(false);
+        this.itemId = 0;
+        try {
+            this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
+            return redirectToEdit("?faces-redirect=true");
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage(Helper.getTranslation("unableToDuplicateProject"));
+            facesContext.addMessage(null, facesMessage);
+            return null;
+        }
+    }
+
+    /**
      * Saves current project if title is not empty and redirects to projects page.
      *
      * @return page or empty String
      */
     public String save() {
+        Session session = Helper.getHibernateSession();
+        session.evict(this.myProjekt);
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
@@ -808,6 +834,26 @@ public class ProjekteForm extends BasisForm {
         } catch (DataException e) {
             logger.error(e.getMessage());
             return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Return the template titles of the project with the given ID "id".
+     *
+     * @param id
+     *            ID of the project for which the template titles are returned.
+     * @return String containing the templates titles of the project with the given
+     *         ID
+     */
+    public String getProjectTemplateTitles(int id) {
+        try {
+            return serviceManager.getProjectService().getProjectTemplatesTitlesAsString(id);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            FacesMessage facesMessage = new FacesMessage(Helper.getTranslation("unableToRetrieveTemplates"));
+            facesContext.addMessage(null, facesMessage);
+            return null;
         }
     }
 

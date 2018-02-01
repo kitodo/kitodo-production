@@ -48,13 +48,16 @@
         </p:column>
 
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
-            <h:link outcome="projectEdit"
-                    title="#{msgs.projektBearbeiten}">
-                <f:param name="id" value="#{item.id}" />
-                <i class="fa fa-pencil-square-o fa-lg"/>
-            </h:link>
-            <h:link><i class="fa fa-clone fa-lg"/></h:link>
-            <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
+            <h:form id="projectActionForm">
+                <h:link onclick="#{ProjekteForm.setLocked(true)}" outcome="projectEdit"
+                        title="#{msgs.projektBearbeiten}">
+                    <f:param name="id" value="#{item.id}" />
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:link>
+                <h:commandLink action="#{ProjekteForm.duplicateProject(item.id)}" immediate="true"
+                               title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+                <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
+            </h:form>
         </p:column>
 
         <p:rowExpansion styleClass="expansion-class">
@@ -66,7 +69,7 @@
                 <h:outputText value="#{item.fileFormatDmsExport}"/>
 
                 <h:outputText value="#{msgs.prozessvorlagen}:"/>
-                <h:outputText value="#{item.processTitles}"/>
+                <h:outputText value="#{ProjekteForm.getProjectTemplateTitles(item.id)}"/>
             </p:panelGrid>
         </p:rowExpansion>
 

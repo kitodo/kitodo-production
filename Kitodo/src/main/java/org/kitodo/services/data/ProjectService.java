@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,7 @@ import org.goobi.production.flow.statistics.StepInformation;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -87,7 +89,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     /**
      * Management od processes for project object.
-     * 
+     *
      * @param project
      *            object
      */
@@ -129,13 +131,13 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     /**
      * Find archived or not archived projects.
-     * 
+     *
      * @param archived
      *            if true - find archived projects, if false - find not archived
      *            projects
      * @param related
-     *            if true - found project is related to some other DTO object,
-     *            if false - not and it collects all related objects
+     *            if true - found project is related to some other DTO object, if
+     *            false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
@@ -281,5 +283,75 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
         return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
                 && project.getFileFormatInternal() != null && digitalCollectionsXmlExists && projectsXmlExists;
+    }
+
+    /**
+     * Duplicate the project with the given ID 'itemId'.
+     *
+     * @return the duplicated Project
+     */
+    public Project duplicateProject(Integer itemId) throws DAOException {
+        Project duplicatedProject = new Project();
+
+        Project baseProject = getById(itemId);
+
+        // Project _title_ should explicitly _not_ be duplicated!
+        duplicatedProject.setStartDate(baseProject.getStartDate());
+        duplicatedProject.setEndDate(baseProject.getEndDate());
+        duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());
+        duplicatedProject.setNumberOfVolumes(baseProject.getNumberOfVolumes());
+
+        duplicatedProject.setFileFormatInternal(baseProject.getFileFormatInternal());
+        duplicatedProject.setFileFormatDmsExport(baseProject.getFileFormatDmsExport());
+        duplicatedProject.setDmsImportErrorPath(baseProject.getDmsImportErrorPath());
+        duplicatedProject.setDmsImportSuccessPath(baseProject.getDmsImportSuccessPath());
+
+        duplicatedProject.setDmsImportTimeOut(baseProject.getDmsImportTimeOut());
+        duplicatedProject.setUseDmsImport(baseProject.isUseDmsImport());
+        duplicatedProject.setDmsImportCreateProcessFolder(baseProject.isDmsImportCreateProcessFolder());
+
+        duplicatedProject.setMetsRightsOwner(baseProject.getMetsRightsOwner());
+        duplicatedProject.setMetsRightsOwnerLogo(baseProject.getMetsRightsOwnerLogo());
+        duplicatedProject.setMetsRightsOwnerSite(baseProject.getMetsRightsOwnerSite());
+        duplicatedProject.setMetsRightsOwnerMail(baseProject.getMetsRightsOwnerMail());
+
+        duplicatedProject.setMetsDigiprovPresentation(baseProject.getMetsDigiprovPresentation());
+        duplicatedProject.setMetsDigiprovPresentationAnchor(baseProject.getMetsDigiprovPresentationAnchor());
+        duplicatedProject.setMetsDigiprovReference(baseProject.getMetsDigiprovReference());
+        duplicatedProject.setMetsDigiprovReferenceAnchor(baseProject.getMetsDigiprovReferenceAnchor());
+
+        duplicatedProject.setMetsPointerPath(baseProject.getMetsPointerPath());
+        duplicatedProject.setMetsPointerPathAnchor(baseProject.getMetsPointerPathAnchor());
+        duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
+        duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
+
+        ArrayList<ProjectFileGroup> duplicatedFileGroups = new ArrayList<>();
+        for (ProjectFileGroup projectFileGroup : baseProject.getProjectFileGroups()) {
+            ProjectFileGroup duplicatedGroup = new ProjectFileGroup();
+            duplicatedGroup.setMimeType(projectFileGroup.getMimeType());
+            duplicatedGroup.setName(projectFileGroup.getName());
+            duplicatedGroup.setPath(projectFileGroup.getPath());
+            duplicatedGroup.setPreviewImage(projectFileGroup.isPreviewImage());
+            duplicatedGroup.setSuffix(projectFileGroup.getSuffix());
+            duplicatedGroup.setFolder(projectFileGroup.getFolder());
+
+            duplicatedGroup.setProject(duplicatedProject);
+            duplicatedFileGroups.add(duplicatedGroup);
+        }
+        duplicatedProject.setProjectFileGroups(duplicatedFileGroups);
+
+        return duplicatedProject;
+    }
+
+    /**
+     * Return a string containing a comma separated list of process templates
+     * associated with this project.
+     *
+     * @return process templates associated with this project
+     */
+    public String getProjectTemplatesTitlesAsString(int id) throws DAOException {
+        Project project = serviceManager.getProjectService().getById(id);
+        return String.join(", ", project.getProcesses().stream().filter(Process::isTemplate).map(Process::getTitle)
+                .collect(Collectors.toList()));
     }
 }

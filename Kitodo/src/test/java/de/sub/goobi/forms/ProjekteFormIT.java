@@ -13,7 +13,6 @@ package de.sub.goobi.forms;
 
 import static org.junit.Assert.assertEquals;
 
-import org.goobi.production.flow.statistics.StatisticsManager;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
