@@ -164,10 +164,10 @@ public class AktuelleSchritteForm extends BasisForm {
             sort += ", " + SortBuilders.fieldSort("title").order(SortOrder.DESC).toString();
         }
         if (this.sortierung.equals("prozessAsc")) {
-            sort += ", " + SortBuilders.fieldSort("process").order(SortOrder.ASC).toString();
+            sort += ", " + SortBuilders.fieldSort("processForTask.title").order(SortOrder.ASC).toString();
         }
         if (this.sortierung.equals("prozessDesc")) {
-            sort += ", " + SortBuilders.fieldSort("process").order(SortOrder.DESC).toString();
+            sort += ", " + SortBuilders.fieldSort("processForTask.title").order(SortOrder.DESC).toString();
         }
         if (this.sortierung.equals("projektAsc")) {
             sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
