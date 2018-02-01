@@ -78,7 +78,7 @@ public class JobManager implements ServletContextListener {
         if (ConfigCore.getLongParameter(configuredStartTimeProperty, -1) != -1) {
             long msOfToday = ConfigCore.getLongParameter(configuredStartTimeProperty, -1);
             Calendar cal = Calendar.getInstance();
-            cal.set(1984, 8, 11, 0, 0);
+            cal.set(1984, Calendar.SEPTEMBER, 11, 0, 0);
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
 
