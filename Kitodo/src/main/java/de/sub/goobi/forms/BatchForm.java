@@ -481,34 +481,31 @@ public class BatchForm extends BasisForm {
             Helper.setFehlerMeldung("noBatchSelected");
             return null;
         }
-        for (Integer batchID : selectedBatches) {
-            try {
-                Batch batch = serviceManager.getBatchService().getById(batchID);
-                switch (batch.getType()) {
-                    case LOGISTIC:
-                        for (Process process : batch.getProcesses()) {
-                            ExportDms dms = new ExportDms(
+
+        try {
+            Batch batch = serviceManager.getBatchService().getById(selectedBatches.get(0));
+            switch (batch.getType()) {
+                case LOGISTIC:
+                    for (Process process : batch.getProcesses()) {
+                        ExportDms dms = new ExportDms(
                                     ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
-                            dms.startExport(process);
-                        }
-                        return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
-                    case NEWSPAPER:
-                        TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-                        return "/pages/taskmanager";
-                    case SERIAL:
-                        TaskManager.addTask(new ExportSerialBatchTask(batch));
-                        return "/pages/taskmanager";
-                    default:
-                        throw new UnreachableCodeException("Complete switch statement");
-                }
-            } catch (Exception e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("fehlerBeimEinlesen");
-                return null;
+                        dms.startExport(process);
+                    }
+                    return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
+                case NEWSPAPER:
+                    TaskManager.addTask(new ExportNewspaperBatchTask(batch));
+                    return "/pages/taskmanager";
+                case SERIAL:
+                    TaskManager.addTask(new ExportSerialBatchTask(batch));
+                    return "/pages/taskmanager";
+                default:
+                    throw new UnreachableCodeException("Complete switch statement");
             }
+        } catch (Exception e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen");
+            return null;
         }
-        Helper.setFehlerMeldung("noBatchSelected");
-        return null;
     }
 
     /**
