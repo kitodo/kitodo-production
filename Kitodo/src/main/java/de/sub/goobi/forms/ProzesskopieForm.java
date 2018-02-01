@@ -1126,40 +1126,45 @@ public class ProzesskopieForm implements Serializable {
             DigitalDocument dd = new DigitalDocument();
             Fileformat ff = new XStream(myPrefs);
             ff.setDigitalDocument(dd);
-            /* BoundBook hinzufügen */
+            // add BoundBook
             DocStructType dst = myPrefs.getDocStrctTypeByName("BoundBook");
             DocStruct dsBoundBook = dd.createDocStruct(dst);
             dd.setPhysicalDocStruct(dsBoundBook);
 
-            /* Monographie */
-            if (!ConfigOpac.getDoctypeByName(this.docType).isPeriodical()
-                    && !ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
-                DocStructType dsty = myPrefs
-                        .getDocStrctTypeByName(ConfigOpac.getDoctypeByName(this.docType).getRulesetType());
-                DocStruct ds = dd.createDocStruct(dsty);
-                dd.setLogicalDocStruct(ds);
-                this.rdf = ff;
-            } else if (ConfigOpac.getDoctypeByName(this.docType).isPeriodical()) {
-                /* Zeitschrift */
-                DocStructType dsty = myPrefs.getDocStrctTypeByName("Periodical");
-                DocStruct ds = dd.createDocStruct(dsty);
-                dd.setLogicalDocStruct(ds);
+            ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
 
-                DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
-                DocStruct dsvolume = dd.createDocStruct(dstyvolume);
-                ds.addChild(dsvolume);
-                this.rdf = ff;
-            } else if (ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
-                /* MultivolumeBand */
-                DocStructType dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
-                DocStruct ds = dd.createDocStruct(dsty);
-                dd.setLogicalDocStruct(ds);
+            if (configOpacDoctype != null) {
+                // Monographie
+                if (!configOpacDoctype.isPeriodical() && !configOpacDoctype.isMultiVolume()) {
+                    DocStructType dsty = myPrefs.getDocStrctTypeByName(configOpacDoctype.getRulesetType());
+                    DocStruct ds = dd.createDocStruct(dsty);
+                    dd.setLogicalDocStruct(ds);
+                    this.rdf = ff;
+                } else if (configOpacDoctype.isPeriodical()) {
+                    // Zeitschrift
+                    DocStructType dsty = myPrefs.getDocStrctTypeByName("Periodical");
+                    DocStruct ds = dd.createDocStruct(dsty);
+                    dd.setLogicalDocStruct(ds);
 
-                DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("Volume");
-                DocStruct dsvolume = dd.createDocStruct(dstyvolume);
-                ds.addChild(dsvolume);
-                this.rdf = ff;
+                    DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
+                    DocStruct dsvolume = dd.createDocStruct(dstyvolume);
+                    ds.addChild(dsvolume);
+                    this.rdf = ff;
+                } else if (configOpacDoctype.isMultiVolume()) {
+                    // MultivolumeBand
+                    DocStructType dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
+                    DocStruct ds = dd.createDocStruct(dsty);
+                    dd.setLogicalDocStruct(ds);
+
+                    DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("Volume");
+                    DocStruct dsvolume = dd.createDocStruct(dstyvolume);
+                    ds.addChild(dsvolume);
+                    this.rdf = ff;
+                }
+            } else {
+                // TODO: what should happen if configOpacDoctype is null?
             }
+
             if (this.docType.equals("volumerun")) {
                 DocStructType dsty = myPrefs.getDocStrctTypeByName("VolumeRun");
                 DocStruct ds = dd.createDocStruct(dsty);
