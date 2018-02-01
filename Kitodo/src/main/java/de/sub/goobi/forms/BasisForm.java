@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
@@ -73,8 +74,12 @@ public class BasisForm implements Serializable {
      */
     public User getUser() {
         if (this.user == null) {
-            LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            this.user = login.getMyBenutzer();
+            try {
+                this.user = serviceManager.getUserService().getAuthenticatedUser();
+            } catch (DAOException e) {
+                Helper.setFehlerMeldung("noLoggedUser");
+                logger.error(e);
+            }
         }
         return this.user;
     }
