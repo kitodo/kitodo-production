@@ -15,7 +15,6 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -28,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;

@@ -24,7 +24,6 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.HistoryType;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.HistoryDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;

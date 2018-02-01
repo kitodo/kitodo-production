@@ -13,8 +13,6 @@ package de.sub.goobi.helper.servletfilter;
 
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 
-import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
