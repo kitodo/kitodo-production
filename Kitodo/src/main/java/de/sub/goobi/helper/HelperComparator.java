@@ -51,10 +51,11 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     private int compareMetadataTypes(Object firstObject, Object secondObject) {
         MetadataType firstMetadata = (MetadataType) firstObject;
         MetadataType secondMetadata = (MetadataType) secondObject;
-        String firstName = firstMetadata
-                .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
-        String secondName = secondMetadata
-                .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+
+        String language = Helper.getMetadataLanguageForCurrentUser();
+
+        String firstName = firstMetadata.getLanguage(language);
+        String secondName = secondMetadata.getLanguage(language);
         if (firstName == null) {
             firstName = "";
         }
@@ -67,10 +68,11 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     private int compareMetadata(Object firstObject, Object secondObject) {
         Metadata firstMetadata = (Metadata) firstObject;
         Metadata secondMetadata = (Metadata) secondObject;
-        String firstName = firstMetadata.getType()
-                .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
-        String secondName = secondMetadata.getType()
-                .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+
+        String language = Helper.getMetadataLanguageForCurrentUser();
+
+        String firstName = firstMetadata.getType().getNameByLanguage(language);
+        String secondName = secondMetadata.getType().getNameByLanguage(language);
         if (firstName == null) {
             firstName = firstMetadata.getType().getName();
         }
@@ -83,10 +85,11 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     private int compareDocStructTypes(Object firstObject, Object secondObject) {
         DocStructType firstDocStructType = (DocStructType) firstObject;
         DocStructType secondDocStructType = (DocStructType) secondObject;
-        String firstName = firstDocStructType
-                .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
-        String secondName = secondDocStructType
-                .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+
+        String language = Helper.getMetadataLanguageForCurrentUser();
+
+        String firstName = firstDocStructType.getNameByLanguage(language);
+        String secondName = secondDocStructType.getNameByLanguage(language);
         if (firstName == null) {
             firstName = "";
         }
