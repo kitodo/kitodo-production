@@ -16,7 +16,7 @@ import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +30,7 @@ import java.util.Objects;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
@@ -54,6 +55,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -856,6 +858,21 @@ public class ProjekteForm extends BasisForm {
             facesContext.addMessage(null, facesMessage);
             return null;
         }
+    }
+
+    public List<SelectItem> getClients() {
+        List<Client> clients = serviceManager.getClientService().getAll();
+        List<SelectItem> items = new ArrayList<>();
+        for (Client client : clients) {
+            items.add(new SelectItem(client, client.getName()));
+        }
+
+        // try {
+        return items;
+        // } catch (Exception e) {
+        // logger.error(e.getMessage());
+        // return new LinkedList<>();
+        // }
     }
 
     // TODO:

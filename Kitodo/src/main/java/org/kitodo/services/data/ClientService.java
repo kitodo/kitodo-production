@@ -11,51 +11,32 @@
 
 package org.kitodo.services.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.ClientType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ClientDTO;
+import org.kitodo.dto.ProjectDTO;
+import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.base.SearchDatabaseService;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
+public class ClientService extends TitleSearchService<Client, ClientDTO, ClientDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ClientService.class);
     private static ClientService instance = null;
-
-    /**
-     * Saves client to database.
-     *
-     * @param client
-     *            The ldap server.
-     */
-    public void save(Client client) throws DAOException {
-        dao.save(client);
-    }
-
-    /**
-     * Removes client from database.
-     *
-     * @param client
-     *            The ldap server.
-     */
-    public void remove(Client client) throws DAOException {
-        dao.remove(client);
-    }
-
-    /**
-     * Removes client from database by id.
-     *
-     * @param id
-     *            The ldap server id.
-     */
-    public void remove(Integer id) throws DAOException {
-        dao.remove(id);
-    }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
@@ -78,8 +59,102 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
         return instance;
     }
 
+    /**
+     * Constructor with Searcher and Indexer assigning.
+     */
     private ClientService() {
-        super(new ClientDAO());
+        super(new ClientDAO(), new ClientType(), new Indexer<>(Client.class), new Searcher(Client.class));
+        this.indexer = new Indexer<>(Client.class);
+    }
+
+    @Override
+    public ClientDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(getIdFromJSONObject(jsonObject));
+        JSONObject clientJSONObject = getSource(jsonObject);
+        clientDTO.setName(getStringPropertyForDTO(clientJSONObject, "clientName"));
+        clientDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(clientJSONObject, "projects"));
+        if (!related) {
+            clientDTO = convertRelatedJSONObjects(clientJSONObject, clientDTO);
+        } else {
+            clientDTO = addBasicProjectRelation(clientDTO, clientJSONObject);
+        }
+        return clientDTO;
+    }
+
+    private ClientDTO convertRelatedJSONObjects(JSONObject jsonObject, ClientDTO clientDTO) throws DataException {
+        clientDTO
+                .setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
+        return clientDTO;
+    }
+
+    private ClientDTO addBasicProjectRelation(ClientDTO clientDTO, JSONObject jsonObject) {
+        if (clientDTO.getProjectsSize() > 0) {
+            List<ProjectDTO> projects = new ArrayList<>();
+            List<String> subKeys = new ArrayList<>();
+            subKeys.add("clientName");
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "projects", subKeys);
+            for (RelatedProperty relatedProperty : relatedProperties) {
+                ProjectDTO project = new ProjectDTO();
+                project.setId(relatedProperty.getId());
+                if (relatedProperty.getValues().size() > 0) {
+                    project.setTitle(relatedProperty.getValues().get(0));
+                }
+                projects.add(project);
+            }
+            clientDTO.setProjects(projects);
+        }
+        return clientDTO;
+    }
+
+    /**
+     * Get all clients from index and covert results to format accepted by frontend.
+     * Right now there is no usage which demands all relations.
+     *
+     * @return list of ClientDTO objects
+     */
+    @Override
+    public List<ClientDTO> findAll() throws DataException {
+        return findAll(true);
+    }
+
+    /**
+     * Get all clients from index and covert results to format accepted by frontend.
+     * Right now there is no usage which demands all relations.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @return list of ClientDTO objects
+     */
+    @Override
+    public List<ClientDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
+        return findAll(sort, offset, size, true);
+    }
+
+    /**
+     * Refresh project object after update.
+     *
+     * @param client
+     *            object
+     */
+    public void refresh(Client client) {
+        dao.refresh(client);
+    }
+
+    /**
+     * Find authorizations by id of user group.
+     *
+     * @param id
+     *            of user group
+     * @return list of JSON objects with authorizations for specific user group id
+     */
+    List<JSONObject> findByProjectId(Integer id) throws DataException {
+        QueryBuilder query = createSimpleQuery("projects.id", id, true);
+        return searcher.findDocuments(query.toString());
     }
 
 }

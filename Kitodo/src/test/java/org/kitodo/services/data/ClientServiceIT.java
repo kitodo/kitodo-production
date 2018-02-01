@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.services.ServiceManager;
 
 public class ClientServiceIT {
@@ -59,5 +60,19 @@ public class ClientServiceIT {
     public void shouldGetProjetByClient() throws Exception {
         Client client = clientService.getById(1);
         assertEquals("Clients were not found database!", 2, client.getProjects().size());
+    }
+
+    @Test
+    public void shouldFindAllAuthorizations() throws Exception {
+        List<ClientDTO> clients = clientService.findAll();
+        assertEquals("Not all clients were found in database!", 2, clients.size());
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        ClientDTO client = clientService.findById(2);
+        String actual = client.getName();
+        String expected = "Second client";
+        assertEquals("User group was not found in index!", expected, actual);
     }
 }

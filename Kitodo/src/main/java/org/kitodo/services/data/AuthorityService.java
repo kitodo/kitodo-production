@@ -67,7 +67,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Get all authorizations from index and covert results to format accepted by
+     * Get all authorities from index and covert results to format accepted by
      * frontend. Right now there is no usage which demands all relations.
      *
      * @return list of AuthorityDTO objects
@@ -78,7 +78,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Get all authorizations from index and covert results to format accepted by
+     * Get all authorities from index and covert results to format accepted by
      * frontend. Right now there is no usage which demands all relations.
      *
      * @param sort
@@ -105,11 +105,11 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Find authorizations by id of user group.
+     * Find authorities by id of user group.
      *
      * @param id
      *            of user group
-     * @return list of JSON objects with authorizations for specific user group id
+     * @return list of JSON objects with authorities for specific user group id
      */
     List<JSONObject> findByUserGroupId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
@@ -134,8 +134,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
 
     /**
      * Check if IndexAction flag is delete. If true remove authority from list of
-     * authorizations and re-save user group, if false only re-save authority
-     * object.
+     * authorities and re-save user group, if false only re-save authority object.
      *
      * @param authority
      *            object

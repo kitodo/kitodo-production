@@ -12,8 +12,9 @@
 -->
 
 <ui:composition
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
     <p:panel>
         <p:selectBooleanButton
                 onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
@@ -41,6 +42,16 @@
                 <p:inputText id="band" placeholder="1" class="input" value="#{ProjekteForm.myProjekt.numberOfVolumes}" disabled="#{ProjekteForm.locked}">
                     <p:ajax event="change"/>
                 </p:inputText>
+            </div>
+            <div>
+                <p:outputLabel for="client" value="#{msgs.client}"/>
+                <p:selectOneMenu id="client"
+                                 value="#{ProjekteForm.myProjekt.client}"
+                                 noSelectionOption="true"
+                                 disabled="#{ProjekteForm.locked}">
+                    <f:selectItems value="#{ProjekteForm.clients}"/>
+                    <p:ajax event="change"/>
+                </p:selectOneMenu>
             </div>
         </p:row>
         <p:row>

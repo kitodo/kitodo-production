@@ -605,7 +605,7 @@ public class MockDatabase {
 
     }
 
-    public static void insertClients() throws DAOException {
+    public static void insertClients() throws DataException {
         Client client = new Client();
         client.setName("First client");
         serviceManager.getClientService().save(client);
