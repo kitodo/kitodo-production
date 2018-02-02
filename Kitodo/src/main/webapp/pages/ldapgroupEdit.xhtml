@@ -42,10 +42,10 @@
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
-                <p:messages id="useredit-messages" autoUpdate="true" /> 
-		<p:tabView id="ldabgroupTabView">
+                <p:messages id="useredit-messages" autoUpdate="true" />
+                <p:tabView id="ldabgroupTabView">
                     <p:tab id="labgroupTab" title="#{msgs.details}">
-			<p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="2" layout="grid">
                             <p:row>
                                 <div>
                                     <p:outputLabel for="title" value="#{msgs.titel}"/>
@@ -184,23 +184,23 @@
                                 </div>
                             </p:row>
                         </p:panelGrid>
-			<p:panel styleClass="content-header">
-			    <p:commandButton value="#{msgs.loeschen}"
-					     onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
-					     action="#{LdapGruppenForm.Loeschen}"
-					     rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}"
-					     icon="fa fa-trash-o fa-lg"
-					     iconPos="right"/>
-			    <p:commandButton value="#{msgs.clearData}"
-					     action="ldapgroupEdit"
-					     rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}"
-					     icon="fa fa-trash-o fa-lg"
-					     iconPos="right"
-					     update=":ldapgroupEditForm"
-					     immediate="true"
-					     onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"/>
-			</p:panel>
-       		    </p:tab>
+                        <p:panel styleClass="content-header">
+                            <p:commandButton value="#{msgs.loeschen}"
+                                             onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
+                                             action="#{LdapGruppenForm.Loeschen}"
+                                             rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}"
+                                             icon="fa fa-trash-o fa-lg"
+                                             iconPos="right"/>
+                            <p:commandButton value="#{msgs.clearData}"
+                                             action="ldapgroupEdit"
+                                             rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}"
+                                             icon="fa fa-trash-o fa-lg"
+                                             iconPos="right"
+                                             update=":ldapgroupEditForm"
+                                             immediate="true"
+                                             onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"/>
+                        </p:panel>
+                    </p:tab>
                 </p:tabView>
             </h:form>
         </p:panel>
