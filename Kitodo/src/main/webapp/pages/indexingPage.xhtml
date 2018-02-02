@@ -18,79 +18,9 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:o="http://omnifaces.org/ui">
     <ui:define name="content">
+        <p:importEnum type="org.kitodo.enums.ObjectType" var="objectTypeEnum"/>
         <p:panel id="listWrapper">
-
-            <script type="text/javascript">
-                function createMapping() {
-                    toggleButtons(false);
-                    document.getElementById('indexing_form:create-mapping-loading').style.display='inline';
-                    return true;
-                }
-
-                function deleteIndex() {
-                    toggleButtons(false);
-                    document.getElementById('indexing_form:delete-index-loading').style.display='inline';
-                    return true;
-                }
-
-                function toggleProgressPolling(message) {
-                    if (message.includes("indexing_started")) {
-                        PF('progressPoll').start();
-                    } else if (message.includes("indexing_finished")) {
-                        PF('progressPoll').stop();
-                        $('.refreshTable').click();
-                    } else if (message.includes("mapping")) {
-                        $('.refreshTable').click();
-                        if (message.endsWith("started")) {
-                            PF('progressPoll').start();
-                        } else if (message.endsWith("finished")) {
-                            document.getElementById('indexing_form:create-mapping-loading').style.display='none';
-                            PF('progressPoll').stop();
-                        } else if (message.endsWith("failed")) {
-                            document.getElementById('indexing_form:create-mapping-loading').style.display='none';
-                            PF('progressPoll').stop();
-                        }
-                    } else if (message.includes("deletion")) {
-                        $('.refreshTable').click();
-                        if (message.endsWith("started")) {
-                            PF('progressPoll').start();
-                        }
-                        if (message.endsWith("finished")) {
-                            document.getElementById('indexing_form:delete-index-loading').style.display='none';
-                            PF('progressPoll').stop();
-                        } else if (message.endsWith("failed")) {
-                            document.getElementById('indexing_form:delete-index-loading').style.display='none';
-                            PF('progressPoll').stop();
-                        }
-                    }
-                    $('.refreshTable').click();
-                }
-
-                function toggleButtons(state) {
-                    var objectTypes = JSON.parse('#{indexingForm.objectTypesAsJson}');
-                    var noneType = "#{indexingForm.noneType}";
-                    if(state) {
-                        PF('createMapping').enable();
-                        PF('deleteIndex').enable();
-                        for (var i = 0; i &lt; objectTypes.length; i++) {
-                            if (objectTypes[i] !== noneType) {
-                                PF('startIndexing' + objectTypes[i]).enable();
-                            }
-                        }
-                        PF('startIndexingAll').enable();
-                    } else {
-                        PF('createMapping').disable();
-                        PF('deleteIndex').disable();
-                        for (var i = 0; i &lt; objectTypes.length; i++) {
-                            if (objectTypes[i] !== noneType) {
-                                PF('startIndexing' + objectTypes[i]).disable();
-                            }
-                        }
-                        PF('startIndexingAll').disable();
-                    }
-                }
-            </script>
-
+            <h:outputScript name="js/indexing.js"/>
             <h:form id="indexing_form">
                 <ui:fragment rendered="#{empty indexingForm.serverInformation}">
                     <h:outputText value="The elastic search server is not running."/>
@@ -113,7 +43,7 @@
                                                      action="#{indexingForm.createMapping(true)}"
                                                      disabled="#{indexingForm.indexExists() or indexingForm.indexingInProgress()}"
                                                      update="indexingTable"
-                                                     onclick="createMapping();"/>
+                                                     onclick="createMapping(#{indexingForm.objectTypesAsJson});"/>
                                 </td>
                                 <td>
                                     <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
@@ -130,7 +60,7 @@
                                                      action="#{indexingForm.deleteIndex(true)}"
                                                      disabled="#{!indexingForm.indexExists() or indexingForm.indexingInProgress()}"
                                                      update="indexingTable"
-                                                     onclick="return confirm('Do you REALLY want to delete the whole index?');deleteIndex();"/>
+                                                     onclick="return confirm('Do you REALLY want to delete the whole index?');deleteIndex(#{indexingForm.objectTypesAsJson});"/>
                                 </td>
                                 <td>
                                     <p:graphicImage id="delete-index-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
@@ -167,7 +97,7 @@
                                 <td><h:outputText value="#{msgs.wholeIndex}"/></td>
                                 <td>
                                     <p:commandButton widgetVar="startIndexingAll"
-                                                     onclick="PF('allProgress').start();toggleButtons(false);"
+                                                     onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                                      value="#{msgs.startIndexing}"
                                                      action="#{indexingForm.startAllIndexing()}"
                                                      disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress())}"/>
