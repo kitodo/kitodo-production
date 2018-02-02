@@ -154,10 +154,7 @@ public class LoginForm implements Serializable {
             return this.myBenutzer;
         } else {
             try {
-                User newUser = serviceManager.getUserService().getAuthenticatedUser();
-                if (newUser != null) {
-                    myBenutzer = new User(newUser);
-                }
+                this.myBenutzer = serviceManager.getUserService().getAuthenticatedUser();
                 return this.myBenutzer;
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(e);
@@ -233,6 +230,7 @@ public class LoginForm implements Serializable {
     public static URI getCurrentUserHomeDir() throws IOException {
         URI result = null;
         ServiceManager serviceManager = new ServiceManager();
+        // TODO: change this method to nonstatic
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (loginForm != null) {
             result = serviceManager.getUserService().getHomeDirectory(loginForm.getMyBenutzer());

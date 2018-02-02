@@ -30,6 +30,7 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.FilterDAO;
@@ -443,22 +444,20 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return query as {@link BoolQueryBuilder}
      */
     private BoolQueryBuilder limitToUserAssignedTasks(Boolean onlyOpenTask, Boolean onlyUserAssignedTask) {
-        /* identify current user */
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null || login.getMyBenutzer() == null) {
+        // identify current user
+        User user = Helper.getCurrentUser();
+        if (user == null) {
             return new BoolQueryBuilder();
         }
 
-        /*
-         * hits by user groups
-         */
+        // hits by user groups
         BoolQueryBuilder taskQuery = new BoolQueryBuilder();
 
         if (onlyOpenTask) {
             taskQuery.must(createSimpleQuery("processingStatus", 1, true));
         } else if (onlyUserAssignedTask) {
             taskQuery.must(createSimpleQuery("processingStatus", 1, true));
-            taskQuery.must(createSimpleQuery("processingUser", login.getMyBenutzer().getId(), true));
+            taskQuery.must(createSimpleQuery("processingUser", user.getId(), true));
         } else {
             BoolQueryBuilder processingStatus = new BoolQueryBuilder();
             processingStatus.should(createSimpleQuery("processingStatus", 1, true));
@@ -468,16 +467,16 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
         UserDTO userDTO = new UserDTO();
 
-        /* only assigned projects */
+        // only assigned projects
         List<ProjectDTO> assignedProjects = new ArrayList<>();
         try {
-            userDTO = serviceManager.getUserService().findById(login.getMyBenutzer().getId());
+            userDTO = serviceManager.getUserService().findById(user.getId());
             assignedProjects = userDTO.getProjects();
         } catch (DataException e) {
             logger.error(e);
         }
 
-        /* only processes which are not templates and are part of assigned projects */
+        // only processes which are not templates and are part of assigned projects
         try {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService()
                     .findNotTemplateByProjectIds(collectIds(assignedProjects), true);
@@ -486,14 +485,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             logger.error(e);
         }
 
-        /*
-         * only tasks assigned to the user groups the current user is member of
-         */
+        // only tasks assigned to the user groups the current user is member of
         List<UserGroupDTO> userUserGroups = userDTO.getUserGroups();
         taskQuery.must(createSetQuery("userGroups.id", collectIds(userUserGroups), true));
 
-        /* only task where the user is assigned to */
-        taskQuery.must(createSimpleQuery("users.id", login.getMyBenutzer().getId(), true));
+        // only task where the user is assigned to
+        taskQuery.must(createSimpleQuery("users.id", user.getId(), true));
 
         return taskQuery;
     }

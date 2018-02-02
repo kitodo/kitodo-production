@@ -101,9 +101,9 @@ public class AktuelleSchritteForm extends BasisForm {
         /*
          * Vorgangsdatum generell anzeigen?
          */
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login != null && login.getMyBenutzer() != null) {
-            this.anzeigeAnpassen.put("processDate", login.getMyBenutzer().isConfigProductionDateShow());
+        User user = getUser();
+        if (user != null) {
+            this.anzeigeAnpassen.put("processDate", user.isConfigProductionDateShow());
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
@@ -255,9 +255,9 @@ public class AktuelleSchritteForm extends BasisForm {
                 s.setProcessingStatusEnum(TaskStatus.INWORK);
                 s.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 s.setProcessingTime(new Date());
-                User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (ben != null) {
-                    s.setProcessingUser(ben);
+                User user = getUser();
+                if (user != null) {
+                    s.setProcessingUser(user);
                 }
                 if (s.getProcessingBegin() == null) {
                     Date myDate = new Date();
@@ -274,8 +274,8 @@ public class AktuelleSchritteForm extends BasisForm {
                     }
                     s.setProcessingTime(new Date());
 
-                    if (ben != null) {
-                        s.setProcessingUser(ben);
+                    if (user != null) {
+                        s.setProcessingUser(user);
                     }
                     this.myDav.downloadToHome(s.getProcess(), !s.isTypeImagesWrite());
 
@@ -491,9 +491,9 @@ public class AktuelleSchritteForm extends BasisForm {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 mySchritt.setProcessingTime(new Date());
-                User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                if (ben != null) {
-                    mySchritt.setProcessingUser(ben);
+                User user = getUser();
+                if (user != null) {
+                    mySchritt.setProcessingUser(user);
                 }
                 task.setProcessingBegin(new Date());
                 Process proz = task.getProcess();
@@ -543,8 +543,8 @@ public class AktuelleSchritteForm extends BasisForm {
     public void calcHomeImages() {
         this.gesamtAnzahlImages = 0;
         this.pageAnzahlImages = 0;
-        User aktuellerBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-        if (aktuellerBenutzer != null && aktuellerBenutzer.isWithMassDownload()) {
+        User user = getUser();
+        if (user != null && user.isWithMassDownload()) {
             for (TaskDTO taskDTO : (List<TaskDTO>) this.page.getCompleteList()) {
                 try {
                     Task task = serviceManager.getTaskService().getById(taskDTO.getId());
@@ -703,7 +703,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann dies jetzt
              * nachholen, damit die Liste vollstÃ¤ndig ist
              */
-            if (this.page == null && Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
+            if (this.page == null &&  getUser() != null) {
                 filterAll();
             }
             Integer inParam = Integer.valueOf(param);
@@ -818,8 +818,6 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            // TODO: why this not used variable is here?
-            User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             this.mySchritt.setProcess(
                 serviceManager.getProcessService().addToWikiField(this.addToWikiField, this.mySchritt.getProcess()));
             this.addToWikiField = "";

@@ -146,13 +146,11 @@ public class ProzessverwaltungForm extends BasisForm {
         /*
          * Vorgangsdatum generell anzeigen?
          */
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login != null) {
-            if (login.getMyBenutzer() != null) {
-                this.anzeigeAnpassen.put("processDate", login.getMyBenutzer().isConfigProductionDateShow());
-            } else {
-                this.anzeigeAnpassen.put("processDate", false);
-            }
+        User user = getUser();
+        if (user != null) {
+            this.anzeigeAnpassen.put("processDate", user.isConfigProductionDateShow());
+        } else {
+            this.anzeigeAnpassen.put("processDate", false);
         }
         DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
@@ -715,7 +713,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public void saveTask() {
         this.task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
-        User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+        User user = getUser();
         if (user != null) {
             task.setProcessingUser(user);
         }
@@ -1738,8 +1736,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             ExportXmlLog xmlExport = new ExportXmlLog();
 
-            LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            String directory = new File(serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer()))
+            String directory = new File(serviceManager.getUserService().getHomeDirectory(getUser()))
                     .getPath();
             String destination = directory + this.process.getTitle() + "_log.xml";
             xmlExport.startExport(this.process, destination);
@@ -1998,8 +1995,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
+            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(getUser()) + ")";
             this.process.setWikiField(
                     WikiFieldHelper.getWikiMessage(this.process, this.process.getWikiField(), "user", message));
             this.addToWikiField = "";

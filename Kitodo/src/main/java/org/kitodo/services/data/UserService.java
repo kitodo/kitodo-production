@@ -211,14 +211,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *      The user.
      */
     public User getByLogin(String login) throws DAOException {
-        List<User> users = getByQuery("from User where login = :username", "username", login);
-        if (users.size() == 1)  {
-            return users.get(0);
-        } else if (users.size() == 0) {
-            throw new UsernameNotFoundException("Username " + login + " not found!");
-        } else {
-            throw new UsernameNotFoundException("Username " + login + " was found more than once");
-        }
+        return getByLoginQuery(login, "from User where login = :username");
     }
 
     /**
@@ -230,13 +223,17 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *      The user.
      */
     public User getByLdapLogin(String ldapLogin) throws DAOException {
-        List<User> users = getByQuery("from User where ldapLogin = :username", "username", ldapLogin);
+        return getByLoginQuery(ldapLogin, "from User where ldapLogin = :username");
+    }
+
+    private User getByLoginQuery(String login, String query) throws DAOException {
+        List<User> users = getByQuery(query, "username", login);
         if (users.size() == 1)  {
             return users.get(0);
         } else if (users.size() == 0) {
-            throw new UsernameNotFoundException("Username " + ldapLogin + " not found!");
+            throw new UsernameNotFoundException("Username " + login + " not found!");
         } else {
-            throw new UsernameNotFoundException("Username " + ldapLogin + " was found more than once");
+            throw new UsernameNotFoundException("Username " + login + " was found more than once");
         }
     }
 

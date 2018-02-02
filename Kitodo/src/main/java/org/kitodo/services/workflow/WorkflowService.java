@@ -54,7 +54,7 @@ public class WorkflowService {
     private List<Task> tasksToFinish;
     private Problem problem = new Problem();
     private Solution solution = new Solution();
-    private User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+    private User user = Helper.getCurrentUser();
     private Boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

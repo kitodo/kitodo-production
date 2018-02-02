@@ -388,7 +388,8 @@ public class ProzesskopieForm implements Serializable {
     public List<SelectItem> getProzessTemplates() {
         List<SelectItem> processTemplates = new ArrayList<>();
 
-        /* Einschränkung auf bestimmte Projekte, wenn kein Admin */
+        // Einschränkung auf bestimmte Projekte, wenn kein Admin
+        // TODO: remove it after method getMaximaleBerechtigung() is gone
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         List<Process> processes = serviceManager.getProcessService().getProcessTemplates();
         if (loginForm != null) {
@@ -982,14 +983,12 @@ public class ProzesskopieForm implements Serializable {
             // always save date and user for each step
             task.setProcessingTime(this.prozessKopie.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            if (loginForm != null) {
-                task.setProcessingUser(loginForm.getMyBenutzer());
+            User user = Helper.getCurrentUser();
+            if (user != null) {
+                task.setProcessingUser(user);
             }
 
-            /*
-             * only if its done, set edit start and end date
-             */
+            // only if its done, set edit start and end date
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
                 task.setProcessingBegin(this.prozessKopie.getCreationDate());
                 // this concerns steps, which are set as done right on creation
