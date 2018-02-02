@@ -76,5 +76,11 @@
         <converter-class>de.sub.goobi.converter.AuthorityConverter</converter-class>
     </converter>
 
+    <!-- ClientConverter -->
+    <converter>
+        <converter-id>ClientConverter</converter-id>
+        <converter-class>de.sub.goobi.converter.ClientConverter</converter-class>
+    </converter>
+
 </faces-config>
 

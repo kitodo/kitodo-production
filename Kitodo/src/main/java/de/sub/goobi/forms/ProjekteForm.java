@@ -860,7 +860,7 @@ public class ProjekteForm extends BasisForm {
         }
     }
 
-    public List<SelectItem> getClients() {
+    public List<SelectItem> getClientItems() {
         List<Client> clients = serviceManager.getClientService().getAll();
         List<SelectItem> items = new ArrayList<>();
         for (Client client : clients) {
@@ -869,6 +869,17 @@ public class ProjekteForm extends BasisForm {
 
         // try {
         return items;
+        // } catch (Exception e) {
+        // logger.error(e.getMessage());
+        // return new LinkedList<>();
+        // }
+    }
+
+    public List<Client> getClients() {
+        List<Client> clients = serviceManager.getClientService().getAll();
+
+        // try {
+        return clients;
         // } catch (Exception e) {
         // logger.error(e.getMessage());
         // return new LinkedList<>();
