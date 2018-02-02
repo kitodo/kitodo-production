@@ -441,7 +441,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                 eventTimestamp = inProcess.getCreationDate();
             } else { // if everything fails we use the current date
                 Calendar cal = Calendar.getInstance();
-                cal.set(2007, 0, 1, 0, 0, 0);
+                cal.set(2007, Calendar.JANUARY, 1, 0, 0, 0);
                 eventTimestamp = cal.getTime();
                 if (logger.isInfoEnabled()) {
                     logger.info("We had to use 2007-1-1 date '" + eventTimestamp.toString()

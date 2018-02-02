@@ -24,8 +24,8 @@ public class SQLStorageTest {
     public final void testSQLStorage() {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01);
-        cal2.set(2009, 03, 31);
+        cal1.set(2009, Calendar.FEBRUARY, 1);
+        cal2.set(2009, Calendar.APRIL, 31);
         SQLStorage storage = new SQLStorage(cal1.getTime(), cal2.getTime(), TimeUnit.days, null);
         assertNotNull(storage);
     }
@@ -34,8 +34,8 @@ public class SQLStorageTest {
     public final void testGetSQL() {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
-        cal1.set(2009, 01, 01);
-        cal2.set(2009, 03, 31);
+        cal1.set(2009, Calendar.FEBRUARY, 1);
+        cal2.set(2009, Calendar.APRIL, 31);
         SQLStorage storage = new SQLStorage(cal1.getTime(), cal2.getTime(), TimeUnit.days, null);
         String answer = storage.getSQL();
         assertNotNull(answer);
