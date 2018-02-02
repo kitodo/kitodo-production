@@ -601,7 +601,8 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage("ERROR: " + Helper.getTranslation("unableToRetrieveTask"));
+            FacesMessage facesMessage = new FacesMessage(
+                    Helper.getTranslation("ERROR") + ": " + Helper.getTranslation("unableToRetrieveTask"));
             facesContext.addMessage(null, facesMessage);
             return null;
         }

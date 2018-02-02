@@ -101,10 +101,12 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     /**
      * Checks and returns whether the ElasticSearch index is running or not.
      *
+     * <p>
      * NOTE: This wrapper function is necessary because the calling "load" function
      * overwrites a function from the PrimeFaces LazyDataModel and therefore its
      * method signature cannot be changed, e.g. now thrown exceptions can be added
      * to it.
+     * </p>
      *
      * @return whether the ElasticSearch index is running or not
      */

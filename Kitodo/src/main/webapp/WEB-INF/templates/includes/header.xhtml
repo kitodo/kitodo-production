@@ -36,19 +36,15 @@
                     <li>
                         <!-- List: my tasks -->
                         <a href="#"><i class="fa fa-bell-o fa-lg"/>
-                            <ui:fragment rendered="#{indexingForm.indexExists()}">
-                                <h:panelGroup rendered="#{AktuelleSchritteForm.lazyDTOModel.rowCount gt 0}" styleClass="batch-count bc-alert">#{AktuelleSchritteForm.lazyDTOModel.rowCount}</h:panelGroup>
-                            </ui:fragment>
+                            <h:panelGroup rendered="#{AktuelleSchritteForm.user.tasks.size gt 0}" styleClass="batch-count bc-alert">#{AktuelleSchritteForm.user.tasks.size}</h:panelGroup>
                         </a>
-                        <ui:fragment rendered="#{indexingForm.indexExists()}">
-                            <ul>
-                                <li><h3>#{msgs.aktuelleSchritte}</h3></li>
-                                <ui:repeat value="#{AktuelleSchritteForm.lazyDTOModel.load(0,3, 'title', null, null)}" var="task">
-                                    <li><a href=""><span class="nav-item-col">#{task.title}</span><span class="nav-item-col">#{task.process.title}</span><span class="nav-item-col"><i class="fa fa-check-square-o fa-lg nc-info"/></span></a></li>
-                                </ui:repeat>
-                                <li><h:link outcome="tasks" value="#{msgs.allMyTasks} (#{AktuelleSchritteForm.lazyDTOModel.rowCount})"/></li>
-                            </ul>
-                        </ui:fragment>
+                        <ul>
+                            <li><h3>#{msgs.aktuelleSchritte}</h3></li>
+                            <ui:repeat value="#{AktuelleSchritteForm.user.tasks}" var="task" size="#{AktuelleSchritteForm.user.tasks.size gt 3 ? 3 : AktuelleSchritteForm.user.tasks.size}">
+                                <li><a href=""><span class="nav-item-col">#{task.title}</span><span class="nav-item-col">#{task.process.title}</span><span class="nav-item-col"><i class="fa fa-check-square-o fa-lg nc-info"/></span></a></li>
+                            </ui:repeat>
+                            <li><h:link outcome="tasks" value="#{msgs.allMyTasks} (#{AktuelleSchritteForm.user.tasks.size})"/></li>
+                        </ul>
                     </li>
                     <li>
                         <!-- List: active users -->
