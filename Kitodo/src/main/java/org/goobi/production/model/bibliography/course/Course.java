@@ -493,12 +493,7 @@ public class Course extends ArrayList<Block> {
     @Override
     public Block remove(int index) {
         Block block = super.remove(index);
-        Iterator<Entry<String, Block>> entries = resolveByBlockVariantCache.entrySet().iterator();
-        while (entries.hasNext()) {
-            if (entries.next().getValue() == block) { // pointer equality
-                entries.remove();
-            }
-        }
+        resolveByBlockVariantCache.entrySet().removeIf(entry -> entry.getValue() == block);
         if (block.countIndividualIssues() > 0) {
             processes.clear();
         }

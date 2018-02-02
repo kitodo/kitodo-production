@@ -146,13 +146,7 @@ public class TaskManager {
         do {
             redo = false;
             try {
-                Iterator<EmptyTask> inspector = singleton().taskList.iterator();
-                while (inspector.hasNext()) {
-                    EmptyTask task = inspector.next();
-                    if (task.getState().equals(Thread.State.TERMINATED)) {
-                        inspector.remove();
-                    }
-                }
+                singleton().taskList.removeIf(emptyTask -> emptyTask.getState().equals(Thread.State.TERMINATED));
             } catch (ConcurrentModificationException listModifiedByAnotherThreadWhileIterating) {
                 redo = true;
             }
