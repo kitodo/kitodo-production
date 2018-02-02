@@ -214,15 +214,6 @@ public class HelperForm implements Serializable {
     }
 
     /**
-     * Check if message exists.
-     * 
-     * @return true or false
-     */
-    public boolean getMessagesExist() {
-        return FacesContext.getCurrentInstance().getMessages().hasNext();
-    }
-
-    /**
      * Get all css files from root folder.
      * 
      * @return list of css files
@@ -269,30 +260,6 @@ public class HelperForm implements Serializable {
     public boolean getMassImportAllowed() {
         return ConfigCore.getBooleanParameter("massImportAllowed", false)
                 && !PluginLoader.getPluginList(PluginType.IMPORT).isEmpty();
-    }
-
-    /**
-     * Check if web browser is IE.
-     * 
-     * @return true or false
-     */
-    public boolean getIsIE() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-
-        return request.getHeader("User-Agent").contains("MSIE");
-    }
-
-    /**
-     * Get user agent.
-     * 
-     * @return user agent as String
-     */
-    public String getUserAgent() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-
-        return request.getHeader("User-Agent");
     }
 
     /**

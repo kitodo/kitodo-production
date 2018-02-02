@@ -40,7 +40,6 @@ import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -88,19 +87,6 @@ public class Helper extends HibernateHelper implements Observer {
         FacesContext context = FacesContext.getCurrentInstance();
         Map requestParams = context.getExternalContext().getRequestParameterMap();
         return (String) requestParams.get(parameter);
-    }
-
-    /**
-     * Get stack trace as String.
-     *
-     * @param inException
-     *            Exception object
-     * @return String
-     */
-    public static String getStacktraceAsString(Exception inException) {
-        StringWriter sw = new StringWriter();
-        inException.printStackTrace(new PrintWriter(sw));
-        return sw.toString();
     }
 
     public static void setFehlerMeldung(String message) {
@@ -391,19 +377,6 @@ public class Helper extends HibernateHelper implements Observer {
         } else {
             Helper.setFehlerMeldung((String) arg);
         }
-    }
-
-    /**
-     * Get base URL.
-     *
-     * @return String
-     */
-    public static String getBaseUrl() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest req = (HttpServletRequest) context.getExternalContext().getRequest();
-        String fullPath = req.getRequestURL().toString();
-        String servletPath = context.getExternalContext().getRequestServletPath();
-        return fullPath.substring(0, fullPath.indexOf(servletPath));
     }
 
     public static User getCurrentUser() {
