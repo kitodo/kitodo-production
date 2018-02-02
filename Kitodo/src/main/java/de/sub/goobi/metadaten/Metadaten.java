@@ -876,7 +876,7 @@ public class Metadaten {
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
          */
         List<? extends Metadata> tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(inStrukturelement,
-                (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"), false, this.process);
+                Helper.getMetadataLanguageForCurrentUser(), false, this.process);
         if (tempMetadata != null) {
             for (Metadata metadata : tempMetadata) {
                 MetadatumImpl meta = new MetadatumImpl(metadata, 0, this.myPrefs, this.process);
@@ -889,7 +889,7 @@ public class Metadaten {
          * alle Personen und die DefaultDisplay-Werte ermitteln
          */
         tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(inStrukturelement,
-                (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"), true, this.process);
+                Helper.getMetadataLanguageForCurrentUser(), true, this.process);
         if (tempMetadata != null) {
             for (Metadata metadata : tempMetadata) {
                 lsPers.add(new MetaPerson((Person) metadata, 0, this.myPrefs, inStrukturelement));
@@ -931,8 +931,7 @@ public class Metadaten {
         /*
          * Die Struktur als Tree3 aufbereiten
          */
-        String label = this.logicalTopstruct.getType()
-                .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+        String label = this.logicalTopstruct.getType().getNameByLanguage(Helper.getMetadataLanguageForCurrentUser());
         if (label == null) {
             label = this.logicalTopstruct.getType().getName();
         }
@@ -985,21 +984,19 @@ public class Metadaten {
             upperNode.setExpanded(true);
         }
 
-        /*
-         * vom aktuellen Strukturelement alle Kinder in den Tree packen
-         */
-        List<DocStruct> meineListe = inStrukturelement.getAllChildren();
-        if (meineListe != null) {
-            /* es gibt Kinder-Strukturelemente */
-            for (DocStruct kind : meineListe) {
-                String label = kind.getType().getNameByLanguage(
-                        (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+        // vom aktuellen Strukturelement alle Kinder in den Tree packen
+        List<DocStruct> children = inStrukturelement.getAllChildren();
+        String language = Helper.getMetadataLanguageForCurrentUser();
+        if (children != null) {
+            // es gibt Kinder-Strukturelemente
+            for (DocStruct child : children) {
+                String label = child.getType().getNameByLanguage(language);
                 if (label == null) {
-                    label = kind.getType().getName();
+                    label = child.getType().getName();
                 }
-                TreeNodeStruct3 tns = new TreeNodeStruct3(label, kind);
+                TreeNodeStruct3 tns = new TreeNodeStruct3(label, child);
                 upperNode.addChild(tns);
-                readMetadataAsSecondTree(kind, tns);
+                readMetadataAsSecondTree(child, tns);
             }
         }
     }
@@ -3325,7 +3322,7 @@ public class Metadaten {
             return Collections.emptyList();
         }
         List<RenderableMetadataGroup> result = new ArrayList<>(records.size());
-        String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
+        String language = Helper.getMetadataLanguageForCurrentUser();
         String projectName = process.getProject().getTitle();
         for (MetadataGroup record : records) {
             result.add(new RenderableMetadataGroup(record, this, language, projectName));
@@ -3340,7 +3337,7 @@ public class Metadaten {
      * @return a bean to create a new metadata group.
      */
     public RenderableMetadataGroup getNewMetadataGroup() {
-        String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
+        String language = Helper.getMetadataLanguageForCurrentUser();
         newMetadataGroup.setLanguage(language);
         return newMetadataGroup;
     }

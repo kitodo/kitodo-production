@@ -348,19 +348,15 @@ public class MetadatenHelper implements Comparator<Object> {
         // TODO: Uses generics, if possible
         Collections.sort(newTypes, c);
 
-        /*
-         * nun ein Array mit der richtigen Größe anlegen
-         */
+        // nun ein Array mit der richtigen Größe anlegen
         int zaehler = newTypes.size();
         myTypes = new SelectItem[zaehler];
 
-        /*
-         * und anschliessend alle Elemente in das Array packen
-         */
+        // und anschliessend alle Elemente in das Array packen
         zaehler = 0;
+        String language = Helper.getMetadataLanguageForCurrentUser();
         for (DocStructType docStructType : newTypes) {
-            String label = docStructType
-                    .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+            String label = docStructType.getNameByLanguage(language);
             if (label == null) {
                 label = docStructType.getName();
             }
@@ -550,8 +546,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @return localized Title of metadata type
      */
     public String getMetadatatypeLanguage(MetadataType inMdt) {
-        String label = inMdt
-                .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+        String label = inMdt.getLanguage(Helper.getMetadataLanguageForCurrentUser());
         if (label == null) {
             label = inMdt.getName();
         }

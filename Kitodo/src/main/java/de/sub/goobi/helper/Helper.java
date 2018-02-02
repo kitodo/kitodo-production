@@ -411,6 +411,15 @@ public class Helper extends HibernateHelper implements Observer {
         return login != null ? login.getMyBenutzer() : null;
     }
 
+    /**
+     * Get metadata language for currently logged user.
+     *
+     * @return metadata language as String
+     */
+    public static String getMetadataLanguageForCurrentUser() {
+        return (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
+    }
+
     public static final FilenameFilter imageNameFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
