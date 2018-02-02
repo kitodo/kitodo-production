@@ -122,9 +122,6 @@ public class Process extends BaseIndexedBean {
     private List<Batch> batches = new ArrayList<>();
 
     @Transient
-    private Boolean panelShown = false;
-
-    @Transient
     private User blockedUser;
 
     @Transient
@@ -437,14 +434,6 @@ public class Process extends BaseIndexedBean {
 
     public void setProperties(List<Property> properties) {
         this.properties = properties;
-    }
-
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
     }
 
     /**
