@@ -24,12 +24,16 @@ import org.kitodo.services.ServiceManager;
 
 public class ClientConverter implements Converter {
 
-    private ServiceManager serviceManager;
+    private ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ClientConverter.class);
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value)
             throws ConverterException {
+        if (value.equals("noClient")) {
+            return null;
+        }
+
         try {
             return serviceManager.getClientService().getById(Integer.parseInt(value));
         } catch (DAOException e) {
@@ -41,6 +45,9 @@ public class ClientConverter implements Converter {
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object)
             throws ConverterException {
+        if (object instanceof String) {
+            return (String) object;
+        }
         return ((Client) object).getId().toString();
     }
 

@@ -49,6 +49,7 @@
                                  converter="ClientConverter"
                                  value="#{ProjekteForm.myProjekt.client}"
                                  disabled="#{ProjekteForm.locked}">
+                    <f:selectItem itemLabel="#{msgs.clientNon}" itemValue="noClient"/>
                     <f:selectItems value="#{ProjekteForm.clients}" var="client" itemValue="#{client}"
                                    itemLabel="#{client.name}"/>
                     <p:ajax event="change"/>
