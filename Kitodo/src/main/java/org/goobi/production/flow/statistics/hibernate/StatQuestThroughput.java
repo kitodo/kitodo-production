@@ -18,7 +18,6 @@ import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -200,7 +199,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
             // composition from 2 tables
             List<DataRow> allTempRows = tableStepOpenAndDone.getDataRows();
             // this fixes the sorting problem
-            Collections.sort(allTempRows, new DataTableComparator());
+            allTempRows.sort(Comparator.comparing(DataRow::getName));
 
             allTables.add(tableStepOpenAndDone);
         }
@@ -215,13 +214,6 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
             ids.add(process.getId());
         }
         return ids;
-    }
-
-    private static class DataTableComparator implements Comparator<DataRow> {
-        @Override
-        public int compare(DataRow firstDataRow, DataRow secondDataRow) {
-            return firstDataRow.getName().compareTo(secondDataRow.getName());
-        }
     }
 
     /*

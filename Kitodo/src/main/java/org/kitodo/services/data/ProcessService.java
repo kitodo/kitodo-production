@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1810,8 +1811,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         filteredList = filterForCorrectionSolutionMessages(properties);
 
         if (filteredList.size() > 1) {
-            Collections.sort(filteredList, (PropertyDTO firstProperty, PropertyDTO secondProperty) -> firstProperty
-                    .getCreationDate().compareTo(secondProperty.getCreationDate()));
+            filteredList.sort(Comparator.comparing(PropertyDTO::getCreationDate));
         }
 
         return new ArrayList<>(filteredList);
