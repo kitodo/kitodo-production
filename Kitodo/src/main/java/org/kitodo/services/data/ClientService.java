@@ -30,9 +30,9 @@ import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.helper.RelatedProperty;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.services.data.base.SearchService;
 
-public class ClientService extends TitleSearchService<Client, ClientDTO, ClientDAO> {
+public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ClientService.class);
