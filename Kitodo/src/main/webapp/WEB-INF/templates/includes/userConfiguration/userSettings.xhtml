@@ -18,43 +18,56 @@
         xmlns:p="http://primefaces.org/ui">
 
     <h:form id="userconfigform" onkeypress="ifEnterClick(event, 'userconfigform:absenden');">
-        <p:panelGrid id="userConfigurationGrid" columns="2">
+        <p:panelGrid id="userConfigurationGrid" columns="2" layout="grid">
 
-            <!-- session timeout -->
-            <h:outputLabel for="session-timeout" value="#{msgs.timeoutForSession}"/>
-            <p:inputText id="session-timeout" value="#{LoginForm.myBenutzer.sessionTimeoutInMinutes}"
-                         label="'#{msgs.timeoutForSession}'">
-                <f:convertNumber integerOnly="true"/>
-            </p:inputText>
-
-            <!-- table size -->
-            <h:outputLabel for="table-size" value="#{msgs.tableSize}" />
-            <p:inputText id="table-size" value="#{LoginForm.myBenutzer.tableSize}" label="'#{msgs.tableSize}'">
-                <f:convertNumber integerOnly="true"/>
-            </p:inputText>
-
-            <!-- metadata language -->
-            <h:outputLabel for="metadata-language" value="#{msgs.spracheFuerMetadaten}" />
-            <p:inputText id="metadata-language" value="#{LoginForm.myBenutzer.metadataLanguage}"/>
-
-            <!-- color scheme -->
-            <h:outputLabel for="color-scheme" value="#{msgs.colorScheme}" />
-            <p:selectOneMenu id="color-scheme" value="#{LoginForm.myBenutzer.css}" style="margin-bottom: 0">
-                <f:selectItems id="id19" value="#{HelperForm.cssFiles}"/>
-            </p:selectOneMenu>
-
-            <!-- language -->
-            <h:outputLabel for="languages" value="#{msgs.languageUserInterface}" />
-            <p:selectOneMenu id="languages" value="#{SpracheForm.locale}" style="margin-bottom: 0">
-                <f:selectItems value="#{SpracheForm.supportedLocales}" var="entry"
-                               itemLabel="#{entry['displayLanguageSelf']}"
-                               itemValue="#{entry['id']}"/>
-            </p:selectOneMenu>
-
-            <!-- show process data in my tasks -->
-            <h:outputLabel for="show-process-data" value="#{msgs.spalteVorgangsdatumInEigenenAufgabenAnzeigen}" />
-            <p:selectBooleanCheckbox id="show-process-data" value="#{LoginForm.myBenutzer.configProductionDateShow}"/>
-
+            <p:row>
+                <div>
+                    <!-- session timeout -->
+                    <h:outputLabel for="session-timeout" value="#{msgs.timeoutForSession}"/>
+                    <p:inputText id="session-timeout" value="#{LoginForm.myBenutzer.sessionTimeoutInMinutes}"
+                                 class="input"
+                                 label="'#{msgs.timeoutForSession}'">
+                        <f:convertNumber integerOnly="true"/>
+                    </p:inputText>
+                </div>
+                <div>
+                    <!-- table size -->
+                    <h:outputLabel for="table-size" value="#{msgs.tableSize}" />
+                    <p:inputText id="table-size" value="#{LoginForm.myBenutzer.tableSize}" label="'#{msgs.tableSize}'"
+                                 class="input">
+                        <f:convertNumber integerOnly="true"/>
+                    </p:inputText>
+                </div>
+                <div>
+                    <!-- metadata language -->
+                    <h:outputLabel for="metadata-language" value="#{msgs.spracheFuerMetadaten}" />
+                    <p:inputText id="metadata-language" value="#{LoginForm.myBenutzer.metadataLanguage}"
+                                 class="input"/>
+                </div>
+            </p:row>
+            <p:row>
+                <div>
+                    <!-- color scheme -->
+                    <h:outputLabel for="color-scheme" value="#{msgs.colorScheme}" />
+                    <p:selectOneMenu id="color-scheme" value="#{LoginForm.myBenutzer.css}" style="margin-bottom: 0">
+                        <f:selectItems id="id19" value="#{HelperForm.cssFiles}"/>
+                    </p:selectOneMenu>
+                </div>
+                <div>
+                    <!-- language -->
+                    <h:outputLabel for="languages" value="#{msgs.languageUserInterface}" />
+                    <p:selectOneMenu id="languages" value="#{SpracheForm.locale}" style="margin-bottom: 0">
+                        <f:selectItems value="#{SpracheForm.supportedLocales}" var="entry"
+                                       itemLabel="#{entry['displayLanguageSelf']}"
+                                       itemValue="#{entry['id']}"/>
+                    </p:selectOneMenu>
+                </div>
+                <div>
+                    <!-- show process data in my tasks -->
+                    <h:outputLabel for="show-process-data" value="#{msgs.spalteVorgangsdatumInEigenenAufgabenAnzeigen}" />
+                    <p:selectBooleanCheckbox id="show-process-data" value="#{LoginForm.myBenutzer.configProductionDateShow}"/>
+                </div>
+            </p:row>
             <p:commandButton id="submit"
                              value="#{msgs.speichern}"
                              action="#{LoginForm.BenutzerkonfigurationSpeichern}"

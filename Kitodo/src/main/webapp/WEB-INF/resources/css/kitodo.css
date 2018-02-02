@@ -422,20 +422,18 @@ body.first-visit main {
     animation-name: fadein;
     }
 
-#demo-section {
+section#content-section {
     background: #fff;
+    height: 500px;
+}
+
+#listWrapper, section#content-section {
+    margin: auto;
     border-radius: 3px;
-    padding: 30px;
+    padding: 0;
     -webkit-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
     -moz-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
     box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
-    height: 500px;
-    }
-
-#listWrapper {
-    margin: auto;
-    border-radius: 5px;
-    padding: 0;
 }
 
 #listWrapper > div {
@@ -468,6 +466,11 @@ body.first-visit main {
 
 .input {
     width:100%;
+}
+
+.password {
+    width: 100%;
+    min-width: 200px;
 }
 
 .input-with-button,
@@ -549,7 +552,7 @@ body.first-visit main {
     display: inline-block;
     padding: 10px;
     text-decoration: none;
-    color: #006DBD;
+    color: #0071bc;
 }
 
 #filterMenu .ui-overlaypanel li > a:first-child {
@@ -676,7 +679,7 @@ footer {
 
 .ui-datatable tr td.actionsColumn > a,
 .ui-datatable tr td.actionsColumn > form > a  {
-    color: #2B6FB6;
+    color: #0071bc;
     margin-right: 10px;
 }
 
@@ -722,7 +725,7 @@ footer {
 
 .ui-commandlink.button-blue,
 .button-blue .ui-icon {
-    color: #006DBD;
+    color: #0071bc;
     background: transparent;
     border: none;
 }
@@ -730,7 +733,7 @@ footer {
 .ui-commandlink.button-filled-green,
 .button-filled-green > .ui-button,
 .ui-button.button-filled-green {
-    background: #00C62F !important;
+    background: #42ba37 !important;
 }
 
 .buttonset {
@@ -739,7 +742,7 @@ footer {
 
 .ui-selectonemenu .ui-selectonemenu-trigger {
     background: #fff;
-    color: #006DBD;
+    color: #0071bc;
     border-left: none !important;
 }
 
@@ -757,7 +760,7 @@ footer {
 .ui-selectonemenu-panel .ui-selectonemenu-list {
     background: #f3f3f3;
     padding: 0;
-    color: #006DBD;
+    color: #0071bc;
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list-item {
@@ -766,7 +769,7 @@ footer {
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-list-item.ui-state-highlight {
-    background: #006DBD;
+    background: #0071bc;
 }
 
 .ui-chkbox .ui-chkbox-box {
@@ -783,6 +786,7 @@ footer {
     width: 100%;
     height: 100%;
     position: relative;
+    cursor: pointer;
 }
 
 .ui-chkbox .ui-chkbox-box .ui-chkbox-icon::before {
@@ -807,11 +811,15 @@ footer {
 }
 
 .checkbox-checked {
-    color: limegreen;
+    color: #42ba37;
 }
 
 .checkbox-unchecked {
-    color: darkred;
+    color: #f94a15;
+}
+
+.checkbox-checked, .checkbox-unchecked {
+    cursor: default;
 }
 
 /*----------------------------------------------------------------------

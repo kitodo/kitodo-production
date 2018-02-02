@@ -26,11 +26,11 @@
             <h:form id="projectEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.projektBearbeiten}" rendered="#{ProjekteForm.itemId ne 0}"/>
+                        <h:outputText value="#{msgs.projektBearbeiten} (#{ProjekteForm.myProjekt.title})" rendered="#{ProjekteForm.itemId ne 0}"/>
                         <h:outputText value="#{msgs.newProject}" rendered="#{ProjekteForm.itemId eq 0}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" iconPos="right" onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});" update="notifications"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <p:tabView id="tabs">
                     <p:tab title="#{msgs.details}">

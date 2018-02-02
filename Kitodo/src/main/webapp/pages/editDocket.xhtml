@@ -26,10 +26,10 @@
             <h:form id="docketEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
+                        <h:outputText value="#{msgs.editDocket} (#{DocketForm.myDocket.title})"
+                                      rendered="#{DocketForm.myDocket.id != null}"/>
                         <h:outputText value="#{msgs.createNewDocket}"
                                       rendered="#{DocketForm.myDocket.id == null}"/>
-                        <h:outputText value="#{msgs.editDocket}"
-                                      rendered="#{DocketForm.myDocket.id != null}"/>
                     </h3>
 
                     <p:commandButton value="#{msgs.speichern}"
@@ -41,21 +41,31 @@
                                         'summary':'#{msgs.docketSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="projects"
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
                 <p:messages id="docket-messages" autoUpdate="true" />
                 <p:tabView id="docketTabView">
                     <p:tab id="docketTab" title="#{msgs.details}">
-                        <p:panelGrid id="docket-grid" columns="2">
-                            <p:outputLabel for="title" value="#{msgs.titel}"/>
-                            <p:inputText id="title"
-                                         value="#{DocketForm.myDocket.title}"
-                                         placeholder="#{msgs.titel}"
-                                         required="true"/>
-                            <p:outputLabel for="file" value="#{msgs.datei}"/>
-                            <p:inputText id="file" value="#{DocketForm.myDocket.file}"
-                                         required="true"/>
+                        <p:panelGrid id="docket-grid" columns="2" layout="grid">
+                            <p:row>
+                                <div>
+                                    <p:outputLabel for="title" value="#{msgs.titel}"/>
+                                    <p:inputText id="title"
+                                                 class="input"
+                                                 value="#{DocketForm.myDocket.title}"
+                                                 placeholder="#{msgs.titel}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="file" value="#{msgs.datei}"/>
+                                    <p:inputText id="file" value="#{DocketForm.myDocket.file}"
+                                                 class="input"
+                                                 required="true"/>
+                                </div>
+                            </p:row>
+                            <p:row/>
                         </p:panelGrid>
                     </p:tab>
                 </p:tabView>

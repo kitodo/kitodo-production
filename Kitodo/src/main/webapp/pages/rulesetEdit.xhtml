@@ -26,7 +26,7 @@
             <h:form id="rulesetEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.regelsatzBearbeiten}"
+                        <h:outputText value="#{msgs.regelsatzBearbeiten} (#{RulesetForm.ruleset.title})"
                                       rendered="#{RulesetForm.ruleset.id ne null}"/>
                         <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
                                       rendered="#{RulesetForm.ruleset.id eq null}"/>
@@ -38,25 +38,37 @@
                                      iconPos="right"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      styleClass="button-filled-blue"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="projects"
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <p:messages autoUpdate="true" />
                 <p:tabView id="rulesetTabView">
                     <p:tab id="rulesetTab" title="#{msgs.details}">
-                        <p:panelGrid columns="2">
-                            <p:outputLabel for="title" value="#{msgs.titel}"/>
-                            <p:inputText id="title"
-                                         placeholder="#{msgs.titel}"
-                                         value="#{RulesetForm.ruleset.title}"
-                                         required="true"/>
-                            <p:outputLabel for="file" value="#{msgs.datei}"/>
-                            <p:inputText id="file"
-                                         placeholder="#{msgs.datei}"
-                                         value="#{RulesetForm.ruleset.file}"
-                                         required="true"/>
-                            <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
-                            <p:selectBooleanCheckbox id="sortByRuleset"
-                                                     value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:row>
+                                <div>
+                                    <p:outputLabel for="title" value="#{msgs.titel}"/>
+                                    <p:inputText id="title"
+                                                 class="input"
+                                                 placeholder="#{msgs.titel}"
+                                                 value="#{RulesetForm.ruleset.title}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="file" value="#{msgs.datei}"/>
+                                    <p:inputText id="file"
+                                                 class="input"
+                                                 placeholder="#{msgs.datei}"
+                                                 value="#{RulesetForm.ruleset.file}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
+                                    <p:selectBooleanCheckbox id="sortByRuleset"
+                                                             value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
+                                </div>
+                            </p:row>
+                            <p:row/>
                         </p:panelGrid>
                     </p:tab>
                 </p:tabView>

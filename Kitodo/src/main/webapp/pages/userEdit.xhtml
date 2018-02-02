@@ -26,7 +26,7 @@
             <h:form id="userEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.benutzerBearbeiten}"
+                        <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
                                       rendered="#{BenutzerverwaltungForm.userObject.id ne null}"/>
                         <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
                                       rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
@@ -38,72 +38,104 @@
                                      iconPos="right"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      styleClass="button-filled-blue"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="users"
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
                 <p:messages id="useredit-messages" autoUpdate="true" />
-                <p:panelGrid id="useredit-grid" columns="2">
-                    <p:outputLabel for="surname" value="#{msgs.surname}"/>
-                    <p:inputText id="surname"
-                                 placeholder="#{msgs.surname}"
-                                 value="#{BenutzerverwaltungForm.userObject.surname}"
-                                 required="true"/>
-                    <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
-                    <p:inputText id="firstName"
-                                 placeholder="#{msgs.vorname}"
-                                 value="#{BenutzerverwaltungForm.userObject.name}"
-                                 required="true"/>
-                    <p:outputLabel for="location" value="#{msgs.standort}"/>
-                    <p:inputText id="location"
-                                 placeholder="#{msgs.standort}"
-                                 value="#{BenutzerverwaltungForm.userObject.location}"
-                                 required="true"/>
-                    <p:outputLabel for="login" value="#{msgs.login}"/>
-                    <p:inputText id="login"
-                                 placeholder="#{msgs.login}"
-                                 value="#{BenutzerverwaltungForm.userObject.login}"
-                                 readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
-                                 required="true"/>
-                    <p:outputLabel for="password" value="#{msgs.password}"/>
-                    <p:password id="password"
-                                placeholder="#{msgs.password}"
-                                value="#{BenutzerverwaltungForm.password}"
-                                required="true"
-                                redisplay="true"/>
-                    <p:outputLabel for="metaDataLanguage" value="#{msgs.spracheFuerMetadaten}"/>
-                    <p:inputText id="metaDataLanguage"
-                                 placeholder="#{msgs.spracheFuerMetadaten}"
-                                 value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
-                                 required="true"/>
-                    <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
-                    <p:selectBooleanCheckbox id="active"
-                                             value="#{BenutzerverwaltungForm.userObject.active}"/>
-                    <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
-                    <p:selectBooleanCheckbox id="withMassDownload"
-                                             value="#{BenutzerverwaltungForm.userObject.withMassDownload}"/>
-                </p:panelGrid>
-                <!-- user groups -->
-                <p:panel>
-                    <p:dataTable var="item" value="#{BenutzerverwaltungForm.userObject.userGroups}">
-                        <p:column headerText="#{msgs.benutzergruppen}">
-                            <h:outputText value="#{item.title}"/>
-                        </p:column>
-                        <p:column styleClass="actionsColumn">
-                            <p:commandLink action="#{BenutzerverwaltungForm.deleteFromGroup}"
-                                           title="#{msgs.ausGruppeLoeschen}"
-                                           update="@form">
-                                <i class="fa fa-trash-o fa-lg"/>
-                                <f:param name="ID" value="#{item.id}"/>
-                            </p:commandLink>
-                        </p:column>
-                    </p:dataTable>
-                    <button onclick="PF('addUserGroupDialog').show()"
-                            type="button"
-                            class="ui-button ui-widget ui-corner-all button-filled-green"
-                            style="padding:.7em;border:none;">
-                        #{msgs.benutzergruppenHinzufuegen}
-                        <i class="fa fa-plus-circle fa-lg"/>
-                    </button>
-                </p:panel>
+                <p:tabView id="userTabView">
+                    <p:tab id="detailsTab" title="#{msgs.details}">
+                        <p:panelGrid id="useredit-grid" columns="2" layout="grid">
+                            <p:row>
+                                <div>
+                                    <p:outputLabel for="surname" value="#{msgs.surname}"/>
+                                    <p:inputText id="surname"
+                                                 class="input"
+                                                 placeholder="#{msgs.surname}"
+                                                 value="#{BenutzerverwaltungForm.userObject.surname}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
+                                    <p:inputText id="firstName"
+                                                 class="input"
+                                                 placeholder="#{msgs.vorname}"
+                                                 value="#{BenutzerverwaltungForm.userObject.name}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="location" value="#{msgs.standort}"/>
+                                    <p:inputText id="location"
+                                                 class="input"
+                                                 placeholder="#{msgs.standort}"
+                                                 value="#{BenutzerverwaltungForm.userObject.location}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
+                                    <p:selectBooleanCheckbox id="active"
+                                                             value="#{BenutzerverwaltungForm.userObject.active}"/>
+                                </div>
+                            </p:row>
+                            <p:row>
+                                <div>
+                                    <p:outputLabel for="login" value="#{msgs.login}"/>
+                                    <p:inputText id="login"
+                                                 class="input"
+                                                 placeholder="#{msgs.login}"
+                                                 value="#{BenutzerverwaltungForm.userObject.login}"
+                                                 readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="password" value="#{msgs.password}"/>
+                                    <p:password id="password"
+                                                class="input"
+                                                placeholder="#{msgs.password}"
+                                                value="#{BenutzerverwaltungForm.password}"
+                                                required="true"
+                                                redisplay="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="metaDataLanguage" value="#{msgs.spracheFuerMetadaten}"/>
+                                    <p:inputText id="metaDataLanguage"
+                                                 class="input"
+                                                 placeholder="#{msgs.spracheFuerMetadaten}"
+                                                 value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
+                                                 required="true"/>
+                                </div>
+                                <div>
+                                    <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
+                                    <p:selectBooleanCheckbox id="withMassDownload"
+                                                             value="#{BenutzerverwaltungForm.userObject.withMassDownload}"/>
+                                </div>
+                            </p:row>
+                        </p:panelGrid>
+                        <!-- user groups -->
+                        <p:panel>
+                            <p:dataTable var="item" value="#{BenutzerverwaltungForm.userObject.userGroups}">
+                                <p:column headerText="#{msgs.benutzergruppen}">
+                                    <h:outputText value="#{item.title}"/>
+                                </p:column>
+                                <p:column styleClass="actionsColumn">
+                                    <p:commandLink action="#{BenutzerverwaltungForm.deleteFromGroup}"
+                                                   title="#{msgs.ausGruppeLoeschen}"
+                                                   update="@form">
+                                        <i class="fa fa-trash-o fa-lg"/>
+                                        <f:param name="ID" value="#{item.id}"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                            <button onclick="PF('addUserGroupDialog').show()"
+                                    type="button"
+                                    class="ui-button ui-widget ui-corner-all button-filled-green"
+                                    style="padding:.7em;border:none;">
+                                #{msgs.benutzergruppenHinzufuegen}
+                                <i class="fa fa-plus-circle fa-lg"/>
+                            </button>
+                        </p:panel>
+                    </p:tab>
+                </p:tabView>
             </h:form>
         </p:panel>
     </ui:define>
