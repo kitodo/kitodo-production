@@ -307,10 +307,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void readProjectConfigs() {
-        /*
-         * projektabhängig die richtigen Felder in der Gui anzeigen
-         */
-        ConfigProjects cp = null;
+        // projektabhängig die richtigen Felder in der Gui anzeigen
+        ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
@@ -326,16 +324,12 @@ public class ProzesskopieForm implements Serializable {
             this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
         }
 
-        /*
-         * die auszublendenden Standard-Felder ermitteln
-         */
+        // die auszublendenden Standard-Felder ermitteln
         for (String t : cp.getParamList("createNewProcess.itemlist.hide")) {
             this.standardFields.put(t, false);
         }
 
-        /*
-         * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
-         */
+        // die einzublendenen (zusätzlichen) Eigenschaften ermitteln
         int count = cp.getParamList("createNewProcess.itemlist.item").size();
         for (int i = 0; i < count; i++) {
             AdditionalField fa = new AdditionalField(this);
@@ -1724,32 +1718,25 @@ public class ProzesskopieForm implements Serializable {
      * Calculate tiff header.
      */
     public void calculateTiffHeader() {
-        String tifDefinition = "";
-        ConfigProjects cp = null;
+        ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
         }
-        tifDefinition = cp.getParamString("tifheader." + this.docType, "intranda");
+        String tifDefinition = cp.getParamString("tifheader." + this.docType, "intranda");
 
-        /*
-         * evtuelle Ersetzungen
-         */
+        // possible replacements
         tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
         tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
 
-        /*
-         * Documentname ist im allgemeinen = Prozesstitel
-         */
+        // Documentname ist im allgemeinen = Prozesstitel
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
         this.tifHeaderImageDescription = "";
-        /*
-         * Imagedescription
-         */
+        // image description
         StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
-        /* jetzt den Tiffheader parsen */
+        // jetzt den Tiffheader parsen
         String title = "";
         while (tokenizer.hasMoreTokens()) {
             String myString = tokenizer.nextToken();

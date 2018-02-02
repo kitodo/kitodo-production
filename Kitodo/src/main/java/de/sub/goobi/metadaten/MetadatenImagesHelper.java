@@ -147,7 +147,7 @@ public class MetadatenImagesHelper {
         if (physicaldocstruct.getAllChildren() != null && !physicaldocstruct.getAllChildren().isEmpty()) {
             for (DocStruct page : physicaldocstruct.getAllChildren()) {
                 if (page.getImageName() != null) {
-                    URI imageFile = null;
+                    URI imageFile;
                     if (directory == null) {
                         imageFile = serviceManager.getProcessService().getImagesTifDirectory(true, process)
                                 .resolve(page.getImageName());

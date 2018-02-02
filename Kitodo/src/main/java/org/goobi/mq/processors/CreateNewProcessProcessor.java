@@ -233,7 +233,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
                     "Bad argument “docType”: Selected template doesn’t provide " + "the standard field “doctype”.");
         }
 
-        boolean valueIsValid = false;
+        boolean valueIsValid;
         Iterator<ConfigOpacDoctype> configOpacDoctypeIterator = dialog.getAllDoctypes().iterator();
         do {
             ConfigOpacDoctype option = configOpacDoctypeIterator.next();

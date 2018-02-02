@@ -512,7 +512,7 @@ public class Metadaten {
      *      The addable metadatatypes from tempTyp.
      */
     public ArrayList<SelectItem> getAddableMetadataTypesFromTempType() {
-        DocStruct ds = null;
+        DocStruct ds;
         DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
         try {
             ds = this.digitalDocument.createDocStruct(dst);
@@ -1201,8 +1201,7 @@ public class Metadaten {
      * Adds a serveral new DocStruct elements to the current DocStruct tree and sets specified metadata.
      */
     public void addSeveralNodesWithMetadata() {
-        DocStruct ds = null;
-
+        DocStruct ds;
         DocStructType docStructType = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
         try {
             ds = addNode(
@@ -1376,7 +1375,7 @@ public class Metadaten {
      * alle Seiten ermitteln.
      */
     public void retrieveAllImages() {
-        DigitalDocument document = null;
+        DigitalDocument document;
         try {
             document = this.gdzfile.getDigitalDocument();
         } catch (PreferencesException e) {
@@ -3212,25 +3211,25 @@ public class Metadaten {
     }
 
     private static String generateFileName(int counter) {
-        String filename = "";
+        String fileName;
         if (counter >= 10000000) {
-            filename = "" + counter;
+            fileName = "" + counter;
         } else if (counter >= 1000000) {
-            filename = "0" + counter;
+            fileName = "0" + counter;
         } else if (counter >= 100000) {
-            filename = "00" + counter;
+            fileName = "00" + counter;
         } else if (counter >= 10000) {
-            filename = "000" + counter;
+            fileName = "000" + counter;
         } else if (counter >= 1000) {
-            filename = "0000" + counter;
+            fileName = "0000" + counter;
         } else if (counter >= 100) {
-            filename = "00000" + counter;
+            fileName = "00000" + counter;
         } else if (counter >= 10) {
-            filename = "000000" + counter;
+            fileName = "000000" + counter;
         } else {
-            filename = "0000000" + counter;
+            fileName = "0000000" + counter;
         }
-        return filename;
+        return fileName;
     }
 
     /**

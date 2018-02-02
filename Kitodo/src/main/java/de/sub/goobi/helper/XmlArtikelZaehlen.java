@@ -53,13 +53,11 @@ public class XmlArtikelZaehlen {
             return -1;
         }
 
-        /*
-         * DocStruct rukursiv durchlaufen
-         */
-        DigitalDocument mydocument = null;
+        // DocStruct rukursiv durchlaufen
+        DigitalDocument document;
         try {
-            mydocument = gdzfile.getDigitalDocument();
-            DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
+            document = gdzfile.getDigitalDocument();
+            DocStruct logicalTopstruct = document.getLogicalDocStruct();
             rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
         } catch (PreferencesException e1) {
             Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());

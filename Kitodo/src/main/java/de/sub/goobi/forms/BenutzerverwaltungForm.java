@@ -160,12 +160,12 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     private boolean isLoginValid(String inLogin) {
-        boolean valide = true;
+        boolean valid;
         String patternStr = "[A-Za-z0-9@_\\-.]*";
         Pattern pattern = Pattern.compile(patternStr);
         Matcher matcher = pattern.matcher(inLogin);
-        valide = matcher.matches();
-        if (!valide) {
+        valid = matcher.matches();
+        if (!valid) {
             Helper.setFehlerMeldung("", Helper.getTranslation("loginNotValid"));
         }
 
@@ -184,14 +184,14 @@ public class BenutzerverwaltungForm extends BasisForm {
             String str;
             while ((str = in.readLine()) != null) {
                 if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
-                    valide = false;
+                    valid = false;
                     Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
                 }
             }
         } catch (IOException e) {
             logger.error(e);
         }
-        return valide;
+        return valid;
     }
 
     /**

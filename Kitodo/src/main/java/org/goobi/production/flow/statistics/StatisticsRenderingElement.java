@@ -93,7 +93,7 @@ public class StatisticsRenderingElement implements Serializable {
     private void createChart(Boolean showAverage) {
         imageUrl = System.currentTimeMillis() + ".png";
 
-        IRenderer renderer = null;
+        IRenderer renderer;
         if (dataTable.isShowableInPieChart()) {
             renderer = new PieChartRenderer();
         } else {

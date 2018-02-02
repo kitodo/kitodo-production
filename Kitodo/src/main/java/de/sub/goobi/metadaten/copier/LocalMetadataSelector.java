@@ -181,10 +181,10 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param logicalNode
      *            document structure node to check and enrich
      * @param value
-     *            value to write if no metadataof this type is available
+     *            value to write if no metadata of this type is available
      */
     private void tryToCreateANewMetadatum(CopierData data, DocStruct logicalNode, String value) {
-        Metadata copy = null;
+        Metadata copy;
         try {
             copy = new Metadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
         } catch (MetadataTypeNotAllowedException e) {

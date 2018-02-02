@@ -19,7 +19,7 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 import org.kitodo.data.database.beans.Process;
 
 public class DisplayCase {
-    private DisplayType displayType = null;
+    private DisplayType displayType;
     private ArrayList<Item> itemList = new ArrayList<>();
     private ConfigDispayRules configDisplay;
     private Process myProcess;

@@ -155,10 +155,8 @@ public class GUIExceptionWrapper extends Exception {
         // the part, which may contain a href web link and the part, which
         // allows a mailto: link triggered email from the user to
         // admin/developers
-        String linkPart = "";
-        String emailPart = "";
-
-        linkPart = this.errLinkText + lineFeed;
+        String linkPart = this.errLinkText + lineFeed;
+        String emailPart;
 
         // only elaborate email part if
         if (this.emailAddresses.size() > 0) {

@@ -570,7 +570,7 @@ public class SRUClient {
         }
 
         // Perform the search
-        GetMethod get = null;
+        GetMethod get;
         try {
             get = getUrl(searchUrl);
             int status = get.getStatusCode();
@@ -586,15 +586,13 @@ public class SRUClient {
         }
 
         // Return our results body
-        String response = null;
         try {
-            byte[] bla = get.getResponseBody();
-            response = new String(bla, StandardCharsets.UTF_8);
+            byte[] responseBody = get.getResponseBody();
+            return new String(responseBody, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             logger.error("Error accessing response body: ", ex);
             return null;
         }
-        return response;
     }
 
     /**

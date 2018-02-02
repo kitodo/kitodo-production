@@ -97,10 +97,8 @@ public class ExportPdf extends ExportMets {
 
             GetMethod method = null;
             try {
-                /*
-                 * define path for mets and pdfs
-                 */
-                URL kitodoContentServerUrl = null;
+                // define path for mets and pdfs
+                URL kitodoContentServerUrl;
                 String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
                 Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
 

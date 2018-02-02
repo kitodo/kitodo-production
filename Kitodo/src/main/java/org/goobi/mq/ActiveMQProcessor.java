@@ -86,7 +86,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      */
     @Override
     public void onMessage(Message arg) {
-        MapMessageObjectReader ticket = null;
+        MapMessageObjectReader ticket;
         String ticketID = null;
 
         try {

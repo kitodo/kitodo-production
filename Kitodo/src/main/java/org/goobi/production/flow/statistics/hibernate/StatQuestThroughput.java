@@ -168,7 +168,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
             }
 
             // adding the first row
-            String title = "";
+            String title;
             if (tableStepOpen.getName().length() > 0) {
                 title = tableStepOpen.getName();
             } else {

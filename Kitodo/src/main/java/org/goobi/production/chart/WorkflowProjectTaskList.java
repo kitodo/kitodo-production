@@ -42,13 +42,13 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
         return myTaskList;
     }
 
-    private static synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages,
+    private static synchronized void calculate(Project inProject, List<IProjectTask> taskList, Boolean countImages,
             Integer inMax) throws DataException {
         List<StepInformation> workFlow = serviceManager.getProjectService().getWorkFlow(inProject);
-        Integer usedMax = 0;
 
         for (StepInformation step : workFlow) {
-            ProjectTask pt = null;
+            Integer usedMax;
+            ProjectTask projectTask;
 
             // get workflow contains steps with the following structure
             // stepTitle,stepOrder,stepCount,stepImageCount,totalProcessCount,totalImageCount
@@ -69,7 +69,7 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
                     usedMax = inMax;
                 }
 
-                pt = new ProjectTask(title, Integer.parseInt(imagesCompleted), usedMax);
+                projectTask = new ProjectTask(title, Integer.parseInt(imagesCompleted), usedMax);
             } else {
                 usedMax = step.getNumberOfTotalSteps();
                 if (usedMax > inMax) {
@@ -79,10 +79,9 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
                     usedMax = inMax;
                 }
 
-                pt = new ProjectTask(title, Integer.parseInt(stepsCompleted), usedMax);
+                projectTask = new ProjectTask(title, Integer.parseInt(stepsCompleted), usedMax);
             }
-            myTaskList.add(pt);
-
+            taskList.add(projectTask);
         }
     }
 
