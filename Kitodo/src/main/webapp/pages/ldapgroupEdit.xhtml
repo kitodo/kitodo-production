@@ -208,6 +208,15 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
-        <li><a href="">#{msgs.ldapgruppeBearbeiten}</a></li>
+        <li>
+            <a href="">
+                <ui:fragment rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}">
+                    #{msgs.neueLdapgruppeAnlegen}
+                </ui:fragment>
+                <ui:fragment rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}">
+                    #{msgs.ldapgruppeBearbeiten} (#{LdapGruppenForm.myLdapGruppe.title})
+                </ui:fragment>
+            </a>
+        </li>
     </ui:define>
 </ui:composition>
