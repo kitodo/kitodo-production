@@ -38,7 +38,8 @@
                     </p:menuButton>
                 </h:form>
             </p:panel>
-            <p:tabView activeIndex="#{param.id}" id="projectsTabView">
+            <p:tabView activeIndex="#{ProjekteForm.activeTabIndex}" id="projectsTabView">
+                <p:ajax event="tabChange" listener="#{ProjekteForm.onTabChange}"/>
                 <p:tab title="#{msgs.projectList}" id="projectTab">
                     <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
                 </p:tab>

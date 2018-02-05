@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +39,10 @@ public class DocketForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
     private int docketId;
+
+    @Inject
+    @Named("ProjekteForm")
+    private ProjekteForm projectForm;
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -174,7 +179,7 @@ public class DocketForm extends BasisForm {
         String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
         String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
         if (!callerViewId.isEmpty() && callerViewId.contains("editDocket.jsf")) {
-            return "/pages/projects.jsf?id=3&" + REDIRECT_PARAMETER;
+            return "/pages/projects.jsf?id=" + projectForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
         } else {
             return "/pages/DocketList?" + REDIRECT_PARAMETER;
         }

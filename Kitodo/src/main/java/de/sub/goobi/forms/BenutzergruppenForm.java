@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +41,10 @@ public class BenutzergruppenForm extends BasisForm {
     private UserGroup myBenutzergruppe = new UserGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
+
+    @Inject
+    @Named("BenutzerverwaltungForm")
+    private BenutzerverwaltungForm userForm;
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -196,7 +201,7 @@ public class BenutzergruppenForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("usergroupEdit.jsf")) {
-                return "/pages/users.jsf?id=1&" + REDIRECT_PARAMETER;
+                return "/pages/users.jsf?id=" + userForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
             } else {
                 return "/pages/BenutzergruppenAlle?" + REDIRECT_PARAMETER;
             }

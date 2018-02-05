@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +38,10 @@ public class RulesetForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
     private int rulesetId;
+
+    @Inject
+    @Named("ProjekteForm")
+    private ProjekteForm projectForm;
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -183,7 +188,7 @@ public class RulesetForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("rulesetEdit.jsf")) {
-                return "/pages/projects.jsf?id=4&" + REDIRECT_PARAMETER;
+                return "/pages/projects.jsf?id=" + projectForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
             } else {
                 return "/pages/RegelsaetzeAlle?" + REDIRECT_PARAMETER;
             }
