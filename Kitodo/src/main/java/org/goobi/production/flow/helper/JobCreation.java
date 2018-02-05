@@ -76,7 +76,7 @@ public class JobCreation {
             if (fileService.isDirectory(imagesFolder)) {
                 fileService.delete(imagesFolder);
             } else {
-                imagesFolder = fileService.createResource(basepath, "_" + vorlage.DIRECTORY_SUFFIX);
+                imagesFolder = fileService.createResource(basepath, "_images");
                 if (fileService.isDirectory(imagesFolder)) {
                     fileService.delete(imagesFolder);
                 }
@@ -166,7 +166,7 @@ public class JobCreation {
         if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
             URI imagesFolder = basepath;
             if (!fileService.fileExist(imagesFolder)) {
-                imagesFolder = fileService.createResource(basepath, "_" + p.DIRECTORY_SUFFIX);
+                imagesFolder = fileService.createResource(basepath, "_images");
             }
             if (fileService.isDirectory(imagesFolder)) {
                 List<URI> imageDir = new ArrayList<>(fileService.getSubUris(imagesFolder));
