@@ -106,6 +106,10 @@ public class Task extends BaseIndexedBean {
     private User processingUser;
 
     @ManyToOne
+    @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_task_template_id"))
+    private Template template;
+
+    @ManyToOne
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_task_process_id"))
     private Process process;
 
@@ -298,6 +302,24 @@ public class Task extends BaseIndexedBean {
 
     public void setProcess(Process process) {
         this.process = process;
+    }
+
+    /**
+     * Get template.
+     *
+     * @return value of template
+     */
+    public Template getTemplate() {
+        return this.template;
+    }
+
+    /**
+     * Set template.
+     *
+     * @param template as Template
+     */
+    public void setTemplate(Template template) {
+        this.template = template;
     }
 
     public boolean isPanelShown() {
