@@ -22,32 +22,32 @@
                  sortBy="#{item.ordering}">
 
         <!-- ordering -->
-        <p:column headerText="#{msgs.nr}" style="width: 60px">
+        <p:column headerText="#{msgs.nr}" id="taskOrder">
             <!-- TODO funktioniert der Link? -->
             <h:outputText value="#{item.ordering}"/>
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
                              update="@form"
                              rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
-                             icon="fa fa-long-arrow-up">
+                             icon="fa fa-long-arrow-up" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
             </p:commandButton>
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
                              update="@form"
                              rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
-                             icon="fa fa-long-arrow-down">
+                             icon="fa fa-long-arrow-down" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
             </p:commandButton>
         </p:column>
 
         <!-- title -->
-        <p:column headerText="#{msgs.arbeitsschritt}">
+        <p:column headerText="#{msgs.arbeitsschritt}" id="taskTitle">
             <p:rowToggler />
             <h:outputText value="#{item.title}"/>
         </p:column>
 
         <!-- status -->
-        <p:column headerText="#{msgs.status}">
-            <p:panelGrid columns="2" id="statusColumn" styleClass="ui-noborder" style="background: transparent">
+        <p:column headerText="#{msgs.status}" id="taskStatus">
+            <p:panelGrid columns="2" id="statusColumn" styleClass="ui-noborder statusColumn" style="background: transparent">
                 <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
                                 title="#{item.processingStatusEnum.title}"
                                 alt="status"/>
@@ -79,7 +79,7 @@
 
         <!-- actions -->
         <p:column rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                  headerText="#{msgs.auswahl}">
+                  headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskEdit"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>

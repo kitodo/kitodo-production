@@ -393,13 +393,13 @@ body.first-visit #portal-header {
     color: #1b2b36;
     }
 
-#breadcrumb li a:after {
+#breadcrumb li a:before {
     font-family: FontAwesome;
     content: "\f054";
     padding: 0px 10px;
     }
 
-#breadcrumb li:last-child a:after {
+#breadcrumb li:first-child a:before {
     content: " " !important;
     padding: 0px;
     }
@@ -608,7 +608,6 @@ section#content-section {
     margin: 1.5em;
 }
 
-<<<<<<< HEAD
 main i.fa {
     font-size: 20px;
 }
@@ -626,6 +625,32 @@ main i.fa {
 #processEditForm\:tabs\:processEditDetails label,
 #processEditForm\:tabs\:processEditDetails input {
     display: block;
+}
+
+#processEditForm\:tabs\:vorgaenge\:taskOrder {
+    width: 90px;
+}
+
+#processEditForm\:tabs\:vorgaenge\:0\:statusColumn,
+#processEditForm\:tabs\:vorgaenge\:0\:statusColumn table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#processEditForm .button-filled-green {
+    margin: 16px;
+}
+
+#processEditForm .statusColumn .ui-panelgrid-cell {
+    width: 16px;
+}
+
+#processEditForm\:tabs\:vorgaenge .ui-panelgrid-cell {
+    padding: 0;
+}
+
+#processEditForm\:tabs\:vorgaenge .ui-expanded-row-content .ui-panelgrid-cell {
+    padding: 8px 10px;
 }
 
 /*----------------------------------------------------------------------
