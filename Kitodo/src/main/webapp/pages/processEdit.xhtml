@@ -35,26 +35,28 @@
                                      iconPos="right"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      update="notifications"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="processes"
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <p:messages autoUpdate="true"/>
                 <p:tabView id="tabs">
-                    <p:tab title="#{msgs.prozessDetails}" id="processEditDetails">
-                        <ui:include src="/WEB-INF/templates/includes/processEdit/processEditDetails.xhtml"/>
+                    <p:tab title="#{msgs.prozessDetails}" id="details">
+                        <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml"/>
                     </p:tab>
-                    <p:tab title="#{msgs.arbeitsschritte}">
+                    <p:tab title="#{msgs.arbeitsschritte}" id="taskOrder">
                         <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml"/>
                     </p:tab>
                     <ui:fragment rendered="#{ProzessverwaltungForm.process.templatesSize ne 0}">
-                        <p:tab title="#{msgs.prozessvorlagen}">
+                        <p:tab title="#{msgs.prozessvorlagen}" id="processTemplates">
                             <ui:include src="/WEB-INF/templates/includes/processEdit/templateList.xhtml"/>
                         </p:tab>
                     </ui:fragment>
                     <ui:fragment rendered="#{ProzessverwaltungForm.process.workpiecesSize ne 0}">
-                        <p:tab title="#{msgs.werkstuecke}">
+                        <p:tab title="#{msgs.werkstuecke}" id="workpieces">
                             <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml"/>
                         </p:tab>
                     </ui:fragment>
-                    <p:tab title="#{msgs.eigenschaften}">
+                    <p:tab title="#{msgs.eigenschaften}" id="properties">
                         <ui:include src="/WEB-INF/templates/includes/processEdit/propertyList.xhtml"/>
                     </p:tab>
                 </p:tabView>
