@@ -162,15 +162,15 @@ public class RulesetForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/rulesetEdit?" + redirectParameter;
+                return "/pages/rulesetEdit?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/RegelsaetzeBearbeiten?" + redirectParameter;
+                return "/pages/RegelsaetzeBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
             // used from it's integration test
             // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/RegelsaetzeBearbeiten?" + redirectParameter;
+            return "/pages/RegelsaetzeBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 
@@ -183,15 +183,15 @@ public class RulesetForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("rulesetEdit.jsf")) {
-                return "/pages/projects.jsf?id=4&" + redirectParameter;
+                return "/pages/projects.jsf?id=4&" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/RegelsaetzeAlle?" + redirectParameter;
+                return "/pages/RegelsaetzeAlle?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
             // used from it's integration test
             // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/RegelsaetzeAlle?" + redirectParameter;
+            return "/pages/RegelsaetzeAlle?" + REDIRECT_PARAMETER;
         }
     }
 

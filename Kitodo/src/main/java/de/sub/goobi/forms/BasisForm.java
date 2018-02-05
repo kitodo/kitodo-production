@@ -33,7 +33,7 @@ public class BasisForm implements Serializable {
     protected String filter = "";
     protected User user;
     protected String sortierung = "prozessAsc";
-    static final String redirectParameter = "faces-redirect=true";
+    static final String REDIRECT_PARAMETER = "faces-redirect=true";
 
     private LazyDTOModel lazyDTOModel = null;
 

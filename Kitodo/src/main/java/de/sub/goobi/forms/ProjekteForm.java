@@ -866,15 +866,15 @@ public class ProjekteForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/projectEdit?" + redirectParameter;
+                return "/pages/projectEdit?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/ProjekteBearbeiten?" + redirectParameter;
+                return "/pages/ProjekteBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
             // used from it's integration test
             // class "ProjekteFormIT", where no "FacesContext" is available!
-            return "/pages/ProjekteBearbeiten?" + redirectParameter;
+            return "/pages/ProjekteBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 

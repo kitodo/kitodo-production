@@ -175,15 +175,15 @@ public class BenutzergruppenForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/usergroupEdit?" + redirectParameter;
+                return "/pages/usergroupEdit?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzergruppenBearbeiten?" + redirectParameter;
+                return "/pages/BenutzergruppenBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzergruppenForm" is
             // used from it's integration test
             // class "BenutzergruppenFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzergruppenBearbeiten?" + redirectParameter;
+            return "/pages/BenutzergruppenBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 
@@ -196,15 +196,15 @@ public class BenutzergruppenForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("usergroupEdit.jsf")) {
-                return "/pages/users.jsf?id=1&" + redirectParameter;
+                return "/pages/users.jsf?id=1&" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzergruppenAlle?" + redirectParameter;
+                return "/pages/BenutzergruppenAlle?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzergruppenForm" is
             // used from it's integration test
             // class "BenutzergruppenFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzergruppenAlle?" + redirectParameter;
+            return "/pages/BenutzergruppenAlle?" + REDIRECT_PARAMETER;
         }
     }
 }

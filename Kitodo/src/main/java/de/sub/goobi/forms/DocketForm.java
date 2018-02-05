@@ -154,15 +154,15 @@ public class DocketForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/editDocket?" + redirectParameter;
+                return "/pages/editDocket?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/DocketEdit?" + redirectParameter;
+                return "/pages/DocketEdit?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "DocketForm" is
             // used from it's integration test
             // class "DocketFormIT", where no "FacesContext" is available!
-            return "/pages/DocketEdit?" + redirectParameter;
+            return "/pages/DocketEdit?" + REDIRECT_PARAMETER;
         }
     }
 
@@ -174,9 +174,9 @@ public class DocketForm extends BasisForm {
         String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
         String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
         if (!callerViewId.isEmpty() && callerViewId.contains("editDocket.jsf")) {
-            return "/pages/projects.jsf?id=3&" + redirectParameter;
+            return "/pages/projects.jsf?id=3&" + REDIRECT_PARAMETER;
         } else {
-            return "/pages/DocketList?" + redirectParameter;
+            return "/pages/DocketList?" + REDIRECT_PARAMETER;
         }
     }
 }

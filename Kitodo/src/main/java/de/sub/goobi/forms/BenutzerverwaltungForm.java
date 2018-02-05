@@ -459,15 +459,15 @@ public class BenutzerverwaltungForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/userEdit?" + redirectParameter;
+                return "/pages/userEdit?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzerBearbeiten?" + redirectParameter;
+                return "/pages/BenutzerBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
             // used from it's integration test
             // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzerBearbeiten?" + redirectParameter;
+            return "/pages/BenutzerBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 
@@ -480,15 +480,15 @@ public class BenutzerverwaltungForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("userEdit.jsf")) {
-                return "/pages/users?" + redirectParameter;
+                return "/pages/users?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzerAlle?" + redirectParameter;
+                return "/pages/BenutzerAlle?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
             // used from it's integration test
             // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzerAlle?" + redirectParameter;
+            return "/pages/BenutzerAlle?" + REDIRECT_PARAMETER;
         }
     }
 }
