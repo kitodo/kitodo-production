@@ -374,7 +374,7 @@ body.first-visit #portal-header {
     text-align: left;
     color: #fff;
     font-size: 0px;
-    width: 50%;
+    width: 100%;
     }
 
 #breadcrumb li {
@@ -860,6 +860,10 @@ min 700px
 
     #kitodo-icon {
         display: none;
+        }
+
+    #breadcrumb {
+        width: 50%;
         }
 
     #header-nav li ul {
