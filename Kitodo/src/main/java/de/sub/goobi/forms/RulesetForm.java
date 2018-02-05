@@ -180,7 +180,7 @@ public class RulesetForm extends BasisForm {
     }
 
     // TODO:
-    // replace calls to this function with "/pages/projects.jsf?id=4" once we have
+    // replace calls to this function with "/pages/projects.jsf" once we have
     // completely switched to the new frontend pages
     private String redirectToList() {
         try {
