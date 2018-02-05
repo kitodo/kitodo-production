@@ -55,7 +55,7 @@ public class RulesetForm extends BasisForm {
     public String createNewRuleset() {
         this.ruleset = new Ruleset();
         this.rulesetId = 0;
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -67,7 +67,7 @@ public class RulesetForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(this.ruleset);
-                return redirectToList("?faces-redirect=true");
+                return redirectToList();
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
                 return null;
@@ -110,7 +110,7 @@ public class RulesetForm extends BasisForm {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
             return null;
         }
-        return redirectToList("?faces-redirect=true");
+        return redirectToList();
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
@@ -156,42 +156,42 @@ public class RulesetForm extends BasisForm {
     // TODO:
     // replace calls to this function with "/pages/rulesetEdit" once we have
     // completely switched to the new frontend pages
-    private String redirectToEdit(String urlSuffix) {
+    private String redirectToEdit() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/rulesetEdit" + urlSuffix;
+                return "/pages/rulesetEdit?" + redirectParameter;
             } else {
-                return "/pages/RegelsaetzeBearbeiten" + urlSuffix;
+                return "/pages/RegelsaetzeBearbeiten?" + redirectParameter;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
             // used from it's integration test
             // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/RegelsaetzeBearbeiten" + urlSuffix;
+            return "/pages/RegelsaetzeBearbeiten?" + redirectParameter;
         }
     }
 
     // TODO:
-    // replace calls to this function with "/pages/projects" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList(String urlSuffix) {
+    // replace calls to this function with "/pages/projects.jsf?id=4" once we have
+    // completely switched to the new frontend pages
+    private String redirectToList() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("rulesetEdit.jsf")) {
-                return "/pages/projects" + urlSuffix;
+                return "/pages/projects.jsf?id=4&" + redirectParameter;
             } else {
-                return "/pages/RegelsaetzeAlle" + urlSuffix;
+                return "/pages/RegelsaetzeAlle?" + redirectParameter;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
             // used from it's integration test
             // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/RegelsaetzeAlle" + urlSuffix;
+            return "/pages/RegelsaetzeAlle?" + redirectParameter;
         }
     }
 
