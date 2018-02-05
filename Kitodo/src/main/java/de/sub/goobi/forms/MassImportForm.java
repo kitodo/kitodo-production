@@ -38,7 +38,6 @@ import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.DocstructElement;
-import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.goobi.production.plugin.PluginLoader;
@@ -81,7 +80,6 @@ public class MassImportForm implements Serializable {
     private String currentPlugin = "";
     private IImportPlugin plugin;
     private File importFile = null;
-    private final Helper help = new Helper();
     private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
 
@@ -374,60 +372,6 @@ public class MassImportForm implements Serializable {
     private boolean testForData() {
         return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
                 && this.selectedFilenames.size() == 0);
-    }
-
-    /**
-     * Get formats.
-     *
-     * @return list with all import formats
-     */
-    public List<String> getFormats() {
-        List<String> l = new ArrayList<>();
-        for (ImportFormat input : ImportFormat.values()) {
-            l.add(input.getTitle());
-        }
-        return l;
-    }
-
-    /**
-     * Get Hotfolder path for plugin.
-     *
-     * @param pluginId
-     *            int
-     * @return String
-     */
-    public String getHotfolderPathForPlugin(int pluginId) {
-        for (GoobiHotfolder hotfolder : GoobiHotfolder.getInstances()) {
-            if (hotfolder.getTemplate() == pluginId) {
-                return hotfolder.getFolderAsString();
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Get current format.
-     *
-     * @return current format
-     */
-
-    public String getCurrentFormat() {
-        if (this.format != null) {
-            return this.format.getTitle();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Set current format.
-     *
-     * @param formatTitle
-     *            current format
-     */
-    public void setCurrentFormat(String formatTitle) {
-        this.format = ImportFormat.getTypeFromTitle(formatTitle);
     }
 
     /**
