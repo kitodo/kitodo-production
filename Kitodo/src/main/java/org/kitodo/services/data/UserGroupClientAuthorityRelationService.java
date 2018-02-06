@@ -18,6 +18,8 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupClientAuthorityRelationDAO;
@@ -103,5 +105,18 @@ public class UserGroupClientAuthorityRelationService
      */
     public void remove(Integer id) throws DAOException {
         dao.remove(id);
+    }
+
+    public List<Authority> getAuthoritiesFromListByClientAndUserGroup(UserGroup userGroup, Client client,
+            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
+        List<Authority> authorities = new ArrayList<>();
+
+        for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelations) {
+
+            if (userGroup.equals(relation.getUserGroup()) && client.equals(relation.getClient())) {
+                authorities.add(relation.getAuthority());
+            }
+        }
+        return authorities;
     }
 }

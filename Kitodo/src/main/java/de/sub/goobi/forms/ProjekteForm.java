@@ -30,7 +30,6 @@ import java.util.Objects;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
@@ -860,30 +859,8 @@ public class ProjekteForm extends BasisForm {
         }
     }
 
-    public List<SelectItem> getClientItems() {
-        List<Client> clients = serviceManager.getClientService().getAll();
-        List<SelectItem> items = new ArrayList<>();
-        for (Client client : clients) {
-            items.add(new SelectItem(client, client.getName()));
-        }
-
-        // try {
-        return items;
-        // } catch (Exception e) {
-        // logger.error(e.getMessage());
-        // return new LinkedList<>();
-        // }
-    }
-
     public List<Client> getClients() {
-        List<Client> clients = serviceManager.getClientService().getAll();
-
-        // try {
-        return clients;
-        // } catch (Exception e) {
-        // logger.error(e.getMessage());
-        // return new LinkedList<>();
-        // }
+        return serviceManager.getClientService().getAll();
     }
 
     // TODO:

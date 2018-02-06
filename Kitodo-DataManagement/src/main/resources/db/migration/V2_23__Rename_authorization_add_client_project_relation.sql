@@ -53,7 +53,8 @@ CREATE TABLE userGroup_x_client_x_authority (
   userGroup_id INT NOT NULL,
   client_id INT NOT NULL,
   authority_id INT NOT NULL,
-  PRIMARY KEY (id))
+  PRIMARY KEY (id),
+  UNIQUE KEY unique_index(`userGroup_id`, `client_id`,`authority_id`))
   DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ALTER TABLE userGroup_x_client_x_authority add constraint `FK_userGroup_x_client_x_authority_userGroup_id`
@@ -71,7 +72,8 @@ CREATE TABLE userGroup_x_project_x_authority (
   userGroup_id INT NOT NULL,
   project_id INT NOT NULL,
   authority_id INT NOT NULL,
-  PRIMARY KEY (id))
+  PRIMARY KEY (id),
+  UNIQUE KEY unique_index(`userGroup_id`, `project_id`,`authority_id`))
   DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ALTER TABLE userGroup_x_project_x_authority add constraint `FK_userGroup_x_project_x_authority_userGroup_id`

@@ -36,6 +36,8 @@
                                      iconPos="right"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      styleClass="button-filled-blue"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="clients"
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
                 <p:messages id="clientEdit-messages" autoUpdate="true"/>

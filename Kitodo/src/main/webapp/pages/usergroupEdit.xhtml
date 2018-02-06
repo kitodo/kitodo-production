@@ -12,11 +12,11 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+    template="/WEB-INF/templates/base.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id" value="#{BenutzergruppenForm.userGroupId}"/>
         <f:viewAction action="#{BenutzergruppenForm.loadUserGroup}"/>
@@ -26,13 +26,15 @@
             <h:form id="usergroupEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.myBenutzergruppe.title})"
-                                      rendered="#{BenutzergruppenForm.myBenutzergruppe.id ne null}"/>
+                        <h:outputText
+                            value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
+                            rendered="#{BenutzergruppenForm.userGroup.id ne null}"/>
                         <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
-                                      rendered="#{BenutzergruppenForm.myBenutzergruppe.id eq null}"/>
+                                      rendered="#{BenutzergruppenForm.userGroup.id eq null}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}"
                                      action="#{BenutzergruppenForm.save}"
+                                     process="usergroupTabView:authoritiesGlobal, usergroupTabView:authoritiesClient, usergroupTabView:title, usergroupTabView:authoritiesProject"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
                                      styleClass="button-filled-blue"
@@ -46,28 +48,86 @@
                 </p:panel>
 
                 <!-- main form -->
-                <p:messages id="usergroupedit-messages" autoUpdate="true" />
+                <p:messages id="usergroupedit-messages" autoUpdate="true"/>
                 <p:tabView id="usergroupTabView">
                     <p:tab id="usergroupTab" title="#{msgs.details}">
-                        <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
                             <p:row>
                                 <div>
                                     <p:outputLabel for="title" value="#{msgs.titel}"/>
                                     <p:inputText id="title"
                                                  class="input"
-                                                 value="#{BenutzergruppenForm.myBenutzergruppe.title}"
+                                                 value="#{BenutzergruppenForm.userGroup.title}"
                                                  placeholder="#{msgs.titel}"
                                                  required="true"/>
                                 </div>
                                 <div>
-                                    <p:outputLabel for="authorities" value="#{msgs.berechtigungen}"/>
-                                    <p:pickList id="authorities"
-                                                value="#{BenutzergruppenForm.authorities}"
-                                                converter="AuthorityConverter"
-                                                var="authority" itemLabel="#{authority.title}" itemValue="#{authority}">
-                                        <f:facet name="sourceCaption" style="color: #000;">#{msgs.available}</f:facet>
-                                        <f:facet name="targetCaption" style="color: #000;">#{msgs.assigned}</f:facet>
-                                    </p:pickList>
+                                    <p:panelGrid columns="3" layout="grid">
+                                        <p:outputLabel for="authoritiesGlobal" value="#{msgs.authoritiesGlobal}"/>
+                                        <p:outputLabel for="authoritiesClient" value="#{msgs.authoritiesClient}"/>
+                                        <p:outputLabel for="authoritiesProject" value="#{msgs.authoritiesProject}"/>
+
+                                        <!--global authorities-->
+                                        <h:panelGroup>
+                                            <p:pickList id="authoritiesGlobal"
+                                                        value="#{BenutzergruppenForm.authorities}"
+                                                        converter="AuthorityConverter"
+                                                        var="authority" itemLabel="#{authority.title}"
+                                                        itemValue="#{authority}">
+                                                <f:facet name="sourceCaption"
+                                                         style="color: #000;">#{msgs.available}</f:facet>
+                                                <f:facet name="targetCaption"
+                                                         style="color: #000;">#{msgs.assigned}</f:facet>
+                                            </p:pickList>
+                                        </h:panelGroup>
+
+                                        <!--client authorities-->
+                                        <h:panelGroup rendered="#{BenutzergruppenForm.clientsAvailable}">
+                                            <p:outputLabel for="client" value="#{msgs.client}"/>
+                                            <p:selectOneMenu id="client"
+                                                             converter="ClientConverter"
+                                                             value="#{BenutzergruppenForm.selectedClient}">
+                                                <f:selectItems value="#{BenutzergruppenForm.clients}" var="client"
+                                                               itemValue="#{client}"
+                                                               itemLabel="#{client.name}"/>
+                                                <p:ajax event="change" update="authoritiesClient"/>
+                                            </p:selectOneMenu>
+                                            <p:pickList id="authoritiesClient"
+                                                        value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
+                                                        converter="AuthorityConverter"
+                                                        var="authority" itemLabel="#{authority.title}"
+                                                        itemValue="#{authority}"
+                                            >
+                                                <f:facet name="sourceCaption"
+                                                         style="color: #000;">#{msgs.available}</f:facet>
+                                                <f:facet name="targetCaption"
+                                                         style="color: #000;">#{msgs.assigned}</f:facet>
+                                                <p:ajax event="transfer"/>
+                                            </p:pickList>
+                                        </h:panelGroup>
+
+                                        <!--project authorities-->
+                                        <h:panelGroup rendered="true">
+                                            <p:inputText id="project"
+                                                         class="input"
+                                                         value="#{BenutzergruppenForm.userGroup.title}"
+                                                         placeholder="#{msgs.titel}"
+                                                         required="true"/>
+                                            <p:pickList id="authoritiesProject"
+                                                        value="#{BenutzergruppenForm.authorities}"
+                                                        converter="AuthorityConverter"
+                                                        var="authority" itemLabel="#{authority.title}"
+                                                        itemValue="#{authority}">
+                                                <f:facet name="sourceCaption"
+                                                         style="color: #000;">#{msgs.available}</f:facet>
+                                                <f:facet name="targetCaption"
+                                                         style="color: #000;">#{msgs.assigned}</f:facet>
+                                            </p:pickList>
+                                        </h:panelGroup>
+
+
+                                    </p:panelGrid>
+
                                 </div>
                             </p:row>
                             <p:row/>
