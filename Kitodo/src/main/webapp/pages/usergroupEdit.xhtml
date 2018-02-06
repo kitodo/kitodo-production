@@ -64,8 +64,10 @@
                                 <div>
                                     <p:panelGrid columns="3" layout="grid">
                                         <p:outputLabel for="authoritiesGlobal" value="#{msgs.authoritiesGlobal}"/>
-                                        <p:outputLabel for="authoritiesClient" value="#{msgs.authoritiesClient}"/>
-                                        <p:outputLabel for="authoritiesProject" value="#{msgs.authoritiesProject}"/>
+                                        <p:outputLabel rendered="#{BenutzergruppenForm.clientsAvailable}"
+                                                       for="authoritiesClient" value="#{msgs.authoritiesClient}"/>
+                                        <p:outputLabel rendered="#{BenutzergruppenForm.projectsAvailable}"
+                                                       for="authoritiesProject" value="#{msgs.authoritiesProject}"/>
 
                                         <!--global authorities-->
                                         <h:panelGroup>
@@ -96,8 +98,7 @@
                                                         value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
                                                         converter="AuthorityConverter"
                                                         var="authority" itemLabel="#{authority.title}"
-                                                        itemValue="#{authority}"
-                                            >
+                                                        itemValue="#{authority}">
                                                 <f:facet name="sourceCaption"
                                                          style="color: #000;">#{msgs.available}</f:facet>
                                                 <f:facet name="targetCaption"
@@ -107,14 +108,18 @@
                                         </h:panelGroup>
 
                                         <!--project authorities-->
-                                        <h:panelGroup rendered="true">
-                                            <p:inputText id="project"
-                                                         class="input"
-                                                         value="#{BenutzergruppenForm.userGroup.title}"
-                                                         placeholder="#{msgs.titel}"
-                                                         required="true"/>
+                                        <h:panelGroup rendered="#{BenutzergruppenForm.projectsAvailable}">
+                                            <p:outputLabel for="project" value="#{msgs.project}"/>
+                                            <p:selectOneMenu id="project"
+                                                             converter="ProjectConverter"
+                                                             value="#{BenutzergruppenForm.selectedProject}">
+                                                <f:selectItems value="#{BenutzergruppenForm.projects}" var="project"
+                                                               itemValue="#{project}"
+                                                               itemLabel="#{project.title}"/>
+                                                <p:ajax event="change" update="authoritiesProject"/>
+                                            </p:selectOneMenu>
                                             <p:pickList id="authoritiesProject"
-                                                        value="#{BenutzergruppenForm.authorities}"
+                                                        value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
                                                         converter="AuthorityConverter"
                                                         var="authority" itemLabel="#{authority.title}"
                                                         itemValue="#{authority}">
@@ -122,12 +127,10 @@
                                                          style="color: #000;">#{msgs.available}</f:facet>
                                                 <f:facet name="targetCaption"
                                                          style="color: #000;">#{msgs.assigned}</f:facet>
+                                                <p:ajax event="transfer"/>
                                             </p:pickList>
                                         </h:panelGroup>
-
-
                                     </p:panelGrid>
-
                                 </div>
                             </p:row>
                             <p:row/>

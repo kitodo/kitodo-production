@@ -33,6 +33,15 @@ public class UserGroupProjectAuthorityRelation extends BaseBean {
     @JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_project_x_authority_authority_id"))
     private Authority authority;
 
+    public UserGroupProjectAuthorityRelation(UserGroup userGroup, Project project, Authority authority) {
+        this.userGroup = userGroup;
+        this.project = project;
+        this.authority = authority;
+    }
+
+    public UserGroupProjectAuthorityRelation() {
+    }
+
     /**
      * Gets userGroup.
      *
@@ -88,5 +97,33 @@ public class UserGroupProjectAuthorityRelation extends BaseBean {
      */
     public void setAuthority(Authority authority) {
         this.authority = authority;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        UserGroupProjectAuthorityRelation that = (UserGroupProjectAuthorityRelation) o;
+
+        if (userGroup != null ? !userGroup.equals(that.userGroup) : that.userGroup != null) {
+            return false;
+        }
+        if (project != null ? !project.equals(that.project) : that.project != null) {
+            return false;
+        }
+        return authority != null ? authority.equals(that.authority) : that.authority == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userGroup != null ? userGroup.hashCode() : 0;
+        result = 31 * result + (project != null ? project.hashCode() : 0);
+        result = 31 * result + (authority != null ? authority.hashCode() : 0);
+        return result;
     }
 }

@@ -18,11 +18,11 @@ import javax.faces.convert.ConverterException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
-public class ClientConverter implements Converter {
+public class ProjectConverter implements Converter {
 
     private ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ClientConverter.class);
@@ -30,13 +30,9 @@ public class ClientConverter implements Converter {
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value)
             throws ConverterException {
-        if (value.equals("noClient")) {
-            // we need to return null if we want to write null value to database
-            return null;
-        }
 
         try {
-            return serviceManager.getClientService().getById(Integer.parseInt(value));
+            return serviceManager.getProjectService().getById(Integer.parseInt(value));
         } catch (DAOException e) {
             logger.error(e.getMessage());
             return "0";
@@ -49,7 +45,6 @@ public class ClientConverter implements Converter {
         if (object instanceof String) {
             return (String) object;
         }
-        return ((Client) object).getId().toString();
+        return ((Project) object).getId().toString();
     }
-
 }

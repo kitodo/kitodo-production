@@ -82,5 +82,11 @@
         <converter-class>de.sub.goobi.converter.ClientConverter</converter-class>
     </converter>
 
+    <!-- ProjectConverter -->
+    <converter>
+        <converter-id>ProjectConverter</converter-id>
+        <converter-class>de.sub.goobi.converter.ProjectConverter</converter-class>
+    </converter>
+
 </faces-config>
 

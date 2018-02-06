@@ -199,6 +199,42 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
     }
 
+    /**
+     * Gets authorities of the usergroup which are related to given project.
+     * 
+     * @param project
+     *            The Project.
+     * @return The List of authorities.
+     */
+    public List<Authority> getAuthoritiesByProject(Project project) {
+        List<Authority> authorities = new ArrayList<>();
+
+        for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
+            if (project.equals(relation.getProject())) {
+                authorities.add(relation.getAuthority());
+            }
+        }
+        return authorities;
+    }
+
+    /**
+     * Gets authorities of the usergroup which are related to given client.
+     *
+     * @param client
+     *            The Client.
+     * @return The List of authorities.
+     */
+    public List<Authority> getAuthoritiesByClient(Client client) {
+        List<Authority> authorities = new ArrayList<>();
+
+        for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
+            if (client.equals(relation.getClient())) {
+                authorities.add(relation.getAuthority());
+            }
+        }
+        return authorities;
+    }
+
     @Override
     public int compareTo(UserGroup o) {
         return this.getTitle().compareTo(o.getTitle());

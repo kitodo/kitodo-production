@@ -26,9 +26,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
+import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
@@ -50,9 +52,13 @@ public class BenutzergruppenForm extends BasisForm {
 
     private Client selectedClient;
     private boolean clientsAvailable = false;
-
     private boolean clientAuthoritiesChanged = false;
     private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelationsToDelete = new ArrayList<>();
+
+    private Project selectedProject;
+    private boolean projectsAvailable = false;
+    private boolean projectAuthoritiesChanged = false;
+    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelationsToDelete = new ArrayList<>();
 
     private void initializeSelectedClient() {
         if (selectedClient == null) {
@@ -67,6 +73,23 @@ public class BenutzergruppenForm extends BasisForm {
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(e);
                 clientsAvailable = false;
+            }
+        }
+    }
+
+    private void initializeSelectedProject() {
+        if (selectedProject == null) {
+            try {
+                Long databaseRows = serviceManager.getProcessService().countDatabaseRows();
+                if (databaseRows > 0L) {
+                    this.selectedProject = serviceManager.getProjectService().getById(1);
+                    this.projectsAvailable = true;
+                } else {
+                    this.projectsAvailable = false;
+                }
+            } catch (DAOException e) {
+                Helper.setFehlerMeldung(e);
+                projectsAvailable = false;
             }
         }
     }
@@ -109,6 +132,17 @@ public class BenutzergruppenForm extends BasisForm {
                 }
                 this.userGroupClientAuthorityRelationsToDelete.clear();
                 this.clientAuthoritiesChanged = false;
+            }
+
+            if (projectAuthoritiesChanged) {
+                for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelationsToDelete) {
+                    relation.setAuthority(null);
+                    relation.setProject(null);
+                    relation.setUserGroup(null);
+                    this.serviceManager.getUserGroupProjectAuthorityRelationService().remove(relation);
+                }
+                this.userGroupProjectAuthorityRelationsToDelete.clear();
+                this.projectAuthoritiesChanged = false;
             }
 
             return redirectToList();
@@ -160,7 +194,8 @@ public class BenutzergruppenForm extends BasisForm {
 
     /**
      * Method being used as viewAction for user group edit form. If 'userGroupId' is
-     * '0', the form for creating a new user group will be displayed.
+     * '0', the form for creating a new user group will be displayed. Selectable
+     * clients and projects are initialized as well.
      */
     public void loadUserGroup() {
         try {
@@ -172,6 +207,7 @@ public class BenutzergruppenForm extends BasisForm {
         }
 
         initializeSelectedClient();
+        initializeSelectedProject();
         userGroupClientAuthorityRelationsToDelete.clear();
     }
 
@@ -219,22 +255,19 @@ public class BenutzergruppenForm extends BasisForm {
      *            list of authority assigned to 'userGroup'
      */
     public void setAuthorities(DualListModel<Authority> authorities) {
-        // authorities.getTarget().removeIf(Objects::isNull);
         this.userGroup.setAuthorities(authorities.getTarget());
     }
 
     /**
      * Return the list of available authorization levels and the list of authority
-     * levels currently assigned to 'userGroup' as a combined 'DualListModel' that
-     * is used by the frontend for authority management of user groups utilizing a
-     * PrimeFaces PickList object.
+     * levels currently assigned to 'userGroup' relation to selected client as a
+     * combined 'DualListModel' that is used by the frontend for authority
+     * management of user groups utilizing a PrimeFaces PickList object.
      *
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getAuthoritiesByCurrentClient() {
-        List<Authority> assignedAuthorities = serviceManager.getUserGroupClientAuthorityRelationService()
-                .getAuthoritiesFromListByClientAndUserGroup(this.userGroup, this.selectedClient,
-                    this.userGroup.getUserGroupClientAuthorityRelations());
+        List<Authority> assignedAuthorities = this.userGroup.getAuthoritiesByClient(this.selectedClient);
         List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
         availableAuthorities.removeAll(assignedAuthorities);
         return new DualListModel<>(availableAuthorities, assignedAuthorities);
@@ -242,14 +275,14 @@ public class BenutzergruppenForm extends BasisForm {
 
     /**
      * Assign the target property of given DualListModel of authorities to
-     * 'userGroup' using a PrimeFaces PickList object.
+     * 'userGroup' in relation to selected client using a PrimeFaces PickList
+     * object.
      *
      * @param clientAuthorities
      *            list of authority assigned to 'userGroup'
      */
     public void setAuthoritiesByCurrentClient(DualListModel<Authority> clientAuthorities) {
 
-        // clientAuthorities.getTarget().removeIf(Objects::isNull);
         List<Authority> targetAuthorities = clientAuthorities.getTarget();
         List<Authority> sourceAuthorities = clientAuthorities.getSource();
 
@@ -264,7 +297,7 @@ public class BenutzergruppenForm extends BasisForm {
         this.userGroup.setUserGroupClientAuthorityRelations(userGroupClientAuthorityRelations);
     }
 
-    private UserGroupClientAuthorityRelation getRelationCopyWithId(
+    private UserGroupClientAuthorityRelation getClientRelationCopyWithId(
             List<UserGroupClientAuthorityRelation> relationsWithId, UserGroupClientAuthorityRelation relation) {
         for (UserGroupClientAuthorityRelation relationItem : relationsWithId) {
             if (relation.equals(relationItem)) {
@@ -287,8 +320,8 @@ public class BenutzergruppenForm extends BasisForm {
 
             if (this.userGroupClientAuthorityRelationsToDelete.contains(userGroupClientAuthorityRelation)) {
 
-                userGroupClientAuthorityRelations.add(
-                    getRelationCopyWithId(userGroupClientAuthorityRelationsToDelete, userGroupClientAuthorityRelation));
+                userGroupClientAuthorityRelations.add(getClientRelationCopyWithId(
+                    userGroupClientAuthorityRelationsToDelete, userGroupClientAuthorityRelation));
                 this.clientAuthoritiesChanged = true;
                 this.userGroupClientAuthorityRelationsToDelete.remove(userGroupClientAuthorityRelation);
             }
@@ -310,7 +343,7 @@ public class BenutzergruppenForm extends BasisForm {
             if (userGroupClientAuthorityRelations.contains(userGroupClientAuthorityRelation)) {
                 this.clientAuthoritiesChanged = true;
 
-                userGroupClientAuthorityRelation = getRelationCopyWithId(userGroupClientAuthorityRelations,
+                userGroupClientAuthorityRelation = getClientRelationCopyWithId(userGroupClientAuthorityRelations,
                     userGroupClientAuthorityRelation);
 
                 userGroupClientAuthorityRelations.remove(userGroupClientAuthorityRelation);
@@ -318,6 +351,101 @@ public class BenutzergruppenForm extends BasisForm {
             }
         }
         return userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Return the list of available authority levels and the list of authority
+     * levels currently assigned to 'userGroup' in relation to selected project as a
+     * combined 'DualListModel' that is used by the frontend for authority
+     * management of user groups utilizing a PrimeFaces PickList object.
+     *
+     * @return DualListModel of available and assigned authority levels
+     */
+    public DualListModel<Authority> getAuthoritiesByCurrentProject() {
+        List<Authority> assignedAuthorities = this.userGroup.getAuthoritiesByProject(this.selectedProject);
+        List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
+        availableAuthorities.removeAll(assignedAuthorities);
+        return new DualListModel<>(availableAuthorities, assignedAuthorities);
+    }
+
+    /**
+     * Assign the target property of given DualListModel of authorities to
+     * 'userGroup' in relation to selected project using a PrimeFaces PickList
+     * object.
+     *
+     * @param projectAuthorities
+     *            list of authority assigned to 'userGroup'
+     */
+    public void setAuthoritiesByCurrentProject(DualListModel<Authority> projectAuthorities) {
+
+        List<Authority> targetAuthorities = projectAuthorities.getTarget();
+        List<Authority> sourceAuthorities = projectAuthorities.getSource();
+
+        List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = this.userGroup
+                .getUserGroupProjectAuthorityRelations();
+
+        userGroupProjectAuthorityRelations = modifyProjectRelationsByPickedAuthorities(
+            userGroupProjectAuthorityRelations, targetAuthorities);
+        userGroupProjectAuthorityRelations = modifyProjectRelationsByNotPickedAuthorities(
+            userGroupProjectAuthorityRelations, sourceAuthorities);
+
+        this.userGroup.setUserGroupProjectAuthorityRelations(userGroupProjectAuthorityRelations);
+    }
+
+    private UserGroupProjectAuthorityRelation getProjectRelationCopyWithId(
+            List<UserGroupProjectAuthorityRelation> relationsWithId, UserGroupProjectAuthorityRelation relation) {
+        for (UserGroupProjectAuthorityRelation relationItem : relationsWithId) {
+            if (relation.equals(relationItem)) {
+                if (relationItem.getId() != null) {
+                    return relationItem;
+                } else {
+                    return relation;
+                }
+            }
+        }
+        return new UserGroupProjectAuthorityRelation();
+    }
+
+    private List<UserGroupProjectAuthorityRelation> modifyProjectRelationsByPickedAuthorities(
+            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
+            List<Authority> authoritiesToCheck) {
+        for (Authority authority : authoritiesToCheck) {
+            UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation(
+                    this.userGroup, this.selectedProject, authority);
+
+            if (this.userGroupProjectAuthorityRelationsToDelete.contains(userGroupProjectAuthorityRelation)) {
+
+                userGroupProjectAuthorityRelations.add(getProjectRelationCopyWithId(
+                    this.userGroupProjectAuthorityRelationsToDelete, userGroupProjectAuthorityRelation));
+                this.projectAuthoritiesChanged = true;
+                this.userGroupProjectAuthorityRelationsToDelete.remove(userGroupProjectAuthorityRelation);
+            }
+            if (!userGroupProjectAuthorityRelations.contains(userGroupProjectAuthorityRelation)) {
+                userGroupProjectAuthorityRelations.add(userGroupProjectAuthorityRelation);
+            }
+        }
+        return userGroupProjectAuthorityRelations;
+    }
+
+    private List<UserGroupProjectAuthorityRelation> modifyProjectRelationsByNotPickedAuthorities(
+            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
+            List<Authority> authoritiesToCheck) {
+
+        for (Authority authority : authoritiesToCheck) {
+            UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation(
+                    this.userGroup, this.selectedProject, authority);
+
+            if (userGroupProjectAuthorityRelations.contains(userGroupProjectAuthorityRelation)) {
+                this.projectAuthoritiesChanged = true;
+
+                userGroupProjectAuthorityRelation = getProjectRelationCopyWithId(userGroupProjectAuthorityRelations,
+                    userGroupProjectAuthorityRelation);
+
+                userGroupProjectAuthorityRelations.remove(userGroupProjectAuthorityRelation);
+                this.userGroupProjectAuthorityRelationsToDelete.add(userGroupProjectAuthorityRelation);
+            }
+        }
+        return userGroupProjectAuthorityRelations;
     }
 
     /**
@@ -341,6 +469,29 @@ public class BenutzergruppenForm extends BasisForm {
 
     public List<Client> getClients() {
         return serviceManager.getClientService().getAll();
+    }
+
+    /**
+     * Gets selectedProject.
+     *
+     * @return The selectedProject.
+     */
+    public Project getSelectedProject() {
+        return selectedProject;
+    }
+
+    /**
+     * Sets selectedProject.
+     *
+     * @param selectedProject
+     *            The selectedProject.
+     */
+    public void setSelectedProject(Project selectedProject) {
+        this.selectedProject = selectedProject;
+    }
+
+    public List<Project> getProjects() {
+        return serviceManager.getProjectService().getAll();
     }
 
     // TODO:
@@ -394,5 +545,14 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public boolean isClientsAvailable() {
         return clientsAvailable;
+    }
+
+    /**
+     * Gets clientsAvailable.
+     *
+     * @return The clientsAvailable.
+     */
+    public boolean isProjectsAvailable() {
+        return projectsAvailable;
     }
 }
