@@ -983,4 +983,15 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("Error retrieving task with ID '" + this.stepId + "'; ", e.getMessage());
         }
     }
+
+    /**
+     * Retrieve and return the list of tasks that are assigned to the user that are
+     * currently in progress.
+     *
+     * @return list of tasks that are currently assigned to the user that are
+     *         currently in progress.
+     */
+    public List<Task> getTasksInProgress() {
+        return serviceManager.getUserService().getTasksInProgress(this.user);
+    }
 }
