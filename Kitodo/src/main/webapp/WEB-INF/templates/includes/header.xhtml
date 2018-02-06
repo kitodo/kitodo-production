@@ -14,6 +14,7 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:p="http://primefaces.org/ui">
     <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
     <div class="wrapper">
@@ -35,15 +36,16 @@
                 <ul>
                     <li>
                         <!-- List: my tasks -->
+                        <c:set var="tasks" value="#{AktuelleSchritteForm.user.tasks}"/>
                         <a href="#"><i class="fa fa-bell-o fa-lg"/>
-                            <h:panelGroup rendered="#{AktuelleSchritteForm.user.tasks.size gt 0}" styleClass="batch-count bc-alert">#{AktuelleSchritteForm.user.tasks.size}</h:panelGroup>
+                            <h:panelGroup rendered="#{tasks.size() gt 0}" styleClass="batch-count bc-alert">#{tasks.size()}</h:panelGroup>
                         </a>
                         <ul>
                             <li><h3>#{msgs.aktuelleSchritte}</h3></li>
-                            <ui:repeat value="#{AktuelleSchritteForm.user.tasks}" var="task" size="#{AktuelleSchritteForm.user.tasks.size gt 3 ? 3 : AktuelleSchritteForm.user.tasks.size}">
+                            <ui:repeat value="#{tasks}" var="task" size="#{tasks.size() gt 3 ? 3 : tasks.size()}">
                                 <li><a href=""><span class="nav-item-col">#{task.title}</span><span class="nav-item-col">#{task.process.title}</span><span class="nav-item-col"><i class="fa fa-check-square-o fa-lg nc-info"/></span></a></li>
                             </ui:repeat>
-                            <li><h:link outcome="tasks" value="#{msgs.allMyTasks} (#{AktuelleSchritteForm.user.tasks.size})"/></li>
+                            <li><h:link outcome="tasks" value="#{msgs.allMyTasks} (#{tasks.size()})"/></li>
                         </ul>
                     </li>
                     <li>
