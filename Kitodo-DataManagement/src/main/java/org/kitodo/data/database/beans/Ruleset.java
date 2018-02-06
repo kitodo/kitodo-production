@@ -45,22 +45,25 @@ public class Ruleset extends BaseIndexedBean {
         this.file = file;
     }
 
+    /**
+     * Check if metadata should be ordered by ruleset.
+     * 
+     * @return true or false
+     */
     public boolean isOrderMetadataByRuleset() {
-        return isOrderMetadataByRulesetHibernate();
-    }
-
-    public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
-        this.orderMetadataByRuleset = orderMetadataByRuleset;
-    }
-
-    public Boolean isOrderMetadataByRulesetHibernate() {
         if (this.orderMetadataByRuleset == null) {
             this.orderMetadataByRuleset = false;
         }
         return this.orderMetadataByRuleset;
     }
 
-    public void setOrderMetadataByRulesetHibernate(Boolean orderMetadataByRuleset) {
+    /**
+     * Set if metadata should be ordered by ruleset.
+     * 
+     * @param orderMetadataByRuleset
+     *            true or false
+     */
+    public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
         this.orderMetadataByRuleset = orderMetadataByRuleset;
     }
 }

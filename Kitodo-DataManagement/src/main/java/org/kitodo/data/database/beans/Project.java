@@ -63,7 +63,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private String title;
 
     @Column(name = "useDmsImport")
-    private boolean useDmsImport = false;
+    private boolean useDmsImport;
 
     @Column(name = "dmsImportTimeOut")
     private Integer dmsImportTimeOut = 20000;
@@ -81,7 +81,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private String dmsImportErrorPath;
 
     @Column(name = "dmsImportCreateProcessFolder")
-    private Boolean dmsImportCreateProcessFolder = false;
+    private Boolean dmsImportCreateProcessFolder;
 
     @Column(name = "fileFormatInternal")
     private String fileFormatInternal;
@@ -253,9 +253,9 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Here different Getters and Setters for the same value, because Hibernate
-     * does not like bit-Fields with null Values (that's why Boolean) and
-     * MyFaces seams not to like Boolean (that's why boolean for the GUI).
+     * Get DMS import create process folder.
+     * 
+     * @return true or false
      */
     public boolean isDmsImportCreateProcessFolder() {
         if (this.dmsImportCreateProcessFolder == null) {
@@ -264,16 +264,14 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.dmsImportCreateProcessFolder;
     }
 
-    public void setDmsImportCreateProcessFolder(boolean inFolder) {
-        this.dmsImportCreateProcessFolder = inFolder;
-    }
-
-    public Boolean isDmsImportCreateProcessFolderHibernate() {
-        return this.dmsImportCreateProcessFolder;
-    }
-
-    public void setDmsImportCreateProcessFolderHibernate(Boolean inFolder) {
-        this.dmsImportCreateProcessFolder = inFolder;
+    /**
+     * Set DMS import create process folder.
+     * 
+     * @param dmsImportCreateProcessFolder
+     *            true or false
+     */
+    public void setDmsImportCreateProcessFolder(boolean dmsImportCreateProcessFolder) {
+        this.dmsImportCreateProcessFolder = dmsImportCreateProcessFolder;
     }
 
     public List<ProjectFileGroup> getProjectFileGroups() {
