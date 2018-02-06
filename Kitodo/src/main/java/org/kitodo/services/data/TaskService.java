@@ -19,7 +19,6 @@ import de.sub.goobi.helper.VariableReplacer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -580,21 +579,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             return task.getScriptPath();
         }
         return "";
-    }
-
-    /**
-     * Get script and its path.
-     *
-     * @param task
-     *            object
-     * @return hash map - key script name and value script path
-     */
-    public HashMap<String, String> getScript(Task task) {
-        HashMap<String, String> answer = new HashMap<>();
-        if (task.getScriptPath() != null && !task.getScriptPath().equals("")) {
-            answer.put(task.getScriptName(), task.getScriptPath());
-        }
-        return answer;
     }
 
     /**
