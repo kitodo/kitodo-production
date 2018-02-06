@@ -165,6 +165,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.process = new Process();
         this.newProcessTitle = "";
         this.editMode = ObjectMode.PROCESS;
+        setProperties(new ArrayList<>());
         return redirectToEdit("?faces-redirect=true");
     }
 
