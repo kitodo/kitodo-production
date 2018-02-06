@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,6 +30,7 @@ import javax.persistence.Table;
 @Table(name = "user")
 public class User extends BaseIndexedBean {
     private static final long serialVersionUID = -7482853955996650586L;
+    private static final int defaultSessionTimeout = 7200;
 
     @Column(name = "name")
     private String name;
@@ -58,7 +60,7 @@ public class User extends BaseIndexedBean {
     private Integer tableSize = 10;
 
     @Column(name = "sessionTimeout")
-    private Integer sessionTimeout = 7200;
+    private Integer sessionTimeout = defaultSessionTimeout;
 
     @Column(name = "configProductionDateShow")
     private boolean configProductionDateShow = false;
@@ -105,7 +107,7 @@ public class User extends BaseIndexedBean {
 
     /**
      * Copy Constructor.
-     * 
+     *
      * @param user
      *            The user.
      */
@@ -300,8 +302,17 @@ public class User extends BaseIndexedBean {
         this.ldapLogin = ldapLogin;
     }
 
+    /**
+     * Return session timeout of the user.
+     *
+     * @return sessionTimeout if it is not null or defaultSessionTimeout otherwise
+     */
     public Integer getSessionTimeout() {
-        return this.sessionTimeout;
+        if (Objects.nonNull(this.sessionTimeout)) {
+            return this.sessionTimeout;
+        } else {
+            return defaultSessionTimeout;
+        }
     }
 
     public void setSessionTimeout(Integer sessionTimeout) {
