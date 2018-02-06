@@ -14,7 +14,6 @@
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
@@ -24,7 +23,7 @@
                 <h3>#{msgs.prozessverwaltung}</h3>
                 <h:form>
                     <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
-                        <p:menuitem value="#{msgs.newProcess}" outcome="/pages/ProzessverwaltungBearbeiten" icon="ui-icon-plusthick" />
+                        <p:menuitem value="#{msgs.newProcess}" outcome="/pages/processEdit?id=0" icon="ui-icon-plusthick" />
                         <p:menuitem value="#{msgs.newBatch}" icon="ui-icon-plusthick" />
                     </p:menuButton>
                 </h:form>
