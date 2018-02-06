@@ -62,7 +62,7 @@ public class TaskScriptThread extends EmptyTask {
             }
         } else if (this.task.isTypeExportDMS()) {
             try {
-                serviceManager.getTaskService().executeDmsExport(this.task, false);
+                serviceManager.getTaskService().executeDmsExport(this.task);
             } catch (DataException e) {
                 logger.error("Data Exception occurred", e);
             } catch (ConfigurationException e) {

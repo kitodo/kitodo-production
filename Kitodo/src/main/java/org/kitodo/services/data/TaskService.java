@@ -682,8 +682,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Returns whether this is a step of a process that is part of at least one
-     * batch as read-only property "batchSize".
-     * //TODO: is it ever used?
+     * batch as read-only property "batchSize". //TODO: is it ever used?
      *
      * @return whether this step’s process is in a batch
      */
@@ -694,28 +693,24 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Execute DMS export.
      *
-     * @param step
-     *            StepObject
-     * @param automatic
-     *            boolean
+     * @param task
+     *            as Task object
      */
-    public void executeDmsExport(Task step, boolean automatic) throws DataException, ConfigurationException {
-        ConfigCore.getBooleanParameter("automaticExportWithImages", true);
-        if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
-            // TODO: check why this if is empty
-        }
-        Process po = step.getProcess();
+    public void executeDmsExport(Task task) throws DataException, ConfigurationException {
+        boolean automaticExportWithImages = ConfigCore.getBooleanParameter("automaticExportWithImages", true);
+        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter("automaticExportWithOcr", true);
+        Process process = task.getProcess();
         try {
-            boolean validate = serviceManager.getProcessService().startDmsExport(po,
-                    ConfigCore.getBooleanParameter("automaticExportWithImages", true), false);
+            boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
+                automaticExportWithOcr);
             if (validate) {
-                serviceManager.getWorkflowService().close(step);
+                serviceManager.getWorkflowService().close(task);
             } else {
-                abortTask(step);
+                abortTask(task);
             }
         } catch (PreferencesException | WriteException | IOException e) {
             logger.error(e);
-            abortTask(step);
+            abortTask(task);
         }
     }
 
@@ -766,8 +761,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (user == null) {
             return new ArrayList<>();
         }
-        List<JSONObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK,
-                user.getId(), false, sort);
+        List<JSONObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
+            sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -784,8 +779,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (user == null) {
             return new ArrayList<>();
         }
-        List<JSONObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK,
-                user.getId(), 10, false, sort);
+        List<JSONObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
+            10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
@@ -891,7 +886,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<Task> getTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
         return dao.getTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(processingStatus,
-                projectId);
+            projectId);
     }
 
     /**
@@ -906,7 +901,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<Long> getSizeOfTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
         return dao.getSizeOfTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
-                processingStatus, projectId);
+            processingStatus, projectId);
     }
 
     /**
@@ -922,6 +917,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<Long> getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(Integer processingStatus,
             Integer projectId) {
         return dao.getAmountOfImagesForTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
-                processingStatus, projectId);
+            processingStatus, projectId);
     }
 }
