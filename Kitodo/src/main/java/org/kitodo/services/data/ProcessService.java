@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.forms.ProzessverwaltungForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -46,11 +45,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -1889,24 +1888,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * DMS-Export an eine gewünschte Stelle.
+     * DMS-Export to a desired location.
      *
      * @param process
      *            object
+     * @param exportWithImages true or false
+     * @param exportFullText true or false
+     * @return true or false
      */
-
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText) throws IOException,
-            PreferencesException, org.apache.commons.configuration.ConfigurationException, WriteException {
+            PreferencesException, WriteException {
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-
         Project project = process.getProject();
-
-        ConfigProjects configProjects = new ConfigProjects(project.getTitle());
         String atsPpnBand = process.getTitle();
 
-        /*
-         * Dokument einlesen
-         */
+        // read document
         Fileformat gdzfile;
         Fileformat newfile;
         try {
@@ -1924,64 +1920,48 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             newfile.setDigitalDocument(gdzfile.getDigitalDocument());
             gdzfile = newfile;
-
         } catch (Exception e) {
             Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
             logger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
         }
 
-        String rules = ConfigCore.getParameter("copyData.onExport");
-        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
-            try {
-                new DataCopier(rules).process(new CopierData(newfile, process));
-            } catch (ConfigurationException e) {
-                Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
-                return false;
-            } catch (RuntimeException e) {
-                Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
-                return false;
-            }
+        if (!handleExceptionsForConfiguration(newfile, process)) {
+            return false;
         }
 
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
-        /*
-         * Metadaten validieren
-         */
-
+        // validate metadata
         if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
             if (!serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
                 return false;
-
             }
         }
 
-        /*
-         * Speicherort vorbereiten und downloaden
-         */
+        // prepare place for save and download
         URI targetDirectory = new File(project.getDmsImportImagesPath()).toURI();
         URI userHome = targetDirectory;
 
-        /* ggf. noch einen Vorgangsordner anlegen */
+        // if necessary, create an operation folder
         if (project.isDmsImportCreateProcessFolder()) {
             targetDirectory = userHome.resolve(File.separator + process.getTitle());
-            /* alte Import-Ordner löschen */
+            // remove old import folder
             if (!fileService.delete(userHome)) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Import folder could not be cleared");
                 return false;
             }
-            /* alte Success-Ordner löschen */
+            // remove old success folder
             File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
             if (!fileService.delete(successFile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Success folder could not be cleared");
                 return false;
             }
-            /* alte Error-Ordner löschen */
-            File errorfile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
-            if (!fileService.delete(errorfile.toURI())) {
+            // remove old error folder
+            File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
+            if (!fileService.delete(errorFile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Error folder could not be cleared");
                 return false;
@@ -1992,9 +1972,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        /*
-         * der eigentliche Download der Images
-         */
+        // download images
         try {
             if (exportWithImages) {
                 imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
@@ -2015,14 +1993,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         if (project.isUseDmsImport()) {
             if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
-                /* Wenn METS, dann per writeMetsFile schreiben... */
+                // if METS, then write by writeMetsFile...
                 writeMetsFile(process, userHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
             } else {
-                /* ...wenn nicht, nur ein Fileformat schreiben. */
+                // ...if not, just write a Fileformat
                 gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
             }
 
-            /* ggf. sollen im Export mets und rdf geschrieben werden */
+            // if necessary, METS and RDF should be written in the export
             if (MetadataFormat
                     .findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
                 writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
@@ -2031,7 +2009,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
 
             if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
-                /* Success-Ordner wieder löschen */
+                // again remove success folder
                 if (project.isDmsImportCreateProcessFolder()) {
                     File successFile = new File(
                             project.getDmsImportSuccessPath() + File.separator + process.getTitle());
@@ -2043,22 +2021,48 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Run through all metadata and children of given docstruct to trim the strings
-     * calls itself recursively.
+     * Method for avoiding redundant code for exception handling.
+     * //TODO: should this exceptions be handled that way?
+     *
+     * @param newFile as Fileformat
+     * @param process as Process object
+     * @return true if no exception appeared
      */
-    private void trimAllMetadata(DocStruct inStruct) {
-        /* trim all metadata values */
-        if (inStruct.getAllMetadata() != null) {
-            for (ugh.dl.Metadata md : inStruct.getAllMetadata()) {
+    public boolean handleExceptionsForConfiguration(Fileformat newFile, Process process) {
+        String rules = ConfigCore.getParameter("copyData.onExport");
+        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+            try {
+                new DataCopier(rules).process(new CopierData(newFile, process));
+            } catch (ConfigurationException e) {
+                Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+                return false;
+            } catch (RuntimeException e) {
+                Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Run through all metadata and children of given docStruct to trim the strings
+     * calls itself recursively.
+     *
+     * @param docStruct metadata to be trimmed
+     */
+    private void trimAllMetadata(DocStruct docStruct) {
+        // trim all metadata values
+        if (docStruct.getAllMetadata() != null) {
+            for (ugh.dl.Metadata md : docStruct.getAllMetadata()) {
                 if (md.getValue() != null) {
                     md.setValue(md.getValue().trim());
                 }
             }
         }
 
-        /* run through all children of docstruct */
-        if (inStruct.getAllChildren() != null) {
-            for (DocStruct child : inStruct.getAllChildren()) {
+        // run through all children of docStruct
+        if (docStruct.getAllChildren() != null) {
+            for (DocStruct child : docStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }
