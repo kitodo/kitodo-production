@@ -57,11 +57,11 @@ import org.hibernate.LazyInitializationException;
  * <li>Requests wait a maximum of 5 seconds, which can be overridden per URI
  * pattern in the filter's configuration.</li>
  * </ul>
- * 
+ *
  * @author Kevin Chipalowsky and Ivelin Ivanov
  */
 @WebFilter(filterName = "RequestControlFilter", urlPatterns = "*.jsf", initParams = {
-        @WebInitParam(name = "excludePattern", value = ".*\\.(js|css)\\.jsf") })
+        @WebInitParam(name = "excludePattern", value = ".*\\.(js|css|svg)\\.jsf") })
 public class RequestControlFilter implements Filter {
 
     /**
