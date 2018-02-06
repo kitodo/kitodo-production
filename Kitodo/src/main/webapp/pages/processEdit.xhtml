@@ -46,16 +46,12 @@
                     <p:tab title="#{msgs.arbeitsschritte}" id="taskOrder">
                         <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml"/>
                     </p:tab>
-                    <ui:fragment rendered="#{ProzessverwaltungForm.process.templatesSize ne 0}">
-                        <p:tab title="#{msgs.prozessvorlagen}" id="processTemplates">
-                            <ui:include src="/WEB-INF/templates/includes/processEdit/templateList.xhtml"/>
-                        </p:tab>
-                    </ui:fragment>
-                    <ui:fragment rendered="#{ProzessverwaltungForm.process.workpiecesSize ne 0}">
-                        <p:tab title="#{msgs.werkstuecke}" id="workpieces">
-                            <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml"/>
-                        </p:tab>
-                    </ui:fragment>
+                    <p:tab title="#{msgs.prozessvorlagen}" id="processTemplates">
+                        <ui:include src="/WEB-INF/templates/includes/processEdit/templateList.xhtml"/>
+                    </p:tab>
+                    <p:tab title="#{msgs.werkstuecke}" id="workpieces">
+                        <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml"/>
+                    </p:tab>
                     <p:tab title="#{msgs.eigenschaften}" id="properties">
                         <ui:include src="/WEB-INF/templates/includes/processEdit/propertyList.xhtml"/>
                     </p:tab>
@@ -65,6 +61,8 @@
     </ui:define>
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/processEdit/propertyEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processEdit/templateEditPopup.xhtml"/>
     </ui:define>
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
