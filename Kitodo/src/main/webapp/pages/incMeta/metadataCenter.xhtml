@@ -18,10 +18,8 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:p="http://primefaces.org/ui">
-
     <p:growl id="growl" showDetail="true"/>
-
-    <p:tabView id="tabView" style="height: 99%">
+    <p:tabView id="tabView">
         <p:tab title="#{msgs.paginierung}">
             <ui:include src="pagination.xhtml"/>
         </p:tab>
@@ -32,5 +30,4 @@
             <ui:include src="metadata.xhtml"/>
         </p:tab>
     </p:tabView>
-
 </ui:composition>

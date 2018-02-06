@@ -62,13 +62,13 @@
 
                 <p:column style="width:64px;text-align: center">
                     <p:commandButton update="tabView:metadata:personTable,tabView:metadata:messagesMetadata"
-                                     icon="ui-icon-copy" immediate="true" id="copyPersonBtn"
+                                     icon="fa fa-clipboard" immediate="true" id="copyPersonBtn"
                                      title="#{msgs.personendatenKopieren}" action="#{Metadaten.copyPerson}">
                         <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
                     </p:commandButton>
 
                     <p:commandButton update="tabView:metadata" id="deletePersonBtn"
-                                     icon="ui-icon-trash" immediate="true"
+                                     icon="fa fa-trash" immediate="true"
                                      title="#{msgs.personendatenLoeschen}" action="#{Metadaten.deletePerson}">
                         <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
                     </p:commandButton>
@@ -96,13 +96,13 @@
             <p:column style="width:64px;text-align: center">
 
                 <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata"
-                                 icon="ui-icon-copy" immediate="true"
+                                 icon="fa fa-clipboard" immediate="true"
                                  title="#{msgs.metadatenKopieren}" action="#{Metadaten.copy}">
                     <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                 </p:commandButton>
 
                 <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata"
-                                 icon="ui-icon-trash" immediate="true"
+                                 icon="fa fa-trash" immediate="true"
                                  title="#{msgs.metadatenLoeschen}" action="#{Metadaten.delete}">
                     <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                 </p:commandButton>
@@ -126,14 +126,14 @@
                 </p:column>
 
                 <p:column style="width:64px;text-align: center">
-                    <p:commandButton update="tabView:metadata:metadataTable" icon="ui-icon-plus"
+                    <p:commandButton update="tabView:metadata:metadataTable" icon="fa fa-plus"
                                      title="#{msgs.neueMetadatenHinzufuegen}" action="#{Metadaten.save}">
                     </p:commandButton>
                 </p:column>
             </p:row>
         </p:panelGrid>
 
-        <p:commandButton icon="ui-icon-plus" value="#{msgs.neuePersonAnlegen}"
+        <p:commandButton icon="fa fa-plus" value="#{msgs.neuePersonAnlegen}"
                          update="tabView:dialogAddPersonForm:selectTempPersonRoll, tabView:dialogAddPersonForm:addPersonRecord"
                          title="#{msgs.docstructTypeAendern}"
                          action="#{Metadaten.addPerson}"
