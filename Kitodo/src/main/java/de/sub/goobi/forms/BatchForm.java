@@ -123,7 +123,7 @@ public class BatchForm extends BasisForm {
                 logger.error(e);
             }
         } else {
-            query = serviceManager.getProcessService().getQueryTemplate(false);
+            query = serviceManager.getTemplateService().getQueryTemplate(false);
         }
 
         Integer batchMaxSize = ConfigCore.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);

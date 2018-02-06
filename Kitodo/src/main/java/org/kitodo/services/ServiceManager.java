@@ -26,6 +26,7 @@ import org.kitodo.services.data.ProjectService;
 import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
+import org.kitodo.services.data.TemplateService;
 import org.kitodo.services.data.UserGroupClientAuthorityRelationService;
 import org.kitodo.services.data.UserGroupProjectAuthorityRelationService;
 import org.kitodo.services.data.UserGroupService;
@@ -54,6 +55,7 @@ public class ServiceManager {
     private ProjectService projectService;
     private RulesetService rulesetService;
     private TaskService taskService;
+    private TemplateService templateService;
     private UserGroupService userGroupService;
     private UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService;
     private UserGroupProjectAuthorityRelationService userGroupProjectAuthorityRelationService;
@@ -154,6 +156,12 @@ public class ServiceManager {
     private void initializeTaskService() {
         if (taskService == null) {
             taskService = TaskService.getInstance();
+        }
+    }
+
+    private void initializeTemplateService() {
+        if (templateService == null) {
+            templateService = TemplateService.getInstance();
         }
     }
 
@@ -380,6 +388,16 @@ public class ServiceManager {
     public TaskService getTaskService() {
         initializeTaskService();
         return taskService;
+    }
+
+    /**
+     * Initialize TemplateService if it is not yet initialized and next return it.
+     *
+     * @return TemplateService object
+     */
+    public TemplateService getTemplateService() {
+        initializeTemplateService();
+        return templateService;
     }
 
     /**

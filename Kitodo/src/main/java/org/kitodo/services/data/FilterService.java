@@ -224,7 +224,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         // this is needed for the template filter (true) and the undefined
         // processes filter (false) in any other case it needs to be null
         if (template != null) {
-            processQuery.must(serviceManager.getProcessService().getQueryTemplate(template));
+            processQuery.must(serviceManager.getTemplateService().getQueryTemplate(template));
         }
         return processQuery;
     }
@@ -240,7 +240,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             if (!template) {
                 processDTOS = serviceManager.getProcessService().findAllWithoutTemplates(null);
             } else {
-                processDTOS = serviceManager.getProcessService().findAllTemplates(null);
+                processDTOS = serviceManager.getTemplateService().findAllTemplates(null);
             }
             taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
         }

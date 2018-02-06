@@ -556,7 +556,7 @@ public class ProzessverwaltungForm extends BasisForm {
             if (!this.showArchivedProjects) {
                 processDTOS = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
             } else {
-                processDTOS = serviceManager.getProcessService().findAllTemplates(sortList());
+                processDTOS = serviceManager.getTemplateService().findAllTemplates(sortList());
             }
         }
     }

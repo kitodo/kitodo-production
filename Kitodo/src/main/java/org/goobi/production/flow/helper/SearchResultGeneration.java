@@ -72,7 +72,7 @@ public class SearchResultGeneration {
         } catch (DataException e) {
             logger.error(e);
         }
-        query.must(serviceManager.getProcessService().getQueryTemplate(false));
+        query.must(serviceManager.getTemplateService().getQueryTemplate(false));
 
         if (!this.showClosedProcesses) {
             query.mustNot(serviceManager.getProcessService().getQuerySortHelperStatus(true));
