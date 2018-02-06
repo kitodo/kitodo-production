@@ -33,12 +33,25 @@ public class UserGroupClientAuthorityRelation extends BaseBean {
     @JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_client_x_authority_authority_id"))
     private Authority authority;
 
+    /**
+     * Constructor for setting all values.
+     * 
+     * @param userGroup
+     *            The user group.
+     * @param client
+     *            The client.
+     * @param authority
+     *            The Authoritie.
+     */
     public UserGroupClientAuthorityRelation(UserGroup userGroup, Client client, Authority authority) {
         this.userGroup = userGroup;
         this.client = client;
         this.authority = authority;
     }
 
+    /**
+     * Standard Constructor.
+     */
     public UserGroupClientAuthorityRelation() {
     }
 
@@ -101,17 +114,21 @@ public class UserGroupClientAuthorityRelation extends BaseBean {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         UserGroupClientAuthorityRelation that = (UserGroupClientAuthorityRelation) o;
 
-        if (userGroup != null ? !userGroup.equals(that.userGroup) : that.userGroup != null)
+        if (userGroup != null ? !userGroup.equals(that.userGroup) : that.userGroup != null) {
             return false;
-        if (client != null ? !client.equals(that.client) : that.client != null)
+        }
+        if (client != null ? !client.equals(that.client) : that.client != null) {
             return false;
+        }
         return authority != null ? authority.equals(that.authority) : that.authority == null;
     }
 
