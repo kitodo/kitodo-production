@@ -131,6 +131,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         JSONObject rulesetJSONObject = getSource(jsonObject);
         rulesetDTO.setTitle(getStringPropertyForDTO(rulesetJSONObject, "title"));
         rulesetDTO.setFile(getStringPropertyForDTO(rulesetJSONObject, "file"));
+        rulesetDTO.setOrderMetadataByRuleset(getBooleanPropertyForDTO(rulesetJSONObject, "orderMetadataByRuleset"));
         return rulesetDTO;
     }
 
