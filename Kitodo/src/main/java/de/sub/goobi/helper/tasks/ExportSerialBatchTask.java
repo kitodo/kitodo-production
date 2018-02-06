@@ -13,7 +13,6 @@ package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
@@ -157,7 +156,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     ExportDms exporter = new ExportDms(
                             ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
-                    exporter.startExport(process, LoginForm.getCurrentUserHomeDir(), out);
+                    exporter.startExport(process, serviceManager.getUserService().getHomeDirectory(Helper.getCurrentUser()), out);
                     stepcounter++;
                     setProgress(100 * stepcounter / maxsize);
                 }

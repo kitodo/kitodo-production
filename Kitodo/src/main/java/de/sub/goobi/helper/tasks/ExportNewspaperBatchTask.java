@@ -13,7 +13,6 @@ package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -233,7 +232,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
                     new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true))
-                            .startExport(process, LoginForm.getCurrentUserHomeDir(), extendedData.getDigitalDocument());
+                            .startExport(process, serviceManager.getUserService().getHomeDirectory(Helper.getCurrentUser()),
+                                    extendedData.getDigitalDocument());
                     setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
                 }
             }

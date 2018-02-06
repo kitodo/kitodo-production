@@ -220,25 +220,6 @@ public class LoginForm implements Serializable {
     }
 
     /**
-     * The function getUserHomeDir() returns the home directory of the currently
-     * logged in user, if any, or the empty string otherwise.
-     *
-     * @return the home directory of the current user.
-     * @throws IOException
-     *             if an I/O error occurs.
-     */
-    public static URI getCurrentUserHomeDir() throws IOException {
-        URI result = null;
-        ServiceManager serviceManager = new ServiceManager();
-        // TODO: change this method to nonstatic
-        LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (loginForm != null) {
-            result = serviceManager.getUserService().getHomeDirectory(loginForm.getMyBenutzer());
-        }
-        return result;
-    }
-
-    /**
      * Checks and returns whether this is the first time the user visits a Kitodo
      * page in the current session or not. Makes use of the fact that "LoginForm" is
      * a SessionScoped bean.
