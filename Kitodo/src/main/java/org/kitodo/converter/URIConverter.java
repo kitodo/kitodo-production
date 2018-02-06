@@ -9,10 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.converter;
+package org.kitodo.converter;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;

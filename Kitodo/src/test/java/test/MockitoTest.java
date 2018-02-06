@@ -15,8 +15,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-import de.sub.goobi.converter.ProcessConverter;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +22,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kitodo.converter.ProcessConverter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.data.ProcessService;
 import org.mockito.Mock;

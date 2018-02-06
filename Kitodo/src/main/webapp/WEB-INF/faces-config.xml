@@ -32,60 +32,60 @@
     <!-- URI Converter for Select-Boxes -->
     <converter>
         <converter-id>URIConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.URIConverter</converter-class>
+        <converter-class>org.kitodo.converter.URIConverter</converter-class>
     </converter>
 
     <!-- RuleSet Converter for Select-Boxes -->
     <converter>
         <converter-id>RegelsatzConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.RegelsatzConverter</converter-class>
+        <converter-class>org.kitodo.converter.RegelsatzConverter</converter-class>
     </converter>
 
     <!-- Docket Converter for Select-Boxes -->
     <converter>
         <converter-id>DocketConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.DocketConverter</converter-class>
+        <converter-class>org.kitodo.converter.DocketConverter</converter-class>
     </converter>
 
     <!-- Process Converter for Select-Boxes -->
     <converter>
         <converter-id>ProcessConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.ProcessConverter</converter-class>
+        <converter-class>org.kitodo.converter.ProcessConverter</converter-class>
     </converter>
     <!-- StatisticsTimeUnitConverter for Select-Boxes -->
     <converter>
         <converter-id>StatisticsTimeUnitConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.StatisticsTimeUnitConverter</converter-class>
+        <converter-class>org.kitodo.converter.StatisticsTimeUnitConverter</converter-class>
     </converter>
 
     <!-- StatisticResultOutputConverter for Select-Boxes -->
     <converter>
         <converter-id>StatisticsResultOutputConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.StatisticsResultOutputConverter</converter-class>
+        <converter-class>org.kitodo.converter.StatisticsResultOutputConverter</converter-class>
     </converter>
 
     <!-- StatisticCalculationUnitConverter for Select-Boxes -->
     <converter>
         <converter-id>StatisticsCalculationUnitConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.StatisticsCalculationUnitConverter</converter-class>
+        <converter-class>org.kitodo.converter.StatisticsCalculationUnitConverter</converter-class>
     </converter>
 
     <!-- AuthorityConverter -->
     <converter>
         <converter-id>AuthorityConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.AuthorityConverter</converter-class>
+        <converter-class>org.kitodo.converter.AuthorityConverter</converter-class>
     </converter>
 
     <!-- ClientConverter -->
     <converter>
         <converter-id>ClientConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.ClientConverter</converter-class>
+        <converter-class>org.kitodo.converter.ClientConverter</converter-class>
     </converter>
 
     <!-- ProjectConverter -->
     <converter>
         <converter-id>ProjectConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.ProjectConverter</converter-class>
+        <converter-class>org.kitodo.converter.ProjectConverter</converter-class>
     </converter>
 
 </faces-config>
