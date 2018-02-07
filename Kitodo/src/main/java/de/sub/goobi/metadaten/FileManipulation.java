@@ -339,16 +339,12 @@ public class FileManipulation {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            InputStream in = null;
-            ServletOutputStream out = null;
-            try {
+            try (InputStream in = fileService.read(downloadFile); ServletOutputStream out = response.getOutputStream()) {
                 String fileName = fileService.getFileName(downloadFile);
                 ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
                 String contentType = servletContext.getMimeType(fileName);
                 response.setContentType(contentType);
                 response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-                in = fileService.read(downloadFile);
-                out = response.getOutputStream();
                 byte[] buffer = new byte[4096];
                 int length;
                 while ((length = in.read(buffer)) != -1) {
@@ -357,26 +353,10 @@ public class FileManipulation {
                 out.flush();
             } catch (IOException e) {
                 logger.error("IOException while exporting run note", e);
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        logger.error(e);
-                    }
-                }
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        logger.error(e);
-                    }
-                }
             }
 
             facesContext.responseComplete();
         }
-
     }
 
     /**
@@ -468,11 +448,11 @@ public class FileManipulation {
     }
 
     /**
-     * import files from folder.
+     * Import files from folder.
      *
+     * @return URI list of import folders
      */
     public List<URI> getAllImportFolder() {
-
         URI tempDirectory = new File(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toURI();
         URI fileuploadFolder = tempDirectory.resolve("fileupload");
 
