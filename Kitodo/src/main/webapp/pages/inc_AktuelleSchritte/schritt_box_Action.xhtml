@@ -37,15 +37,15 @@
 
                             <!-- Import-Upload -->
                             <h:panelGroup>
-                                <h:panelGroup rendered="#{Import.importMeldung !=''}">
-                                    <h:outputText value="#{Import.importMeldung}"
+                                <h:panelGroup rendered="#{Import.importMessage !=''}">
+                                    <h:outputText value="#{Import.importMessage}"
                                                   style="color: blue;"/>
                                     <br/>
                                     <br/>
                                 </h:panelGroup>
 
-                                <h:panelGroup rendered="#{Import.importFehler !=''}">
-                                    <h:outputText value="#{Import.importFehler}" style="color: red;"
+                                <h:panelGroup rendered="#{Import.importError !=''}">
+                                    <h:outputText value="#{Import.importError}" style="color: red;"
                                                   escape="false"/>
                                     <br/>
                                     <br/>
@@ -53,11 +53,11 @@
 
                                 <h:form enctype="multipart/form-data" id="formupload">
                                     <t:inputFileUpload id="fileupload" accept="image/*"
-                                                       value="#{Import.upDatei}" storage="file"
+                                                       value="#{Import.uploadedFile}" storage="file"
                                                        styleClass="fileUploadInput" required="false"/>
                                     <h:commandButton value="#{msgs.metadatenImportieren}" id="button1"
                                                      action="#{Import.start}">
-                                        <t:updateActionListener property="#{Import.mySchritt}"
+                                        <t:updateActionListener property="#{Import.task}"
                                                                 value="#{AktuelleSchritteForm.mySchritt}"/>
                                     </h:commandButton>
                                 </h:form>

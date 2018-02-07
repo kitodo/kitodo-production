@@ -51,16 +51,13 @@ import ugh.fileformats.mets.XStream;
  */
 public class ImportZentralblatt {
     private static final Logger logger = LogManager.getLogger(ImportZentralblatt.class);
-    private String separator;
-    private final Helper help;
     private Prefs myPrefs;
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Allgemeiner Konstruktor ().
+     * Constructor.
      */
     public ImportZentralblatt() {
-        this.help = new Helper();
     }
 
     /**
@@ -68,24 +65,21 @@ public class ImportZentralblatt {
      *
      * @param reader
      *            BufferedReader object
-     * @param inProzess
+     * @param process
      *            Process object
      */
-    protected void parse(BufferedReader reader, Process inProzess)
+    protected void parse(BufferedReader reader, Process process)
             throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
         logger.debug("ParsenZentralblatt() - start");
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
-        String prozessID = String.valueOf(inProzess.getId().intValue());
-        String line;
-        this.separator = ":";
-        boolean istAbsatz = false;
-        boolean istErsterTitel = true;
-        LinkedList<DocStruct> listArtikel = new LinkedList<>();
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        String processId = String.valueOf(process.getId().intValue());
+        String separator = ":";
+        boolean isParagraph = false;
+        boolean isFirstTitle = true;
+        LinkedList<DocStruct> listArticle = new LinkedList<>();
 
-        /*
-         * Vorbereitung der Dokumentenstruktur
-         */
+        // preparation of the document structure
         DigitalDocument dd = new DigitalDocument();
         DocStructType dst = this.myPrefs.getDocStrctTypeByName("Periodical");
         DocStruct dsPeriodical = dd.createDocStruct(dst);
@@ -93,108 +87,81 @@ public class ImportZentralblatt {
         DocStruct dsPeriodicalVolume = dd.createDocStruct(dst);
         dsPeriodical.addChild(dsPeriodicalVolume);
 
-        /*
-         * alle Zeilen durchlaufen
-         */
+        String line;
+
+        // go through all lines
         while ((line = reader.readLine()) != null) {
-            // logger.debug(line);
-
-            /*
-             * wenn die Zeile leer ist, ist es das Ende eines Absatzes
-             */
+            // if the line is empty, it is the end of a paragraph
             if (line.length() == 0) {
-                istAbsatz = false;
-                /* wenn die Zeile nicht leer ist, den Inhalt prüfen */
+                isParagraph = false;
             } else {
-
-                /* prüfen ob der String korrekte xml-Zeichen enthält */
+                // check if the string contains correct xml characters
                 String xmlTauglich = checkXmlSuitability(line);
                 if (xmlTauglich.length() > 0) {
                     throw new WrongImportFileException("Parsingfehler (nicht druckbares Zeichen) der Importdatei "
                             + "in der Zeile <br/>" + xmlTauglich);
                 }
 
-                /*
-                 * wenn es gerade ein neuer Absatz ist, diesen als neuen Artikel
-                 * in die Liste übernehmen
-                 */
-                if (!istAbsatz) {
+                // if it is a new paragraph, add it as a new article in the list
+                if (!isParagraph) {
                     DocStructType dstLocal = this.myPrefs.getDocStrctTypeByName("Article");
                     DocStruct ds = dd.createDocStruct(dstLocal);
-                    listArtikel.add(ds);
-                    // logger.debug("--------------- neuer Artikel
-                    // ----------------");
-                    istAbsatz = true;
-                    istErsterTitel = true;
+                    listArticle.add(ds);
+                    isParagraph = true;
+                    isFirstTitle = true;
                 }
 
-                /* Position des Trennzeichens ermitteln */
-                int posTrennzeichen = line.indexOf(this.separator);
-                /* wenn kein Trennzeichen vorhanden, Parsingfehler */
-                if (posTrennzeichen == -1) {
+                // determine the position of the separator
+                int separatorPosition = line.indexOf(separator);
+                // if there is no separator throw parse error
+                if (separatorPosition == -1) {
                     logger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"
                             + maskHtmlTags(line));
                     throw new WrongImportFileException("Parsingfehler (kein Doppelpunkt) der Importdatei in "
                             + "der Zeile <br/>" + maskHtmlTags(line));
                 } else {
-                    String myLeft = line.substring(0, posTrennzeichen).trim();
-                    String myRight = line.substring(posTrennzeichen + 1, line.length()).trim();
-                    parseArticle(listArtikel.getLast(), myLeft, myRight, istErsterTitel);
+                    String left = line.substring(0, separatorPosition).trim();
+                    String right = line.substring(separatorPosition + 1, line.length()).trim();
+                    parseArticle(listArticle.getLast(), left, right, isFirstTitle);
 
-                    /*
-                     * wenn es ein Titel war, ist der nächste nicht mehr der
-                     * erste Titel
-                     */
-                    if (myLeft.equals("TI")) {
-                        istErsterTitel = false;
+                    // if it was a title, the next one is no longer the first title
+                    if (left.equals("TI")) {
+                        isFirstTitle = false;
+                    }
+
+                    // if it is just the journal name, call the magazine
+                    if (left.equals("J")) {
+                        parseGeneral(dsPeriodical, left, right);
+                    }
+
+                    // if it is just a year, then for the current band
+                    if (left.equals("Y")) {
+                        parseGeneral(dsPeriodicalVolume, left, right);
+                    }
+
+                    // if it is just a year, then for the current band
+                    if (left.equals("V")) {
+                        parseGeneral(dsPeriodicalVolume, left, right);
                     }
 
                     /*
-                     * wenn es gerade der Zeitschriftenname ist, die Zeitschrift
-                     * benennen
+                     * wenn es gerade die Heftnummer ist, dann jetzt dem richtigen Heft zuordnen und
+                     * dieses ggf. noch vorher anlegen
                      */
-                    if (myLeft.equals("J")) {
-                        parseGeneral(dsPeriodical, myLeft, myRight);
-                    }
-
-                    /*
-                     * wenn es gerade eine Jahresangabe ist, dann für den
-                     * aktuellen Band
-                     */
-                    if (myLeft.equals("Y")) {
-                        parseGeneral(dsPeriodicalVolume, myLeft, myRight);
-                    }
-
-                    /*
-                     * wenn es gerade eine Jahresangabe ist, dann für den
-                     * aktuellen Band
-                     */
-                    if (myLeft.equals("V")) {
-                        parseGeneral(dsPeriodicalVolume, myLeft, myRight);
-                    }
-
-                    /*
-                     * wenn es gerade die Heftnummer ist, dann jetzt dem
-                     * richtigen Heft zuordnen und dieses ggf. noch vorher
-                     * anlegen
-                     */
-                    if (myLeft.equals("I")) {
-                        DocStruct dsPeriodicalIssue = parsenIssueAssignment(dsPeriodicalVolume, myRight, dd);
-                        dsPeriodicalIssue.addChild(listArtikel.getLast());
+                    if (left.equals("I")) {
+                        DocStruct dsPeriodicalIssue = parseIssueAssignment(dsPeriodicalVolume, right, dd);
+                        dsPeriodicalIssue.addChild(listArticle.getLast());
                     }
                 }
             }
         }
 
-        /*
-         * physischer Baum (Seiten)
-         */
+        // physical tree (pages)
         dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
         DocStruct dsBoundBook = dd.createDocStruct(dst);
 
-        /*
-         * jetzt die Gesamtstruktur bauen und in xml schreiben
-         */
+        // now build the structure and write in xml
+
         // DigitalDocument dd = new DigitalDocument();
         dd.setLogicalDocStruct(dsPeriodical);
         dd.setPhysicalDocStruct(dsBoundBook);
@@ -202,10 +169,8 @@ public class ImportZentralblatt {
             Fileformat gdzfile = new XStream(this.myPrefs);
             gdzfile.setDigitalDocument(dd);
 
-            /*
-             * Datei am richtigen Ort speichern
-             */
-            gdzfile.write(ConfigCore.getKitodoDataDirectory() + prozessID + File.separator + "meta.xml");
+            // save file in the right place
+            gdzfile.write(ConfigCore.getKitodoDataDirectory() + processId + File.separator + "meta.xml");
         } catch (PreferencesException e) {
             Helper.setFehlerMeldung("Import aborted: ", e.getMessage());
             logger.error(e);
@@ -214,23 +179,23 @@ public class ImportZentralblatt {
     }
 
     private String checkXmlSuitability(String text) {
-        int laenge = text.length();
-        String rueckgabe = "";
-        for (int i = 0; i < laenge; i++) {
+        int length = text.length();
+        String result = "";
+        for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
 
             if (!isValidXMLChar(c)) {
-                rueckgabe = maskHtmlTags(text.substring(0, i)) + "<span class=\"parsingfehler\">" + c + "</span>";
-                if (laenge > i) {
-                    rueckgabe += maskHtmlTags(text.substring(i + 1, laenge));
+                result = maskHtmlTags(text.substring(0, i)) + "<span class=\"parsingfehler\">" + c + "</span>";
+                if (length > i) {
+                    result += maskHtmlTags(text.substring(i + 1, length));
                 }
                 break;
             }
         }
-        return rueckgabe;
+        return result;
     }
 
-    private static final boolean isValidXMLChar(char c) {
+    private static boolean isValidXMLChar(char c) {
         switch (c) {
             case 0x9:
             case 0xa: // line feed, '\n'
@@ -246,41 +211,42 @@ public class ImportZentralblatt {
     }
 
     /**
-     * Funktion für das Ermitteln des richtigen Heftes für einen Artikel Liegt
-     * das Heft noch nicht in dem Volume vor, wird es angelegt. Als Rückgabe
-     * kommt das Heft als DocStruct
+     * Funktion für das Ermitteln des richtigen Heftes für einen Artikel Liegt das
+     * Heft noch nicht in dem Volume vor, wird es angelegt. Als Rückgabe kommt das
+     * Heft als DocStruct
      *
      * @param dsPeriodicalVolume
      *            DocStruct object
-     * @param myRight
+     * @param right
      *            String
      * @return DocStruct of periodical
      */
-    private DocStruct parsenIssueAssignment(DocStruct dsPeriodicalVolume, String myRight,
+    private DocStruct parseIssueAssignment(DocStruct dsPeriodicalVolume, String right,
             DigitalDocument inDigitalDocument)
             throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
         DocStructType dst;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
         DocStruct dsPeriodicalIssue = null;
-        /* erstmal prüfen, ob das Heft schon existiert */
+        // first check if the booklet already exists
         List<DocStruct> myList = dsPeriodicalVolume.getAllChildrenByTypeAndMetadataType("PeriodicalIssue", "CurrentNo");
         if (myList != null && myList.size() != 0) {
             for (DocStruct dsIntern : myList) {
                 // logger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
                 Metadata metadata = dsIntern.getAllMetadataByType(mdt).get(0);
                 // logger.debug("und der Wert ist: " + myMD1.getValue());
-                if (metadata.getValue().equals(myRight)) {
+                if (metadata.getValue().equals(right)) {
                     dsPeriodicalIssue = dsIntern;
                 }
             }
         }
-        /* wenn das Heft nicht gefunden werden konnte, jetzt anlegen */
+        // if the booklet could not be found, create it now
         if (dsPeriodicalIssue == null) {
             dst = this.myPrefs.getDocStrctTypeByName("PeriodicalIssue");
             dsPeriodicalIssue = inDigitalDocument.createDocStruct(dst);
             Metadata myMD = new Metadata(mdt);
+            // TODO: should this be set?
             // myMD.setType(mdt);
-            myMD.setValue(myRight);
+            myMD.setValue(right);
             dsPeriodicalIssue.addMetadata(myMD);
             dsPeriodicalVolume.addChild(dsPeriodicalIssue);
         }
@@ -290,12 +256,9 @@ public class ImportZentralblatt {
     /**
      * General parsing.
      */
-    private void parseGeneral(DocStruct inStruct, String myLeft, String myRight)
+    private void parseGeneral(DocStruct inStruct, String left, String right)
             throws WrongImportFileException, MetadataTypeNotAllowedException {
 
-        // logger.debug(myLeft);
-        // logger.debug(myRight);
-        // logger.debug("---");
         Metadata md;
         MetadataType mdt;
 
@@ -304,86 +267,58 @@ public class ImportZentralblatt {
         // I: Heft
         // Y: Jahrgang
 
-        /*
-         * Zeitschriftenname
-         */
-        if (myLeft.equals("J")) {
+        // Zeitschriftenname
+        if (left.equals("J")) {
             mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
-            List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
-            /* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
+            List<? extends Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            // if no journal name has been assigned yet, then assign now
             if (myList.size() == 0) {
                 md = new Metadata(mdt);
                 // md.setType(mdt);
-                md.setValue(myRight);
+                md.setValue(right);
                 inStruct.addMetadata(md);
             } else {
-                /*
-                 * wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser
-                 * genauso lautet
-                 */
+                // a journal name has already been assigned, check if this is the same
                 md = myList.get(0);
-                if (!myRight.equals(md.getValue())) {
+                if (!right.equals(md.getValue())) {
                     throw new WrongImportFileException("Parsingfehler: verschiedene Zeitschriftennamen in der Datei ('"
-                            + md.getValue() + "' & '" + myRight + "')");
+                            + md.getValue() + "' & '" + right + "')");
                 }
             }
             return;
         }
 
-        /*
-         * Jahrgang
-         */
-        if (myLeft.equals("Y")) {
+        // Jahrgang
+        if (left.equals("Y")) {
             mdt = this.myPrefs.getMetadataTypeByName("PublicationYear");
-            List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends Metadata> list = inStruct.getAllMetadataByType(mdt);
 
-            /* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
-            if (myList.size() == 0) {
+            // if no journal name has been assigned yet, then assign now
+            if (list.size() == 0) {
                 md = new Metadata(mdt);
                 // md.setType(mdt);
-                md.setValue(myRight);
+                md.setValue(right);
                 inStruct.addMetadata(md);
-            } else {
-
-                /*
-                 * wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser
-                 * genauso lautet
-                 */
-                /*
-                 * da Frau Jansch ständig Importprobleme mit jahrübergreifenden
-                 * Bänden hat, jetzt mal auskommentiert
-                 */
-                // md = myList.get(0);
-                // if (!myRight.equals(md.getValue()))
-                // throw new WrongImportFileException("Parsingfehler:
-                // verschiedene Jahresangaben in der Datei ('"
-                // + md.getValue() + "' & '" + myRight + "')");
             }
             return;
         }
 
-        /*
-         * Bandnummer
-         */
-        if (myLeft.equals("V")) {
+        // Bandnummer
+        if (left.equals("V")) {
             mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
-            List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
+            List<? extends Metadata> list = inStruct.getAllMetadataByType(mdt);
 
-            /* wenn noch keine Bandnummer vergeben wurde, dann jetzt */
-            if (myList.size() == 0) {
+            // if no band number has been assigned yet, then assign now
+            if (list.size() == 0) {
                 md = new Metadata(mdt);
-                md.setValue(myRight);
+                md.setValue(right);
                 inStruct.addMetadata(md);
             } else {
-
-                /*
-                 * wurde schon eine Bandnummer vergeben, prüfen, ob dieser
-                 * genauso lautet
-                 */
-                md = myList.get(0);
-                if (!myRight.equals(md.getValue())) {
+                // a band number has already been assigned, check if this is the same
+                md = list.get(0);
+                if (!right.equals(md.getValue())) {
                     throw new WrongImportFileException("Parsingfehler: verschiedene Bandangaben in der Datei ('"
-                            + md.getValue() + "' & '" + myRight + "')");
+                            + md.getValue() + "' & '" + right + "')");
                 }
             }
         }
@@ -391,12 +326,19 @@ public class ImportZentralblatt {
 
     /**
      * Parse article.
+     *
+     * @param docStruct
+     *            article
+     * @param left
+     *            String
+     * @param right
+     *            String
+     * @param isFirstTitle
+     *            true or false
      */
-    private void parseArticle(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel)
+    private void parseArticle(DocStruct docStruct, String left, String right, boolean isFirstTitle)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
-        // logger.debug(myLeft);
-        // logger.debug(myRight);
-        // logger.debug("---");
+
         Metadata md;
         MetadataType mdt;
 
@@ -410,159 +352,132 @@ public class ImportZentralblatt {
         // AB: Abstract-Review
         // DE: Vorlaeufige AN-Nummer (eher fuer uns intern)
         // SI: Quellenangabe für Rezension im Zentralblatt
-        //
 
         /*
          * erledigt
          *
-         * TI: Titel AU: Autor LA: Sprache NH: Namensvariationen CC: MSC 2000
-         * KW: Keywords AN: Zbl und/oder JFM Nummer P: Seiten
+         * TI: Titel AU: Autor LA: Sprache NH: Namensvariationen CC: MSC 2000 KW:
+         * Keywords AN: Zbl und/oder JFM Nummer P: Seiten
          */
 
-        /*
-         * Titel
-         */
-        if (myLeft.equals("TI")) {
-            if (istErsterTitel) {
+        // title
+        if (left.equals("TI")) {
+            if (isFirstTitle) {
                 mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
             } else {
                 mdt = this.myPrefs.getMetadataTypeByName("MainTitleTranslated");
             }
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * Sprache
-         */
-        if (myLeft.equals("LA")) {
+        // language
+        if (left.equals("LA")) {
             mdt = this.myPrefs.getMetadataTypeByName("DocLanguage");
             md = new Metadata(mdt);
-            md.setValue(myRight.toLowerCase());
-            inStruct.addMetadata(md);
+            md.setValue(right.toLowerCase());
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLIdentifier
-         */
-        if (myLeft.equals("AN")) {
+        // ZBLIdentifier
+        if (left.equals("AN")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLIdentifier");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLPageNumber
-         */
-        if (myLeft.equals("P")) {
+        // ZBLPageNumber
+        if (left.equals("P")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLPageNumber");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLSource
-         */
-        if (myLeft.equals("SO")) {
+        // ZBLSource
+        if (left.equals("SO")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLSource");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLAbstract
-         */
-        if (myLeft.equals("AB")) {
+        // ZBLAbstract
+        if (left.equals("AB")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLAbstract");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLReviewAuthor
-         */
-        if (myLeft.equals("RV")) {
+        // ZBLReviewAuthor
+        if (left.equals("RV")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewAuthor");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLCita
-         */
-        if (myLeft.equals("CI")) {
+        // ZBLCita
+        if (left.equals("CI")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLCita");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLTempID
-         */
-        if (myLeft.equals("DE")) {
+        // ZBLTempID
+        if (left.equals("DE")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLTempID");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLReviewLink
-         */
-        if (myLeft.equals("SI")) {
+        // ZBLReviewLink
+        if (left.equals("SI")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewLink");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * ZBLIntern
-         */
-        if (myLeft.equals("XX")) {
+        // ZBLIntern
+        if (left.equals("XX")) {
             mdt = this.myPrefs.getMetadataTypeByName("ZBLIntern");
             md = new Metadata(mdt);
-            md.setValue(myRight);
-            inStruct.addMetadata(md);
+            md.setValue(right);
+            docStruct.addMetadata(md);
             return;
         }
 
-        /*
-         * Keywords
-         */
-        if (myLeft.equals("KW")) {
-            StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
+        // Keywords
+        if (left.equals("KW")) {
+            StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
                 md = new Metadata(this.myPrefs.getMetadataTypeByName("Keyword"));
                 String myTok = tokenizer.nextToken();
                 md.setValue(myTok.trim());
-                inStruct.addMetadata(md);
+                docStruct.addMetadata(md);
             }
             return;
         }
 
-        /*
-         * Autoren als Personen
-         */
-        if (myLeft.equals("AU")) {
-            StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
+        // Autoren als Personen
+        if (left.equals("AU")) {
+            StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
                 Person p = new Person(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
                 String myTok = tokenizer.nextToken();
@@ -575,16 +490,14 @@ public class ImportZentralblatt {
                 p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
                 p.setFirstname(myTok.substring(myTok.indexOf(",") + 1, myTok.length()).trim());
                 p.setRole("ZBLAuthor");
-                inStruct.addPerson(p);
+                docStruct.addPerson(p);
             }
             return;
         }
 
-        /*
-         * AutorVariationen als Personen
-         */
-        if (myLeft.equals("NH")) {
-            StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
+        // AutorVariationen als Personen
+        if (left.equals("NH")) {
+            StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
                 Person p = new Person(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
                 String myTok = tokenizer.nextToken();
@@ -597,21 +510,19 @@ public class ImportZentralblatt {
                 p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
                 p.setFirstname(myTok.substring(myTok.indexOf(",") + 1, myTok.length()).trim());
                 p.setRole("AuthorVariation");
-                inStruct.addPerson(p);
+                docStruct.addPerson(p);
             }
             return;
         }
 
-        /*
-         * MSC 2000 - ClassificationMSC
-         */
-        if (myLeft.equals("CC")) {
-            StringTokenizer tokenizer = new StringTokenizer(myRight);
+        // MSC 2000 - ClassificationMSC
+        if (left.equals("CC")) {
+            StringTokenizer tokenizer = new StringTokenizer(right);
             while (tokenizer.hasMoreTokens()) {
                 md = new Metadata(this.myPrefs.getMetadataTypeByName("ClassificationMSC"));
                 String myTok = tokenizer.nextToken();
                 md.setValue(myTok.trim());
-                inStruct.addMetadata(md);
+                docStruct.addMetadata(md);
             }
         }
     }

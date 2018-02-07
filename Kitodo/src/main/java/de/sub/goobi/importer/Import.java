@@ -38,31 +38,30 @@ import ugh.exceptions.WriteException;
  */
 public class Import {
     private static final Logger logger = LogManager.getLogger(Import.class);
-    private String importFehler = "";
-    private String importMeldung = "";
-    private Task mySchritt;
-    private UploadedFile upDatei;
+    private String importError = "";
+    private String importMessage = "";
+    private Task task;
+    private UploadedFile uploadedFile;
 
     /**
-     * Allgemeiner Konstruktor ().
+     * Constructor.
      */
     public Import() {
     }
 
     /**
-     * Start.
+     * Start import.
      *
      * @return String
      */
     public String start() {
         logger.info("Import start - start");
-        this.importFehler = "";
-        this.importMeldung = "";
+        this.importError = "";
+        this.importMessage = "";
         try {
-            // Einlesen(prozessID.toString());
             read();
         } catch (Exception e) {
-            this.importFehler = "An error occurred: " + e.getMessage();
+            this.importError = "An error occurred: " + e.getMessage();
             logger.error(e);
         }
         logger.info("Import start - ende");
@@ -75,30 +74,23 @@ public class Import {
         logger.debug("Einlesen() - start");
         BufferedReader reader = null;
         try {
-
-            /*
-             * prüfen ob es ein russischer oder ein zbl-Import ist und
-             * entsprechende Routine aufrufen
-             */
-
-            /* russischer Import */
-            if (this.mySchritt.isTypeImportFileUpload() && this.mySchritt.isTypeExportRussian()) {
-                String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.UTF_16LE);
-                reader = new BufferedReader(new StringReader(gesamteDatei));
-                ImportRussland myImport = new ImportRussland();
-                myImport.parse(reader, this.mySchritt.getProcess());
-                this.importMeldung = "Der russische Import wurde erfolgreich abgeschlossen";
+            // Russian import
+            if (this.task.isTypeImportFileUpload() && this.task.isTypeExportRussian()) {
+                String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.UTF_16LE);
+                reader = new BufferedReader(new StringReader(fileContent));
+                ImportRussland importRussland = new ImportRussland();
+                importRussland.parse(reader, this.task.getProcess());
+                this.importMessage = "Der russische Import wurde erfolgreich abgeschlossen";
             }
 
-            /* Zentralblatt-Import */
-            if (this.mySchritt.isTypeImportFileUpload() && !this.mySchritt.isTypeExportRussian()) {
-                String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.ISO_8859_1);
-                reader = new BufferedReader(new StringReader(gesamteDatei));
-                ImportZentralblatt myImport = new ImportZentralblatt();
-                myImport.parse(reader, this.mySchritt.getProcess());
-                this.importMeldung = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
+            // Zentralblatt import
+            if (this.task.isTypeImportFileUpload() && !this.task.isTypeExportRussian()) {
+                String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.ISO_8859_1);
+                reader = new BufferedReader(new StringReader(fileContent));
+                ImportZentralblatt importZentralblatt = new ImportZentralblatt();
+                importZentralblatt.parse(reader, this.task.getProcess());
+                this.importMessage = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
             }
-
         } finally {
             if (reader != null) {
                 try {
@@ -108,36 +100,63 @@ public class Import {
                 }
             }
         }
-        /* wenn alles ok ist, 0 zurückgeben */
+
         logger.debug("Einlesen() - Ende");
     }
 
-    /*
-     * allgemeine Getter und Setter
+    /**
+     * Get message with import error.
+     * 
+     * @return import error as String
      */
-
-    public String getImportFehler() {
-        return this.importFehler;
+    public String getImportError() {
+        return this.importError;
     }
 
-    public String getImportMeldung() {
-        return this.importMeldung;
+    /**
+     * Get message with import information.
+     * 
+     * @return import message as String
+     */
+    public String getImportMessage() {
+        return this.importMessage;
     }
 
-    public UploadedFile getUpDatei() {
-        return this.upDatei;
+    /**
+     * Get uploaded file.
+     * 
+     * @return uploaded file
+     */
+    public UploadedFile getUploadedFile() {
+        return this.uploadedFile;
     }
 
-    public void setUpDatei(UploadedFile inUpDatei) {
-        this.upDatei = inUpDatei;
+    /**
+     * Set uploaded file.
+     * 
+     * @param uploadedFile
+     *            as UploadedFile
+     */
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
     }
 
-    public Task getMySchritt() {
-        return this.mySchritt;
+    /**
+     * Get task for import.
+     * 
+     * @return Task object
+     */
+    public Task getTask() {
+        return this.task;
     }
 
-    public void setMySchritt(Task mySchritt) {
-        this.mySchritt = mySchritt;
+    /**
+     * Set task for import.
+     * 
+     * @param task
+     *            as Task object
+     */
+    public void setTask(Task task) {
+        this.task = task;
     }
-
 }

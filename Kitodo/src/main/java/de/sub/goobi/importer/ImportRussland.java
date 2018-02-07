@@ -46,17 +46,17 @@ import ugh.exceptions.WriteException;
 public class ImportRussland {
     private static final Logger logger = LogManager.getLogger(ImportRussland.class);
     private DocStruct logicalTopstruct;
-    private Process prozess;
+    private Process process;
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Allgemeiner Konstruktor ().
+     * Constructor.
      */
     public ImportRussland() {
     }
 
     /**
-     * Parsen.
+     * Parse.
      *
      * @param reader
      *            BufferedReader object
@@ -66,180 +66,145 @@ public class ImportRussland {
     protected void parse(BufferedReader reader, Process inProzess) throws IOException, WrongImportFileException,
             MetadataTypeNotAllowedException, ReadException, PreferencesException, WriteException {
 
-        /*
-         * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess
-         * gehört
-         */
-        this.prozess = inProzess;
-        String prozessID = String.valueOf(inProzess.getId().intValue());
+        // check if the import file is correct and really belongs to the process
+        this.process = inProzess;
+        String processId = String.valueOf(this.process.getId().intValue());
         String line = reader.readLine();
-        // logger.info(line + " : " + myProzesseID);
         if (line == null) {
             throw new WrongImportFileException("Importfehler: ungültige Importdatei oder falsche Kodierung");
         }
 
-        if (!line.equals("+ " + prozessID + " (ProzessID)")) {
+        if (!line.equals("+ " + processId + " (ProzessID)")) {
             throw new WrongImportFileException(
-                    "Importfehler: Importdatei gehört zu einem anderen Werk ('" + prozessID + "' <> '" + line + "')");
+                    "Importfehler: Importdatei gehört zu einem anderen Werk ('" + processId + "' <> '" + line + "')");
         }
 
-        /*
-         * xml-Datei einlesen und Hauptelement ermitteln
-         */
-        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(inProzess);
-        DigitalDocument mydocument;
-        mydocument = gdzfile.getDigitalDocument();
-        this.logicalTopstruct = mydocument.getLogicalDocStruct();
+        // import the XML file and determine the main element
+        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(this.process);
+        DigitalDocument digitalDocument = gdzfile.getDigitalDocument();
+        this.logicalTopstruct = digitalDocument.getLogicalDocStruct();
         deleteRussianData(this.logicalTopstruct);
-        // if (1 == 1) {
-        // gdzfile.Write(help.metadatenverzeichnis() + myProzesseID +
-        // "/meta.xml");
-        // return;
-        // }
 
-        /*
-         * alle Zeilen durchlaufen
-         */
-        List<String> listeDaten = new ArrayList<>();
+        // go through all lines
+        List<String> lines = new ArrayList<>();
         while ((line = reader.readLine()) != null) {
             // logger.info(line);
             if (line.length() == 0) {
 
                 /*
-                 * immer wenn die Zeile leer ist, können die gesammelten Daten
-                 * aus der gesammelten Liste ausgewertet werden
+                 * always when the line is empty, the collected data from the collected list can
+                 * be evaluated
                  */
-                analyzeParagraph(listeDaten);
-                /* Liste wieder zurücksetzen */
-                listeDaten = new ArrayList<>();
+                analyzeParagraph(lines);
+                // reset list
+                lines = new ArrayList<>();
             } else if (!line.substring(0, 1).equals("+")) {
-                /*
-                 * wenn zeile kein Kommentar ist, Zeile in Liste für Auswertung
-                 * übernehmen
-                 */
+                // if line is not a comment, accept the line in the list for evaluation
                 if (line.length() > 3) {
-                    listeDaten.add(line);
+                    lines.add(line);
                 }
             }
         }
 
-        /*
-         * Datei abschliessend wieder speichern
-         */
+        // finally save the file again
         serviceManager.getFileService().writeMetadataFile(gdzfile, inProzess);
         logger.debug("ParsenRussland() - Ende");
     }
 
-    private void analyzeParagraph(List<String> inListe)
-            throws ugh.exceptions.MetadataTypeNotAllowedException, WrongImportFileException {
-        if (inListe.size() == 0) {
+    private void analyzeParagraph(List<String> list) throws MetadataTypeNotAllowedException, WrongImportFileException {
+        if (list.size() == 0) {
             return;
         }
 
-        String detail = inListe.get(0);
-        String meineDetailNr = detail.substring(0, 3);
+        String detail = list.get(0);
+        String detailNr = detail.substring(0, 3);
 
-        if (meineDetailNr.equals("080") || meineDetailNr.equals("090")) {
-            setArticleDetails(inListe);
-        } else if (meineDetailNr.equals("010")) {
-            setJournalDetails(inListe);
-        } else if (meineDetailNr.equals("050")) {
-            setBandDetails(inListe);
+        if (detailNr.equals("080") || detailNr.equals("090")) {
+            setArticleDetails(list);
+        } else if (detailNr.equals("010")) {
+            setJournalDetails(list);
+        } else if (detailNr.equals("050")) {
+            setBandDetails(list);
         } else {
             throw new WrongImportFileException("Parsingfehler: Neuer Block mit ungültigem ersten Identifier ('" + detail
                     + "'), möglicherweise sind an einer falschen Stelle Zeilenumbrüche eingefügt worden.");
         }
     }
 
-    private void setJournalDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
-        /* zunächst alle Details durchlaufen und der Zeitschrift hinzufügenl */
-        for (String journalDetail : inListe) {
-            String meineDetailNr = journalDetail.substring(0, 3);
-            // logger.debug("---- " + meinDetail);
+    private void setJournalDetails(List<String> list) throws MetadataTypeNotAllowedException {
+        // go through all the details and add to the journal
+        for (String journalDetail : list) {
+            String detailNr = journalDetail.substring(0, 3);
 
-            /* Zeitschrift Titel russisch */
-            if (meineDetailNr.equals("020")) {
+            // Zeitschrift Titel russisch
+            if (detailNr.equals("020")) {
                 addMetadata(this.logicalTopstruct, "RUSMainTitle", journalDetail);
             }
 
-            /* Zeitschrift Herausgeber (wiederholbar) */
-            if (meineDetailNr.equals("030")) {
+            // Zeitschrift Herausgeber (wiederholbar)
+            if (detailNr.equals("030")) {
                 addMetadata(this.logicalTopstruct, "RUSPublisher", journalDetail);
             }
 
-            /* Zeitschrift Ort (wiederholbar) */
-            if (meineDetailNr.equals("040")) {
+            // Zeitschrift Ort (wiederholbar)
+            if (detailNr.equals("040")) {
                 addMetadata(this.logicalTopstruct, "RUSPlaceOfPublication", journalDetail);
             }
 
-            /* Verlag / Publishing house - russisch */
-            if (meineDetailNr.equals("042")) {
+            // Verlag / Publishing house - russisch
+            if (detailNr.equals("042")) {
                 addMetadata(this.logicalTopstruct, "RUSPublicationHouse", journalDetail);
             }
         }
     }
 
-    private void setBandDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
+    private void setBandDetails(List<String> list) throws MetadataTypeNotAllowedException {
         DocStruct ds = this.logicalTopstruct.getAllChildren().get(0);
-        // logger.info(ds.getType().getName());
-        /* zunächst alle Details durchlaufen und dem Band hinzufügenl */
-        for (String bandDetail : inListe) {
-            String meineDetailNr = bandDetail.substring(0, 3);
 
-            /* Band Herausgeber (wiederholbar) */
-            if (meineDetailNr.equals("060")) {
+        // go through all the details and add it to the band
+        for (String bandDetail : list) {
+            String detailNr = bandDetail.substring(0, 3);
+
+            // Band Herausgeber (wiederholbar)
+            if (detailNr.equals("060")) {
                 addMetadata(ds, "RUSPublisher", bandDetail);
             }
 
-            /* Band Ort (wiederholbar) */
-            if (meineDetailNr.equals("070")) {
+            // Band Ort (wiederholbar)
+            if (detailNr.equals("070")) {
                 addMetadata(ds, "RUSPlaceOfPublication", bandDetail);
             }
         }
     }
 
-    private void setArticleDetails(List<String> inListe)
-            throws MetadataTypeNotAllowedException, WrongImportFileException {
-        boolean artikelGefunden = false;
-
-        /*
-         * zunächst alle Details durchlaufen und die ZBL-ID des Artikels
-         * ermitteln
-         */
+    private void setArticleDetails(List<String> list) throws MetadataTypeNotAllowedException, WrongImportFileException {
+        // go through all the details and determine the ZBL-ID of the article
         String zblID = "";
-        for (String articleDetail : inListe) {
+        for (String articleDetail : list) {
             if (articleDetail.substring(0, 3).equals("090")) {
                 zblID = articleDetail.substring(4).trim();
                 break;
             }
         }
 
-        /* für das Debugging bei Problemen */
-        // if (zblID.equals("0843.11050"))
-        // logger.warn("gesuchte ID");
-
         /*
-         * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der
-         * selben ZBL-ID finden
+         * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der selben
+         * ZBL-ID finden
          */
-        MetadataType metadataTypeId = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+        MetadataType metadataTypeId = serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
                 .getMetadataTypeByName("ZBLIdentifier");
-        MetadataType metadataTypeTempId = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+        MetadataType metadataTypeTempId = serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
                 .getMetadataTypeByName("ZBLTempID");
         DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
-        // logger.info(band.getType().getName());
+
         List<DocStruct> listHefte = band.getAllChildren();
         if (listHefte != null) {
             for (Iterator<DocStruct> iter = listHefte.iterator(); iter.hasNext();) {
                 DocStruct heft = iter.next();
-                List<DocStruct> listArtikel = heft.getAllChildren();
-                if (listArtikel != null) {
-                    /*
-                     * jetzt alle Artikel durchlaufen, bis der richtige Artikel
-                     * gefunden wurde
-                     */
-                    for (DocStruct article : listArtikel) {
-                        // logger.info(artikel.getType().getName());
+                List<DocStruct> listArticle = heft.getAllChildren();
+                if (listArticle != null) {
+                    // go through all the articles until the right article is found
+                    for (DocStruct article : listArticle) {
                         if (article.getAllMetadataByType(metadataTypeId).size() > 0
                                 || article.getAllMetadataByType(metadataTypeTempId).size() > 0) {
                             Metadata md;
@@ -250,55 +215,42 @@ public class ImportRussland {
                             }
                             // logger.debug(md.getValue());
                             if (md.getValue().equals(zblID)) {
-                                // logger.info("------------ Artikel gefunden
-                                // -------------");
-                                artikelGefunden = true;
-                                /*
-                                 * jetzt alle Details durchlaufen und dem
-                                 * Artikel hinzufügenl
-                                 */
-                                for (String detail : inListe) {
-                                    String meineDetailNr = detail.substring(0, 3);
+                                // go through all the details and add to the article
+                                for (String detail : list) {
+                                    String detailNr = detail.substring(0, 3);
 
-                                    /* Artikel Autor russisch (wiederholbar) */
-                                    if (meineDetailNr.equals("120")) {
+                                    // Artikel Autor russisch (wiederholbar)
+                                    if (detailNr.equals("120")) {
                                         addPerson(article, "Author", detail);
                                     }
 
-                                    /* Artikel Autor-Variation (wiederholbar) */
-                                    if (meineDetailNr.equals("130")) {
+                                    // Artikel Autor-Variation (wiederholbar)
+                                    if (detailNr.equals("130")) {
                                         addPerson(article, "AuthorVariation", detail);
                                     }
 
-                                    /*
-                                     * Artikel Autor-Kontributor (wiederholbar)
-                                     */
-                                    if (meineDetailNr.equals("140")) {
+                                    // Artikel Autor-Kontributor (wiederholbar)
+                                    if (detailNr.equals("140")) {
                                         addPerson(article, "Contributor", detail);
                                     }
 
-                                    /*
-                                     * Artikel Person als Subjekt des Artikels
-                                     * (wiederholbar)
-                                     */
-                                    if (meineDetailNr.equals("150")) {
+                                    // Artikel Person als Subjekt des Artikels (wiederholbar)
+                                    if (detailNr.equals("150")) {
                                         addMetadata(article, "PersonAsSubject", detail);
                                     }
 
-                                    /* Artikel Titel russisch */
-                                    if (meineDetailNr.equals("170")) {
+                                    // Artikel Titel russisch
+                                    if (detailNr.equals("170")) {
                                         addMetadata(article, "RUSMainTitle", detail);
                                     }
 
-                                    /*
-                                     * Artikel Klassifikation UDK (wiederholbar)
-                                     */
-                                    if (meineDetailNr.equals("190")) {
+                                    // Artikel Klassifikation UDK (wiederholbar)
+                                    if (detailNr.equals("190")) {
                                         addMetadata(article, "ClassificationUDK", detail);
                                     }
 
-                                    /* Artikel Keywords russisch */
-                                    if (meineDetailNr.equals("210")) {
+                                    // Artikel Keywords russisch
+                                    if (detailNr.equals("210")) {
                                         addMetadata(article, "RUSKeyword", detail);
                                     }
                                 }
@@ -308,7 +260,7 @@ public class ImportRussland {
                     }
                 }
 
-                if (!iter.hasNext() && !artikelGefunden) {
+                if (!iter.hasNext()) {
                     throw new WrongImportFileException(
                             "Parsingfehler: Artikel mit der ZBL-ID wurde nicht gefunden ('" + zblID + "')");
                 }
@@ -319,38 +271,38 @@ public class ImportRussland {
         }
     }
 
-    private void deleteRussianData(DocStruct inStrukturelement) {
+    private void deleteRussianData(DocStruct docStruct) {
         /*
-         * von dem aktuellen Stukturelement alle Metadaten durchlaufen und das
-         * gesuchte löschen
+         * von dem aktuellen Stukturelement alle Metadaten durchlaufen und das gesuchte
+         * löschen
          */
-        if (inStrukturelement.getAllVisibleMetadata() != null) {
-            LinkedList<Metadata> listMetas = new LinkedList<>(inStrukturelement.getAllMetadata());
+        if (docStruct.getAllVisibleMetadata() != null) {
+            LinkedList<Metadata> listMetas = new LinkedList<>(docStruct.getAllMetadata());
             for (Metadata meta : listMetas) {
                 String myMetaName = meta.getType().getName();
 
                 /*
-                 * wenn die Metadatentypen die russischen sind, werden sie aus
-                 * der Liste entfernt
+                 * wenn die Metadatentypen die russischen sind, werden sie aus der Liste
+                 * entfernt
                  */
                 if (myMetaName.equals("PersonAsSubject") || myMetaName.equals("RUSMainTitle")
                         || myMetaName.equals("ClassificationUDK") || myMetaName.equals("RUSKeyword")
                         || myMetaName.equals("RUSPublisher") || myMetaName.equals("RUSPlaceOfPublication")
                         || myMetaName.equals("RUSPublicationHouse") || myMetaName.equals("RUSPublisher")) {
-                    inStrukturelement.removeMetadata(meta);
+                    docStruct.removeMetadata(meta);
                 }
             }
         }
 
         /*
-         * von dem aktuellen Stukturelement alle Personen durchlaufen und die
-         * gesuchten löschen
+         * von dem aktuellen Stukturelement alle Personen durchlaufen und die gesuchten
+         * löschen
          */
-        if (inStrukturelement.getAllPersons() != null) {
-            List<Person> listPersons = new ArrayList<>(inStrukturelement.getAllPersons());
+        if (docStruct.getAllPersons() != null) {
+            List<Person> listPersons = new ArrayList<>(docStruct.getAllPersons());
             for (Person p : listPersons) {
                 if (p.getRole().equals("Author")) {
-                    inStrukturelement.removePerson(p);
+                    docStruct.removePerson(p);
                 }
             }
         }
@@ -359,26 +311,25 @@ public class ImportRussland {
          * von dem aktuellen Stukturelement alle Kinder durchlaufen und rekursiv
          * durchlaufen
          */
-        List<DocStruct> listKinder = inStrukturelement.getAllChildren();
-        if (listKinder != null) {
-            /* es gibt Kinder-Strukturelemente, also alle Kinder durchlaufen */
-            for (DocStruct kind : listKinder) {
-                deleteRussianData(kind);
+        List<DocStruct> children = docStruct.getAllChildren();
+        if (children != null) {
+            // there are children's structural elements, so go through them
+            for (DocStruct child : children) {
+                deleteRussianData(child);
             }
         }
     }
 
     private void addMetadata(DocStruct inStruct, String inMdtName, String inDetail)
             throws MetadataTypeNotAllowedException {
-        MetadataType mdt = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+        MetadataType mdt = serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
                 .getMetadataTypeByName(inMdtName);
         Metadata md = new Metadata(mdt);
         try {
             md.setValue(inDetail.substring(4).trim());
 
-            /*
-             * prüfen, ob das Metadatum schon existiert, wenn nein, neu anlegen
-             */
+            // check if the metadata already exists, if no, create new
+            // TODO: should be this removed??
 
             // LinkedList list = inStruct.getAllChildren();
             // if (list != null) {
@@ -401,7 +352,7 @@ public class ImportRussland {
 
     private void addPerson(DocStruct inStruct, String inRole, String inDetail)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
-        Person p = new Person(serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+        Person p = new Person(serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
                 .getMetadataTypeByName(inRole));
         String pName = inDetail.substring(4).trim();
         if (pName.length() == 0) {
@@ -414,8 +365,9 @@ public class ImportRussland {
         p.setLastname(pName.substring(0, pName.indexOf(",")).trim());
         p.setFirstname(pName.substring(pName.indexOf(",") + 1, pName.length()).trim());
         p.setRole(inRole);
+        // TODO: should be this data inserted?
         // MetadataType mdt =
-        // prozess.getRegelsatz().getPreferences().getMetadataTypeByName(inRole);
+        // process.getRegelsatz().getPreferences().getMetadataTypeByName(inRole);
         // p.setType(mdt);
         inStruct.addPerson(p);
     }
