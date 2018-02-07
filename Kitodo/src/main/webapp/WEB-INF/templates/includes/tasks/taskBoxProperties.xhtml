@@ -22,9 +22,6 @@
         <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode != 'processProperty' and AktuelleSchritteForm.propertiesSize>0}">
             <p:dataTable var="property" value="#{AktuelleSchritteForm.properties}" rowCountVar="propCount"
                          rowIndexVar="propInd">
-                <p:column style="width: 16px;">
-                    <p:rowToggler/>
-                </p:column>
                 <p:column headerText="#{msgs.titel}">
                     <h:outputText value="#{property.title}" />
                 </p:column>

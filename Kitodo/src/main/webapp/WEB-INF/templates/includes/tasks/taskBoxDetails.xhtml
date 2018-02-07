@@ -16,9 +16,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item" value="#{AktuelleSchritteForm.mySchritt}">
-        <p:column style="width: 16px;">
-            <p:rowToggler/>
-        </p:column>
         <p:column headerText="#{msgs.titel}">
             <h:outputText value="#{AktuelleSchritteForm.mySchritt.localizedTitle}"/>
         </p:column>

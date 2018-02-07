@@ -31,11 +31,11 @@
             <p:messages id="taskedit-messages" autoUpdate="true" />
             <p:tabView id="tasksTabView">
                 <p:tab title="#{msgs.schrittDetails}">
-                    <ui:include src="inc_AktuelleSchritte/taskBoxDetails.xhtml"/>
+                    <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxDetails.xhtml"/>
                     <ui:include src="inc_AktuelleSchritte/schritt_box_Action.xhtml"/>
                 </p:tab>
                 <p:tab title="#{msgs.eigenschaften}" id="Properties">
-                    <ui:include src="inc_AktuelleSchritte/taskBoxProperties.xhtml" />
+                    <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxProperties.xhtml"/>
                 </p:tab>
                 <p:tab title="#{msgs.messages}">
                     <h:form id="addToWikiForm">

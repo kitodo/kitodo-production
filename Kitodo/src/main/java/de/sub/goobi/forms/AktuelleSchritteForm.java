@@ -1002,13 +1002,13 @@ public class AktuelleSchritteForm extends BasisForm {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty() && (callerViewId.contains("tasks.jsf")|| callerViewId.contains("editCurrentTasks.jsf"))) {
+            if (!callerViewId.isEmpty() && (callerViewId.contains("tasks.jsf") || callerViewId.contains("editCurrentTasks.jsf"))) {
                 return "/pages/editCurrentTasks" + urlSuffix;
             } else {
                 return "/pages/AktuelleSchritteBearbeiten" + urlSuffix;
             }
         } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "AktuelleEchritteForm" is
+            // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
             // used from it's integration test
             // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
             return "/pages/AktuelleSchritteBearbeiten" + urlSuffix;
