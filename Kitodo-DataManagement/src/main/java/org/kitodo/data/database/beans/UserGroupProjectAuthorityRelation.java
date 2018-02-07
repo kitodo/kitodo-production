@@ -33,12 +33,25 @@ public class UserGroupProjectAuthorityRelation extends BaseBean {
     @JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_project_x_authority_authority_id"))
     private Authority authority;
 
+    /**
+     * The Constructor for setting all values.
+     * 
+     * @param userGroup
+     *            The user group.
+     * @param project
+     *            The project.
+     * @param authority
+     *            The authority.
+     */
     public UserGroupProjectAuthorityRelation(UserGroup userGroup, Project project, Authority authority) {
         this.userGroup = userGroup;
         this.project = project;
         this.authority = authority;
     }
 
+    /**
+     * The default constructor.
+     */
     public UserGroupProjectAuthorityRelation() {
     }
 

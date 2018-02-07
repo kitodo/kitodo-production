@@ -211,23 +211,41 @@ public class BenutzergruppenForm extends BasisForm {
         userGroupClientAuthorityRelationsToDelete.clear();
     }
 
-    /*
-     * Getter und Setter
+    /**
+     * Gets the user group.
+     * 
+     * @return The user group.
      */
-
     public UserGroup getUserGroup() {
         return this.userGroup;
     }
 
+    /**
+     * Sets the user group.
+     * 
+     * @param userGroup
+     *            The user group.
+     */
     public void setUserGroup(UserGroup userGroup) {
         Helper.getHibernateSession().clear();
         this.userGroup = userGroup;
     }
 
+    /**
+     * Sets the user group id.
+     * 
+     * @param id
+     *            The user group id.
+     */
     public void setUserGroupId(int id) {
         this.userGroupId = id;
     }
 
+    /**
+     * Gets the user group id.
+     * 
+     * @return The user group id.
+     */
     public int getUserGroupId() {
         return this.userGroupId;
     }
@@ -467,6 +485,11 @@ public class BenutzergruppenForm extends BasisForm {
         this.selectedClient = selectedClient;
     }
 
+    /**
+     * Gets all available clients.
+     * 
+     * @return The list of clients.
+     */
     public List<Client> getClients() {
         return serviceManager.getClientService().getAll();
     }
@@ -490,6 +513,11 @@ public class BenutzergruppenForm extends BasisForm {
         this.selectedProject = selectedProject;
     }
 
+    /**
+     * Gets all available Projects.
+     * 
+     * @return The list of projects.
+     */
     public List<Project> getProjects() {
         return serviceManager.getProjectService().getAll();
     }

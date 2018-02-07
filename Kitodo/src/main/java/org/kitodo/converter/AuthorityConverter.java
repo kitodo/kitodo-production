@@ -24,12 +24,8 @@ import org.kitodo.services.ServiceManager;
 
 public class AuthorityConverter implements Converter {
 
-    private ServiceManager serviceManager;
+    private ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(AuthorityConverter.class);
-
-    public AuthorityConverter() {
-        this.serviceManager = new ServiceManager();
-    }
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) throws ConverterException {
