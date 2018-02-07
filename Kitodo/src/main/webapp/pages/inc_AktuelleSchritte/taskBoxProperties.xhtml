@@ -1,0 +1,96 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:importEnum type="org.kitodo.enums.ObjectMode" var="objectMode"/>
+    <h:form id="propform2" rendered="#{AktuelleSchritteForm.propertiesSize>0}">
+
+        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode != 'processProperty' and AktuelleSchritteForm.propertiesSize>0}">
+            <p:dataTable var="property" value="#{AktuelleSchritteForm.properties}" rowCountVar="propCount"
+                         rowIndexVar="propInd">
+                <p:column style="width: 16px;">
+                    <p:rowToggler/>
+                </p:column>
+                <p:column headerText="#{msgs.titel}">
+                    <h:outputText value="#{property.title}" />
+                </p:column>
+                <p:column headerText="#{msgs.wert}">
+                    <h:outputText value="#{property.value}" rendered="#{property.type.name !=  'link'}"/>
+                    <h:outputLink title="#{property.value}" value="#{property.value}"
+                                  rendered="#{property.type.name ==  'link'}" target="_blank">
+                        <h:outputText value="#{property.value}"/>
+                    </h:outputLink>
+                </p:column>
+                <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+                    <h:commandLink action="editCurrentTasks" title="#{msgs.bearbeiten}"
+                                   rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
+                        <i class="fa fa-pencil-square-o fa-lg"/>
+                        <f:setPropertyActionListener target="#{AktuelleSchritteForm.property}" value="#{property}"/>
+                        <f:setPropertyActionListener target="#{AktuelleSchritteForm.editMode}"
+                                                     value="#{objectMode.PROCESSPROPERTY}"/>
+                        <p:ajax event="click" update="tasksTabView:Properties" />
+                    </h:commandLink>
+                    <h:commandLink action="#{AktuelleSchritteForm.duplicateProperty}" title="#{msgs.duplicate}">
+                        <f:setPropertyActionListener target="#{AktuelleSchritteForm.property}" value="#{property}"/>
+                        <i class="fa fa-clone fa-lg"/>
+                    </h:commandLink>
+                </p:column>
+            </p:dataTable>
+        </ui:fragment>
+
+        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == 'processProperty' and AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
+            <p:panel styleClass="content-header">
+                <p:commandButton update="tasksTabView,tasksTabView:Properties" value="#{msgs.applyToThisProcess}" action="#{AktuelleSchritteForm.saveCurrentProperty}" icon="fa fa-floppy-o fa-lg" iconPos="right">
+                    <f:setPropertyActionListener value="#{objectMode.NONE}" target= "#{AktuelleSchritteForm.editMode}"/>
+                </p:commandButton>
+                <p:commandButton update="tasksTabView,tasksTabView:Properties"  value="#{msgs.abbrechen}" action="#{NavigationForm.reload}" immediate="true" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button">
+                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.editMode}" value="#{objectMode.NONE}"/>
+                </p:commandButton>
+            </p:panel>
+            <p:dataList var="myprocess_item" value="#{AktuelleSchritteForm.properties}" itemType="none">
+                <p:panel>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:row>
+                            <p:outputLabel id="eigenschafttitel"
+                                           value="#{myprocess_item.title}"/>
+                            <ui:fragment id="test" layout="block"
+                                         rendered="#{((myprocess_item.type.name == 'string') || (myprocess_item.type.name == 'null') || (myprocess_item.type.name == 'link'))}">
+                                <p:inputText id="file"
+                                             value="#{myprocess_item.value}" class="input"/>
+                            </ui:fragment>
+                            <ui:fragment id="prpvw15_1mnk" layout="block"
+                                         rendered="#{myprocess_item.type.name == 'integer' || myprocess_item.type.name == 'number'}">
+                                <p:inputText id="numberstuff122334mnktodo"
+                                             value="#{myprocess_item.value}" class="input">
+                                    <f:validateLongRange minimum="0"/>
+                                </p:inputText>
+                            </ui:fragment>
+                            <ui:fragment id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}" layout="block">
+                                <p:selectBooleanCheckbox value="#{myprocess_item.value}"/>
+                            </ui:fragment>
+                            <ui:fragment id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}" layout="block">
+                                <p:calendar id="prpvw15_5_1" value="#{myprocess_item.value}"
+                                            locale="#{SpracheForm.locale}" navigator="true"
+                                            pattern="dd.MM.yyyy"  />
+                            </ui:fragment>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+            </p:dataList>
+        </ui:fragment>
+    </h:form>
+</ui:composition>

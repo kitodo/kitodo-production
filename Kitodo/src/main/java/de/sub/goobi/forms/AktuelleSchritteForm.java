@@ -135,7 +135,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("Error on reading ElasticSearch: ", e.getMessage());
             return null;
         }
-        return "/pages/AktuelleSchritteAlle";
+        return redirectToList("?faces-redirect=true");
     }
 
     /**
@@ -202,7 +202,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.setMySchritt(serviceManager.getWorkflowService().assignTaskToUser(this.getMySchritt()));
         }
-        return "/pages/AktuelleSchritteBearbeiten";
+        return redirectToEdit("?faces-redirect=true");
     }
 
     /**
@@ -214,7 +214,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         Helper.getHibernateSession().refresh(mySchritt);
 
-        return "/pages/AktuelleSchritteBearbeiten";
+        return redirectToEdit("?faces-redirect=true");
     }
 
     /**
@@ -314,7 +314,7 @@ public class AktuelleSchritteForm extends BasisForm {
             // only steps with same title
             currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
         } else {
-            return "/pages/AktuelleSchritteBearbeiten";
+            return redirectToEdit("?faces-redirect=true");
         }
         // if only one step is assigned for this batch, use the single
 
@@ -322,7 +322,7 @@ public class AktuelleSchritteForm extends BasisForm {
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
-            return "/pages/AktuelleSchritteBearbeiten";
+            return redirectToEdit("?faces-redirect=true");
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
         return "/pages/batchesEdit";
@@ -993,5 +993,46 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public List<Task> getTasksInProgress() {
         return serviceManager.getUserService().getTasksInProgress(this.user);
+    }
+
+    // replace calls to this function with "/pages/editCurrentTasks" once we have
+    // completely switched to the new frontend pages
+    private String redirectToEdit(String urlSuffix) {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && (callerViewId.contains("tasks.jsf")|| callerViewId.contains("editCurrentTasks.jsf"))) {
+                return "/pages/editCurrentTasks" + urlSuffix;
+            } else {
+                return "/pages/AktuelleSchritteBearbeiten" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "AktuelleEchritteForm" is
+            // used from it's integration test
+            // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
+            return "/pages/AktuelleSchritteBearbeiten" + urlSuffix;
+        }
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/tasks" once we have completely
+    // switched to the new frontend pages
+    private String redirectToList(String urlSuffix) {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("editCurrentTasks.jsf")) {
+                return "/pages/tasks" + urlSuffix;
+            } else {
+                return "/pages/AktuelleSchritteAlle" + urlSuffix;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
+            // used from it's integration test
+            // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
+            return "/pages/AktuelleSchritteAlle" + urlSuffix;
+        }
     }
 }

@@ -1,0 +1,53 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dataTable var="item" value="#{AktuelleSchritteForm.mySchritt}">
+        <p:column style="width: 16px;">
+            <p:rowToggler/>
+        </p:column>
+        <p:column headerText="#{msgs.titel}">
+            <h:outputText value="#{AktuelleSchritteForm.mySchritt.localizedTitle}"/>
+        </p:column>
+        <p:column headerText="#{msgs.prozessTitel}">
+            <h:outputText value="#{item.process.title}"/>
+        </p:column>
+        <p:column headerText="#{msgs.reihenfolge}">
+            <h:outputText value="#{item.ordering}"/>
+        </p:column>
+        <p:column headerText="#{msgs.prioritaet}">
+            <h:outputText value="#{item.priority}"
+                          rendered="#{item.priority!=10}"/>
+            <h:outputText value="#{msgs.korrektur}"
+                          rendered="#{item.priority==10}"/>
+        </p:column>
+        <p:column headerText="#{msgs.status}">
+            <h:outputText value="#{item.processingStatusEnum.title}"/>
+        </p:column>
+        <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
+            <p:column headerText="#{msgs.bearbeitungsbeginn}:"/>
+            <h:outputText value="#{item.processingBeginAsFormattedString}"/>
+        </ui:fragment>
+        <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
+            <p:column headerText="#{msgs.zuletztBearbeitet}:"/>
+            <h:outputText value="#{item.processingTimeAsFormattedString}"/>
+        </ui:fragment>
+        <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
+            <p:column headerText="#{msgs.aktualisierungstyp}:"/>
+            <h:outputText value="#{item.editTypeEnum.title}"/>
+        </ui:fragment>
+    </p:dataTable>
+</ui:composition>

@@ -15,7 +15,8 @@
         template="/WEB-INF/templates/base.xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:define name="content">
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
@@ -45,7 +46,29 @@
                             <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
                         </p:column>
                         <p:column headerText="#{msgs.auswahl}">
-                            <!-- TODO add actions -->
+                            <h:form>
+                                <!-- assign task -->
+                                <h:commandLink id="take" action="#{AktuelleSchritteForm.schrittDurchBenutzerUebernehmen}"
+                                               rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchSize)}"
+                                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                                    <i class="fa fa-bell-o"/>
+                                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.mySchritt}" value="#{AktuelleSchritteForm.getTaskById(item.id)}"/>
+                                </h:commandLink>
+                                <!-- already assigned task (this user) -->
+                                <h:link outcome="/pages/editCurrentTasks"
+                                        rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
+                                        title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
+                                    <i class="fa fa-bell"/>
+                                    <f:param name="id" value="#{item.id}"/>
+                                </h:link>
+                                <!-- already assigned task (different user) -->
+                                <h:commandLink action="#{AktuelleSchritteForm.editStep}" id="view2"
+                                               rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and (!item.batchStep || !item.batchSize)}"
+                                               title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
+                                    <i class="fa fa-bell-slash"/>
+                                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
+                                </h:commandLink>
+                            </h:form>
                         </p:column>
                     </p:dataTable>
                 </p:tab>
