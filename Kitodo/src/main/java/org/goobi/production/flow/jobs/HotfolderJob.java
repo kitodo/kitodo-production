@@ -345,7 +345,7 @@ public class HotfolderJob extends AbstractGoobiJob {
             if (fileService.isDirectory(imagesFolder)) {
                 fileService.delete(imagesFolder);
             } else {
-                imagesFolder = fileService.createResource(basepath, "_" + vorlage.DIRECTORY_SUFFIX);
+                imagesFolder = fileService.createResource(basepath, "_images");
                 if (fileService.isDirectory(imagesFolder)) {
                     fileService.delete(imagesFolder);
                 }

@@ -130,8 +130,6 @@ public class Process extends BaseIndexedBean {
     @Transient
     private long blockedSeconds;
 
-    public static String DIRECTORY_SUFFIX = "images";
-
     /**
      * Constructor.
      */
