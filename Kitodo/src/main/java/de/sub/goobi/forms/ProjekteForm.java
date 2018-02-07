@@ -159,6 +159,7 @@ public class ProjekteForm extends BasisForm {
      * @return page address
      */
     public String newProject() {
+        setLocked(false);
         this.myProjekt = new Project();
         this.itemId = 0;
         return redirectToEdit();

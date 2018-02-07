@@ -49,7 +49,16 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
-        <li><a href="">#{msgs.projektBearbeiten}</a></li>
+        <li>
+            <a href="">
+                <ui:fragment rendered="#{ProjekteForm.itemId ne 0}">
+                    #{msgs.projektBearbeiten}
+                </ui:fragment>
+                <ui:fragment rendered="#{ProjekteForm.itemId eq 0}">
+                    #{msgs.newProject}
+                </ui:fragment>
+            </a>
+        </li>
     </ui:define>
     <ui:define name="dialog">
         <ui:include src="/pages/projectEditMetsPopup.xhtml"/>
