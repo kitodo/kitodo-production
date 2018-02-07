@@ -14,7 +14,6 @@ package org.kitodo.production.thread;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
@@ -65,8 +64,6 @@ public class TaskScriptThread extends EmptyTask {
                 serviceManager.getTaskService().executeDmsExport(this.task);
             } catch (DataException e) {
                 logger.error("Data Exception occurred", e);
-            } catch (ConfigurationException e) {
-                logger.error("Configuration could not be read", e);
             }
         }
     }
