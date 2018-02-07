@@ -86,7 +86,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.userObject.setPassword("");
         this.userId = 0;
         this.password = "";
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -147,7 +147,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
                 this.userObject.setPassword(passwordEncoder.encrypt(this.password));
                 this.serviceManager.getUserService().save(this.userObject);
-                return redirectToList("?faces-redirect=true");
+                return redirectToList();
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
                 return null;
@@ -453,42 +453,42 @@ public class BenutzerverwaltungForm extends BasisForm {
     // TODO:
     // replace calls to this function with "/pages/userEdit" once we have
     // completely switched to the new frontend pages
-    private String redirectToEdit(String urlSuffix) {
+    private String redirectToEdit() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/userEdit" + urlSuffix;
+                return "/pages/userEdit?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzerBearbeiten" + urlSuffix;
+                return "/pages/BenutzerBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
             // used from it's integration test
             // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzerBearbeiten" + urlSuffix;
+            return "/pages/BenutzerBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 
     // TODO:
     // replace calls to this function with "/pages/users" once we have completely
     // switched to the new frontend pages
-    private String redirectToList(String urlSuffix) {
+    private String redirectToList() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("userEdit.jsf")) {
-                return "/pages/users" + urlSuffix;
+                return "/pages/users?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzerAlle" + urlSuffix;
+                return "/pages/BenutzerAlle?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
             // used from it's integration test
             // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzerAlle" + urlSuffix;
+            return "/pages/BenutzerAlle?" + REDIRECT_PARAMETER;
         }
     }
 }

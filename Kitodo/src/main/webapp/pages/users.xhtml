@@ -28,7 +28,8 @@
                     </p:menuButton>
                 </h:form>
             </p:panel>
-            <p:tabView>
+            <p:tabView activeIndex="#{BenutzerverwaltungForm.activeTabIndex}" id="usersTabView">
+                <p:ajax event="tabChange" listener="#{BenutzerverwaltungForm.onTabChange}"/>
                 <p:tab title="#{msgs.benutzerverwaltung}">
                     <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
                 </p:tab>

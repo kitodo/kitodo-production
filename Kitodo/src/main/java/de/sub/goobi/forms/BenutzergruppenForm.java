@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +42,10 @@ public class BenutzergruppenForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
 
+    @Inject
+    @Named("BenutzerverwaltungForm")
+    private BenutzerverwaltungForm userForm;
+
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
      * bean.
@@ -58,7 +63,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String newUserGroup() {
         this.myBenutzergruppe = new UserGroup();
         this.userGroupId = 0;
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -69,7 +74,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String save() {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
-            return redirectToList("?faces-redirect=true");
+            return redirectToList();
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save user group", e.getMessage());
             return null;
@@ -100,7 +105,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
             return null;
         }
-        return redirectToList("?faces-redirect=true");
+        return redirectToList();
     }
 
     /**
@@ -169,42 +174,42 @@ public class BenutzergruppenForm extends BasisForm {
     // TODO:
     // replace calls to this function with "/pages/usergroupEdit" once we have
     // completely switched to the new frontend pages
-    private String redirectToEdit(String urlSuffix) {
+    private String redirectToEdit() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/usergroupEdit" + urlSuffix;
+                return "/pages/usergroupEdit?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzergruppenBearbeiten" + urlSuffix;
+                return "/pages/BenutzergruppenBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzergruppenForm" is
             // used from it's integration test
             // class "BenutzergruppenFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzergruppenBearbeiten" + urlSuffix;
+            return "/pages/BenutzergruppenBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 
     // TODO:
     // replace calls to this function with "/pages/users" once we have completely
     // switched to the new frontend pages
-    private String redirectToList(String urlSuffix) {
+    private String redirectToList() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("usergroupEdit.jsf")) {
-                return "/pages/users" + urlSuffix;
+                return "/pages/users.jsf?id=" + userForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/BenutzergruppenAlle" + urlSuffix;
+                return "/pages/BenutzergruppenAlle?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "BenutzergruppenForm" is
             // used from it's integration test
             // class "BenutzergruppenFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzergruppenAlle" + urlSuffix;
+            return "/pages/BenutzergruppenAlle?" + REDIRECT_PARAMETER;
         }
     }
 }

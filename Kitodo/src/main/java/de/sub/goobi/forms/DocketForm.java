@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,10 @@ public class DocketForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
     private int docketId;
 
+    @Inject
+    @Named("ProjekteForm")
+    private ProjekteForm projectForm;
+
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
      * bean.
@@ -56,7 +61,7 @@ public class DocketForm extends BasisForm {
     public String newDocket() {
         this.myDocket = new Docket();
         this.docketId = 0;
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -68,7 +73,7 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return redirectToList("?faces-redirect=true");
+                return redirectToList();
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
@@ -148,21 +153,21 @@ public class DocketForm extends BasisForm {
 
     // replace calls to this function with "/pages/DocketEdit" once we have
     // completely switched to the new frontend pages
-    private String redirectToEdit(String urlSuffix) {
+    private String redirectToEdit() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/editDocket" + urlSuffix;
+                return "/pages/editDocket?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/DocketEdit" + urlSuffix;
+                return "/pages/DocketEdit?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "DocketForm" is
             // used from it's integration test
             // class "DocketFormIT", where no "FacesContext" is available!
-            return "/pages/DocketEdit" + urlSuffix;
+            return "/pages/DocketEdit?" + REDIRECT_PARAMETER;
         }
     }
 
@@ -170,13 +175,13 @@ public class DocketForm extends BasisForm {
     // TODO:
     // replace calls to this function with "/pages/projects" once we have completely
     // switched to the new frontend pages
-    private String redirectToList(String urlSuffix) {
+    private String redirectToList() {
         String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
         String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
         if (!callerViewId.isEmpty() && callerViewId.contains("editDocket.jsf")) {
-            return "/pages/projects" + urlSuffix;
+            return "/pages/projects.jsf?id=" + projectForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
         } else {
-            return "/pages/DocketList" + urlSuffix;
+            return "/pages/DocketList?" + REDIRECT_PARAMETER;
         }
     }
 }

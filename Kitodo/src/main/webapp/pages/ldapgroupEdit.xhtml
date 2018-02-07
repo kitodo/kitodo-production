@@ -38,7 +38,7 @@
                                      styleClass="button-filled-blue"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.ldapgroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      update="notifications"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="users"
+                    <p:button value="#{msgs.abbrechen}" outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->

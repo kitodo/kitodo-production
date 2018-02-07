@@ -161,7 +161,7 @@ public class ProjekteForm extends BasisForm {
     public String newProject() {
         this.myProjekt = new Project();
         this.itemId = 0;
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -178,7 +178,7 @@ public class ProjekteForm extends BasisForm {
         this.itemId = 0;
         try {
             this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
-            return redirectToEdit("?faces-redirect=true");
+            return redirectToEdit();
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -860,21 +860,21 @@ public class ProjekteForm extends BasisForm {
     // TODO:
     // replace calls to this function with "/pages/projectEdit" once we have
     // completely switched to the new frontend pages
-    private String redirectToEdit(String urlSuffix) {
+    private String redirectToEdit() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/projectEdit" + urlSuffix;
+                return "/pages/projectEdit?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/ProjekteBearbeiten" + urlSuffix;
+                return "/pages/ProjekteBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
             // used from it's integration test
             // class "ProjekteFormIT", where no "FacesContext" is available!
-            return "/pages/ProjekteBearbeiten" + urlSuffix;
+            return "/pages/ProjekteBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 

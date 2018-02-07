@@ -41,7 +41,7 @@
                                         'summary':'#{msgs.docketSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects"
+                    <p:button value="#{msgs.abbrechen}" outcome="projects.jsf?id=#{ProjectTabView.activeTabIndex}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->

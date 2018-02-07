@@ -23,6 +23,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.primefaces.event.TabChangeEvent;
 
 public class BasisForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(BasisForm.class);
@@ -33,6 +34,8 @@ public class BasisForm implements Serializable {
     protected String filter = "";
     protected User user;
     protected String sortierung = "prozessAsc";
+    static final String REDIRECT_PARAMETER = "faces-redirect=true";
+    private int activeTabId = 0;
 
     private LazyDTOModel lazyDTOModel = null;
 
@@ -125,5 +128,35 @@ public class BasisForm implements Serializable {
             return;
         }
         serviceManager.getUserService().removeFilter(getUser(), this.filter);
+    }
+
+    /**
+     * Return index of active tab.
+     *
+     * @return index of active tab
+     */
+    public int getActiveTabIndex() {
+        return activeTabId;
+    }
+
+    /**
+     * Set index of active tab.
+     *
+     * @param id
+     *            index of active tab
+     */
+    public void setActiveTabIndex(int id) {
+        this.activeTabId = id;
+    }
+
+    /**
+     * Updates the active tab index whenever the TabChangeEvent is fired.
+     *
+     * @param event
+     *            TabChangeEvent is fired when the user changes the tab in the
+     *            current tab view
+     */
+    public void onTabChange(TabChangeEvent event) {
+        setActiveTabIndex(event.getComponent().getChildren().indexOf(event.getTab()));
     }
 }
