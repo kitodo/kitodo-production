@@ -98,7 +98,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      *
      * @return The authorities.
      */
-    public List<Authority> getAuthorities() {
+    public List<Authority> getGlobalAuthorities() {
         if (this.authorities == null) {
             this.authorities = new ArrayList<>();
         }
@@ -111,7 +111,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      * @param authorities
      *            The authorities.
      */
-    public void setAuthorities(List<Authority> authorities) {
+    public void setGlobalAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }
 

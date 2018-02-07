@@ -16,7 +16,7 @@ import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

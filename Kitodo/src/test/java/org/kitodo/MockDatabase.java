@@ -1079,7 +1079,7 @@ public class MockDatabase {
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
-        firstUserGroup.setAuthorities(adminAuthorities);
+        firstUserGroup.setGlobalAuthorities(adminAuthorities);
 
         List<User> users = new ArrayList<>();
         User firstUser = serviceManager.getUserService().getById(1);
@@ -1100,7 +1100,7 @@ public class MockDatabase {
 
         List<Authority> userAuthorities = new ArrayList<>();
         userAuthorities.add(userAuthority);
-        secondUserGroup.setAuthorities(userAuthorities);
+        secondUserGroup.setGlobalAuthorities(userAuthorities);
         serviceManager.getUserGroupService().save(secondUserGroup);
 
         UserGroup thirdUserGroup = new UserGroup();

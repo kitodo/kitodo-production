@@ -83,7 +83,7 @@ public class UserGroupServiceIT {
     public void shouldGetUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         boolean condition = userGroup.getTitle().equals("Admin")
-                && userGroup.getAuthorities().get(0).getTitle().equals("admin");
+                && userGroup.getGlobalAuthorities().get(0).getTitle().equals("admin");
         assertTrue("User group was not found in database!", condition);
     }
 
@@ -226,7 +226,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetAuthorizations() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<Authority> actual = userGroup.getAuthorities();
+        List<Authority> actual = userGroup.getGlobalAuthorities();
         assertEquals("Permission strings doesn't match to given plain text!", "admin", actual.get(0).getTitle());
     }
 
@@ -250,7 +250,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldSaveAndRemoveAuthorizationForUsergroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<Authority> authorities = userGroup.getAuthorities();
+        List<Authority> authorities = userGroup.getGlobalAuthorities();
 
         Authority authority = new Authority();
         authority.setTitle("newAuthorization");
@@ -259,7 +259,7 @@ public class UserGroupServiceIT {
 
         authorities.add(authority);
 
-        userGroup.setAuthorities(authorities);
+        userGroup.setGlobalAuthorities(authorities);
         userGroupService.save(userGroup);
 
         userGroup = userGroupService.getById(1);
@@ -268,7 +268,7 @@ public class UserGroupServiceIT {
         List<String> expected = Arrays.asList("admin", "manager", "user", "newAuthorization");
         assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
 
-        authorities = userGroup.getAuthorities();
+        authorities = userGroup.getGlobalAuthorities();
 
         assertEquals("Permission strings doesn't match to given plain text!", "newAuthorization",
             authorities.get(3).getTitle());

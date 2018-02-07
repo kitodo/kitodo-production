@@ -180,8 +180,8 @@ public class BenutzergruppenForm extends BasisForm {
                     this.serviceManager.getUserGroupClientAuthorityRelationService().remove(relation);
                 }
             }
-            if (this.userGroup.getAuthorities().size() > 0) {
-                this.userGroup.setAuthorities(new ArrayList<>());
+            if (this.userGroup.getGlobalAuthorities().size() > 0) {
+                this.userGroup.setGlobalAuthorities(new ArrayList<>());
                 this.serviceManager.getUserGroupService().save(this.userGroup);
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
@@ -241,7 +241,7 @@ public class BenutzergruppenForm extends BasisForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getAuthorities() {
-        List<Authority> assignedAuthorities = this.userGroup.getAuthorities();
+        List<Authority> assignedAuthorities = this.userGroup.getGlobalAuthorities();
         List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
         availableAuthorities.removeAll(assignedAuthorities);
         return new DualListModel<>(availableAuthorities, assignedAuthorities);
@@ -255,7 +255,7 @@ public class BenutzergruppenForm extends BasisForm {
      *            list of authority assigned to 'userGroup'
      */
     public void setAuthorities(DualListModel<Authority> authorities) {
-        this.userGroup.setAuthorities(authorities.getTarget());
+        this.userGroup.setGlobalAuthorities(authorities.getTarget());
     }
 
     /**

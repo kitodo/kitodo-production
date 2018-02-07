@@ -142,7 +142,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private void manageUserGroupsDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
         if (authority.getIndexAction() == IndexAction.DELETE) {
             for (UserGroup userGroup : authority.getUserGroups()) {
-                userGroup.getAuthorities().remove(authority);
+                userGroup.getGlobalAuthorities().remove(authority);
                 serviceManager.getUserGroupService().saveToIndex(userGroup);
             }
         } else {

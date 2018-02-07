@@ -177,8 +177,8 @@ public class LoginForm implements Serializable {
         //TODO delete this methode when all new frontend is ready or security tags are replaced
         if (this.myBenutzer != null) {
             for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
-                if (userGroup.getAuthorities().size() > 0) {
-                    for (Authority authority : userGroup.getAuthorities()) {
+                if (userGroup.getGlobalAuthorities().size() > 0) {
+                    for (Authority authority : userGroup.getGlobalAuthorities()) {
                         if (authority.getTitle().equals("admin")) {
                             return 1; //Admin permission
                         }
