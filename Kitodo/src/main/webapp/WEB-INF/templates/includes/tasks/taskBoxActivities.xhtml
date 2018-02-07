@@ -1,0 +1,295 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:panelGroup
+            rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
+
+        <!-- ++++++++++++++++     Import      ++++++++++++++++ -->
+        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null and AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
+            <table cellpadding="3" cellspacing="0" width="100%"
+                   class="eingabeBoxen" style="margin-top:20px">
+                <tr>
+                    <td class="eingabeBoxen_row1">
+                        <h:outputText value="#{msgs.metadatenImportieren}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="eingabeBoxen_row2">
+                        <h:panelGrid columns="1">
+
+                            <!-- Import-Upload -->
+                            <h:panelGroup>
+                                <h:panelGroup rendered="#{Import.importMessage !=''}">
+                                    <h:outputText value="#{Import.importMessage}"
+                                                  style="color: blue;"/>
+                                    <br/>
+                                    <br/>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{Import.importError !=''}">
+                                    <h:outputText value="#{Import.importError}" style="color: red;"
+                                                  escape="false"/>
+                                    <br/>
+                                    <br/>
+                                </h:panelGroup>
+
+                                <h:form enctype="multipart/form-data" id="formupload">
+                                    <h:inputFile id="fileupload" accept="image/*"
+                                                       value="#{Import.uploadedFile}" storage="file"
+                                                       styleClass="fileUploadInput" required="false"/>
+                                    <h:commandButton value="#{msgs.metadatenImportieren}" id="button1"
+                                                     action="#{Import.start}">
+                                        <f:setPropertyActionListener target="#{Import.task}"
+                                                                value="#{AktuelleSchritteForm.mySchritt}"/>
+                                    </h:commandButton>
+                                </h:form>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </td>
+                </tr>
+            </table>
+        </ui:fragment>
+
+        <!-- ++++++++++++++++     // Import      ++++++++++++++++ -->
+        <h:form id="actionform">
+            <!-- ++++++++++++++++     Action      ++++++++++++++++ -->
+            <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == ''}">
+                <table cellpadding="3" cellspacing="0" width="100%"
+                       class="eingabeBoxen" style="margin-top:20px">
+                    <tr>
+                        <td class="eingabeBoxen_row1">
+                            <h4>#{msgs.moeglicheAktionen}</h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="eingabeBoxen_row2">
+                            <h:panelGrid columns="1">
+
+                                <!-- Sperrung der Metadaten anzeigen -->
+                                <h:panelGroup
+                                        style="color: red;margin-top:5px;margin-bottom:15px;display:block"
+                                        rendered="#{AktuelleSchritteForm.mySchritt.process.blockedUser != null}">
+                                    <h:outputText value="#{msgs.gesperrt}"/>
+                                    <br/>
+                                    <h:panelGrid columns="2" style="color: red;margin-left:30px"
+                                                 cellpadding="3">
+                                        <h:outputText value="#{msgs.benutzer}: "/>
+                                        <h:outputText
+                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUser.fullName}"/>
+                                        <h:outputText value="#{msgs.standort}: "/>
+                                        <h:outputText
+                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUser.location}"/>
+                                        <h:outputText value="#{msgs.lebenszeichen} "/>
+                                        <h:outputText
+                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedMinutes} min #{AktuelleSchritteForm.mySchritt.process.blockedSeconds} sec"/>
+                                    </h:panelGrid>
+                                    <h:outputText value="#{msgs.spaeter}"/>
+
+                                    <!-- Bei Sperrung durch eigenen Benutzer: Sperrung aufheben können -->
+                                    <h:commandLink id="action1"
+                                                   rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUser != null) and (AktuelleSchritteForm.mySchritt.process.blockedUser.id == LoginForm.myBenutzer.id)}"
+                                                   action="#{AktuelleSchritteForm.sperrungAufheben}"
+                                                   title="#{msgs.oderSperrungAufheben}">
+                                        <h:graphicImage value="/pages/images/buttons/key2a.gif" alt="release lock"
+                                                        style="margin-left:10px;margin-right:3px;vertical-align:middle"/>
+                                        <h:outputText value="#{msgs.oderSperrungAufheben}"
+                                                      style="font-weight:bold;font-style:underline"/>
+                                    </h:commandLink>
+
+                                </h:panelGroup>
+
+                                <!-- Russland-Export-Schaltknopf -->
+                                <!--
+                                <h:commandLink
+                                        rendered="#{AktuelleSchritteForm.mySchritt.typExportRus and AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+                                        action="#{AktuelleSchritteForm.DownloadRusExport}"
+                                        title="#{msgs.russischeMetadatenExportieren}">
+                                    <h:graphicImage value="/pages/images/buttons/rus.gif" alt=""
+                                                    style="margin-right:3px;vertical-align:middle" />
+                                    <h:outputText value="#{msgs.russischeMetadatenExportieren}" />
+                                </h:commandLink>
+                                -->
+
+                                <!-- Script-Schaltknopf -->
+                                <h:commandLink id="action3"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.scriptPath != null and AktuelleSchritteForm.mySchritt.scriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.executeScript}"
+                                               title="#{AktuelleSchritteForm.mySchritt.scriptName}">
+                                    <f:setPropertyActionListener
+                                            target="#{AktuelleSchritteForm.scriptPath}"
+                                            value="#{AktuelleSchritteForm.mySchritt.scriptPath}"/>
+                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
+                                                    style="margin-right:3px;vertical-align:middle"/>
+                                    <h:outputText
+                                            value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName}"/>
+                                </h:commandLink>
+
+                                <!-- tiffHeaderDownload-Schaltknopf -->
+                                <h:commandLink id="action8"
+                                               rendered="#{0==1 and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.downloadTiffHeader}"
+                                               title="#{msgs.dateiMitTiffHeaderSpeichern}">
+                                    <h:graphicImage value="/pages/images/buttons/tif.gif" alt="download tiff header"
+                                                    style="margin-right:3px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.dateiMitTiffHeaderSpeichern}"/>
+                                </h:commandLink>
+
+                                <!-- Import in das DMS-Schaltknopf -->
+
+                                <!-- TODO: delete this warning once the root cause of the timeout problem is solved  -->
+                                <h:outputText style="back-color:blue; color: red; font-weight: bold;"
+                                              rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                              value="#{msgs.timeoutWarningDMS}"/>
+
+                                <!-- Upload-Schaltknopf -->
+                                <h:commandLink id="action9"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.exportDMS}"
+                                               title="#{msgs.importDms}">
+                                    <h:graphicImage value="/pages/images/buttons/dms.png" alt="export to dms"
+                                                    style="margin-right:3px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.importDms}"/>
+                                </h:commandLink>
+
+                                <!-- Metadaten-Schaltknopf -->
+                                <h:commandLink id="action10"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               action="#{Metadaten.readXml}"
+                                               title="#{msgs.metadatenBearbeiten}">
+                                    <h:graphicImage value="/pages/images/buttons/view1.gif" alt="read xml"
+                                                    style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.metadatenBearbeiten}"/>
+                                    <f:setPropertyActionListener
+                                            value="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"
+                                            target="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"/>
+                                    <f:param name="ProzesseID"
+                                             value="#{AktuelleSchritteForm.mySchritt.process.id}"/>
+                                    <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
+                                    <f:param name="zurueck" value="AktuelleSchritteBearbeiten"/>
+                                </h:commandLink>
+
+                                <!-- Bearbeitung abbrechen-Schaltknopf -->
+                                <h:commandLink id="action11"
+                                               action="#{AktuelleSchritteForm.schrittDurchBenutzerZurueckgeben}"
+                                               title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
+                                               onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
+                                    <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
+                                                    style="margin-right:3px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}"/>
+                                </h:commandLink>
+
+                                <!-- Schritt zurückgeben an vorherige Station für Korrekturzwecke -->
+                                <h:panelGroup rendered="#{AktuelleSchritteForm.sizeOfPreviousStepsForProblemReporting > 0}">
+                                    <span class="toggle" data-for="toggle-1">
+                                        <h:graphicImage alt="step back"
+                                                        value="/pages/images/buttons/step_back_20px.gif"
+                                                        style="margin-right:3px;vertical-align:middle"/>
+                                        <h:outputText
+                                                value="#{msgs.korrekturmeldungAnVorherigeStationSenden}"/>
+                                    </span>
+
+                                    <div class="toggle-1" style="display: none;">
+
+                                        <h:panelGrid columns="2" style="margin-left:40px;" id="grid3"
+                                                     rowClasses="top"
+                                                     columnClasses="standardTable_Column,standardTable_ColumnRight">
+                                            <h:outputText value="#{msgs.zurueckZuArbeitsschritt}"/>
+                                            <h:selectOneMenu style="width:350px"
+                                                             value="#{AktuelleSchritteForm.problem.id}">
+                                                <f:selectItems
+                                                        value="#{AktuelleSchritteForm.previousStepsForProblemReporting}"
+                                                        var="step1" itemLabel="#{step1.titleWithUserName}"
+                                                        itemValue="#{step1.id}"/>
+                                            </h:selectOneMenu>
+                                            <h:outputText value="#{msgs.bemerkung}"/>
+                                            <h:inputTextarea style="width:350px;height:80px"
+                                                             value="#{AktuelleSchritteForm.problem.message}"/>
+                                            <!-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset -->
+                                            <h:outputText value=""/>
+                                            <h:commandLink id="action13"
+                                                           action="#{AktuelleSchritteForm.reportProblem}"
+                                                           title="#{msgs.korrekturmeldungSenden}"
+                                                           onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                                <h:outputText value="#{msgs.korrekturmeldungSenden}"/>
+                                            </h:commandLink>
+                                        </h:panelGrid>
+                                    </div>
+
+                                </h:panelGroup>
+
+                                <!-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke -->
+                                <h:panelGroup
+                                        rendered="#{AktuelleSchritteForm.mySchritt.priority>9 and AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
+
+                                    <span class="toggle" data-for="toggle-2">
+
+                                        <h:graphicImage alt="step forward"
+                                                        value="/pages/images/buttons/step_for_20px.gif"
+                                                        style="margin-right:3px;vertical-align:middle"/>
+                                        <h:outputText
+                                                value="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}"/>
+                                    </span>
+                                    <div class="toggle-2" style="display: none;">
+
+                                        <h:panelGrid columns="2" style="margin-left:40px;"
+                                                     rowClasses="top" id="grid1"
+                                                     columnClasses="standardTable_Column,standardTable_ColumnRight">
+                                            <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
+                                            <h:selectOneMenu style="width:350px" id="select1"
+                                                             value="#{AktuelleSchritteForm.solution.id}">
+                                                <f:selectItems
+                                                        value="#{AktuelleSchritteForm.nextStepsForProblemSolution}"
+                                                        var="step2" itemLabel="#{step2.titleWithUserName}"
+                                                        itemValue="#{step2.id}"/>
+                                            </h:selectOneMenu>
+                                            <h:outputText value="#{msgs.bemerkung}"/>
+                                            <h:inputTextarea style="width:350px;height:80px" id="input1"
+                                                             value="#{AktuelleSchritteForm.solution.message}"/>
+                                            <!-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset -->
+                                            <h:outputText value=""/>
+                                            <h:commandLink id="action14"
+                                                           action="#{AktuelleSchritteForm.solveProblem}"
+                                                           title="#{msgs.meldungUeberProblemloesungSenden}"
+                                                           onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                                <h:outputText value="#{msgs.meldungUeberProblemloesungSenden}"/>
+                                            </h:commandLink>
+                                        </h:panelGrid>
+                                    </div>
+
+                                </h:panelGroup>
+
+                                <!-- Abschliessen-Schaltknopf -->
+                                <h:commandLink id="action15"
+                                               action="#{AktuelleSchritteForm.schrittDurchBenutzerAbschliessen}"
+                                               title="#{msgs.diesenSchrittAbschliessen}"
+                                               onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
+                                    <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
+                                                    style="margin-right:3px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.diesenSchrittAbschliessen}"/>
+                                </h:commandLink>
+
+                            </h:panelGrid>
+                        </td>
+                    </tr>
+
+                </table>
+            </ui:fragment>
+            <!-- ++++++++++++++++     // Action      ++++++++++++++++ -->
+        </h:form>
+    </h:panelGroup>
+</ui:composition>
