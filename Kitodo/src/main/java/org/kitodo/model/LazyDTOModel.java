@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
@@ -46,6 +47,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      *            source
      */
     public LazyDTOModel(SearchService searchService) {
+        indexRestClient.setIndex(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         this.searchService = searchService;
 
         try {
