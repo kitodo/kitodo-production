@@ -15,18 +15,19 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
+import javax.inject.Named;
 
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 
 /**
  * StatisticCalculationUnitConverter for statistics CalculationUnits as
  * select-items in jsf-guis.
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 21.05.2009
  */
+@Named
 public class StatisticsCalculationUnitConverter implements Converter {
-    public static final String CONVERTER_ID = "StatisticsCalculationUnitConverter";
 
     /**
      * Convert String to CalculationUnit.

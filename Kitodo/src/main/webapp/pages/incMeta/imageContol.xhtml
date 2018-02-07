@@ -25,7 +25,7 @@
         <p:commandButton id="dummy" style="display:none;"/>
         <h:panelGrid colums="1">
             <h:outputText value="#{msgs.aktuellerOrdner}: "/>
-            <p:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}" converter="URIConverter">
+            <p:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}">
                 <f:selectItems value="#{Metadaten.allTifFolders}"/>
                 <p:ajax update="currentImage,imageNumberSpinner" listener="#{Metadaten.goToFirstImage}"/>
             </p:selectOneMenu>

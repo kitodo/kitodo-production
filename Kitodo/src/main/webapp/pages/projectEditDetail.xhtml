@@ -46,7 +46,7 @@
             <div>
                 <p:outputLabel for="client" value="#{msgs.client}"/>
                 <p:selectOneMenu id="client"
-                                 converter="ClientConverter"
+                                 converter="#{clientConverter}"
                                  value="#{ProjekteForm.myProjekt.client}"
                                  disabled="#{ProjekteForm.locked}">
                     <f:selectItem itemLabel="#{msgs.clientNon}" itemValue="noClient"/>
