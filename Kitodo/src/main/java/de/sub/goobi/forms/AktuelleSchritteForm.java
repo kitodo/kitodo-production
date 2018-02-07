@@ -601,7 +601,8 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e.getMessage());
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage("ERROR: " + Helper.getTranslation("unableToRetrieveTask"));
+            FacesMessage facesMessage = new FacesMessage(
+                    Helper.getTranslation("ERROR") + ": " + Helper.getTranslation("unableToRetrieveTask"));
             facesContext.addMessage(null, facesMessage);
             return null;
         }
@@ -981,5 +982,16 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving task with ID '" + this.stepId + "'; ", e.getMessage());
         }
+    }
+
+    /**
+     * Retrieve and return the list of tasks that are assigned to the user that are
+     * currently in progress.
+     *
+     * @return list of tasks that are currently assigned to the user that are
+     *         currently in progress.
+     */
+    public List<Task> getTasksInProgress() {
+        return serviceManager.getUserService().getTasksInProgress(this.user);
     }
 }

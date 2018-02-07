@@ -13,6 +13,7 @@ package org.kitodo.model;
 
 import static java.lang.Math.toIntExact;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,8 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BaseDTO;
 import org.kitodo.services.data.base.SearchService;
@@ -31,6 +34,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     private static final long serialVersionUID = 8782111495680176505L;
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
+    private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
 
     /**
      * Creates a LazyDTOModel instance that allows fetching data from the data
@@ -70,24 +74,48 @@ public class LazyDTOModel extends LazyDataModel<Object> {
 
     @Override
     public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        try {
-            setRowCount(toIntExact(searchService.count(searchService.createCountQuery(filters))));
+        if (indexRunning()) {
+            try {
+                setRowCount(toIntExact(searchService.count(searchService.createCountQuery(filters))));
 
-            List entities;
-            if (!Objects.equals(sortField, null)
-                    && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
-                entities = searchService.findAll("{\"" + sortField + "\":\"asc\" }", first, pageSize, filters);
-            } else if (!Objects.equals(sortField, null)
-                    && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
-                entities = searchService.findAll("{\"" + sortField + "\":\"desc\" }", first, pageSize, filters);
-            } else {
-                entities = searchService.findAll(null, first, pageSize, filters);
+                List entities;
+                if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
+                    entities = searchService.findAll("{\"" + sortField + "\":\"asc\" }", first, pageSize, filters);
+                } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
+                    entities = searchService.findAll("{\"" + sortField + "\":\"desc\" }", first, pageSize, filters);
+                } else {
+                    entities = searchService.findAll(null, first, pageSize, filters);
+                }
+                logger.info(entities.size() + " entities loaded!");
+                return entities;
+            } catch (DataException e) {
+                logger.error(e.getMessage());
+                return new LinkedList();
             }
-            logger.info(entities.size() + " entities loaded!");
-            return entities;
-        } catch (DataException e) {
-            logger.error(e.getMessage());
+        } else {
+            logger.info("Index not found!");
             return new LinkedList();
+        }
+    }
+
+    /**
+     * Checks and returns whether the ElasticSearch index is running or not.
+     *
+     * <p>
+     * NOTE: This wrapper function is necessary because the calling "load" function
+     * overwrites a function from the PrimeFaces LazyDataModel and therefore its
+     * method signature cannot be changed, e.g. now thrown exceptions can be added
+     * to it.
+     * </p>
+     *
+     * @return whether the ElasticSearch index is running or not
+     */
+    private boolean indexRunning() {
+        try {
+            return indexRestClient.indexExists();
+        } catch (IOException | CustomResponseException e) {
+            logger.error(e.getMessage());
+            return false;
         }
     }
 }

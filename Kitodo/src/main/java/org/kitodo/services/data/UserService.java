@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +41,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -678,7 +680,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     /**
      * Check if password is correct.
-     * 
+     *
      * @param user
      *            as User object
      * @param inputPassword
@@ -836,5 +838,17 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             }
         }
         refresh(user);
+    }
+
+    /**
+     * Retrieve and return the list of tasks that are assigned to the user and that
+     * are neither "DONE" nor "LOCKED".
+     *
+     * @return list of tasks that are currently assigned to the user and neither
+     *         "DONE" nor "LOCKED".
+     */
+    public List<Task> getTasksInProgress(User user) {
+        return user.getProcessingTasks().stream().filter(task -> !task.getProcessingStatusEnum().equals(TaskStatus.DONE)
+                && !task.getProcessingStatusEnum().equals(TaskStatus.LOCKED)).collect(Collectors.toList());
     }
 }
