@@ -11,18 +11,14 @@
 
 package de.sub.goobi.export.download;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.metadaten.copier.CopierData;
-import de.sub.goobi.metadaten.copier.DataCopier;
 
 import java.io.IOException;
 import java.net.URI;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
@@ -85,17 +81,8 @@ public class ExportMets {
         String atsPpnBand = process.getTitle();
         Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(process);
 
-        String rules = ConfigCore.getParameter("copyData.onExport");
-        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
-            try {
-                new DataCopier(rules).process(new CopierData(gdzfile, process));
-            } catch (ConfigurationException e) {
-                Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
-                return false;
-            } catch (RuntimeException exception) {
-                Helper.setFehlerMeldung("dataCopier.runtimeException", exception.getMessage());
-                return false;
-            }
+        if (!serviceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
+            return false;
         }
 
         // only for the metadata of the RUSDML project
