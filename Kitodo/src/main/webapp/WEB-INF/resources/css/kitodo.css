@@ -270,12 +270,13 @@ body.first-visit #portal-header {
     position: absolute;
     top: -14px;
     right: -14px;
-    display: table-cell;
-    width: 22px;
+    min-width: 13px;
+    height: 22px;
     text-align: center;
-    padding: 3px 0px 7px 0px;
+    padding: 0 5px;
     font-size: 12px;
-    border-radius: 100%;
+    line-height: 22px;
+    border-radius: 11px;
     color: #fff !important;
     }
 
