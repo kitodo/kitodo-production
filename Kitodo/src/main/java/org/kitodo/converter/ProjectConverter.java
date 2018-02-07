@@ -25,7 +25,7 @@ import org.kitodo.services.ServiceManager;
 public class ProjectConverter implements Converter {
 
     private ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(ClientConverter.class);
+    private static final Logger logger = LogManager.getLogger(ProjectConverter.class);
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value)

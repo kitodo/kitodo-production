@@ -15,20 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupProjectAuthorityRelationDAO;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
 public class UserGroupProjectAuthorityRelationService
         extends SearchDatabaseService<UserGroupProjectAuthorityRelation, UserGroupProjectAuthorityRelationDAO> {
 
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final Logger logger = LogManager.getLogger(this.getClass());
     private static UserGroupProjectAuthorityRelationService instance = null;
 
     private UserGroupProjectAuthorityRelationService() {

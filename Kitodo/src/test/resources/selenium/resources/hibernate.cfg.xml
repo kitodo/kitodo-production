@@ -48,15 +48,15 @@
         <mapping class="org.kitodo.data.database.beans.LdapGroup"/>
         <mapping class="org.kitodo.data.database.beans.LdapServer"/>
         <mapping class="org.kitodo.data.database.beans.Process"/>
-        <mapping class="org.kitodo.data.database.beans.Property"/>
         <mapping class="org.kitodo.data.database.beans.Project"/>
         <mapping class="org.kitodo.data.database.beans.ProjectFileGroup"/>
+        <mapping class="org.kitodo.data.database.beans.Property"/>
         <mapping class="org.kitodo.data.database.beans.Ruleset"/>
         <mapping class="org.kitodo.data.database.beans.Task"/>
+        <mapping class="org.kitodo.data.database.beans.User"/>
         <mapping class="org.kitodo.data.database.beans.UserGroup"/>
         <mapping class="org.kitodo.data.database.beans.UserGroupClientAuthorityRelation"/>
         <mapping class="org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation"/>
-        <mapping class="org.kitodo.data.database.beans.User"/>
 
     </session-factory>
 

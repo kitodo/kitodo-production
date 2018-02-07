@@ -52,7 +52,7 @@ public class ClientForm extends BasisForm {
     public String save() {
         try {
             this.serviceManager.getClientService().save(this.client);
-            return "/pages/clients?faces-redirect=true";
+            return "/pages/clients?" + REDIRECT_PARAMETER;
         } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save client", e.getMessage());
             return null;
@@ -81,7 +81,7 @@ public class ClientForm extends BasisForm {
     public String newClient() {
         this.client = new Client();
         this.clientId = 0;
-        return "/pages/clientEdit?faces-redirect=true";
+        return "/pages/clientEdit?" + REDIRECT_PARAMETER;
     }
 
     /**

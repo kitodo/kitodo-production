@@ -622,7 +622,7 @@ public class ProjekteForm extends BasisForm {
                 this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
                 this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
                 this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(),
-                        this.getMyProjekt().getEndDate());
+                    this.getMyProjekt().getEndDate());
                 this.projectProgressData.setDataSource(getProcessesForStatistics());
 
                 if (this.projectProgressImage == null) {
@@ -859,6 +859,11 @@ public class ProjekteForm extends BasisForm {
         }
     }
 
+    /**
+     * Gets all available clients.
+     * 
+     * @return The list of clients.
+     */
     public List<Client> getClients() {
         return serviceManager.getClientService().getAll();
     }
