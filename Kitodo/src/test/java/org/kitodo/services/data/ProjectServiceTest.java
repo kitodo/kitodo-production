@@ -21,13 +21,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 public class ProjectServiceTest {
 
     @Test
-    public void testProjectForCompletness() throws DAOException, IOException {
+    public void testProjectForCompletness() throws IOException {
         ProjectService projectService = new ServiceManager().getProjectService();
 
         // A project without dmsExportFormat, internal format or templates

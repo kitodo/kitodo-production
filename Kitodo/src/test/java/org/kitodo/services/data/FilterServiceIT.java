@@ -81,7 +81,7 @@ public class FilterServiceIT {
     }
 
     @Test
-    public void shouldFindAllFilters() throws Exception {
+    public void shouldFindAllFilters() {
         List<Filter> filters = filterService.getAll();
         assertEquals("Not all filters were found in database!", 2, filters.size());
     }

@@ -31,7 +31,7 @@ public class LdapGroupServiceIT {
     }
 
     @AfterClass
-    public static void cleanDatabase() throws Exception {
+    public static void cleanDatabase() {
         MockDatabase.cleanDatabase();
     }
 

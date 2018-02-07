@@ -45,7 +45,7 @@ public class BatchFormIT {
     }
 
     @Test
-    public void shouldFilterProcesses() throws Exception {
+    public void shouldFilterProcesses() {
         BatchForm batchForm = new BatchForm();
 
         batchForm.setProcessfilter("\"id:2\"");

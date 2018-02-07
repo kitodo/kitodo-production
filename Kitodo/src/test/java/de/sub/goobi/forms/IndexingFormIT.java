@@ -32,7 +32,7 @@ public class IndexingFormIT {
     }
 
     @Test
-    public void shouldCreateMapping() throws Exception {
+    public void shouldCreateMapping() {
         Assert.assertFalse(indexingForm.indexExists());
         indexingForm.createMapping(false);
         Assert.assertTrue(indexingForm.indexExists());

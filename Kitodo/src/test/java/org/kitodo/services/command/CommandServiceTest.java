@@ -120,7 +120,7 @@ public class CommandServiceTest {
     }
 
     @Test(expected = IOException.class)
-    public void runNotExistingScript() throws InterruptedException, IOException {
+    public void runNotExistingScript() throws IOException {
         String commandString = "src/test/resources/not_existing_script" + scriptExtension;
         CommandService service = new CommandService();
         service.runCommand(commandString);
