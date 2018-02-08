@@ -193,8 +193,6 @@ button .ui-icon {
 }
 
 .ui-chkbox .ui-chkbox-icon {
-  /*outline: 0;
-  display: block;*/
   width: 80%;
   height: 40%;
   position: relative;
