@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
@@ -129,13 +130,19 @@ public class CopyProcess {
 
         clearValues();
         readProjectConfigs();
-        Prefs prefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
-        try {
-            this.rdf = new MetsMods(prefs);
-            this.rdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException | ReadException e) {
-            logger.error(e);
+
+        if (Objects.nonNull(this.metadataFile)) {
+            Prefs prefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
+            try {
+                this.rdf = new MetsMods(prefs);
+                if (Objects.nonNull(this.metadataFile)) {
+                    this.rdf.read(this.metadataFile.getPath());
+                }
+            } catch (PreferencesException | ReadException e) {
+                logger.error(e);
+            }
         }
+
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setTemplate(false);
@@ -334,6 +341,7 @@ public class CopyProcess {
         this.standardFields.put("collections", true);
         this.standardFields.put("doctype", true);
         this.standardFields.put("regelsatz", true);
+        this.standardFields.put("images", true);
         this.additionalFields = new ArrayList<>();
         this.tifHeaderDocumentName = "";
         this.tifHeaderImageDescription = new StringBuilder("");
