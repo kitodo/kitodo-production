@@ -332,6 +332,21 @@ tr.ui-widget-content,
     color: #fff;
 }
 
+@keyframes row-expansion-animation {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        max-height: 500px;
+    }
+}
+
+.row-expansion-wrapper {
+    animation-name: row-expansion-animation;
+    animation-duration: 0.5s;
+}
+
 tr.ui-expanded-row-content,
 tr.ui-expanded-row-content tr.ui-widget-header,
 .ui-dialog-content tr.ui-widget-header,
