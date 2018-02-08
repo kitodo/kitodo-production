@@ -22,30 +22,40 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.importer.ImportObject;
 import org.jdom.JDOMException;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -56,12 +66,13 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 
 public class CopyProcess {
 
     private static final Logger logger = LogManager.getLogger(CopyProcess.class);
-    private FileformatInterface myRdf;
+    private FileformatInterface rdf;
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
@@ -77,10 +88,12 @@ public class CopyProcess {
     private StringBuilder tifHeaderImageDescription = new StringBuilder("");
     private String tifHeaderDocumentName = "";
     private Integer auswahl;
+    private Integer guessedImages = 0;
     private String docType;
     // TODO: check use of atstsl. Why is it never modified?
     private static final String atstsl = "";
     private List<String> possibleDigitalCollection;
+    private static final String DIRECTORY_SUFFIX = "_tif";
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -110,8 +123,8 @@ public class CopyProcess {
         readProjectConfigs();
         PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
-            this.myRdf = UghImplementation.INSTANCE.createMetsMods(prefs);
-            this.myRdf.read(this.metadataFile.getPath());
+            this.rdf = UghImplementation.INSTANCE.createMetsMods(prefs);
+            this.rdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
         }
@@ -215,13 +228,13 @@ public class CopyProcess {
         try {
             PrefsInterface myPrefs = serviceManager.getRulesetService()
                     .getPreferences(this.prozessVorlage.getRuleset());
-            /* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile.getPath());
+            // den Opac abfragen und ein RDF draus bauen lassen
+            this.rdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
+            this.rdf.read(this.metadataFile.getPath());
 
-            this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getDocStructType().getName();
+            this.docType = this.rdf.getDigitalDocument().getLogicalDocStruct().getDocStructType().getName();
 
-            fillFieldsFromMetadataFile(this.myRdf);
+            fillFieldsFromMetadataFile();
 
             fillFieldsFromConfig();
 
@@ -236,31 +249,29 @@ public class CopyProcess {
      * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
      * füllen.
      */
-    private void fillFieldsFromMetadataFile(FileformatInterface myRdf) throws PreferencesException {
-        if (myRdf != null) {
-
+    public void fillFieldsFromMetadataFile() throws PreferencesException {
+        if (this.rdf != null) {
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
-                    /* welches Docstruct */
-
-                    DocStructInterface myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
+                    // welches Docstruct
+                    DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
-                            myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
                             logger.error(e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
-                        myTempStruct = myRdf.getDigitalDocument().getPhysicalDocStruct();
+                        tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
                     }
-                    /* welches Metadatum */
+                    // welches Metadatum
                     try {
                         if (field.getMetadata().equals("ListOfCreators")) {
-                            /* bei Autoren die Namen zusammenstellen */
+                            // bei Autoren die Namen zusammenstellen
                             StringBuilder authors = new StringBuilder();
-                            if (myTempStruct.getAllPersons() != null) {
-                                for (PersonInterface p : myTempStruct.getAllPersons()) {
+                            if (tempStruct.getAllPersons() != null) {
+                                for (PersonInterface p : tempStruct.getAllPersons()) {
                                     authors.append(p.getLastName());
                                     if (StringUtils.isNotBlank(p.getFirstName())) {
                                         authors.append(", ");
@@ -274,11 +285,11 @@ public class CopyProcess {
                             }
                             field.setValue(authors.toString());
                         } else {
-                            /* bei normalen Feldern die Inhalte auswerten */
+                            // bei normalen Feldern die Inhalte auswerten
                             MetadataTypeInterface mdt = UghHelper.getMetadataType(
                                 serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                                 field.getMetadata());
-                            MetadataInterface md = UghHelper.getMetadata(myTempStruct, mdt);
+                            MetadataInterface md = UghHelper.getMetadata(tempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
                             }
@@ -286,9 +297,9 @@ public class CopyProcess {
                     } catch (UghHelperException e) {
                         Helper.setFehlerMeldung(e.getMessage(), "");
                     }
-                } // end if ughbinding
-            } // end for
-        } // end if myrdf==null
+                }
+            }
+        }
     }
 
     private void fillFieldsFromConfig() {
@@ -301,7 +312,6 @@ public class CopyProcess {
             }
         }
         calculateTiffHeader();
-
     }
 
     /**
@@ -323,7 +333,7 @@ public class CopyProcess {
     /**
      * Auswahl des Prozesses auswerten.
      */
-    public String templateAuswahlAuswerten() throws DAOException {
+    public String evaluateSelectedTemplate() throws DAOException {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
@@ -331,6 +341,9 @@ public class CopyProcess {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
                         field.setValue(workpieceProperty.getValue());
+                    }
+                    if (workpieceProperty.getTitle().equals("DocType")) {
+                        docType = workpieceProperty.getValue();
                     }
                 }
             }
@@ -346,29 +359,33 @@ public class CopyProcess {
             }
         }
 
+        if (serviceManager.getProcessService().getPropertiesSize(tempProzess) > 0) {
+            for (Property processProperty : tempProzess.getProperties()) {
+                if (processProperty.getTitle().equals("digitalCollection")) {
+                    digitalCollections.add(processProperty.getValue());
+                }
+            }
+        }
         try {
-            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
+            this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Fehler beim Einlesen der Template-Metadaten ", e);
+            Helper.setFehlerMeldung("Error on reading template-metadata ", e);
         }
 
-        /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
+        // falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
         try {
-            DocStructInterface colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
+            DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct);
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct);
         } catch (PreferencesException e) {
-            Helper.setFehlerMeldung("Fehler beim Anlegen des Vorgangs", e);
-            logger.error("Fehler beim Anlegen des Vorgangs", e);
+            Helper.setFehlerMeldung("Error on creating process", e);
+            logger.error("Error on creating process", e);
         } catch (RuntimeException e) {
-            /*
-             * das Firstchild unterhalb des Topstructs konnte nicht ermittelt
-             * werden
-             */
+            // the first child below the topstruct could not be determined
         }
 
-        return "";
+        return null;
     }
 
     /**
@@ -506,11 +523,11 @@ public class CopyProcess {
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
          * stattfand, dann jetzt eine anlegen
          */
-        if (this.myRdf == null) {
+        if (this.rdf == null) {
             createNewFileformat();
         }
 
-        serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
+        serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
 
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
@@ -530,7 +547,6 @@ public class CopyProcess {
             throws ReadException, IOException, PreferencesException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
-        this.prozessKopie.setId(null);
         addProperties(io);
         prepareTasksForProcess();
 
@@ -541,7 +557,6 @@ public class CopyProcess {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            e.printStackTrace();
             logger.error("error on save: ", e);
             return this.prozessKopie;
         }
@@ -550,17 +565,280 @@ public class CopyProcess {
          * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
          * stattfand, dann jetzt eine anlegen
          */
-        if (this.myRdf == null) {
+        if (this.rdf == null) {
             createNewFileformat();
         }
 
-        serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
+        serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
 
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
         Helper.getHibernateSession().refresh(this.prozessKopie);
         return this.prozessKopie;
+    }
+
+    public boolean createNewProcess()
+            throws ReadException, IOException, PreferencesException, WriteException {
+
+        //evict set up id to null
+        Helper.getHibernateSession().evict(this.prozessKopie);
+        if (!isContentValid(true)) {
+            return false;
+        }
+        addProperties(null);
+        prepareTasksForProcess();
+
+        try {
+            this.prozessKopie.setSortHelperImages(this.guessedImages);
+            serviceManager.getProcessService().save(this.prozessKopie);
+            serviceManager.getProcessService().refresh(this.prozessKopie);
+        } catch (DataException e) {
+            logger.error("error on save: ", e);
+            return false;
+        }
+
+        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
+        boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+        if (!successful) {
+            String message = "Metadata directory: " + baseProcessDirectory + "in path:"
+                    +  ConfigCore.getKitodoDataDirectory() + " was not created!";
+            logger.error(message);
+            Helper.setFehlerMeldung(message);
+            return false;
+        }
+
+        /*
+         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
+         * stattfand, dann jetzt eine anlegen
+         */
+        if (this.rdf == null) {
+            createNewFileformat();
+        }
+
+        /*
+         * wenn eine RDF-Konfiguration vorhanden ist (z.B. aus dem Opac-Import,
+         * oder frisch angelegt), dann diese ergänzen
+         */
+        if (this.rdf != null) {
+
+            // there must be at least one non-anchor level doc struct
+            // if missing, insert logical doc structs until you reach it
+            DocStructInterface populizer = null;
+            try {
+                populizer = rdf.getDigitalDocument().getLogicalDocStruct();
+                if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
+                    PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
+                    while (populizer.getDocStructType().getAnchorClass() != null) {
+                        populizer = populizer.createChild(populizer.getDocStructType().getAllAllowedDocStructTypes().get(0),
+                                rdf.getDigitalDocument(), ruleset);
+                    }
+                }
+            } catch (NullPointerException | IndexOutOfBoundsException e) { // if
+                // getAllAllowedDocStructTypes()
+                // returns null
+                Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
+                        populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName() : null);
+            } catch (UGHException catchAll) {
+                Helper.setFehlerMeldung(catchAll.getMessage());
+            }
+
+            for (AdditionalField field : this.additionalFields) {
+                if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
+                    // welches Docstruct
+                    DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+                    DocStructInterface tempChild = null;
+                    if (field.getDocstruct().equals("firstchild")) {
+                        try {
+                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
+                                    .get(0);
+                        } catch (RuntimeException e) {
+                            logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
+                        }
+                    }
+                    /*
+                     * falls topstruct und firstchild das Metadatum bekommen
+                     * sollen
+                     */
+                    if (!field.getDocstruct().equals("firstchild") && field.getDocstruct().contains("firstchild")) {
+                        try {
+                            tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+                        } catch (RuntimeException e) {
+                            logger.error(e);
+                        }
+                    }
+                    if (field.getDocstruct().equals("boundbook")) {
+                        tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
+                    }
+                    // welches Metadatum
+                    try {
+                        /*
+                         * bis auf die Autoren alle additionals in die Metadaten
+                         * übernehmen
+                         */
+                        if (!field.getMetadata().equals("ListOfCreators")) {
+                            MetadataTypeInterface mdt = UghHelper.getMetadataType(
+                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                    field.getMetadata());
+                            MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
+                            if (metadata != null) {
+                                metadata.setStringValue(field.getValue());
+                            }
+                            /*
+                             * wenn dem Topstruct und dem Firstchild der Wert
+                             * gegeben werden soll
+                             */
+                            if (tempChild != null) {
+                                metadata = UghHelper.getMetadata(tempChild, mdt);
+                                if (metadata != null) {
+                                    metadata.setStringValue(field.getValue());
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        Helper.setFehlerMeldung(e);
+                    }
+                }
+            }
+
+            updateMetadata();
+
+            /*
+             * Collectionen hinzufügen
+             */
+            DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+            try {
+                addCollections(colStruct);
+                /*
+                 * falls ein erstes Kind vorhanden ist, sind die Collectionen
+                 * dafür
+                 */
+                colStruct = colStruct.getAllChildren().get(0);
+                addCollections(colStruct);
+            } catch (RuntimeException e) {
+                logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
+            }
+
+            /*
+             * Imagepfad hinzufügen (evtl. vorhandene zunächst löschen)
+             */
+            try {
+                MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
+                List<? extends MetadataInterface> allImagePaths = this.rdf.getDigitalDocument().getPhysicalDocStruct()
+                        .getAllMetadataByType(mdt);
+                if (allImagePaths != null && allImagePaths.size() > 0) {
+                    for (MetadataInterface metadata : allImagePaths) {
+                        this.rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(metadata);
+                    }
+                }
+                MetadataInterface newMetadata = new UghImplementation.INSTANCE.createMetadata(mdt);
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    newMetadata.setStringValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                            + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
+                } else {
+                    newMetadata.setStringValue("file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                            + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
+                }
+                this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
+
+                /* Rdf-File schreiben */
+                serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
+
+                /*
+                 * soll der Prozess als Vorlage verwendet werden?
+                 */
+                if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
+                    serviceManager.getFileService().writeMetadataAsTemplateFile(this.rdf, this.prozessKopie);
+                }
+
+            } catch (DocStructHasNoTypeException e) {
+                Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
+                logger.error("creation of new process throws an error: ", e);
+            } catch (UghHelperException e) {
+                Helper.setFehlerMeldung("UghHelperException", e.getMessage());
+                logger.error("creation of new process throws an error: ", e);
+            } catch (MetadataTypeNotAllowedException e) {
+                Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
+                logger.error("creation of new process throws an error: ", e);
+            }
+
+        }
+
+        // Create configured directories
+        serviceManager.getProcessService().createProcessDirs(this.prozessKopie);
+
+        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
+
+        startTaskScriptThreads();
+
+        return true;
+    }
+
+    /**
+     * Metadata inheritance and enrichment.
+     */
+    private void updateMetadata() throws PreferencesException {
+        if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+            DocStructInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
+            Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
+            while (enricher.getAllChildren() != null) {
+                // save higher level metadata for lower enrichment
+                List<MetadataInterface> allMetadata = enricher.getAllMetadata();
+                if (allMetadata == null) {
+                    allMetadata = Collections.emptyList();
+                }
+                for (MetadataInterface available : allMetadata) {
+                    Map<String, MetadataInterface> availableMetadata = higherLevelMetadata
+                            .containsKey(available.getMetadataType().getName())
+                            ? higherLevelMetadata.get(available.getMetadataType().getName()) : new HashMap<>();
+                    if (!availableMetadata.containsKey(available.getValue())) {
+                        availableMetadata.put(available.getValue(), available);
+                    }
+                    higherLevelMetadata.put(available.getMetadataType().getName(), availableMetadata);
+                }
+
+                // enrich children with inherited metadata
+                for (DocStructInterface nextChild : enricher.getAllChildren()) {
+                    enricher = nextChild;
+                    for (Map.Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata
+                            .entrySet()) {
+                        String enrichable = availableHigherMetadata.getKey();
+                        boolean addable = false;
+                        List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
+                        if (addableTypesNotNull == null) {
+                            addableTypesNotNull = Collections.emptyList();
+                        }
+                        for (MetadataTypeInterface addableMetadata : addableTypesNotNull) {
+                            if (addableMetadata.getName().equals(enrichable)) {
+                                addable = true;
+                                break;
+                            }
+                        }
+                        if (!addable) {
+                            continue;
+                        }
+                        there: for (Map.Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
+                                .entrySet()) {
+                            List<MetadataInterface> amNotNull = enricher.getAllMetadata();
+                            if (amNotNull == null) {
+                                amNotNull = Collections.emptyList();
+                            }
+                            for (MetadataInterface existentMetadata : amNotNull) {
+                                if (existentMetadata.getMetadataType().getName().equals(enrichable)
+                                        && existentMetadata.getValue().equals(higherElement.getKey())) {
+                                    continue there;
+                                }
+                            }
+                            try {
+                                enricher.addMetadata(higherElement.getValue());
+                            } catch (UGHException didNotWork) {
+                                logger.info(didNotWork);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void prepareTasksForProcess() {
@@ -590,6 +868,34 @@ public class CopyProcess {
         }
     }
 
+    private void startTaskScriptThreads() {
+        /* damit die Sortierung stimmt nochmal einlesen */
+        Helper.getHibernateSession().refresh(this.prozessKopie);
+
+        List<Task> tasks = this.prozessKopie.getTasks();
+        for (Task task : tasks) {
+            if (task.getProcessingStatus() == 1 && task.isTypeAutomatic()) {
+                TaskScriptThread thread = new TaskScriptThread(task);
+                thread.start();
+            }
+        }
+    }
+
+    private void addCollections(DocStructInterface colStruct) {
+        for (String s : this.digitalCollections) {
+            try {
+                MetadataInterface md = new UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
+                        serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                        "singleDigCollection"));
+                md.setStringValue(s);
+                md.setDocStruct(colStruct);
+                colStruct.addMetadata(md);
+            } catch (UghHelperException | DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
+                Helper.setFehlerMeldung(e.getMessage(), "");
+            }
+        }
+    }
+
     /**
      * alle Kollektionen eines übergebenen DocStructs entfernen.
      */
@@ -606,11 +912,11 @@ public class CopyProcess {
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
             Helper.setFehlerMeldung(e.getMessage(), "");
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
-    public void createNewFileformat() {
+    /*public void createNewFileformat() {
 
         PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
 
@@ -620,6 +926,73 @@ public class CopyProcess {
             ff.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
+        }
+    }*/
+
+    /**
+     * Create new file format.
+     */
+    public void createNewFileformat() {
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+        try {
+            DigitalDocumentInterface dd = UghImplementation.INSTANCE.createDigitalDocument();
+            FileformatInterface ff = UghImplementation.INSTANCE.createXStream(myPrefs);
+            ff.setDigitalDocument(dd);
+            // add BoundBook
+            DocStructTypeInterface dst = myPrefs.getDocStrctTypeByName("BoundBook");
+            DocStructInterface dsBoundBook = dd.createDocStruct(dst);
+            dd.setPhysicalDocStruct(dsBoundBook);
+
+            ConfigOpacDoctype configOpacDoctype = ConfigOpac.getDoctypeByName(this.docType);
+
+            if (configOpacDoctype != null) {
+                // Monographie
+                if (!configOpacDoctype.isPeriodical() && !configOpacDoctype.isMultiVolume()) {
+                    DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName(configOpacDoctype.getRulesetType());
+                    DocStructInterface ds = dd.createDocStruct(dsty);
+                    dd.setLogicalDocStruct(ds);
+                    this.rdf = ff;
+                } else if (configOpacDoctype.isPeriodical()) {
+                    // Zeitschrift
+                    DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("Periodical");
+                    DocStructInterface ds = dd.createDocStruct(dsty);
+                    dd.setLogicalDocStruct(ds);
+
+                    DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
+                    DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
+                    ds.addChild(dsvolume);
+                    this.rdf = ff;
+                } else if (configOpacDoctype.isMultiVolume()) {
+                    // MultivolumeBand
+                    DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
+                    DocStructInterface ds = dd.createDocStruct(dsty);
+                    dd.setLogicalDocStruct(ds);
+
+                    DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("Volume");
+                    DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
+                    ds.addChild(dsvolume);
+                    this.rdf = ff;
+                }
+            } else {
+                // TODO: what should happen if configOpacDoctype is null?
+            }
+
+            if (this.docType.equals("volumerun")) {
+                DocStructTypeInterface dsty = myPrefs.getDocStrctTypeByName("VolumeRun");
+                DocStructInterface ds = dd.createDocStruct(dsty);
+                dd.setLogicalDocStruct(ds);
+
+                DocStructTypeInterface dstyvolume = myPrefs.getDocStrctTypeByName("Record");
+                DocStructInterface dsvolume = dd.createDocStruct(dstyvolume);
+                ds.addChild(dsvolume);
+                this.rdf = ff;
+            }
+
+        } catch (TypeNotAllowedAsChildException | PreferencesException e) {
+            logger.error(e);
+        } catch (FileNotFoundException e) {
+            logger.error("Error while reading von opac-config", e);
+            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
         }
     }
 
@@ -657,9 +1030,10 @@ public class CopyProcess {
             for (Property templateProperty : io.getTemplateProperties()) {
                 addPropertyForTemplate(this.prozessKopie, templateProperty);
             }
-            BeanHelper.addPropertyForProcess(prozessKopie, "Template", prozessVorlage.getTitle());
-            BeanHelper.addPropertyForProcess(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
         }
+
+        BeanHelper.addPropertyForProcess(prozessKopie, "Template", prozessVorlage.getTitle());
+        BeanHelper.addPropertyForProcess(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
     }
 
     public String getDocType() {
@@ -667,7 +1041,75 @@ public class CopyProcess {
     }
 
     public void setDocType(String docType) {
-        this.docType = docType;
+        if (!this.docType.equals(docType)) {
+            this.docType = docType;
+            if (rdf != null) {
+
+                FileformatInterface tmp = rdf;
+
+                createNewFileformat();
+                try {
+                    if (rdf.getDigitalDocument().getLogicalDocStruct()
+                            .equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
+                        rdf = tmp;
+                    } else {
+                        DocStructInterface oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
+                        DocStructInterface newLogicalDocstruct = rdf.getDigitalDocument().getLogicalDocStruct();
+                        // both have no children
+                        if (oldLogicalDocstruct.getAllChildren() == null
+                                && newLogicalDocstruct.getAllChildren() == null) {
+                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                        } else if (oldLogicalDocstruct.getAllChildren() != null
+                                && newLogicalDocstruct.getAllChildren() == null) {
+                            // old has a child, new has no child
+                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                            copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
+                        } else if (oldLogicalDocstruct.getAllChildren() == null
+                                && newLogicalDocstruct.getAllChildren() != null) {
+                            // new has a child, but old not
+                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                            copyMetadata(oldLogicalDocstruct.copy(true, false),
+                                    newLogicalDocstruct.getAllChildren().get(0));
+                        } else if (oldLogicalDocstruct.getAllChildren() != null
+                                && newLogicalDocstruct.getAllChildren() != null) {
+                            // both have children
+                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+                            copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
+                                    newLogicalDocstruct.getAllChildren().get(0));
+                        }
+                    }
+                } catch (PreferencesException e) {
+                    logger.error(e);
+                }
+                try {
+                    fillFieldsFromMetadataFile();
+                } catch (PreferencesException e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
+
+    private void copyMetadata(DocStructInterface oldDocStruct, DocStructInterface newDocStruct) {
+
+        if (oldDocStruct.getAllMetadata() != null) {
+            for (MetadataInterface md : oldDocStruct.getAllMetadata()) {
+                try {
+                    newDocStruct.addMetadata(md);
+                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    logger.error(e);
+                }
+            }
+        }
+        if (oldDocStruct.getAllPersons() != null) {
+            for (PersonInterface p : oldDocStruct.getAllPersons()) {
+                try {
+                    newDocStruct.addPerson(p);
+                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    logger.error(e);
+                }
+            }
+        }
     }
 
     public Process getProzessVorlage() {
@@ -1063,5 +1505,27 @@ public class CopyProcess {
 
     public URI getMetadataFile() {
         return this.metadataFile;
+    }
+
+    /**
+     * Set images guessed.
+     *
+     * @param imagesGuessed
+     *            the imagesGuessed to set
+     */
+    public void setImagesGuessed(Integer imagesGuessed) {
+        if (imagesGuessed == null) {
+            imagesGuessed = 0;
+        }
+        this.guessedImages = imagesGuessed;
+    }
+
+    /**
+     * Get images guessed.
+     *
+     * @return the imagesGuessed
+     */
+    public Integer getImagesGuessed() {
+        return this.guessedImages;
     }
 }
