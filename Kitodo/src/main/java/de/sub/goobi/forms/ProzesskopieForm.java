@@ -646,72 +646,13 @@ public class ProzesskopieForm implements Serializable {
      * @return sind Fehler bei den Eingaben vorhanden?
      */
     boolean isContentValid() {
-        return isContentValid(true);
+        copyProcess.setProzessKopie(this.prozessKopie);
+        return copyProcess.isContentValid(true);
     }
 
     boolean isContentValid(boolean criticiseEmptyTitle) {
-        boolean valide = true;
-
-        if (criticiseEmptyTitle) {
-
-            /*
-             * grundsätzlich den Vorgangstitel prüfen
-             */
-            /* kein Titel */
-            if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                        + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-            }
-
-            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-            if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
-            }
-
-            /* prüfen, ob der Prozesstitel schon verwendet wurde */
-            if (this.prozessKopie.getTitle() != null) {
-                long amount = 0;
-                try {
-                    amount = serviceManager.getProcessService()
-                            .findNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
-                } catch (DataException e) {
-                    Helper.setFehlerMeldung("Error on reading process information", e.getMessage());
-                    valide = false;
-                }
-                if (amount > 0) {
-                    valide = false;
-                    Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
-                            + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
-                }
-            }
-
-        }
-
-        /*
-         * Prüfung der standard-Eingaben, die angegeben werden müssen
-         */
-        /* keine Collektion ausgewählt */
-        if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
-            valide = false;
-            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                    + Helper.getTranslation("ProcessCreationErrorNoCollection"));
-        }
-
-        /*
-         * Prüfung der additional-Eingaben, die angegeben werden müssen
-         */
-        for (AdditionalField field : this.additionalFields) {
-            if ((field.getValue() == null || field.getValue().equals("")) && field.isRequired()
-                    && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getValue()))) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle() + " "
-                        + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
-
-            }
-        }
-        return valide;
+        copyProcess.setProzessKopie(this.prozessKopie);
+        return copyProcess.isContentValid(criticiseEmptyTitle);
     }
 
     public String goToPageOne() {

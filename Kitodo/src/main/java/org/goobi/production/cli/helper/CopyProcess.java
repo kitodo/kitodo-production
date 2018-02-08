@@ -377,58 +377,49 @@ public class CopyProcess {
     }
 
     /**
-     * Validierung der Eingaben.
+     * Validation of the input Process.
      *
-     * @return sind Fehler bei den Eingaben vorhanden?
+     * @param criticiseEmptyTitle true if check also for title
+     * @return true if copied Process is correct, else false
      */
-    private boolean isContentValid() {
-        /*
-         * Vorbedingungen prüfen
-         */
-        boolean valide = true;
+    public boolean isContentValid(boolean criticiseEmptyTitle) {
+        boolean valid = true;
 
-        /*
-         * grundsätzlich den Vorgangstitel prüfen
-         */
-        /* kein Titel */
-        if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-            valide = false;
-            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                    + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+        if (criticiseEmptyTitle) {
+            if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
+                valid = false;
+                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+                        + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+            }
+
+            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
+            if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
+                valid = false;
+                Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
+            }
+
+            if (this.prozessKopie.getTitle() != null) {
+                valid = isProcessTitleAvailable(this.prozessKopie.getTitle());
+            }
         }
 
-        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-        if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-            valide = false;
-            Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
-        }
-
-        if (this.prozessKopie.getTitle() != null) {
-            valide = isProcessTitleAvailable(this.prozessKopie.getTitle());
-        }
-
-        /*
-         * Prüfung der standard-Eingaben, die angegeben werden müssen
-         */
-        /* keine Collektion ausgewählt */
+        // check the standard inputs that must be specified - no collections
         if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
-            valide = false;
+            valid = false;
             Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
                     + Helper.getTranslation("ProcessCreationErrorNoCollection"));
         }
 
-        /*
-         * Prüfung der additional-Eingaben, die angegeben werden müssen
-         */
+        // check the additional inputs that must be specified
         for (AdditionalField field : this.additionalFields) {
             if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
                     && (StringUtils.isBlank(field.getValue()))) {
-                valide = false;
+                valid = false;
                 Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle() + " "
                         + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
             }
         }
-        return valide;
+        return valid;
     }
 
     /**
@@ -437,30 +428,27 @@ public class CopyProcess {
      * @return boolean
      */
     public boolean testTitle() {
-        boolean valide = true;
+        boolean valid = true;
 
         if (ConfigCore.getBooleanParameter("MassImportUniqueTitle", true)) {
-            /*
-             * grundsätzlich den Vorgangstitel prüfen
-             */
-            /* kein Titel */
+
             if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-                valide = false;
+                valid = false;
                 Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
                         + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
             }
 
             String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
             if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-                valide = false;
+                valid = false;
                 Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
             }
 
             if (this.prozessKopie.getTitle() != null) {
-                valide = isProcessTitleAvailable(this.prozessKopie.getTitle());
+                valid = isProcessTitleAvailable(this.prozessKopie.getTitle());
             }
         }
-        return valide;
+        return valid;
     }
 
     /**
