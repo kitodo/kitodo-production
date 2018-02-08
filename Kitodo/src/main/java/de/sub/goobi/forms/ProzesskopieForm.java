@@ -108,11 +108,8 @@ public class ProzesskopieForm implements Serializable {
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
-    private List<String> possibleDigitalCollection;
     private Process prozessVorlage = new Process();
     private Process prozessKopie = new Process();
-    private boolean useOpac;
-    private boolean useTemplates;
     private Integer auswahl;
     private HashMap<String, Boolean> standardFields;
     private String tifHeaderImageDescription = "";
@@ -456,36 +453,6 @@ public class ProzesskopieForm implements Serializable {
         this.additionalFields = additionalFields;
     }
 
-    /*
-     * this is needed for GUI, render multiple select only if this is false if
-     * this is true use the only choice
-     *
-     * @author Wulf
-     */
-    public boolean isSingleChoiceCollection() {
-        return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
-
-    }
-
-    /**
-     * This is needed for GUI, render multiple select only if this is false if
-     * isSingleChoiceCollection is true use this choice.
-     *
-     * @author Wulf
-     */
-    public String getDigitalCollectionIfSingleChoice() {
-        List<String> pdc = getPossibleDigitalCollections();
-        if (pdc.size() == 1) {
-            return pdc.get(0);
-        } else {
-            return null;
-        }
-    }
-
-    public List<String> getPossibleDigitalCollections() {
-        return this.possibleDigitalCollection;
-    }
-
     /**
      * Get all OPAC catalogues.
      *
@@ -530,14 +497,6 @@ public class ProzesskopieForm implements Serializable {
 
     public HashMap<String, Boolean> getStandardFields() {
         return this.standardFields;
-    }
-
-    public boolean isUseOpac() {
-        return this.useOpac;
-    }
-
-    public boolean isUseTemplates() {
-        return this.useTemplates;
     }
 
     public String getTifHeaderDocumentName() {
@@ -810,6 +769,14 @@ public class ProzesskopieForm implements Serializable {
 
     public void setHitlistPage(long hitlistPage) {
         this.hitlistPage = hitlistPage;
+    }
+
+    public CopyProcess getCopyProcess() {
+        return copyProcess;
+    }
+
+    public void setCopyProcess(CopyProcess copyProcess) {
+        this.copyProcess = copyProcess;
     }
 
     // TODO:

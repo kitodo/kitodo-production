@@ -200,7 +200,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             digitalCollections possible here
      */
     private static List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process) {
-        HashSet<String> possibleCollections = new HashSet<>(process.getPossibleDigitalCollections());
+        HashSet<String> possibleCollections = new HashSet<>(process.getCopyProcess().getPossibleDigitalCollections());
         if (!possibleCollections.containsAll(collections)) {
             throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not "
                     + "available for template \"" + process.getProzessVorlage().getTitle() + "\".");
