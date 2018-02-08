@@ -92,7 +92,7 @@ public class AuthorizationServiceIT {
     }
 
     @Test
-    public void shouldGetAllAuthorizations() throws Exception {
+    public void shouldGetAllAuthorizations() {
         List<Authorization> authorizations = authorizationService.getAll();
         assertEquals("Authorizations were not found databse!", 3, authorizations.size());
     }

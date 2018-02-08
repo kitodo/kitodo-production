@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -680,7 +679,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @param task
      *            as Task object
      */
-    public void executeDmsExport(Task task) throws DataException, ConfigurationException {
+    public void executeDmsExport(Task task) throws DataException {
         boolean automaticExportWithImages = ConfigCore.getBooleanParameter("automaticExportWithImages", true);
         boolean automaticExportWithOcr = ConfigCore.getBooleanParameter("automaticExportWithOcr", true);
         Process process = task.getProcess();

@@ -33,7 +33,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.kitodo.data.database.exceptions.DAOException;
 
 public class StatQuestProductionTest {
 
@@ -59,7 +58,7 @@ public class StatQuestProductionTest {
 
     @Ignore("Crashing")
     @Test
-    public void testGetDataTables() throws DAOException {
+    public void testGetDataTables() {
         test.setTimeUnit(TimeUnit.days);
         List<DataTable> tables = test.getDataTables(testFilter);
         int countTableInTables = 0;

@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import org.apache.commons.lang.SystemUtils;
@@ -48,7 +47,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testCreateMetaDirectory() throws IOException {
+    public void testCreateMetaDirectory() {
         try {
             File script = new File(ConfigCore.getParameter("script_createDirMeta"));
             if (!SystemUtils.IS_OS_WINDOWS) {
@@ -83,7 +82,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testCreateDirectoryWithMissingRoot() throws IOException {
+    public void testCreateDirectoryWithMissingRoot() {
         try {
             fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
         } catch (IOException e) {
@@ -371,7 +370,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testFileExist() throws IOException, URISyntaxException {
+    public void testFileExist() throws IOException {
         URI notExisting = URI.create("fileServiceTest/fileExists");
         Assert.assertFalse(fileService.fileExist(notExisting));
 
@@ -399,7 +398,7 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testGetFileNameFromNotExisting() throws IOException {
+    public void testGetFileNameFromNotExisting() {
         URI notExisting = URI.create("fileServiceTest/fileName.xml");
 
         String fileName = fileService.getFileName(notExisting);

@@ -51,7 +51,7 @@ public class LazyDTOModelIT {
     }
 
     @Test
-    public void shouldLoad() throws Exception {
+    public void shouldLoad() {
         List users = lazyDTOModel.load(0, 2, "login", SortOrder.ASCENDING, null);
         UserDTO user = (UserDTO) users.get(0);
         Assert.assertEquals("dora", user.getLogin());

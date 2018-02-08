@@ -660,20 +660,20 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetTemplates() throws Exception {
+    public void shouldGetTemplates() {
         List<Process> templates = processService.getProcessTemplates();
         assertTrue("Found " + templates.size() + " processes, instead of 2", templates.size() == 2);
     }
 
     @Test
-    public void shouldGetTemplatesWithTitle() throws Exception {
+    public void shouldGetTemplatesWithTitle() {
         List<Process> templates = processService.getProcessTemplatesWithTitle("First process");
         assertTrue("Found " + templates.size() + " processes, instead of 1", templates.size() == 1);
     }
 
     @Ignore("IN clause doesn't work correctly here - to deeper check out")
     @Test
-    public void shouldGetTemplatesForUser() throws Exception {
+    public void shouldGetTemplatesForUser() {
         List<Integer> projects = new ArrayList<>();
         projects.add(1);
         List<Process> templates = processService.getProcessTemplatesForUser(projects);

@@ -85,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    public void configureGlobal(AuthenticationManagerBuilder auth) {
         DynamicAuthenticationProvider authenticationProvider = new DynamicAuthenticationProvider();
         authenticationProvider.readLocalConfig();
         authenticationProvider.initializeAuthenticationProvider();

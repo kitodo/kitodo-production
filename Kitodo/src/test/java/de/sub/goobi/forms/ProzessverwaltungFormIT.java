@@ -43,7 +43,7 @@ public class ProzessverwaltungFormIT {
     }
 
     @Test
-    public void shouldFilterAlleStart() throws Exception {
+    public void shouldFilterAllStart() {
         ProzessverwaltungForm prozessverwaltungForm = new ProzessverwaltungForm();
 
         prozessverwaltungForm.setShowArchivedProjects(false);
