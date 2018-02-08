@@ -135,7 +135,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("Error on reading ElasticSearch: ", e.getMessage());
             return null;
         }
-        return redirectToList("?faces-redirect=true");
+        return redirectToList();
     }
 
     /**
@@ -202,7 +202,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.setMySchritt(serviceManager.getWorkflowService().assignTaskToUser(this.getMySchritt()));
         }
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -214,7 +214,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         Helper.getHibernateSession().refresh(mySchritt);
 
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -314,7 +314,7 @@ public class AktuelleSchritteForm extends BasisForm {
             // only steps with same title
             currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
         } else {
-            return redirectToEdit("?faces-redirect=true");
+            return redirectToEdit();
         }
         // if only one step is assigned for this batch, use the single
 
@@ -322,7 +322,7 @@ public class AktuelleSchritteForm extends BasisForm {
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
-            return redirectToEdit("?faces-redirect=true");
+            return redirectToEdit();
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
         return "/pages/batchesEdit";
@@ -997,42 +997,42 @@ public class AktuelleSchritteForm extends BasisForm {
 
     // replace calls to this function with "/pages/editCurrentTasks" once we have
     // completely switched to the new frontend pages
-    private String redirectToEdit(String urlSuffix) {
+    private String redirectToEdit() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && (callerViewId.contains("tasks.jsf") || callerViewId.contains("editCurrentTasks.jsf"))) {
-                return "/pages/editCurrentTasks" + urlSuffix;
+                return "/pages/editCurrentTasks?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/AktuelleSchritteBearbeiten" + urlSuffix;
+                return "/pages/AktuelleSchritteBearbeiten?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
             // used from it's integration test
             // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
-            return "/pages/AktuelleSchritteBearbeiten" + urlSuffix;
+            return "/pages/AktuelleSchritteBearbeiten?" + REDIRECT_PARAMETER;
         }
     }
 
     // TODO:
     // replace calls to this function with "/pages/tasks" once we have completely
     // switched to the new frontend pages
-    private String redirectToList(String urlSuffix) {
+    private String redirectToList() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("editCurrentTasks.jsf")) {
-                return "/pages/tasks" + urlSuffix;
+                return "/pages/tasks.jsf?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/AktuelleSchritteAlle" + urlSuffix;
+                return "/pages/AktuelleSchritteAlle?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
             // used from it's integration test
             // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
-            return "/pages/AktuelleSchritteAlle" + urlSuffix;
+            return "/pages/AktuelleSchritteAlle?" + REDIRECT_PARAMETER;
         }
     }
 }
