@@ -48,6 +48,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
@@ -246,6 +247,7 @@ public class ProzesskopieForm implements Serializable {
     private HashMap<String, Boolean> standardFields;
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
+    private CopyProcess copyProcess = new CopyProcess();
 
     private static final String TEMPLATE_ROOT = "/pages/";
     private static final String PROCESS_FROM_TEMPLATE_PATH = TEMPLATE_ROOT + "processFromTemplate";
@@ -270,43 +272,10 @@ public class ProzesskopieForm implements Serializable {
             Helper.setFehlerMeldung("Process " + id + " not found.");
             return null;
         }
-        Helper.getHibernateSession().refresh(this.prozessVorlage);
-        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
-            if (this.prozessVorlage.getTasks().size() == 0) {
-                Helper.setFehlerMeldung("noStepsInWorkflow");
-            }
-            for (Task s : this.prozessVorlage.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
-                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    List<String> param = new ArrayList<>();
-                    param.add(s.getTitle());
-                    Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
-                }
-            }
-            return null;
-        }
 
-        clearValues();
-        readProjectConfigs();
-        this.rdf = null;
-        this.prozessKopie = new Process();
-        this.prozessKopie.setTitle("");
-        this.prozessKopie.setTemplate(false);
-        this.prozessKopie.setInChoiceListShown(false);
-        this.prozessKopie.setProject(this.prozessVorlage.getProject());
-        this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
-        this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
-        this.digitalCollections = new ArrayList<>();
-
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
-        BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
-
-        initializePossibleDigitalCollections();
+        copyProcess.setProzessVorlage(this.prozessVorlage);
+        boolean result = copyProcess.prepare(null);
+        setProzessKopie(copyProcess.getProzessKopie());
 
         return redirectToProcessFromTemplateEdit();
     }
