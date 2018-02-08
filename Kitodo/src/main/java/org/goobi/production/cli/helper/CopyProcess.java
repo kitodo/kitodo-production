@@ -91,7 +91,7 @@ public class CopyProcess {
     private Integer guessedImages = 0;
     private String docType;
     // TODO: check use of atstsl. Why is it never modified?
-    private static final String atstsl = "";
+    private static String atstsl = "";
     private List<String> possibleDigitalCollection;
     private static final String DIRECTORY_SUFFIX = "_tif";
     private final ServiceManager serviceManager = new ServiceManager();
@@ -731,7 +731,7 @@ public class CopyProcess {
                         this.rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(metadata);
                     }
                 }
-                MetadataInterface newMetadata = new UghImplementation.INSTANCE.createMetadata(mdt);
+                MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newMetadata.setStringValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
                             + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
@@ -884,7 +884,7 @@ public class CopyProcess {
     private void addCollections(DocStructInterface colStruct) {
         for (String s : this.digitalCollections) {
             try {
-                MetadataInterface md = new UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
+                MetadataInterface md = UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
                         serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                         "singleDigCollection"));
                 md.setStringValue(s);
@@ -1378,8 +1378,10 @@ public class CopyProcess {
         return result;
     }
 
+    /**
+     * Calculate tiff header.
+     */
     public void calculateTiffHeader() {
-        String tifDefinition;
         ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
@@ -1387,39 +1389,42 @@ public class CopyProcess {
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
         }
+        String tifDefinition = cp.getParamString("tifheader." + this.docType, "intranda");
 
-        tifDefinition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
-
-        /*
-         * evtuelle Ersetzungen
-         */
+        // possible replacements
         tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
         tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
 
-        /*
-         * Documentname ist im allgemeinen = Prozesstitel
-         */
+        // Documentname ist im allgemeinen = Prozesstitel
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
         this.tifHeaderImageDescription = new StringBuilder("");
-        /*
-         * Imagedescription
-         */
+        // image description
         StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
-        /* jetzt den Tiffheader parsen */
+        // jetzt den Tiffheader parsen
+        String title = "";
         while (tokenizer.hasMoreTokens()) {
-            String string = tokenizer.nextToken();
+            String myString = tokenizer.nextToken();
             /*
              * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
              * übernehmen
              */
-            if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
-                this.tifHeaderImageDescription.append(string.substring(1, string.length() - 1));
-            } else if (string.equals("$Doctype")) {
-
-                this.tifHeaderImageDescription.append(this.docType);
+            if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
+                this.tifHeaderImageDescription.append(myString.substring(1, myString.length() - 1));
+            } else if (myString.equals("$Doctype")) {
+                /* wenn der Doctype angegeben werden soll */
+                try {
+                    this.tifHeaderImageDescription.append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
+                } catch (Throwable t) {
+                    logger.error("Error while reading von opac-config", t);
+                    Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+                }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (AdditionalField additionalField : this.additionalFields) {
+                    if (additionalField.getTitle().equals("Titel") || additionalField.getTitle().equals("Title")
+                            && additionalField.getValue() != null && !additionalField.getValue().equals("")) {
+                        title = additionalField.getValue();
+                    }
                     /*
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
                      * atstsl einsetzen, sofern noch nicht vorhanden
@@ -1431,15 +1436,28 @@ public class CopyProcess {
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(string) && additionalField.getShowDependingOnDoctype()
+                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeaderImageDescription
-                                .append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                        this.tifHeaderImageDescription.append(calculateProcessTitleCheck(additionalField.getTitle(),
+                                additionalField.getValue()));
                     }
+
                 }
+            }
+            // reduce to 255 character
+        }
+        int length = this.tifHeaderImageDescription.length();
+        if (length > 255) {
+            try {
+                int toCut = length - 255;
+                String newTitle = title.substring(0, title.length() - toCut);
+                this.tifHeaderImageDescription = new StringBuilder(this.tifHeaderImageDescription.toString().replace(title, newTitle));
+            } catch (IndexOutOfBoundsException e) {
+                logger.error(e);
             }
         }
     }
+
 
     private void addPropertyForTemplate(Process template, Property property) {
         if (!verifyProperty(template.getTemplates(), property)) {
@@ -1527,5 +1545,198 @@ public class CopyProcess {
      */
     public Integer getImagesGuessed() {
         return this.guessedImages;
+    }
+
+    /**
+     * Generate title.
+     *
+     * @param genericFields
+     *            Map of Strings
+     * @return String
+     */
+    public String generateTitle(Map<String, String> genericFields) throws IOException {
+        String currentAuthors = "";
+        String currentTitle = "";
+        int counter = 0;
+        for (AdditionalField field : this.additionalFields) {
+            if (field.getAutogenerated() && field.getValue().isEmpty()) {
+                field.setValue(String.valueOf(System.currentTimeMillis() + counter));
+                counter++;
+            }
+            if (field.getMetadata() != null && field.getMetadata().equals("TitleDocMain")
+                    && currentTitle.length() == 0) {
+                currentTitle = field.getValue();
+            } else if (field.getMetadata() != null && field.getMetadata().equals("ListOfCreators")
+                    && currentAuthors.length() == 0) {
+                currentAuthors = field.getValue();
+            }
+
+        }
+        StringBuilder newTitle = new StringBuilder();
+        String titleDefinition = "";
+        ConfigProjects cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+
+        int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
+        for (int i = 0; i < count; i++) {
+            String title = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")");
+            String isdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isdoctype]");
+            String isnotdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isnotdoctype]");
+
+            if (title == null) {
+                title = "";
+            }
+            if (isdoctype == null) {
+                isdoctype = "";
+            }
+            if (isnotdoctype == null) {
+                isnotdoctype = "";
+            }
+
+            // wenn nix angegeben wurde, dann anzeigen
+            if (isdoctype.equals("") && isnotdoctype.equals("")) {
+                titleDefinition = title;
+                break;
+            }
+
+            // wenn beides angegeben wurde
+            if (!isdoctype.equals("") && !isnotdoctype.equals("")
+                    && StringUtils.containsIgnoreCase(isdoctype, this.docType)
+                    && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
+                titleDefinition = title;
+                break;
+            }
+
+            // wenn nur pflicht angegeben wurde
+            if (isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType)) {
+                titleDefinition = title;
+                break;
+            }
+            // wenn nur "darf nicht" angegeben wurde
+            if (isdoctype.equals("") && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
+                titleDefinition = title;
+                break;
+            }
+        }
+
+        StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
+        /* jetzt den Bandtitel parsen */
+        while (tokenizer.hasMoreTokens()) {
+            String myString = tokenizer.nextToken();
+            /*
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
+             * übernehmen
+             */
+            if (myString.startsWith("'") && myString.endsWith("'")) {
+                newTitle.append(myString.substring(1, myString.length() - 1));
+            } else if (myString.startsWith("#")) {
+                /*
+                 * resolve strings beginning with # from generic fields
+                 */
+                if (genericFields != null) {
+                    String genericValue = genericFields.get(myString);
+                    if (genericValue != null) {
+                        newTitle.append(genericValue);
+                    }
+                }
+            } else {
+                /* andernfalls den string als Feldnamen auswerten */
+                for (AdditionalField additionalField : this.additionalFields) {
+                    /*
+                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
+                     * atstsl einsetzen, sofern noch nicht vorhanden
+                     */
+                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
+                            && additionalField.getShowDependingOnDoctype()
+                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
+                        if (atstsl == null || atstsl.length() == 0) {
+                            atstsl = createAtstsl(currentTitle, currentAuthors);
+                        }
+                        additionalField.setValue(this.atstsl);
+                    }
+
+                    /* den Inhalt zum Titel hinzufügen */
+                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                            && additionalField.getValue() != null) {
+                        newTitle.append(
+                                calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                    }
+                }
+            }
+        }
+
+        if (newTitle.toString().endsWith("_")) {
+            newTitle.setLength(newTitle.length() - 1);
+        }
+        // remove non-ascii characters for the sake of TIFF header limits
+        String filteredTitle = newTitle.toString().replaceAll("[^\\p{ASCII}]", "");
+        prozessKopie.setTitle(filteredTitle);
+        calculateTiffHeader();
+        return filteredTitle;
+    }
+
+    private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
+        String rueckgabe = inFeldWert;
+
+        /*
+         * Bandnummer
+         */
+        if (inFeldName.equals("Bandnummer") || inFeldName.equals("Volume number")) {
+            try {
+                int bandint = Integer.parseInt(inFeldWert);
+                java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
+                rueckgabe = df.format(bandint);
+            } catch (NumberFormatException e) {
+                if (inFeldName.equals("Bandnummer")) {
+                    Helper.setFehlerMeldung(
+                            Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
+                } else {
+                    Helper.setFehlerMeldung(
+                            Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
+                }
+            }
+            if (rueckgabe != null && rueckgabe.length() < 4) {
+                rueckgabe = "0000".substring(rueckgabe.length()) + rueckgabe;
+            }
+        }
+
+        return rueckgabe;
+    }
+
+    /* Create Atstsl.
+     *
+     * @param title
+     *            String
+     * @param author
+     *            String
+     * @return String
+     */
+    public static String createAtstsl(String title, String author) {
+        StringBuilder result = new StringBuilder(8);
+        if (author != null && author.trim().length() > 0) {
+            result.append(author.length() > 4 ? author.substring(0, 4) : author);
+            result.append(title.length() > 4 ? title.substring(0, 4) : title);
+        } else {
+            StringTokenizer titleWords = new StringTokenizer(title);
+            int wordNo = 1;
+            while (titleWords.hasMoreTokens() && wordNo < 5) {
+                String word = titleWords.nextToken();
+                switch (wordNo) {
+                    case 1:
+                        result.append(word.length() > 4 ? word.substring(0, 4) : word);
+                        break;
+                    case 2:
+                    case 3:
+                        result.append(word.length() > 2 ? word.substring(0, 2) : word);
+                        break;
+                    case 4:
+                        result.append(word.length() > 1 ? word.substring(0, 1) : word);
+                        break;
+                    default:
+                        assert false : wordNo;
+                }
+                wordNo++;
+            }
+        }
+        return result.toString().replaceAll("[\\W]", ""); // delete umlauts etc.
     }
 }
