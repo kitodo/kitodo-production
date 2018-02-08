@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.forms.AdditionalField;
-import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
@@ -59,7 +58,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
-public class CopyProcess extends ProzesskopieForm {
+public class CopyProcess {
 
     private static final Logger logger = LogManager.getLogger(CopyProcess.class);
     private FileformatInterface myRdf;
@@ -77,7 +76,6 @@ public class CopyProcess extends ProzesskopieForm {
     private List<String> digitalCollections;
     private StringBuilder tifHeaderImageDescription = new StringBuilder("");
     private String tifHeaderDocumentName = "";
-    private String naviFirstPage;
     private Integer auswahl;
     private String docType;
     // TODO: check use of atstsl. Why is it never modified?
@@ -92,15 +90,27 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return page or empty String
      */
-    public String prepare(ImportObject io) {
+    public boolean prepare(ImportObject io) {
         if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
-            return "";
+            if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
+                if (this.prozessVorlage.getTasks().size() == 0) {
+                    Helper.setFehlerMeldung("noStepsInWorkflow");
+                }
+                for (Task task : this.prozessVorlage.getTasks()) {
+                    if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
+                            && serviceManager.getTaskService().getUsersSize(task) == 0) {
+                        Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", task.getTitle()));
+                    }
+                }
+                return false;
+            }
         }
 
         clearValues();
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
+        readProjectConfigs();
+        PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
-            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
+            this.myRdf = UghImplementation.INSTANCE.createMetsMods(prefs);
             this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
             logger.error(e);
@@ -114,54 +124,6 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
-        BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
-
-        return this.naviFirstPage;
-    }
-
-    @Override
-    public String prepare(int id) {
-        try {
-            this.prozessVorlage = serviceManager.getProcessService().getById(id);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
-            return null;
-        }
-        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
-            for (Task s : this.prozessVorlage.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
-                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitle());
-                }
-            }
-            return "";
-        }
-
-        clearValues();
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
-        try {
-            this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException | ReadException e) {
-            logger.error(e);
-        }
-        this.prozessKopie = new Process();
-        this.prozessKopie.setTitle("");
-        this.prozessKopie.setTemplate(false);
-        this.prozessKopie.setInChoiceListShown(false);
-        this.prozessKopie.setProject(this.prozessVorlage.getProject());
-        this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
-        this.digitalCollections = new ArrayList<>();
-
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
         BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
         BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
         BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
@@ -169,7 +131,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         initializePossibleDigitalCollections();
 
-        return this.naviFirstPage;
+        return true;
     }
 
     private void readProjectConfigs() {
@@ -188,7 +150,6 @@ public class CopyProcess extends ProzesskopieForm {
             ConfigOpac.getAllDoctypes().get(0).getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
-        this.naviFirstPage = "NewProcess/Page1";
         if (this.opacKatalog.equals("")) {
             this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
         }
@@ -248,7 +209,6 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * OpacAnfrage.
      */
-    @Override
     public String evaluateOpac() {
         clearValues();
         readProjectConfigs();
@@ -363,7 +323,6 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * Auswahl des Prozesses auswerten.
      */
-    @Override
     public String templateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
@@ -465,20 +424,6 @@ public class CopyProcess extends ProzesskopieForm {
             }
         }
         return valide;
-    }
-
-    @Override
-    public String goToPageOne() {
-        return this.naviFirstPage;
-    }
-
-    @Override
-    public String goToPageTwo() {
-        if (!isContentValid()) {
-            return this.naviFirstPage;
-        } else {
-            return "NewProcess/Page2";
-        }
     }
 
     /**
@@ -677,7 +622,6 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    @Override
     public void createNewFileformat() {
 
         PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
@@ -730,37 +674,30 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    @Override
     public String getDocType() {
         return this.docType;
     }
 
-    @Override
     public void setDocType(String docType) {
         this.docType = docType;
     }
 
-    @Override
     public Process getProzessVorlage() {
         return this.prozessVorlage;
     }
 
-    @Override
     public void setProzessVorlage(Process prozessVorlage) {
         this.prozessVorlage = prozessVorlage;
     }
 
-    @Override
     public Integer getAuswahl() {
         return this.auswahl;
     }
 
-    @Override
     public void setAuswahl(Integer auswahl) {
         this.auswahl = auswahl;
     }
 
-    @Override
     public List<AdditionalField> getAdditionalFields() {
         return this.additionalFields;
     }
@@ -768,10 +705,7 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * this is needed for GUI, render multiple select only if this is false if
      * this is true use the only choice.
-     *
-     * @author Wulf
      */
-    @Override
     public boolean isSingleChoiceCollection() {
         return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
 
@@ -780,10 +714,7 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * this is needed for GUI, render multiple select only if this is false if
      * isSingleChoiceCollection is true use this choice.
-     *
-     * @author Wulf
      */
-    @Override
     public String getDigitalCollectionIfSingleChoice() {
         List<String> pdc = getPossibleDigitalCollections();
         if (pdc.size() == 1) {
@@ -793,7 +724,6 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    @Override
     public List<String> getPossibleDigitalCollections() {
         return this.possibleDigitalCollection;
     }
@@ -815,12 +745,10 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    @Override
     public List<String> getAllOpacCatalogues() {
         return ConfigOpac.getAllCatalogueTitles();
     }
 
-    @Override
     public List<ConfigOpacDoctype> getAllDoctypes() {
         return ConfigOpac.getAllDoctypes();
     }
@@ -829,87 +757,70 @@ public class CopyProcess extends ProzesskopieForm {
      * changed, so that on first request list gets set if there is only one
      * choice
      */
-    @Override
     public List<String> getDigitalCollections() {
         return this.digitalCollections;
     }
 
-    @Override
     public void setDigitalCollections(List<String> digitalCollections) {
         this.digitalCollections = digitalCollections;
     }
 
-    @Override
     public HashMap<String, Boolean> getStandardFields() {
         return this.standardFields;
     }
 
-    @Override
     public boolean isUseOpac() {
         return this.useOpac;
     }
 
-    @Override
     public boolean isUseTemplates() {
         return this.useTemplates;
     }
 
-    @Override
     public String getTifHeaderDocumentName() {
         return this.tifHeaderDocumentName;
     }
 
-    @Override
     public void setTifHeaderDocumentName(String tifHeaderDocumentName) {
         this.tifHeaderDocumentName = tifHeaderDocumentName;
     }
 
-    @Override
     public String getTifHeaderImageDescription() {
         return this.tifHeaderImageDescription.toString();
     }
 
-    @Override
     public void setTifHeaderImageDescription(String tifHeaderImageDescription) {
         this.tifHeaderImageDescription = new StringBuilder(tifHeaderImageDescription);
     }
 
-    @Override
     public Process getProzessKopie() {
         return this.prozessKopie;
     }
 
-    @Override
     public void setProzessKopie(Process prozessKopie) {
         this.prozessKopie = prozessKopie;
     }
 
-    @Override
     public String getOpacSuchfeld() {
         return this.opacSuchfeld;
     }
 
-    @Override
     public void setOpacSuchfeld(String opacSuchfeld) {
         this.opacSuchfeld = opacSuchfeld;
     }
 
-    @Override
     public String getOpacKatalog() {
         return this.opacKatalog;
     }
 
-    @Override
     public void setOpacKatalog(String opacKatalog) {
         this.opacKatalog = opacKatalog;
     }
 
-    @Override
     public String getOpacSuchbegriff() {
         return this.opacSuchbegriff;
     }
 
-    @Override
     public void setOpacSuchbegriff(String opacSuchbegriff) {
         this.opacSuchbegriff = opacSuchbegriff;
     }
@@ -921,7 +832,6 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * Prozesstitel und andere Details generieren.
      */
-    @Override
     @SuppressWarnings("rawtypes")
     public void calculateProcessTitle() {
         StringBuilder newTitle = new StringBuilder();
@@ -1038,7 +948,6 @@ public class CopyProcess extends ProzesskopieForm {
         return result;
     }
 
-    @Override
     public void calculateTiffHeader() {
         String tifDefinition;
         ConfigProjects cp;
