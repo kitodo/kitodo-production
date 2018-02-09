@@ -314,7 +314,8 @@ public class ProzesskopieForm implements Serializable {
      * Auswahl des Prozesses auswerten.
      */
     public String templateAuswahlAuswerten() throws DAOException {
-        return copyProcess.evaluateSelectedTemplate();
+        copyProcess.evaluateSelectedTemplate();
+        return "";
     }
 
     /**
@@ -323,8 +324,7 @@ public class ProzesskopieForm implements Serializable {
      * @return sind Fehler bei den Eingaben vorhanden?
      */
     boolean isContentValid() {
-        copyProcess.setProzessKopie(this.prozessKopie);
-        return copyProcess.isContentValid(true);
+        return isContentValid(true);
     }
 
     boolean isContentValid(boolean criticiseEmptyTitle) {
