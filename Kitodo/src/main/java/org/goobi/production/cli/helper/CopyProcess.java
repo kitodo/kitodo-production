@@ -110,22 +110,20 @@ public class CopyProcess {
      *
      * @param io
      *            import object
-     * @return page or empty String
+     * @return true if template can be used for copy, either false
      */
     public boolean prepare(ImportObject io) {
         if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
-            if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
-                if (this.prozessVorlage.getTasks().size() == 0) {
-                    Helper.setFehlerMeldung("noStepsInWorkflow");
-                }
-                for (Task task : this.prozessVorlage.getTasks()) {
-                    if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
-                            && serviceManager.getTaskService().getUsersSize(task) == 0) {
-                        Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", task.getTitle()));
-                    }
-                }
-                return false;
+            if (this.prozessVorlage.getTasks().size() == 0) {
+                Helper.setFehlerMeldung("noStepsInWorkflow");
             }
+            for (Task task : this.prozessVorlage.getTasks()) {
+                if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
+                        && serviceManager.getTaskService().getUsersSize(task) == 0) {
+                    Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", task.getTitle()));
+                }
+            }
+            return false;
         }
 
         clearValues();
@@ -350,7 +348,7 @@ public class CopyProcess {
     /**
      * Auswahl des Prozesses auswerten.
      */
-    public String evaluateSelectedTemplate() throws DAOException {
+    public void evaluateSelectedTemplate() throws DAOException {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
@@ -401,8 +399,6 @@ public class CopyProcess {
         } catch (RuntimeException e) {
             // the first child below the topstruct could not be determined
         }
-
-        return null;
     }
 
     /**
@@ -1502,14 +1498,14 @@ public class CopyProcess {
         // jetzt den Tiffheader parsen
         String title = "";
         while (tokenizer.hasMoreTokens()) {
-            String myString = tokenizer.nextToken();
+            String tokenString = tokenizer.nextToken();
             /*
              * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
              * übernehmen
              */
-            if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
-                this.tifHeaderImageDescription.append(myString.substring(1, myString.length() - 1));
-            } else if (myString.equals("$Doctype")) {
+            if (tokenString.startsWith("'") && tokenString.endsWith("'") && tokenString.length() > 2) {
+                this.tifHeaderImageDescription.append(tokenString.substring(1, tokenString.length() - 1));
+            } else if (tokenString.equals("$Doctype")) {
                 /* wenn der Doctype angegeben werden soll */
                 try {
                     this.tifHeaderImageDescription.append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
@@ -1535,7 +1531,7 @@ public class CopyProcess {
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                    if (additionalField.getTitle().equals(tokenString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
                         this.tifHeaderImageDescription.append(calculateProcessTitleCheck(additionalField.getTitle(),
                                 additionalField.getValue()));
