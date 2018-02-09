@@ -112,8 +112,6 @@ public class ProzesskopieForm implements Serializable {
     private Process prozessKopie = new Process();
     private Integer auswahl;
     private HashMap<String, Boolean> standardFields;
-    private String tifHeaderImageDescription = "";
-    private String tifHeaderDocumentName = "";
     private CopyProcess copyProcess = new CopyProcess();
 
     private static final String TEMPLATE_ROOT = "/pages/";
@@ -268,8 +266,6 @@ public class ProzesskopieForm implements Serializable {
         this.standardFields.put("regelsatz", true);
         this.standardFields.put("images", true);
         this.additionalFields = new ArrayList<>();
-        this.tifHeaderDocumentName = "";
-        this.tifHeaderImageDescription = "";
     }
 
     /**
@@ -497,22 +493,6 @@ public class ProzesskopieForm implements Serializable {
 
     public HashMap<String, Boolean> getStandardFields() {
         return this.standardFields;
-    }
-
-    public String getTifHeaderDocumentName() {
-        return this.tifHeaderDocumentName;
-    }
-
-    public void setTifHeaderDocumentName(String tifHeaderDocumentName) {
-        this.tifHeaderDocumentName = tifHeaderDocumentName;
-    }
-
-    public String getTifHeaderImageDescription() {
-        return this.tifHeaderImageDescription;
-    }
-
-    public void setTifHeaderImageDescription(String tifHeaderImageDescription) {
-        this.tifHeaderImageDescription = tifHeaderImageDescription;
     }
 
     public Process getProzessKopie() {
