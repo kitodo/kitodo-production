@@ -399,21 +399,7 @@ public class CopyProcess {
         boolean valid = true;
 
         if (criticiseEmptyTitle) {
-            if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-                valid = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                        + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-            }
-
-            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-            if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-                valid = false;
-                Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
-            }
-
-            if (this.prozessKopie.getTitle() != null) {
-                valid = isProcessTitleAvailable(this.prozessKopie.getTitle());
-            }
+            valid = testProcessTitle();
         }
 
         // check the standard inputs that must be specified - no collections
@@ -441,26 +427,31 @@ public class CopyProcess {
      * @return boolean
      */
     public boolean testTitle() {
+        if (ConfigCore.getBooleanParameter("MassImportUniqueTitle", true)) {
+            return testProcessTitle();
+        }
+        return true;
+    }
+
+    private boolean testProcessTitle() {
         boolean valid = true;
 
-        if (ConfigCore.getBooleanParameter("MassImportUniqueTitle", true)) {
-
-            if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-                valid = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                        + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-            }
-
-            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-            if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-                valid = false;
-                Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
-            }
-
-            if (this.prozessKopie.getTitle() != null) {
-                valid = isProcessTitleAvailable(this.prozessKopie.getTitle());
-            }
+        if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
+            valid = false;
+            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+                    + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
         }
+
+        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
+            valid = false;
+            Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
+        }
+
+        if (this.prozessKopie.getTitle() != null) {
+            valid = isProcessTitleAvailable(this.prozessKopie.getTitle());
+        }
+
         return valid;
     }
 
