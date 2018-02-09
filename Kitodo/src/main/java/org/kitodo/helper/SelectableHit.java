@@ -117,6 +117,6 @@ public class SelectableHit {
                 prozesskopieForm.setHitlistPage(-1);
             }
         }
-        return null;
+        return "";
     }
 }
