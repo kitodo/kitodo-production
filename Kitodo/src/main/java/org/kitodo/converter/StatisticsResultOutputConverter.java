@@ -9,45 +9,46 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.converter;
+package org.kitodo.converter;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
-import org.goobi.production.flow.statistics.enums.TimeUnit;
+import org.goobi.production.flow.statistics.enums.ResultOutput;
 
 /**
- * TimeUnitConverter for statistics TimeUnits as select-items in jsf-guis.
+ * StatisticOutputConverter for statistics ResultOutput as select-items in
+ * jsf-guis.
  * 
  * @author Steffen Hankiewicz
  * @version 21.05.2009
  */
-public class StatisticsTimeUnitConverter implements Converter {
-    public static final String CONVERTER_ID = "StatisticsTimeUnitConverter";
+public class StatisticsResultOutputConverter implements Converter {
+    public static final String CONVERTER_ID = "StatisticsResultOutputConverter";
 
     /**
-     * Convert String to TimeUnit.
+     * Convert String to ResultOutput.
      */
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
         if (value == null) {
-            return TimeUnit.days;
+            return ResultOutput.table;
         } else {
-            return TimeUnit.getById(value);
+            return ResultOutput.getById(value);
         }
     }
 
     /**
-     * Convert TimeUnit to String.
+     * Convert ResultOutput to String.
      */
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
-        if (value == null || !(value instanceof TimeUnit)) {
-            return TimeUnit.days.getId();
+        if (value == null || !(value instanceof ResultOutput)) {
+            return ResultOutput.table.getId();
         } else {
-            return ((TimeUnit) value).getId();
+            return ((ResultOutput) value).getId();
         }
     }
 

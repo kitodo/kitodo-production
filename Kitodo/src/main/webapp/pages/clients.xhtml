@@ -1,0 +1,52 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+    template="/WEB-INF/templates/base.xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <p:panel styleClass="content-header">
+                <h3>#{msgs.clients}</h3>
+                <h:form>
+                    <p:commandButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right"
+                                     action="#{ClientForm.newClient}"
+                                     styleClass="button-filled-green">
+                    </p:commandButton>
+                </h:form>
+            </p:panel>
+            <p:dataTable var="item"
+                         value="#{ClientForm.lazyDTOModel}"
+                         lazy="true"
+                         paginator="true"
+                         rows="#{LoginForm.myBenutzer.tableSize}"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom">
+                <p:column headerText="#{msgs.name}">
+                    <h:outputText value="#{item.name}"/>
+                </p:column>
+                <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+                    <h:link outcome="clientEdit" title="#{msgs.clientEdit}">
+                        <f:param name="id" value="#{item.id}"/>
+                        <i class="fa fa-pencil-square-o fa-lg"/>
+                    </h:link>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><a href="">#{msgs.clients}</a></li>
+    </ui:define>
+</ui:composition>

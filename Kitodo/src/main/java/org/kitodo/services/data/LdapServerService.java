@@ -73,7 +73,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      */
     public static LdapServerService getInstance() {
         if (Objects.equals(instance, null)) {
-            synchronized (HistoryService.class) {
+            synchronized (LdapServerService.class) {
                 if (Objects.equals(instance, null)) {
                     instance = new LdapServerService();
                 }

@@ -12,8 +12,9 @@
 package org.kitodo.services;
 
 import org.kitodo.services.command.CommandService;
-import org.kitodo.services.data.AuthorizationService;
+import org.kitodo.services.data.AuthorityService;
 import org.kitodo.services.data.BatchService;
+import org.kitodo.services.data.ClientService;
 import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
 import org.kitodo.services.data.HistoryService;
@@ -25,6 +26,8 @@ import org.kitodo.services.data.ProjectService;
 import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
+import org.kitodo.services.data.UserGroupClientAuthorityRelationService;
+import org.kitodo.services.data.UserGroupProjectAuthorityRelationService;
 import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.file.FileService;
@@ -37,8 +40,9 @@ import org.kitodo.services.workflow.WorkflowService;
 
 public class ServiceManager {
 
-    private AuthorizationService authorizationService;
+    private AuthorityService authorityService;
     private BatchService batchService;
+    private ClientService clientService;
     private DocketService docketService;
     private FilterService filterService;
     private HistoryService historyService;
@@ -51,6 +55,8 @@ public class ServiceManager {
     private RulesetService rulesetService;
     private TaskService taskService;
     private UserGroupService userGroupService;
+    private UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService;
+    private UserGroupProjectAuthorityRelationService userGroupProjectAuthorityRelationService;
     private UserService userService;
     private FileService fileService;
     private CommandService commandService;
@@ -62,14 +68,20 @@ public class ServiceManager {
     private WorkflowService workflowService;
 
     private void initializeAuthorizationService() {
-        if (authorizationService == null) {
-            authorizationService = AuthorizationService.getInstance();
+        if (authorityService == null) {
+            authorityService = AuthorityService.getInstance();
         }
     }
 
     private void initializeBatchService() {
         if (batchService == null) {
             batchService = BatchService.getInstance();
+        }
+    }
+
+    private void initializeClientService() {
+        if (clientService == null) {
+            clientService = ClientService.getInstance();
         }
     }
 
@@ -151,6 +163,18 @@ public class ServiceManager {
         }
     }
 
+    private void initializeUserGroupClientAuthorityRelationService() {
+        if (userGroupClientAuthorityRelationService == null) {
+            userGroupClientAuthorityRelationService = UserGroupClientAuthorityRelationService.getInstance();
+        }
+    }
+
+    private void initializeUserGroupProjectAuthorityRelationService() {
+        if (userGroupProjectAuthorityRelationService == null) {
+            userGroupProjectAuthorityRelationService = UserGroupProjectAuthorityRelationService.getInstance();
+        }
+    }
+
     private void initializeUserService() {
         if (userService == null) {
             userService = UserService.getInstance();
@@ -200,13 +224,13 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize AuthorizationService if it is not yet initialized and next return it.
+     * Initialize AuthorityService if it is not yet initialized and next return it.
      *
-     * @return AuthorizationService object
+     * @return AuthorityService object
      */
-    public AuthorizationService getAuthorizationService() {
+    public AuthorityService getAuthorityService() {
         initializeAuthorizationService();
-        return authorizationService;
+        return authorityService;
     }
 
     /**
@@ -217,6 +241,16 @@ public class ServiceManager {
     public BatchService getBatchService() {
         initializeBatchService();
         return batchService;
+    }
+
+    /**
+     * Initialize ClientService if it is not yet initialized and next return it.
+     *
+     * @return ClientService object
+     */
+    public ClientService getClientService() {
+        initializeClientService();
+        return clientService;
     }
 
     /**
@@ -357,6 +391,28 @@ public class ServiceManager {
     public UserGroupService getUserGroupService() {
         initializeUserGroupService();
         return userGroupService;
+    }
+
+    /**
+     * Initialize UserGroupClientAuthorityRelationService if it is not yet
+     * initialized and next return it.
+     *
+     * @return UserGroupClientAuthorityRelationService object
+     */
+    public UserGroupClientAuthorityRelationService getUserGroupClientAuthorityRelationService() {
+        initializeUserGroupClientAuthorityRelationService();
+        return userGroupClientAuthorityRelationService;
+    }
+
+    /**
+     * Initialize UserGroupProjectAuthorityRelationService if it is not yet
+     * initialized and next return it.
+     *
+     * @return UserGroupProjectAuthorityRelationService object
+     */
+    public UserGroupProjectAuthorityRelationService getUserGroupProjectAuthorityRelationService() {
+        initializeUserGroupProjectAuthorityRelationService();
+        return userGroupProjectAuthorityRelationService;
     }
 
     /**

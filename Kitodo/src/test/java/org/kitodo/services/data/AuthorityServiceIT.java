@@ -11,6 +11,10 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,18 +23,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.AuthorizationDTO;
+import org.kitodo.dto.AuthorityDTO;
 import org.kitodo.services.ServiceManager;
 
-import java.util.List;
+public class AuthorityServiceIT {
 
-import static org.junit.Assert.assertEquals;
-
-public class AuthorizationServiceIT {
-
-    private static final AuthorizationService authorizationService = new ServiceManager().getAuthorizationService();
+    private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -54,25 +54,25 @@ public class AuthorizationServiceIT {
 
     @Test
     public void shouldCountAllAuthorizations() throws Exception {
-        Long amount = authorizationService.count();
+        Long amount = authorityService.count();
         assertEquals("Authorizations were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForAuthorizations() throws Exception {
-        Long amount = authorizationService.countDatabaseRows();
+        Long amount = authorityService.countDatabaseRows();
         assertEquals("Authorizations were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
     public void shouldFindAllAuthorizations() throws Exception {
-        List<AuthorizationDTO> authorizations = authorizationService.findAll();
+        List<AuthorityDTO> authorizations = authorityService.findAll();
         assertEquals("Not all authorizations were found in database!", 3, authorizations.size());
     }
 
     @Test
     public void shouldFindById() throws Exception {
-        AuthorizationDTO authorization = authorizationService.findById(2);
+        AuthorityDTO authorization = authorityService.findById(2);
         String actual = authorization.getTitle();
         String expected = "manager";
         assertEquals("User group was not found in index!", expected, actual);
@@ -80,28 +80,28 @@ public class AuthorizationServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> authorizations = authorizationService.findByTitle("user", true);
-        Integer actual = authorizations.size();
+        List<JSONObject> authorities = authorityService.findByTitle("user", true);
+        Integer actual = authorities.size();
         Integer expected = 1;
-        assertEquals("Authorization was not found in index!", expected, actual);
+        assertEquals("Authority was not found in index!", expected, actual);
 
-        authorizations = authorizationService.findByTitle("none", true);
-        actual = authorizations.size();
+        authorities = authorityService.findByTitle("none", true);
+        actual = authorities.size();
         expected = 0;
-        assertEquals("Authorization was found in index!", expected, actual);
+        assertEquals("Authority was found in index!", expected, actual);
     }
 
     @Test
     public void shouldGetAllAuthorizations() {
-        List<Authorization> authorizations = authorizationService.getAll();
-        assertEquals("Authorizations were not found databse!", 3, authorizations.size());
+        List<Authority> authorities = authorityService.getAll();
+        assertEquals("Authorizations were not found databse!", 3, authorities.size());
     }
 
     @Test
     public void shouldNotSaveAlreadyExistingAuthorization() throws DataException {
-        Authorization adminAuthorization = new Authorization();
-        adminAuthorization.setTitle("admin");
+        Authority adminAuthority = new Authority();
+        adminAuthority.setTitle("admin");
         exception.expect(DataException.class);
-        authorizationService.save(adminAuthorization);
+        authorityService.save(adminAuthority);
     }
 }

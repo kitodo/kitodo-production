@@ -1,0 +1,68 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+    template="/WEB-INF/templates/base.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id" value="#{ClientForm.clientId}"/>
+        <f:viewAction action="#{ClientForm.loadClient}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <h:form id="clientEditForm">
+                <p:panel styleClass="content-header">
+                    <h3>
+                        <h:outputText value="#{msgs.clientEdit}"
+                                      rendered="#{ClientForm.client.id ne null}"/>
+                        <h:outputText value="#{msgs.clientNew}"
+                                      rendered="#{ClientForm.client.id eq null}"/>
+                    </h3>
+                    <p:commandButton value="#{msgs.speichern}"
+                                     action="#{ClientForm.save}"
+                                     update="notifications"
+                                     icon="fa fa-floppy-o fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                                     styleClass="button-filled-blue"/>
+                    <p:button value="#{msgs.abbrechen}" outcome="clients"
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                </p:panel>
+                <!-- main form -->
+                <p:messages id="clientEdit-messages" autoUpdate="true"/>
+                <p:panelGrid id="clientEdit-grid" columns="2">
+                    <p:outputLabel for="name" value="#{msgs.name}"/>
+                    <p:inputText id="name"
+                                 placeholder="#{msgs.name}"
+                                 value="#{ClientForm.client.name}"
+                                 required="true"/>
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.clients}" outcome="clients"/></li>
+        <li>
+            <a href="">
+                <ui:fragment rendered="#{ClientForm.client.id ne null}">
+                    #{msgs.clientEdit}
+                </ui:fragment>
+                <ui:fragment rendered="#{ClientForm.client.id eq null}">
+                    #{msgs.clientNew}
+                </ui:fragment>
+            </a>
+        </li>
+    </ui:define>
+</ui:composition>

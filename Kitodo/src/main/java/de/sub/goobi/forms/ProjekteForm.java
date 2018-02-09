@@ -54,6 +54,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -621,7 +622,7 @@ public class ProjekteForm extends BasisForm {
                 this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
                 this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
                 this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(),
-                        this.getMyProjekt().getEndDate());
+                    this.getMyProjekt().getEndDate());
                 this.projectProgressData.setDataSource(getProcessesForStatistics());
 
                 if (this.projectProgressImage == null) {
@@ -856,6 +857,15 @@ public class ProjekteForm extends BasisForm {
             facesContext.addMessage(null, facesMessage);
             return null;
         }
+    }
+
+    /**
+     * Gets all available clients.
+     * 
+     * @return The list of clients.
+     */
+    public List<Client> getClients() {
+        return serviceManager.getClientService().getAll();
     }
 
     // TODO:

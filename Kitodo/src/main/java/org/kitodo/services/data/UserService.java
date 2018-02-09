@@ -250,7 +250,13 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         Authentication authentication = securityContext.getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
-            UserDetails userDetails = principal instanceof UserDetails ? (UserDetails) principal : null;
+
+            SecurityUserDetails userDetails = null;
+
+            if (principal instanceof SecurityUserDetails) {
+                userDetails = (SecurityUserDetails) principal;
+            }
+
             if (userDetails != null) {
                 return getByLogin(userDetails.getUsername());
             }

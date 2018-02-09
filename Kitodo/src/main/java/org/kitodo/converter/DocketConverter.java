@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.converter;
+package org.kitodo.converter;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

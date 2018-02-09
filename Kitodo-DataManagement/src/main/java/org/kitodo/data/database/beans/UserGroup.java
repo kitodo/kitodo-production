@@ -17,7 +17,11 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -47,8 +51,15 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
-    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
-    private List<Authorization> authorizations;
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) }, inverseJoinColumns = {@JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
+    private List<Authority> authorities;
+
+    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
+    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
+
+    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
+    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
     /**
      * The Constructor.
@@ -56,7 +67,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public UserGroup() {
         this.tasks = new ArrayList<>();
         this.users = new ArrayList<>();
-        this.authorizations = new ArrayList<>();
+        this.authorities = new ArrayList<>();
     }
 
     /**
@@ -83,25 +94,25 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     }
 
     /**
-     * Gets authorizations.
+     * Gets authorities.
      *
-     * @return The authorizations.
+     * @return The authorities.
      */
-    public List<Authorization> getAuthorizations() {
-        if (this.authorizations == null) {
-            this.authorizations = new ArrayList<>();
+    public List<Authority> getGlobalAuthorities() {
+        if (this.authorities == null) {
+            this.authorities = new ArrayList<>();
         }
-        return this.authorizations;
+        return this.authorities;
     }
 
     /**
-     * Sets authorizations.
+     * Sets authorities.
      *
-     * @param authorizations
-     *            The authorizations.
+     * @param authorities
+     *            The authorities.
      */
-    public void setAuthorizations(List<Authorization> authorizations) {
-        this.authorizations = authorizations;
+    public void setGlobalAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     /**
@@ -140,6 +151,88 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      */
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    /**
+     * Gets userGroupClientAuthorityRelations.
+     *
+     * @return The userGroupClientAuthorityRelations.
+     */
+    public List<UserGroupClientAuthorityRelation> getUserGroupClientAuthorityRelations() {
+        if (this.userGroupClientAuthorityRelations == null) {
+            this.userGroupClientAuthorityRelations = new ArrayList<>();
+        }
+        return userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupClientAuthorityRelations.
+     *
+     * @param userGroupClientAuthorityRelations
+     *            The userGroupClientAuthorityRelations.
+     */
+    public void setUserGroupClientAuthorityRelations(
+            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
+        this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
+    }
+
+    /**
+     * Gets userGroupProjectAuthorityRelations.
+     *
+     * @return The userGroupProjectAuthorityRelations.
+     */
+    public List<UserGroupProjectAuthorityRelation> getUserGroupProjectAuthorityRelations() {
+        if (this.userGroupProjectAuthorityRelations == null) {
+            this.userGroupProjectAuthorityRelations = new ArrayList<>();
+        }
+        return userGroupProjectAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupProjectAuthorityRelations.
+     *
+     * @param userGroupProjectAuthorityRelations
+     *            The userGroupProjectAuthorityRelations.
+     */
+    public void setUserGroupProjectAuthorityRelations(
+            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
+        this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
+    }
+
+    /**
+     * Gets authorities of the usergroup which are related to given project.
+     * 
+     * @param project
+     *            The Project.
+     * @return The List of authorities.
+     */
+    public List<Authority> getAuthoritiesByProject(Project project) {
+        List<Authority> authorities = new ArrayList<>();
+
+        for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
+            if (project.equals(relation.getProject())) {
+                authorities.add(relation.getAuthority());
+            }
+        }
+        return authorities;
+    }
+
+    /**
+     * Gets authorities of the usergroup which are related to given client.
+     *
+     * @param client
+     *            The Client.
+     * @return The List of authorities.
+     */
+    public List<Authority> getAuthoritiesByClient(Client client) {
+        List<Authority> authorities = new ArrayList<>();
+
+        for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
+            if (client.equals(relation.getClient())) {
+                authorities.add(relation.getAuthority());
+            }
+        }
+        return authorities;
     }
 
     @Override

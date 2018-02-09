@@ -28,7 +28,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -177,9 +177,9 @@ public class LoginForm implements Serializable {
         //TODO delete this methode when all new frontend is ready or security tags are replaced
         if (this.myBenutzer != null) {
             for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
-                if (userGroup.getAuthorizations().size() > 0) {
-                    for (Authorization authorization : userGroup.getAuthorizations()) {
-                        if (authorization.getTitle().equals("admin")) {
+                if (userGroup.getGlobalAuthorities().size() > 0) {
+                    for (Authority authority : userGroup.getGlobalAuthorities()) {
+                        if (authority.getTitle().equals("admin")) {
                             return 1; //Admin permission
                         }
                     }

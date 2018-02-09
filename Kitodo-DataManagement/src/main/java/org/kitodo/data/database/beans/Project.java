@@ -18,7 +18,10 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -52,10 +55,10 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     /**
      * The constant ANCHOR_SEPARATOR holds the character U+00A6
-     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
-     * if several of them are needed in one project. The anchors must then be
-     * listed the hierarchical order they have to be applied, that is the
-     * topmost anchor in first place, followed by the second one and so on.
+     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors, if
+     * several of them are needed in one project. The anchors must then be listed
+     * the hierarchical order they have to be applied, that is the topmost anchor in
+     * first place, followed by the second one and so on.
      */
     public static final String ANCHOR_SEPARATOR = "\u00A6";
 
@@ -148,6 +151,13 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectFileGroup> projectFileGroups;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
+    private Client client;
+
+    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
+    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
     @Transient
     @XmlElement(name = "template")
@@ -254,7 +264,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     /**
      * Get DMS import create process folder.
-     * 
+     *
      * @return true or false
      */
     public boolean isDmsImportCreateProcessFolder() {
@@ -266,7 +276,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     /**
      * Set DMS import create process folder.
-     * 
+     *
      * @param dmsImportCreateProcessFolder
      *            true or false
      */
@@ -490,6 +500,45 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     public Boolean getProjectIsArchived() {
         return this.projectIsArchived;
+    }
+
+    /**
+     * Gets client.
+     *
+     * @return The client.
+     */
+    public Client getClient() {
+        return client;
+    }
+
+    /**
+     * Sets client.
+     *
+     * @param client
+     *            The client.
+     */
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    /**
+     * Gets userGroupProjectAuthorityRelations.
+     *
+     * @return The userGroupProjectAuthorityRelations.
+     */
+    public List<UserGroupProjectAuthorityRelation> getUserGroupProjectAuthorityRelations() {
+        return userGroupProjectAuthorityRelations;
+    }
+
+    /**
+     * Sets userGroupProjectAuthorityRelations.
+     *
+     * @param userGroupProjectAuthorityRelations
+     *            The userGroupProjectAuthorityRelations.
+     */
+    public void setUserGroupProjectAuthorityRelations(
+            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
+        this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
     }
 
     @Override

@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
+import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,12 +39,65 @@ public class SecurityUserDetails extends User implements UserDetails {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         for (UserGroup userGroup : userGroups) {
-            List<Authorization> authorizations = userGroup.getAuthorizations();
-            for (Authorization authorization : authorizations) {
-                grantedAuthorities.add(new SimpleGrantedAuthority(authorization.getTitle()));
+            List<Authority> authorities = userGroup.getGlobalAuthorities();
+            for (Authority authority : authorities) {
+                grantedAuthorities.add(new SimpleGrantedAuthority(authority.getTitle() + "_GLOBAL"));
             }
+
+            grantedAuthorities = insertClientAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
+            grantedAuthorities = insertProjectAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
         }
         return grantedAuthorities;
+    }
+
+    private List<SimpleGrantedAuthority> insertClientAuthoritiesFromUserGroup(
+            List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
+        List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = userGroup
+                .getUserGroupClientAuthorityRelations();
+
+        if (userGroupClientAuthorityRelations.size() > 0) {
+            for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelations) {
+
+                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
+                        relation.getAuthority().getTitle() + "_CLIENT_ANY");
+
+                if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
+                    simpleGrantedAuthorities.add(simpleGrantedAuthority);
+                }
+
+                SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
+                        relation.getAuthority().getTitle() + "_CLIENT_" + relation.getClient().getId());
+
+                if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
+                    simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
+                }
+            }
+        }
+        return simpleGrantedAuthorities;
+    }
+
+    private List<SimpleGrantedAuthority> insertProjectAuthoritiesFromUserGroup(
+            List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
+        List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = userGroup
+                .getUserGroupProjectAuthorityRelations();
+
+        for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelations) {
+
+            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
+                    relation.getAuthority().getTitle() + "_PROJECT_ANY");
+
+            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
+                simpleGrantedAuthorities.add(simpleGrantedAuthority);
+            }
+
+            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
+                    relation.getAuthority().getTitle() + "_PROJECT_" + relation.getProject().getId());
+
+            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
+                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
+            }
+        }
+        return simpleGrantedAuthorities;
     }
 
     @Override

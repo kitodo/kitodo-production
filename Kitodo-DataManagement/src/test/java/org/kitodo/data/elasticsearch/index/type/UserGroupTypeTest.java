@@ -22,7 +22,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 
@@ -54,24 +54,24 @@ public class UserGroupTypeTest {
         firstUserGroup.setId(1);
         firstUserGroup.setTitle("Administrator");
 
-        List<Authorization> adminAuthorizations = new ArrayList<>();
-        Authorization adminAuthorization = new Authorization();
-        adminAuthorization.setTitle("admin");
-        adminAuthorization.setId(1);
+        List<Authority> adminAuthorities = new ArrayList<>();
+        Authority adminAuthority = new Authority();
+        adminAuthority.setTitle("admin");
+        adminAuthority.setId(1);
 
-        Authorization managerAuthorization = new Authorization();
-        managerAuthorization.setTitle("manager");
-        managerAuthorization.setId(2);
+        Authority managerAuthority = new Authority();
+        managerAuthority.setTitle("manager");
+        managerAuthority.setId(2);
 
-        Authorization userAuthorization = new Authorization();
-        userAuthorization.setTitle("user");
-        userAuthorization.setId(3);
+        Authority userAuthority = new Authority();
+        userAuthority.setTitle("user");
+        userAuthority.setId(3);
 
-        adminAuthorizations.add(adminAuthorization);
-        adminAuthorizations.add(managerAuthorization);
-        adminAuthorizations.add(userAuthorization);
+        adminAuthorities.add(adminAuthority);
+        adminAuthorities.add(managerAuthority);
+        adminAuthorities.add(userAuthority);
 
-        firstUserGroup.setAuthorizations(adminAuthorizations);
+        firstUserGroup.setGlobalAuthorities(adminAuthorities);
 
         firstUserGroup.setUsers(users);
         userGroups.add(firstUserGroup);
@@ -79,7 +79,7 @@ public class UserGroupTypeTest {
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setId(2);
         secondUserGroup.setTitle("Random");
-        secondUserGroup.setAuthorizations(adminAuthorizations);
+        secondUserGroup.setGlobalAuthorities(adminAuthorities);
         userGroups.add(secondUserGroup);
 
         return userGroups;
@@ -94,7 +94,7 @@ public class UserGroupTypeTest {
         HttpEntity document = userGroupType.createDocument(userGroup);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser
-                .parse("{\"authorizations\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
+                .parse("{\"authorities\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
                         + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Administrator\",\"users\":[{\"surname\":"
                         + "\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":\"Barney\","
                         + "\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}");
@@ -104,7 +104,7 @@ public class UserGroupTypeTest {
         document = userGroupType.createDocument(userGroup);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser
-            .parse("{\"authorizations\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
+                .parse("{\"authorities\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
                     + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Random\",\"users\":[]}");
         assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
     }

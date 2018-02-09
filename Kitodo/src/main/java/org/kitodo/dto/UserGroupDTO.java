@@ -21,7 +21,7 @@ public class UserGroupDTO extends BaseDTO {
     private String title;
     private List<UserDTO> users;
     private Integer usersSize;
-    private List<AuthorizationDTO> authorizations;
+    private List<AuthorityDTO> authorities;
     private Integer authorizationsSize;
     private boolean panelShown = false;
 
@@ -83,35 +83,35 @@ public class UserGroupDTO extends BaseDTO {
     }
 
     /**
-     * Get list of authorizations.
+     * Get list of authorities.
      *
-     * @return list of authorizations as AuthorizationDTO
+     * @return list of authorities as AuthorityDTO
      */
-    public List<AuthorizationDTO> getAuthorizations() {
-        return authorizations;
+    public List<AuthorityDTO> getAuthorities() {
+        return authorities;
     }
 
     /**
-     * Set list of authorizations.
+     * Set list of authorities.
      *
-     * @param authorizations
-     *            list of authorizations as AuthorizationDTO
+     * @param authorities
+     *            list of authorities as AuthorityDTO
      */
-    public void setAuthorizations(List<AuthorizationDTO> authorizations) {
-        this.authorizations = authorizations;
+    public void setAuthorities(List<AuthorityDTO> authorities) {
+        this.authorities = authorities;
     }
 
     /**
-     * Get size of authorizations.
+     * Get size of authorities.
      *
-     * @return size of authorizations as Integer
+     * @return size of authorities as Integer
      */
     public Integer getAuthorizationsSize() {
         return authorizationsSize;
     }
 
     /**
-     * Set size of authorizations.
+     * Set size of authorities.
      *
      * @param authorizationsSize
      *            as Integer

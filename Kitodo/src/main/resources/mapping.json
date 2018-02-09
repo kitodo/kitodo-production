@@ -1,5 +1,40 @@
 {
     "mappings": {
+        "client": {
+            "dynamic": "strict",
+            "properties": {
+                "clientName": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "projects": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "batch": {
             "dynamic": "strict",
             "properties": {
@@ -555,7 +590,7 @@
                         }
                     }
                 },
-                "authorizations": {
+                "authorities": {
                     "properties": {
                         "id": {
                             "type": "long"

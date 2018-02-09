@@ -14,13 +14,12 @@ package org.kitodo.dto;
 import java.util.List;
 
 /**
- * Authorization DTO object.
+ * Authority DTO object.
  */
-public class AuthorizationDTO extends BaseDTO {
+public class AuthorityDTO extends BaseDTO {
     private String title;
     private List<UserGroupDTO> userGroups;
     private Integer userGroupsSize;
-    private boolean panelShown = false;
 
     /**
      * Get title.
@@ -77,24 +76,5 @@ public class AuthorizationDTO extends BaseDTO {
      */
     public void setUserGroupsSize(Integer usersSize) {
         this.userGroupsSize = usersSize;
-    }
-
-    /**
-     * Get information if panel is shown.
-     *
-     * @return true or false
-     */
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    /**
-     * Set information if panel is shown.
-     *
-     * @param panelShown
-     *            as boolean
-     */
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
     }
 }

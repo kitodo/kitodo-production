@@ -48,8 +48,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.database.beans.Authorization;
+import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.History;
@@ -63,6 +64,8 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
+import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -130,13 +133,14 @@ public class MockDatabase {
     }
 
     public static void insertProcessesFull() throws DAOException, DataException {
-        insertAuthorizations();
+        insertAuthorities();
         insertBatches();
         insertDockets();
         insertRulesets();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
+        insertClients();
         insertProjects();
         insertProjectFileGroups();
         insertProcesses();
@@ -146,10 +150,12 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertHistory();
+        insertUserGroupClientAuthorityRelations();
+        insertUserGroupProjectAuthorityRelations();
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
-        insertAuthorizations();
+        insertAuthorities();
         insertBatches();
         insertDockets();
         insertRulesets();
@@ -168,10 +174,21 @@ public class MockDatabase {
     }
 
     public static void insertUserGroupsFull() throws DAOException, DataException {
-        insertAuthorizations();
+        insertAuthorities();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
+    }
+
+    public static void insertForAuthenticationTesting() throws DAOException, DataException {
+        insertAuthorities();
+        insertLdapGroups();
+        insertUsers();
+        insertUserGroups();
+        insertClients();
+        insertProjects();
+        insertUserGroupClientAuthorityRelations();
+        insertUserGroupProjectAuthorityRelations();
     }
 
     private static class ExtendedNode extends Node {
@@ -237,18 +254,102 @@ public class MockDatabase {
         return settingsMap;
     }
 
-    private static void insertAuthorizations() throws DataException {
-        Authorization adminAuthorization = new Authorization();
-        adminAuthorization.setTitle("admin");
-        serviceManager.getAuthorizationService().save(adminAuthorization);
+    private static void insertUserGroupClientAuthorityRelations() throws DAOException {
+        UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
 
-        Authorization managerAuthorization = new Authorization();
-        managerAuthorization.setTitle("manager");
-        serviceManager.getAuthorizationService().save(managerAuthorization);
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
 
-        Authorization userAuthorization = new Authorization();
-        userAuthorization.setTitle("user");
-        serviceManager.getAuthorizationService().save(userAuthorization);
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(2));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+    }
+
+    private static void insertUserGroupProjectAuthorityRelations() throws DAOException {
+        UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+
+        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
+        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
+        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(3));
+        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
+        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+    }
+
+    private static void insertAuthorities() throws DataException {
+        Authority adminAuthority = new Authority();
+        adminAuthority.setTitle("admin");
+        serviceManager.getAuthorityService().save(adminAuthority);
+
+        Authority managerAuthority = new Authority();
+        managerAuthority.setTitle("manager");
+        serviceManager.getAuthorityService().save(managerAuthority);
+
+        Authority userAuthority = new Authority();
+        userAuthority.setTitle("user");
+        serviceManager.getAuthorityService().save(userAuthority);
     }
 
     private static void insertBatches() throws DataException {
@@ -504,7 +605,20 @@ public class MockDatabase {
 
     }
 
+    public static void insertClients() throws DataException {
+        Client client = new Client();
+        client.setName("First client");
+        serviceManager.getClientService().save(client);
+
+        Client secondClient = new Client();
+        secondClient.setName("Second client");
+        serviceManager.getClientService().save(secondClient);
+    }
+
     private static void insertProjects() throws DAOException, DataException {
+
+        int clientsCount = serviceManager.getClientService().getAll().size();
+
         User firstUser = serviceManager.getUserService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
 
@@ -519,6 +633,12 @@ public class MockDatabase {
         firstProject.setNumberOfVolumes(2);
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
+
+        if (clientsCount > 0) {
+            Client client = serviceManager.getClientService().getById(1);
+            client.getProjects().add(firstProject);
+            firstProject.setClient(client);
+        }
         serviceManager.getProjectService().save(firstProject);
 
         Project secondProject = new Project();
@@ -531,6 +651,11 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
+        if (clientsCount > 0) {
+            Client client = serviceManager.getClientService().getById(1);
+            client.getProjects().add(secondProject);
+            secondProject.setClient(client);
+        }
         serviceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
@@ -548,6 +673,10 @@ public class MockDatabase {
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
         thirdProject.setProjectIsArchived(true);
+        if (clientsCount > 0) {
+            Client client = serviceManager.getClientService().getById(2);
+            thirdProject.setClient(client);
+        }
         serviceManager.getProjectService().save(thirdProject);
     }
 
@@ -940,17 +1069,17 @@ public class MockDatabase {
     }
 
     private static void insertUserGroups() throws DAOException, DataException {
-        List<Authorization> adminAuthorizations = new ArrayList<>();
-        Authorization adminAuthorization = serviceManager.getAuthorizationService().getById(1); //admin
-        Authorization managerAuthorization = serviceManager.getAuthorizationService().getById(2); //manager
-        Authorization userAuthorization = serviceManager.getAuthorizationService().getById(3); //user
-        adminAuthorizations.add(adminAuthorization);
-        adminAuthorizations.add(managerAuthorization);
-        adminAuthorizations.add(userAuthorization);
+        List<Authority> adminAuthorities = new ArrayList<>();
+        Authority adminAuthority = serviceManager.getAuthorityService().getById(1); // admin
+        Authority managerAuthority = serviceManager.getAuthorityService().getById(2); // manager
+        Authority userAuthority = serviceManager.getAuthorityService().getById(3); // user
+        adminAuthorities.add(adminAuthority);
+        adminAuthorities.add(managerAuthority);
+        adminAuthorities.add(userAuthority);
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
-        firstUserGroup.setAuthorizations(adminAuthorizations);
+        firstUserGroup.setGlobalAuthorities(adminAuthorities);
 
         List<User> users = new ArrayList<>();
         User firstUser = serviceManager.getUserService().getById(1);
@@ -963,19 +1092,19 @@ public class MockDatabase {
         users.add(secondUser);
         firstUserGroup.setUsers(users);
         serviceManager.getUserGroupService().save(firstUserGroup);
-        adminAuthorization.getUserGroups().add(firstUserGroup);
-        serviceManager.getAuthorizationService().save(adminAuthorization);
+        adminAuthority.getUserGroups().add(firstUserGroup);
+        serviceManager.getAuthorityService().save(adminAuthority);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setTitle("Random");
 
-        List<Authorization> userAuthorizations = new ArrayList<>();
-        userAuthorizations.add(userAuthorization);
-        secondUserGroup.setAuthorizations(userAuthorizations);
+        List<Authority> userAuthorities = new ArrayList<>();
+        userAuthorities.add(userAuthority);
+        secondUserGroup.setGlobalAuthorities(userAuthorities);
         serviceManager.getUserGroupService().save(secondUserGroup);
 
         UserGroup thirdUserGroup = new UserGroup();
-        thirdUserGroup.setTitle("Without authorizations");
+        thirdUserGroup.setTitle("Without authorities");
         serviceManager.getUserGroupService().save(thirdUserGroup);
     }
 
