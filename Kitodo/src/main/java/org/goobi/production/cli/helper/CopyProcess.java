@@ -392,7 +392,8 @@ public class CopyProcess {
     /**
      * Validation of the input Process.
      *
-     * @param criticiseEmptyTitle true if check also for title
+     * @param criticiseEmptyTitle
+     *            true if check also for title
      * @return true if copied Process is correct, else false
      */
     public boolean isContentValid(boolean criticiseEmptyTitle) {
@@ -480,13 +481,12 @@ public class CopyProcess {
     }
 
     /**
-     * Anlegen des Prozesses und save der Metadaten.
+     * Create the process and save the metadata.
+     *
+     * @return new copy Process
      */
-
     public Process neuenProzessAnlegen() throws ReadException, IOException, PreferencesException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
-
-        this.prozessKopie.setId(null);
 
         addProperties(null);
         prepareTasksForProcess();
@@ -511,10 +511,8 @@ public class CopyProcess {
             return null;
         }
 
-        /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
-         * stattfand, dann jetzt eine anlegen
-         */
+        // if there is no RDF file yet (because no OPAC query took place), then create
+        // it now
         if (this.rdf == null) {
             createNewFileformat();
         }
@@ -523,7 +521,7 @@ public class CopyProcess {
 
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
-        /* damit die Sortierung stimmt nochmal einlesen */
+        // so that the sorting is correct again
         Helper.getHibernateSession().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
@@ -553,10 +551,8 @@ public class CopyProcess {
             return this.prozessKopie;
         }
 
-        /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
-         * stattfand, dann jetzt eine anlegen
-         */
+        // if there is no RDF file yet (because no OPAC query took place), then create
+        // it now
         if (this.rdf == null) {
             createNewFileformat();
         }
@@ -565,15 +561,19 @@ public class CopyProcess {
 
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
-        /* damit die Sortierung stimmt nochmal einlesen */
+        // so that the sorting is correct again
         Helper.getHibernateSession().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
 
-    public boolean createNewProcess()
-            throws ReadException, IOException, PreferencesException, WriteException {
+    /**
+     * Create new process.
+     * 
+     * @return true on succes, either false
+     */
+    public boolean createNewProcess() throws ReadException, IOException, PreferencesException, WriteException {
 
-        //evict set up id to null
+        // evict set up id to null
         Helper.getHibernateSession().evict(this.prozessKopie);
         if (!isContentValid(true)) {
             return false;
@@ -590,28 +590,24 @@ public class CopyProcess {
             return false;
         }
 
-        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie).toString();
+        String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
+                .toString();
         boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
         if (!successful) {
             String message = "Metadata directory: " + baseProcessDirectory + "in path:"
-                    +  ConfigCore.getKitodoDataDirectory() + " was not created!";
+                    + ConfigCore.getKitodoDataDirectory() + " was not created!";
             logger.error(message);
             Helper.setFehlerMeldung(message);
             return false;
         }
 
-        /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
-         * stattfand, dann jetzt eine anlegen
-         */
+        // so that the sorting is correct again
         if (this.rdf == null) {
             createNewFileformat();
         }
 
-        /*
-         * wenn eine RDF-Konfiguration vorhanden ist (z.B. aus dem Opac-Import,
-         * oder frisch angelegt), dann diese ergänzen
-         */
+        // if there is an RDF configuration (for example, from the Opac import, or
+        // freshly created), then supplement this
         if (this.rdf != null) {
 
             // there must be at least one non-anchor level doc struct
@@ -642,16 +638,13 @@ public class CopyProcess {
                     DocStructInterface tempChild = null;
                     if (field.getDocstruct().equals("firstchild")) {
                         try {
-                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren()
-                                    .get(0);
+                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
+                            logger.error(
+                                e.getMessage() + " The first child below the top structure could not be determined!");
                         }
                     }
-                    /*
-                     * falls topstruct und firstchild das Metadatum bekommen
-                     * sollen
-                     */
+                    // if topstruct and firstchild should get the metadata
                     if (!field.getDocstruct().equals("firstchild") && field.getDocstruct().contains("firstchild")) {
                         try {
                             tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
@@ -662,12 +655,9 @@ public class CopyProcess {
                     if (field.getDocstruct().equals("boundbook")) {
                         tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
                     }
-                    // welches Metadatum
+
                     try {
-                        /*
-                         * bis auf die Autoren alle additionals in die Metadaten
-                         * übernehmen
-                         */
+                        // except for the authors, take all additions into the metadata
                         if (!field.getMetadata().equals("ListOfCreators")) {
                             MetadataTypeInterface mdt = UghHelper.getMetadataType(
                                     serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
@@ -676,10 +666,7 @@ public class CopyProcess {
                             if (metadata != null) {
                                 metadata.setStringValue(field.getValue());
                             }
-                            /*
-                             * wenn dem Topstruct und dem Firstchild der Wert
-                             * gegeben werden soll
-                             */
+                            // if the topstruct and the firstchild should be given the value
                             if (tempChild != null) {
                                 metadata = UghHelper.getMetadata(tempChild, mdt);
                                 if (metadata != null) {
@@ -695,25 +682,18 @@ public class CopyProcess {
 
             updateMetadata();
 
-            /*
-             * Collectionen hinzufügen
-             */
+            // add Collections
             DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             try {
                 addCollections(colStruct);
-                /*
-                 * falls ein erstes Kind vorhanden ist, sind die Collectionen
-                 * dafür
-                 */
+                // if there is a first child, the collections are there
                 colStruct = colStruct.getAllChildren().get(0);
                 addCollections(colStruct);
             } catch (RuntimeException e) {
                 logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
             }
 
-            /*
-             * Imagepfad hinzufügen (evtl. vorhandene zunächst löschen)
-             */
+            // add image path (possibly delete existing ones first)
             try {
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
                 List<? extends MetadataInterface> allImagePaths = this.rdf.getDigitalDocument().getPhysicalDocStruct()
@@ -733,12 +713,10 @@ public class CopyProcess {
                 }
                 this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
 
-                /* Rdf-File schreiben */
+                // write RDF file
                 serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
 
-                /*
-                 * soll der Prozess als Vorlage verwendet werden?
-                 */
+                // should the process be used as a template?
                 if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
                     serviceManager.getFileService().writeMetadataAsTemplateFile(this.rdf, this.prozessKopie);
                 }
@@ -835,9 +813,7 @@ public class CopyProcess {
 
     private void prepareTasksForProcess() {
         for (Task task : this.prozessKopie.getTasks()) {
-            /*
-             * always save date and user for each task
-             */
+            // always save date and user for each task
             task.setProcessingTime(this.prozessKopie.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
             User user = Helper.getCurrentUser();
@@ -845,9 +821,7 @@ public class CopyProcess {
                 task.setProcessingUser(user);
             }
 
-            /*
-             * only if its done, set edit start and end date
-             */
+            // only if its done, set edit start and end date
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
                 task.setProcessingBegin(this.prozessKopie.getCreationDate());
                 // this concerns steps, which are set as done right on creation
@@ -861,7 +835,7 @@ public class CopyProcess {
     }
 
     private void startTaskScriptThreads() {
-        /* damit die Sortierung stimmt nochmal einlesen */
+        // so that the sorting is correct again
         Helper.getHibernateSession().refresh(this.prozessKopie);
 
         List<Task> tasks = this.prozessKopie.getTasks();
@@ -889,7 +863,10 @@ public class CopyProcess {
     }
 
     /**
-     * alle Kollektionen eines übergebenen DocStructs entfernen.
+     * Remove all collections of a transferred DocStruct.
+     *
+     * @param colStruct
+     *            as DocStruct
      */
     private void removeCollections(DocStructInterface colStruct) {
         try {
@@ -907,19 +884,6 @@ public class CopyProcess {
             logger.error(e);
         }
     }
-
-    /*public void createNewFileformat() {
-
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
-
-        FileformatInterface ff;
-        try {
-            ff = UghImplementation.INSTANCE.createMetsMods(myPrefs);
-            ff.read(this.metadataFile.getPath());
-        } catch (PreferencesException | ReadException e) {
-            logger.error(e);
-        }
-    }*/
 
     /**
      * Create new file format.
@@ -1005,11 +969,13 @@ public class CopyProcess {
             }
 
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+                this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+                this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (Property processProperty : io.getProcessProperties()) {
@@ -1061,13 +1027,13 @@ public class CopyProcess {
                             // new has a child, but old not
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.copy(true, false),
-                                    newLogicalDocstruct.getAllChildren().get(0));
+                                newLogicalDocstruct.getAllChildren().get(0));
                         } else if (oldLogicalDocstruct.getAllChildren() != null
                                 && newLogicalDocstruct.getAllChildren() != null) {
                             // both have children
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
-                                    newLogicalDocstruct.getAllChildren().get(0));
+                                newLogicalDocstruct.getAllChildren().get(0));
                         }
                     }
                 } catch (PreferencesException e) {
@@ -1125,8 +1091,8 @@ public class CopyProcess {
     }
 
     /**
-     * this is needed for GUI, render multiple select only if this is false if
-     * this is true use the only choice.
+     * this is needed for GUI, render multiple select only if this is false if this
+     * is true use the only choice.
      */
     public boolean isSingleChoiceCollection() {
         return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
@@ -1176,8 +1142,7 @@ public class CopyProcess {
     }
 
     /*
-     * changed, so that on first request list gets set if there is only one
-     * choice
+     * changed, so that on first request list gets set if there is only one choice
      */
     public List<String> getDigitalCollections() {
         return this.digitalCollections;
@@ -1308,8 +1273,7 @@ public class CopyProcess {
             String myString = tokenizer.nextToken();
             // System.out.println(myString);
             /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
-             * übernehmen
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'")) {
                 newTitle.append(myString.substring(1, myString.length() - 1));
@@ -1317,8 +1281,8 @@ public class CopyProcess {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (AdditionalField additionalField : this.additionalFields) {
                     /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
+                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen,
+                     * sofern noch nicht vorhanden
                      */
                     if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                             && additionalField.getShowDependingOnDoctype()
@@ -1387,23 +1351,20 @@ public class CopyProcess {
         tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
         tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
 
-        // Documentname ist im allgemeinen = Prozesstitel
+        // document name is generally equal process title
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
         this.tifHeaderImageDescription = new StringBuilder("");
         // image description
         StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
-        // jetzt den Tiffheader parsen
+        // now parse the Tiff header
         String title = "";
         while (tokenizer.hasMoreTokens()) {
             String tokenString = tokenizer.nextToken();
-            /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
-             * übernehmen
-             */
+            // if the string begins with 'and ends with', then take over the content
             if (tokenString.startsWith("'") && tokenString.endsWith("'") && tokenString.length() > 2) {
                 this.tifHeaderImageDescription.append(tokenString.substring(1, tokenString.length() - 1));
             } else if (tokenString.equals("$Doctype")) {
-                /* wenn der Doctype angegeben werden soll */
+                // if the doctype should be specified
                 try {
                     this.tifHeaderImageDescription.append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
                 } catch (Throwable t) {
@@ -1411,45 +1372,43 @@ public class CopyProcess {
                     Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
                 }
             } else {
-                /* andernfalls den string als Feldnamen auswerten */
+                // otherwise, evaluate the string as a field name
                 for (AdditionalField additionalField : this.additionalFields) {
                     if (additionalField.getTitle().equals("Titel") || additionalField.getTitle().equals("Title")
                             && additionalField.getValue() != null && !additionalField.getValue().equals("")) {
                         title = additionalField.getValue();
                     }
-                    /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
-                     */
+                    // if it is the ATS or TSL field, then use the calculated atstsl if it does not
+                    // already exist
                     if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                             && additionalField.getShowDependingOnDoctype()
                             && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
-                        additionalField.setValue(this.atstsl);
+                        additionalField.setValue(atstsl);
                     }
 
-                    /* den Inhalt zum Titel hinzufügen */
+                    // add the content to the title
                     if (additionalField.getTitle().equals(tokenString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
-                        this.tifHeaderImageDescription.append(calculateProcessTitleCheck(additionalField.getTitle(),
-                                additionalField.getValue()));
+                        this.tifHeaderImageDescription.append(
+                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
 
                 }
             }
-            // reduce to 255 character
         }
+        // reduce to 255 character
         int length = this.tifHeaderImageDescription.length();
         if (length > 255) {
             try {
                 int toCut = length - 255;
                 String newTitle = title.substring(0, title.length() - toCut);
-                this.tifHeaderImageDescription = new StringBuilder(this.tifHeaderImageDescription.toString().replace(title, newTitle));
+                this.tifHeaderImageDescription = new StringBuilder(
+                        this.tifHeaderImageDescription.toString().replace(title, newTitle));
             } catch (IndexOutOfBoundsException e) {
                 logger.error(e);
             }
         }
     }
-
 
     private void addPropertyForTemplate(Process template, Property property) {
         if (!verifyProperty(template.getTemplates(), property)) {
@@ -1584,13 +1543,13 @@ public class CopyProcess {
                 isnotdoctype = "";
             }
 
-            // wenn nix angegeben wurde, dann anzeigen
+            // if nothing was specified, then show
             if (isdoctype.equals("") && isnotdoctype.equals("")) {
                 titleDefinition = title;
                 break;
             }
 
-            // wenn beides angegeben wurde
+            // if both were specified
             if (!isdoctype.equals("") && !isnotdoctype.equals("")
                     && StringUtils.containsIgnoreCase(isdoctype, this.docType)
                     && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
@@ -1598,12 +1557,13 @@ public class CopyProcess {
                 break;
             }
 
-            // wenn nur pflicht angegeben wurde
+            // if only obligatory was specified
             if (isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType)) {
                 titleDefinition = title;
                 break;
             }
-            // wenn nur "darf nicht" angegeben wurde
+
+            // if only not allowed was specified
             if (isdoctype.equals("") && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
                 titleDefinition = title;
                 break;
@@ -1611,46 +1571,39 @@ public class CopyProcess {
         }
 
         StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
-        /* jetzt den Bandtitel parsen */
+        // parse the band title
         while (tokenizer.hasMoreTokens()) {
-            String myString = tokenizer.nextToken();
-            /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
-             * übernehmen
-             */
-            if (myString.startsWith("'") && myString.endsWith("'")) {
-                newTitle.append(myString.substring(1, myString.length() - 1));
-            } else if (myString.startsWith("#")) {
-                /*
-                 * resolve strings beginning with # from generic fields
-                 */
+            String tokenString = tokenizer.nextToken();
+            // if the string begins with ' and ends with ', then take over the content
+            if (tokenString.startsWith("'") && tokenString.endsWith("'")) {
+                newTitle.append(tokenString.substring(1, tokenString.length() - 1));
+            } else if (tokenString.startsWith("#")) {
+                // resolve strings beginning with # from generic fields
                 if (genericFields != null) {
-                    String genericValue = genericFields.get(myString);
+                    String genericValue = genericFields.get(tokenString);
                     if (genericValue != null) {
                         newTitle.append(genericValue);
                     }
                 }
             } else {
-                /* andernfalls den string als Feldnamen auswerten */
+                // otherwise, evaluate the string as a field name
                 for (AdditionalField additionalField : this.additionalFields) {
-                    /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
-                     */
+                    // if it is the ATS or TSL field, then use the calculated atstsl if it does not
+                    // already exist
                     if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                             && additionalField.getShowDependingOnDoctype()
                             && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
                         if (atstsl == null || atstsl.length() == 0) {
                             atstsl = createAtstsl(currentTitle, currentAuthors);
                         }
-                        additionalField.setValue(this.atstsl);
+                        additionalField.setValue(atstsl);
                     }
 
-                    /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                    // add the content to the title
+                    if (additionalField.getTitle().equals(tokenString) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
                         newTitle.append(
-                                calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }
@@ -1667,39 +1620,39 @@ public class CopyProcess {
     }
 
     private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
-        String rueckgabe = inFeldWert;
+        String result = inFeldWert;
 
-        /*
-         * Bandnummer
-         */
+        // Bandnummer
         if (inFeldName.equals("Bandnummer") || inFeldName.equals("Volume number")) {
             try {
-                int bandint = Integer.parseInt(inFeldWert);
+                int bandInt = Integer.parseInt(inFeldWert);
                 java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
-                rueckgabe = df.format(bandint);
+                result = df.format(bandInt);
             } catch (NumberFormatException e) {
                 if (inFeldName.equals("Bandnummer")) {
                     Helper.setFehlerMeldung(
-                            Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
+                        Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
                 } else {
                     Helper.setFehlerMeldung(
-                            Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
+                        Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
                 }
             }
-            if (rueckgabe != null && rueckgabe.length() < 4) {
-                rueckgabe = "0000".substring(rueckgabe.length()) + rueckgabe;
+            if (result != null && result.length() < 4) {
+                result = "0000".substring(result.length()) + result;
             }
         }
 
-        return rueckgabe;
+        return result;
     }
 
-    /* Create Atstsl.
+    /**
+     * Create Atstsl.
      *
      * @param title
      *            String
      * @param author
      *            String
+     * 
      * @return String
      */
     public static String createAtstsl(String title, String author) {

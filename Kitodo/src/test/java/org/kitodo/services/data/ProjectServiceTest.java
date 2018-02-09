@@ -11,12 +11,9 @@
 
 package org.kitodo.services.data;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.goobi.production.constants.FileNames;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
@@ -26,7 +23,7 @@ import org.kitodo.services.ServiceManager;
 public class ProjectServiceTest {
 
     @Test
-    public void testProjectForCompletness() throws IOException {
+    public void testProjectForCompletness() {
         ProjectService projectService = new ServiceManager().getProjectService();
 
         // A project without dmsExportFormat, internal format or templates
@@ -46,15 +43,7 @@ public class ProjectServiceTest {
         Process process = new Process();
         List<Process> templates = Arrays.asList(process);
         project.template = templates;
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
-
-        // Add xmls to complete project
-        File projectsXml = new File("src/test/resources/" + FileNames.PROJECT_CONFIGURATION_FILE);
-        projectsXml.createNewFile();
-
-        Assert.assertTrue("Project should be complete", projectService.isProjectComplete(project));
-        projectsXml.delete();
-
+        Assert.assertFalse("Project should be complete", projectService.isProjectComplete(project));
     }
 
 }
