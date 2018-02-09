@@ -130,11 +130,11 @@
 
     <!-- Tifheader - Documentname -->
     <h:outputText value="#{msgs.tifheaderdocumentname}"/>
-    <h:inputText value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
+    <h:inputText value="#{ProzesskopieForm.copyProcess.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
 
     <!-- Tifheader - Imagedescription -->
     <h:outputText value="#{msgs.tifheaderimagedescription}"/>
-    <h:inputText value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
+    <h:inputText value="#{ProzesskopieForm.copyProcess.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
 
     <h:outputText value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.copyProcess.useTemplates}"/>
     <h:selectBooleanCheckbox rendered="#{ProzesskopieForm.copyProcess.useTemplates}"
