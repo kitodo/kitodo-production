@@ -1,0 +1,63 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="id" value="#{AktuelleSchritteForm.stepId}"/>
+            <f:viewAction action="#{AktuelleSchritteForm.loadMyStep}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <p:panel styleClass="content-header">
+                <h3>#{msgs.detailsDesArbeitsschritts}</h3>
+            </p:panel>
+            <p:messages id="taskedit-messages" autoUpdate="true" />
+            <p:tabView id="tasksTabView">
+                <p:tab title="#{msgs.schrittDetails}">
+                    <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxDetails.xhtml"/>
+                    <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxActivities.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.eigenschaften}" id="Properties">
+                    <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxProperties.xhtml"/>
+                </p:tab>
+                <p:tab title="#{msgs.messages}">
+                    <h:form id="addToWikiForm">
+                        <p:panel style="width:800px">
+                            <div style="border: 1px solid lightgray;min-height: 100px;">
+                                <h:outputText escape="false" value="#{AktuelleSchritteForm.wikiField}" />
+                            </div>
+                            <br/>
+                            <p:inputText id="addToTextArea" value="#{AktuelleSchritteForm.addToWikiField}" class="input" />
+                            <p:panel styleClass="content-header">
+                                <p:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{AktuelleSchritteForm.addToWikiField}" ajax="false"
+                                                 styleClass="button-filled-green"/>
+                            </p:panel>
+                        </p:panel>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+        </p:panel>
+    </ui:define>
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.schritte}" outcome="tasks"/></li>
+        <li><a href="">#{msgs.detailsDesArbeitsschritts}</a></li>
+    </ui:define>
+</ui:composition>
