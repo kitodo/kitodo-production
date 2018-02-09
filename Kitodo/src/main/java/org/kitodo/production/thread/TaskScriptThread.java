@@ -88,6 +88,6 @@ public class TaskScriptThread extends EmptyTask {
      */
     @Override
     public String getDisplayName() {
-        return Helper.getTranslation("TaskScriptThread");
+        return Helper.getTranslation("automaticTask");
     }
 }

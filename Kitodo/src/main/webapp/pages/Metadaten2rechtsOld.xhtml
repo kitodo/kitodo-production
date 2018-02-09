@@ -50,11 +50,11 @@
                                     <h:panelGroup id="vdid3" rendered="#{not Metadaten.modeOnlyRead}">
 
                                         <h:commandLink id="vdid4" action="#{Metadaten.changeView}"
-                                                       value="#{msgs.paginierung}" style="font-size: 11px;"
+                                                       value="#{msgs.pagination}" style="font-size: 11px;"
                                                        rendered="#{Metadaten.modeView != 'Paginierung'}" accesskey="P">
                                             <f:param id="vdid5" name="Ansicht" value="Paginierung"/>
                                         </h:commandLink>
-                                        <h:outputText id="vdid6" value="#{msgs.paginierung}"
+                                        <h:outputText id="vdid6" value="#{msgs.pagination}"
                                                       style="font-weight:bold;font-size: 11px"
                                                       rendered="#{Metadaten.modeView == 'Paginierung'}"/>
                                         <h:outputText id="vdid7" value=" | " style="font-size: 11px;"/>
@@ -72,12 +72,12 @@
                                         <h:outputText id="vdid11" value=" | " style="font-size: 11px;"/>
 
                                         <h:commandLink id="vdid12" action="#{Metadaten.changeView}"
-                                                       value="#{msgs.metadaten}" style="font-size: 11px;"
+                                                       value="#{msgs.metadata}" style="font-size: 11px;"
                                                        rendered="#{Metadaten.modeView != 'Metadaten'}" accesskey="M">
                                             <f:param id="vdid13" name="Ansicht" value="Metadaten"/>
                                         </h:commandLink>
 
-                                        <h:outputText id="vdid14" value="#{msgs.metadaten}"
+                                        <h:outputText id="vdid14" value="#{msgs.metadata}"
                                                       style="font-weight:bold;font-size: 11px;"
                                                       rendered="#{Metadaten.modeView == 'Metadaten'}"/>
                                         <h:outputText value=" | " style="font-size: 11px;"

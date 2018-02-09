@@ -186,7 +186,7 @@ public class BatchStepHelper extends BatchHelper {
             }
         }
         if (!error) {
-            Helper.setMeldung("Properties saved");
+            Helper.setMeldung("propertySaved");
         }
     }
 

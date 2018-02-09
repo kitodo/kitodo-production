@@ -268,6 +268,6 @@ public class CreatePdfFromServletThread extends LongRunningTask {
      */
     @Override
     public String getDisplayName() {
-        return Helper.getTranslation("CreatePdfFromServletThread");
+        return Helper.getTranslation("createPdf");
     }
 }

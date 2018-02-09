@@ -57,7 +57,7 @@
                     <h:outputText value="#{msgs.newFileName}"/>
                     <h:inputText value="#{Metadaten.fileManipulation.uploadedFileName}" style="width:220px"/>
 
-                    <h:outputText value="#{msgs.paginierung}:"/>
+                    <h:outputText value="#{msgs.pagination}:"/>
                     <h:selectOneRadio value="#{Metadaten.fileManipulation.insertMode}">
                         <f:selectItem itemValue="uncounted" itemLabel="#{msgs.insertAsUncounted}"/>
                         <f:selectItem itemValue="insertIntoPagination" itemLabel="#{msgs.insertIntoPagination}"/>
@@ -181,7 +181,7 @@
                             <f:selectItem itemLabel="#{msgs.lastPage}" itemValue="lastPage"/>
                         </h:selectOneMenu>
 
-                        <h:outputText value="#{msgs.paginierung}:"/>
+                        <h:outputText value="#{msgs.pagination}:"/>
                         <h:selectOneRadio value="#{Metadaten.fileManipulation.insertMode}">
                             <f:selectItem itemValue="uncounted" itemLabel="#{msgs.insertAsUncounted}"/>
                             <f:selectItem itemValue="insertIntoPagination" itemLabel="#{msgs.insertIntoPagination}"/>
