@@ -184,6 +184,51 @@ button .ui-icon {
     background: #0071bc;
 }
 
+.ui-chkbox .ui-chkbox-box, .ui-chkbox .ui-chkbox-box.ui-state-hover {
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+    background: #999;
+    cursor: pointer;
+}
+
+.ui-chkbox .ui-chkbox-icon {
+  width: 80%;
+  height: 40%;
+  position: relative;
+  left: 10%;
+  top: 30%;
+  background: #fff;
+  background-image: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+.ui-chkbox .ui-chkbox-icon:after {
+  position: relative;
+  display: block;
+  content: "";
+  width: calc(50% - 4px);
+  height: calc(100% - 4px);
+  left: 2px;
+  top: 2px;
+  background: #999;
+  border-radius: 50%;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.ui-chkbox .ui-chkbox-box.ui-state-active, .ui-chkbox-box.ui-state-active.ui-state-hover {
+    background: #00C62F;
+}
+
+.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
+  left: calc(50% + 2px);
+  background: #00C62F;
+}
+
 .ui-datatable thead th,
 .ui-datatable tbody td,
 .ui-datatable tfoot td,
