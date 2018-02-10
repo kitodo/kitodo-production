@@ -38,7 +38,6 @@ public class DocketForm extends BasisForm {
     private Docket myDocket = new Docket();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
-    private int docketId;
 
     @Inject
     @Named("ProjekteForm")
@@ -60,7 +59,6 @@ public class DocketForm extends BasisForm {
      */
     public String newDocket() {
         this.myDocket = new Docket();
-        this.docketId = 0;
         return redirectToEdit();
     }
 
@@ -117,16 +115,18 @@ public class DocketForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for docket edit form. If 'docketId' is
-     * '0', the form for creating a new docket will be displayed.
+     * Method being used as viewAction for docket edit form.
+     *
+     * @param id
+     *            ID of the docket to load
      */
-    public void loadDocket() {
+    public void loadDocket(int id) {
         try {
-            if (!Objects.equals(this.docketId, 0)) {
-                setMyDocket(this.serviceManager.getDocketService().getById(this.docketId));
+            if (!Objects.equals(id, 0)) {
+                setMyDocket(this.serviceManager.getDocketService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving docket with ID '" + this.docketId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving docket with ID '" + id + "'; ", e.getMessage());
         }
     }
 
@@ -141,14 +141,6 @@ public class DocketForm extends BasisForm {
     public void setMyDocket(Docket docket) {
         Helper.getHibernateSession().clear();
         this.myDocket = docket;
-    }
-
-    public int getDocketId() {
-        return this.docketId;
-    }
-
-    public void setDocketId(int id) {
-        this.docketId = id;
     }
 
     // replace calls to this function with "/pages/DocketEdit" once we have

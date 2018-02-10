@@ -18,8 +18,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <f:viewParam name="id" value="#{RulesetForm.rulesetId}"/>
-        <f:viewAction action="#{RulesetForm.loadRuleset}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{RulesetForm.loadRuleset(id)}"/>
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
@@ -27,9 +27,9 @@
                 <p:panel styleClass="content-header">
                     <h3>
                         <h:outputText value="#{msgs.regelsatzBearbeiten} (#{RulesetForm.ruleset.title})"
-                                      rendered="#{RulesetForm.ruleset.id ne null}"/>
+                                      rendered="#{not empty RulesetForm.ruleset.title}"/>
                         <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
-                                      rendered="#{RulesetForm.ruleset.id eq null}"/>
+                                      rendered="#{empty RulesetForm.ruleset.title}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}"
                                      action="#{RulesetForm.saveRuleset}"

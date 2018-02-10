@@ -18,8 +18,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <f:viewParam name="id" value="#{LdapGruppenForm.itemId}"/>
-        <f:viewAction action="#{LdapGruppenForm.loadLdapGroup}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{LdapGruppenForm.loadLdapGroup(id)}"/>
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
@@ -27,9 +27,9 @@
                 <p:panel styleClass="content-header">
                     <h3>
                         <h:outputText value="#{msgs.ldapgruppeBearbeiten} (#{LdapGruppenForm.myLdapGruppe.title})"
-                                      rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}"/>
+                                      rendered="#{not empty LdapGruppenForm.myLdapGruppe.title}"/>
                         <h:outputText value="#{msgs.neueLdapgruppeAnlegen}"
-                                      rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}"/>
+                                      rendered="#{empty LdapGruppenForm.myLdapGruppe.title}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}"
                                      action="#{LdapGruppenForm.Speichern}"

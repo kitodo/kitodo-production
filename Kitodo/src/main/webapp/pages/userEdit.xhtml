@@ -18,8 +18,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <f:viewParam name="id" value="#{BenutzerverwaltungForm.userId}"/>
-        <f:viewAction action="#{BenutzerverwaltungForm.loadUserObject}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{BenutzerverwaltungForm.loadUserObject(id)}"/>
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">

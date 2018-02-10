@@ -91,8 +91,6 @@ public class ProjekteForm extends BasisForm {
     private String projectStatVolumes;
     private boolean showStatistics;
 
-    private int itemId;
-
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
      * bean.
@@ -162,7 +160,6 @@ public class ProjekteForm extends BasisForm {
     public String newProject() {
         setLocked(false);
         this.myProjekt = new Project();
-        this.itemId = 0;
         return redirectToEdit();
     }
 
@@ -177,7 +174,6 @@ public class ProjekteForm extends BasisForm {
      */
     public String duplicateProject(Integer itemId) {
         setLocked(false);
-        this.itemId = 0;
         try {
             this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
             return redirectToEdit();
@@ -803,26 +799,20 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for project edit form. If 'itemId' is '0',
-     * the form for creating a new project will be displayed.
+     * Method being used as viewAction for project edit form.
+     *
+     * @param id
+     *            ID of the ruleset to load
      */
-    public void loadProject() {
+    public void loadProject(int id) {
         try {
-            if (!Objects.equals(this.itemId, 0)) {
-                setMyProjekt(this.serviceManager.getProjectService().getById(this.itemId));
+            if (!Objects.equals(id, 0)) {
+                setMyProjekt(this.serviceManager.getProjectService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving project with ID '" + this.itemId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving project with ID '" + id + "'; ", e.getMessage());
         }
 
-    }
-
-    public void setItemId(int id) {
-        this.itemId = id;
-    }
-
-    public int getItemId() {
-        return this.itemId;
     }
 
     /**

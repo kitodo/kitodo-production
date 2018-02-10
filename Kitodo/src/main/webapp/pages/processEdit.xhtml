@@ -18,16 +18,16 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
-        <f:viewParam name="id" value="#{ProzessverwaltungForm.processId}"/>
-        <f:viewAction action="#{ProzessverwaltungForm.loadProcess}" />
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
             <h:form id="processEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{ProzessverwaltungForm.processId ne 0}"/>
-                        <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{ProzessverwaltungForm.processId eq 0}"/>
+                        <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
+                        <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}"
                                      action="#{ProzessverwaltungForm.saveAndRedirect}"
@@ -35,11 +35,11 @@
                                      iconPos="right"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      update="notifications"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="processes"
+                    <p:button value="#{msgs.abbrechen}" outcome="#{ProzessverwaltungForm.process.template ? 'projects' : 'processes'}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <p:messages autoUpdate="true"/>
-                <p:tabView id="tabs">
+                <p:tabView id="tabs" cache="false">
                     <p:tab title="#{msgs.prozessDetails}" id="details">
                         <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml"/>
                     </p:tab>
@@ -67,6 +67,12 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
-        <li><a href="">#{msgs.prozessBearbeiten}</a></li>
+        <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
+            <li><a href="">#{msgs.prozessBearbeiten}</a></li>
+        </ui:fragment>
+        <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
+            <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
+        </ui:fragment>
+
     </ui:define>
 </ui:composition>

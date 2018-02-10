@@ -26,8 +26,8 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
     <f:metadata>
-        <f:viewParam name="id" value="#{DocketForm.docketId}"/>
-        <f:viewAction action="#{DocketForm.loadDocket}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{DocketForm.loadDocket(id)}"/>
     </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />

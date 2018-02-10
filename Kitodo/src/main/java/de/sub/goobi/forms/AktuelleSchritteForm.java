@@ -84,7 +84,6 @@ public class AktuelleSchritteForm extends BasisForm {
     private List<Property> properties;
     private Property property;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private int stepId;
 
     /**
      * Constructor.
@@ -953,34 +952,18 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Return the id of the current task.
-     *
-     * @return int stepId
-     */
-    public int getStepId() {
-        return this.stepId;
-    }
-
-    /**
-     * Set the id of the current task.
-     *
-     * @param stepId
-     *            as int
-     */
-    public void setStepId(int stepId) {
-        this.stepId = stepId;
-    }
-
-    /**
      * Method being used as viewAction for AktuelleSchritteForm.
+     *
+     * @param id
+     *            ID of the step to load
      */
-    public void loadMyStep() {
+    public void loadMyStep(int id) {
         try {
-            if (!Objects.equals(this.stepId, null)) {
-                setMySchritt(this.serviceManager.getTaskService().getById(this.stepId));
+            if (!Objects.equals(id, null)) {
+                setMySchritt(this.serviceManager.getTaskService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving task with ID '" + this.stepId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving task with ID '" + id + "'; ", e.getMessage());
         }
     }
 

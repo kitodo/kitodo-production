@@ -44,7 +44,6 @@ public class BenutzergruppenForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup userGroup = new UserGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
-    private int userGroupId;
 
     @Inject
     @Named("BenutzerverwaltungForm")
@@ -110,7 +109,6 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public String newUserGroup() {
         this.userGroup = new UserGroup();
-        this.userGroupId = 0;
         return redirectToEdit();
     }
 
@@ -193,17 +191,19 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for user group edit form. If 'userGroupId' is
-     * '0', the form for creating a new user group will be displayed. Selectable
-     * clients and projects are initialized as well.
+     * Method being used as viewAction for user group edit form. Selectable clients
+     * and projects are initialized as well.
+     *
+     * @param id
+     *            ID of the usergroup to load
      */
-    public void loadUserGroup() {
+    public void loadUserGroup(int id) {
         try {
-            if (!Objects.equals(this.userGroupId, 0)) {
-                setUserGroup(this.serviceManager.getUserGroupService().getById(this.userGroupId));
+            if (!Objects.equals(id, 0)) {
+                setUserGroup(this.serviceManager.getUserGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving user group with ID '" + this.userGroupId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving user group with ID '" + id + "'; ", e.getMessage());
         }
 
         initializeSelectedClient();
@@ -213,7 +213,7 @@ public class BenutzergruppenForm extends BasisForm {
 
     /**
      * Gets the user group.
-     * 
+     *
      * @return The user group.
      */
     public UserGroup getUserGroup() {
@@ -222,32 +222,13 @@ public class BenutzergruppenForm extends BasisForm {
 
     /**
      * Sets the user group.
-     * 
+     *
      * @param userGroup
      *            The user group.
      */
     public void setUserGroup(UserGroup userGroup) {
         Helper.getHibernateSession().clear();
         this.userGroup = userGroup;
-    }
-
-    /**
-     * Sets the user group id.
-     * 
-     * @param id
-     *            The user group id.
-     */
-    public void setUserGroupId(int id) {
-        this.userGroupId = id;
-    }
-
-    /**
-     * Gets the user group id.
-     * 
-     * @return The user group id.
-     */
-    public int getUserGroupId() {
-        return this.userGroupId;
     }
 
     /**
@@ -487,7 +468,7 @@ public class BenutzergruppenForm extends BasisForm {
 
     /**
      * Gets all available clients.
-     * 
+     *
      * @return The list of clients.
      */
     public List<Client> getClients() {
@@ -515,7 +496,7 @@ public class BenutzergruppenForm extends BasisForm {
 
     /**
      * Gets all available Projects.
-     * 
+     *
      * @return The list of projects.
      */
     public List<Project> getProjects() {

@@ -59,7 +59,6 @@ public class BenutzerverwaltungForm extends BasisForm {
     private boolean hideInactiveUsers = true;
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
-    private int userId;
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private String password;
 
@@ -84,7 +83,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.userObject.setLogin("");
         this.userObject.setLdapLogin("");
         this.userObject.setPassword("");
-        this.userId = 0;
         this.password = "";
         return redirectToEdit();
     }
@@ -382,25 +380,19 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for user edit form. If 'userId' is '0',
-     * the form for creating a new user will be displayed.
+     * Method being used as viewAction for user edit form.
+     *
+     * @param id
+     *            ID of the user to load
      */
-    public void loadUserObject() {
+    public void loadUserObject(int id) {
         try {
-            if (!Objects.equals(this.userId, 0)) {
-                setUserObject(this.serviceManager.getUserService().getById(this.userId));
+            if (!Objects.equals(id, 0)) {
+                setUserObject(this.serviceManager.getUserService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving user with ID '" + this.userId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving user with ID '" + id + "'; ", e.getMessage());
         }
-    }
-
-    public int getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(int id) {
-        this.userId = id;
     }
 
     /**

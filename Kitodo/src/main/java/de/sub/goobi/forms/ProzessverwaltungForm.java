@@ -120,8 +120,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowService workflowService = serviceManager.getWorkflowService();
     private static String DONEDIRECTORYNAME = "fertig/";
-    private int processId;
-    private int taskId;
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
 
     /**
@@ -166,7 +164,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.newProcessTitle = "";
         this.editMode = ObjectMode.PROCESS;
         setProperties(new ArrayList<>());
-        return redirectToEdit("?faces-redirect=true");
+        return redirectToEdit();
     }
 
     /**
@@ -243,7 +241,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             Helper.setFehlerMeldung("titleEmpty");
         }
-        return redirectToList("?faces-redirect=true");
+        return redirectToList();
     }
 
     /**
@@ -521,7 +519,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (UnsupportedOperationException e) {
             logger.error(e);
         }
-        return redirectToList("?faces-redirect=true");
+        return redirectToList();
     }
 
     private void filterProcessesWithFilter() throws DataException {
@@ -723,8 +721,7 @@ public class ProzessverwaltungForm extends BasisForm {
             logger.error(e);
         }
         this.editMode = ObjectMode.TASK;
-        this.taskId = this.task.getId();
-        return "/pages/inc_Prozessverwaltung/schritt?faces-redirect=true&id=" + this.taskId;
+        return redirectToEditTask();
     }
 
     /**
@@ -756,6 +753,17 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
+     * Remove task with given id.
+     *
+     * @param id
+     *            ID of the task to be removed.
+     */
+    public void deleteTask(int id) {
+        loadTask(id);
+        deleteTask();
+    }
+
+    /**
      * Remove task.
      *
      * @return page
@@ -779,7 +787,7 @@ public class ProzessverwaltungForm extends BasisForm {
             logger.error(e);
         }
         deleteSymlinksFromUserHomes();
-        return "/pages/ProzessverwaltungBearbeiten?faces-redirect=true&id=" + this.process.getId();
+        return redirectToEdit();
     }
 
     private void deleteSymlinksFromUserHomes() {
@@ -885,11 +893,14 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Export METS.
      */
-    public void exportMets() {
+    public void exportMets(int id) {
         ExportMets export = new ExportMets();
         try {
-            this.process = serviceManager.getProcessService().getById(this.processId);
+            this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error loading process with ID " + id);
+            logger.error("ExportMETS error", e);
         } catch (Exception e) {
             Helper.setFehlerMeldung(
                     "An error occurred while trying to export METS file for: " + this.process.getTitle(), e);
@@ -900,11 +911,14 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Export PDF.
      */
-    public void exportPdf() {
+    public void exportPdf(int id) {
         ExportPdf export = new ExportPdf();
         try {
-            this.process = serviceManager.getProcessService().getById(this.processId);
+            this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error loading process with ID " + id);
+            logger.error("ExportMETS error", e);
         } catch (Exception e) {
             Helper.setFehlerMeldung(
                     "An error occurred while trying to export PDF file for: " + this.process.getTitle(), e);
@@ -915,11 +929,14 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Export DMS.
      */
-    public void exportDMS() {
+    public void exportDMS(int id) {
         ExportDms export = new ExportDms();
         try {
-            this.process = serviceManager.getProcessService().getById(this.processId);
+            this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error loading process with ID " + id);
+            logger.error("ExportMETS error", e);
         } catch (Exception e) {
             Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.process.getTitle(),
                     e);
@@ -2221,72 +2238,37 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Return the id of the current process.
+     * Method being used as viewAction for process edit form. If the given parameter
+     * 'id' is '0', the form for creating a new process will be displayed.
      *
-     * @return int processId
+     * @param id
+     *            ID of the process to load
      */
-    public int getProcessId() {
-        return this.processId;
-    }
-
-    /**
-     * Set the id of the current process.
-     *
-     * @param processId
-     *            as int
-     */
-    public void setProcessId(int processId) {
-        this.processId = processId;
-    }
-
-    /**
-     * Method being used as viewAction for process edit form. If 'processId' is '0',
-     * the form for creating a new process will be displayed.
-     */
-    public void loadProcess() {
+    public void loadProcess(int id) {
         try {
-            if (this.processId != 0) {
-                setProcess(this.serviceManager.getProcessService().getById(this.processId));
+            if (id != 0) {
+                setProcess(this.serviceManager.getProcessService().getById(id));
             } else {
                 newProcess();
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving process with ID '" + this.processId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving process with ID '" + id + "'; ", e.getMessage());
         }
-    }
-
-    /**
-     * Return the id of the current task.
-     *
-     * @return int taskId
-     */
-    public int getTaskId() {
-        return this.taskId;
-    }
-
-    /**
-     * Set the id of the current task.
-     *
-     * @param taskId
-     *            as int
-     */
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
     }
 
     /**
      * Method being used as viewAction for task form.
      */
-    public void loadTask() {
+    public void loadTask(int id) {
         try {
-            if (taskId != 0) {
-                setTask(this.serviceManager.getTaskService().getById(this.taskId));
+            if (id != 0) {
+                setTask(this.serviceManager.getTaskService().getById(id));
             } else {
                 // TODO: find way to redirect with usage of inserted task
                 setTask(this.serviceManager.getTaskService().getByQuery("FROM Task ORDER BY id DESC").get(0));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving task with ID '" + this.taskId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving task with ID '" + id + "'; ", e.getMessage());
         }
     }
 
@@ -2340,43 +2322,65 @@ public class ProzessverwaltungForm extends BasisForm {
     // TODO:
     // replace calls to this function with "/pages/processEdit" once we have
     // completely switched to the new frontend pages
-    private String redirectToEdit(String urlSuffix) {
+    private String redirectToEdit() {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("processes.jsf")) {
-                return "/pages/processEdit" + urlSuffix;
+                return "/pages/processEdit?" + REDIRECT_PARAMETER + "&id=" + this.process.getId();
             } else {
-                return "/pages/ProzessverwaltungBearbeiten" + urlSuffix;
+                return "/pages/ProzessverwaltungBearbeiten?" + REDIRECT_PARAMETER + "&id=" + this.process.getId();
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
             // used from it's integration test
             // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/ProzessverwaltungBearbeiten" + urlSuffix;
+            return "/pages/ProzessverwaltungBearbeiten?" + REDIRECT_PARAMETER + "&id=" + this.process.getId();
+        }
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/taskEdit" once we have
+    // completely switched to the new frontend pages
+    private String redirectToEditTask() {
+        try {
+            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty() && callerViewId.contains("processEdit.jsf")) {
+                return "/pages/taskEdit?" + REDIRECT_PARAMETER + "&id=" + this.task.getId();
+            } else {
+                return "/pages/inc_Prozessverwaltung/schritt?" + REDIRECT_PARAMETER + "&id=" + this.task.getId();
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when
+            // "ProzessverwaltungForm" is
+            // used from it's integration test
+            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
+            return "/pages/inc_Prozessverwaltung/schritt?" + REDIRECT_PARAMETER + "&id=" + this.task.getId();
         }
     }
 
     // TODO:
     // replace calls to this function with "/pages/processes" once we have completely
     // switched to the new frontend pages
-    private String redirectToList(String urlSuffix) {
+    private String redirectToList() {
         try {
             String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty()
                     && (callerViewId.contains("searchProcess.jsf") || callerViewId.contains("processEdit.jsf"))) {
-                return "/pages/processes" + urlSuffix;
+                return "/pages/processes?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/ProzessverwaltungAlle" + urlSuffix;
+                return "/pages/ProzessverwaltungAlle?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
             // used from it's integration test
             // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/ProzessverwaltungAlle" + urlSuffix;
+            return "/pages/ProzessverwaltungAlle?" + REDIRECT_PARAMETER;
         }
     }
 }

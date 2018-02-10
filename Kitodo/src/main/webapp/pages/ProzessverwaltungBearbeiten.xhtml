@@ -25,8 +25,8 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     >
     <f:metadata>
-        <f:viewParam name="id" value="#{ProzessverwaltungForm.processId}"/>
-        <f:viewAction action="#{ProzessverwaltungForm.loadProcess}" />
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
     </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
