@@ -627,12 +627,12 @@ main i.fa {
     display: block;
 }
 
-#processEditForm\:tabs\:vorgaenge\:taskOrder {
+#processEditForm\:tabs\:taskTable\:taskOrder {
     width: 90px;
 }
 
-#processEditForm\:tabs\:vorgaenge\:0\:statusColumn,
-#processEditForm\:tabs\:vorgaenge\:0\:statusColumn table {
+#processEditForm\:tabs\:taskTable\:0\:statusColumn,
+#processEditForm\:tabs\:taskTable\:0\:statusColumn table {
     border-collapse: collapse;
     border-spacing: 0;
 }
@@ -645,11 +645,11 @@ main i.fa {
     width: 16px;
 }
 
-#processEditForm\:tabs\:vorgaenge .ui-panelgrid-cell {
+#processEditForm\:tabs\:taskTable .ui-panelgrid-cell {
     padding: 0;
 }
 
-#processEditForm\:tabs\:vorgaenge .ui-expanded-row-content .ui-panelgrid-cell {
+#processEditForm\:tabs\:taskTable .ui-expanded-row-content .ui-panelgrid-cell {
     padding: 8px 10px;
 }
 
