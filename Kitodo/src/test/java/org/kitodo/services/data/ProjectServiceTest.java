@@ -26,24 +26,21 @@ public class ProjectServiceTest {
     public void testProjectForCompletness() {
         ProjectService projectService = new ServiceManager().getProjectService();
 
-        // A project without dmsExportFormat, internal format or templates
         Project project = new Project();
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
+        Assert.assertFalse("A project without anything shouldn't be complete",
+            projectService.isProjectComplete(project));
 
-        // Add title, still not complete
         project.setTitle("testProject");
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
+        Assert.assertFalse("Project with added title shouldn't be complete", projectService.isProjectComplete(project));
 
-        // Add dms and internal format, still not complete
         project.setFileFormatDmsExport("METS");
         project.setFileFormatInternal("METS");
-        Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
+        Assert.assertFalse("Project with added dms and internal format shouldn't be complete",
+            projectService.isProjectComplete(project));
 
-        // Add templates, still not complete
         Process process = new Process();
         List<Process> templates = Arrays.asList(process);
         project.template = templates;
-        Assert.assertTrue("Project shouldn't be complete", projectService.isProjectComplete(project));
+        Assert.assertTrue("Project with added templates should be complete", projectService.isProjectComplete(project));
     }
-
 }

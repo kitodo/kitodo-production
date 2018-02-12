@@ -35,7 +35,9 @@ public class XMLEditorTest {
     private static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     private static final String LOAD_XML = XML_DECLARATION + "<loadRoot>LoadRootValue</loadRoot>";
     private static final String SAVE_XML = XML_DECLARATION + "<saveRoot>SaveRootValue</saveRoot>";
-    private static String absolutePath = ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE;
+    private static final String FILE_NAME = "xmlEditorTest_" + FileNames.PROJECT_CONFIGURATION_FILE;
+
+    private static String absolutePath = ConfigCore.getKitodoConfigDirectory() + FILE_NAME;
     private static XMLEditor xmlEditor = null;
 
     @BeforeClass
@@ -54,13 +56,13 @@ public class XMLEditorTest {
 
     @Test
     public void shouldLoadXMLConfiguration() {
-        xmlEditor.loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
+        xmlEditor.loadXMLConfiguration(FILE_NAME);
         Assert.assertEquals(LOAD_XML, xmlEditor.getXMLConfiguration().replace("\n", "").replace("\r", ""));
     }
 
     @Test
     public void shouldSaveXMLConfiguration() throws IOException {
-        xmlEditor.loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
+        xmlEditor.loadXMLConfiguration(FILE_NAME);
         xmlEditor.setXMLConfiguration(SAVE_XML);
         xmlEditor.saveXMLConfiguration();
         String savedString = FileUtils.readFileToString(new File(absolutePath), "utf-8");
