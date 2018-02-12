@@ -101,7 +101,7 @@ public class StatistikForm {
      */
     public Long getAmountTemplates() {
         try {
-            return serviceManager.getProcessService().countTemplates();
+            return serviceManager.getTemplateService().countTemplates();
         } catch (DataException e) {
             logger.error("ElasticSearch problem: ", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);

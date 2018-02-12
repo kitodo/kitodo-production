@@ -88,12 +88,6 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.workflow.WorkflowService;
 
-/**
- * ProzessverwaltungForm class.
- *
- * @author Wulf Riebensahm
- */
-
 @Named("ProzessverwaltungForm")
 @SessionScoped
 public class ProzessverwaltungForm extends BasisForm {
@@ -556,7 +550,7 @@ public class ProzessverwaltungForm extends BasisForm {
             if (!this.showArchivedProjects) {
                 processDTOS = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
             } else {
-                processDTOS = serviceManager.getProcessService().findAllTemplates(sortList());
+                processDTOS = serviceManager.getTemplateService().findAllTemplates(sortList());
             }
         }
     }

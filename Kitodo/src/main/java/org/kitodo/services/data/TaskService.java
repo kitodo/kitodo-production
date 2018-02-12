@@ -275,7 +275,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
 
-        List<JSONObject> templateProcesses = serviceManager.getProcessService().findByTemplate(true, null);
+        List<JSONObject> templateProcesses = serviceManager.getTemplateService().findByTemplate(true, null);
         if (templateProcesses.size() > 0) {
             Set<Integer> templates = new HashSet<>();
             for (JSONObject jsonObject : templateProcesses) {

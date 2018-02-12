@@ -628,12 +628,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindAllTemplates() throws Exception {
-        List<ProcessDTO> allTemplates = processService.findAllTemplates(null);
-        assertTrue("Found " + allTemplates.size() + " processes, instead of 2", allTemplates.size() == 2);
-    }
-
-    @Test
     public void shouldFindAllWithoutTemplates() throws Exception {
         List<ProcessDTO> allWithoutTemplates = processService.findAllWithoutTemplates(null);
         assertTrue("Found " + allWithoutTemplates.size() + " processes, instead of 3", allWithoutTemplates.size() == 3);
