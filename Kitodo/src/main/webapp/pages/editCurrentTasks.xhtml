@@ -19,8 +19,8 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="id" value="#{AktuelleSchritteForm.stepId}"/>
-            <f:viewAction action="#{AktuelleSchritteForm.loadMyStep}"/>
+            <f:viewParam name="id"/>
+            <f:viewAction action="#{AktuelleSchritteForm.loadMyStep(id)}"/>
         </f:metadata>
     </ui:define>
     <ui:define name="content">

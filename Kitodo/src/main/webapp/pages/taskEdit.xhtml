@@ -32,16 +32,14 @@
                                       rendered="#{not empty ProzessverwaltungForm.task.title}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}"
-                                     action="#{ProzessverwaltungForm.saveTaskAndRedirect()}"
+                                     action="#{ProzessverwaltungForm.saveTaskAndRedirect}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
                                      immediate="true"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      update="notifications"/>
                     <p:button value="#{msgs.abbrechen}" outcome="processEdit?id=#{ProzessverwaltungForm.process.id}"
-                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button" rendered="#{not empty ProzessverwaltungForm.task.title}"/>
-                    <p:commandButton value="#{msgs.abbrechen} (und neue Task wieder löschen)" action="#{ProzessverwaltungForm.deleteTask(id)}" immediate="true"
-                                     icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button" rendered="#{empty ProzessverwaltungForm.task.title}"/>
+                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <p:messages autoUpdate="true"/>
                 <p:tabView id="tabs" activeIndex="#{param.tabId}">

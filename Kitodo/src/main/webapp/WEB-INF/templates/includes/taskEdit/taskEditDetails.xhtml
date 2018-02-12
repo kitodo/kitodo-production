@@ -19,15 +19,21 @@
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.titel}"/>
-                <p:inputText id="title" value="#{ProzessverwaltungForm.task.title}" required="true" class="input"/>
+                <p:inputText id="title" value="#{ProzessverwaltungForm.task.title}" required="true" class="input">
+                    <p:ajax event="change"/>
+                </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="ordering" value="#{msgs.reihenfolge}"/>
-                <p:inputText id="ordering" value="#{ProzessverwaltungForm.task.ordering}" required="true" class="input"/>
+                <p:inputText id="ordering" value="#{ProzessverwaltungForm.task.ordering}" required="true" class="input">
+                    <p:ajax event="change"/>
+                </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="priority" value="#{msgs.prioritaet}"/>
-                <p:inputText id="priority" value="#{ProzessverwaltungForm.task.priority}" required="true" class="input"/>
+                <p:inputText id="priority" value="#{ProzessverwaltungForm.task.priority}" required="true" class="input">
+                    <p:ajax event="change"/>
+                </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
@@ -37,45 +43,64 @@
                     <f:selectItem itemValue="1" itemLabel="#{msgs.statusOffen}"/>
                     <f:selectItem itemValue="2" itemLabel="#{msgs.statusInBearbeitung}"/>
                     <f:selectItem itemValue="3" itemLabel="#{msgs.statusAbgeschlossen}"/>
+                    <p:ajax event="change"/>
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="typeMetaData" value="#{msgs.metadaten}"/>
-                <p:selectBooleanCheckbox id="typeMetaData" value="#{ProzessverwaltungForm.task.typeMetadata}" class="input"/>
+                <p:outputLabel for="typeMetaData" value="#{msgs.metadata}"/>
+                <p:selectBooleanCheckbox id="typeMetaData" value="#{ProzessverwaltungForm.task.typeMetadata}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="typeImportFileUpload" value="#{msgs.importMittelsFileUpload}"/>
-                <p:selectBooleanCheckbox id="typeImportFileUpload" value="#{ProzessverwaltungForm.task.typeImportFileUpload}" class="input"/>
+                <p:selectBooleanCheckbox id="typeImportFileUpload" value="#{ProzessverwaltungForm.task.typeImportFileUpload}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="typeImagesRead" value="#{msgs.imagesLesen}"/>
-                <p:selectBooleanCheckbox id="typeImagesRead" value="#{ProzessverwaltungForm.task.typeImagesRead}" class="input"/>
+                <p:selectBooleanCheckbox id="typeImagesRead" value="#{ProzessverwaltungForm.task.typeImagesRead}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
         </p:row>
         <p:row>
             <div>
                 <p:outputLabel for="typeImagesWrite" value="#{msgs.imagesSchreiben}"/>
-                <p:selectBooleanCheckbox id="typeImagesWrite" value="#{ProzessverwaltungForm.task.typeImagesWrite}" class="input"/>
+                <p:selectBooleanCheckbox id="typeImagesWrite" value="#{ProzessverwaltungForm.task.typeImagesWrite}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="typeCloseVerify" value="#{msgs.beimAbschliessenVerifizieren}"/>
-                <p:selectBooleanCheckbox id="typeCloseVerify" value="#{ProzessverwaltungForm.task.typeCloseVerify}" class="input"/>
+                <p:selectBooleanCheckbox id="typeCloseVerify" value="#{ProzessverwaltungForm.task.typeCloseVerify}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="typeExportDMS" value="#{msgs.exportDMS}"/>
-                <p:selectBooleanCheckbox id="typeExportDMS" value="#{ProzessverwaltungForm.task.typeExportDMS}" class="input"/>
+                <p:selectBooleanCheckbox id="typeExportDMS" value="#{ProzessverwaltungForm.task.typeExportDMS}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="typeAcceptClose" value="#{msgs.schrittBeimAnnehmenAbschliessen}"/>
-                <p:selectBooleanCheckbox id="typeAcceptClose" value="#{ProzessverwaltungForm.task.typeAcceptClose}" class="input"/>
+                <p:selectBooleanCheckbox id="typeAcceptClose" value="#{ProzessverwaltungForm.task.typeAcceptClose}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
             <div>
-                <p:outputLabel for="typeAutomatic" value="#{msgs.automatischerSchritt}"/>
-                <p:selectBooleanCheckbox id="typeAutomatic" value="#{ProzessverwaltungForm.task.typeAutomatic}" class="input"/>
+                <p:outputLabel for="typeAutomatic" value="#{msgs.automaticTask}"/>
+                <p:selectBooleanCheckbox id="typeAutomatic" value="#{ProzessverwaltungForm.task.typeAutomatic}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="batchStep" value="#{msgs.batchStep}"/>
-                <p:selectBooleanCheckbox id="batchStep" value="#{ProzessverwaltungForm.task.batchStep}" class="input"/>
+                <p:selectBooleanCheckbox id="batchStep" value="#{ProzessverwaltungForm.task.batchStep}" class="input">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
         </p:row>
     </p:panelGrid>
