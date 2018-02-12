@@ -60,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // CSRF protection is disabled. In default enabled state, CSRF Token must be included on every request.
         http.csrf().disable();
 
-        http.sessionManagement().maximumSessions(1).sessionRegistry(getSessionRegistry());
+        http.sessionManagement().maximumSessions(1).sessionRegistry(getSessionRegistry())
+                .expiredUrl("/pages/login.jsf");
 
         http
             .authorizeRequests()
