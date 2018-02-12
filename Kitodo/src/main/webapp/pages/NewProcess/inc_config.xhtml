@@ -33,7 +33,7 @@
     <h:outputText value="#{msgs.zusaetzlicheDetails}" style="font-size:13px;font-weight:bold;color:#00309C"/>
 
     <table style="margin-left:30px" cellspacing="0">
-        <t:dataList var="intern" style="font-weight: normal;margin-left:30px" value="#{ProzesskopieForm.additionalFields}"
+        <t:dataList var="intern" style="font-weight: normal;margin-left:30px" value="#{ProzesskopieForm.copyProcess.additionalFields}"
                     layout="ordered list"
                     rowCountVar="rowCount" rowIndexVar="rowIndex">
             <ui:fragment rendered="#{intern.showDependingOnDoctype}">
