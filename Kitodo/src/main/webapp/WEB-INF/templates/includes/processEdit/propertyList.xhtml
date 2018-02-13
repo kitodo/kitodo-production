@@ -43,6 +43,7 @@
     </p:dataTable>
     <p:commandButton actionListener="#{ProzessverwaltungForm.createNewProperty()}"
                      oncomplete="PF('editPropertyDialog').show()"
+                     update="@(.editDialog)"
                      value="#{msgs.eigenschaftHinzufuegen}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"

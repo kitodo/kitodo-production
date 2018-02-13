@@ -13,6 +13,7 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
@@ -32,7 +33,10 @@
             <p:commandButton action="#{ProzessverwaltungForm.saveWorkpieceProperty}"
                              update="processEditForm"
                              oncomplete="PF('editWorkpieceDialog').hide()"
-                             value="#{msgs.uebernehmen}"/>
+                             value="#{msgs.uebernehmen}">
+                <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
+                                             value="#{objectMode.NONE}"/>
+            </p:commandButton>
         </h:form>
     </p:dialog>
 </ui:composition>
