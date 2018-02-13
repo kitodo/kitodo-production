@@ -11,14 +11,10 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import org.kitodo.data.database.beans.User;
-import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class LoginPage {
-
-    String url = "pages/login.jsf";
+public class TopNavigation {
 
     @SuppressWarnings("unused")
     @FindBy(id = "login")
@@ -33,16 +29,6 @@ public class LoginPage {
     private WebElement passwordInput;
 
     public void goTo() {
-        Browser.goTo(url);
-    }
 
-    public void performLogin(User user) {
-        usernameInput.clear();
-        usernameInput.sendKeys(user.getLogin());
-
-        passwordInput.clear();
-        passwordInput.sendKeys(user.getPassword());
-
-        loginButton.click();
     }
 }
