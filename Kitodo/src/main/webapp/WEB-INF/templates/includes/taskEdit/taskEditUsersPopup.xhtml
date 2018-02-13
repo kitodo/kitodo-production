@@ -34,10 +34,10 @@
                         <h:outputText value="#{user.surname}, #{user.name}"/>
                     </p:column>
                     <p:column headerText="#{msgs.auswahl}">
-                        <h:commandLink action="#{ProzessverwaltungForm.addUser}">
+                        <p:commandLink action="#{ProzessverwaltungForm.addUser}" update="taskEditForm:tabs:taskUserTable">
                             <h:graphicImage alt="add task to user" value="/pages/images/buttons/addUser.gif"/>
                             <f:param name="ID" value="#{user.id}"/>
-                        </h:commandLink>
+                        </p:commandLink>
                     </p:column>
                 </p:dataTable>
                 <p:commandButton onclick="PF('addUserDialog').hide()" value="#{msgs.close}"/>
