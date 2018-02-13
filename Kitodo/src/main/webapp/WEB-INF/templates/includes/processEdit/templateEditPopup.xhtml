@@ -30,9 +30,10 @@
             <p:inputText value="#{ProzessverwaltungForm.templateProperty.value}" styleClass="editDialog"/>
 
             <p:commandButton action="#{ProzessverwaltungForm.saveTemplateProperty}"
-                             update="processEditForm"
+                             update="@form"
                              oncomplete="PF('editTemplateDialog').hide()"
-                             value="#{msgs.uebernehmen}"/>
+                             value="#{msgs.uebernehmen}"
+                             ajax="false"/>
         </h:form>
     </p:dialog>
 </ui:composition>

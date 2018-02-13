@@ -28,7 +28,7 @@
                   styleClass="actionsColumn"
                   rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}">
             <p:commandLink title="#{msgs.bearbeiten}"
-                           oncomplete="PF('editTemplateDialog).show()">
+                           oncomplete="PF('editTemplateDialog').show()">
                 <i class="fa fa-pencil-square-o fa-lg"/>
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.templateProperty}" value="#{property}"/>
             </p:commandLink>
