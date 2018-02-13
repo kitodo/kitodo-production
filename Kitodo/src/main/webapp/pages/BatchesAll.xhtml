@@ -235,7 +235,7 @@
                                                 </h:panelGroup>
 
                                                 <h:selectManyListbox value="#{BatchForm.selectedProcesses}"
-                                                                     converter="ProcessConverter"
+                                                                     converter="#{processConverter}"
                                                                      style="width:90%;margin-bottom:10px;display:block;"
                                                                      size="20" id="selectProcesses">
                                                     <f:selectItems value="#{BatchForm.currentProcessesAsSelectItems}"/>

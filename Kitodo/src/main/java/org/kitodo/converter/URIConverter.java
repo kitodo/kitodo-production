@@ -18,14 +18,13 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@FacesConverter("URIConverter")
+@Named
 public class URIConverter implements Converter {
-    public static final String CONVERTER_ID = "URIConverter";
     private static final Logger logger = LogManager.getLogger(URIConverter.class);
 
     @Override

@@ -87,7 +87,7 @@
                                         <h:panelGroup rendered="#{BenutzergruppenForm.clientsAvailable}">
                                             <p:outputLabel for="client" value="#{msgs.client}"/>
                                             <p:selectOneMenu id="client"
-                                                             converter="ClientConverter"
+                                                             converter="#{clientConverter}"
                                                              value="#{BenutzergruppenForm.selectedClient}">
                                                 <f:selectItems value="#{BenutzergruppenForm.clients}" var="client"
                                                                itemValue="#{client}"
@@ -111,7 +111,7 @@
                                         <h:panelGroup rendered="#{BenutzergruppenForm.projectsAvailable}">
                                             <p:outputLabel for="project" value="#{msgs.project}"/>
                                             <p:selectOneMenu id="project"
-                                                             converter="ProjectConverter"
+                                                             converter="#{projectConverter}"
                                                              value="#{BenutzergruppenForm.selectedProject}">
                                                 <f:selectItems value="#{BenutzergruppenForm.projects}" var="project"
                                                                itemValue="#{project}"

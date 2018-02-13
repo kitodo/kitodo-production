@@ -202,7 +202,7 @@
 
                         <h:selectOneMenu id="pcid10" style="height:20px"
                                          value="#{ProjekteForm.projectProgressInterface.timeUnit}"
-                                         converter="StatisticsTimeUnitConverter">
+                                         converter="#{statisticsTimeUnitConverter}">
                             <f:selectItems id="pcid11"
                                            value="#{ProjekteForm.projectProgressInterface.selectableTimeUnits}"
                                            var="unit"

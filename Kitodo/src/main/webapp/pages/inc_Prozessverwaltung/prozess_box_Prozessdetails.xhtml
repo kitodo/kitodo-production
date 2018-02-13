@@ -220,7 +220,7 @@
                             <h:outputLabel for="Regelsatz" value="#{msgs.regelsatz}"/>
                             <h:panelGroup>
                                 <h:selectOneMenu id="Regelsatz" value="#{ProzessverwaltungForm.process.ruleset}"
-                                                 converter="RegelsatzConverter"
+                                                 converter="#{rulesetConverter}"
                                                  style="width: 300px;margin-right:15px" required="true">
                                     <f:selectItems value="#{HelperForm.regelsaetze}"/>
                                 </h:selectOneMenu>
@@ -231,7 +231,7 @@
                             <h:panelGroup>
                                 <h:selectOneMenu id="docket" style="width: 300px;margin-right:15px"
                                                  value="#{ProzessverwaltungForm.process.docket}"
-                                                 converter="DocketConverter">
+                                                 converter="#{docketConverter}">
                                     <!-- 							<f:selectItem itemValue="" itemLabel="#{msgs.defaultDocket}" /> -->
                                     <f:selectItems value="#{HelperForm.dockets}"/>
                                 </h:selectOneMenu>

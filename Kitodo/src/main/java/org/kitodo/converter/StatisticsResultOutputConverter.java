@@ -15,18 +15,19 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
+import javax.inject.Named;
 
 import org.goobi.production.flow.statistics.enums.ResultOutput;
 
 /**
  * StatisticOutputConverter for statistics ResultOutput as select-items in
  * jsf-guis.
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 21.05.2009
  */
+@Named
 public class StatisticsResultOutputConverter implements Converter {
-    public static final String CONVERTER_ID = "StatisticsResultOutputConverter";
 
     /**
      * Convert String to ResultOutput.

@@ -55,7 +55,7 @@
                                  value="#{Form.statisticsManagerForStorage.sourceNumberOfTimeUnitsAsString}"/>
 
                     <h:selectOneMenu id="uaid10" style="width:130px" value="#{Form.statisticsManagerForStorage.sourceTimeUnit}"
-                                     converter="StatisticsTimeUnitConverter">
+                                     converter="#{statisticsTimeUnitConverter}">
                         <f:selectItems id="uaid11" value="#{Form.statisticsManagerForStorage.allTimeUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -70,7 +70,7 @@
                     <h:outputText id="uaid15" value="#{msgs.unit}" style="width:150px"/>
 
                     <h:selectOneMenu id="uaid16" style="width:130px" value="#{Form.statisticsManagerForStorage.targetTimeUnit}"
-                                     converter="StatisticsTimeUnitConverter">
+                                     converter="#{statisticsTimeUnitConverter}">
                         <f:selectItems id="uaid17" value="#{Form.statisticsManagerForStorage.allTimeUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -79,7 +79,7 @@
 
                     <h:selectOneMenu id="uaid19" style="width:130px"
                                      value="#{Form.statisticsManagerForStorage.targetCalculationUnit}"
-                                     converter="StatisticsCalculationUnitConverter">
+                                     converter="#{statisticsCalculationUnitConverter}">
                         <f:selectItems id="uaid20" value="#{Form.statisticsManagerForStorage.allCalculationUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -87,7 +87,7 @@
                     <h:outputText id="uaid21" value="#{msgs.ausgabe}"/>
 
                     <h:selectOneMenu id="uaid22" style="width:130px" value="#{Form.statisticsManagerForStorage.targetResultOutput}"
-                                     converter="StatisticsResultOutputConverter">
+                                     converter="#{statisticsResultOutputConverter}">
                         <f:selectItems id="uaid23" value="#{Form.statisticsManagerForStorage.allResultOutputs}" var="out"
                                         itemLabel="#{out.title}" itemValue="#{out}"/>
                     </h:selectOneMenu>

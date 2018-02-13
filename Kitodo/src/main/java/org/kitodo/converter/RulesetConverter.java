@@ -15,6 +15,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,9 +23,9 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
-public class RegelsatzConverter implements Converter {
-    public static final String CONVERTER_ID = "RegelsatzConverter";
-    private static final Logger logger = LogManager.getLogger(RegelsatzConverter.class);
+@Named
+public class RulesetConverter implements Converter {
+    private static final Logger logger = LogManager.getLogger(RulesetConverter.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
