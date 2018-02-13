@@ -34,10 +34,10 @@
                         <h:outputText value="#{usergroup.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.auswahl}">
-                        <h:commandLink action="#{ProzessverwaltungForm.addUserGroup}">
+                        <p:commandLink action="#{ProzessverwaltungForm.addUserGroup}" update="taskEditForm:tabs:taskUsergroupTable">
                             <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
                             <f:param name="ID" value="#{usergroup.id}"/>
-                        </h:commandLink>
+                        </p:commandLink>
                     </p:column>
                 </p:dataTable>
                 <p:commandButton onclick="PF('addUsergroupDialog').hide()" value="#{msgs.close}"/>
