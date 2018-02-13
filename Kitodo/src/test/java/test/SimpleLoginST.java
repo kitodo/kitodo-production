@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -48,26 +47,19 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.selenium.testframework.Browser;
+import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
 
 public class SimpleLoginST {
 
     private static final Logger logger = LogManager.getLogger(SimpleLoginST.class);
-    private static WebDriver driver;
-
-    private static final String userName = "kowal";
-    private static final String userPassword = "test";
 
     private static final int BUFFER_SIZE = 8 * 1024;
 
@@ -89,14 +81,15 @@ public class SimpleLoginST {
 
         String userDir = System.getProperty("user.dir");
         provideGeckoDriver(GECKO_DRIVER_VERSION, userDir + "/target/downloads/", userDir + "/target/extracts/");
-        driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+
+        // driver = new FirefoxDriver();
+        // driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
-        driver.close();
+        Browser.Close();
         MockDatabase.stopDatabaseServer();
         MockDatabase.stopNode();
 
@@ -110,7 +103,8 @@ public class SimpleLoginST {
     }
 
     /**
-     * Watcher for WebDriverExceptions on travis which makes screenshot and sends email
+     * Watcher for WebDriverExceptions on travis which makes screenshot and sends
+     * email
      */
     @Rule
     public TestRule seleniumExceptionWatcher = new TestWatcher() {
@@ -120,17 +114,17 @@ public class SimpleLoginST {
             if ("true".equals(System.getenv().get("TRAVIS")) // make sure we are on travis-ci
                     && (ex instanceof WebDriverException)) {
                 try {
-                    File screenshot = captureScreenShot(driver);
+                    File screenshot = captureScreenShot(Browser.getDriver());
                     Map<String, String> travisProperties = getTravisProperties();
 
                     String emailSubject = String.format("%s - #%s: Test Failure: %s: %s",
-                            travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
-                            description.getClassName(), description.getMethodName());
+                        travisProperties.get(TRAVIS_BRANCH), travisProperties.get(TRAVIS_BUILD_NUMBER),
+                        description.getClassName(), description.getMethodName());
 
                     String emailMessage = String.format(
-                            "Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
-                            travisProperties.get(TRAVIS_BUILD_NUMBER), travisProperties.get(TRAVIS_REPO_SLUG),
-                            travisProperties.get(TRAVIS_BUILD_ID));
+                        "Selenium Test failed on build #%s: https://travis-ci.org/%s/builds/%s",
+                        travisProperties.get(TRAVIS_BUILD_NUMBER), travisProperties.get(TRAVIS_REPO_SLUG),
+                        travisProperties.get(TRAVIS_BUILD_ID));
 
                     String user = travisProperties.get(MAIL_USER);
                     String password = travisProperties.get(MAIL_PASSWORD);
@@ -160,36 +154,48 @@ public class SimpleLoginST {
     @Test
     public void seleniumTest() throws Exception {
 
-        String appUrl = "http://localhost:8080/kitodo/pages/login.jsf";
+        Browser.Initialize();
 
-        driver.get(appUrl);
-        Thread.sleep(2000);
-        driver.manage().window().setSize(new Dimension(1280, 1024));
+        User user = new User();
+        user.setLogin("kowal");
+        user.setPassword("test");
 
-        Thread.sleep(2000);
+        Pages.login().goTo();
+        Pages.login().performLogin(user);
 
-        WebElement username = driver.findElement(By.id("username"));
+        Assert.assertNotNull(user);
 
-        username.clear();
-        username.sendKeys(userName);
-
-        WebElement password = driver.findElement(By.id("password"));
-        password.clear();
-        password.sendKeys(userPassword);
-        WebElement LoginButton = driver.findElement(By.id("login"));
-
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", LoginButton);
-        Thread.sleep(200);
-        LoginButton.click();
-        Thread.sleep(500);
-
-        Actions action = new Actions(driver);
-        WebElement UserMenuLink = driver.findElement(By.id("user-menu"));
-
-        action.moveToElement(UserMenuLink).perform();
-
-        WebElement LogoutButton = driver.findElement(By.id("logout-form:logout"));
-        Assert.assertNotNull(LogoutButton);
+        // String appUrl = "http://localhost:8080/kitodo/pages/login.jsf";
+        //
+        // driver.get(appUrl);
+        // Thread.sleep(2000);
+        // driver.manage().window().setSize(new Dimension(1280, 1024));
+        //
+        // Thread.sleep(2000);
+        //
+        // WebElement username = driver.findElement(By.id("username"));
+        //
+        // username.clear();
+        // username.sendKeys(userName);
+        //
+        // WebElement password = driver.findElement(By.id("password"));
+        // password.clear();
+        // password.sendKeys(userPassword);
+        // WebElement LoginButton = driver.findElement(By.id("login"));
+        //
+        // ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
+        // LoginButton);
+        // Thread.sleep(200);
+        // LoginButton.click();
+        // Thread.sleep(500);
+        //
+        // Actions action = new Actions(driver);
+        // WebElement UserMenuLink = driver.findElement(By.id("user-menu"));
+        //
+        // action.moveToElement(UserMenuLink).perform();
+        //
+        // WebElement LogoutButton = driver.findElement(By.id("logout-form:logout"));
+        // Assert.assertNotNull(LogoutButton);
 
     }
 
@@ -264,9 +270,10 @@ public class SimpleLoginST {
                     int currentByte;
                     byte data[] = new byte[BUFFER_SIZE];
 
-                    try(BufferedInputStream bufferedInputStream = new BufferedInputStream(zip.getInputStream(entry));
-                        FileOutputStream fileOutputStream = new FileOutputStream(destFile);
-                        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, BUFFER_SIZE)) {
+                    try (BufferedInputStream bufferedInputStream = new BufferedInputStream(zip.getInputStream(entry));
+                            FileOutputStream fileOutputStream = new FileOutputStream(destFile);
+                            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream,
+                                    BUFFER_SIZE)) {
 
                         while ((currentByte = bufferedInputStream.read(data, 0, BUFFER_SIZE)) != -1) {
                             bufferedOutputStream.write(data, 0, currentByte);
@@ -291,8 +298,9 @@ public class SimpleLoginST {
      */
     private static void extractTarFileToFolder(File file, File outputDir, boolean isGZipped) {
         try (FileInputStream fileInputStream = new FileInputStream(file);
-             TarInputStream tarArchiveInputStream = (isGZipped) ? new TarInputStream(new GZIPInputStream(fileInputStream, BUFFER_SIZE))
-                     : new TarInputStream(new BufferedInputStream(fileInputStream, BUFFER_SIZE))){
+                TarInputStream tarArchiveInputStream = (isGZipped)
+                        ? new TarInputStream(new GZIPInputStream(fileInputStream, BUFFER_SIZE))
+                        : new TarInputStream(new BufferedInputStream(fileInputStream, BUFFER_SIZE))) {
 
             unTar(tarArchiveInputStream, outputDir);
         } catch (IOException e) {
@@ -327,7 +335,7 @@ public class SimpleLoginST {
                             out.write(data, 0, length);
                         }
                     } catch (IOException e) {
-                            logger.error(e.getMessage());
+                        logger.error(e.getMessage());
                     }
                 }
             }
@@ -356,13 +364,13 @@ public class SimpleLoginST {
             geckoDriverFileName = "geckodriver.exe";
             File geckoDriverZipFile = new File(downloadFolder + "geckodriver.zip");
             FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-win64.zip"),
-                    geckoDriverZipFile);
+                geckoDriverZipFile);
             extractZipFileToFolder(geckoDriverZipFile, new File(extractFolder));
         } else if (SystemUtils.IS_OS_MAC_OSX) {
             geckoDriverFileName = "geckodriver";
             File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
             FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-macos.tar.gz"),
-                    geckoDriverTarFile);
+                geckoDriverTarFile);
             File theDir = new File(extractFolder);
             if (!theDir.exists()) {
                 theDir.mkdir();
@@ -372,7 +380,7 @@ public class SimpleLoginST {
             geckoDriverFileName = "geckodriver";
             File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
             FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-linux64.tar.gz"),
-                    geckoDriverTarFile);
+                geckoDriverTarFile);
             extractTarFileToFolder(geckoDriverTarFile, new File(extractFolder), true);
         }
         File geckoDriverFile = new File(extractFolder, geckoDriverFileName);
