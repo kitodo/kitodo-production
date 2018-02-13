@@ -756,41 +756,30 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Remove task with given id.
-     *
-     * @param id
-     *            ID of the task to be removed.
-     */
-    public void deleteTask(int id) {
-        loadTask(id);
-        deleteTask();
-    }
-
-    /**
      * Remove task.
      *
      * @return page
      */
     public String deleteTask() {
-        this.process.getTasks().remove(this.task);
-
-        List<User> users = this.task.getUsers();
-        for (User user : users) {
-            user.getTasks().remove(this.task);
-        }
-
-        List<UserGroup> userGroups = this.task.getUserGroups();
-        for (UserGroup userGroup : userGroups) {
-            userGroup.getTasks().remove(this.task);
-        }
-
         try {
+            this.process.getTasks().remove(this.task);
+            List<User> users = this.task.getUsers();
+            for (User user : users) {
+                user.getTasks().remove(this.task);
+            }
+
+            List<UserGroup> userGroups = this.task.getUserGroups();
+            for (UserGroup userGroup : userGroups) {
+                userGroup.getTasks().remove(this.task);
+            }
+            deleteSymlinksFromUserHomes();
             serviceManager.getTaskService().remove(this.task);
+            return redirectToEdit();
         } catch (DataException e) {
             logger.error(e);
+            return null;
         }
-        deleteSymlinksFromUserHomes();
-        return redirectToEdit();
+
     }
 
     private void deleteSymlinksFromUserHomes() {
@@ -2330,7 +2319,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty()
-                    && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf"))) {
+                    && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf") || callerViewId.contains("processEdit.jsf"))) {
                 return PROCESS_EDIT_PATH + urlParameters;
             } else {
                 return PROCESS_EDIT_PATH_OLD + urlParameters;

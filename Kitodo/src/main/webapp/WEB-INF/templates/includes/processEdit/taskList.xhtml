@@ -85,10 +85,12 @@
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
-            <h:commandLink title="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteTask(item.id)}"
-                           onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-                           immediate="true">
-                <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
+            <h:commandLink title="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteTask}" immediate="true"
+                           onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')">
+                <i class="fa fa-trash-o fa-lg"/>
+                <f:setPropertyActionListener
+                        target="#{ProzessverwaltungForm.task}"
+                        value="#{item}"/>
             </h:commandLink>
         </p:column>
 
