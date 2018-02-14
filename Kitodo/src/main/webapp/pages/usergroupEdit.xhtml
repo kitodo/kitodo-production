@@ -31,7 +31,7 @@
                         <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
                                       rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
                     </h3>
-                    <p:commandButton value="#{msgs.speichern}"
+                    <p:commandButton id="save" value="#{msgs.speichern}"
                                      action="#{BenutzergruppenForm.save}"
                                      process="usergroupTabView:authoritiesGlobal, usergroupTabView:authoritiesClient, usergroupTabView:title, usergroupTabView:authoritiesProject"
                                      icon="fa fa-floppy-o fa-lg"
@@ -42,7 +42,8 @@
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"
                                      update="notifications"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
+                    <p:button id="cancel" value="#{msgs.abbrechen}"
+                              outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
 

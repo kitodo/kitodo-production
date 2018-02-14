@@ -24,7 +24,8 @@
             </p:panel>
             <p:tabView id="tasksTabView">
                 <p:tab id="tasksTab" title="#{msgs.tasklist}">
-                    <p:dataTable var="item"
+                    <p:dataTable id="taskTable"
+                                 var="item"
                                  value="#{AktuelleSchritteForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"

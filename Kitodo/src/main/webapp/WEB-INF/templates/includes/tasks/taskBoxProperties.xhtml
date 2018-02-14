@@ -25,7 +25,7 @@
                 <p:column headerText="#{msgs.titel}">
                     <h:outputText value="#{property.title}" />
                 </p:column>
-                <p:column headerText="#{msgs.wert}">
+                <p:column headerText="#{msgs.value}">
                     <h:outputText value="#{property.value}" rendered="#{property.type.name !=  'link'}"/>
                     <h:outputLink title="#{property.value}" value="#{property.value}"
                                   rendered="#{property.type.name ==  'link'}" target="_blank">

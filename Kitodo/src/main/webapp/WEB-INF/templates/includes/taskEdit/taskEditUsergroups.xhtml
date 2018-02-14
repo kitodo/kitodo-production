@@ -16,15 +16,16 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable var="usergroup" id="taskUsergroupTable"
+    <p:dataTable var="usergroup" id="usergroupTable"
                  value="#{ProzessverwaltungForm.task.userGroups}">
         <p:column headerText="#{msgs.titel}">
             <h:outputText value="#{usergroup.title}"/>
         </p:column>
         <p:column headerText="#{msgs.loeschen}">
             <p:commandLink action="#{ProzessverwaltungForm.deleteUserGroup}"
+                           id="deleteUsergroup"
                            immediate="true"
-                           update="taskEditForm:tabs:taskUsergroupTable"
+                           update="taskEditForm:tabs:usergroupTable"
                            title="#{msgs.removeUsergroup}">
                 <i class="fa fa-trash-o fa-lg"/>
                 <f:param name="ID" value="#{usergroup.id}"/>
@@ -32,6 +33,7 @@
         </p:column>
     </p:dataTable>
     <p:commandButton value="#{msgs.benutzergruppenHinzufuegen}"
+                     id="addUsergroup"
                      action="#{ProzessverwaltungForm.userGroups}"
                      oncomplete="PF('addUsergroupDialog').show()"
                      icon="fa fa-plus-circle fa-lg"

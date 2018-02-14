@@ -46,7 +46,8 @@
                             <br/>
                             <p:inputText id="addToTextArea" value="#{AktuelleSchritteForm.addToWikiField}" class="input" />
                             <p:panel styleClass="content-header">
-                                <p:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{AktuelleSchritteForm.addToWikiField}" ajax="false"
+                                <p:commandButton id="addMessage" value="#{msgs.nachrichtHinzufuegen}"
+                                                 action="#{AktuelleSchritteForm.addToWikiField}" ajax="false"
                                                  styleClass="button-filled-green"/>
                             </p:panel>
                         </p:panel>

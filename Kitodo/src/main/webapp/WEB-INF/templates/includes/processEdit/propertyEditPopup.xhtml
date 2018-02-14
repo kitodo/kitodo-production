@@ -23,14 +23,16 @@
               width="700px"
               modal="true"
               dynamic="true">
-        <h:form>
+        <h:form id="propertyForm">
             <!-- title -->
-            <p:inputText value="#{ProzessverwaltungForm.property.title}" placeholder="#{msgs.titel}" required="true"/>
+            <p:inputText id="propertyTitle" value="#{ProzessverwaltungForm.property.title}"
+                         placeholder="#{msgs.titel}" required="true"/>
 
             <!-- value: text -->
-            <p:inputText value="#{ProzessverwaltungForm.property.value}"/>
+            <p:inputText id="propertyValue" value="#{ProzessverwaltungForm.property.value}"/>
 
             <p:commandButton action="#{ProzessverwaltungForm.saveCurrentProperty}"
+                             id="save"
                              update="processEditForm"
                              oncomplete="PF('editPropertyDialog').hide()"
                              value="#{msgs.uebernehmen}">

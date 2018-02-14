@@ -25,7 +25,7 @@
                       width="700px"
                       modal="true"
                       dynamic="true">
-                <h:form>
+                <h:form id="userForm">
                     <p:dataTable var="item"
                                  value="#{BenutzergruppenForm.lazyDTOModel}"
                                  lazy="true"
@@ -36,7 +36,8 @@
                             <h:outputText value="#{item.title}"/>
                         </p:column>
                         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
-                            <p:commandLink action="#{BenutzerverwaltungForm.addToGroup}"
+                            <p:commandLink id="add"
+                                           action="#{BenutzerverwaltungForm.addToGroup}"
                                            title="add to user group"
                                            update="userEditForm">
                                 <i class="fa fa-user-plus fa-lg"/>
@@ -44,7 +45,7 @@
                             </p:commandLink>
                         </p:column>
                     </p:dataTable>
-                    <p:commandButton onclick="PF('addUserGroupDialog').hide()" value="#{msgs.close}"/>
+                    <p:commandButton id="close" onclick="PF('addUserGroupDialog').hide()" value="#{msgs.close}"/>
                 </h:form>
             </p:dialog>
         </h:body>

@@ -31,14 +31,14 @@
                         <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
                                       rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
                     </h3>
-                    <p:commandButton value="#{msgs.speichern}"
+                    <p:commandButton id="save" value="#{msgs.speichern}"
                                      action="#{BenutzerverwaltungForm.save}"
                                      update="notifications"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      styleClass="button-filled-blue"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="users"
+                    <p:button id="cancel" value="#{msgs.abbrechen}" outcome="users"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
@@ -118,7 +118,8 @@
                                     <h:outputText value="#{item.title}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
-                                    <p:commandLink action="#{BenutzerverwaltungForm.deleteFromGroup}"
+                                    <p:commandLink id="delete"
+                                                   action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                                    title="#{msgs.ausGruppeLoeschen}"
                                                    update="@form">
                                         <i class="fa fa-trash-o fa-lg"/>

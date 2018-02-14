@@ -24,8 +24,9 @@
                   width="700px"
                   modal="true"
                   dynamic="true">
-            <h:form>
-                <p:dataTable var="usergroup"
+            <h:form id="usergroupForm">
+                <p:dataTable id="usergroupTable"
+                             var="usergroup"
                              value="#{BenutzergruppenForm.lazyDTOModel}"
                              lazy="true"
                              rows="#{LoginForm.myBenutzer.tableSize}"
@@ -34,13 +35,14 @@
                         <h:outputText value="#{usergroup.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.auswahl}">
-                        <p:commandLink action="#{ProzessverwaltungForm.addUserGroup}" update="taskEditForm:tabs:taskUsergroupTable">
+                        <p:commandLink id="addUsergroup" action="#{ProzessverwaltungForm.addUserGroup}"
+                                       update="taskEditForm:tabs:taskUsergroupTable">
                             <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
                             <f:param name="ID" value="#{usergroup.id}"/>
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
-                <p:commandButton onclick="PF('addUsergroupDialog').hide()" value="#{msgs.close}"/>
+                <p:commandButton id="close" onclick="PF('addUsergroupDialog').hide()" value="#{msgs.close}"/>
             </h:form>
         </p:dialog>
     </f:view>

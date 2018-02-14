@@ -23,14 +23,17 @@
               width="700px"
               modal="true"
               dynamic="true">
-        <h:form>
+        <h:form id="workpiecePropertyForm">
             <!-- title -->
-            <p:inputText value="#{ProzessverwaltungForm.workpieceProperty.title}" placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
+            <p:inputText id="workpiecePropertyTitle" value="#{ProzessverwaltungForm.workpieceProperty.title}"
+                         placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
 
             <!-- value: text -->
-            <p:inputText value="#{ProzessverwaltungForm.workpieceProperty.value}" styleClass="editDialog"/>
+            <p:inputText id="workpiecePropertyValue" value="#{ProzessverwaltungForm.workpieceProperty.value}"
+                         styleClass="editDialog"/>
 
             <p:commandButton action="#{ProzessverwaltungForm.saveWorkpieceProperty}"
+                             id="save"
                              update="processEditForm"
                              oncomplete="PF('editWorkpieceDialog').hide()"
                              value="#{msgs.uebernehmen}">

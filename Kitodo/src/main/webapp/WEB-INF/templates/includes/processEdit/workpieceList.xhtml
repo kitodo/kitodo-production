@@ -25,12 +25,14 @@
             <h:outputText value="#{property.value}"/>
         </p:column>
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
-            <p:commandLink title="#{msgs.bearbeiten}"
+            <p:commandLink id="editWorkpieceProperty"
+                           title="#{msgs.bearbeiten}"
                            oncomplete="PF('editWorkpieceDialog').show()">
                 <i class="fa fa-pencil-square-o fa-lg"/>
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.workpieceProperty}" value="#{property}"/>
             </p:commandLink>
-            <p:commandLink title="#{msgs.loeschen}"
+            <p:commandLink id="deleteWorkpieceProperty"
+                           title="#{msgs.loeschen}"
                            action="#{ProzessverwaltungForm.deleteWorkpieceProperty}"
                            update="workpiecePropertyTable">
                 <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
@@ -38,7 +40,8 @@
             </p:commandLink>
         </p:column>
     </p:dataTable>
-    <p:commandButton value="#{msgs.eigenschaftHinzufuegen}"
+    <p:commandButton id="addWorkpieceProperty"
+                     value="#{msgs.eigenschaftHinzufuegen}"
                      actionListener="#{ProzessverwaltungForm.createWorkpieceProperty}"
                      update="@(.editDialog)"
                      oncomplete="PF('editWorkpieceDialog').show()"

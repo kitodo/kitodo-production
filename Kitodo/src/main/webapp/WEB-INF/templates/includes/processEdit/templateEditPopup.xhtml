@@ -18,18 +18,21 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editTemplateDialog"
-              header="#{msgs.eigenschaftBearbeiten}"
+              header="#{ProzessverwaltungForm.templateProperty.id eq null ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
               width="700px"
               modal="true"
               dynamic="true">
-        <h:form>
+        <h:form id="templatePropertyForm">
             <!-- title -->
-            <p:inputText value="#{ProzessverwaltungForm.templateProperty.title}" placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
+            <p:inputText id="templatePropertyTitle" value="#{ProzessverwaltungForm.templateProperty.title}"
+                         placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
 
             <!-- value: text -->
-            <p:inputText value="#{ProzessverwaltungForm.templateProperty.value}" styleClass="editDialog"/>
+            <p:inputText id="templatePropertyValue" value="#{ProzessverwaltungForm.templateProperty.value}"
+                         styleClass="editDialog"/>
 
             <p:commandButton action="#{ProzessverwaltungForm.saveTemplateProperty}"
+                             id="save"
                              update="@form"
                              oncomplete="PF('editTemplateDialog').hide()"
                              value="#{msgs.uebernehmen}"

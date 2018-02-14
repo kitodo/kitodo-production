@@ -24,8 +24,9 @@
                   width="700px"
                   modal="true"
                   dynamic="true">
-            <h:form>
-                <p:dataTable var="user"
+            <h:form id="userForm">
+                <p:dataTable id="userTable"
+                             var="user"
                              value="#{BenutzerverwaltungForm.lazyDTOModel}"
                              lazy="true"
                              rows="#{LoginForm.myBenutzer.tableSize}"
@@ -34,13 +35,14 @@
                         <h:outputText value="#{user.surname}, #{user.name}"/>
                     </p:column>
                     <p:column headerText="#{msgs.auswahl}">
-                        <p:commandLink action="#{ProzessverwaltungForm.addUser}" update="taskEditForm:tabs:taskUserTable">
+                        <p:commandLink id="addUser" action="#{ProzessverwaltungForm.addUser}"
+                                       update="taskEditForm:tabs:taskUserTable">
                             <h:graphicImage alt="add task to user" value="/pages/images/buttons/addUser.gif"/>
                             <f:param name="ID" value="#{user.id}"/>
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
-                <p:commandButton onclick="PF('addUserDialog').hide()" value="#{msgs.close}"/>
+                <p:commandButton id="close" onclick="PF('addUserDialog').hide()" value="#{msgs.close}"/>
             </h:form>
         </p:dialog>
     </f:view>

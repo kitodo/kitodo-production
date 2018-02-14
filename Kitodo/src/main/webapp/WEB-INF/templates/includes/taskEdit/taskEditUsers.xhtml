@@ -16,16 +16,17 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable var="user" value="#{ProzessverwaltungForm.task.users}" id="taskUserTable">
+    <p:dataTable var="user" value="#{ProzessverwaltungForm.task.users}" id="userTable">
         <p:column headerText="#{msgs.benutzer}">
             <h:outputText value="#{user.surname}, #{user.name}"/>
         </p:column>
 
         <p:column headerText="#{msgs.loeschen}">
             <p:commandLink action="#{ProzessverwaltungForm.deleteUser}"
+                           id="deleteUser"
                            title="#{msgs.removeUser}"
                            immediate="true"
-                           update="@form">
+                           update="taskEditForm:tabs:userTable">
                 <i class="fa fa-trash-o fa-lg"/>
                 <f:param name="ID" value="#{user.id}"/>
             </p:commandLink>
@@ -34,6 +35,7 @@
 
     <p:commandButton value="#{msgs.benutzerHinzufuegen}"
                      action="#{ProzessverwaltungForm.activeUsers}"
+                     id="addUser"
                      oncomplete="PF('addUserDialog').show()"
                      icon="fa fa-plus-circle fa-lg"
                      immediate="true"

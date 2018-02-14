@@ -26,13 +26,15 @@
             <!-- TODO funktioniert der Link? -->
             <h:outputText value="#{item.ordering}"/>
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
-                             update="@form"
+                             id="orderUp"
+                             update="processEditForm:tabs:taskTable"
                              rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
                              icon="fa fa-long-arrow-up" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
             </p:commandButton>
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
-                             update="@form"
+                             id="orderDown"
+                             update="processEditForm:tabs:taskTable"
                              rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
                              icon="fa fa-long-arrow-down" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
@@ -55,6 +57,7 @@
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                     <!-- Bearbeitungsstatus hoch und runter -->
                     <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusUp}"
+                                   id="taskStatusUp"
                                    title="#{msgs.statusHoeherSetzen}"
                                    update="statusColumn">
                         <h:graphicImage alt="status up"
@@ -65,6 +68,7 @@
                     </p:commandLink>
                     <!-- Bearbeitungsstatus hoch und runter -->
                     <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusDown}"
+                                   id="taskStatusDown"
                                    title="#{msgs.statusRunterSetzen}"
                                    update="statusColumn">
                         <h:graphicImage alt="status down"
@@ -80,13 +84,13 @@
         <!-- actions -->
         <p:column rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                   headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
-            <h:link outcome="taskEdit"
+            <h:link outcome="taskEdit" id="editTask"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
-            <h:commandLink title="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteTask}" immediate="true"
-                           onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')">
+            <h:commandLink id="deleteTask" title="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteTask}"
+                           immediate="true" onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')">
                 <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
                 <f:setPropertyActionListener
                         target="#{ProzessverwaltungForm.task}"

@@ -31,7 +31,8 @@
                         <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
                                       rendered="#{empty RulesetForm.ruleset.title}"/>
                     </h3>
-                    <p:commandButton value="#{msgs.speichern}"
+                    <p:commandButton id="save"
+                                     value="#{msgs.speichern}"
                                      action="#{RulesetForm.saveRuleset}"
                                      update="notifications"
                                      icon="fa fa-floppy-o fa-lg"

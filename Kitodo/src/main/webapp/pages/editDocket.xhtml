@@ -32,7 +32,8 @@
                                       rendered="#{empty DocketForm.myDocket.title}"/>
                     </h3>
 
-                    <p:commandButton value="#{msgs.speichern}"
+                    <p:commandButton id="save"
+                                     value="#{msgs.speichern}"
                                      action="#{DocketForm.save}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
@@ -41,7 +42,8 @@
                                         'summary':'#{msgs.docketSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects.jsf?id=#{ProjectTabView.activeTabIndex}"
+                    <p:button id="cancel" value="#{msgs.abbrechen}"
+                              outcome="projects.jsf?id=#{ProjectTabView.activeTabIndex}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
