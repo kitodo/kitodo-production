@@ -19,14 +19,15 @@
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>#{msgs.clients}</h3>
-                <h:form>
+                <h:form id="clientForm">
                     <p:commandButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right"
-                                     action="#{ClientForm.newClient}"
+                                     action="#{ClientForm.newClient}" id="newClientButton"
                                      styleClass="button-filled-green">
                     </p:commandButton>
                 </h:form>
             </p:panel>
             <p:dataTable var="item"
+                         id="clientsTable"
                          value="#{ClientForm.lazyDTOModel}"
                          lazy="true"
                          paginator="true"

@@ -36,7 +36,7 @@ public class LoginPage {
         Browser.goTo(url);
     }
 
-    public void performLogin(User user) {
+    public void performLogin(User user) throws InterruptedException {
         usernameInput.clear();
         usernameInput.sendKeys(user.getLogin());
 
@@ -44,5 +44,6 @@ public class LoginPage {
         passwordInput.sendKeys(user.getPassword());
 
         loginButton.click();
+        Thread.sleep(2000);
     }
 }

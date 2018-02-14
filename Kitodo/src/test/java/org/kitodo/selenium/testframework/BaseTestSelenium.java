@@ -9,37 +9,22 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package test;
+package org.kitodo.selenium.testframework;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.selenium.testframework.Browser;
-import org.kitodo.selenium.testframework.MailSender;
-import org.kitodo.selenium.testframework.Pages;
-import org.kitodo.services.ServiceManager;
 import org.openqa.selenium.WebDriverException;
 
-public class SimpleLoginST {
-
-    private static final Logger logger = LogManager.getLogger(SimpleLoginST.class);
-    private ServiceManager serviceManager = new ServiceManager();
+public class BaseTestSelenium {
+    private static final Logger logger = LogManager.getLogger(BaseTestSelenium.class);
 
     private static final String TRAVIS_BUILD_NUMBER = "TRAVIS_BUILD_NUMBER";
     private static final String TRAVIS_BRANCH = "TRAVIS_BRANCH";
@@ -48,84 +33,6 @@ public class SimpleLoginST {
     private static final String MAIL_USER = "MAIL_USER";
     private static final String MAIL_PASSWORD = "MAIL_PASSWORD";
     private static final String MAIL_RECIPIENT = "MAIL_RECIPIENT";
-
-
-    @BeforeClass
-    public static void setUp() throws Exception {
-        MockDatabase.startNode();
-        MockDatabase.insertProcessesFull();
-        MockDatabase.startDatabaseServer();
-
-        Browser.Initialize();
-    }
-
-    @AfterClass
-    public static void tearDown() throws Exception {
-        Browser.Close();
-
-        MockDatabase.stopDatabaseServer();
-        MockDatabase.stopNode();
-
-        if (SystemUtils.IS_OS_WINDOWS) {
-            try {
-                Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
-            } catch (Exception ex) {
-                logger.error(ex.getMessage());
-            }
-        }
-    }
-
-    @Before
-    public void login() throws Exception {
-        User user = serviceManager.getUserService().getById(1);
-
-        Pages.login().goTo();
-        Pages.login().performLogin(user);
-    }
-
-    @After
-    public void logout() throws Exception {
-
-    }
-
-    @Test
-    public void seleniumTest() throws Exception {
-
-        Assert.assertNotNull(true);
-
-        // String appUrl = "http://localhost:8080/kitodo/pages/login.jsf";
-        //
-        // driver.get(appUrl);
-        // Thread.sleep(2000);
-        // driver.manage().window().setSize(new Dimension(1280, 1024));
-        //
-        // Thread.sleep(2000);
-        //
-        // WebElement username = driver.findElement(By.id("username"));
-        //
-        // username.clear();
-        // username.sendKeys(userName);
-        //
-        // WebElement password = driver.findElement(By.id("password"));
-        // password.clear();
-        // password.sendKeys(userPassword);
-        // WebElement LoginButton = driver.findElement(By.id("login"));
-        //
-        // ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
-        // LoginButton);
-        // Thread.sleep(200);
-        // LoginButton.click();
-        // Thread.sleep(500);
-        //
-        // Actions action = new Actions(driver);
-        // WebElement UserMenuLink = driver.findElement(By.id("user-menu"));
-        //
-        // action.moveToElement(UserMenuLink).perform();
-        //
-        // WebElement LogoutButton = driver.findElement(By.id("logout-form:logout"));
-        // Assert.assertNotNull(LogoutButton);
-
-    }
 
     /**
      * Watcher for WebDriverExceptions on travis which makes screenshot and sends
@@ -175,6 +82,4 @@ public class SimpleLoginST {
             return properties;
         }
     };
-
-
 }

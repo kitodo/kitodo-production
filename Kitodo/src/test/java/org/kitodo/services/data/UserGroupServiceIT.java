@@ -130,7 +130,8 @@ public class UserGroupServiceIT {
 
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("Cascados Group");
-        userGroup.getUsers().add(userService.getByQuery("FROM User WHERE login = 'Cascados' ORDER BY id DESC").get(0));
+        userGroup.getUsers()
+                .add(userService.getByQuery("FROM User WHERE getLoginPage = 'Cascados' ORDER BY id DESC").get(0));
         userGroupService.saveToDatabase(userGroup);
 
         UserGroup foundUserGroup = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").get(0);
@@ -140,10 +141,10 @@ public class UserGroupServiceIT {
         int size = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
-        size = userService.getByQuery("FROM User WHERE login = 'Cascados'").size();
+        size = userService.getByQuery("FROM User WHERE getLoginPage = 'Cascados'").size();
         assertEquals("User was removed from database!", 1, size);
 
-        userService.removeFromDatabase(userService.getByQuery("FROM User WHERE login = 'Cascados'").get(0));
+        userService.removeFromDatabase(userService.getByQuery("FROM User WHERE getLoginPage = 'Cascados'").get(0));
     }
 
     @Test

@@ -11,24 +11,59 @@
 
 package org.kitodo.selenium.testframework;
 
+import org.kitodo.selenium.testframework.pages.ClientsPage;
+import org.kitodo.selenium.testframework.pages.HelpPage;
+import org.kitodo.selenium.testframework.pages.IndexingPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
+import org.kitodo.selenium.testframework.pages.ProcessesPage;
+import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.TasksPage;
+import org.kitodo.selenium.testframework.pages.TopNavigationPage;
+import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.openqa.selenium.support.PageFactory;
 
 public class Pages {
 
     private static <T> T getPage(Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        System.out.println("T page = clazz.newInstance();");
-        System.out.println(clazz.getCanonicalName());
         T page = clazz.newInstance();
-        System.out.println("PageFactory.initElements(Browser.getDriver(), page);");
-        System.out.println("page = " + page.toString());
         PageFactory.initElements(Browser.getDriver(), page);
-        System.out.println("return page;");
         return page;
     }
 
-    public static LoginPage login() throws InstantiationException, IllegalAccessException {
+    public static ClientsPage getClientsPage() throws InstantiationException, IllegalAccessException {
+        return getPage(ClientsPage.class);
+    }
+
+    public static HelpPage getHelpPage() throws InstantiationException, IllegalAccessException {
+        return getPage(HelpPage.class);
+    }
+
+    public static IndexingPage getIndexingPage() throws InstantiationException, IllegalAccessException {
+        return getPage(IndexingPage.class);
+    }
+
+    public static LoginPage getLoginPage() throws InstantiationException, IllegalAccessException {
         return getPage(LoginPage.class);
+    }
+
+    public static ProcessesPage getProcessesPage() throws InstantiationException, IllegalAccessException {
+        return getPage(ProcessesPage.class);
+    }
+
+    public static ProjectsPage getProjectsPage() throws InstantiationException, IllegalAccessException {
+        return getPage(ProjectsPage.class);
+    }
+
+    public static TasksPage getTasksPage() throws InstantiationException, IllegalAccessException {
+        return getPage(TasksPage.class);
+    }
+
+    public static TopNavigationPage getTopNavigation() throws InstantiationException, IllegalAccessException {
+        return getPage(TopNavigationPage.class);
+    }
+
+    public static UsersPage getUsersPage() throws InstantiationException, IllegalAccessException {
+        return getPage(UsersPage.class);
     }
 
 }

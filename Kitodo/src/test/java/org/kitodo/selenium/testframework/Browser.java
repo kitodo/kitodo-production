@@ -21,12 +21,14 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class Browser {
     private static final Logger logger = LogManager.getLogger(Browser.class);
     private static final String BASE_URL = "http://localhost:8080/kitodo/";
     private static RemoteWebDriver webDriver;
+    private static Actions actions;
 
     private static final String GECKO_DRIVER_VERSION = "0.19.0";
 
@@ -35,16 +37,27 @@ public class Browser {
         GeckoDriverProvider.provide(GECKO_DRIVER_VERSION, userDir + "/target/downloads/",
             userDir + "/target/extracts/");
 
-        webDriver = new FirefoxDriver();
+        // FirefoxOptions options = new FirefoxOptions();
+        // options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.IGNORE);
 
-        webDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        webDriver = new FirefoxDriver();
+        actions = new Actions(Browser.getDriver());
+
+        webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         goTo("");
         webDriver.manage().window().setSize(new Dimension(1280, 1024));
     }
 
+    public static String getCurrentUrl() {
+        return webDriver.getCurrentUrl();
+    }
 
     public static RemoteWebDriver getDriver() {
         return webDriver;
+    }
+
+    public static Actions getActions() {
+        return actions;
     }
 
     public static void goTo(String url) {
