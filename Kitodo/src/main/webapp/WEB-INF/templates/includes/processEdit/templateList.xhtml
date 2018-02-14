@@ -30,7 +30,8 @@
                   rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}">
             <p:commandLink id="editTemplateProperty"
                            title="#{msgs.bearbeiten}"
-                           oncomplete="PF('editTemplateDialog').show()">
+                           oncomplete="PF('editTemplateDialog').show()"
+                           update="@(.editDialog)">
                 <i class="fa fa-pencil-square-o fa-lg"/>
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.templateProperty}" value="#{property}"/>
             </p:commandLink>
@@ -46,6 +47,7 @@
                      value="#{msgs.eigenschaftHinzufuegen}"
                      actionListener="#{ProzessverwaltungForm.createTemplateProperty}"
                      oncomplete="PF('editTemplateDialog').show()"
+                     update="@(.editDialog)"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
                      styleClass="button-filled-green"/>

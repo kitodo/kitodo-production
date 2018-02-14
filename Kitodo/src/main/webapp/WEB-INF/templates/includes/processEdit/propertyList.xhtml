@@ -27,7 +27,9 @@
             <h:outputLink title="#{item.value}" value="#{item.value}" rendered="#{item.type.name eq 'link'}"/>
         </p:column>
         <p:column headerText="#{msgs.choice}" styleClass="actionsColumn">
-            <p:commandLink id="editProperty" title="#{msgs.bearbeiten}" oncomplete="PF('editPropertyDialog').show()">
+            <p:commandLink id="editProperty" title="#{msgs.bearbeiten}"
+                           oncomplete="PF('editPropertyDialog').show()"
+                           update="@(.editDialog)">
                 <i class="fa fa-pencil-square-o fa-lg"/>
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.property}" value="#{item}"/>
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}" value="#{objectMode.PROCESSPROPERTY}"/>

@@ -19,10 +19,11 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editWorkpieceDialog"
-              header="#{msgs.eigenschaftBearbeiten}"
+              header="#{empty ProzessverwaltungForm.workpieceProperty.title ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
               width="700px"
               modal="true"
-              dynamic="true">
+              dynamic="true"
+              styleClass="editDialog">
         <h:form id="workpiecePropertyForm">
             <!-- title -->
             <p:inputText id="workpiecePropertyTitle" value="#{ProzessverwaltungForm.workpieceProperty.title}"

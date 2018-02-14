@@ -27,7 +27,8 @@
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
             <p:commandLink id="editWorkpieceProperty"
                            title="#{msgs.bearbeiten}"
-                           oncomplete="PF('editWorkpieceDialog').show()">
+                           oncomplete="PF('editWorkpieceDialog').show()"
+                           update="@(.editDialog)">
                 <i class="fa fa-pencil-square-o fa-lg"/>
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.workpieceProperty}" value="#{property}"/>
             </p:commandLink>

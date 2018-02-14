@@ -35,6 +35,7 @@
                                      action="#{ProzessverwaltungForm.saveAndRedirect}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
+                                     immediate="true"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      update="notifications"/>
                     <p:button id="cancel" value="#{msgs.abbrechen}"

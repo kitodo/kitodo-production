@@ -19,17 +19,18 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editPropertyDialog"
-              header="#{msgs.eigenschaftBearbeiten}"
+              header="#{empty ProzessverwaltungForm.property.title ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
               width="700px"
               modal="true"
-              dynamic="true">
+              dynamic="true"
+              styleClass="editDialog">
         <h:form id="propertyForm">
             <!-- title -->
             <p:inputText id="propertyTitle" value="#{ProzessverwaltungForm.property.title}"
-                         placeholder="#{msgs.titel}" required="true"/>
+                         placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
 
             <!-- value: text -->
-            <p:inputText id="propertyValue" value="#{ProzessverwaltungForm.property.value}"/>
+            <p:inputText id="propertyValue" value="#{ProzessverwaltungForm.property.value}" styleClass="editDialog"/>
 
             <p:commandButton action="#{ProzessverwaltungForm.saveCurrentProperty}"
                              id="save"

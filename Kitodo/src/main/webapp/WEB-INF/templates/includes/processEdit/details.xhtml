@@ -22,7 +22,9 @@
                 <p:inputText id="title" placeholder="#{msgs.prozessTitel}"
                              value="#{ProzessverwaltungForm.newProcessTitle}"
                              class="input"
-                             required="true"/>
+                             required="true">
+                    <p:ajax event="change"/>
+                </p:inputText>
             </div>
 
             <div>
@@ -30,12 +32,15 @@
                 <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projektAuswahl}" required="true">
                     <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
                     <f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}"/>
+                    <p:ajax event="change"/>
                 </p:selectOneMenu>
             </div>
 
             <div>
                 <p:outputLabel for="showInList" value="#{msgs.inAuswahllisteAnzeigen}"/>
-                <p:selectBooleanCheckbox id="showInList" value="#{ProzessverwaltungForm.process.inChoiceListShown}"/>
+                <p:selectBooleanCheckbox id="showInList" value="#{ProzessverwaltungForm.process.inChoiceListShown}">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
         </p:row>
 
@@ -44,6 +49,7 @@
                 <p:outputLabel for="ruleset" value="#{msgs.regelsatz}"/>
                 <p:selectOneMenu id="ruleset" value="#{ProzessverwaltungForm.process.ruleset}" required="true" converter="RegelsatzConverter">
                     <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                    <p:ajax event="change"/>
                 </p:selectOneMenu>
             </div>
 
@@ -51,12 +57,15 @@
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
                 <p:selectOneMenu id="docket" value="#{ProzessverwaltungForm.process.docket}" required="true" converter="DocketConverter">
                     <f:selectItems value="#{HelperForm.dockets}"/>
+                    <p:ajax event="change"/>
                 </p:selectOneMenu>
             </div>
 
             <div>
                 <p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>
-                <p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}"/>
+                <p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
             </div>
         </p:row>
     </p:panelGrid>

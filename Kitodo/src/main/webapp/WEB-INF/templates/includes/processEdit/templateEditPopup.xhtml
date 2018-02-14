@@ -18,10 +18,11 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editTemplateDialog"
-              header="#{ProzessverwaltungForm.templateProperty.id eq null ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
+              header="#{empty ProzessverwaltungForm.templateProperty.title ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
               width="700px"
               modal="true"
-              dynamic="true">
+              dynamic="true"
+              styleClass="editDialog">
         <h:form id="templatePropertyForm">
             <!-- title -->
             <p:inputText id="templatePropertyTitle" value="#{ProzessverwaltungForm.templateProperty.title}"
