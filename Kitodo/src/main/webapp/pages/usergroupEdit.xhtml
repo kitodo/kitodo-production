@@ -33,7 +33,7 @@
                     </h3>
                     <p:commandButton id="save" value="#{msgs.speichern}"
                                      action="#{BenutzergruppenForm.save}"
-                                     process="usergroupTabView:authoritiesGlobal, usergroupTabView:authoritiesClient, usergroupTabView:title, usergroupTabView:authoritiesProject"
+                                     process="usergroupTabView:authoritiesGlobalPick, usergroupTabView:authoritiesClientPick, usergroupTabView:titleInput, usergroupTabView:authoritiesProjectPick"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
                                      styleClass="button-filled-blue"
@@ -54,8 +54,8 @@
                         <p:panelGrid columns="1" layout="grid">
                             <p:row>
                                 <div>
-                                    <p:outputLabel for="title" value="#{msgs.titel}"/>
-                                    <p:inputText id="title"
+                                    <p:outputLabel for="titleInput" value="#{msgs.titel}"/>
+                                    <p:inputText id="titleInput"
                                                  class="input"
                                                  value="#{BenutzergruppenForm.userGroup.title}"
                                                  placeholder="#{msgs.titel}"
@@ -63,15 +63,15 @@
                                 </div>
                                 <div>
                                     <p:panelGrid columns="3" layout="grid">
-                                        <p:outputLabel for="authoritiesGlobal" value="#{msgs.authoritiesGlobal}"/>
+                                        <p:outputLabel for="authoritiesGlobalPick" value="#{msgs.authoritiesGlobal}"/>
                                         <p:outputLabel rendered="#{BenutzergruppenForm.clientsAvailable}"
-                                                       for="authoritiesClient" value="#{msgs.authoritiesClient}"/>
+                                                       for="authoritiesClientPick" value="#{msgs.authoritiesClient}"/>
                                         <p:outputLabel rendered="#{BenutzergruppenForm.projectsAvailable}"
-                                                       for="authoritiesProject" value="#{msgs.authoritiesProject}"/>
+                                                       for="authoritiesProjectPick" value="#{msgs.authoritiesProject}"/>
 
                                         <!--global authorities-->
                                         <h:panelGroup>
-                                            <p:pickList id="authoritiesGlobal"
+                                            <p:pickList id="authoritiesGlobalPick"
                                                         value="#{BenutzergruppenForm.authorities}"
                                                         converter="#{authorityConverter}"
                                                         var="authority" itemLabel="#{authority.title}"
@@ -85,16 +85,16 @@
 
                                         <!--client authorities-->
                                         <h:panelGroup rendered="#{BenutzergruppenForm.clientsAvailable}">
-                                            <p:outputLabel for="client" value="#{msgs.client}"/>
-                                            <p:selectOneMenu id="client"
+                                            <p:outputLabel for="clientSelect" value="#{msgs.client}"/>
+                                            <p:selectOneMenu id="clientSelect"
                                                              converter="#{clientConverter}"
                                                              value="#{BenutzergruppenForm.selectedClient}">
                                                 <f:selectItems value="#{BenutzergruppenForm.clients}" var="client"
                                                                itemValue="#{client}"
                                                                itemLabel="#{client.name}"/>
-                                                <p:ajax event="change" update="authoritiesClient"/>
+                                                <p:ajax event="change" update="authoritiesClientPick"/>
                                             </p:selectOneMenu>
-                                            <p:pickList id="authoritiesClient"
+                                            <p:pickList id="authoritiesClientPick"
                                                         value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
                                                         converter="#{authorityConverter}"
                                                         var="authority" itemLabel="#{authority.title}"
@@ -109,16 +109,16 @@
 
                                         <!--project authorities-->
                                         <h:panelGroup rendered="#{BenutzergruppenForm.projectsAvailable}">
-                                            <p:outputLabel for="project" value="#{msgs.project}"/>
-                                            <p:selectOneMenu id="project"
+                                            <p:outputLabel for="projectSelect" value="#{msgs.project}"/>
+                                            <p:selectOneMenu id="projectSelect"
                                                              converter="#{projectConverter}"
                                                              value="#{BenutzergruppenForm.selectedProject}">
                                                 <f:selectItems value="#{BenutzergruppenForm.projects}" var="project"
                                                                itemValue="#{project}"
                                                                itemLabel="#{project.title}"/>
-                                                <p:ajax event="change" update="authoritiesProject"/>
+                                                <p:ajax event="change" update="authoritiesProjectPick"/>
                                             </p:selectOneMenu>
-                                            <p:pickList id="authoritiesProject"
+                                            <p:pickList id="authoritiesProjectPick"
                                                         value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
                                                         converter="#{authorityConverter}"
                                                         var="authority" itemLabel="#{authority.title}"
