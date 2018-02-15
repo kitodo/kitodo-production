@@ -25,6 +25,8 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.generators.UserGenerator;
+import org.kitodo.selenium.testframework.helper.Timer;
 import org.kitodo.services.ServiceManager;
 
 public class SeleniumST extends BaseTestSelenium {
@@ -78,33 +80,15 @@ public class SeleniumST extends BaseTestSelenium {
     }
 
     @Test
-    public void gotoClientsPageTest() throws Exception {
-        Pages.getClientsPage().goTo();
-        Assert.assertTrue("Browser has not directed to clients page", Pages.getClientsPage().isAt());
-    }
-
-    @Test
     public void gotoProcessesPageTest() throws Exception {
         Pages.getProcessesPage().goTo();
         Assert.assertTrue("Browser has not directed to processes page", Pages.getProcessesPage().isAt());
     }
 
     @Test
-    public void gotoUsersPageTest() throws Exception {
-        Pages.getUsersPage().goTo();
-        Assert.assertTrue("Browser has not directed to users page", Pages.getUsersPage().isAt());
-    }
-
-    @Test
     public void gotoTasksPageTest() throws Exception {
         Pages.getTasksPage().goTo();
         Assert.assertTrue("Browser has not directed to tasks page", Pages.getTasksPage().isAt());
-    }
-
-    @Test
-    public void gotoIndexingPageTest() throws Exception {
-        Pages.getIndexingPage().goTo();
-        Assert.assertTrue("Browser has not directed to indexing page", Pages.getIndexingPage().isAt());
     }
 
     @Test
@@ -125,9 +109,32 @@ public class SeleniumST extends BaseTestSelenium {
 
     @Test
     public void addUserTest() throws Exception {
+        User user = UserGenerator.generateUser();
         Pages.getUsersPage().goTo();
-        Pages.getUsersPage().addUser(new User());
+        Pages.getUsersPage().goToAddUser().addUser(user);
+        // Pages.getUsersPage().goTo();
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().performLogin(user);
 
-        Assert.assertTrue(true);
+        Assert.assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
+    }
+
+    @Test
+    public void reindexingTest() throws Exception {
+        final float maximumIndexingTimeSec = 40;
+        Pages.getIndexingPage().goTo();
+        Pages.getIndexingPage().startReindexingAll();
+
+        Timer timer = new Timer();
+        timer.start();
+        while (!Pages.getIndexingPage().isIndexingComplete()
+                && timer.getElapsedTimeAfterStartSec() < maximumIndexingTimeSec) {
+            logger.debug("Indexing at: " + Pages.getIndexingPage().getIndexingProgress() + "%");
+            Thread.sleep(1000);
+        }
+        timer.stop();
+        logger.info("Reindexing took: " + timer.getElapsedTimeSec() + " s");
+
+        Assert.assertTrue("Reindexing took to long", timer.getElapsedTimeSec() < maximumIndexingTimeSec);
     }
 }

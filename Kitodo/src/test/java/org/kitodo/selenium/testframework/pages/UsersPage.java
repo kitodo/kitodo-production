@@ -13,7 +13,6 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 
-import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -62,12 +61,16 @@ public class UsersPage {
         return listOfRows.size();
     }
 
-    public void addUser(User user) throws InterruptedException {
+    public UserEditPage goToAddUser() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
         newElementButton.click();
         Thread.sleep(400);
         newUserButton.click();
         Thread.sleep(400);
 
+        return Pages.getUserEditPage();
     }
 
 }

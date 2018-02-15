@@ -17,8 +17,10 @@ import org.kitodo.selenium.testframework.pages.IndexingPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.StartPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
 import org.kitodo.selenium.testframework.pages.TopNavigationPage;
+import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.openqa.selenium.support.PageFactory;
 
@@ -54,12 +56,20 @@ public class Pages {
         return getPage(ProjectsPage.class);
     }
 
+    public static StartPage getStartPage() throws InstantiationException, IllegalAccessException {
+        return getPage(StartPage.class);
+    }
+
     public static TasksPage getTasksPage() throws InstantiationException, IllegalAccessException {
         return getPage(TasksPage.class);
     }
 
     public static TopNavigationPage getTopNavigation() throws InstantiationException, IllegalAccessException {
         return getPage(TopNavigationPage.class);
+    }
+
+    public static UserEditPage getUserEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(UserEditPage.class);
     }
 
     public static UsersPage getUsersPage() throws InstantiationException, IllegalAccessException {

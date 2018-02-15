@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.selenium.testframework;
+package org.kitodo.selenium.testframework.helper;
 
 import java.io.File;
 import java.util.ArrayList;

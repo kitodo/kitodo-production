@@ -21,6 +21,7 @@ import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.kitodo.selenium.testframework.helper.MailSender;
 import org.openqa.selenium.WebDriverException;
 
 public class BaseTestSelenium {
