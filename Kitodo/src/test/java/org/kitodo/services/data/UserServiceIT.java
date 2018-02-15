@@ -166,11 +166,11 @@ public class UserServiceIT {
         user.getUserGroups()
                 .add(userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
         userService.saveToDatabase(user);
-        User foundUser = userService.getByQuery("FROM User WHERE getLoginPage = 'Cascade'").get(0);
+        User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
 
         userService.removeFromDatabase(foundUser);
-        int size = userService.getByQuery("FROM User WHERE getLoginPage = 'Cascade'").size();
+        int size = userService.getByQuery("FROM User WHERE login = 'Cascade'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
         size = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascade Group'").size();

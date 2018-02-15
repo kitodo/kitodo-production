@@ -89,7 +89,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAllUserGroupsInGivenRange() throws Exception {
-        List<UserGroup> userGroups = userGroupService.getAll(1,10);
+        List<UserGroup> userGroups = userGroupService.getAll(1, 10);
         assertEquals("Not all user's groups were found in database!", 2, userGroups.size());
     }
 
@@ -130,8 +130,7 @@ public class UserGroupServiceIT {
 
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("Cascados Group");
-        userGroup.getUsers()
-                .add(userService.getByQuery("FROM User WHERE getLoginPage = 'Cascados' ORDER BY id DESC").get(0));
+        userGroup.getUsers().add(userService.getByQuery("FROM User WHERE login = 'Cascados' ORDER BY id DESC").get(0));
         userGroupService.saveToDatabase(userGroup);
 
         UserGroup foundUserGroup = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").get(0);
@@ -141,10 +140,10 @@ public class UserGroupServiceIT {
         int size = userGroupService.getByQuery("FROM UserGroup WHERE title = 'Cascados Group'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
-        size = userService.getByQuery("FROM User WHERE getLoginPage = 'Cascados'").size();
+        size = userService.getByQuery("FROM User WHERE login = 'Cascados'").size();
         assertEquals("User was removed from database!", 1, size);
 
-        userService.removeFromDatabase(userService.getByQuery("FROM User WHERE getLoginPage = 'Cascados'").get(0));
+        userService.removeFromDatabase(userService.getByQuery("FROM User WHERE login = 'Cascados'").get(0));
     }
 
     @Test
@@ -220,7 +219,7 @@ public class UserGroupServiceIT {
     public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
-        List<String> expected = Arrays.asList("admin","manager","user");
+        List<String> expected = Arrays.asList("admin", "manager", "user");
         assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
     }
 
@@ -241,7 +240,8 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAuthorizationForAdmin() throws Exception {
-        List<UserGroupDTO> userGroupDTOS = userGroupService.convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
+        List<UserGroupDTO> userGroupDTOS = userGroupService
+                .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
         assertEquals("Incorrect amount of found user groups", 1, userGroupDTOS.size());
 
         AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);

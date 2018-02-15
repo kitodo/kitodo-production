@@ -11,7 +11,8 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import org.kitodo.selenium.testframework.Browser;
+import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -60,10 +61,6 @@ public class TopNavigationPage {
     @SuppressWarnings("unused")
     @FindBy(id = "linkIndexing")
     private WebElement linkIndexing;
-
-    private void hoverWebElement(WebElement webElement) throws InterruptedException {
-        Browser.getActions().moveToElement(webElement).pause(400).build().perform();
-    }
 
     public void logout() throws InterruptedException {
         hoverWebElement(userMenu);

@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.helper.GeckoDriverProvider;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -37,9 +38,6 @@ public class Browser {
         String userDir = System.getProperty("user.dir");
         GeckoDriverProvider.provide(GECKO_DRIVER_VERSION, userDir + "/target/downloads/",
             userDir + "/target/extracts/");
-
-        // FirefoxOptions options = new FirefoxOptions();
-        // options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.IGNORE);
 
         webDriver = new FirefoxDriver();
         actions = new Actions(Browser.getDriver());
@@ -67,6 +65,10 @@ public class Browser {
 
     public static void Close() {
         webDriver.close();
+    }
+
+    public static void hoverWebElement(WebElement webElement) throws InterruptedException {
+        actions.moveToElement(webElement).pause(400).build().perform();
     }
 
     public static File captureScreenShot() {
