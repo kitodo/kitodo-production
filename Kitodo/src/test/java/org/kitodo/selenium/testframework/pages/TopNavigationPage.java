@@ -65,7 +65,7 @@ public class TopNavigationPage {
     public void logout() throws InterruptedException {
         hoverWebElement(userMenu);
         logoutButton.click();
-        Thread.sleep(1000);
+        Thread.sleep(2000);
     }
 
     public void gotoHelp() throws InterruptedException {

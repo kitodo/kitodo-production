@@ -13,6 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -22,8 +23,8 @@ import org.openqa.selenium.support.FindBy;
 public class UsersPage {
 
     @SuppressWarnings("unused")
-    @FindBy(id = "clientsTable")
-    private WebElement clientsTable;
+    @FindBy(id = "usersTabView")
+    private WebElement usersTabView;
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView:usersTable_data")
@@ -45,8 +46,10 @@ public class UsersPage {
     @FindBy(id = "newElementForm:newLdapGroupButton")
     private WebElement newLdapGroupButton;
 
-    public void goTo() throws Exception {
+    public UsersPage goTo() throws Exception {
         Pages.getTopNavigation().gotoUsers();
+        Thread.sleep(200);
+        return this;
     }
 
     public boolean isAt() throws InterruptedException {
@@ -61,7 +64,7 @@ public class UsersPage {
         return listOfRows.size();
     }
 
-    public UserEditPage goToAddUser() throws Exception {
+    public UserEditPage goToUserEditPage() throws Exception {
         if (!isAt()) {
             goTo();
         }
@@ -71,6 +74,60 @@ public class UsersPage {
         Thread.sleep(400);
 
         return Pages.getUserEditPage();
+    }
+
+    public UsersPage switchToUsersTab() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        List<WebElement> listTabs = usersTabView.findElements(By.tagName("li"));
+        WebElement userGroupTab = listTabs.get(0);
+        userGroupTab.click();
+        return this;
+    }
+
+    public UsersPage switchToUserGroupsTab() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        List<WebElement> listTabs = usersTabView.findElements(By.tagName("li"));
+        WebElement userGroupTab = listTabs.get(1);
+        userGroupTab.click();
+        return this;
+    }
+
+    public UsersPage switchToLdapGrousTab() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        List<WebElement> listTabs = usersTabView.findElements(By.tagName("li"));
+        WebElement userGroupTab = listTabs.get(2);
+        userGroupTab.click();
+        return this;
+    }
+
+    public UserGroupEditPage goToUserGroupEditPage() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        newElementButton.click();
+        Thread.sleep(400);
+        newUserGroupButton.click();
+        Thread.sleep(400);
+
+        return Pages.getUserGroupEditPage();
+    }
+
+    public UserGroupEditPage goToUserGroupEditPage(UserGroup userGroup) throws Exception {
+        if (!isAt()) {
+            goTo();
+            switchToUserGroupsTab();
+        }
+
+        WebElement userGroupEditLink = Browser.getDriver()
+                .findElementByXPath("//a[@href='/kitodo/pages/usergroupEdit.jsf?id=" + userGroup.getId() + "']");
+        userGroupEditLink.click();
+        return Pages.getUserGroupEditPage();
     }
 
 }

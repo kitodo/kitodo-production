@@ -209,9 +209,11 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByProject(Project project) {
         List<Authority> authorities = new ArrayList<>();
 
-        for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
-            if (project.equals(relation.getProject())) {
-                authorities.add(relation.getAuthority());
+        if (this.userGroupProjectAuthorityRelations != null) {
+            for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
+                if (project.equals(relation.getProject())) {
+                    authorities.add(relation.getAuthority());
+                }
             }
         }
         return authorities;
@@ -227,9 +229,11 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByClient(Client client) {
         List<Authority> authorities = new ArrayList<>();
 
-        for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
-            if (client.equals(relation.getClient())) {
-                authorities.add(relation.getAuthority());
+        if (this.userGroupClientAuthorityRelations != null) {
+            for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
+                if (client.equals(relation.getClient())) {
+                    authorities.add(relation.getAuthority());
+                }
             }
         }
         return authorities;

@@ -15,17 +15,26 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.helper.MailSender;
+import org.kitodo.services.ServiceManager;
 import org.openqa.selenium.WebDriverException;
 
 public class BaseTestSelenium {
     private static final Logger logger = LogManager.getLogger(BaseTestSelenium.class);
+    private ServiceManager serviceManager = new ServiceManager();
 
     private static final String TRAVIS_BUILD_NUMBER = "TRAVIS_BUILD_NUMBER";
     private static final String TRAVIS_BRANCH = "TRAVIS_BRANCH";
@@ -34,6 +43,45 @@ public class BaseTestSelenium {
     private static final String MAIL_USER = "MAIL_USER";
     private static final String MAIL_PASSWORD = "MAIL_PASSWORD";
     private static final String MAIL_RECIPIENT = "MAIL_RECIPIENT";
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        MockDatabase.startNode();
+        MockDatabase.insertProcessesFull();
+        MockDatabase.startDatabaseServer();
+
+        Browser.Initialize();
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+
+        Browser.Close();
+        MockDatabase.stopDatabaseServer();
+        MockDatabase.stopNode();
+
+        if (SystemUtils.IS_OS_WINDOWS) {
+            try {
+                Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+            }
+        }
+    }
+
+    @Before
+    public void login() throws Exception {
+        User user = serviceManager.getUserService().getById(1);
+        user.setPassword("test");
+
+        Pages.getLoginPage().goTo();
+        Pages.getLoginPage().performLogin(user);
+    }
+
+    @After
+    public void logout() throws Exception {
+        Pages.getTopNavigation().logout();
+    }
 
     /**
      * Watcher for WebDriverExceptions on travis which makes screenshot and sends

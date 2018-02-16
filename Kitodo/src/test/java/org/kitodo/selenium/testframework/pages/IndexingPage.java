@@ -38,8 +38,9 @@ public class IndexingPage {
     @FindBy(id = "indexing_form:startIndexingAllButton")
     private WebElement startIndexingAllButton;
 
-    public void goTo() throws Exception {
+    public IndexingPage goTo() throws Exception {
         Pages.getTopNavigation().gotoIndexing();
+        return this;
     }
 
     public boolean isAt() throws InterruptedException {
@@ -48,7 +49,7 @@ public class IndexingPage {
 
     public void deleteIndex() throws InterruptedException {
         deleteIndexButton.click();
-        Thread.sleep(200);
+        Thread.sleep(500);
         Alert javascriptconfirm = Browser.getDriver().switchTo().alert();
         javascriptconfirm.accept();
         Thread.sleep(500);
