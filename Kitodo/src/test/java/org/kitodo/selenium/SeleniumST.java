@@ -16,7 +16,9 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.selenium.testframework.helper.Timer;
@@ -26,24 +28,6 @@ public class SeleniumST extends BaseTestSelenium {
 
     private static final Logger logger = LogManager.getLogger(SeleniumST.class);
     private ServiceManager serviceManager = new ServiceManager();
-
-    @Test
-    public void gotoHelpPageTest() throws Exception {
-        Pages.getHelpPage().goTo();
-        Assert.assertTrue("Browser has not directed to help page", Pages.getHelpPage().isAt());
-    }
-
-    @Test
-    public void gotoProcessesPageTest() throws Exception {
-        Pages.getProcessesPage().goTo();
-        Assert.assertTrue("Browser has not directed to processes page", Pages.getProcessesPage().isAt());
-    }
-
-    @Test
-    public void gotoTasksPageTest() throws Exception {
-        Pages.getTasksPage().goTo();
-        Assert.assertTrue("Browser has not directed to tasks page", Pages.getTasksPage().isAt());
-    }
 
     @Test
     public void listClientsTest() throws Exception {
@@ -63,7 +47,7 @@ public class SeleniumST extends BaseTestSelenium {
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
-        Pages.getUsersPage().goTo().goToUserEditPage().addUser(user);
+        Pages.getUsersPage().goTo().goToUserEditPage().insertUserData(user).save();
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
 
@@ -79,13 +63,29 @@ public class SeleniumST extends BaseTestSelenium {
         timer.start();
         while (!Pages.getIndexingPage().isIndexingComplete()
                 && timer.getElapsedTimeAfterStartSec() < maximumIndexingTimeSec) {
-            logger.debug("Indexing at: " + Pages.getIndexingPage().getIndexingProgress() + "%");
-            Thread.sleep(1000);
+            logger.error("Indexing at: " + Pages.getIndexingPage().getIndexingProgress() + "%");
+            Thread.sleep(Browser.getDelayIndexing());
         }
         timer.stop();
-        Thread.sleep(1000);
+        Thread.sleep(Browser.getDelayIndexing());
 
-        logger.info("Reindexing took: " + timer.getElapsedTimeSec() + " s");
+        logger.error("Reindexing took: " + timer.getElapsedTimeSec() + " s");
         Assert.assertTrue("Reindexing took to long", timer.getElapsedTimeSec() < maximumIndexingTimeSec);
+    }
+
+    @Test
+    public void removeAllGlobalAuthoritiesOffUserGroupTest() throws Exception {
+        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
+                .removeAllGlobalAuthorities().save();
+
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().performLoginAsAdmin();
+        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup);
+
+        int availableGlobalAuthorities = Pages.getUserGroupEditPage().countAvailableGlobalAuthorities();
+
+        Assert.assertEquals("Removing off all global authorities was not saved", availableGlobalAuthorities, 3);
+
     }
 }

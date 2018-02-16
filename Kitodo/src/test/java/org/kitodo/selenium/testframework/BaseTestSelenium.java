@@ -56,7 +56,7 @@ public class BaseTestSelenium {
     @AfterClass
     public static void tearDown() throws Exception {
 
-        Browser.Close();
+        Browser.close();
         MockDatabase.stopDatabaseServer();
         MockDatabase.stopNode();
 

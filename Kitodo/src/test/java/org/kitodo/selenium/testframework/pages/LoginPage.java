@@ -12,7 +12,9 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.selenium.testframework.Browser;
+import org.kitodo.services.ServiceManager;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -44,6 +46,20 @@ public class LoginPage {
         passwordInput.sendKeys(user.getPassword());
 
         loginButton.click();
-        Thread.sleep(2000);
+        Thread.sleep(Browser.getDelayAfterLogin());
+    }
+
+    public void performLoginAsAdmin() throws InterruptedException, DAOException {
+        User user = new ServiceManager().getUserService().getById(1);
+        user.setPassword("test");
+
+        usernameInput.clear();
+        usernameInput.sendKeys(user.getLogin());
+
+        passwordInput.clear();
+        passwordInput.sendKeys(user.getPassword());
+
+        loginButton.click();
+        Thread.sleep(Browser.getDelayAfterLogin());
     }
 }

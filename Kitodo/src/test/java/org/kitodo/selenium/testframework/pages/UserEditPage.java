@@ -49,16 +49,20 @@ public class UserEditPage {
         Pages.getUsersPage().goToUserEditPage();
     }
 
-    public void addUser(User user) throws InterruptedException {
+    public UserEditPage insertUserData(User user) throws InterruptedException {
         firstNameInput.sendKeys(user.getName());
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
         passwordInput.sendKeys(user.getPassword());
         locationInput.sendKeys(user.getLocation());
         metaDataLanguageInput.sendKeys(user.getMetadataLanguage());
+        return this;
+    }
 
+    public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
         saveUserButton.click();
         Thread.sleep(3000);
+        return Pages.getUsersPage();
     }
 
 }

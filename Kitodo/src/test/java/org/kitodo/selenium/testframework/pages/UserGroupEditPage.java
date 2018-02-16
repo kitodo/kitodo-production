@@ -11,28 +11,84 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import org.kitodo.data.database.beans.User;
+import java.util.List;
+
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class UserGroupEditPage {
 
-    public void goTo() throws Exception {
-        Pages.getUsersPage().goToUserGroupEditPage();
+    @SuppressWarnings("unused")
+    @FindBy(id = "usergroupEditForm:saveUserGroupButton")
+    private WebElement saveUserGroupButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usergroupEditForm:usergroupTabView:authoritiesGlobalPick")
+    private WebElement globalAuthoritiesPickList;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usergroupEditForm:usergroupTabView:authoritiesClientPick")
+    private WebElement clientAuthoritiesPickList;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usergroupEditForm:usergroupTabView:authoritiesProjectPick")
+    private WebElement projectAuthoritiesPickList;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usergroupEditForm:usergroupTabView:clientSelect")
+    private WebElement clientSelector;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usergroupEditForm:usergroupTabView:projectSelect")
+    private WebElement projectSelector;
+
+    private WebElement getAddAllElementsButtonByPicklist(WebElement picklist) {
+        return picklist.findElement(By.className("ui-picklist-button-add-all"));
     }
 
-    public void goToByUser(User user) throws Exception {
-        Pages.getUsersPage().goToUserGroupEditPage();
+    private WebElement getRemoveAllElementsButtonByPicklist(WebElement picklist) {
+        return picklist.findElement(By.className("ui-picklist-button-remove-all"));
     }
-    // public void addUser(User user) throws InterruptedException {
-    // firstNameInput.sendKeys(user.getName());
-    // lastNameInput.sendKeys(user.getSurname());
-    // loginInput.sendKeys(user.getLogin());
-    // passwordInput.sendKeys(user.getPassword());
-    // locationInput.sendKeys(user.getLocation());
-    // metaDataLanguageInput.sendKeys(user.getMetadataLanguage());
-    //
-    // saveUserButton.click();
-    // Thread.sleep(3000);
-    // }
+
+    private WebElement getAddElementButtonByPicklist(WebElement picklist) {
+        return picklist.findElement(By.className("ui-picklist-button-add"));
+    }
+
+    private WebElement getRemoveElementButtonByPicklist(WebElement picklist) {
+        return picklist.findElement(By.className("ui-picklist-button-remove"));
+    }
+
+    private List<WebElement> getSourceItemsFromPickList(WebElement picklist) {
+        WebElement source = picklist.findElement(By.className("ui-picklist-source"));
+        return source.findElements(By.className("ui-picklist-item"));
+    }
+
+    private List<WebElement> getTargetItemsFromPickList(WebElement picklist) {
+        WebElement source = picklist.findElement(By.className("ui-picklist-target"));
+        return source.findElements(By.className("ui-picklist-item"));
+    }
+
+    public UserGroupEditPage removeAllGlobalAuthorities() throws InterruptedException {
+        getRemoveAllElementsButtonByPicklist(globalAuthoritiesPickList).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        return this;
+    }
+
+    public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
+        saveUserGroupButton.click();
+        Thread.sleep(Browser.getDelayAfterSave());
+        return Pages.getUsersPage();
+    }
+
+    public int countAssignedGlobalAuthorities() {
+        return getTargetItemsFromPickList(globalAuthoritiesPickList).size();
+    }
+
+    public int countAvailableGlobalAuthorities() {
+        return getSourceItemsFromPickList(globalAuthoritiesPickList).size();
+    }
 
 }

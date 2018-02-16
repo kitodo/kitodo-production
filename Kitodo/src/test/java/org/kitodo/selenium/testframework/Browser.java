@@ -31,8 +31,17 @@ public class Browser {
     private static final String BASE_URL = "http://localhost:8080/kitodo/";
     private static RemoteWebDriver webDriver;
     private static Actions actions;
+    private static final String GECKO_DRIVER_VERSION = "0.19.1";
+    private static boolean onTravis = false;
 
-    private static final String GECKO_DRIVER_VERSION = "0.19.0";
+    private static int delayIndexing = 3000;
+    private static int delayAfterSave = 3000;
+    private static int delayAfterLogin = 2000;
+    private static int delayAfterLogout = 3000;
+    private static int delayAfterLinkClick = 500;
+    private static int delayAfterHoverMenu = 500;
+    private static int delayAfterNewItemClick = 500;
+    private static int delayAfterPickListClick = 3000;
 
     public static void Initialize() throws IOException {
         String userDir = System.getProperty("user.dir");
@@ -45,6 +54,22 @@ public class Browser {
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         goTo("");
         webDriver.manage().window().setSize(new Dimension(1280, 1024));
+
+        if ("true".equals(System.getenv().get("TRAVIS"))) {
+            onTravis = true;
+            doubleAllDelays();
+        }
+    }
+
+    private static void doubleAllDelays() {
+        delayIndexing = delayIndexing * 2;
+        delayAfterSave = delayAfterSave * 2;
+        delayAfterLogin = delayAfterLogin * 2;
+        delayAfterLogout = delayAfterLogout * 2;
+        delayAfterLinkClick = delayAfterLinkClick * 2;
+        delayAfterHoverMenu = delayAfterHoverMenu * 2;
+        delayAfterNewItemClick = delayAfterNewItemClick * 2;
+        delayAfterPickListClick = delayAfterPickListClick * 2;
     }
 
     public static String getCurrentUrl() {
@@ -55,20 +80,16 @@ public class Browser {
         return webDriver;
     }
 
-    public static Actions getActions() {
-        return actions;
-    }
-
     public static void goTo(String url) {
         webDriver.get(BASE_URL + url);
     }
 
-    public static void Close() {
+    public static void close() {
         webDriver.close();
     }
 
     public static void hoverWebElement(WebElement webElement) throws InterruptedException {
-        actions.moveToElement(webElement).pause(400).build().perform();
+        actions.moveToElement(webElement).pause(delayAfterHoverMenu).build().perform();
     }
 
     public static File captureScreenShot() {
@@ -81,5 +102,77 @@ public class Browser {
             logger.error(e.getMessage());
         }
         return screenshotFile;
+    }
+
+    /**
+     * Gets delayAfterSave.
+     *
+     * @return The delayAfterSave.
+     */
+    public static int getDelayAfterSave() {
+        return delayAfterSave;
+    }
+
+    /**
+     * Gets delayAfterLogin.
+     *
+     * @return The delayAfterLogin.
+     */
+    public static int getDelayAfterLogin() {
+        return delayAfterLogin;
+    }
+
+    /**
+     * Gets delayAfterLogout.
+     *
+     * @return The delayAfterLogout.
+     */
+    public static int getDelayAfterLogout() {
+        return delayAfterLogout;
+    }
+
+    /**
+     * Gets delayAfterHoverMenu.
+     *
+     * @return The delayAfterHoverMenu.
+     */
+    public static int getDelayAfterHoverMenu() {
+        return delayAfterHoverMenu;
+    }
+
+    /**
+     * Gets delayAfterNewItemClick.
+     *
+     * @return The delayAfterNewItemClick.
+     */
+    public static int getDelayAfterNewItemClick() {
+        return delayAfterNewItemClick;
+    }
+
+    /**
+     * Gets delayIndexing.
+     *
+     * @return The delayIndexing.
+     */
+    public static int getDelayIndexing() {
+        return delayIndexing;
+    }
+
+    /**
+     * Gets delayAfterPickListClick.
+     *
+     * @return The delayAfterPickListClick.
+     */
+    public static int getDelayAfterPickListClick() {
+        return delayAfterPickListClick;
+    }
+
+    /**
+     * Gets delayAfterLinkClick.
+     *
+     * @return The delayAfterLinkClick.
+     */
+    public static int getDelayAfterLinkClick() {
+        return delayAfterLinkClick;
     }
 }

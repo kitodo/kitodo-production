@@ -13,6 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
+import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -65,46 +66,54 @@ public class TopNavigationPage {
     public void logout() throws InterruptedException {
         hoverWebElement(userMenu);
         logoutButton.click();
-        Thread.sleep(2000);
+        Thread.sleep(Browser.getDelayAfterLogout());
     }
 
     public void gotoHelp() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkHelp.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoTasks() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkTasks.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoProcesses() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkProcesses.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoProjects() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkProjects.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoUsers() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkUsers.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoModules() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkModules.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoClients() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkClients.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoIndexing() throws InterruptedException {
         hoverWebElement(dashboardMenu);
         linkIndexing.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 }

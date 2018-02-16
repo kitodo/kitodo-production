@@ -49,20 +49,20 @@ public class IndexingPage {
 
     public void deleteIndex() throws InterruptedException {
         deleteIndexButton.click();
-        Thread.sleep(500);
+        Thread.sleep(Browser.getDelayIndexing());
         Alert javascriptconfirm = Browser.getDriver().switchTo().alert();
         javascriptconfirm.accept();
-        Thread.sleep(500);
+        Thread.sleep(Browser.getDelayIndexing());
     }
 
     public void createMapping() throws InterruptedException {
         createMappingButton.click();
-        Thread.sleep(2000);
+        Thread.sleep(Browser.getDelayIndexing());
     }
 
     public void startIndexingAll() throws InterruptedException {
         startIndexingAllButton.click();
-        Thread.sleep(500);
+        Thread.sleep(Browser.getDelayIndexing());
     }
 
     public void startReindexingAll() throws InterruptedException {

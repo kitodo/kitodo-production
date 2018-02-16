@@ -48,7 +48,6 @@ public class UsersPage {
 
     public UsersPage goTo() throws Exception {
         Pages.getTopNavigation().gotoUsers();
-        Thread.sleep(200);
         return this;
     }
 
@@ -69,9 +68,9 @@ public class UsersPage {
             goTo();
         }
         newElementButton.click();
-        Thread.sleep(400);
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
         newUserButton.click();
-        Thread.sleep(400);
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
 
         return Pages.getUserEditPage();
     }
@@ -96,7 +95,7 @@ public class UsersPage {
         return this;
     }
 
-    public UsersPage switchToLdapGrousTab() throws Exception {
+    public UsersPage switchToLdapGroupsTab() throws Exception {
         if (!isAt()) {
             goTo();
         }
@@ -111,9 +110,9 @@ public class UsersPage {
             goTo();
         }
         newElementButton.click();
-        Thread.sleep(400);
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
         newUserGroupButton.click();
-        Thread.sleep(400);
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
 
         return Pages.getUserGroupEditPage();
     }
