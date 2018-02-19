@@ -26,6 +26,10 @@ public class UserGroupEditPage {
     private WebElement saveUserGroupButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "usergroupEditForm:usergroupTabView:titleInput")
+    private WebElement titleInput;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "usergroupEditForm:usergroupTabView:authoritiesGlobalPick")
     private WebElement globalAuthoritiesPickList;
 
@@ -89,6 +93,12 @@ public class UserGroupEditPage {
 
     public int countAvailableGlobalAuthorities() {
         return getSourceItemsFromPickList(globalAuthoritiesPickList).size();
+    }
+
+    public UserGroupEditPage setUserGroupTitle(String newTitle) {
+        titleInput.clear();
+        titleInput.sendKeys(newTitle);
+        return this;
     }
 
 }

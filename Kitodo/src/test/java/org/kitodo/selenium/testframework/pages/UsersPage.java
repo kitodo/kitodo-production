@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kitodo.data.database.beans.UserGroup;
@@ -29,6 +30,10 @@ public class UsersPage {
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView:usersTable_data")
     private WebElement usersTableData;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:userGroupsTable_data")
+    private WebElement userGroupsTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newElementButton_button")
@@ -60,6 +65,15 @@ public class UsersPage {
             goTo();
         }
         List<WebElement> listOfRows = usersTableData.findElements(By.tagName("tr"));
+        return listOfRows.size();
+    }
+
+    public int countListedUserGroups() throws Exception {
+        if (!isAt()) {
+            goTo();
+            switchToUserGroupsTab();
+        }
+        List<WebElement> listOfRows = userGroupsTable.findElements(By.tagName("tr"));
         return listOfRows.size();
     }
 
@@ -127,6 +141,20 @@ public class UsersPage {
                 .findElementByXPath("//a[@href='/kitodo/pages/usergroupEdit.jsf?id=" + userGroup.getId() + "']");
         userGroupEditLink.click();
         return Pages.getUserGroupEditPage();
+    }
+
+    public List<String> getListOfUserGroupTitles() throws Exception {
+        if (!isAt()) {
+            goTo();
+            switchToUserGroupsTab();
+        }
+        List<WebElement> listOfRows = usersTableData.findElements(By.tagName("tr"));
+        List<String> titles = new ArrayList<>();
+        for (WebElement webElement : listOfRows) {
+            List<WebElement> columns = webElement.findElements(By.tagName("td"));
+            titles.add(columns.get(0).getText());
+        }
+        return titles;
     }
 
 }

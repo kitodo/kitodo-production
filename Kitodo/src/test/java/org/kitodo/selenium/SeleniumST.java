@@ -11,6 +11,8 @@
 
 package org.kitodo.selenium;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -42,6 +44,14 @@ public class SeleniumST extends BaseTestSelenium {
         int numberOfUsersInDatabase = serviceManager.getUserService().getAll().size();
         int numberOfUsersDisplayed = Pages.getUsersPage().goTo().countListedUsers();
         Assert.assertEquals("Displayed wrong number of users", numberOfUsersInDatabase, numberOfUsersDisplayed);
+    }
+
+    @Test
+    public void listUserGroupssTest() throws Exception {
+        int numberOfUserGroupsInDatabase = serviceManager.getUserGroupService().getAll().size();
+        int numberOfUserGroupsDisplayed = Pages.getUsersPage().goTo().countListedUserGroups();
+        Assert.assertEquals("Displayed wrong number of user groups", numberOfUserGroupsInDatabase,
+            numberOfUserGroupsDisplayed);
     }
 
     @Test
@@ -87,25 +97,26 @@ public class SeleniumST extends BaseTestSelenium {
         int authoritiesInDatabase = serviceManager.getUserGroupService().getById(1).getGlobalAuthorities().size();
 
         Assert.assertEquals(
-            "Removing off all global authorities was not saved! Authorities in Database are: " + authoritiesInDatabase,
+            "Removing off all global authorities was not saved! Number of Authorities in Database is: "
+                    + authoritiesInDatabase,
             3, availableGlobalAuthorities);
     }
 
     @Test
     public void renameUserGroupTest() throws Exception {
+        String newTitle = "SeleniumGroup";
+
         UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
         Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
-                .removeAllGlobalAuthorities().save();
+                .setUserGroupTitle(newTitle).save();
 
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
-        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup);
+        List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToUserGroupsTab()
+                .getListOfUserGroupTitles();
 
-        int availableGlobalAuthorities = Pages.getUserGroupEditPage().countAvailableGlobalAuthorities();
-        int authoritiesInDatabase = serviceManager.getUserGroupService().getById(1).getGlobalAuthorities().size();
+        System.out.println(listOfUserGroupTitles);
 
-        Assert.assertEquals(
-            "Removing off all global authorities was not saved! Authorities in Database are: " + authoritiesInDatabase,
-            3, availableGlobalAuthorities);
+        Assert.assertTrue("New Name of user group has not appeared on table", listOfUserGroupTitles.contains(newTitle));
     }
 }

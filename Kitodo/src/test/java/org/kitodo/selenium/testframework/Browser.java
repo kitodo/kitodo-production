@@ -23,7 +23,9 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class Browser {
@@ -48,7 +50,11 @@ public class Browser {
         GeckoDriverProvider.provide(GECKO_DRIVER_VERSION, userDir + "/target/downloads/",
             userDir + "/target/extracts/");
 
-        webDriver = new FirefoxDriver();
+        DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+        capabilities.setCapability("moz:webdriverClick", false);
+
+        FirefoxOptions firefoxOptions = new FirefoxOptions(capabilities);
+        webDriver = new FirefoxDriver(firefoxOptions);
         actions = new Actions(Browser.getDriver());
 
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
