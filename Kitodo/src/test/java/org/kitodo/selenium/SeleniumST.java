@@ -71,13 +71,13 @@ public class SeleniumST extends BaseTestSelenium {
         timer.start();
         while (!Pages.getIndexingPage().isIndexingComplete()
                 && timer.getElapsedTimeAfterStartSec() < maximumIndexingTimeSec) {
-            logger.error("Indexing at: " + Pages.getIndexingPage().getIndexingProgress() + "%");
+            logger.debug("Indexing at: " + Pages.getIndexingPage().getIndexingProgress() + "%");
             Thread.sleep(Browser.getDelayIndexing());
         }
         timer.stop();
         Thread.sleep(Browser.getDelayIndexing());
 
-        logger.error("Reindexing took: " + timer.getElapsedTimeSec() + " s");
+        logger.info("Reindexing took: " + timer.getElapsedTimeSec() + " s");
         Assert.assertTrue("Reindexing took to long", timer.getElapsedTimeSec() < maximumIndexingTimeSec);
     }
 

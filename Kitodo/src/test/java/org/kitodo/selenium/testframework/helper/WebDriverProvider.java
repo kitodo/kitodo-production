@@ -128,7 +128,7 @@ public class WebDriverProvider {
         } else {
             chromeDriverFileName = "chromedriver";
             File chromeDriverZipFile = new File(downloadFolder + "chromedriver.zip");
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_linux32.zip"), chromeDriverZipFile);
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_linux64.zip"), chromeDriverZipFile);
             extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder));
         }
         File chromeDriverFile = new File(extractFolder, chromeDriverFileName);
