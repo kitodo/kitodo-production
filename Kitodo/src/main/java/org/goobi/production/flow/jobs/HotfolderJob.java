@@ -29,6 +29,9 @@ import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -36,10 +39,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
 
 /**
  * HotfolderJob class.

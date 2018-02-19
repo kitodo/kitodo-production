@@ -21,17 +21,16 @@ import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 
 public interface IImportPlugin extends IPlugin {
 
-    void setPrefs(Prefs prefs);
+    void setPrefs(PrefsInterface prefs);
 
     void setData(Record r);
 
-    Fileformat convertData() throws ImportPluginException;
+    FileformatInterface convertData() throws ImportPluginException;
 
     String getImportFolder();
 

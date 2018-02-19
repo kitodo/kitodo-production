@@ -17,16 +17,16 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import ugh.dl.DocStruct;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.legacy.UghImplementation;
 
 /**
  * A LocalMetadataSelector provides methods to retrieve or modify metadata on a
  * document structure node.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class LocalMetadataSelector extends MetadataSelector {
@@ -35,7 +35,7 @@ public class LocalMetadataSelector extends MetadataSelector {
     /**
      * Metadata type to return.
      */
-    private final MetadataType selector = new MetadataType();
+    private final MetadataTypeInterface selector = UghImplementation.INSTANCE.createMetadataType();
 
     /**
      * Creates a new LocalMetadataSelector.
@@ -70,7 +70,7 @@ public class LocalMetadataSelector extends MetadataSelector {
      *      java.lang.String)
      */
     @Override
-    protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
+    protected void createIfPathExistsOnly(CopierData data, DocStructInterface logicalNode, String value) {
         if (findMetadatumIn(logicalNode) != null) {
             return;
         }
@@ -94,10 +94,10 @@ public class LocalMetadataSelector extends MetadataSelector {
      */
 
     @Override
-    protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {
-        Metadata existingMetadatum = findMetadatumIn(logicalNode);
+    protected void createOrOverwrite(CopierData data, DocStructInterface logicalNode, String value) {
+        MetadataInterface existingMetadatum = findMetadatumIn(logicalNode);
         if (existingMetadatum != null) {
-            existingMetadatum.setValue(value);
+            existingMetadatum.setStringValue(value);
         } else {
             tryToCreateANewMetadatum(data, logicalNode, value);
         }
@@ -113,11 +113,11 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
      */
     @Override
-    protected Iterable<MetadataSelector> findAll(DocStruct node) {
+    protected Iterable<MetadataSelector> findAll(DocStructInterface node) {
         ArrayList<MetadataSelector> result = new ArrayList<>(1);
-        List<MetadataType> addableTypes = node.getAddableMetadataTypes();
+        List<MetadataTypeInterface> addableTypes = node.getAddableMetadataTypes();
         if (addableTypes != null) {
-            for (MetadataType addable : addableTypes) {
+            for (MetadataTypeInterface addable : addableTypes) {
                 if (selector.getName().equals(addable.getName())) {
                     result.add(this);
                     break;
@@ -137,8 +137,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
      */
     @Override
-    protected String findIn(DocStruct node) {
-        Metadata found = findMetadatumIn(node);
+    protected String findIn(DocStructInterface node) {
+        MetadataInterface found = findMetadatumIn(node);
         return found != null ? found.getValue() : null;
     }
 
@@ -151,10 +151,10 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @return the metadata, or null if absent
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
      */
-    private Metadata findMetadatumIn(DocStruct node) {
-        List<? extends Metadata> metadata = node.getAllMetadataByType(selector);
-        for (Metadata metadatum : metadata) {
-            if (selector.getName().equals(metadatum.getType().getName())) {
+    private MetadataInterface findMetadatumIn(DocStructInterface node) {
+        List<? extends MetadataInterface> metadata = node.getAllMetadataByType(selector);
+        for (MetadataInterface metadatum : metadata) {
+            if (selector.getName().equals(metadatum.getMetadataType().getName())) {
                 return metadatum;
             }
         }
@@ -181,12 +181,13 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param logicalNode
      *            document structure node to check and enrich
      * @param value
-     *            value to write if no metadata of this type is available
+     *            value to write if no metadataof this type is available
      */
-    private void tryToCreateANewMetadatum(CopierData data, DocStruct logicalNode, String value) {
-        Metadata copy;
+    private void tryToCreateANewMetadatum(CopierData data, DocStructInterface logicalNode, String value) {
+        MetadataInterface copy;
         try {
-            copy = new Metadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
+            copy = UghImplementation.INSTANCE
+                    .createMetadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
         } catch (MetadataTypeNotAllowedException e) {
             // copy rules aren’t related to the rule set but depend on it, so
             // copy rules that don’t work with the current rule set are ignored
@@ -200,12 +201,13 @@ public class LocalMetadataSelector extends MetadataSelector {
             if (logger.isDebugEnabled()) {
                 logger.debug("Cannot create metadata element " + selector.getName()
                         + ": Accessing the rule set failed with exception: "
-                        + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+                        + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()),
+                    e);
             }
             return;
         }
         try {
-            copy.setValue(value);
+            copy.setStringValue(value);
             logicalNode.addMetadata(copy);
         } catch (MetadataTypeNotAllowedException e) {
             // copy rules aren’t related to the rule set but depend on it, so
@@ -213,8 +215,9 @@ public class LocalMetadataSelector extends MetadataSelector {
             if (logger.isDebugEnabled()) {
                 logger.debug("Cannot assign metadata element " + selector.getName() + " (\"" + value
                         + "\") to structural element "
-                        + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type") + ": "
-                        + e.getMessage());
+                        + (logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName()
+                                : "without type")
+                        + ": " + e.getMessage());
             }
         }
     }

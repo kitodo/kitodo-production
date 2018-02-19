@@ -26,7 +26,7 @@ import org.joda.time.LocalDate;
 /**
  * The static class CourseToGerman provides a toString() method to convert a
  * course of appearance into a verbal description in German language.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CourseToGerman {
@@ -36,20 +36,19 @@ public class CourseToGerman {
      * <p>
      * Joda time’s days of week are 1-based, where 1 references Monday through 7
      * references Sunday. Therefore the “null” in first place.
-     * </p>
      */
     private static final String[] DAYS_OF_WEEK_NAMES = new String[] {null, "Montag", "Dienstag", "Mittwoch",
-            "Donnerstag", "Freitag", "Samstag", "Sonntag" };
+                                                                     "Donnerstag", "Freitag", "Samstag", "Sonntag" };
 
     /**
      * Month’s names in German.
      *
      * <p>
      * Joda time’s months are 1-based, therefore the “null” in first place.
-     * </p>
      */
     private static final String[] MONTH_NAMES = new String[] {null, "Januar", "Februar", "März", "April", "Mai", "Juni",
-            "Juli", "August", "September", "Oktober", "November", "Dezember" };
+                                                              "Juli", "August", "September", "Oktober", "November",
+                                                              "Dezember" };
 
     /**
      * The function toString() returns a verbal description of the course of

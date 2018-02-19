@@ -16,11 +16,11 @@ import de.sub.goobi.helper.TreeNode;
 
 import java.util.ArrayList;
 
-import ugh.dl.DocStruct;
+import org.kitodo.api.ugh.DocStructInterface;
 
 public class TreeNodeStruct3 extends TreeNode {
 
-    private DocStruct struct;
+    private DocStructInterface struct;
     private String firstImage;
     private String lastImage;
     private String zblNummer;
@@ -56,7 +56,7 @@ public class TreeNodeStruct3 extends TreeNode {
      * @param struct
      *            as DocStruct
      */
-    public TreeNodeStruct3(String label, DocStruct struct) {
+    public TreeNodeStruct3(String label, DocStructInterface struct) {
         this.label = label;
         this.struct = struct;
     }
@@ -107,11 +107,11 @@ public class TreeNodeStruct3 extends TreeNode {
         this.lastImage = lastImage;
     }
 
-    public DocStruct getStruct() {
+    public DocStructInterface getStruct() {
         return this.struct;
     }
 
-    public void setStruct(DocStruct struct) {
+    public void setStruct(DocStructInterface struct) {
         this.struct = struct;
     }
 

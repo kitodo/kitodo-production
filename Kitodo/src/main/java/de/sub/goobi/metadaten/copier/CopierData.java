@@ -11,14 +11,13 @@
 
 package de.sub.goobi.metadaten.copier;
 
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
 
 /**
  * A CopierData object contains all the data the data copier has access to. It
@@ -39,7 +38,7 @@ public class CopierData {
     /**
      * The workspace file to modify.
      */
-    private final Fileformat fileformat;
+    private final FileformatInterface fileformat;
 
     /**
      * The Goobi process corresponding to the workspace file.
@@ -69,7 +68,7 @@ public class CopierData {
      * @param process
      *            the related goobi process
      */
-    public CopierData(Fileformat fileformat, Process process) {
+    public CopierData(FileformatInterface fileformat, Process process) {
         this.fileformat = fileformat;
         this.process = process;
         this.destination = null;
@@ -91,7 +90,7 @@ public class CopierData {
      *
      * @return the digital document
      */
-    DigitalDocument getDigitalDocument() {
+    DigitalDocumentInterface getDigitalDocument() {
         try {
             return fileformat.getDigitalDocument();
         } catch (PreferencesException e) {
@@ -104,7 +103,7 @@ public class CopierData {
      *
      * @return the logical document structure
      */
-    public DocStruct getLogicalDocStruct() {
+    public DocStructInterface getLogicalDocStruct() {
         return getDigitalDocument().getLogicalDocStruct();
     }
 
@@ -113,7 +112,7 @@ public class CopierData {
      *
      * @return the required ruleset.
      */
-    public Prefs getPreferences() {
+    public PrefsInterface getPreferences() {
         return serviceManager.getRulesetService().getPreferences((process).getRuleset());
     }
 

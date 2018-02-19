@@ -19,15 +19,14 @@ import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataType;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Backing bean for a select list style input element to edit a metadatum with
  * the option to select one or more predefined values renderable by JSF.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableListBox extends RenderableMetadatum implements RenderableGroupableMetadatum {
@@ -40,7 +39,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
     /**
      * Constructor. Creates a RenderableListBox.
-     * 
+     *
      * @param metadataType
      *            metadata type editable by this list element
      * @param binding
@@ -51,14 +50,15 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      * @param projectName
      *            project of the process owning this metadatum
      */
-    public RenderableListBox(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
-            String projectName) {
+    public RenderableListBox(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+            RenderableMetadataGroup container, String projectName) {
+
         super(metadataType, binding, container);
         items = getItems(projectName, DisplayType.select);
         if (binding != null) {
-            List<Metadata> elements = binding.getMetadataByType(metadataType.getName());
+            List<MetadataInterface> elements = binding.getMetadataByType(metadataType.getName());
             List<String> selected = new ArrayList<>(elements.size());
-            for (Metadata m : elements) {
+            for (MetadataInterface m : elements) {
                 selected.add(m.getValue());
             }
             setSelectedItems(selected);
@@ -67,12 +67,12 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
     /**
      * Selects all items whose values are equal to the value to set.
-     * 
+     *
      * @param data
      *            data to add
      */
     @Override
-    public void addContent(Metadata data) {
+    public void addContent(MetadataInterface data) {
         String valueToSet = data.getValue();
         for (Item item : items) {
             if (valueToSet.equals(item.getValue())) {
@@ -83,7 +83,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
     /**
      * Returns the available items for the the user to choose from.
-     * 
+     *
      * @return the items to choose from
      */
     public Collection<SelectItem> getItems() {
@@ -97,7 +97,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
     /**
      * Uses the passed-in list of identifiers of the items that shall be
      * selected to set the selected state on the items.
-     * 
+     *
      * @param selected
      *            list of identifiers of items to be selected
      */
@@ -110,14 +110,14 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
     /**
      * Returns the value of this edit component as metadata elements
-     * 
+     *
      * @return a list of metadata elements with the selected values of this
      *         input
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
      */
     @Override
-    public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<>(items.size());
+    public List<MetadataInterface> toMetadata() {
+        List<MetadataInterface> result = new ArrayList<>(items.size());
         for (Item item : items) {
             if (item.getIsSelected()) {
                 result.add(getMetadata(item.getValue()));

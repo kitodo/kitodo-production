@@ -16,30 +16,33 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
-import ugh.dl.DigitalDocument;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-
 public class ExportDms_CorrectRusdml {
-    private final Prefs prefs;
+    private final PrefsInterface prefs;
     private final Process process;
-    private final DigitalDocument digitalDocument;
+    private final DigitalDocumentInterface digitalDocument;
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ExportDms_CorrectRusdml.class);
 
     /**
      * Constructor.
      *
-     * @param process object
-     * @param prefs   Prefs object
-     * @param gdzFile Fileformat object
+     * @param process
+     *            object
+     * @param prefs
+     *            Prefs object
+     * @param gdzFile
+     *            Fileformat object
      */
-    public ExportDms_CorrectRusdml(Process process, Prefs prefs, Fileformat gdzFile) throws PreferencesException {
+    public ExportDms_CorrectRusdml(Process process, PrefsInterface prefs, FileformatInterface gdzFile)
+            throws PreferencesException {
         this.prefs = prefs;
         this.digitalDocument = gdzFile.getDigitalDocument();
         this.process = process;

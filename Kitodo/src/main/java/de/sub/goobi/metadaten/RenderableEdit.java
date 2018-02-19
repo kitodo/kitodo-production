@@ -17,17 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.constants.Parameters;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
 
 /**
  * Backing bean for a single line input box element to edit a metadatum
  * renderable by JSF.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableEdit extends RenderableMetadatum
@@ -40,7 +39,7 @@ public class RenderableEdit extends RenderableMetadatum
 
     /**
      * Constructor. Creates a RenderableEdit.
-     * 
+     *
      * @param metadataType
      *            metadata type editable by this drop-down list
      * @param binding
@@ -49,10 +48,12 @@ public class RenderableEdit extends RenderableMetadatum
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public RenderableEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
+    public RenderableEdit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+            RenderableMetadataGroup container) {
+
         super(metadataType, binding, container);
         if (binding != null) {
-            for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
+            for (MetadataInterface data : binding.getMetadataByType(metadataType.getName())) {
                 addContent(data);
             }
         }
@@ -62,12 +63,12 @@ public class RenderableEdit extends RenderableMetadatum
      * Adds the data passed from the metadata element as content to the input.
      * If there is data already (shouldn’t be, but however) it is appended for
      * not being lost.
-     * 
+     *
      * @param data
      *            data to add
      */
     @Override
-    public void addContent(Metadata data) {
+    public void addContent(MetadataInterface data) {
         if (value == null || value.length() == 0) {
             value = data.getValue();
         } else {
@@ -77,9 +78,9 @@ public class RenderableEdit extends RenderableMetadatum
 
     /**
      * Returns the edit field value.
-     * 
+     *
      * @return the value from or for the edit field
-     * 
+     *
      * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
      */
     @Override
@@ -89,10 +90,10 @@ public class RenderableEdit extends RenderableMetadatum
 
     /**
      * Sets the value or saves the value entered by the user.
-     * 
+     *
      * @param value
      *            value to set
-     * 
+     *
      * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
      */
     @Override
@@ -103,13 +104,13 @@ public class RenderableEdit extends RenderableMetadatum
 
     /**
      * Returns the value of this edit component as metadata element
-     * 
+     *
      * @return a list with one metadata element with the value of this component
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
      */
     @Override
-    public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<>(1);
+    public List<MetadataInterface> toMetadata() {
+        List<MetadataInterface> result = new ArrayList<>(1);
         result.add(getMetadata(value));
         return result;
     }
@@ -118,7 +119,7 @@ public class RenderableEdit extends RenderableMetadatum
      * Specialised version of updateBinding() which is capable to update a
      * metadata type of kind “person” if the input box is part of a
      * RenderablePersonMetadataGroup.
-     * 
+     *
      * @see de.sub.goobi.metadaten.RenderableMetadatum#updateBinding()
      */
     @Override
@@ -129,13 +130,13 @@ public class RenderableEdit extends RenderableMetadatum
             if (personType == null) {
                 super.updateBinding();
             } else {
-                for (Person found : binding.getPersonByType(personType)) {
+                for (PersonInterface found : binding.getPersonByType(personType)) {
                     switch (RenderablePersonMetadataGroup.getPersonField(typeName)) {
                         case FIRSTNAME:
-                            found.setFirstname(value);
+                            found.setFirstName(value);
                             break;
                         case LASTNAME:
-                            found.setLastname(value);
+                            found.setLastName(value);
                             break;
                         case NORMDATA_RECORD:
                             if (value != null && value.length() > 0

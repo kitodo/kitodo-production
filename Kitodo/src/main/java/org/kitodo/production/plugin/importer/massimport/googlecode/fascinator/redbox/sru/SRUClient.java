@@ -1,7 +1,7 @@
 /*
  * The Fascinator - ReDBox/Mint SRU Client - NLA Identity Copyright (C) 2012
  * Queensland Cyber Infrastructure Foundation (http://www.qcif.edu.au/)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
@@ -325,7 +325,8 @@ public class SRUClient {
      *
      * @param xmlData
      *            The XML String returned from the search
-     * @return List<Node> A List containing a DOM4J Node for each search result
+     * @return List&lt;Node> A List containing a DOM4J Node for each search
+     *         result
      */
     public List<Node> getResultList(String xmlData) {
         SRUResponse response = getResponseObject(xmlData);
@@ -772,7 +773,7 @@ public class SRUClient {
      *
      * @param search
      *            The search to submit to the NLA
-     * @return List<NLAIdentity> A list of processed Identities
+     * @return List&lt;NLAIdentity> A list of processed Identities
      */
     public List<NLAIdentity> nlaGetIdentitiesBySearch(String search) {
         return nlaGetIdentitiesBySearch(search, null, null);
@@ -791,7 +792,7 @@ public class SRUClient {
      *            Starting record number. Optional, with no default.
      * @param maxRecords
      *            Maximum rows to return. Optional, with no default.
-     * @return List<NLAIdentity> A list of processed Identities
+     * @return List&lt;NLAIdentity> A list of processed Identities
      */
     public List<NLAIdentity> nlaGetIdentitiesBySearch(String search, String startRecord, String maxRecords) {
         SRUResponse response = nlaGetResponseBySearch(search);

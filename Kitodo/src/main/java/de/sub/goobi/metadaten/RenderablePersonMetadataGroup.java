@@ -22,13 +22,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.production.constants.Parameters;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataGroupType;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataGroupTypeInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.legacy.UghImplementation;
 
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal
@@ -45,7 +45,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
      */
     enum Field {
-        NORMDATA_RECORD("normDataRecord", true), FIRSTNAME("vorname", false), LASTNAME("nachname", false);
+        NORMDATA_RECORD("normDataRecord", true),
+        FIRSTNAME("vorname", false),
+        LASTNAME("nachname", false);
 
         private boolean isIdentifier;
         private String resourceKey;
@@ -106,13 +108,14 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *             if one of the sub-fields was configured to display a
      *             multi-select metadata
      */
-    public RenderablePersonMetadataGroup(MetadataType metadataType, MetadataGroup binding,
+    public RenderablePersonMetadataGroup(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
             RenderableMetadataGroup container, String projectName) throws ConfigurationException {
+
         super(metadataType, binding, container, getGroupTypeFor(metadataType), projectName);
         checkConfiguration();
         getField(Field.NORMDATA_RECORD).setValue(ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, ""));
         if (binding != null) {
-            for (Person person : binding.getPersonByType(metadataType.getName())) {
+            for (PersonInterface person : binding.getPersonByType(metadataType.getName())) {
                 addContent(person);
             }
         }
@@ -127,8 +130,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *            a metadata type which represents a person
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
-    private static final MetadataGroupType getGroupTypeFor(MetadataType type) {
-        MetadataGroupType result = new MetadataGroupType();
+    private static final MetadataGroupTypeInterface getGroupTypeFor(MetadataTypeInterface type) {
+        MetadataGroupTypeInterface result = UghImplementation.INSTANCE.createMetadataGroupType();
         result.setName(type.getName());
         result.setAllLanguages(type.getAllLanguages());
         if (type.getNum() != null) {
@@ -151,14 +154,14 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *            a field of the person record
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
-    private static final MetadataType getMetadataTypeFor(MetadataType type, Field field) {
-        MetadataType result = new MetadataType();
+    private static final MetadataTypeInterface getMetadataTypeFor(MetadataTypeInterface type, Field field) {
+        MetadataTypeInterface result = UghImplementation.INSTANCE.createMetadataType();
         result.setName(type.getName() + '.' + field.toString());
         if (type.getNum() != null) {
             result.setNum(type.getNum());
         }
         result.setAllLanguages(Helper.getAllStrings(field.getResourceKey()));
-        result.setIsPerson(false);
+        result.setPerson(false);
         result.setIdentifier(field.isIdentifier());
         return result;
     }
@@ -190,14 +193,14 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#addContent(ugh.dl.Metadata)
      */
     @Override
-    public void addContent(Metadata data) {
-        if (data instanceof Person) {
-            Person personData = (Person) data;
-            if (personData.getLastname() != null) {
-                getField(Field.LASTNAME).setValue(personData.getLastname());
+    public void addContent(MetadataInterface data) {
+        if (data instanceof PersonInterface) {
+            PersonInterface personData = (PersonInterface) data;
+            if (personData.getLastName() != null) {
+                getField(Field.LASTNAME).setValue(personData.getLastName());
             }
-            if (personData.getFirstname() != null) {
-                getField(Field.FIRSTNAME).setValue(personData.getFirstname());
+            if (personData.getFirstName() != null) {
+                getField(Field.FIRSTNAME).setValue(personData.getFirstName());
             }
             if (personData.getAuthorityURI() != null) {
                 getField(Field.NORMDATA_RECORD).setValue(personData.getAuthorityValue());
@@ -260,11 +263,11 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
      */
     @Override
-    public List<Person> toMetadata() {
-        List<Person> result = new ArrayList<>(1);
-        Person person;
+    public List<PersonInterface> toMetadata() {
+        List<PersonInterface> result = new ArrayList<>(1);
+        PersonInterface person;
         try {
-            person = new Person(metadataType);
+            person = UghImplementation.INSTANCE.createPerson(metadataType);
         } catch (MetadataTypeNotAllowedException e) {
             throw new NullPointerException(e.getMessage());
         }
@@ -274,8 +277,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
             String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
             person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
         }
-        person.setFirstname(getField(Field.FIRSTNAME).getValue());
-        person.setLastname(getField(Field.LASTNAME).getValue());
+        person.setFirstName(getField(Field.FIRSTNAME).getValue());
+        person.setLastName(getField(Field.LASTNAME).getValue());
         result.add(person);
         return result;
     }

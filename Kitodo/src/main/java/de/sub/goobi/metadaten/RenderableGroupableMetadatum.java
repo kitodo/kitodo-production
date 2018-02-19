@@ -13,7 +13,7 @@ package de.sub.goobi.metadaten;
 
 import java.util.List;
 
-import ugh.dl.Metadata;
+import org.kitodo.api.ugh.MetadataInterface;
 
 /**
  * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to
@@ -37,7 +37,7 @@ interface RenderableGroupableMetadatum {
      * @param data
      *            data to add
      */
-    void addContent(Metadata data);
+    void addContent(MetadataInterface data);
 
     /**
      * Shall return the label for the metadatum in the language previously set.
@@ -68,5 +68,5 @@ interface RenderableGroupableMetadatum {
      * 
      * @return the metadata elements contained in this bean
      */
-    List<? extends Metadata> toMetadata();
+    List<? extends MetadataInterface> toMetadata();
 }

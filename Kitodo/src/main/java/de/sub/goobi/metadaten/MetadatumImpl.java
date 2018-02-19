@@ -23,11 +23,10 @@ import org.goobi.api.display.DisplayCase;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Process;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -38,9 +37,9 @@ import ugh.dl.Prefs;
  */
 
 public class MetadatumImpl implements Metadatum {
-    private Metadata md;
+    private MetadataInterface md;
     private int identifier;
-    private Prefs myPrefs;
+    private PrefsInterface myPrefs;
     private Process myProcess;
     private HashMap<String, DisplayCase> myValues = new HashMap<>();
     private List<SelectItem> items;
@@ -49,14 +48,14 @@ public class MetadatumImpl implements Metadatum {
     /**
      * Allgemeiner Konstruktor().
      */
-    public MetadatumImpl(Metadata m, int inID, Prefs inPrefs, Process inProcess) {
+    public MetadatumImpl(MetadataInterface m, int inID, PrefsInterface inPrefs, Process inProcess) {
         this.md = m;
         this.identifier = inID;
         this.myPrefs = inPrefs;
         this.myProcess = inProcess;
         for (BindState state : BindState.values()) {
             this.myValues.put(state.getTitle(),
-                    new DisplayCase(this.myProcess, state.getTitle(), this.md.getType().getName()));
+                    new DisplayCase(this.myProcess, state.getTitle(), this.md.getMetadataType().getName()));
         }
     }
 
@@ -77,21 +76,21 @@ public class MetadatumImpl implements Metadatum {
 
     @Override
     public void setWert(String inWert) {
-        this.md.setValue(inWert.trim());
+        this.md.setStringValue(inWert.trim());
     }
 
     @Override
     public String getTyp() {
-        String label = this.md.getType().getLanguage(Helper.getMetadataLanguageForCurrentUser());
+        String label = this.md.getMetadataType().getLanguage(Helper.getMetadataLanguageForCurrentUser());
         if (label == null) {
-            label = this.md.getType().getName();
+            label = this.md.getMetadataType().getName();
         }
         return label;
     }
 
     @Override
     public void setTyp(String inTyp) {
-        MetadataType mdt = this.myPrefs.getMetadataTypeByName(inTyp);
+        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName(inTyp);
         this.md.setType(mdt);
     }
 
@@ -110,12 +109,12 @@ public class MetadatumImpl implements Metadatum {
     }
 
     @Override
-    public Metadata getMd() {
+    public MetadataInterface getMd() {
         return this.md;
     }
 
     @Override
-    public void setMd(Metadata md) {
+    public void setMd(MetadataInterface md) {
         this.md = md;
     }
 

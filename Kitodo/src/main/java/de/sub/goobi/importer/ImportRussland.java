@@ -22,19 +22,19 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -45,7 +45,7 @@ import ugh.exceptions.WriteException;
  */
 public class ImportRussland {
     private static final Logger logger = LogManager.getLogger(ImportRussland.class);
-    private DocStruct logicalTopstruct;
+    private DocStructInterface logicalTopstruct;
     private Process process;
     private final ServiceManager serviceManager = new ServiceManager();
 
@@ -80,8 +80,8 @@ public class ImportRussland {
         }
 
         // import the XML file and determine the main element
-        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(this.process);
-        DigitalDocument digitalDocument = gdzfile.getDigitalDocument();
+        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(this.process);
+        DigitalDocumentInterface digitalDocument = gdzfile.getDigitalDocument();
         this.logicalTopstruct = digitalDocument.getLogicalDocStruct();
         deleteRussianData(this.logicalTopstruct);
 
@@ -92,14 +92,15 @@ public class ImportRussland {
             if (line.length() == 0) {
 
                 /*
-                 * always when the line is empty, the collected data from the collected list can
-                 * be evaluated
+                 * always when the line is empty, the collected data from the
+                 * collected list can be evaluated
                  */
                 analyzeParagraph(lines);
                 // reset list
                 lines = new ArrayList<>();
             } else if (!line.substring(0, 1).equals("+") && line.length() > 3) {
-                // if line is not a comment, accept the line in the list for evaluation
+                // if line is not a comment, accept the line in the list for
+                // evaluation
                 lines.add(line);
             }
         }
@@ -157,7 +158,7 @@ public class ImportRussland {
     }
 
     private void setBandDetails(List<String> list) throws MetadataTypeNotAllowedException {
-        DocStruct ds = this.logicalTopstruct.getAllChildren().get(0);
+        DocStructInterface ds = this.logicalTopstruct.getAllChildren().get(0);
 
         // go through all the details and add it to the band
         for (String bandDetail : list) {
@@ -186,26 +187,27 @@ public class ImportRussland {
         }
 
         /*
-         * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der selben
-         * ZBL-ID finden
+         * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der
+         * selben ZBL-ID finden
          */
-        MetadataType metadataTypeId = serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
-                .getMetadataTypeByName("ZBLIdentifier");
-        MetadataType metadataTypeTempId = serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
-                .getMetadataTypeByName("ZBLTempID");
-        DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
+        MetadataTypeInterface metadataTypeId = serviceManager.getRulesetService()
+                .getPreferences(this.process.getRuleset()).getMetadataTypeByName("ZBLIdentifier");
+        MetadataTypeInterface metadataTypeTempId = serviceManager.getRulesetService()
+                .getPreferences(this.process.getRuleset()).getMetadataTypeByName("ZBLTempID");
+        DocStructInterface band = this.logicalTopstruct.getAllChildren().get(0);
 
-        List<DocStruct> listHefte = band.getAllChildren();
+        List<DocStructInterface> listHefte = band.getAllChildren();
         if (listHefte != null) {
-            for (Iterator<DocStruct> iter = listHefte.iterator(); iter.hasNext();) {
-                DocStruct heft = iter.next();
-                List<DocStruct> listArticle = heft.getAllChildren();
+            for (Iterator<DocStructInterface> iter = listHefte.iterator(); iter.hasNext();) {
+                DocStructInterface heft = iter.next();
+                List<DocStructInterface> listArticle = heft.getAllChildren();
                 if (listArticle != null) {
-                    // go through all the articles until the right article is found
-                    for (DocStruct article : listArticle) {
+                    // go through all the articles until the right article is
+                    // found
+                    for (DocStructInterface article : listArticle) {
                         if (article.getAllMetadataByType(metadataTypeId).size() > 0
                                 || article.getAllMetadataByType(metadataTypeTempId).size() > 0) {
-                            Metadata md;
+                            MetadataInterface md;
                             if (article.getAllMetadataByType(metadataTypeId).size() > 0) {
                                 md = article.getAllMetadataByType(metadataTypeId).get(0);
                             } else {
@@ -213,7 +215,8 @@ public class ImportRussland {
                             }
                             // logger.debug(md.getValue());
                             if (md.getValue().equals(zblID)) {
-                                // go through all the details and add to the article
+                                // go through all the details and add to the
+                                // article
                                 for (String detail : list) {
                                     String detailNr = detail.substring(0, 3);
 
@@ -232,7 +235,8 @@ public class ImportRussland {
                                         addPerson(article, "Contributor", detail);
                                     }
 
-                                    // Artikel Person als Subjekt des Artikels (wiederholbar)
+                                    // Artikel Person als Subjekt des Artikels
+                                    // (wiederholbar)
                                     if (detailNr.equals("150")) {
                                         addMetadata(article, "PersonAsSubject", detail);
                                     }
@@ -269,19 +273,19 @@ public class ImportRussland {
         }
     }
 
-    private void deleteRussianData(DocStruct docStruct) {
+    private void deleteRussianData(DocStructInterface docStruct) {
         /*
-         * von dem aktuellen Stukturelement alle Metadaten durchlaufen und das gesuchte
-         * löschen
+         * von dem aktuellen Stukturelement alle Metadaten durchlaufen und das
+         * gesuchte löschen
          */
         if (docStruct.getAllVisibleMetadata() != null) {
-            LinkedList<Metadata> listMetas = new LinkedList<>(docStruct.getAllMetadata());
-            for (Metadata meta : listMetas) {
-                String metaName = meta.getType().getName();
+            LinkedList<MetadataInterface> listMetas = new LinkedList<>(docStruct.getAllMetadata());
+            for (MetadataInterface meta : listMetas) {
+                String metaName = meta.getMetadataType().getName();
 
                 /*
-                 * wenn die Metadatentypen die russischen sind, werden sie aus der Liste
-                 * entfernt
+                 * wenn die Metadatentypen die russischen sind, werden sie aus
+                 * der Liste entfernt
                  */
                 if (metaName.equals("PersonAsSubject") || metaName.equals("RUSMainTitle")
                         || metaName.equals("ClassificationUDK") || metaName.equals("RUSKeyword")
@@ -293,12 +297,12 @@ public class ImportRussland {
         }
 
         /*
-         * von dem aktuellen Stukturelement alle Personen durchlaufen und die gesuchten
-         * löschen
+         * von dem aktuellen Stukturelement alle Personen durchlaufen und die
+         * gesuchten löschen
          */
         if (docStruct.getAllPersons() != null) {
-            List<Person> listPersons = new ArrayList<>(docStruct.getAllPersons());
-            for (Person p : listPersons) {
+            List<PersonInterface> listPersons = new ArrayList<>(docStruct.getAllPersons());
+            for (PersonInterface p : listPersons) {
                 if (p.getRole().equals("Author")) {
                     docStruct.removePerson(p);
                 }
@@ -309,22 +313,22 @@ public class ImportRussland {
          * von dem aktuellen Stukturelement alle Kinder durchlaufen und rekursiv
          * durchlaufen
          */
-        List<DocStruct> children = docStruct.getAllChildren();
+        List<DocStructInterface> children = docStruct.getAllChildren();
         if (children != null) {
             // there are children's structural elements, so go through them
-            for (DocStruct child : children) {
+            for (DocStructInterface child : children) {
                 deleteRussianData(child);
             }
         }
     }
 
-    private void addMetadata(DocStruct inStruct, String inMdtName, String inDetail)
+    private void addMetadata(DocStructInterface inStruct, String inMdtName, String inDetail)
             throws MetadataTypeNotAllowedException {
-        MetadataType mdt = serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
+        MetadataTypeInterface mdt = serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
                 .getMetadataTypeByName(inMdtName);
-        Metadata md = new Metadata(mdt);
+        MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
         try {
-            md.setValue(inDetail.substring(4).trim());
+            md.setStringValue(inDetail.substring(4).trim());
 
             // check if the metadata already exists, if no, create new
             // TODO: should be this removed??
@@ -348,10 +352,10 @@ public class ImportRussland {
         }
     }
 
-    private void addPerson(DocStruct inStruct, String inRole, String inDetail)
+    private void addPerson(DocStructInterface inStruct, String inRole, String inDetail)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
-        Person p = new Person(serviceManager.getRulesetService().getPreferences(this.process.getRuleset())
-                .getMetadataTypeByName(inRole));
+        PersonInterface p = UghImplementation.INSTANCE.createPerson(
+            serviceManager.getRulesetService().getPreferences(this.process.getRuleset()).getMetadataTypeByName(inRole));
         String pName = inDetail.substring(4).trim();
         if (pName.length() == 0) {
             return;
@@ -360,8 +364,8 @@ public class ImportRussland {
             throw new WrongImportFileException(
                     "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + inDetail + "')");
         }
-        p.setLastname(pName.substring(0, pName.indexOf(',')).trim());
-        p.setFirstname(pName.substring(pName.indexOf(',') + 1, pName.length()).trim());
+        p.setLastName(pName.substring(0, pName.indexOf(',')).trim());
+        p.setFirstName(pName.substring(pName.indexOf(',') + 1, pName.length()).trim());
         p.setRole(inRole);
         // TODO: should be this data inserted?
         // MetadataType mdt =
