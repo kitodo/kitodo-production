@@ -54,10 +54,6 @@
 
         <module name="NeedBraces"/>
 
-        <module name="LeftCurly">
-            <property name="maxLineLength" value="100"/>
-        </module>
-
         <module name="RightCurly"/>
 
         <module name="RightCurly">
@@ -199,6 +195,14 @@
 
         <module name="VariableDeclarationUsageDistance"/>
 
+        <module name="ImportOrder">
+            <property name="groups" value="com,de,/^java\./,javax,net,org,ugh"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="option" value="above"/>
+            <property name="sortStaticImportsAlphabetically" value="true"/>
+        </module>
+
         <module name="CustomImportOrder">
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="true"/>
@@ -248,6 +252,7 @@
             <property name="minLineCount" value="2"/>
             <property name="allowedAnnotations" value="Override, Test"/>
             <property name="allowThrowsTagsForSubclasses" value="true"/>
+            <property name="suppressLoadErrors" value="true"/>
         </module>
 
         <module name="MethodName">
