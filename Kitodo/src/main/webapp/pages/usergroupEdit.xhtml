@@ -73,7 +73,7 @@
                                         <h:panelGroup>
                                             <p:pickList id="authoritiesGlobal"
                                                         value="#{BenutzergruppenForm.authorities}"
-                                                        converter="AuthorityConverter"
+                                                        converter="#{authorityConverter}"
                                                         var="authority" itemLabel="#{authority.title}"
                                                         itemValue="#{authority}">
                                                 <f:facet name="sourceCaption"
@@ -96,7 +96,7 @@
                                             </p:selectOneMenu>
                                             <p:pickList id="authoritiesClient"
                                                         value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
-                                                        converter="AuthorityConverter"
+                                                        converter="#{authorityConverter}"
                                                         var="authority" itemLabel="#{authority.title}"
                                                         itemValue="#{authority}">
                                                 <f:facet name="sourceCaption"
@@ -120,7 +120,7 @@
                                             </p:selectOneMenu>
                                             <p:pickList id="authoritiesProject"
                                                         value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
-                                                        converter="AuthorityConverter"
+                                                        converter="#{authorityConverter}"
                                                         var="authority" itemLabel="#{authority.title}"
                                                         itemValue="#{authority}">
                                                 <f:facet name="sourceCaption"
