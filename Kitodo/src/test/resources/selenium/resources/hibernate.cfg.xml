@@ -37,6 +37,7 @@
         <property name="hbm2ddl.auto">update</property>
         <property name="javax.persistence.validation.mode">none</property>
 
+        <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
         <!-- Die einzelnen Mappings -->
         <mapping class="org.kitodo.data.database.beans.Authority"/>

@@ -85,7 +85,7 @@ public class SeleniumST extends BaseTestSelenium {
 
         int availableGlobalAuthorities = Pages.getUserGroupEditPage().countAvailableGlobalAuthorities();
 
-        Assert.assertEquals("Removing off all global authorities was not saved", availableGlobalAuthorities, 3);
+        Assert.assertEquals("Removing off all global authorities was not saved", 3, availableGlobalAuthorities);
 
     }
 }
