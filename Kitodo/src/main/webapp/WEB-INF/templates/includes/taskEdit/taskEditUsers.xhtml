@@ -32,13 +32,11 @@
             </p:commandLink>
         </p:column>
     </p:dataTable>
-
-    <p:commandButton value="#{msgs.benutzerHinzufuegen}"
-                     action="#{ProzessverwaltungForm.activeUsers}"
-                     id="addUser"
-                     oncomplete="PF('addUserDialog').show()"
-                     icon="fa fa-plus-circle fa-lg"
-                     immediate="true"
-                     iconPos="right"/>
-
+    <button id="addUser"
+            onclick="PF('addUserDialog').show()"
+            type="button"
+            class="ui-button ui-widget ui-corner-all button-filled-green"
+            style="padding:.7em;border:none;">
+        #{msgs.benutzerHinzufuegen}
+    </button>
 </ui:composition>
