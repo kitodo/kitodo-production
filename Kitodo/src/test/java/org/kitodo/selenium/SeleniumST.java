@@ -45,7 +45,7 @@ public class SeleniumST extends BaseTestSelenium {
     }
 
     @Test
-    public void listUserGroupssTest() throws Exception {
+    public void listUserGroupsTest() throws Exception {
         int numberOfUserGroupsInDatabase = serviceManager.getUserGroupService().getAll().size();
         int numberOfUserGroupsDisplayed = Pages.getUsersPage().goTo().countListedUserGroups();
         Assert.assertEquals("Displayed wrong number of user groups", numberOfUserGroupsInDatabase,
@@ -64,13 +64,13 @@ public class SeleniumST extends BaseTestSelenium {
 
     @Test
     public void reindexingTest() throws Exception {
-        final float maximumIndexingTimeSec = 40;
+        final float MAXIMUM_TIME_SEC = 40;
         Pages.getIndexingPage().goTo().startReindexingAll();
 
         Timer timer = new Timer();
         timer.start();
         while (!Pages.getIndexingPage().isIndexingComplete()
-                && timer.getElapsedTimeAfterStartSec() < maximumIndexingTimeSec) {
+                && timer.getElapsedTimeAfterStartSec() < MAXIMUM_TIME_SEC) {
             logger.debug("Indexing at: " + Pages.getIndexingPage().getIndexingProgress() + "%");
             Thread.sleep(Browser.getDelayIndexing());
         }
@@ -78,7 +78,7 @@ public class SeleniumST extends BaseTestSelenium {
         Thread.sleep(Browser.getDelayIndexing());
 
         logger.info("Reindexing took: " + timer.getElapsedTimeSec() + " s");
-        Assert.assertTrue("Reindexing took to long", timer.getElapsedTimeSec() < maximumIndexingTimeSec);
+        Assert.assertTrue("Reindexing took to long", timer.getElapsedTimeSec() < MAXIMUM_TIME_SEC);
     }
 
     @Test

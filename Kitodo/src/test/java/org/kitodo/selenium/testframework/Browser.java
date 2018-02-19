@@ -58,8 +58,9 @@ public class Browser {
         webDriver.manage().window().setSize(new Dimension(1280, 1024));
 
         if ("true".equals(System.getenv().get("TRAVIS"))) {
+            logger.debug("TRAVIS environment detected");
             onTravis = true;
-            doubleAllDelays();
+            // doubleAllDelays();
         }
     }
 
