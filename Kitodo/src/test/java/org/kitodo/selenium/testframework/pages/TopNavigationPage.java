@@ -71,48 +71,56 @@ public class TopNavigationPage {
 
     public void gotoHelp() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkHelp);
         linkHelp.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoTasks() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkHelp);
         linkTasks.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoProcesses() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkProcesses);
         linkProcesses.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoProjects() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkProjects);
         linkProjects.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoUsers() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkUsers);
         linkUsers.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoModules() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkModules);
         linkModules.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoClients() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkClients);
         linkClients.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     public void gotoIndexing() throws InterruptedException {
         hoverWebElement(dashboardMenu);
+        hoverWebElement(linkIndexing);
         linkIndexing.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }

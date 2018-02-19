@@ -84,8 +84,28 @@ public class SeleniumST extends BaseTestSelenium {
         Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup);
 
         int availableGlobalAuthorities = Pages.getUserGroupEditPage().countAvailableGlobalAuthorities();
+        int authoritiesInDatabase = serviceManager.getUserGroupService().getById(1).getGlobalAuthorities().size();
 
-        Assert.assertEquals("Removing off all global authorities was not saved", 3, availableGlobalAuthorities);
+        Assert.assertEquals(
+            "Removing off all global authorities was not saved! Authorities in Database are: " + authoritiesInDatabase,
+            3, availableGlobalAuthorities);
+    }
 
+    @Test
+    public void renameUserGroupTest() throws Exception {
+        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
+                .removeAllGlobalAuthorities().save();
+
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().performLoginAsAdmin();
+        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup);
+
+        int availableGlobalAuthorities = Pages.getUserGroupEditPage().countAvailableGlobalAuthorities();
+        int authoritiesInDatabase = serviceManager.getUserGroupService().getById(1).getGlobalAuthorities().size();
+
+        Assert.assertEquals(
+            "Removing off all global authorities was not saved! Authorities in Database are: " + authoritiesInDatabase,
+            3, availableGlobalAuthorities);
     }
 }
