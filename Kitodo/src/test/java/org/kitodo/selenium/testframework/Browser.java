@@ -18,14 +18,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.selenium.testframework.helper.GeckoDriverProvider;
+import org.kitodo.selenium.testframework.helper.WebDriverProvider;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class Browser {
@@ -34,6 +32,7 @@ public class Browser {
     private static RemoteWebDriver webDriver;
     private static Actions actions;
     private static final String GECKO_DRIVER_VERSION = "0.19.1";
+    private static final String CHROME_DRIVER_VERSION = "2.35";
     private static boolean onTravis = false;
 
     private static int delayIndexing = 3000;
@@ -47,15 +46,12 @@ public class Browser {
 
     public static void Initialize() throws IOException {
         String userDir = System.getProperty("user.dir");
-        GeckoDriverProvider.provide(GECKO_DRIVER_VERSION, userDir + "/target/downloads/",
+
+        WebDriverProvider.provideChromDriver(CHROME_DRIVER_VERSION, userDir + "/target/downloads/",
             userDir + "/target/extracts/");
 
-        DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-        capabilities.setCapability("moz:webdriverClick", false);
-
-        FirefoxOptions firefoxOptions = new FirefoxOptions(capabilities);
-        webDriver = new FirefoxDriver(firefoxOptions);
-        actions = new Actions(Browser.getDriver());
+        webDriver = new ChromeDriver();
+        actions = new Actions(webDriver);
 
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         goTo("");
@@ -92,6 +88,7 @@ public class Browser {
 
     public static void close() {
         webDriver.close();
+        webDriver.quit();
     }
 
     public static void hoverWebElement(WebElement webElement) throws InterruptedException {

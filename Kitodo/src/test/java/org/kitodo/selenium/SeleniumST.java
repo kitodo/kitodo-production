@@ -11,8 +11,6 @@
 
 package org.kitodo.selenium;
 
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -104,19 +102,21 @@ public class SeleniumST extends BaseTestSelenium {
 
     @Test
     public void renameUserGroupTest() throws Exception {
-        String newTitle = "SeleniumGroup";
+        String expectedTitle = "SeleniumGroup";
 
         UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
         Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
-                .setUserGroupTitle(newTitle).save();
+                .setUserGroupTitle(expectedTitle).save();
+
+        System.out.println(serviceManager.getUserGroupService().getById(1).getTitle());
 
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
-        List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToUserGroupsTab()
-                .getListOfUserGroupTitles();
+        String actualTitle = Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
+                .getUserGroupTitle();
 
-        System.out.println(listOfUserGroupTitles);
+        System.out.println(serviceManager.getUserGroupService().getById(1).getTitle());
 
-        Assert.assertTrue("New Name of user group has not appeared on table", listOfUserGroupTitles.contains(newTitle));
+        Assert.assertEquals("New Name of user group was not saved", expectedTitle, actualTitle);
     }
 }

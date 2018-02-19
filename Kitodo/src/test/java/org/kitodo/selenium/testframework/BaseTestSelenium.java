@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
@@ -55,18 +54,10 @@ public class BaseTestSelenium {
 
     @AfterClass
     public static void tearDown() throws Exception {
-
-        Browser.close();
         MockDatabase.stopDatabaseServer();
         MockDatabase.stopNode();
 
-        if (SystemUtils.IS_OS_WINDOWS) {
-            try {
-                Runtime.getRuntime().exec("taskkill /F /IM geckodriver.exe");
-            } catch (Exception ex) {
-                logger.error(ex.getMessage());
-            }
-        }
+        Browser.close();
     }
 
     @Before

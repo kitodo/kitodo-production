@@ -31,9 +31,9 @@ import org.kitodo.ExecutionPermission;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
 
-public class GeckoDriverProvider {
+public class WebDriverProvider {
 
-    private static final Logger logger = LogManager.getLogger(GeckoDriverProvider.class);
+    private static final Logger logger = LogManager.getLogger(WebDriverProvider.class);
     private static final int BUFFER_SIZE = 8 * 1024;
 
     /**
@@ -48,7 +48,7 @@ public class GeckoDriverProvider {
      * @param extractFolder
      *            The folder in which the extracted files will be put in.
      */
-    public static void provide(String geckoDriverVersion, String downloadFolder, String extractFolder)
+    public static void provideGeckoDriver(String geckoDriverVersion, String downloadFolder, String extractFolder)
             throws IOException {
         String geckoDriverUrl = "https://github.com/mozilla/geckodriver/releases/download/v" + geckoDriverVersion + "/";
         String geckoDriverFileName;
@@ -89,6 +89,62 @@ public class GeckoDriverProvider {
             }
         } else {
             logger.error("Geckodriver file not found");
+        }
+    }
+
+    /**
+     * Downloads chrome driver, extracts archive file and set system property
+     * "webdriver.chrome.driver". On Linux the method also sets executable
+     * permission.
+     *
+     * @param chromeDriverVersion
+     *            The chrome driver version.
+     * @param downloadFolder
+     *            The folder in which the downloaded files will be put in.
+     * @param extractFolder
+     *            The folder in which the extracted files will be put in.
+     */
+    public static void provideChromDriver(String chromeDriverVersion, String downloadFolder, String extractFolder)
+            throws IOException {
+
+        String chromeDriverUrl = "https://chromedriver.storage.googleapis.com/" + chromeDriverVersion + "/";
+        String chromeDriverFileName;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            chromeDriverFileName = "chromedriver.exe";
+            File chromeDriverZipFile = new File(downloadFolder + "chromedriver.zip");
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_win32.zip"), chromeDriverZipFile);
+            extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder));
+
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            chromeDriverFileName = "chromedriver";
+            File chromeDriverZipFile = new File(downloadFolder + "chromedriver.zip");
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_mac64.zip"), chromeDriverZipFile);
+            File theDir = new File(extractFolder);
+            if (!theDir.exists()) {
+                theDir.mkdir();
+            }
+            extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder));
+
+        } else {
+            chromeDriverFileName = "chromedriver";
+            File chromeDriverZipFile = new File(downloadFolder + "chromedriver.zip");
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_linux32.zip"), chromeDriverZipFile);
+            extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder));
+        }
+        File chromeDriverFile = new File(extractFolder, chromeDriverFileName);
+
+        if (chromeDriverFile.exists()) {
+            if (!SystemUtils.IS_OS_WINDOWS) {
+                ExecutionPermission.setExecutePermission(chromeDriverFile);
+            }
+
+            if (chromeDriverFile.canExecute()) {
+                System.setProperty("webdriver.chrome.driver", chromeDriverFile.getPath());
+            } else {
+                logger.error("Chromedriver not executeable");
+            }
+        } else {
+            logger.error("Chromedriver file not found");
         }
     }
 

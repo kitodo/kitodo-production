@@ -101,4 +101,8 @@ public class UserGroupEditPage {
         return this;
     }
 
+    public String getUserGroupTitle() {
+        return titleInput.getAttribute("value");
+    }
+
 }
