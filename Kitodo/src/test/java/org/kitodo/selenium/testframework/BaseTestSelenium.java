@@ -83,8 +83,7 @@ public class BaseTestSelenium {
 
         @Override
         protected void failed(Throwable ex, Description description) {
-            if ("true".equals(System.getenv().get("TRAVIS")) // make sure we are on travis-ci
-                    && (ex instanceof WebDriverException)) {
+            if (Browser.isOnTravis() && (ex instanceof WebDriverException)) {
                 try {
                     File screenshot = Browser.captureScreenShot();
                     Map<String, String> travisProperties = getTravisProperties();

@@ -18,6 +18,7 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -77,7 +78,7 @@ public class UsersPage {
         return listOfRows.size();
     }
 
-    public UserEditPage goToUserEditPage() throws Exception {
+    public UserEditPage createNewUser() throws Exception {
         if (!isAt()) {
             goTo();
         }
@@ -119,7 +120,7 @@ public class UsersPage {
         return this;
     }
 
-    public UserGroupEditPage goToUserGroupEditPage() throws Exception {
+    public UserGroupEditPage createNewUserGroup() throws Exception {
         if (!isAt()) {
             goTo();
         }
@@ -131,7 +132,7 @@ public class UsersPage {
         return Pages.getUserGroupEditPage();
     }
 
-    public UserGroupEditPage goToUserGroupEditPage(UserGroup userGroup) throws Exception {
+    public UserGroupEditPage editUserGroup(UserGroup userGroup) throws Exception {
         if (!isAt()) {
             goTo();
             switchToUserGroupsTab();
@@ -143,18 +144,54 @@ public class UsersPage {
         return Pages.getUserGroupEditPage();
     }
 
+    public UserGroupEditPage editUserGroup(String userGroupTitle) throws Exception {
+        if (!isAt()) {
+            goTo();
+            switchToUserGroupsTab();
+        }
+
+        WebElement userGroupEditLink = null;
+
+        List<WebElement> tableRows = getRowsOfTable(userGroupsTable);
+
+        for (WebElement tableRow : tableRows) {
+            if (getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
+                userGroupEditLink = tableRow.findElement(By.tagName("a"));
+                userGroupEditLink.click();
+                Thread.sleep(Browser.getDelayAfterLinkClick());
+                return Pages.getUserGroupEditPage();
+            }
+        }
+        throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+    }
+
     public List<String> getListOfUserGroupTitles() throws Exception {
         if (!isAt()) {
             goTo();
             switchToUserGroupsTab();
         }
-        List<WebElement> listOfRows = usersTableData.findElements(By.tagName("tr"));
-        List<String> titles = new ArrayList<>();
-        for (WebElement webElement : listOfRows) {
-            List<WebElement> columns = webElement.findElements(By.tagName("td"));
-            titles.add(columns.get(0).getText());
-        }
-        return titles;
+        return getTableDataByColumn(userGroupsTable, 0);
     }
 
+    private List<WebElement> getRowsOfTable(WebElement table) {
+        return table.findElements(By.tagName("tr"));
+    }
+
+    private List<WebElement> getCellsOfRow(WebElement row) {
+        return row.findElements(By.tagName("td"));
+    }
+
+    private List<String> getTableDataByColumn(WebElement table, int columnIndex) {
+        List<WebElement> rows = getRowsOfTable(table);
+        List<String> data = new ArrayList<>();
+        for (WebElement row : rows) {
+            data.add(getCellDataByRow(row, columnIndex));
+        }
+        return data;
+    }
+
+    private String getCellDataByRow(WebElement row, int columnIndex) {
+        List<WebElement> cells = getCellsOfRow(row);
+        return cells.get(columnIndex).getText();
+    }
 }

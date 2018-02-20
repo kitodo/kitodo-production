@@ -11,6 +11,8 @@
 
 package org.kitodo.selenium;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -26,8 +28,8 @@ import org.kitodo.services.ServiceManager;
 
 public class SeleniumST extends BaseTestSelenium {
 
-    private static final Logger logger = LogManager.getLogger(SeleniumST.class);
     private ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(SeleniumST.class);
 
     @Test
     public void listClientsTest() throws Exception {
@@ -55,7 +57,7 @@ public class SeleniumST extends BaseTestSelenium {
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
-        Pages.getUsersPage().goTo().goToUserEditPage().insertUserData(user).save();
+        Pages.getUsersPage().goTo().createNewUser().insertUserData(user).save();
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
 
@@ -82,41 +84,26 @@ public class SeleniumST extends BaseTestSelenium {
     }
 
     @Test
-    public void removeAllGlobalAuthoritiesOffUserGroupTest() throws Exception {
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
-        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
-                .removeAllGlobalAuthorities().save();
+    public void addUserGroupTest() throws Exception {
+        UserGroup userGroup = new UserGroup();
+        userGroup.setTitle("MockUserGroup");
+
+        Pages.getUsersPage().goTo().switchToUserGroupsTab().createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
+                .assignAllGlobalAuthorities().save();
 
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
-        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup);
+        List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToUserGroupsTab()
+                .getListOfUserGroupTitles();
+        Assert.assertTrue("New user group was not saved", listOfUserGroupTitles.contains(userGroup.getTitle()));
 
-        int availableGlobalAuthorities = Pages.getUserGroupEditPage().countAvailableGlobalAuthorities();
-        int authoritiesInDatabase = serviceManager.getUserGroupService().getById(1).getGlobalAuthorities().size();
+        int availableAuthorities = serviceManager.getAuthorityService().getAll().size();
+        int assignedGlobalAuthorities = Pages.getUsersPage().switchToUserGroupsTab().editUserGroup(userGroup.getTitle())
+                .countAssignedGlobalAuthorities();
+        Assert.assertEquals("Assigned authorities of the new user group was not saved!", availableAuthorities,
+            assignedGlobalAuthorities);
 
-        Assert.assertEquals(
-            "Removing off all global authorities was not saved! Number of Authorities in Database is: "
-                    + authoritiesInDatabase,
-            3, availableGlobalAuthorities);
-    }
-
-    @Test
-    public void renameUserGroupTest() throws Exception {
-        String expectedTitle = "SeleniumGroup";
-
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
-        Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
-                .setUserGroupTitle(expectedTitle).save();
-
-        System.out.println(serviceManager.getUserGroupService().getById(1).getTitle());
-
-        Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLoginAsAdmin();
-        String actualTitle = Pages.getUsersPage().goTo().switchToUserGroupsTab().goToUserGroupEditPage(userGroup)
-                .getUserGroupTitle();
-
-        System.out.println(serviceManager.getUserGroupService().getById(1).getTitle());
-
-        Assert.assertEquals("New Name of user group was not saved", expectedTitle, actualTitle);
+        String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
+        Assert.assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
     }
 }

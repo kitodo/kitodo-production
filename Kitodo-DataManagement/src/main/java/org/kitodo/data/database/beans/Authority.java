@@ -142,4 +142,9 @@ public class Authority extends BaseIndexedBean {
     public int hashCode() {
         return title != null ? title.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return "Authority{" + "title='" + title + "\'" + '}' + "@" + Integer.toHexString(hashCode());
+    }
 }

@@ -42,9 +42,9 @@ public class Browser {
     private static int delayAfterLinkClick = 500;
     private static int delayAfterHoverMenu = 500;
     private static int delayAfterNewItemClick = 500;
-    private static int delayAfterPickListClick = 3000;
+    private static int delayAfterPickListClick = 1500;
 
-    public static void Initialize() throws IOException {
+    static void Initialize() throws IOException {
         String userDir = System.getProperty("user.dir");
 
         WebDriverProvider.provideChromDriver(CHROME_DRIVER_VERSION, userDir + "/target/downloads/",
@@ -60,19 +60,7 @@ public class Browser {
         if ("true".equals(System.getenv().get("TRAVIS"))) {
             logger.debug("TRAVIS environment detected");
             onTravis = true;
-            // doubleAllDelays();
         }
-    }
-
-    private static void doubleAllDelays() {
-        delayIndexing = delayIndexing * 2;
-        delayAfterSave = delayAfterSave * 2;
-        delayAfterLogin = delayAfterLogin * 2;
-        delayAfterLogout = delayAfterLogout * 2;
-        delayAfterLinkClick = delayAfterLinkClick * 2;
-        delayAfterHoverMenu = delayAfterHoverMenu * 2;
-        delayAfterNewItemClick = delayAfterNewItemClick * 2;
-        delayAfterPickListClick = delayAfterPickListClick * 2;
     }
 
     public static String getCurrentUrl() {
@@ -178,5 +166,14 @@ public class Browser {
      */
     public static int getDelayAfterLinkClick() {
         return delayAfterLinkClick;
+    }
+
+    /**
+     * Gets onTravis.
+     *
+     * @return True if this runs on Travis.
+     */
+    public static boolean isOnTravis() {
+        return onTravis;
     }
 }

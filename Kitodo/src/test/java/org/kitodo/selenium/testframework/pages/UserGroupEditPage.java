@@ -81,6 +81,12 @@ public class UserGroupEditPage {
         return this;
     }
 
+    public UserGroupEditPage assignAllGlobalAuthorities() throws InterruptedException {
+        getAddAllElementsButtonByPicklist(globalAuthoritiesPickList).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        return this;
+    }
+
     public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
         saveUserGroupButton.click();
         Thread.sleep(Browser.getDelayAfterSave());

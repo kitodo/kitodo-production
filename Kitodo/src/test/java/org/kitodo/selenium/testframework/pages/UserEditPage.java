@@ -46,7 +46,7 @@ public class UserEditPage {
     private WebElement metaDataLanguageInput;
 
     public void goTo() throws Exception {
-        Pages.getUsersPage().goToUserEditPage();
+        Pages.getUsersPage().createNewUser();
     }
 
     public UserEditPage insertUserData(User user) throws InterruptedException {
