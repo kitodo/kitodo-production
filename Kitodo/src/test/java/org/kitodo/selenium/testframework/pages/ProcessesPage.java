@@ -16,10 +16,21 @@ import org.kitodo.selenium.testframework.Pages;
 
 public class ProcessesPage {
 
-    public void goTo() throws Exception {
+    /**
+     * Goes to processes page.
+     *
+     * @return The processes page.
+     */
+    public ProcessesPage goTo() throws Exception {
         Pages.getTopNavigation().gotoProcesses();
+        return this;
     }
 
+    /**
+     * Checks if the browser is currently at processes page.
+     *
+     * @return True if browser is at processes page.
+     */
     public boolean isAt() throws InterruptedException {
         return Browser.getCurrentUrl().contains("processes");
     }

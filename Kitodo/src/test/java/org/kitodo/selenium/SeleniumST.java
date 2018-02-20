@@ -67,20 +67,23 @@ public class SeleniumST extends BaseTestSelenium {
     @Test
     public void reindexingTest() throws Exception {
         final float MAXIMUM_TIME_SEC = 40;
+        String indexingProgress = "";
         Pages.getIndexingPage().goTo().startReindexingAll();
 
         Timer timer = new Timer();
         timer.start();
         while (!Pages.getIndexingPage().isIndexingComplete()
                 && timer.getElapsedTimeAfterStartSec() < MAXIMUM_TIME_SEC) {
-            logger.debug("Indexing at: " + Pages.getIndexingPage().getIndexingProgress() + "%");
+            indexingProgress = Pages.getIndexingPage().getIndexingProgress();
+            logger.debug("Indexing at: " + indexingProgress + "%");
             Thread.sleep(Browser.getDelayIndexing());
         }
         timer.stop();
         Thread.sleep(Browser.getDelayIndexing());
 
         logger.info("Reindexing took: " + timer.getElapsedTimeSec() + " s");
-        Assert.assertTrue("Reindexing took to long", timer.getElapsedTimeSec() < MAXIMUM_TIME_SEC);
+        Assert.assertTrue("Reindexing took to long. Maximum time reached at: " + indexingProgress,
+            timer.getElapsedTimeSec() < MAXIMUM_TIME_SEC);
     }
 
     @Test
@@ -88,17 +91,17 @@ public class SeleniumST extends BaseTestSelenium {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("MockUserGroup");
 
-        Pages.getUsersPage().goTo().switchToUserGroupsTab().createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
+        Pages.getUsersPage().goTo().switchToTabByIndex(1).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
                 .assignAllGlobalAuthorities().save();
 
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
-        List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToUserGroupsTab()
+        List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
                 .getListOfUserGroupTitles();
         Assert.assertTrue("New user group was not saved", listOfUserGroupTitles.contains(userGroup.getTitle()));
 
         int availableAuthorities = serviceManager.getAuthorityService().getAll().size();
-        int assignedGlobalAuthorities = Pages.getUsersPage().switchToUserGroupsTab().editUserGroup(userGroup.getTitle())
+        int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
                 .countAssignedGlobalAuthorities();
         Assert.assertEquals("Assigned authorities of the new user group was not saved!", availableAuthorities,
             assignedGlobalAuthorities);

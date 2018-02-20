@@ -20,7 +20,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class LoginPage {
 
-    String url = "pages/login.jsf";
+    final String URL = "pages/login.jsf";
 
     @SuppressWarnings("unused")
     @FindBy(id = "login")
@@ -34,8 +34,14 @@ public class LoginPage {
     @FindBy(id = "password")
     private WebElement passwordInput;
 
-    public void goTo() {
-        Browser.goTo(url);
+    /**
+     * Goes to login page.
+     *
+     * @return The login page.
+     */
+    public LoginPage goTo() {
+        Browser.goTo(URL);
+        return this;
     }
 
     public void performLogin(User user) throws InterruptedException {

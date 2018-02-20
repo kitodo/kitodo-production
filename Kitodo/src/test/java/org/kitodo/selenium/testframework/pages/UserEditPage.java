@@ -12,6 +12,7 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.User;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -45,6 +46,11 @@ public class UserEditPage {
     @FindBy(id = "userEditForm:userTabView:metaDataLanguage")
     private WebElement metaDataLanguageInput;
 
+    /**
+     * Goes to users page.
+     *
+     * @return The users page.
+     */
     public void goTo() throws Exception {
         Pages.getUsersPage().createNewUser();
     }
@@ -61,7 +67,7 @@ public class UserEditPage {
 
     public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
         saveUserButton.click();
-        Thread.sleep(3000);
+        Thread.sleep(Browser.getDelayAfterSave());
         return Pages.getUsersPage();
     }
 

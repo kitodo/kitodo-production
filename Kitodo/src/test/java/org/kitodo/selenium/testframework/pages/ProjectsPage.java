@@ -16,10 +16,21 @@ import org.kitodo.selenium.testframework.Pages;
 
 public class ProjectsPage {
 
-    public void goTo() throws Exception {
+    /**
+     * Goes to projects page.
+     *
+     * @return The projects page.
+     */
+    public ProjectsPage goTo() throws Exception {
         Pages.getTopNavigation().gotoProjects();
+        return this;
     }
 
+    /**
+     * Checks if the browser is currently at projects page.
+     *
+     * @return True if browser is at projects page.
+     */
     public boolean isAt() throws InterruptedException {
         return Browser.getCurrentUrl().contains("projects");
     }

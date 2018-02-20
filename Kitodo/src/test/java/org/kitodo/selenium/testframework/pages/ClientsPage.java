@@ -11,11 +11,10 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import java.util.List;
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -27,12 +26,22 @@ public class ClientsPage {
 
     @SuppressWarnings("unused")
     @FindBy(id = "clientsTable_data")
-    private WebElement clientsTableData;
+    private WebElement clientsTable;
 
+    /**
+     * Goes to clients page.
+     *
+     * @return The clients page.
+     */
     public void goTo() throws Exception {
         Pages.getTopNavigation().gotoClients();
     }
 
+    /**
+     * Checks if the browser is currently at clients page.
+     *
+     * @return True if browser is at clients page.
+     */
     public boolean isAt() throws InterruptedException {
         return Browser.getCurrentUrl().contains("clients");
     }
@@ -41,8 +50,7 @@ public class ClientsPage {
         if (!isAt()) {
             goTo();
         }
-        List<WebElement> listOfRows = clientsTableData.findElements(By.tagName("tr"));
-        return listOfRows.size();
+        return getRowsOfTable(clientsTable).size();
     }
 
 }

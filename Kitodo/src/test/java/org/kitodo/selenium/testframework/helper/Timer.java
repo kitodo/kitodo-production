@@ -16,10 +16,20 @@ public class Timer {
     private Long startTime;
     private Long stopTime;
 
+    /**
+     * Starts the timer.
+     */
     public void start() {
         startTime = System.currentTimeMillis();
+        stopTime = null;
     }
 
+    /**
+     * Stops the timer.
+     * 
+     * @throws IllegalAccessException
+     *             Throws IllegalAccessException if timer hat not started before.
+     */
     public void stop() throws IllegalAccessException {
         if (startTime != null) {
             stopTime = System.currentTimeMillis();
@@ -28,10 +38,20 @@ public class Timer {
         }
     }
 
+    /**
+     * Gets elapsed time since start of the time (timer can still run).
+     * 
+     * @return The elapsed time in seconds.
+     */
     public float getElapsedTimeAfterStartSec() {
         return (System.currentTimeMillis() - startTime) / 1000F;
     }
 
+    /**
+     * Gets elapsed time between last start and stop of the timer
+     * 
+     * @return The elapsed time in seconds.
+     */
     public float getElapsedTimeSec() {
         return (stopTime - startTime) / 1000F;
     }

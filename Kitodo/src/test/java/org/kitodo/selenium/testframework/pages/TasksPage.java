@@ -16,10 +16,21 @@ import org.kitodo.selenium.testframework.Pages;
 
 public class TasksPage {
 
-    public void goTo() throws Exception {
+    /**
+     * Goes to tasks page.
+     *
+     * @return The tasks page.
+     */
+    public TasksPage goTo() throws Exception {
         Pages.getTopNavigation().gotoTasks();
+        return this;
     }
 
+    /**
+     * Checks if the browser is currently at tasks page.
+     *
+     * @return True if browser is at tasks page.
+     */
     public boolean isAt() throws InterruptedException {
         return Browser.getCurrentUrl().contains("tasks");
     }

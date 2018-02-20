@@ -13,13 +13,17 @@ package org.kitodo.selenium.testframework;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.helper.WebDriverProvider;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -44,6 +48,9 @@ public class Browser {
     private static int delayAfterNewItemClick = 500;
     private static int delayAfterPickListClick = 1500;
 
+    /**
+     * Provides the web driver, sets timeout and window size.
+     */
     static void Initialize() throws IOException {
         String userDir = System.getProperty("user.dir");
 
@@ -63,28 +70,63 @@ public class Browser {
         }
     }
 
+    /**
+     * Gets current url.
+     * 
+     * @return The current url.
+     */
     public static String getCurrentUrl() {
         return webDriver.getCurrentUrl();
     }
 
+    /**
+     * Gets the driver for sending remote commands to the browser.
+     * 
+     * @return The Web Driver.
+     */
     public static RemoteWebDriver getDriver() {
         return webDriver;
     }
 
+    /**
+     * Can be used give an url to which the browser navigates.
+     * 
+     * @param url
+     *            The url as String.
+     */
     public static void goTo(String url) {
         webDriver.get(BASE_URL + url);
     }
 
+    /**
+     * Closed the browser and quits the web driver.
+     */
     public static void close() {
         webDriver.close();
         webDriver.quit();
     }
 
+    /**
+     * Hovers the given web element.
+     * 
+     * @param webElement
+     *            The web element.
+     */
     public static void hoverWebElement(WebElement webElement) throws InterruptedException {
         actions.moveToElement(webElement).pause(delayAfterHoverMenu).build().perform();
     }
 
-    public static File captureScreenShot() {
+    /**
+     * Scrolls to a given web element.
+     * 
+     * @param webElement
+     *            The web element
+     */
+    public static void scrollWebElementIntoView(WebElement webElement) {
+        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView();", webElement);
+    }
+
+    static File captureScreenShot() {
 
         File src = webDriver.getScreenshotAs(OutputType.FILE);
         File screenshotFile = new File(System.getProperty("user.dir") + "/target/Selenium/" + "screen.png");
@@ -94,6 +136,28 @@ public class Browser {
             logger.error(e.getMessage());
         }
         return screenshotFile;
+    }
+
+    public static List<WebElement> getRowsOfTable(WebElement table) {
+        return table.findElements(By.tagName("tr"));
+    }
+
+    public static List<WebElement> getCellsOfRow(WebElement row) {
+        return row.findElements(By.tagName("td"));
+    }
+
+    public static List<String> getTableDataByColumn(WebElement table, int columnIndex) {
+        List<WebElement> rows = getRowsOfTable(table);
+        List<String> data = new ArrayList<>();
+        for (WebElement row : rows) {
+            data.add(getCellDataByRow(row, columnIndex));
+        }
+        return data;
+    }
+
+    public static String getCellDataByRow(WebElement row, int columnIndex) {
+        List<WebElement> cells = getCellsOfRow(row);
+        return cells.get(columnIndex).getText();
     }
 
     /**

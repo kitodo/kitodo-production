@@ -15,6 +15,23 @@ import org.kitodo.selenium.testframework.Browser;
 
 public class StartPage {
 
+    private final String URL = "pages/start.jsf";
+
+    /**
+     * Goes to help page.
+     *
+     * @return The help page.
+     */
+    public StartPage goTo() throws Exception {
+        Browser.goTo(URL);
+        return this;
+    }
+
+    /**
+     * Checks if the browser is currently at start page.
+     *
+     * @return True if browser is at start page.
+     */
     public boolean isAt() throws InterruptedException {
         return Browser.getCurrentUrl().contains("start");
     }

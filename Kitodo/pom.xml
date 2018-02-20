@@ -32,6 +32,7 @@
         <parent.basedir>${basedir}/../</parent.basedir>
         <maxAllowedViolations>126</maxAllowedViolations>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
+        <selenium.version>3.9.1</selenium.version>
     </properties>
 
     <dependencies>
@@ -245,7 +246,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
-            <version>3.9.1</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -262,7 +263,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-chrome-driver</artifactId>
-            <version>3.9.1</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -279,7 +280,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-support</artifactId>
-            <version>3.9.1</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
 

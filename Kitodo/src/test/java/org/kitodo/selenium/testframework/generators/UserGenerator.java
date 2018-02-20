@@ -30,8 +30,6 @@ public class UserGenerator {
 
     private static String generatePassword() {
         int length = 10;
-        boolean useLetters = true;
-        boolean useNumbers = false;
-        return RandomStringUtils.random(length, useLetters, useNumbers);
+        return RandomStringUtils.random(length, true, false);
     }
 }

@@ -28,6 +28,22 @@ public class MailSender {
 
     private static final Logger logger = LogManager.getLogger(MailSender.class);
 
+    /**
+     * Sends an email.
+     * 
+     * @param user
+     *            The user name for login in to email account.
+     * @param password
+     *            The password for login in to email account.
+     * @param subject
+     *            The email subject.
+     * @param message
+     *            The email message.
+     * @param attachedFile
+     *            The attached file.
+     * @param recipient
+     *            The recipient email address.
+     */
     public static void sendEmail(String user, String password, String subject, String message, File attachedFile,
             String recipient) throws EmailException, AddressException {
 
