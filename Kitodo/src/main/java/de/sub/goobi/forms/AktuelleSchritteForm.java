@@ -964,9 +964,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public void loadMyStep(int id) {
         try {
-            if (!Objects.equals(id, null)) {
-                setMySchritt(this.serviceManager.getTaskService().getById(id));
-            }
+            setMySchritt(this.serviceManager.getTaskService().getById(id));
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving task with ID '" + id + "'; ", e.getMessage());
         }

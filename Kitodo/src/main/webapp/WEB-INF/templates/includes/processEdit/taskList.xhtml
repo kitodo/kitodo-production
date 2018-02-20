@@ -23,7 +23,6 @@
 
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
-            <!-- TODO funktioniert der Link? -->
             <h:outputText value="#{item.ordering}"/>
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
                              id="orderUp"
@@ -55,7 +54,7 @@
                                 alt="status"/>
                 <p:panelGrid columns="1" cellpadding="0" cellspacing="0" style="background: transparent"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                    <!-- Bearbeitungsstatus hoch und runter -->
+                    <!-- Set workflow state to next step -->
                     <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusUp}"
                                    id="taskStatusUp"
                                    title="#{msgs.statusHoeherSetzen}"
@@ -66,7 +65,7 @@
                                 target="#{ProzessverwaltungForm.taskReload}"
                                 value="#{item}"/>
                     </p:commandLink>
-                    <!-- Bearbeitungsstatus hoch und runter -->
+                    <!-- Set workflow state to previous step -->
                     <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusDown}"
                                    id="taskStatusDown"
                                    title="#{msgs.statusRunterSetzen}"
