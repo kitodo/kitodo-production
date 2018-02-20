@@ -35,6 +35,7 @@ public class BasisForm implements Serializable {
     protected User user;
     protected String sortierung = "prozessAsc";
     static final String REDIRECT_PARAMETER = "faces-redirect=true";
+    static final String TEMPLATE_ROOT = "/pages/";
     private int activeTabId = 0;
 
     private LazyDTOModel lazyDTOModel = null;

@@ -122,7 +122,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private static String DONEDIRECTORYNAME = "fertig/";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
 
-    private static final String TEMPLATE_ROOT = "/pages/";
     private static final String PROCESS_LIST_PATH = TEMPLATE_ROOT + "processes";
     private static final String PROCESS_LIST_PATH_OLD = TEMPLATE_ROOT + "ProzessverwaltungAlle";
     private static final String PROCESS_EDIT_PATH = TEMPLATE_ROOT + "processEdit";
