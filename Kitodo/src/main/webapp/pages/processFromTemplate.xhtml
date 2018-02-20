@@ -35,155 +35,18 @@
             <p:tabView>
                 <p:tab title="#{msgs.prozessdaten}">
 
-                    <h:panelGrid columns="2" width="100%" border="0" style="font-size:12px;margin-left:30px" rowClasses="rowTop"
-                                 columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
+                    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processDataEdit.xhtml" />
 
-                        <!-- Prozessvorlage -->
-                        <h:outputText value="#{msgs.prozessvorlage}"/>
-                        <h:outputText value="#{ProzesskopieForm.prozessVorlage.title}"/>
-
-                        <!-- ProzessTitel -->
-                        <h:outputText value="#{msgs.prozessTitel}"/>
-                        <h:panelGroup>
-                            <h:inputText value="#{ProzesskopieForm.prozessKopie.title}" styleClass="prozessKopieFeldbreite"/>
-                            <h:commandLink action="#{ProzesskopieForm.calculateProcessTitle}" value="#{msgs.generieren}"/>
-                        </h:panelGroup>
-
-                        <!-- DocType -->
-                        <h:outputText value="DocType" rendered="#{ProzesskopieForm.standardFields.doctype}"/>
-                        <h:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.standardFields.doctype}"
-                                         onchange="submit()"
-                                         styleClass="prozessKopieFeldbreite">
-                            <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
-                                           itemValue="#{step.title}"/>
-                        </h:selectOneMenu>
-
-                        <!-- Preferences -->
-                        <h:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.preferences}" value="#{msgs.regelsatz}"/>
-                        <h:panelGroup rendered="#{ProzesskopieForm.standardFields.preferences}">
-                            <h:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
-                                             onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"
-                                             required="true">
-                                <f:selectItems value="#{HelperForm.regelsaetze}"/>
-                            </h:selectOneMenu>
-                            <!--<t:message for="Regelsatz" style="color: red" replaceIdWithLabel="true"/>-->
-                        </h:panelGroup>
-
-                        <!-- digitale Kollektion -->
-                        <h:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
-                                       value="#{msgs.digitaleKollektionen}"/>
-                        <h:selectManyListbox id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
-                                             rendered="#{ProzesskopieForm.standardFields.collections}"
-                                             value="#{ProzesskopieForm.digitalCollections}">
-                            <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
-                                           itemValue="#{step}"/>
-                        </h:selectManyListbox>
-
-                        <!-- Tifheader - Documentname -->
-                        <h:outputText value="#{msgs.tifheaderdocumentname}"/>
-                        <h:inputText value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
-
-                        <!-- Tifheader - Imagedescription -->
-                        <h:outputText value="#{msgs.tifheaderimagedescription}"/>
-                        <h:inputText value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
-
-                        <h:outputText value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}"/>
-                        <h:selectBooleanCheckbox rendered="#{ProzesskopieForm.useTemplates}"
-                                                 value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
-
-                        <h:outputText value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}"/>
-                        <h:inputText value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}"
-                                     styleClass="prozessKopieFeldbreite"/>
-
-                    </h:panelGrid>
                 </p:tab>
                 <p:tab title="#{msgs.zusaetzlicheDetails}">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <table style="margin-left:30px" cellspacing="0">
-                            <p:dataList var="intern" style="font-weight: normal;margin-left:30px" value="#{ProzesskopieForm.additionalFields}"
-                                        layout="ordered list"
-                                        rowCountVar="rowCount" rowIndexVar="rowIndex">
-                                <ui:fragment rendered="#{intern.showDependingOnDoctype}">
-                                    <tr>
-                                        <td width="150">
-                                            <h:outputText value="#{intern.title}:"/>
-                                        </td>
-                                        <td>
-                                            <h:inputText value="#{intern.value}" styleClass="prozessKopieFeldbreite"
-                                                         rendered="#{intern.selectList==null}"/>
-                                            <!--  		<h:selectOneMenu  value="#{intern.wert}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList!=null}">
-                                            <f:selectItems value="#{intern.selectList}" />
-                                        </h:selectOneMenu> -->
-                                            <h:selectOneListbox value="#{intern.value}" styleClass="prozessKopieFeldbreite"
-                                                                rendered="#{intern.selectList!=null}">
-                                                <f:selectItems value="#{intern.selectList}"/>
-                                            </h:selectOneListbox>
 
-                                            <h:outputText value="*" rendered="#{intern.required}"/>
-                                        </td>
-                                    </tr>
-                                </ui:fragment>
+                    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processAdditionalDataEdit.xhtml" />
 
-                            </p:dataList>
-
-                            <tr class="rowTop">
-                                <td width="150" style="">
-                                    <h:outputText value="#{msgs.addToProcessLog}:"/>
-                                </td>
-                                <td>
-                                    <h:inputTextarea value="#{ProzesskopieForm.addToWikiField}" styleClass="prozessKopieFeldbreite"/>
-                                </td>
-                            </tr>
-
-                        </table>
-                    </h:panelGrid>
                 </p:tab>
                 <p:tab title="#{msgs.suche}">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <!-- aus den bereits vorhandenen Prozessen einen auswaehlen -->
-                        <h:outputText value="#{msgs.AuswaehlenAusVorhandenenProzessen}" rendered="#{ProzesskopieForm.useTemplates}"/>
-                        <h:selectOneMenu value="#{ProzesskopieForm.auswahl}" rendered="#{ProzesskopieForm.useTemplates}"
-                                         style="margin-left:10px;margin-right:10px; width:200px">
-                            <f:selectItems value="#{ProzesskopieForm.prozessTemplates}"/>
-                        </h:selectOneMenu>
-                        <h:commandLink action="#{ProzesskopieForm.templateAuswahlAuswerten}" rendered="#{ProzesskopieForm.useTemplates}"
-                                       title="#{msgs.AuswaehlenAusVorhandenenProzessen}">
-                            <h:graphicImage alt="" value="/pages/images/buttons/copy.gif"
-                                            style="vertical-align:middle; margin-right:3px"/>
-                            <h:outputText value="#{msgs.uebernehmen}"/>
-                        </h:commandLink>
-                        <!-- aus dem Opac auswaehlen -->
-                        <h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
-                            <h:outputText value="#{msgs.sucheImOpac}" style="display:inline"/>
 
-                            <h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}"
-                                             style="display:inline; margin-left:7px">
-                                <f:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}"
-                                               itemValue="#{step}"/>
-                            </h:selectOneMenu>
-                            <h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px"/>
-                            <h:selectOneMenu id="feldauswahl" value="#{ProzesskopieForm.opacSuchfeld}"
-                                             style="display:inline; margin-left:10px">
-                                <f:selectItem itemLabel="Identifier" itemValue="12"/>
-                                <f:selectItem itemLabel="Barcode" itemValue="8535"/>
-                                <f:selectItem itemLabel="Barcode 8200" itemValue="8200"/>
-                                <f:selectItem itemLabel="ISBN" itemValue="7"/>
-                                <f:selectItem itemLabel="ISSN" itemValue="8"/>
-                                <f:selectItem itemLabel="Title" itemValue="4"/>
-                                <f:selectItem itemLabel="ZDB-ID" itemValue="8506"/>
-                            </h:selectOneMenu>
+                    <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processSearchEdit.xhtml" />
 
-                        </h:panelGroup>
-                        <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}"
-                                     style="margin-left:7px;margin-right:7px; width:200px"
-                                     onkeypress="return checkOpac('OpacRequest',event)"/>
-                        <h:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery"
-                                       rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
-                            <h:graphicImage alt="query opac" value="/pages/images/buttons/opac.gif"
-                                            style="vertical-align:middle; margin-right:3px"/>
-                            <h:outputText value="#{msgs.uebernehmen}"/>
-                        </h:commandLink>
-                    </h:panelGrid>
                 </p:tab>
             </p:tabView>
         </h:form>
