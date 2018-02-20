@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
@@ -21,44 +21,43 @@
         <f:viewParam name="id"/>
         <f:viewAction action="#{ProzessverwaltungForm.loadTask(id)}" />
     </f:metadata>
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="taskEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.schrittHinzufuegen}"
-                                      rendered="#{empty ProzessverwaltungForm.task.title}"/>
-                        <h:outputText value="#{msgs.schrittDetails} (#{ProzessverwaltungForm.task.title})"
-                                      rendered="#{not empty ProzessverwaltungForm.task.title}"/>
-                    </h3>
-                    <p:commandButton id="save" value="#{msgs.speichern}"
-                                     action="#{ProzessverwaltungForm.saveTaskAndRedirect}"
-                                     icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right"
-                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                                     update="notifications"/>
-                    <p:button id="cancel" value="#{msgs.abbrechen}" outcome="processEdit?id=#{ProzessverwaltungForm.process.id}"
-                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-                </p:panel>
-                <p:messages autoUpdate="true"/>
-                <p:tabView id="tabs">
-                    <p:tab title="#{msgs.details}">
-                        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditDetails.xhtml"/>
-                    </p:tab>
-                    <p:tab title="#{msgs.benutzer}">
-                        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsers.xhtml"/>
-                    </p:tab>
-                    <p:tab title="#{msgs.benutzergruppen}">
-                        <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsergroups.xhtml"/>
-                    </p:tab>
-                </p:tabView>
-            </h:form>
-        </p:panel>
+
+    <ui:define name="contentHeader">
+        <h3>
+            <h:outputText value="#{msgs.schrittHinzufuegen}"
+                          rendered="#{empty ProzessverwaltungForm.task.title}"/>
+            <h:outputText value="#{msgs.schrittDetails} (#{ProzessverwaltungForm.task.title})"
+                          rendered="#{not empty ProzessverwaltungForm.task.title}"/>
+        </h3>
+        <p:commandButton id="save" value="#{msgs.speichern}"
+                         action="#{ProzessverwaltungForm.saveTaskAndRedirect}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         update="notifications"/>
+        <p:button id="cancel" value="#{msgs.abbrechen}" outcome="processEdit?id=#{ProzessverwaltungForm.process.id}"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="tabs">
+            <p:tab title="#{msgs.details}">
+                <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditDetails.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.benutzer}">
+                <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsers.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.benutzergruppen}">
+                <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsergroups.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsergroupsPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/taskEdit/taskEditUsersPopup.xhtml"/>
     </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>

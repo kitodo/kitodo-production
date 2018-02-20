@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -21,61 +21,59 @@
         <f:viewParam name="id"/>
         <f:viewAction action="#{RulesetForm.loadRuleset(id)}"/>
     </f:metadata>
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="rulesetEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.regelsatzBearbeiten} (#{RulesetForm.ruleset.title})"
-                                      rendered="#{not empty RulesetForm.ruleset.title}"/>
-                        <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
-                                      rendered="#{empty RulesetForm.ruleset.title}"/>
-                    </h3>
-                    <p:commandButton id="save"
-                                     value="#{msgs.speichern}"
-                                     action="#{RulesetForm.saveRuleset}"
-                                     update="notifications"
-                                     icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right"
-                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                                     styleClass="button-filled-blue"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
-                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-                </p:panel>
-                <p:messages autoUpdate="true" />
-                <p:tabView id="rulesetTabView">
-                    <p:tab id="rulesetTab" title="#{msgs.details}">
-                        <p:panelGrid columns="2" layout="grid">
-                            <p:row>
-                                <div>
-                                    <p:outputLabel for="title" value="#{msgs.titel}"/>
-                                    <p:inputText id="title"
-                                                 class="input"
-                                                 placeholder="#{msgs.titel}"
-                                                 value="#{RulesetForm.ruleset.title}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="file" value="#{msgs.datei}"/>
-                                    <p:inputText id="file"
-                                                 class="input"
-                                                 placeholder="#{msgs.datei}"
-                                                 value="#{RulesetForm.ruleset.file}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
-                                    <p:selectBooleanCheckbox id="sortByRuleset"
-                                                             value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
-                                </div>
-                            </p:row>
-                            <p:row/>
-                        </p:panelGrid>
-                    </p:tab>
-                </p:tabView>
-            </h:form>
-        </p:panel>
+
+    <ui:define name="contentHeader">
+        <h3>
+            <h:outputText value="#{msgs.regelsatzBearbeiten} (#{RulesetForm.ruleset.title})"
+                          rendered="#{not empty RulesetForm.ruleset.title}"/>
+            <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
+                          rendered="#{empty RulesetForm.ruleset.title}"/>
+        </h3>
+        <p:commandButton id="save"
+                         value="#{msgs.speichern}"
+                         action="#{RulesetForm.saveRuleset}"
+                         update="notifications"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         styleClass="button-filled-blue"/>
+        <p:button value="#{msgs.abbrechen}" outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="rulesetTabView">
+            <p:tab id="rulesetTab" title="#{msgs.details}">
+                <p:panelGrid columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="title" value="#{msgs.titel}"/>
+                            <p:inputText id="title"
+                                         class="input"
+                                         placeholder="#{msgs.titel}"
+                                         value="#{RulesetForm.ruleset.title}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="file" value="#{msgs.datei}"/>
+                            <p:inputText id="file"
+                                         class="input"
+                                         placeholder="#{msgs.datei}"
+                                         value="#{RulesetForm.ruleset.file}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
+                            <p:selectBooleanCheckbox id="sortByRuleset"
+                                                     value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
+                        </div>
+                    </p:row>
+                    <p:row/>
+                </p:panelGrid>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>

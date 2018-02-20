@@ -12,52 +12,52 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         >
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <p:panel styleClass="content-header">
-                <h3>#{msgs.projekte}</h3>
-                <h:form>
-                    <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
-                        <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick" immediate="true" />
-                        <p:menuitem value="#{msgs.newProcessTemplate}" action="#{ProzessverwaltungForm.newTemplate}"
-                                    immediate="true" style="width: inherit;"
-                                    rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}"
-                                    icon="ui-icon-plusthick"/>
-                        <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
-                                    immediate="true"
-                                    rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                    icon="ui-icon-plusthick"/>
-                        <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
-                                    rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                    icon="ui-icon-plusthick"/>
-                    </p:menuButton>
-                </h:form>
-            </p:panel>
-            <p:tabView activeIndex="#{ProjekteForm.activeTabIndex}" id="projectsTabView">
-                <p:ajax event="tabChange" listener="#{ProjekteForm.onTabChange}"/>
-                <p:tab title="#{msgs.projectList}" id="projectTab">
-                    <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
-                </p:tab>
-                <p:tab title="#{msgs.prozessvorlagen}" id="templateTab">
-                    <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
-                </p:tab>
-                <p:tab title="#{msgs.workflows}" id="workflowTab">
-                    <ui:include src="/WEB-INF/templates/includes/projects/workflowList.xhtml"/>
-                </p:tab>
-                <p:tab title="#{msgs.dockets}" id="docketTab">
-                    <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
-                </p:tab>
-                <p:tab title="#{msgs.regelsaetze}" id="rulesetTab">
-                    <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
-                </p:tab>
-            </p:tabView>
-        </p:panel>
+    <ui:define name="contentHeader">
+        <h3>#{msgs.projekte}</h3>
+        <h:form>
+            <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+                <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick" immediate="true" />
+                <p:menuitem value="#{msgs.newProcessTemplate}" action="#{ProzessverwaltungForm.newTemplate}"
+                            immediate="true" style="width: inherit;"
+                            rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}"
+                            icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
+                            immediate="true"
+                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                            icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
+                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                            icon="ui-icon-plusthick"/>
+            </p:menuButton>
+        </h:form>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView activeIndex="#{ProjekteForm.activeTabIndex}" id="projectsTabView">
+            <p:ajax event="tabChange" listener="#{ProjekteForm.onTabChange}"/>
+            <p:tab title="#{msgs.projectList}" id="projectTab">
+                <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.prozessvorlagen}" id="templateTab">
+                <ui:include src="/WEB-INF/templates/includes/projects/templateList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.workflows}" id="workflowTab">
+                <ui:include src="/WEB-INF/templates/includes/projects/workflowList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.dockets}" id="docketTab">
+                <ui:include src="/WEB-INF/templates/includes/projects/docketList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.regelsaetze}" id="rulesetTab">
+                <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><a href="">#{msgs.projekte}</a></li>

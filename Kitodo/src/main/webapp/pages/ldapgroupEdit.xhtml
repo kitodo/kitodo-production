@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -21,194 +21,191 @@
         <f:viewParam name="id"/>
         <f:viewAction action="#{LdapGruppenForm.loadLdapGroup(id)}"/>
     </f:metadata>
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="ldapgroupEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.ldapgruppeBearbeiten} (#{LdapGruppenForm.myLdapGruppe.title})"
-                                      rendered="#{not empty LdapGruppenForm.myLdapGruppe.title}"/>
-                        <h:outputText value="#{msgs.neueLdapgruppeAnlegen}"
-                                      rendered="#{empty LdapGruppenForm.myLdapGruppe.title}"/>
-                    </h3>
-                    <p:commandButton id="save"
-                                     value="#{msgs.speichern}"
-                                     action="#{LdapGruppenForm.Speichern}"
-                                     icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right"
-                                     styleClass="button-filled-blue"
-                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.ldapgroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                                     update="notifications"/>
-                    <p:button id="cancel" value="#{msgs.abbrechen}"
-                              outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
-                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-                </p:panel>
-                <!-- main form -->
-                <p:messages id="useredit-messages" autoUpdate="true" />
-                <p:tabView id="ldabgroupTabView">
-                    <p:tab id="labgroupTab" title="#{msgs.details}">
-                        <p:panelGrid columns="2" layout="grid">
-                            <p:row>
-                                <div>
-                                    <p:outputLabel for="title" value="#{msgs.titel}"/>
-                                    <p:inputText id="title"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.title}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="userDn" value="#{msgs.userDN}"/>
-                                    <p:inputText id="userDn"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.userDN}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="homeDirectory" value="homeDirectory"/>
-                                    <p:inputText id="homeDirectory"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.homeDirectory}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="gidNumber" value="gidNumber"/>
-                                    <p:inputText id="gidNumber"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.gidNumber}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="objectClasses" value="objectClasses"/>
-                                    <p:inputText id="objectClasses"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.objectClasses}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaSid" value="sambaSID"/>
-                                    <p:inputText id="sambaSid"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaSID}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sn" value="sn"/>
-                                    <p:inputText id="sn"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sn}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="uid" value="uid"/>
-                                    <p:inputText id="uid"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.uid}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="description" value="description"/>
-                                    <p:inputText id="description"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.description}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="displayName" value="displayName"/>
-                                    <p:inputText id="displayName"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.displayName}"
-                                                 required="true"/>
-                                </div>
-                            </p:row>
-                            <p:row>
-                                <div>
-                                    <p:outputLabel for="gecos" value="gecos"/>
-                                    <p:inputText id="gecos"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.gecos}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="loginShell" value="loginShell"/>
-                                    <p:inputText id="loginShell"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.loginShell}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaAcctFlags" value="sambaAcctFlags"/>
-                                    <p:inputText id="sambaAcctFlags"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaAcctFlags}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaLogonScript" value="sambaLogonScript"/>
-                                    <p:inputText id="sambaLogonScript"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaLogonScript}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaPrimaryGroupSid" value="sambaPrimaryGroupSID"/>
-                                    <p:inputText id="sambaPrimaryGroupSid"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaPrimaryGroupSID}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaPwdMustChange" value="sambaPwdMustChange"/>
-                                    <p:inputText id="sambaPwdMustChange"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaPwdMustChange}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaPasswordHistory" value="sambaPasswordHistory"/>
-                                    <p:inputText id="sambaPasswordHistory"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaPasswordHistory}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaLogonHours" value="sambaLogonHours"/>
-                                    <p:inputText id="sambaLogonHours"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaLogonHours}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="sambaKickoffTime" value="sambaKickoffTime"/>
-                                    <p:inputText id="sambaKickoffTime"
-                                                 class="input"
-                                                 value="#{LdapGruppenForm.myLdapGruppe.sambaKickoffTime}"
-                                                 required="true"/>
-                                </div>
-                            </p:row>
-                        </p:panelGrid>
-                        <p:panel styleClass="content-header">
-                            <p:commandButton id="delete"
-                                             value="#{msgs.loeschen}"
-                                             onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
-                                             action="#{LdapGruppenForm.Loeschen}"
-                                             rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}"
-                                             icon="fa fa-trash-o fa-lg"
-                                             iconPos="right"/>
-                            <p:commandButton id="clear"
-                                             value="#{msgs.clearData}"
-                                             action="ldapgroupEdit"
-                                             rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}"
-                                             icon="fa fa-trash-o fa-lg"
-                                             iconPos="right"
-                                             update=":ldapgroupEditForm"
-                                             immediate="true"
-                                             onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"/>
-                        </p:panel>
-                    </p:tab>
-                </p:tabView>
-            </h:form>
-        </p:panel>
+
+    <ui:define name="contentHeader">
+        <h3>
+            <h:outputText value="#{msgs.ldapgruppeBearbeiten} (#{LdapGruppenForm.myLdapGruppe.title})"
+                          rendered="#{not empty LdapGruppenForm.myLdapGruppe.title}"/>
+            <h:outputText value="#{msgs.neueLdapgruppeAnlegen}"
+                          rendered="#{empty LdapGruppenForm.myLdapGruppe.title}"/>
+        </h3>
+        <p:commandButton id="save"
+                         value="#{msgs.speichern}"
+                         action="#{LdapGruppenForm.Speichern}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         styleClass="button-filled-blue"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.ldapgroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         update="notifications"/>
+        <p:button id="cancel" value="#{msgs.abbrechen}"
+                  outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="ldabgroupTabView">
+            <p:tab id="labgroupTab" title="#{msgs.details}">
+                <p:panelGrid columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="title" value="#{msgs.titel}"/>
+                            <p:inputText id="title"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.title}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="userDn" value="#{msgs.userDN}"/>
+                            <p:inputText id="userDn"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.userDN}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="homeDirectory" value="homeDirectory"/>
+                            <p:inputText id="homeDirectory"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.homeDirectory}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="gidNumber" value="gidNumber"/>
+                            <p:inputText id="gidNumber"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.gidNumber}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="objectClasses" value="objectClasses"/>
+                            <p:inputText id="objectClasses"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.objectClasses}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaSid" value="sambaSID"/>
+                            <p:inputText id="sambaSid"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaSID}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sn" value="sn"/>
+                            <p:inputText id="sn"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sn}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="uid" value="uid"/>
+                            <p:inputText id="uid"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.uid}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="description" value="description"/>
+                            <p:inputText id="description"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.description}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="displayName" value="displayName"/>
+                            <p:inputText id="displayName"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.displayName}"
+                                         required="true"/>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="gecos" value="gecos"/>
+                            <p:inputText id="gecos"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.gecos}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="loginShell" value="loginShell"/>
+                            <p:inputText id="loginShell"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.loginShell}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaAcctFlags" value="sambaAcctFlags"/>
+                            <p:inputText id="sambaAcctFlags"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaAcctFlags}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaLogonScript" value="sambaLogonScript"/>
+                            <p:inputText id="sambaLogonScript"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaLogonScript}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaPrimaryGroupSid" value="sambaPrimaryGroupSID"/>
+                            <p:inputText id="sambaPrimaryGroupSid"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaPrimaryGroupSID}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaPwdMustChange" value="sambaPwdMustChange"/>
+                            <p:inputText id="sambaPwdMustChange"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaPwdMustChange}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaPasswordHistory" value="sambaPasswordHistory"/>
+                            <p:inputText id="sambaPasswordHistory"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaPasswordHistory}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaLogonHours" value="sambaLogonHours"/>
+                            <p:inputText id="sambaLogonHours"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaLogonHours}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="sambaKickoffTime" value="sambaKickoffTime"/>
+                            <p:inputText id="sambaKickoffTime"
+                                         class="input"
+                                         value="#{LdapGruppenForm.myLdapGruppe.sambaKickoffTime}"
+                                         required="true"/>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+                <p:panel styleClass="content-header">
+                    <p:commandButton id="delete"
+                                     value="#{msgs.loeschen}"
+                                     onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
+                                     action="#{LdapGruppenForm.Loeschen}"
+                                     rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}"
+                                     icon="fa fa-trash-o fa-lg"
+                                     iconPos="right"/>
+                    <p:commandButton id="clear"
+                                     value="#{msgs.clearData}"
+                                     action="ldapgroupEdit"
+                                     rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}"
+                                     icon="fa fa-trash-o fa-lg"
+                                     iconPos="right"
+                                     update="editForm"
+                                     immediate="true"
+                                     onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"/>
+                </p:panel>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>

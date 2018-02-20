@@ -12,40 +12,41 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseListView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <p:panel styleClass="content-header">
-                <h3>#{msgs.users}</h3>
-                <h:form id="newElementForm">
-                    <p:menuButton value="#{msgs.newElement}" id="newElementButton" icon="fa fa-plus-circle fa-lg"
-                                  iconPos="right" styleClass="button-filled-green">
-                        <p:menuitem value="#{msgs.newUser}" id="newUserButton"
-                                    action="#{BenutzerverwaltungForm.newUser}" icon="ui-icon-plusthick"/>
-                        <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
-                                    action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick"/>
-                        <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.Neu}"
-                                    icon="ui-icon-plusthick"/>
-                    </p:menuButton>
-                </h:form>
-            </p:panel>
-            <p:tabView activeIndex="#{BenutzerverwaltungForm.activeTabIndex}" id="usersTabView">
-                <p:ajax event="tabChange" listener="#{BenutzerverwaltungForm.onTabChange}"/>
-                <p:tab title="#{msgs.benutzerverwaltung}">
-                    <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
-                </p:tab>
-                <p:tab title="#{msgs.benutzergruppen}">
-                    <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
-                </p:tab>
-                <p:tab title="#{msgs.ldapgruppen}">
-                    <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
-                </p:tab>
-            </p:tabView>
-        </p:panel>
+
+    <ui:define name="contentHeader">
+        <h3>#{msgs.users}</h3>
+        <h:form id="newElementForm">
+            <p:menuButton value="#{msgs.newElement}" id="newElementButton" icon="fa fa-plus-circle fa-lg"
+                          iconPos="right" styleClass="button-filled-green">
+                <p:menuitem value="#{msgs.newUser}" id="newUserButton"
+                            action="#{BenutzerverwaltungForm.newUser}" icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
+                            action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.Neu}"
+                            icon="ui-icon-plusthick"/>
+            </p:menuButton>
+        </h:form>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView activeIndex="#{BenutzerverwaltungForm.activeTabIndex}" id="usersTabView">
+            <p:ajax event="tabChange" listener="#{BenutzerverwaltungForm.onTabChange}"/>
+            <p:tab title="#{msgs.benutzerverwaltung}">
+                <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.benutzergruppen}">
+                <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.ldapgruppen}">
+                <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><a href="">#{msgs.users}</a></li>

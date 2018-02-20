@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -21,59 +21,56 @@
         <f:viewParam name="id"/>
         <f:viewAction action="#{DocketForm.loadDocket(id)}"/>
     </f:metadata>
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="docketEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.editDocket} (#{DocketForm.myDocket.title})"
-                                      rendered="#{not empty DocketForm.myDocket.title}"/>
-                        <h:outputText value="#{msgs.createNewDocket}"
-                                      rendered="#{empty DocketForm.myDocket.title}"/>
-                    </h3>
 
-                    <p:commandButton id="save"
-                                     value="#{msgs.speichern}"
-                                     action="#{DocketForm.save}"
-                                     icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right"
-                                     styleClass="button-filled-blue"
-                                     onclick="PF('notifications').renderMessage({
-                                        'summary':'#{msgs.docketSaving}',
-                                        'detail':'#{msgs.youWillBeRedirected}',
-                                        'severity':'info'});"/>
-                    <p:button id="cancel" value="#{msgs.abbrechen}"
-                              outcome="projects.jsf?id=#{ProjectTabView.activeTabIndex}"
-                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-                </p:panel>
-                <!-- main form -->
-                <p:messages id="docket-messages" autoUpdate="true" />
-                <p:tabView id="docketTabView">
-                    <p:tab id="docketTab" title="#{msgs.details}">
-                        <p:panelGrid id="docket-grid" columns="2" layout="grid">
-                            <p:row>
-                                <div>
-                                    <p:outputLabel for="title" value="#{msgs.titel}"/>
-                                    <p:inputText id="title"
-                                                 class="input"
-                                                 value="#{DocketForm.myDocket.title}"
-                                                 placeholder="#{msgs.titel}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:outputLabel for="file" value="#{msgs.datei}"/>
-                                    <p:inputText id="file" value="#{DocketForm.myDocket.file}"
-                                                 class="input"
-                                                 required="true"/>
-                                </div>
-                            </p:row>
-                            <p:row/>
-                        </p:panelGrid>
-                    </p:tab>
-                </p:tabView>
-            </h:form>
-        </p:panel>
+    <ui:define name="contentHeader">
+        <h3>
+            <h:outputText value="#{msgs.editDocket} (#{DocketForm.myDocket.title})"
+                          rendered="#{not empty DocketForm.myDocket.title}"/>
+            <h:outputText value="#{msgs.createNewDocket}"
+                          rendered="#{empty DocketForm.myDocket.title}"/>
+        </h3>
+
+        <p:commandButton id="save"
+                         value="#{msgs.speichern}"
+                         action="#{DocketForm.save}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         styleClass="button-filled-blue"
+                         onclick="PF('notifications').renderMessage({
+                            'summary':'#{msgs.docketSaving}',
+                            'detail':'#{msgs.youWillBeRedirected}',
+                            'severity':'info'});"/>
+        <p:button id="cancel" value="#{msgs.abbrechen}"
+                  outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="docketTabView">
+            <p:tab id="docketTab" title="#{msgs.details}">
+                <p:panelGrid id="docket-grid" columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="title" value="#{msgs.titel}"/>
+                            <p:inputText id="title"
+                                         class="input"
+                                         value="#{DocketForm.myDocket.title}"
+                                         placeholder="#{msgs.titel}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="file" value="#{msgs.datei}"/>
+                            <p:inputText id="file" value="#{DocketForm.myDocket.file}"
+                                         class="input"
+                                         required="true"/>
+                        </div>
+                    </p:row>
+                    <p:row/>
+                </p:panelGrid>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>

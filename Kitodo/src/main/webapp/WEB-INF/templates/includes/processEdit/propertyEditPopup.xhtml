@@ -34,7 +34,7 @@
 
             <p:commandButton action="#{ProzessverwaltungForm.saveCurrentProperty}"
                              id="save"
-                             update="processEditForm"
+                             update="editForm"
                              oncomplete="PF('editPropertyDialog').hide()"
                              value="#{msgs.uebernehmen}">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
