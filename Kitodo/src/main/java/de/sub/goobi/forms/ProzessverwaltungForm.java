@@ -2318,7 +2318,8 @@ public class ProzessverwaltungForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty()
-                    && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf") || callerViewId.contains("processEdit.jsf"))) {
+                    && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf")
+                            || callerViewId.contains("processEdit.jsf"))) {
                 return PROCESS_EDIT_PATH + urlParameters;
             } else {
                 return PROCESS_EDIT_PATH_OLD + urlParameters;
