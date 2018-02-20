@@ -31,14 +31,21 @@
 
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
             <h:outputText>
+                <h:form>
                 <h:link id="editProcess" outcome="/pages/processEdit"
                         title="#{msgs.editTemplate}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{item.id}"/>
                 </h:link>
-                <h:link><i class="fa fa-inbox fa-lg"/></h:link>
+
+                <h:commandLink action="#{ProzesskopieForm.prepare(item.id)}" id="action22"
+                               title="#{item.containsUnreachableSteps?msgs.prozessvorlageMitUnvollstaendigenSchrittdetails:msgs.eineKopieDieserProzessvorlageAnlegen}">
+                    <i class="fa fa-inbox fa-lg"/>
+                </h:commandLink>
+
                 <h:link><i class="fa fa-clipboard fa-lg"/></h:link>
                 <h:link><i class="fa fa-clone fa-lg"/></h:link>
+                </h:form>
             </h:outputText>
         </p:column>
 

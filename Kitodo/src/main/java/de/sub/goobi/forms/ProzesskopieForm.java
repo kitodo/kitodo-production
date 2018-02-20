@@ -37,6 +37,7 @@ import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
@@ -243,6 +244,12 @@ public class ProzesskopieForm implements Serializable {
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
 
+    private static final String TEMPLATE_ROOT = "/pages/";
+    private static final String PROCESS_FROM_TEMPLATE_PATH = TEMPLATE_ROOT + "processFromTemplate";
+    private static final String PROCESS_FROM_TEMPLATE_PATH_OLD = TEMPLATE_ROOT + "ProzessverwaltungAlle";
+
+    static final String REDIRECT_PARAMETER = "faces-redirect=true";
+
     /**
      * Prepare.
      *
@@ -295,7 +302,7 @@ public class ProzesskopieForm implements Serializable {
 
         initializePossibleDigitalCollections();
 
-        return NAVI_FIRST_PAGE;
+        return redirectToProcessFromTemplateEdit();
     }
 
     private void readProjectConfigs() {
@@ -1940,5 +1947,27 @@ public class ProzesskopieForm implements Serializable {
      */
     public FileformatInterface getFileformat() {
         return rdf;
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/processes" once we have completely
+    // switched to the new frontend pages
+    private String redirectToProcessFromTemplateEdit() {
+        try {
+            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty()
+                    && (callerViewId.contains("projects.jsf"))) {
+                return PROCESS_FROM_TEMPLATE_PATH + "?" + REDIRECT_PARAMETER;
+            } else {
+                return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
+            // used from it's integration test
+            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
+            return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
+        }
     }
 }
