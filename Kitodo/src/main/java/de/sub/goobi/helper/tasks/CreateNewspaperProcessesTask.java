@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -213,8 +214,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                         return;
                     }
                     String state = newProcess.createNewProcess();
-                    if (!state.equals("NewProcess/Page3")) {
-                        throw new RuntimeException(String.valueOf(Helper.getLastMessage()).replaceFirst(":\\?*$", ""));
+                    if (Objects.isNull(state) || !state.equals("NewProcess/Page3")) {
+                        throw new RuntimeException(Helper.getLastMessage().replaceFirst(":\\?*$", ""));
                     }
                     addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
                 }

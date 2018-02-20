@@ -115,7 +115,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private final FileService fileService = serviceManager.getFileService();
     private final TemplateService templateService = serviceManager.getTemplateService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
-    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
     private static ProcessService instance = null;
     private static String DIRECTORY_PREFIX = "orig";
     private static String DIRECTORY_SUFFIX = "images";
@@ -184,12 +183,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             query = readFilters(filterMap);
         }
 
-        return query.toString();
+        if (Objects.nonNull(query)) {
+            return query.toString();
+        }
+        return "";
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
         ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
-        if (Objects.equals(form, null)) {
+        if (Objects.isNull(form)) {
             form = new ProzessverwaltungForm();
         }
         BoolQueryBuilder query = null;

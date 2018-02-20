@@ -109,11 +109,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = null;
+        User user;
         try {
             user = getByLogin(username);
         } catch (DAOException e) {
             Helper.setFehlerMeldung(e);
+            throw new UsernameNotFoundException(e.getMessage());
         }
         return new SecurityUserDetails(user);
     }
@@ -733,14 +734,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public URI getHomeDirectory(User user) throws IOException {
         URI result;
-        if (ConfigCore.getBooleanParameter("ldap_use")) {
-            result = Paths.get(serviceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
-        } else {
-            result = Paths.get(ConfigCore.getParameter("dir_Users"), user.getLogin()).toUri();
-        }
+        if (Objects.nonNull(user)) {
+            if (ConfigCore.getBooleanParameter("ldap_use")) {
+                result = Paths.get(serviceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
+            } else {
+                result = Paths.get(ConfigCore.getParameter("dir_Users"), user.getLogin()).toUri();
+            }
 
-        if (!new File(result).exists()) {
-            serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
+            if (!new File(result).exists()) {
+                serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
+            }
+        } else {
+            throw new IOException("No user for home directory!");
         }
         return result;
     }

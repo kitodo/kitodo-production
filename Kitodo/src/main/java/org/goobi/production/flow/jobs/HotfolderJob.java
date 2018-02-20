@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -238,8 +239,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
                 try {
                     Process p = form.neuenProzessAnlegen();
-                    if (p.getId() != null) {
-
+                    if (Objects.nonNull(p) && Objects.nonNull(p.getId())) {
                         // copy image files to new directory
                         URI images = fileService.createResource(dir,
                                 processTitle.substring(0, processTitle.length() - 4) + File.separator);

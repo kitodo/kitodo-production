@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
@@ -347,9 +348,12 @@ public class Course extends ArrayList<Block> {
     public LinkedHashSet<IndividualIssue> getIndividualIssues() {
         LinkedHashSet<IndividualIssue> result = new LinkedHashSet<>();
         LocalDate lastAppearance = getLastAppearance();
-        for (LocalDate day = getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-            for (Block block : this) {
-                result.addAll(block.getIndividualIssues(day));
+        LocalDate firstAppearance = getFirstAppearance();
+        if (Objects.nonNull(firstAppearance)) {
+            for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+                for (Block block : this) {
+                    result.addAll(block.getIndividualIssues(day));
+                }
             }
         }
         return result;

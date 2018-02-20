@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.goobi.production.constants.Parameters;
@@ -216,12 +217,16 @@ public class CataloguePlugin extends UnspecificPlugin {
     public static Fileformat getFirstHit(String catalogue, String query, Prefs preferences) {
         try {
             CataloguePlugin plugin = PluginLoader.getCataloguePluginForCatalogue(catalogue);
-            plugin.setPreferences(preferences);
-            plugin.useCatalogue(catalogue);
-            Object searchResult = plugin.find(query, getTimeout());
-            long hits = plugin.getNumberOfHits(searchResult, getTimeout());
-            if (hits > 0) {
-                return plugin.getHit(searchResult, 0, getTimeout()).getFileformat();
+            if (Objects.nonNull(plugin)) {
+                plugin.setPreferences(preferences);
+                plugin.useCatalogue(catalogue);
+                Object searchResult = plugin.find(query, getTimeout());
+                long hits = plugin.getNumberOfHits(searchResult, getTimeout());
+                if (hits > 0) {
+                    return plugin.getHit(searchResult, 0, getTimeout()).getFileformat();
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -406,10 +407,13 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param query
      *            for index search
-     * @return amount of objects according to given query
+     * @return amount of objects according to given query or 0 if query is null
      */
     public Long count(String query) throws DataException {
-        return searcher.countDocuments(query);
+        if (!Objects.equals(query, "") && Objects.nonNull(query)) {
+            return searcher.countDocuments(query);
+        }
+        return 0L;
     }
 
     /**

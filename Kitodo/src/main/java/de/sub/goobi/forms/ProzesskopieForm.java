@@ -388,11 +388,6 @@ public class ProzesskopieForm implements Serializable {
         List<Process> processes = serviceManager.getProcessService().getProcessTemplates();
         if (loginForm != null) {
             User currentUser = loginForm.getMyBenutzer();
-            try {
-                currentUser = serviceManager.getUserService().getById(loginForm.getMyBenutzer().getId());
-            } catch (DAOException e) {
-                logger.error(e);
-            }
             if (currentUser != null) {
                 /*
                  * wenn die maximale Berechtigung nicht Admin ist, dann nur

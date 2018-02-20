@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -131,23 +132,26 @@ public class NLAIdentity {
         for (Node identity : sourceIdentities) {
             // Institution for this ID
             institutionNode = identity.selectSingleNode("*//eac:maintenanceAgency/eac:agencyName");
-            institutionString = institutionNode.getText();
 
-            // Any names for this ID
-            @SuppressWarnings("unchecked")
-            List<Node> idNodes = identity.selectNodes("*//eac:identity");
-            for (Node idNode : idNodes) {
-                // A Map for each name
-                idMap = new HashMap<>();
-                // Get all the names this ID lists
-                nameList = getNames(idNode);
-                for (Map<String, String> name : nameList) {
-                    idMap.putAll(name);
+            if (Objects.nonNull(institutionNode)) {
+                institutionString = institutionNode.getText();
+
+                // Any names for this ID
+                @SuppressWarnings("unchecked")
+                List<Node> idNodes = identity.selectNodes("*//eac:identity");
+                for (Node idNode : idNodes) {
+                    // A Map for each name
+                    idMap = new HashMap<>();
+                    // Get all the names this ID lists
+                    nameList = getNames(idNode);
+                    for (Map<String, String> name : nameList) {
+                        idMap.putAll(name);
+                    }
+                    // Indicate the institution for each one
+                    idMap.put("institution", institutionString);
+                    // And add to the list
+                    returnList.add(idMap);
                 }
-                // Indicate the institution for each one
-                idMap.put("institution", institutionString);
-                // And add to the list
-                returnList.add(idMap);
             }
         }
 
