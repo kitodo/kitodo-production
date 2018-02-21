@@ -31,7 +31,7 @@ public class TasksPage {
      *
      * @return True if browser is at tasks page.
      */
-    public boolean isAt() throws InterruptedException {
+    public boolean isAt() {
         return Browser.getCurrentUrl().contains("tasks");
     }
 

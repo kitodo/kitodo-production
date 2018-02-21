@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -209,7 +210,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByProject(Project project) {
         List<Authority> authorities = new ArrayList<>();
 
-        if (this.userGroupProjectAuthorityRelations != null) {
+        if (Objects.nonNull(this.userGroupProjectAuthorityRelations)) {
             for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
                 if (project.equals(relation.getProject())) {
                     authorities.add(relation.getAuthority());
@@ -229,7 +230,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByClient(Client client) {
         List<Authority> authorities = new ArrayList<>();
 
-        if (this.userGroupClientAuthorityRelations != null) {
+        if (Objects.nonNull(this.userGroupClientAuthorityRelations)) {
             for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
                 if (client.equals(relation.getClient())) {
                     authorities.add(relation.getAuthority());

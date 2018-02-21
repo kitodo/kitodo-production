@@ -69,7 +69,7 @@ public class UsersPage {
      * 
      * @return True if browser is at users page.
      */
-    public boolean isAt() throws InterruptedException {
+    public boolean isAt() {
         return Browser.getCurrentUrl().contains("users");
     }
 

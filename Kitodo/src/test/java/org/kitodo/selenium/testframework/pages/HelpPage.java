@@ -31,7 +31,7 @@ public class HelpPage {
      *
      * @return True if browser is at help page.
      */
-    public boolean isAt() throws InterruptedException {
+    public boolean isAt() {
         return Browser.getCurrentUrl().contains("help");
     }
 

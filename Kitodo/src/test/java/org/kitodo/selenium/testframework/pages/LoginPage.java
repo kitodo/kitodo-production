@@ -20,7 +20,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class LoginPage {
 
-    final String URL = "pages/login.jsf";
+    private final String URL = "pages/login.jsf";
 
     @SuppressWarnings("unused")
     @FindBy(id = "login")

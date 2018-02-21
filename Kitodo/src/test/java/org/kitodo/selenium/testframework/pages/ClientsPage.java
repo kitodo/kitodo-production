@@ -33,8 +33,9 @@ public class ClientsPage {
      *
      * @return The clients page.
      */
-    public void goTo() throws Exception {
+    public ClientsPage goTo() throws Exception {
         Pages.getTopNavigation().gotoClients();
+        return this;
     }
 
     /**
@@ -42,7 +43,7 @@ public class ClientsPage {
      *
      * @return True if browser is at clients page.
      */
-    public boolean isAt() throws InterruptedException {
+    public boolean isAt() {
         return Browser.getCurrentUrl().contains("clients");
     }
 

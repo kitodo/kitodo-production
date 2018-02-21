@@ -31,7 +31,7 @@ public class ProcessesPage {
      *
      * @return True if browser is at processes page.
      */
-    public boolean isAt() throws InterruptedException {
+    public boolean isAt() {
         return Browser.getCurrentUrl().contains("processes");
     }
 

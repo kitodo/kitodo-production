@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.helper.WebDriverProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -123,7 +122,7 @@ public class Browser {
      *            The web element
      */
     public static void scrollWebElementIntoView(WebElement webElement) {
-        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView();", webElement);
+        webDriver.executeScript("arguments[0].scrollIntoView();", webElement);
     }
 
     static File captureScreenShot() {

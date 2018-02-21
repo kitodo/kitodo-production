@@ -101,8 +101,7 @@ public class IndexingPage {
             try {
                 List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
                 WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
-                String value = lastRow.findElement(By.className("ui-progressbar-label")).getText();
-                return value;
+                return lastRow.findElement(By.className("ui-progressbar-label")).getText();
             } catch (StaleElementReferenceException e) {
                 attempt++;
                 logger.debug("Indexing progress is not readable, retrying now, " + attempt);
