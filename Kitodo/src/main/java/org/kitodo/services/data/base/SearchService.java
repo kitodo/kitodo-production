@@ -303,6 +303,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 logger.error(e);
+                Thread.currentThread().interrupt();
             }
             savedBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(savedBean);
@@ -366,6 +367,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 logger.error(e);
+                Thread.currentThread().interrupt();
             }
             removeFromDatabase(baseIndexedBean);
         } catch (DAOException e) {

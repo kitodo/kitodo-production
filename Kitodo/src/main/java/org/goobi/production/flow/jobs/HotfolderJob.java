@@ -147,6 +147,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 } catch (InterruptedException e) {
                     logger.error(e);
                     logger.trace("20");
+                    Thread.currentThread().interrupt();
                 } catch (Exception e) {
                     logger.error(e);
                 }

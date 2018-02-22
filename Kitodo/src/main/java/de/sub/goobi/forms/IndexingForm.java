@@ -85,6 +85,7 @@ public class IndexingForm {
                 sleep(pause);
             } catch (InterruptedException e) {
                 logger.error("Thread interrupted: " + e.getMessage());
+                Thread.currentThread().interrupt();
             }
 
             currentIndexState = ObjectType.NONE;
@@ -258,6 +259,7 @@ public class IndexingForm {
                     }
                 } catch (InterruptedException e) {
                     logger.error(e.getMessage());
+                    Thread.currentThread().interrupt();
                 }
             }
         }

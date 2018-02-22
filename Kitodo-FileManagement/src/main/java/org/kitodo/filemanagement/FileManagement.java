@@ -183,6 +183,7 @@ public class FileManagement implements FileManagementInterface {
                     Thread.sleep(SLEEP_INTERVAL_MILLIS);
                 } catch (InterruptedException e) {
                     logger.warn("The thread was interrupted");
+                    Thread.currentThread().interrupt();
                 }
                 millisWaited += SLEEP_INTERVAL_MILLIS;
             }
