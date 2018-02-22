@@ -481,6 +481,7 @@ public class BatchForm extends BasisForm {
             Helper.setFehlerMeldung("noBatchSelected");
             return null;
         }
+
         for (Integer batchID : selectedBatches) {
             try {
                 Batch batch = serviceManager.getBatchService().getById(batchID);
@@ -491,13 +492,13 @@ public class BatchForm extends BasisForm {
                                     ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                             dms.startExport(process);
                         }
-                        return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
+                        break;
                     case NEWSPAPER:
                         TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-                        return "/pages/taskmanager";
+                        break;
                     case SERIAL:
                         TaskManager.addTask(new ExportSerialBatchTask(batch));
-                        return "/pages/taskmanager";
+                        break;
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }
@@ -507,8 +508,8 @@ public class BatchForm extends BasisForm {
                 return null;
             }
         }
-        Helper.setFehlerMeldung("noBatchSelected");
-        return null;
+
+        return "/pages/taskmanager";
     }
 
     /**
