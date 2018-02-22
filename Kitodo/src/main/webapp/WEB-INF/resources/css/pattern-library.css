@@ -95,6 +95,13 @@ button .ui-icon {
     padding: .5em;
 }
 
+.ui-button-small {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    vertical-align: bottom;
+}
+
 .ui-menu, .ui-menu .ui-menu-child {
     background: #d8d8d8;
 }

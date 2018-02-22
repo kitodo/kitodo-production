@@ -1,0 +1,72 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="title" value="#{msgs.prozessTitel}"/>
+                <p:inputText id="title" placeholder="#{msgs.prozessTitel}"
+                             value="#{ProzessverwaltungForm.newProcessTitle}"
+                             class="input"
+                             required="true">
+                    <p:ajax event="change"/>
+                </p:inputText>
+            </div>
+
+            <div>
+                <p:outputLabel for="project" value="#{msgs.projekt}"/>
+                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projektAuswahl}" required="true">
+                    <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
+                    <f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}"/>
+                    <p:ajax event="change"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="showInList" value="#{msgs.inAuswahllisteAnzeigen}"/>
+                <p:selectBooleanCheckbox id="showInList" value="#{ProzessverwaltungForm.process.inChoiceListShown}">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
+            </div>
+        </p:row>
+
+        <p:row>
+            <div>
+                <p:outputLabel for="ruleset" value="#{msgs.regelsatz}"/>
+                <p:selectOneMenu id="ruleset" value="#{ProzessverwaltungForm.process.ruleset}" required="true" converter="#{rulesetConverter}">
+                    <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                    <p:ajax event="change"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="docket" value="#{msgs.docket}"/>
+                <p:selectOneMenu id="docket" value="#{ProzessverwaltungForm.process.docket}" required="true" converter="#{docketConverter}">
+                    <f:selectItems value="#{HelperForm.dockets}"/>
+                    <p:ajax event="change"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>
+                <p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}">
+                    <p:ajax event="change"/>
+                </p:selectBooleanCheckbox>
+            </div>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>

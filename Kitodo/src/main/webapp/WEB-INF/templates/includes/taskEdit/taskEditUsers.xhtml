@@ -1,0 +1,42 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable var="user" value="#{ProzessverwaltungForm.task.users}" id="userTable">
+        <p:column headerText="#{msgs.benutzer}">
+            <h:outputText value="#{user.surname}, #{user.name}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.loeschen}">
+            <p:commandLink action="#{ProzessverwaltungForm.deleteUser}"
+                           id="deleteUser"
+                           title="#{msgs.removeUser}"
+                           immediate="true"
+                           update="taskEditForm:tabs:userTable">
+                <i class="fa fa-trash-o fa-lg"/>
+                <f:param name="ID" value="#{user.id}"/>
+            </p:commandLink>
+        </p:column>
+    </p:dataTable>
+    <button id="addUser"
+            onclick="PF('addUserDialog').show()"
+            type="button"
+            class="ui-button ui-widget ui-corner-all button-filled-green"
+            style="padding:.7em;border:none;">
+        #{msgs.benutzerHinzufuegen}
+    </button>
+</ui:composition>

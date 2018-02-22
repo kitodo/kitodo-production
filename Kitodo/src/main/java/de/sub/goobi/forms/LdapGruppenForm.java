@@ -32,7 +32,6 @@ import org.kitodo.services.ServiceManager;
 public class LdapGruppenForm extends BasisForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
-    private int itemId;
     private transient ServiceManager serviceManager = new ServiceManager();
 
     @Inject
@@ -46,7 +45,6 @@ public class LdapGruppenForm extends BasisForm {
      */
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
-        this.itemId = 0;
         return redirectToEdit();
     }
 
@@ -92,16 +90,18 @@ public class LdapGruppenForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for ldap group edit form. If 'itemId' is
-     * '0', the form for creating a new ldap group will be displayed.
+     * Method being used as viewAction for ldapgroup edit form.
+     *
+     * @param id
+     *            ID of the ldapgroup to load
      */
-    public void loadLdapGroup() {
+    public void loadLdapGroup(int id) {
         try {
-            if (!Objects.equals(this.itemId, 0)) {
-                setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(this.itemId));
+            if (!Objects.equals(id, 0)) {
+                setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving Ldap group with ID '" + this.itemId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving Ldap group with ID '" + id + "'; ", e.getMessage());
         }
     }
 
@@ -123,14 +123,6 @@ public class LdapGruppenForm extends BasisForm {
 
     public void setMyLdapGruppe(LdapGroup myLdapGruppe) {
         this.myLdapGruppe = myLdapGruppe;
-    }
-
-    public void setItemId(int id) {
-        this.itemId = id;
-    }
-
-    public int getItemId() {
-        return this.itemId;
     }
 
     // TODO:

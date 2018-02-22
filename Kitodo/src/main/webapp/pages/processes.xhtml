@@ -14,7 +14,6 @@
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
@@ -22,27 +21,28 @@
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
                 <h3>#{msgs.prozessverwaltung}</h3>
-                <h:form>
+                <h:form id="addForm">
                     <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
-                        <p:menuitem value="#{msgs.newProcess}" outcome="/pages/ProzessverwaltungBearbeiten" icon="ui-icon-plusthick" />
+                        <p:menuitem value="#{msgs.newProcess}" outcome="/pages/processEdit" icon="ui-icon-plusthick" />
                         <p:menuitem value="#{msgs.newBatch}" icon="ui-icon-plusthick" />
                     </p:menuButton>
                 </h:form>
                 <!-- filters -->
-                <p:button value="#{msgs.nachEinemBandSuchen}"
-                                 icon="fa fa-search"
-                                 iconPos="right"
-                                 styleClass="button-filled-blue"
-                                outcome="searchProcess"/>
+                <p:button id="search" value="#{msgs.nachEinemBandSuchen}"
+                          icon="fa fa-search" iconPos="right"
+                          styleClass="button-filled-blue" outcome="searchProcess"/>
                 <h:form id="filterMenu">
                     <div class="ui-inputgroup">
                         <p:inputText forceId="true" id="filterfield" value="#{ProzessverwaltungForm.filter}" placeholder="#{msgs.filter}"/>
-                        <p:commandButton onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
+                        <p:commandButton id="applyFilter" onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
                         <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down" styleClass="button-filled-blue"/>
                         <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                             <ul>
                                 <li>
-                                    <p:commandButton action="#{ProzessverwaltungForm.addFilterToUser}" icon="fa fa-floppy-o fa-lg" value="#{msgs.addFilter}" update="@form"/>
+                                    <p:commandButton id="addFilter"
+                                                     action="#{ProzessverwaltungForm.addFilterToUser}"
+                                                     icon="fa fa-floppy-o fa-lg"
+                                                     value="#{msgs.addFilter}" update="@form"/>
                                 </li>
                                 <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
                                     <li>

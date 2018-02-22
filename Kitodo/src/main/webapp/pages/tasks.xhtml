@@ -13,10 +13,10 @@
 
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui"
-        xmlns:f="http://xmlns.jcp.org/jsf/core">
+        xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
         <p:panel id="listWrapper">
             <p:panel styleClass="content-header">
@@ -24,7 +24,8 @@
             </p:panel>
             <p:tabView id="tasksTabView">
                 <p:tab id="tasksTab" title="#{msgs.tasklist}">
-                    <p:dataTable var="item"
+                    <p:dataTable id="taskTable"
+                                 var="item"
                                  value="#{AktuelleSchritteForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"
@@ -41,6 +42,8 @@
                             <h:outputText value="#{item.process.project.title}"/>
                         </p:column>
                         <p:column headerText="#{msgs.status}">
+                            <h:graphicImage alt="" value="#{item.processingStatus.bigImagePath}"
+                                            title="#{item.processingStatus.title}" style="margin-right:10px;"/>
                             <h:outputText value="!" rendered="#{item.priority == 1}"/>
                             <h:outputText value="!!" rendered="#{item.priority == 2}"/>
                             <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
@@ -67,6 +70,30 @@
                                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                                     <i class="fa fa-bell-slash"/>
                                     <f:setPropertyActionListener target="#{AktuelleSchritteForm.mySchritt}" value="#{item}"/>
+                                </h:commandLink>
+
+                                <!-- take over batch -->
+                                <h:commandLink id="batch" action="#{AktuelleSchritteForm.takeOverBatch}"
+                                               rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchSize}"
+                                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                                    <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
+                                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.step}" value="#{item}"/>
+                                </h:commandLink>
+
+                                <!-- edit batch step (this user) -->
+                                <h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.batchesEdit}"
+                                               rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and item.batchSize}"
+                                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                                    <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
+                                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.step}" value="#{item}"/>
+                                </h:commandLink>
+
+                                <!-- edit batch step (different user) -->
+                                <h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.batchesEdit}"
+                                               rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and item.batchStep and item.batchSize}"
+                                               title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
+                                    <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
+                                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.step}" value="#{item}"/>
                                 </h:commandLink>
                             </h:form>
                         </p:column>

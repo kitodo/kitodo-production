@@ -84,7 +84,11 @@ public class AktuelleSchritteForm extends BasisForm {
     private List<Property> properties;
     private Property property;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private int stepId;
+
+    private static final String CURRENT_TASK_LIST_PATH = TEMPLATE_ROOT + "tasks";
+    private static final String CURRENT_TASK_LIST_PATH_OLD = TEMPLATE_ROOT + "AktuelleSchritteAlle";
+    private static final String CURRENT_TASK_EDIT_PATH = TEMPLATE_ROOT + "editCurrentTasks";
+    private static final String CURRENT_TASK_EDIT_PATH_OLD = TEMPLATE_ROOT + "AktuelleSchritteBearbeiten";
 
     /**
      * Constructor.
@@ -953,34 +957,16 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Return the id of the current task.
-     *
-     * @return int stepId
-     */
-    public int getStepId() {
-        return this.stepId;
-    }
-
-    /**
-     * Set the id of the current task.
-     *
-     * @param stepId
-     *            as int
-     */
-    public void setStepId(int stepId) {
-        this.stepId = stepId;
-    }
-
-    /**
      * Method being used as viewAction for AktuelleSchritteForm.
+     *
+     * @param id
+     *            ID of the step to load
      */
-    public void loadMyStep() {
+    public void loadMyStep(int id) {
         try {
-            if (!Objects.equals(this.stepId, null)) {
-                setMySchritt(this.serviceManager.getTaskService().getById(this.stepId));
-            }
+            setMySchritt(this.serviceManager.getTaskService().getById(id));
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving task with ID '" + this.stepId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving task with ID '" + id + "'; ", e.getMessage());
         }
     }
 
@@ -998,20 +984,22 @@ public class AktuelleSchritteForm extends BasisForm {
     // replace calls to this function with "/pages/editCurrentTasks" once we have
     // completely switched to the new frontend pages
     private String redirectToEdit() {
+        String urlParameters = "?" + REDIRECT_PARAMETER + "&id="
+                + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && (callerViewId.contains("tasks.jsf") || callerViewId.contains("editCurrentTasks.jsf"))) {
-                return "/pages/editCurrentTasks?" + REDIRECT_PARAMETER;
+                return CURRENT_TASK_EDIT_PATH + urlParameters;
             } else {
-                return "/pages/AktuelleSchritteBearbeiten?" + REDIRECT_PARAMETER;
+                return CURRENT_TASK_EDIT_PATH_OLD + urlParameters;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
             // used from it's integration test
             // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
-            return "/pages/AktuelleSchritteBearbeiten?" + REDIRECT_PARAMETER;
+            return CURRENT_TASK_EDIT_PATH_OLD + urlParameters;
         }
     }
 
@@ -1024,15 +1012,15 @@ public class AktuelleSchritteForm extends BasisForm {
                     .get("referer");
             String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("editCurrentTasks.jsf")) {
-                return "/pages/tasks.jsf?" + REDIRECT_PARAMETER;
+                return CURRENT_TASK_LIST_PATH + "?" + REDIRECT_PARAMETER;
             } else {
-                return "/pages/AktuelleSchritteAlle?" + REDIRECT_PARAMETER;
+                return CURRENT_TASK_LIST_PATH_OLD + "?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
             // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
             // used from it's integration test
             // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
-            return "/pages/AktuelleSchritteAlle?" + REDIRECT_PARAMETER;
+            return CURRENT_TASK_LIST_PATH_OLD + "?" + REDIRECT_PARAMETER;
         }
     }
 }

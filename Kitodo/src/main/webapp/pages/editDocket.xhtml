@@ -18,8 +18,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <f:viewParam name="id" value="#{DocketForm.docketId}"/>
-        <f:viewAction action="#{DocketForm.loadDocket}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{DocketForm.loadDocket(id)}"/>
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
@@ -27,12 +27,13 @@
                 <p:panel styleClass="content-header">
                     <h3>
                         <h:outputText value="#{msgs.editDocket} (#{DocketForm.myDocket.title})"
-                                      rendered="#{DocketForm.myDocket.id != null}"/>
+                                      rendered="#{not empty DocketForm.myDocket.title}"/>
                         <h:outputText value="#{msgs.createNewDocket}"
-                                      rendered="#{DocketForm.myDocket.id == null}"/>
+                                      rendered="#{empty DocketForm.myDocket.title}"/>
                     </h3>
 
-                    <p:commandButton value="#{msgs.speichern}"
+                    <p:commandButton id="save"
+                                     value="#{msgs.speichern}"
                                      action="#{DocketForm.save}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
@@ -41,7 +42,8 @@
                                         'summary':'#{msgs.docketSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects.jsf?id=#{ProjectTabView.activeTabIndex}"
+                    <p:button id="cancel" value="#{msgs.abbrechen}"
+                              outcome="projects.jsf?id=#{ProjectTabView.activeTabIndex}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
@@ -75,6 +77,15 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
-        <li><a href="">#{msgs.editDocket}</a></li>
+        <li>
+            <a href="">
+                <ui:fragment rendered="#{not empty DocketForm.myDocket.title}">
+                    #{msgs.editDocket}
+                </ui:fragment>
+                <ui:fragment rendered="#{empty DocketForm.myDocket.title}">
+                    #{msgs.newDocket}
+                </ui:fragment>
+            </a>
+        </li>
     </ui:define>
 </ui:composition>

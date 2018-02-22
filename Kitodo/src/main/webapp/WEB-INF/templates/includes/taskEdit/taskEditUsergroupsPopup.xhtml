@@ -1,0 +1,49 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view locale="#{SpracheForm.locale}">
+        <!-- edit dialog -->
+        <p:dialog widgetVar="addUsergroupDialog"
+                  header="#{msgs.benutzergruppenHinzufuegen}"
+                  width="700px"
+                  modal="true"
+                  dynamic="true">
+            <h:form id="usergroupForm">
+                <p:dataTable id="usergroupTable"
+                             var="usergroup"
+                             value="#{BenutzergruppenForm.lazyDTOModel}"
+                             lazy="true"
+                             rows="#{LoginForm.myBenutzer.tableSize}"
+                             paginator="true">
+                    <p:column headerText="#{msgs.benutzergruppe}">
+                        <h:outputText value="#{usergroup.title}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.auswahl}">
+                        <p:commandLink id="addUsergroup" action="#{ProzessverwaltungForm.addUserGroup}"
+                                       update="taskEditForm:tabs:usergroupTable">
+                            <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
+                            <f:param name="ID" value="#{usergroup.id}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton id="close" onclick="PF('addUsergroupDialog').hide()" value="#{msgs.close}"/>
+            </h:form>
+        </p:dialog>
+    </f:view>
+</ui:composition>

@@ -26,8 +26,8 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
     <f:metadata>
-        <f:viewParam name="id" value="#{LdapGruppenForm.itemId}"/>
-        <f:viewAction action="#{LdapGruppenForm.loadLdapGroup}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{LdapGruppenForm.loadLdapGroup(id)}"/>
     </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />

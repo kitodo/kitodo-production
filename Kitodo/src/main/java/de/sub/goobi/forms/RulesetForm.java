@@ -37,7 +37,6 @@ public class RulesetForm extends BasisForm {
     private Ruleset ruleset;
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
-    private int rulesetId;
 
     @Inject
     @Named("ProjekteForm")
@@ -59,7 +58,6 @@ public class RulesetForm extends BasisForm {
      */
     public String createNewRuleset() {
         this.ruleset = new Ruleset();
-        this.rulesetId = 0;
         return redirectToEdit();
     }
 
@@ -124,16 +122,19 @@ public class RulesetForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for ruleset edit form. If 'rulesetId' is
-     * '0', the form for creating a new ruleset will be displayed.
+     * Method being used as viewAction for ruleset edit form. If given parameter
+     * 'id' is '0', the form for creating a new ruleset will be displayed.
+     *
+     * @param id
+     *            ID of the ruleset to load
      */
-    public void loadRuleset() {
+    public void loadRuleset(int id) {
         try {
-            if (!Objects.equals(this.rulesetId, 0)) {
-                setRuleset(this.serviceManager.getRulesetService().getById(this.rulesetId));
+            if (!Objects.equals(id, 0)) {
+                setRuleset(this.serviceManager.getRulesetService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving ruleset with ID '" + this.rulesetId + "'; ", e.getMessage());
+            Helper.setFehlerMeldung("Error retrieving ruleset with ID '" + id + "'; ", e.getMessage());
         }
     }
 
@@ -148,14 +149,6 @@ public class RulesetForm extends BasisForm {
     public void setRuleset(Ruleset inPreference) {
         Helper.getHibernateSession().clear();
         this.ruleset = inPreference;
-    }
-
-    public void setRulesetId(int id) {
-        this.rulesetId = id;
-    }
-
-    public int getRulesetId() {
-        return this.rulesetId;
     }
 
     // TODO:

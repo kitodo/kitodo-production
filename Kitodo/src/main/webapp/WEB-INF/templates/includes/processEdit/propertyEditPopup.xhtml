@@ -1,0 +1,45 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <!-- edit dialog -->
+    <p:dialog widgetVar="editPropertyDialog"
+              header="#{empty ProzessverwaltungForm.property.title ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
+              width="700px"
+              modal="true"
+              dynamic="true"
+              styleClass="editDialog">
+        <h:form id="propertyForm">
+            <!-- title -->
+            <p:inputText id="propertyTitle" value="#{ProzessverwaltungForm.property.title}"
+                         placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
+
+            <!-- value: text -->
+            <p:inputText id="propertyValue" value="#{ProzessverwaltungForm.property.value}" styleClass="editDialog"/>
+
+            <p:commandButton action="#{ProzessverwaltungForm.saveCurrentProperty}"
+                             id="save"
+                             update="processEditForm"
+                             oncomplete="PF('editPropertyDialog').hide()"
+                             value="#{msgs.uebernehmen}">
+                <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
+                                             value="#{objectMode.NONE}"/>
+            </p:commandButton>
+        </h:form>
+    </p:dialog>
+</ui:composition>

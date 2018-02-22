@@ -25,8 +25,8 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     >
     <f:metadata>
-        <f:viewParam name="id" value="#{AktuelleSchritteForm.stepId}"/>
-        <f:viewAction action="#{AktuelleSchritteForm.loadMyStep}" />
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{AktuelleSchritteForm.loadMyStep(id)}" />
     </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
 

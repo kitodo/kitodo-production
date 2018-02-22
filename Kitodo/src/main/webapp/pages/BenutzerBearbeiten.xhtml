@@ -27,8 +27,8 @@
     xmlns:p="http://primefaces.org/ui"
     >
     <f:metadata>
-        <f:viewParam name="id" value="#{BenutzerverwaltungForm.userId}"/>
-        <f:viewAction action="#{BenutzerverwaltungForm.loadUserObject}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{BenutzerverwaltungForm.loadUserObject(id)}"/>
     </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />

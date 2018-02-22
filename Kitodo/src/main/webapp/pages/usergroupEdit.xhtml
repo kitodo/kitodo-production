@@ -18,21 +18,20 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <f:viewParam name="id" value="#{BenutzergruppenForm.userGroupId}"/>
-        <f:viewAction action="#{BenutzergruppenForm.loadUserGroup}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{BenutzergruppenForm.loadUserGroup(id)}"/>
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
             <h:form id="usergroupEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText
-                            value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
-                            rendered="#{BenutzergruppenForm.userGroup.id ne null}"/>
+                        <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
+                                      rendered="#{not empty BenutzergruppenForm.userGroup.title}"/>
                         <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
-                                      rendered="#{BenutzergruppenForm.userGroup.id eq null}"/>
+                                      rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
                     </h3>
-                    <p:commandButton value="#{msgs.speichern}"
+                    <p:commandButton id="save" value="#{msgs.speichern}"
                                      action="#{BenutzergruppenForm.save}"
                                      process="usergroupTabView:authoritiesGlobal, usergroupTabView:authoritiesClient, usergroupTabView:title, usergroupTabView:authoritiesProject"
                                      icon="fa fa-floppy-o fa-lg"
@@ -43,7 +42,8 @@
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"
                                      update="notifications"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
+                    <p:button id="cancel" value="#{msgs.abbrechen}"
+                              outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
 
@@ -143,7 +143,16 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
-        <li><a href="">#{msgs.benutzergruppeBearbeiten}</a></li>
+        <li>
+            <a href="">
+                <ui:fragment rendered="#{not empty BenutzergruppenForm.userGroup.title}">
+                    #{msgs.benutzergruppeBearbeiten}
+                </ui:fragment>
+                <ui:fragment rendered="#{empty BenutzergruppenForm.userGroup.title}">
+                    #{msgs.newUserGroup}
+                </ui:fragment>
+            </a>
+        </li>
     </ui:define>
     <!-- add user groups dialog -->
     <ui:define name="dialog">

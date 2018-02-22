@@ -18,16 +18,16 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <f:viewParam name="id" value="#{ProjekteForm.itemId}"/>
-        <f:viewAction action="#{ProjekteForm.loadProject}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{ProjekteForm.loadProject(id)}"/>
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
             <h:form id="projectEditForm">
                 <p:panel styleClass="content-header">
                     <h3>
-                        <h:outputText value="#{msgs.projektBearbeiten} (#{ProjekteForm.myProjekt.title})" rendered="#{ProjekteForm.itemId ne 0}"/>
-                        <h:outputText value="#{msgs.newProject}" rendered="#{ProjekteForm.itemId eq 0}"/>
+                        <h:outputText value="#{msgs.projektBearbeiten} (#{ProjekteForm.myProjekt.title})" rendered="#{not empty ProjekteForm.myProjekt.title}"/>
+                        <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjekteForm.myProjekt.title}"/>
                     </h3>
                     <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" iconPos="right" onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});" update="notifications"/>
                     <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
@@ -51,10 +51,10 @@
         <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
         <li>
             <a href="">
-                <ui:fragment rendered="#{ProjekteForm.itemId ne 0}">
+                <ui:fragment rendered="#{not empty ProjekteForm.myProjekt.title}">
                     #{msgs.projektBearbeiten}
                 </ui:fragment>
-                <ui:fragment rendered="#{ProjekteForm.itemId eq 0}">
+                <ui:fragment rendered="#{empty ProjekteForm.myProjekt.title}">
                     #{msgs.newProject}
                 </ui:fragment>
             </a>

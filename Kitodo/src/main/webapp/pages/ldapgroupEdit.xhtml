@@ -18,8 +18,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
-        <f:viewParam name="id" value="#{LdapGruppenForm.itemId}"/>
-        <f:viewAction action="#{LdapGruppenForm.loadLdapGroup}"/>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{LdapGruppenForm.loadLdapGroup(id)}"/>
     </f:metadata>
     <ui:define name="content">
         <p:panel id="listWrapper">
@@ -27,18 +27,20 @@
                 <p:panel styleClass="content-header">
                     <h3>
                         <h:outputText value="#{msgs.ldapgruppeBearbeiten} (#{LdapGruppenForm.myLdapGruppe.title})"
-                                      rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}"/>
+                                      rendered="#{not empty LdapGruppenForm.myLdapGruppe.title}"/>
                         <h:outputText value="#{msgs.neueLdapgruppeAnlegen}"
-                                      rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}"/>
+                                      rendered="#{empty LdapGruppenForm.myLdapGruppe.title}"/>
                     </h3>
-                    <p:commandButton value="#{msgs.speichern}"
+                    <p:commandButton id="save"
+                                     value="#{msgs.speichern}"
                                      action="#{LdapGruppenForm.Speichern}"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
                                      styleClass="button-filled-blue"
                                      onclick="PF('notifications').renderMessage({'summary':'#{msgs.ldapgroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                                      update="notifications"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
+                    <p:button id="cancel" value="#{msgs.abbrechen}"
+                              outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                               icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
                 </p:panel>
                 <!-- main form -->
@@ -185,13 +187,15 @@
                             </p:row>
                         </p:panelGrid>
                         <p:panel styleClass="content-header">
-                            <p:commandButton value="#{msgs.loeschen}"
+                            <p:commandButton id="delete"
+                                             value="#{msgs.loeschen}"
                                              onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
                                              action="#{LdapGruppenForm.Loeschen}"
                                              rendered="#{LdapGruppenForm.myLdapGruppe.id ne null}"
                                              icon="fa fa-trash-o fa-lg"
                                              iconPos="right"/>
-                            <p:commandButton value="#{msgs.clearData}"
+                            <p:commandButton id="clear"
+                                             value="#{msgs.clearData}"
                                              action="ldapgroupEdit"
                                              rendered="#{LdapGruppenForm.myLdapGruppe.id eq null}"
                                              icon="fa fa-trash-o fa-lg"
