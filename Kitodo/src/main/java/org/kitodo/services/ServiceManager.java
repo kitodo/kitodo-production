@@ -33,6 +33,7 @@ import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.schema.SchemaService;
+import org.kitodo.services.security.SecurityAccessService;
 import org.kitodo.services.security.SessionService;
 import org.kitodo.services.validation.FileStructureValidationService;
 import org.kitodo.services.validation.LongTimePreservationValidationService;
@@ -63,6 +64,7 @@ public class ServiceManager {
     private FileService fileService;
     private CommandService commandService;
     private SchemaService schemaService;
+    private SecurityAccessService securityAccessService;
     private FileStructureValidationService fileStructureValidationService;
     private LongTimePreservationValidationService longTimePreservationValidationService;
     private MetadataValidationService metadataValidationService;
@@ -150,6 +152,12 @@ public class ServiceManager {
     private void initializeSessionService() {
         if (sessionService == null) {
             sessionService = SessionService.getInstance();
+        }
+    }
+
+    private void initializeSecurityAccessService() {
+        if (securityAccessService == null) {
+            securityAccessService = SecurityAccessService.getInstance();
         }
     }
 
@@ -378,6 +386,17 @@ public class ServiceManager {
     public SessionService getSessionService() {
         initializeSessionService();
         return sessionService;
+    }
+
+    /**
+     * Initialize SecurityAccessService if it is not yet initialized and next return
+     * it.
+     *
+     * @return SecurityAccessService object
+     */
+    public SecurityAccessService getSecurityAccessService() {
+        initializeSecurityAccessService();
+        return securityAccessService;
     }
 
     /**
