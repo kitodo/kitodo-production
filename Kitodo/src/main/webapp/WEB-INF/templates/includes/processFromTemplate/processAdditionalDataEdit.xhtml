@@ -18,43 +18,22 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <h:panelGrid columns="2" cellpadding="10">
-        <table style="margin-left:30px" cellspacing="0">
-            <p:dataList var="intern" style="font-weight: normal;margin-left:30px" value="#{ProzesskopieForm.additionalFields}"
-                        layout="ordered list"
-                        rowCountVar="rowCount" rowIndexVar="rowIndex">
-                <ui:fragment rendered="#{intern.showDependingOnDoctype}">
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{intern.title}:"/>
-                        </td>
-                        <td>
-                            <h:inputText value="#{intern.value}" styleClass="prozessKopieFeldbreite"
-                                         rendered="#{intern.selectList==null}"/>
-                            <!--  		<h:selectOneMenu  value="#{intern.wert}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList!=null}">
-                            <f:selectItems value="#{intern.selectList}" />
-                        </h:selectOneMenu> -->
-                            <h:selectOneListbox value="#{intern.value}" styleClass="prozessKopieFeldbreite"
-                                                rendered="#{intern.selectList!=null}">
-                                <f:selectItems value="#{intern.selectList}"/>
-                            </h:selectOneListbox>
+    <p:panelGrid layout="grid" columns="2">
+        <p:row>
+            <ui:repeat value="#{ProzesskopieForm.visibleAdditionalFields}" var="field">
+                <div>
+                    <p:outputLabel value="#{field.title}:"/>
+                    <p:inputText value="#{field.value}" styleClass="prozessKopieFeldbreite"
+                                 rendered="#{field.selectList==null}" class="input" required="#{field.required}"/>
+                    <p:selectOneListbox value="#{field.value}" styleClass="prozessKopieFeldbreite"
+                                        rendered="#{field.selectList!=null}" class="input"
+                                        required="#{field.required}">
+                        <f:selectItems value="#{field.selectList}"/>
+                    </p:selectOneListbox>
+                </div>
 
-                            <h:outputText value="*" rendered="#{intern.required}"/>
-                        </td>
-                    </tr>
-                </ui:fragment>
+            </ui:repeat>
+        </p:row>
 
-            </p:dataList>
-
-            <tr class="rowTop">
-                <td width="150" style="">
-                    <h:outputText value="#{msgs.addToProcessLog}:"/>
-                </td>
-                <td>
-                    <h:inputTextarea value="#{ProzesskopieForm.addToWikiField}" styleClass="prozessKopieFeldbreite"/>
-                </td>
-            </tr>
-
-        </table>
-    </h:panelGrid>
+    </p:panelGrid>
 </ui:composition>
