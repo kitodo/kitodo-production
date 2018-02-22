@@ -31,7 +31,7 @@
                         <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
                                       rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
                     </h3>
-                    <p:commandButton id="save" value="#{msgs.speichern}"
+                    <p:commandButton value="#{msgs.speichern}"
                                      action="#{BenutzergruppenForm.save}"
                                      id="saveUserGroupButton"
                                      process="usergroupTabView:authoritiesGlobalPick, usergroupTabView:authoritiesClientPick, usergroupTabView:titleInput, usergroupTabView:authoritiesProjectPick"

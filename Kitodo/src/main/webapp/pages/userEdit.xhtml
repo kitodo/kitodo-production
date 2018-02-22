@@ -31,7 +31,7 @@
                         <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
                                       rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
                     </h3>
-                    <p:commandButton id="save" value="#{msgs.speichern}"
+                    <p:commandButton value="#{msgs.speichern}"
                                      action="#{BenutzerverwaltungForm.save}"
                                      id="saveUserButton"
                                      update="notifications"
