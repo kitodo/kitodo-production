@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -1298,6 +1299,10 @@ public class ProzesskopieForm implements Serializable {
 
     public List<AdditionalField> getAdditionalFields() {
         return this.additionalFields;
+    }
+
+    public List<AdditionalField> getVisibleAdditionalFields() {
+        return this.getAdditionalFields().stream().filter(af -> af.getShowDependingOnDoctype()).collect(Collectors.toList());
     }
 
     /**
