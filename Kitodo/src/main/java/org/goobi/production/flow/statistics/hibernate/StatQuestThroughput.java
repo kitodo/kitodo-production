@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -403,11 +404,15 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
                     // date/time extraction based on the group
                     dataRow.setName(new Converter(objArr[3]).getString() + "");
                 }
-                dataRow.addValue(new Converter(new Converter(objArr[2]).getInteger()).getString() + " ("
-                        + new Converter(objArr[1]).getString() + ")", (new Converter(objArr[0]).getDouble()));
+                if (Objects.nonNull(dataRow)) {
+                    dataRow.addValue(new Converter(new Converter(objArr[2]).getInteger()).getString() + " ("
+                            + new Converter(objArr[1]).getString() + ")", (new Converter(objArr[0]).getDouble()));
+                }
 
             } catch (Exception e) {
-                dataRow.addValue(e.getMessage(), 0.0);
+                if (Objects.nonNull(dataRow)) {
+                    dataRow.addValue(e.getMessage(), 0.0);
+                }
             }
         }
         // to add the last row
