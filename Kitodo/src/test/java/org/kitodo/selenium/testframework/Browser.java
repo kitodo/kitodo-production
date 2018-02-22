@@ -53,7 +53,7 @@ public class Browser {
     static void Initialize() throws IOException {
         String userDir = System.getProperty("user.dir");
 
-        WebDriverProvider.provideChromDriver(CHROME_DRIVER_VERSION, userDir + "/target/downloads/",
+        WebDriverProvider.provideChromeDriver(CHROME_DRIVER_VERSION, userDir + "/target/downloads/",
             userDir + "/target/extracts/");
 
         webDriver = new ChromeDriver();

@@ -62,6 +62,9 @@ public class IndexingPage {
         return Browser.getCurrentUrl().contains("indexing");
     }
 
+    /**
+     * Clicks on "delete index" button and accept dialog.
+     */
     public void deleteIndex() throws InterruptedException {
         deleteIndexButton.click();
         Thread.sleep(Browser.getDelayIndexing());
@@ -70,11 +73,17 @@ public class IndexingPage {
         Thread.sleep(Browser.getDelayIndexing());
     }
 
+    /**
+     * Clicks on "create mapping" button.
+     */
     public void createMapping() throws InterruptedException {
         createMappingButton.click();
         Thread.sleep(Browser.getDelayIndexing());
     }
 
+    /**
+     * Clicks on "start indexing all" button.
+     */
     public void startIndexingAll() throws InterruptedException {
         startIndexingAllButton.click();
         Thread.sleep(Browser.getDelayIndexing());

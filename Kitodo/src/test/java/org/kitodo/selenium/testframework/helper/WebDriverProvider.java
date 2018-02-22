@@ -104,7 +104,7 @@ public class WebDriverProvider {
      * @param extractFolder
      *            The folder in which the extracted files will be put in.
      */
-    public static void provideChromDriver(String chromeDriverVersion, String downloadFolder, String extractFolder)
+    public static void provideChromeDriver(String chromeDriverVersion, String downloadFolder, String extractFolder)
             throws IOException {
 
         String chromeDriverUrl = "https://chromedriver.storage.googleapis.com/" + chromeDriverVersion + "/";
