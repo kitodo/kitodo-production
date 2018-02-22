@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -73,7 +74,7 @@ public class GoobiScript {
         StrTokenizer tokenizer = new StrTokenizer(script, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
-            if (!tok.contains(":")) {
+            if (Objects.nonNull(tok) && !tok.contains(":")) {
                 Helper.setFehlerMeldung("kitodoScriptfield", "missing delimiter / unknown parameter: ", tok);
             } else {
                 String key = tok.substring(0, tok.indexOf(":"));

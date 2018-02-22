@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.PluginManager;
@@ -162,25 +163,27 @@ public class PluginLoader {
     public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
         final String INTERNAL_CLASSES_PREFIX = "net.xeoh.plugins.";
         final short INTERNAL_CLASSES_COUNT = 4;
-        ArrayList<T> result;
+        ArrayList<T> result = new ArrayList<>();
 
         PluginType type = UnspecificPlugin.typeOf(clazz);
-        PluginManagerUtil pluginLoader = getPluginLoader(type);
-        Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class);
-        // Never API version supports no-arg getPlugins() TODO: update API
-        result = new ArrayList<>(plugins.size() - INTERNAL_CLASSES_COUNT);
-        for (Plugin implementation : plugins) {
-            if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX)) {
-                continue; // Skip plugin API internal classes
-            }
-            try {
-                T plugin = (T) UnspecificPlugin.create(type, implementation);
-                plugin.configure(getPluginConfiguration());
-                result.add(plugin);
-            } catch (NoSuchMethodException | SecurityException e) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("Bad implementation of " + type.getName() + " plugin "
-                            + implementation.getClass().getName(), e);
+        if (Objects.nonNull(type)) {
+            PluginManagerUtil pluginLoader = getPluginLoader(type);
+            Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class);
+            // Never API version supports no-arg getPlugins() TODO: update API
+            result = new ArrayList<>(plugins.size() - INTERNAL_CLASSES_COUNT);
+            for (Plugin implementation : plugins) {
+                if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX)) {
+                    continue; // Skip plugin API internal classes
+                }
+                try {
+                    T plugin = (T) UnspecificPlugin.create(type, implementation);
+                    plugin.configure(getPluginConfiguration());
+                    result.add(plugin);
+                } catch (NoSuchMethodException | SecurityException e) {
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("Bad implementation of " + type.getName() + " plugin "
+                                + implementation.getClass().getName(), e);
+                    }
                 }
             }
         }

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -748,12 +749,15 @@ public class CalendarForm implements Serializable {
      */
     public void copyBlockClick() {
         Block copy = blockShowing.clone(course);
-        LocalDate firstAppearance = course.getLastAppearance().plusDays(1);
-        copy.setFirstAppearance(firstAppearance);
-        copy.setLastAppearance(firstAppearance);
-        course.add(copy);
-        blockShowing = copy;
-        navigate();
+        LocalDate lastAppearance = course.getLastAppearance();
+        if (Objects.nonNull(lastAppearance)) {
+            LocalDate firstAppearance = lastAppearance.plusDays(1);
+            copy.setFirstAppearance(firstAppearance);
+            copy.setLastAppearance(firstAppearance);
+            course.add(copy);
+            blockShowing = copy;
+            navigate();
+        }
     }
 
     /**

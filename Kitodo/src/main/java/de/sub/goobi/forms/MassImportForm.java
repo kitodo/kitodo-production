@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -581,13 +582,13 @@ public class MassImportForm implements Serializable {
      */
     public void setCurrentPlugin(String currentPlugin) {
         this.currentPlugin = currentPlugin;
-        if (currentPlugin != null && currentPlugin.length() > 0) {
+        if (this.currentPlugin != null && this.currentPlugin.length() > 0) {
             this.plugin = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.IMPORT, this.currentPlugin);
 
-            if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
+            if (Objects.nonNull(this.plugin) && this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
                 this.allFilenames = this.plugin.getAllFilenames();
             }
-            plugin.setPrefs(serviceManager.getRulesetService().getPreferences(template.getRuleset()));
+            this.plugin.setPrefs(serviceManager.getRulesetService().getPreferences(template.getRuleset()));
         }
     }
 

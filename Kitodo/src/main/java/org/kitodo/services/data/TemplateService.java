@@ -102,12 +102,15 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
             query = readFilters(filterMap);
         }
 
-        return query.toString();
+        if (Objects.nonNull(query)) {
+            return query.toString();
+        }
+        return "";
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
         TemplateForm form = (TemplateForm) Helper.getManagedBeanValue("#{TemplateForm}");
-        if (Objects.equals(form, null)) {
+        if (Objects.isNull(form)) {
             form = new TemplateForm();
         }
         BoolQueryBuilder query = null;

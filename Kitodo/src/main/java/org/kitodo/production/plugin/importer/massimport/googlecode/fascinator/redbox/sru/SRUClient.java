@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -629,20 +630,25 @@ public class SRUClient {
         String rawXml = getSearchResponse(query);
 
         // Get the results nodes
-        List<Node> results = getResultList(rawXml);
-        if (results.isEmpty()) {
+        if (Objects.nonNull(rawXml)) {
+            List<Node> results = getResultList(rawXml);
+            if (results.isEmpty()) {
+                logger.warn("This identifier matches no records.");
+                return null;
+            }
+            if (results.size() > 1) {
+                logger.warn("This identifier matches multiple records! Returning only the first.");
+            }
+
+            // Return first(only?) record
+            if ("xml".equals(responsePacking)) {
+                return results.get(0).selectSingleNode("*[1]");
+            } else {
+                return results.get(0);
+            }
+        } else {
             logger.warn("This identifier matches no records.");
             return null;
-        }
-        if (results.size() > 1) {
-            logger.warn("This identifier matches multiple records! Returning only the first.");
-        }
-
-        // Return first(only?) record
-        if ("xml".equals(responsePacking)) {
-            return results.get(0).selectSingleNode("*[1]");
-        } else {
-            return results.get(0);
         }
     }
 
