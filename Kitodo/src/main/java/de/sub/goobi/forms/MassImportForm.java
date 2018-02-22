@@ -129,9 +129,9 @@ public class MassImportForm implements Serializable {
     /**
      * generate a list with all possible collections for given project.
      */
-
     @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
+        final String defaultString = "default";
         this.possibleDigitalCollections = new ArrayList<>();
         ArrayList<String> defaultCollections = new ArrayList<>();
         String filename = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
@@ -141,33 +141,33 @@ public class MassImportForm implements Serializable {
         }
         this.digitalCollections = new ArrayList<>();
         try {
-            /* Datei einlesen und Root ermitteln */
+            // read data and determine the root
             SAXBuilder builder = new SAXBuilder();
             Document doc = builder.build(new File(filename));
             Element root = doc.getRootElement();
-            /* alle Projekte durchlaufen */
-            List<Element> projekte = root.getChildren();
-            for (Element project : projekte) {
+            // run through all projects
+            List<Element> projects = root.getChildren();
+            for (Element project : projects) {
                 // collect default collections
-                if (project.getName().equals("default")) {
+                if (project.getName().equals(defaultString)) {
                     List<Element> myCols = project.getChildren("DigitalCollection");
                     for (Element digitalCollection : myCols) {
-                        if (digitalCollection.getAttribute("default") != null
-                                && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                        if (digitalCollection.getAttribute(defaultString) != null
+                                && digitalCollection.getAttributeValue(defaultString).equalsIgnoreCase("true")) {
                             digitalCollections.add(digitalCollection.getText());
                         }
                         defaultCollections.add(digitalCollection.getText());
                     }
                 } else {
                     // run through the projects
-                    List<Element> projektnamen = project.getChildren("name");
-                    for (Element projectName : projektnamen) {
+                    List<Element> projectNames = project.getChildren("name");
+                    for (Element projectName : projectNames) {
                         // all all collections to list
                         if (projectName.getText().equalsIgnoreCase(this.template.getProject().getTitle())) {
                             List<Element> myCols = project.getChildren("DigitalCollection");
                             for (Element digitalCollection : myCols) {
-                                if (digitalCollection.getAttribute("default") != null
-                                        && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                                if (digitalCollection.getAttribute(defaultString) != null
+                                        && digitalCollection.getAttributeValue(defaultString).equalsIgnoreCase("true")) {
                                     digitalCollections.add(digitalCollection.getText());
                                 }
                                 this.possibleDigitalCollections.add(digitalCollection.getText());
@@ -278,15 +278,14 @@ public class MassImportForm implements Serializable {
                 if (batch != null) {
                     io.getBatches().add(batch);
                 }
+                URI importFileName = io.getImportFileName();
                 if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
                     Process p = JobCreation.generateProcess(io, this.template);
                     if (p == null) {
-                        if (io.getImportFileName() != null
-                                && !serviceManager.getFileService().getFileName(io.getImportFileName()).isEmpty()
-                                && selectedFilenames != null && !selectedFilenames.isEmpty()) {
-                            if (selectedFilenames.contains(io.getImportFileName())) {
-                                selectedFilenames.remove(io.getImportFileName());
-                            }
+                        if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
+                                && selectedFilenames != null && !selectedFilenames.isEmpty()
+                                && selectedFilenames.contains(importFileName.getRawPath())) {
+                            selectedFilenames.remove(importFileName.getRawPath());
                         }
                         Helper.setFehlerMeldung(
                                 "import failed for " + io.getProcessTitle() + ", process generation failed");
@@ -300,12 +299,10 @@ public class MassImportForm implements Serializable {
                     param.add(io.getProcessTitle());
                     param.add(io.getErrorMessage());
                     Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
-                    if (io.getImportFileName() != null
-                            && !serviceManager.getFileService().getFileName(io.getImportFileName()).isEmpty()
-                            && selectedFilenames != null && !selectedFilenames.isEmpty()) {
-                        if (selectedFilenames.contains(io.getImportFileName())) {
-                            selectedFilenames.remove(io.getImportFileName());
-                        }
+                    if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
+                            && selectedFilenames != null && !selectedFilenames.isEmpty()
+                            && selectedFilenames.contains(importFileName.getRawPath())) {
+                        selectedFilenames.remove(importFileName.getRawPath());
                     }
                 }
             }
@@ -344,10 +341,10 @@ public class MassImportForm implements Serializable {
             basename = basename.substring(1);
         }
         if (basename.contains("/")) {
-            basename = basename.substring(basename.lastIndexOf("/") + 1);
+            basename = basename.substring(basename.lastIndexOf('/') + 1);
         }
         if (basename.contains("\\")) {
-            basename = basename.substring(basename.lastIndexOf("\\") + 1);
+            basename = basename.substring(basename.lastIndexOf('\\') + 1);
         }
         URI temporalFile = serviceManager.getFileService()
                 .createResource(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename);
@@ -458,12 +455,13 @@ public class MassImportForm implements Serializable {
      * @return the opac catalogues
      */
     public List<String> getAllOpacCatalogues() {
+        List<String> allOpacCatalogues = new ArrayList<>();
         try {
-            return ConfigOpac.getAllCatalogueTitles();
-        } catch (Throwable t) {
-            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-            return new ArrayList<>();
+            allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
         }
+        return allOpacCatalogues;
     }
 
     /**
