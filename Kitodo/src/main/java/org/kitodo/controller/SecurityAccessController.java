@@ -22,12 +22,16 @@ import org.kitodo.services.security.SecurityAccessService;
 public class SecurityAccessController {
     private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
 
-    public boolean hasAuthorityForProject(String module, String authorityTitle, int projectId) {
+    public boolean hasAuthorityForProject(String authorityTitle, int projectId) {
         return securityAccessService.hasAuthorityForProject(authorityTitle, projectId);
     }
 
-    public boolean hasAuthorityForClient(String module, String authorityTitle, int clientId) {
+    public boolean hasAuthorityForClient(String authorityTitle, int clientId) {
         return securityAccessService.hasAuthorityForClient(authorityTitle, clientId);
+    }
+
+    public boolean hasAuthority(String authoriyTitle) {
+        return securityAccessService.hasGlobalAuthority(authoriyTitle);
     }
 
 }

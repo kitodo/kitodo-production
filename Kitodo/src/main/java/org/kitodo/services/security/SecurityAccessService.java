@@ -50,37 +50,51 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user has a specified authority title in relation to a
-     * project id.
+     * Checks if the current user has a specified authority globally or in relation
+     * to a project id.
      * 
      * @param authorityTitle
      *            The authority title.
      * @param projectId
      *            The project id.
-     * @return
+     * @return True if the current user has the specified authority.
      */
     public boolean hasAuthorityForProject(String authorityTitle, int projectId) {
-        String titleOfRequiredAuthority = authorityTitle + "_PROJECT_" + projectId;
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(titleOfRequiredAuthority);
-        Collection<? extends GrantedAuthority> authorities = getAuthorities();
-        return authorities.contains(authority);
+        if (hasGlobalAuthority(authorityTitle)) {
+            return true;
+        } else {
+            String titleOfRequiredAuthority = authorityTitle + "_PROJECT_" + projectId;
+            return hasAuthority(titleOfRequiredAuthority);
+        }
     }
 
     /**
-     * Checks if the current user has a specified authority title in relation to a
-     * client id.
+     * Checks if the current user has a specified authority globally or in relation
+     * to a client id.
      *
      * @param authorityTitle
      *            The authority title.
      * @param clientId
      *            The project id.
-     * @return
+     * @return True if the current user has the specified authority.
      */
     public boolean hasAuthorityForClient(String authorityTitle, int clientId) {
-        String titleOfRequiredAuthority = authorityTitle + "_CLIENT_" + clientId;
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(titleOfRequiredAuthority);
+        if (hasGlobalAuthority(authorityTitle)) {
+            return true;
+        } else {
+            String titleOfRequiredAuthority = authorityTitle + "_CLIENT_" + clientId;
+            return hasAuthority(titleOfRequiredAuthority);
+        }
+    }
+
+    private boolean hasAuthority(String authorityTitle) {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authorityTitle);
         Collection<? extends GrantedAuthority> authorities = getAuthorities();
         return authorities.contains(authority);
+    }
+
+    public boolean hasGlobalAuthority(String authorityTitle) {
+        return hasAuthority(authorityTitle + "_GLOBAL");
     }
 
 }
