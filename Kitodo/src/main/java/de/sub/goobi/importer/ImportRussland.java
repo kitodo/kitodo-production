@@ -98,11 +98,9 @@ public class ImportRussland {
                 analyzeParagraph(lines);
                 // reset list
                 lines = new ArrayList<>();
-            } else if (!line.substring(0, 1).equals("+")) {
+            } else if (!line.substring(0, 1).equals("+") && line.length() > 3) {
                 // if line is not a comment, accept the line in the list for evaluation
-                if (line.length() > 3) {
-                    lines.add(line);
-                }
+                lines.add(line);
             }
         }
 
@@ -279,16 +277,16 @@ public class ImportRussland {
         if (docStruct.getAllVisibleMetadata() != null) {
             LinkedList<Metadata> listMetas = new LinkedList<>(docStruct.getAllMetadata());
             for (Metadata meta : listMetas) {
-                String myMetaName = meta.getType().getName();
+                String metaName = meta.getType().getName();
 
                 /*
                  * wenn die Metadatentypen die russischen sind, werden sie aus der Liste
                  * entfernt
                  */
-                if (myMetaName.equals("PersonAsSubject") || myMetaName.equals("RUSMainTitle")
-                        || myMetaName.equals("ClassificationUDK") || myMetaName.equals("RUSKeyword")
-                        || myMetaName.equals("RUSPublisher") || myMetaName.equals("RUSPlaceOfPublication")
-                        || myMetaName.equals("RUSPublicationHouse") || myMetaName.equals("RUSPublisher")) {
+                if (metaName.equals("PersonAsSubject") || metaName.equals("RUSMainTitle")
+                        || metaName.equals("ClassificationUDK") || metaName.equals("RUSKeyword")
+                        || metaName.equals("RUSPublisher") || metaName.equals("RUSPlaceOfPublication")
+                        || metaName.equals("RUSPublicationHouse")) {
                     docStruct.removeMetadata(meta);
                 }
             }
@@ -362,8 +360,8 @@ public class ImportRussland {
             throw new WrongImportFileException(
                     "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + inDetail + "')");
         }
-        p.setLastname(pName.substring(0, pName.indexOf(",")).trim());
-        p.setFirstname(pName.substring(pName.indexOf(",") + 1, pName.length()).trim());
+        p.setLastname(pName.substring(0, pName.indexOf(',')).trim());
+        p.setFirstname(pName.substring(pName.indexOf(',') + 1, pName.length()).trim());
         p.setRole(inRole);
         // TODO: should be this data inserted?
         // MetadataType mdt =

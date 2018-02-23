@@ -41,7 +41,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ProjectStatusDraw {
     private static final Logger logger = LogManager.getLogger(ProjectStatusDraw.class);
-    private static final long MILLICSECS_PER_DAY = 1000 * 60 * 60 * 24;
+    private static final long MILLICSECS_PER_DAY = 1000L * 60 * 60 * 24;
     private static final int BORDERTOP = 50;
     private static int BORDERRIGHT = 50;
     private static int BARWIDTH = 15;

@@ -26,7 +26,7 @@ public class MetadatenSperrung implements Serializable {
      * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
      * behalten (30 min)
      */
-    private static final long sperrzeit = ConfigCore.getLongParameter("MetsEditorLockingTime", 30 * 60 * 1000);
+    private static final long sperrzeit = ConfigCore.getLongParameter("MetsEditorLockingTime", 30 * 60 * 1000L);
 
     /**
      * Metadaten eines bestimmten Prozesses wieder freigeben.

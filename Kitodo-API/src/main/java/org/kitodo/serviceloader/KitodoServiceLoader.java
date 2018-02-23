@@ -52,6 +52,8 @@ public class KitodoServiceLoader<T> {
     private static final String META_INF_FOLDER = "META-INF";
     private static final String RESOURCES_FOLDER = "resources";
     private static final String PAGES_FOLDER = "pages";
+    private static final String JAR = "*.jar";
+    private static final String ERROR = "Classpath could not be accessed";
 
     private static final Path SYSTEM_TEMP_FOLDER = FileSystems.getDefault()
             .getPath(System.getProperty("java.io.tmpdir"));
@@ -99,7 +101,7 @@ public class KitodoServiceLoader<T> {
      */
     private void loadBeans() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
 
             for (Path f : stream) {
                 try (JarFile jarFile = new JarFile(f.toString())) {
@@ -109,41 +111,41 @@ public class KitodoServiceLoader<T> {
                         Enumeration<JarEntry> e = jarFile.entries();
 
                         URL[] urls = {new URL("jar:file:" + f.toString() + "!/") };
-                        URLClassLoader cl = URLClassLoader.newInstance(urls);
+                        try (URLClassLoader cl = URLClassLoader.newInstance(urls)) {
+                            while (e.hasMoreElements()) {
+                                JarEntry je = e.nextElement();
 
-                        while (e.hasMoreElements()) {
-                            JarEntry je = e.nextElement();
+                                /*
+                                 * IMPORTANT: Naming convention: the name of the java class has to be in upper
+                                 * camel case or "pascal case" and must be equal to the file name of the
+                                 * corresponding facelet file concatenated with the word "Form".
+                                 *
+                                 * Example: template filename "sample.xhtml" => "SampleForm.java"
+                                 *
+                                 * That is the reason for the following check (e.g. whether the JarEntry name
+                                 * ends with "Form.class")
+                                 */
+                                if (je.isDirectory() || !je.getName().endsWith("Form.class")) {
+                                    continue;
+                                }
 
-                            /*
-                             * IMPORTANT: Naming convention: the name of the java class has to be in upper
-                             * camel case or "pascal case" and must be equal to the file name of the
-                             * corresponding facelet file concatenated with the word "Form".
-                             *
-                             * Example: template filename "sample.xhtml" => "SampleForm.java"
-                             *
-                             * That is the reason for the following check (e.g. whether the JarEntry name
-                             * ends with "Form.class")
-                             */
-                            if (je.isDirectory() || !je.getName().endsWith("Form.class")) {
-                                continue;
+                                String className = je.getName().substring(0, je.getName().length() - 6);
+                                className = className.replace('/', '.');
+                                Class c = cl.loadClass(className);
+
+                                String beanName = className.substring(className.lastIndexOf('.') + 1).trim();
+
+                                FacesContext facesContext = FacesContext.getCurrentInstance();
+                                HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+
+                                session.getServletContext().setAttribute(beanName, c.newInstance());
                             }
-
-                            String className = je.getName().substring(0, je.getName().length() - 6);
-                            className = className.replace('/', '.');
-                            Class c = cl.loadClass(className);
-
-                            String beanName = className.substring(className.lastIndexOf(".") + 1).trim();
-
-                            FacesContext facesContext = FacesContext.getCurrentInstance();
-                            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
-
-                            session.getServletContext().setAttribute(beanName, c.newInstance());
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            logger.error("Classpath could not be accessed", e.getMessage());
+            logger.error(ERROR, e.getMessage());
         }
     }
 
@@ -156,7 +158,7 @@ public class KitodoServiceLoader<T> {
 
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
 
             for (Path f : stream) {
                 File loc = new File(f.toString());
@@ -190,7 +192,7 @@ public class KitodoServiceLoader<T> {
                 }
             }
         } catch (Exception e) {
-            logger.error("Classpath could not be accessed", e.getMessage());
+            logger.error(ERROR, e.getMessage());
         }
     }
 
@@ -324,8 +326,7 @@ public class KitodoServiceLoader<T> {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
 
         URLClassLoader sysLoader;
-        try {
-            DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, "*.jar");
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(moduleFolder, JAR)) {
             for (Path f : stream) {
                 File loc = new File(f.toString());
                 sysLoader = (URLClassLoader) this.getClass().getClassLoader();
@@ -340,7 +341,7 @@ public class KitodoServiceLoader<T> {
                 }
             }
         } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            logger.error("Classpath could not be accessed", e.getMessage());
+            logger.error(ERROR, e.getMessage());
         }
     }
 
