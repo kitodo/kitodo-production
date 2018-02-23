@@ -31,8 +31,9 @@
                         <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
                                       rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
                     </h3>
-                    <p:commandButton id="save" value="#{msgs.speichern}"
+                    <p:commandButton value="#{msgs.speichern}"
                                      action="#{BenutzerverwaltungForm.save}"
+                                     id="saveUserButton"
                                      update="notifications"
                                      icon="fa fa-floppy-o fa-lg"
                                      iconPos="right"
@@ -128,6 +129,7 @@
                                 </p:column>
                             </p:dataTable>
                             <button onclick="PF('addUserGroupDialog').show()"
+                                    id="addUserGroupButton"
                                     type="button"
                                     class="ui-button ui-widget ui-corner-all button-filled-green"
                                     style="padding:.7em;border:none;">

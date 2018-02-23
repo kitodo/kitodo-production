@@ -13,7 +13,7 @@ jdk:
 sudo: required
 
 addons:
-  firefox: "55.0"
+  chrome: stable
   apt:
       sources:
         - mysql-5.7-trusty

@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -209,9 +210,11 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByProject(Project project) {
         List<Authority> authorities = new ArrayList<>();
 
-        for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
-            if (project.equals(relation.getProject())) {
-                authorities.add(relation.getAuthority());
+        if (Objects.nonNull(this.userGroupProjectAuthorityRelations)) {
+            for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
+                if (project.equals(relation.getProject())) {
+                    authorities.add(relation.getAuthority());
+                }
             }
         }
         return authorities;
@@ -227,9 +230,11 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByClient(Client client) {
         List<Authority> authorities = new ArrayList<>();
 
-        for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
-            if (client.equals(relation.getClient())) {
-                authorities.add(relation.getAuthority());
+        if (Objects.nonNull(this.userGroupClientAuthorityRelations)) {
+            for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
+                if (client.equals(relation.getClient())) {
+                    authorities.add(relation.getAuthority());
+                }
             }
         }
         return authorities;

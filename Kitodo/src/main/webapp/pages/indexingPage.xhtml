@@ -38,6 +38,7 @@
                             <tr>
                                 <td colspan="2">
                                     <p:commandButton widgetVar="createMapping"
+                                                     id="createMappingButton"
                                                      value="#{msgs.createMapping}"
                                                      style="width: 100%;"
                                                      action="#{indexingForm.createMapping(true)}"
@@ -55,6 +56,7 @@
                             <tr>
                                 <td colspan="2">
                                     <p:commandButton widgetVar="deleteIndex"
+                                                     id="deleteIndexButton"
                                                      value="#{msgs.deleteIndex}"
                                                      style="width: 100%;"
                                                      action="#{indexingForm.deleteIndex(true)}"
@@ -70,7 +72,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <table>
+                        <table id="indexingTable">
                             <thead>
                             <tr>
                                 <th><h:outputText value="#{msgs.objectType}"/></th>
@@ -97,6 +99,7 @@
                                 <td><h:outputText value="#{msgs.wholeIndex}"/></td>
                                 <td>
                                     <p:commandButton widgetVar="startIndexingAll"
+                                                     id="startIndexingAllButton"
                                                      onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                                      value="#{msgs.startIndexing}"
                                                      action="#{indexingForm.startAllIndexing()}"

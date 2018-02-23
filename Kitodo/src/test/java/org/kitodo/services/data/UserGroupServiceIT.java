@@ -89,7 +89,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAllUserGroupsInGivenRange() throws Exception {
-        List<UserGroup> userGroups = userGroupService.getAll(1,10);
+        List<UserGroup> userGroups = userGroupService.getAll(1, 10);
         assertEquals("Not all user's groups were found in database!", 2, userGroups.size());
     }
 
@@ -219,7 +219,7 @@ public class UserGroupServiceIT {
     public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
-        List<String> expected = Arrays.asList("admin","manager","user");
+        List<String> expected = Arrays.asList("admin", "manager", "user");
         assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
     }
 
@@ -240,7 +240,8 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAuthorizationForAdmin() throws Exception {
-        List<UserGroupDTO> userGroupDTOS = userGroupService.convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
+        List<UserGroupDTO> userGroupDTOS = userGroupService
+                .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
         assertEquals("Incorrect amount of found user groups", 1, userGroupDTOS.size());
 
         AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);
