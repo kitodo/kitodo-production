@@ -50,8 +50,15 @@ public class SecurityAccessController {
         return securityAccessService.hasAuthorityForClient(authorityTitle, clientId);
     }
 
-    public boolean hasAuthorityGlobally(String authoriyTitle) {
-        return securityAccessService.hasGlobalAuthority(authoriyTitle);
+    /**
+     * Checks if the current user has a specified authority globally.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasAuthorityGlobally(String authorityTitle) {
+        return securityAccessService.hasGlobalAuthority(authorityTitle);
     }
 
 }
