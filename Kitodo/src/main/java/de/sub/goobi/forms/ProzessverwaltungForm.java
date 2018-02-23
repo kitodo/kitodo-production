@@ -2241,6 +2241,7 @@ public class ProzessverwaltungForm extends BasisForm {
             } else {
                 newProcess();
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         }

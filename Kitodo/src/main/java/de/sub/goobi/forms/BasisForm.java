@@ -37,6 +37,7 @@ public class BasisForm implements Serializable {
     static final String REDIRECT_PARAMETER = "faces-redirect=true";
     static final String TEMPLATE_ROOT = "/pages/";
     private int activeTabId = 0;
+    private boolean saveDisabled = true;
 
     private LazyDTOModel lazyDTOModel = null;
 
@@ -158,5 +159,23 @@ public class BasisForm implements Serializable {
      */
     public void onTabChange(TabChangeEvent event) {
         setActiveTabIndex(event.getComponent().getChildren().indexOf(event.getTab()));
+    }
+
+    /**
+     * Return boolean to disable save button.
+     *
+     * @return status of save button
+     */
+    public boolean isSaveDisabled() {
+        return saveDisabled;
+    }
+
+    /**
+     * Set boolean to disable save button.
+     *
+     * @param saveDisabled
+     */
+    public void setSaveDisabled(boolean saveDisabled) {
+        this.saveDisabled = saveDisabled;
     }
 }
