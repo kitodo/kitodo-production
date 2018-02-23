@@ -1955,7 +1955,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     // TODO:
-    // replace calls to this function with "/pages/processes" once we have completely
+    // replace calls to this function with "/pages/processFromTemplate" once we have completely
     // switched to the new frontend pages
     private String redirectToProcessFromTemplateEdit() {
         try {
