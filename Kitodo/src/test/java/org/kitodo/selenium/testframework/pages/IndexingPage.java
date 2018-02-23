@@ -113,7 +113,7 @@ public class IndexingPage {
                 return lastRow.findElement(By.className("ui-progressbar-label")).getText();
             } catch (StaleElementReferenceException e) {
                 attempt++;
-                logger.debug("Indexing progress is not readable, retrying now, " + attempt);
+                logger.error("Indexing progress is not readable, retrying now, " + attempt);
             }
         }
         logger.error("could not read indexing progress");
