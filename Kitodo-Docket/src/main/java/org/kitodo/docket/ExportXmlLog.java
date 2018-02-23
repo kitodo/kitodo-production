@@ -14,6 +14,7 @@ package org.kitodo.docket;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -160,22 +161,8 @@ public class ExportXmlLog {
         comment.setText(docketData.getComment());
         processElements.add(comment);
 
-        ArrayList<Element> processProperties = new ArrayList<Element>();
-        for (Property prop : docketData.getProcessProperties()) {
-            Element property = new Element("property", xmlns);
-            property.setAttribute("propertyIdentifier", prop.getTitle());
-            if (prop.getValue() != null) {
-                property.setAttribute("value", replacer(prop.getValue()));
-            } else {
-                property.setAttribute("value", "");
-            }
+        List<Element> processProperties = prepareProperties(docketData.getProcessProperties(), xmlns);
 
-            Element label = new Element("label", xmlns);
-
-            label.setText(prop.getTitle());
-            property.addContent(label);
-            processProperties.add(property);
-        }
         if (processProperties.size() != 0) {
             Element properties = new Element("properties", xmlns);
             properties.addContent(processProperties);
@@ -183,10 +170,10 @@ public class ExportXmlLog {
         }
 
         // template information
-        ArrayList<Element> templateElements = new ArrayList<Element>();
+        ArrayList<Element> templateElements = new ArrayList<>();
         Element template = new Element("original", xmlns);
 
-        ArrayList<Element> templateProperties = new ArrayList<Element>();
+        ArrayList<Element> templateProperties = new ArrayList<>();
         if (docketData.getTemplateProperties() != null) {
             for (Property prop : docketData.getTemplateProperties()) {
                 Element property = new Element("property", xmlns);
@@ -228,27 +215,11 @@ public class ExportXmlLog {
         processElements.add(templates);
 
         // digital document information
-        ArrayList<Element> docElements = new ArrayList<Element>();
+        ArrayList<Element> docElements = new ArrayList<>();
         Element dd = new Element("digitalDocument", xmlns);
 
-        ArrayList<Element> docProperties = new ArrayList<Element>();
-        if (docketData.getWorkpieceProperties() != null) {
-            for (Property prop : docketData.getWorkpieceProperties()) {
-                Element property = new Element("property", xmlns);
-                property.setAttribute("propertyIdentifier", prop.getTitle());
-                if (prop.getValue() != null) {
-                    property.setAttribute("value", replacer(prop.getValue()));
-                } else {
-                    property.setAttribute("value", "");
-                }
+        List<Element> docProperties = prepareProperties(docketData.getWorkpieceProperties(), xmlns);
 
-                Element label = new Element("label", xmlns);
-
-                label.setText(prop.getTitle());
-                property.addContent(label);
-                docProperties.add(property);
-            }
-        }
         if (docProperties.size() != 0) {
             Element properties = new Element("properties", xmlns);
             properties.addContent(docProperties);
@@ -262,6 +233,26 @@ public class ExportXmlLog {
 
         processElm.setContent(processElements);
         return doc;
+    }
+
+    private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
+        ArrayList<Element> preparedProperties = new ArrayList<>();
+        for (Property property : properties) {
+            Element propertyElement = new Element("property", xmlns);
+            propertyElement.setAttribute("propertyIdentifier", property.getTitle());
+            if (property.getValue() != null) {
+                propertyElement.setAttribute("value", replacer(property.getValue()));
+            } else {
+                propertyElement.setAttribute("value", "");
+            }
+
+            Element label = new Element("label", xmlns);
+
+            label.setText(property.getTitle());
+            propertyElement.addContent(label);
+            preparedProperties.add(propertyElement);
+        }
+        return preparedProperties;
     }
 
     private String replacer(String in) {

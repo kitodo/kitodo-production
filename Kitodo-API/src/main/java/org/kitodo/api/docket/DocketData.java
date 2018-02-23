@@ -12,6 +12,7 @@
 package org.kitodo.api.docket;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DocketData {
 
@@ -173,6 +174,9 @@ public class DocketData {
      * @return The workpieceProperties.
      */
     public ArrayList<Property> getWorkpieceProperties() {
+        if (Objects.isNull(workpieceProperties)) {
+            workpieceProperties = new ArrayList<>();
+        }
         return workpieceProperties;
     }
 
@@ -192,6 +196,9 @@ public class DocketData {
      * @return The processProperties.
      */
     public ArrayList<Property> getProcessProperties() {
+        if (Objects.isNull(processProperties)) {
+            processProperties = new ArrayList<>();
+        }
         return processProperties;
     }
 
