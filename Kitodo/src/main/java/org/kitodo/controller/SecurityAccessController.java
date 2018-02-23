@@ -22,15 +22,35 @@ import org.kitodo.services.security.SecurityAccessService;
 public class SecurityAccessController {
     private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
 
-    public boolean hasAuthorityForProject(String authorityTitle, int projectId) {
+    /**
+     * Checks if the current user has a specified authority globally or in relation
+     * to a project id.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param projectId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasAuthorityForProjectOrGlobally(String authorityTitle, int projectId) {
         return securityAccessService.hasAuthorityForProject(authorityTitle, projectId);
     }
 
-    public boolean hasAuthorityForClient(String authorityTitle, int clientId) {
+    /**
+     * Checks if the current user has a specified authority globally or in relation
+     * to a client id.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param clientId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasAuthorityForClientOrGlobally(String authorityTitle, int clientId) {
         return securityAccessService.hasAuthorityForClient(authorityTitle, clientId);
     }
 
-    public boolean hasAuthority(String authoriyTitle) {
+    public boolean hasAuthorityGlobally(String authoriyTitle) {
         return securityAccessService.hasGlobalAuthority(authoriyTitle);
     }
 

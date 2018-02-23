@@ -93,6 +93,13 @@ public class SecurityAccessService {
         return authorities.contains(authority);
     }
 
+    /**
+     * Checks if the current user has a specified authority globally.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
     public boolean hasGlobalAuthority(String authorityTitle) {
         return hasAuthority(authorityTitle + "_GLOBAL");
     }
