@@ -71,10 +71,10 @@
                         <!-- Dashboard menu -->
                         <a href="#" id="dashboard-menu"><i class="fa fa-th fa-lg"/></a>
                         <ul>
-                            <li>
+                            <li id="dashboard-menu-header">
                                 <h3>#{msgs.dashboard}
                                     <h:outputText
-                                        rendered="#{SecurityAccessController.hasAuthorityGlobally('admin_GLOBAL')}">
+                                        rendered="#{SecurityAccessController.hasAuthorityGlobally('admin')}">
                                         <i>(Admin)</i>
                                     </h:outputText>
                                 </h3>
@@ -106,8 +106,10 @@
                         <a href="#" id="user-menu"><i class="fa fa-user-circle-o fa-lg"/></a>
                         <h:form id="logout-form">
                             <ul id="nav-user">
-                                <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}<h:outputText
-                                    rendered="#{LoginForm.maximaleBerechtigung == 1}"> <i>(Admin)</i></h:outputText>
+                                <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}
+                                    <h:outputText rendered="#{SecurityAccessController.hasAuthorityGlobally('admin')}">
+                                        <i>(Admin)</i>
+                                    </h:outputText>
                                 </h3></li>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
                                 <li><h:outputLink value="#{request.contextPath}/logout"
