@@ -795,6 +795,10 @@ footer {
     border-left: none !important;
 }
 
+.ui-selectonemenu {
+    min-width: 0 !important;
+}
+
 .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
     background: transparent;
 }
