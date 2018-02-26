@@ -28,8 +28,9 @@ class NodeIterable implements Iterable<Node>, Iterator<Node> {
     /**
      * Creates a class to iterate over the children of a DOM element.
      *
-     * @param parent
-     *            parent over whose children shall be iterated
+     * @param firstChild
+     *            first child of the linked list of children over which shall be
+     *            iterated
      */
     NodeIterable(Node firstChild) {
         next = firstChild;
