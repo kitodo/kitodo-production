@@ -100,7 +100,7 @@ public class XMLWriter {
         long first = Long.MAX_VALUE;
         long last = 0;
 
-        if ((node instanceof Node) && (node instanceof IdentifiableNode)) {
+        if (node instanceof IdentifiableNode) {
             out.setAttribute(abbr.abbreviateAttribute(getTypeOrDefault(node), RDF.ABOUT),
                 ((IdentifiableNode) node).getIdentifier());
         }
@@ -191,7 +191,7 @@ public class XMLWriter {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation()
                     .createDocument(Namespaces.namespaceOfForXMLFile(getTypeOrDefault(node)), qualifiedName, null);
             Element root = document.getDocumentElement();
-            if ((node instanceof Node) && (node instanceof IdentifiableNode)) {
+            if (node instanceof IdentifiableNode) {
                 root.setAttribute(abbr.abbreviateAttribute(getTypeOrDefault(node), RDF.ABOUT),
                     ((IdentifiableNode) node).getIdentifier());
             }
