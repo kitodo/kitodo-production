@@ -144,15 +144,15 @@ public class IndexingPage {
      *         is not readable.
      */
     public String getIndexingProgress() {
-        int attempt = 0;
-        while (attempt < 3) {
+        int attempt = 1;
+        while (attempt <= 3) {
             try {
                 List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
                 WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
                 return lastRow.findElement(By.className("ui-progressbar-label")).getText();
             } catch (StaleElementReferenceException e) {
-                attempt++;
                 logger.error("Indexing progress is not readable, retrying now, " + attempt);
+                attempt++;
             }
         }
         logger.error("could not read indexing progress");
