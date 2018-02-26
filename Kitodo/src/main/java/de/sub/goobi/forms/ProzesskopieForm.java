@@ -1445,9 +1445,9 @@ public class ProzesskopieForm implements Serializable {
     public List<String> getAllOpacCatalogues() {
         try {
             return ConfigOpac.getAllCatalogueTitles();
-        } catch (Throwable t) {
-            logger.error("Error while reading von opac-config", t);
-            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while reading von opac-config", e);
+            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -1460,9 +1460,9 @@ public class ProzesskopieForm implements Serializable {
     public List<ConfigOpacDoctype> getAllDoctypes() {
         try {
             return ConfigOpac.getAllDoctypes();
-        } catch (Throwable t) {
-            logger.error("Error while reading von opac-config", t);
-            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while reading von opac-config", e);
+            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -1745,9 +1745,9 @@ public class ProzesskopieForm implements Serializable {
                 /* wenn der Doctype angegeben werden soll */
                 try {
                     this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
-                } catch (Throwable t) {
-                    logger.error("Error while reading von opac-config", t);
-                    Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+                } catch (Exception e) {
+                    logger.error("Error while reading von opac-config", e);
+                    Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
                 }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */

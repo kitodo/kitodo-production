@@ -105,8 +105,8 @@ public class DmsImportThread extends Thread {
                         this.stop = true;
                     }
                 }
-            } catch (Throwable t) {
-                logger.error("Unexception exception", t);
+            } catch (Exception e) {
+                logger.error("Unexpected exception", e);
             }
         }
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
