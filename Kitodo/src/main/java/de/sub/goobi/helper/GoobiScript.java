@@ -77,8 +77,8 @@ public class GoobiScript {
             if (Objects.isNull(tok) || !tok.contains(":")) {
                 Helper.setFehlerMeldung("kitodoScriptfield", "missing delimiter / unknown parameter: ", tok);
             } else {
-                String key = tok.substring(0, tok.indexOf(":"));
-                String value = tok.substring(tok.indexOf(":") + 1);
+                String key = tok.substring(0, tok.indexOf(':'));
+                String value = tok.substring(tok.indexOf(':') + 1);
                 this.parameters.put(key, value);
             }
         }

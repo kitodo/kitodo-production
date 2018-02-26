@@ -342,13 +342,13 @@ class GetOpac {
     private StringBuffer parseRecordField(String field) {
         StringBuffer result = new StringBuffer();
 
-        String[] fieldComponents = null;
-        String fieldName = null;
-        String fieldOccurrence = null;
-        int indexOfFieldOccurrence = -1;
+        String[] fieldComponents;
+        String fieldName;
+        String fieldOccurrence;
+        int indexOfFieldOccurrence;
 
         fieldComponents = field.split("\\$");
-        indexOfFieldOccurrence = fieldComponents[0].indexOf("/");
+        indexOfFieldOccurrence = fieldComponents[0].indexOf('/');
 
         if (indexOfFieldOccurrence != -1) {
             fieldName = fieldComponents[0].substring(0, indexOfFieldOccurrence);

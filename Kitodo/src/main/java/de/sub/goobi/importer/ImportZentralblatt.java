@@ -442,15 +442,15 @@ public class ImportZentralblatt {
             StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
                 Person p = new Person(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
-                String myTok = tokenizer.nextToken();
+                String token = tokenizer.nextToken();
 
-                if (!myTok.contains(",")) {
+                if (!token.contains(",")) {
                     throw new WrongImportFileException(
-                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
+                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + token + "')");
                 }
 
-                p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
-                p.setFirstname(myTok.substring(myTok.indexOf(",") + 1, myTok.length()).trim());
+                p.setLastname(token.substring(0, token.indexOf(',')).trim());
+                p.setFirstname(token.substring(token.indexOf(',') + 1, token.length()).trim());
                 p.setRole("ZBLAuthor");
                 docStruct.addPerson(p);
             }
@@ -462,15 +462,15 @@ public class ImportZentralblatt {
             StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
                 Person p = new Person(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
-                String myTok = tokenizer.nextToken();
+                String token = tokenizer.nextToken();
 
-                if (!myTok.contains(",")) {
+                if (!token.contains(",")) {
                     throw new WrongImportFileException(
-                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
+                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + token + "')");
                 }
 
-                p.setLastname(myTok.substring(0, myTok.indexOf(',')).trim());
-                p.setFirstname(myTok.substring(myTok.indexOf(',') + 1, myTok.length()).trim());
+                p.setLastname(token.substring(0, token.indexOf(',')).trim());
+                p.setFirstname(token.substring(token.indexOf(',') + 1, token.length()).trim());
                 p.setRole("AuthorVariation");
                 docStruct.addPerson(p);
             }

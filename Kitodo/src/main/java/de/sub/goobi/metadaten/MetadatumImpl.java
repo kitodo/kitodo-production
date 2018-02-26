@@ -164,7 +164,7 @@ public class MetadatumImpl implements Metadatum {
         String values = this.md.getValue();
         if (values != null && values.length() != 0) {
             while (!values.isEmpty()) {
-                int semicolon = values.indexOf(";");
+                int semicolon = values.indexOf(';');
                 if (semicolon != -1) {
                     String value = values.substring(0, semicolon);
                     for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {

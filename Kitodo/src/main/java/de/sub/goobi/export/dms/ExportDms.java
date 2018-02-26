@@ -426,7 +426,7 @@ public class ExportDms extends ExportMets {
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
                         && fileService.getFileName(dir).contains("_")) {
                     String suffix = fileService.getFileName(dir)
-                            .substring(fileService.getFileName(dir).lastIndexOf("_"));
+                            .substring(fileService.getFileName(dir).lastIndexOf('_'));
                     URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
                     if (!fileService.fileExist(destination)) {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);

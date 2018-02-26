@@ -310,7 +310,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private List<String> prepareStrings(String filter, String filterName) {
         List<String> filterValues = new ArrayList<>();
         String filterValue = filter.substring(filter.indexOf(filterName));
-        filterValue = filterValue.substring(filterName.lastIndexOf(":") + 1, filterValue.length());
+        filterValue = filterValue.substring(filterName.lastIndexOf(':') + 1, filterValue.length());
         if (filterValue.matches("^[\\s\\d]+$")) {
             filterValues.addAll(Arrays.asList(filterValue.split("\\s+")));
         } else {
@@ -357,8 +357,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<String> titleValue = new ArrayList<>();
         String filterValue = filter.replace(filterName, "");
         if (filterValue.contains(":")) {
-            titleValue.add(filterValue.substring(0, filterValue.lastIndexOf(":")));
-            titleValue.add(filterValue.substring(filterValue.lastIndexOf(":") + 1, filterValue.length()));
+            titleValue.add(filterValue.substring(0, filterValue.lastIndexOf(':')));
+            titleValue.add(filterValue.substring(filterValue.lastIndexOf(':') + 1, filterValue.length()));
         } else {
             titleValue.add(filterValue);
         }
@@ -425,11 +425,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         } catch (DataException e) {
             logger.error(e);
         }
-        if (currentUser != null) {
-            if (loginForm.getMaximaleBerechtigung() > 1) {
-                List<ProjectDTO> projects = currentUser.getProjects();
-                query.must(createSetQuery("project", collectIds(projects), true));
-            }
+        if (currentUser != null && loginForm.getMaximaleBerechtigung() > 1) {
+            List<ProjectDTO> projects = currentUser.getProjects();
+            query.must(createSetQuery("project", collectIds(projects), true));
         }
         return query;
     }
@@ -511,7 +509,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             try {
                 taskOrdering = Integer.parseInt(taskTitle);
             } catch (NumberFormatException e) {
-                taskTitle = filterPart.substring(filterPart.indexOf(":") + 1);
+                taskTitle = filterPart.substring(filterPart.indexOf(':') + 1);
                 historicFilter.must(createSimpleCompareQuery("processingStatus", TaskStatus.OPEN.getValue(),
                         SearchCondition.EQUAL_OR_BIGGER));
                 if (taskTitle.startsWith("-")) {
@@ -592,7 +590,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
                     logger.error(e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(":") + 1) + "' in '" + filter
+                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
                 break;
@@ -604,7 +602,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
                     logger.error(e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(":") + 1) + "' in '" + filter
+                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
                 break;
@@ -616,7 +614,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
                     logger.error(e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(":") + 1) + "' in '" + filter
+                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
                 break;
@@ -629,7 +627,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
                     logger.error(e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(":") + 1) + "' in '" + filter
+                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
                 break;
@@ -647,12 +645,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                         logger.error("stepdone is preset, don't use 'step' filters");
                     } catch (Exception e1) {
                         logger.error(e1);
-                        logger.error("filterpart '" + filter.substring(filter.indexOf(":") + 1) + "' in '" + filter
+                        logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                                 + "' caused an error\n");
                     }
                 } catch (Exception e) {
                     logger.error(e);
-                    logger.error("filterpart '" + filter.substring(filter.indexOf(":") + 1) + "' in '" + filter
+                    logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
                 break;

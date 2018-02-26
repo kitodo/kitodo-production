@@ -2317,20 +2317,20 @@ public class Metadaten {
      * @return String
      */
     public String getOcrAcdress() {
-        int startseite = -1;
-        int endseite = -1;
+        int startPage = -1;
+        int endPage = -1;
         if (this.structSeiten != null) {
             for (SelectItem selectItem : this.structSeiten) {
-                int temp = Integer.parseInt(selectItem.getLabel().substring(0, selectItem.getLabel().indexOf(":")));
-                if (startseite == -1 || startseite > temp) {
-                    startseite = temp;
+                int temp = Integer.parseInt(selectItem.getLabel().substring(0, selectItem.getLabel().indexOf(':')));
+                if (startPage == -1 || startPage > temp) {
+                    startPage = temp;
                 }
-                if (endseite == -1 || endseite < temp) {
-                    endseite = temp;
+                if (endPage == -1 || endPage < temp) {
+                    endPage = temp;
                 }
             }
         }
-        return getOcrBasisUrl(startseite, endseite);
+        return getOcrBasisUrl(startPage, endPage);
     }
 
     private String getOcrBasisUrl(int... seiten) {
@@ -3170,7 +3170,7 @@ public class Metadaten {
 
     private void removeImage(String fileToDelete) throws IOException {
         // TODO check what happens with .tar.gz
-        String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
+        String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf('.'));
         for (URI folder : allTifFolders) {
             ArrayList<URI> filesInFolder = fileService
                     .getSubUris(fileService.getImagesDirectory(process).resolve(folder));
@@ -3191,7 +3191,7 @@ public class Metadaten {
                     ArrayList<URI> filesInFolder = fileService.getSubUris(dir);
                     for (URI currentFile : filesInFolder) {
                         String filename = fileService.getFileName(currentFile);
-                        String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));
+                        String filenamePrefix = filename.substring(0, filename.lastIndexOf('.'));
                         if (filenamePrefix.equals(fileToDeletePrefix)) {
                             fileService.delete(currentFile);
                         }

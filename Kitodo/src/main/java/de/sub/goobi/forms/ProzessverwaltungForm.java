@@ -2313,7 +2313,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty()
                     && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf")
                             || callerViewId.contains("processEdit.jsf"))) {
@@ -2338,7 +2338,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("processEdit.jsf")) {
                 return TASK_EDIT_PATH + urlParameters;
             } else {

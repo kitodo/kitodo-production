@@ -1621,7 +1621,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         try {
             URI folder = this.getImagesTifDirectory(false, process);
             String folderName = fileService.getFileName(folder);
-            folderName = folderName.substring(0, folderName.lastIndexOf("_"));
+            folderName = folderName.substring(0, folderName.lastIndexOf('_'));
             folderName = folderName + "_" + methodName;
             folder = fileService.renameFile(folder, folderName);
             if (fileService.fileExist(folder)) {
@@ -2067,7 +2067,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
                         && fileService.getFileName(dir).contains("_")) {
                     String suffix = fileService.getFileNameWithExtension(dir)
-                            .substring(fileService.getFileNameWithExtension(dir).lastIndexOf("_"));
+                            .substring(fileService.getFileNameWithExtension(dir).lastIndexOf('_'));
                     URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
                     if (!fileService.fileExist(destination)) {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);

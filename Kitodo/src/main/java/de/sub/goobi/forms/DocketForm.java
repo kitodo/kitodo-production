@@ -149,7 +149,7 @@ public class DocketForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
                 return "/pages/editDocket?" + REDIRECT_PARAMETER;
             } else {
@@ -169,7 +169,7 @@ public class DocketForm extends BasisForm {
     // switched to the new frontend pages
     private String redirectToList() {
         String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+        String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
         if (!callerViewId.isEmpty() && callerViewId.contains("editDocket.jsf")) {
             return "/pages/projects.jsf?id=" + projectForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
         } else {

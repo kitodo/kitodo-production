@@ -349,7 +349,7 @@ public class FileService {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         String fileNameWithExtension = fileManagementModule.getFileNameWithExtension(uri);
         if (fileNameWithExtension.contains(".")) {
-            return fileNameWithExtension.substring(0, fileNameWithExtension.indexOf("."));
+            return fileNameWithExtension.substring(0, fileNameWithExtension.indexOf('.'));
         }
         return fileNameWithExtension;
     }
