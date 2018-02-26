@@ -47,6 +47,5 @@ public class BaseTestSelenium {
      * email
      */
     @Rule
-    public TestRule seleniumExceptionWatcher = new TestWatcherImpl() {
-    };
+    public TestRule seleniumExceptionWatcher = new TestWatcherImpl();
 }
