@@ -275,8 +275,7 @@ public class SchemaService {
      * @param prefs
      *            object
      */
-    private void evaluateDocStructPages(DocStruct inStruct, Prefs prefs)
-            throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
+    private void evaluateDocStructPages(DocStruct inStruct, Prefs prefs) throws MetadataTypeNotAllowedException {
         dropRusdmlMetadata(inStruct, prefs);
         rusdmlDropPersons(inStruct);
         maskUmlauts(inStruct);
@@ -303,8 +302,7 @@ public class SchemaService {
      * @param prefs
      *            object
      */
-    private void dropRusdmlMetadata(DocStruct inStruct, Prefs prefs)
-            throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
+    private void dropRusdmlMetadata(DocStruct inStruct, Prefs prefs) throws MetadataTypeNotAllowedException {
         String titleRu = "";
         String titleOther = "";
         String language = "";

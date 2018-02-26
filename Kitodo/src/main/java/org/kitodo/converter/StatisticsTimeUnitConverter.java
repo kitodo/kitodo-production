@@ -14,7 +14,6 @@ package org.kitodo.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
@@ -32,7 +31,7 @@ public class StatisticsTimeUnitConverter implements Converter {
      * Convert String to TimeUnit.
      */
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value == null) {
             return TimeUnit.days;
         } else {
@@ -44,7 +43,7 @@ public class StatisticsTimeUnitConverter implements Converter {
      * Convert TimeUnit to String.
      */
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
         if (value == null || !(value instanceof TimeUnit)) {
             return TimeUnit.days.getId();
         } else {

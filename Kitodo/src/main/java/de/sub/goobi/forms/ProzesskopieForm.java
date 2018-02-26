@@ -1326,7 +1326,7 @@ public class ProzesskopieForm implements Serializable {
      *             in case that no field with a matching title was found in the
      *             ProzesskopieForm object
      */
-    public void setAdditionalField(String key, String value, boolean strict) throws RuntimeException {
+    public void setAdditionalField(String key, String value, boolean strict) {
         boolean unknownField = true;
         for (AdditionalField field : additionalFields) {
             if (key.equals(field.getTitle())) {

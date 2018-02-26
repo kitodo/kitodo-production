@@ -59,7 +59,7 @@ public class MapMessageObjectReader {
      * @throws JMSException
      *             can be thrown by MapMessage.getObject(String)
      */
-    public Set<String> getMandatorySetOfString(String key) throws IllegalArgumentException, JMSException {
+    public Set<String> getMandatorySetOfString(String key) throws JMSException {
         Set<String> result = new HashSet<>();
         Boolean emptiness = Boolean.TRUE;
 
@@ -99,7 +99,7 @@ public class MapMessageObjectReader {
      * @throws JMSException
      *             can be thrown by MapMessage.getString(String)
      */
-    public String getMandatoryString(String key) throws IllegalArgumentException, JMSException {
+    public String getMandatoryString(String key) throws JMSException {
         String result = ticket.getString(key);
         if (result == null || result.length() == 0) {
             throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
@@ -136,7 +136,7 @@ public class MapMessageObjectReader {
      * @throws JMSException
      *             can be thrown by MapMessage.getString(String)
      */
-    public Integer getMandatoryInteger(String key) throws IllegalArgumentException, JMSException {
+    public Integer getMandatoryInteger(String key) throws JMSException {
         if (!ticket.itemExists(key)) {
             throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
         }
@@ -204,7 +204,7 @@ public class MapMessageObjectReader {
      * @throws JMSException
      *             can be thrown by MapMessage
      */
-    public boolean hasField(String string) throws IllegalArgumentException, JMSException {
+    public boolean hasField(String string) throws JMSException {
         String result = ticket.getString(string);
         return (result != null && result.length() > 0);
     }

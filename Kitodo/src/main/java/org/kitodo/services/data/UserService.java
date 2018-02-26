@@ -108,7 +108,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         User user;
         try {
             user = getByLogin(username);

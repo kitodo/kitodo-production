@@ -297,8 +297,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws NumberFormatException
      *             if the value cannot be parsed to int
      */
-    private static int getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName)
-            throws NoSuchElementException, NumberFormatException {
+    private static int getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName) {
         List<MetadataType> metadataTypes = structureTypeName.getType().getAllMetadataTypes();
         for (MetadataType metadataType : metadataTypes) {
             if (metaDataTypeName.equals(metadataType.getName())) {

@@ -36,7 +36,7 @@ public class HibernateUtil {
      *
      * @return Session
      */
-    public static Session getSession() throws InfrastructureException {
+    public static Session getSession() {
         Session session = threadSession.get();
         try {
             if (session == null) {

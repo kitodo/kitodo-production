@@ -424,7 +424,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws NumberFormatException, DataException, IOException {
+    public String uploadFromHomeAlle() throws DataException, IOException {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<URI> geprueft = new ArrayList<>();
         /*
@@ -699,7 +699,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @throws DAOException
      *             , NumberFormatException
      */
-    private void schrittPerParameterLaden() throws DAOException, NumberFormatException {
+    private void schrittPerParameterLaden() throws DAOException {
         String param = Helper.getRequestParameter("myid");
         if (param != null && !param.equals("")) {
             /*

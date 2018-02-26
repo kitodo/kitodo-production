@@ -90,8 +90,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @return DocStruct object
      */
     public DocStruct changeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
-            throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException,
-            TypeNotAllowedForParentException {
+            throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
         // inOldDocstruct.getType().getName()
         // + " soll werden zu " + inNewType);
         DocStructType dst = this.prefs.getDocStrctTypeByName(inNewType);

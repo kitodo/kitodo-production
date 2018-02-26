@@ -25,7 +25,7 @@ public class GoobiVersion {
      *
      * @param manifest as Manifest
      */
-    public static void setupFromManifest(Manifest manifest) throws IllegalArgumentException {
+    public static void setupFromManifest(Manifest manifest) {
         Attributes mainAttributes = manifest.getMainAttributes();
 
         version = getValueOrThrowException(mainAttributes, "Implementation-Version");
@@ -33,8 +33,7 @@ public class GoobiVersion {
         builddate = getValueOrThrowException(mainAttributes, "Implementation-Build-Date");
     }
 
-    private static String getValueOrThrowException(Attributes attributes, String attributeName)
-            throws IllegalArgumentException {
+    private static String getValueOrThrowException(Attributes attributes, String attributeName) {
         String result = attributes.getValue(attributeName);
         if (null == result) {
             throw new IllegalArgumentException(
