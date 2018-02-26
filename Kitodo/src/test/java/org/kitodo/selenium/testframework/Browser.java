@@ -164,7 +164,7 @@ public class Browser {
         webDriver.executeScript("arguments[0].scrollIntoView();", webElement);
     }
 
-    static File captureScreenShot() {
+    public static File captureScreenShot() {
 
         File src = webDriver.getScreenshotAs(OutputType.FILE);
         File screenshotFile = new File(System.getProperty("user.dir") + "/target/Selenium/" + "screen.png");
