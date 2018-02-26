@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -411,12 +410,12 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         Hashtable<String, String> ldapEnvironment = initializeWithLdapConnectionSettings(
             user.getLdapGroup().getLdapServer());
         DirContext ctx;
-        boolean rueckgabe = false;
+        boolean result = false;
         try {
             ctx = new InitialDirContext(ldapEnvironment);
             Attributes matchAttrs = new BasicAttributes(true);
             NamingEnumeration<SearchResult> answer = ctx.search(buildUserDN(user), matchAttrs);
-            rueckgabe = answer.hasMoreElements();
+            result = answer.hasMoreElements();
 
             while (answer.hasMore()) {
                 SearchResult sr = answer.next();
@@ -424,49 +423,32 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                     logger.debug(">>>" + sr.getName());
                 }
                 Attributes attrs = sr.getAttributes();
-                String givenName = " ";
-                String surName = " ";
-                String mail = " ";
-                String cn = " ";
-                String hd = " ";
-                try {
-                    givenName = attrs.get("givenName").toString();
-                } catch (Exception err) {
-                    givenName = " ";
-                }
-                try {
-                    surName = attrs.get("sn").toString();
-                } catch (Exception e2) {
-                    surName = " ";
-                }
-                try {
-                    mail = attrs.get("mail").toString();
-                } catch (Exception e3) {
-                    mail = " ";
-                }
-                try {
-                    cn = attrs.get("cn").toString();
-                } catch (Exception e4) {
-                    cn = " ";
-                }
-                try {
-                    hd = attrs.get("homeDirectory").toString();
-                } catch (Exception e4) {
-                    hd = " ";
-                }
+                String givenName = getStringForAttribute(attrs, "givenName");
+                String surName = getStringForAttribute(attrs, "sn");
+                String mail = getStringForAttribute(attrs, "mail");
+                String cn = getStringForAttribute(attrs, "cn");
+                String homeDirectory = getStringForAttribute(attrs, "homeDirectory");
+
                 logger.debug(givenName);
                 logger.debug(surName);
                 logger.debug(mail);
                 logger.debug(cn);
-                logger.debug(hd);
-
+                logger.debug(homeDirectory);
             }
 
             ctx.close();
         } catch (NamingException e) {
             logger.error(e);
         }
-        return rueckgabe;
+        return result;
+    }
+
+    private String getStringForAttribute(Attributes attrs, String identifier) {
+        try {
+            return attrs.get(identifier).toString();
+        } catch (Exception e) {
+            return " ";
+        }
     }
 
     /**
@@ -540,44 +522,23 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
                 String encryptedPassword = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
 
-                /*
-                 * UserPasswort-Attribut ändern
-                 */
-                BasicAttribute userpassword = new BasicAttribute("userPassword",
+                // UserPasswort-Attribut ändern
+                BasicAttribute userPassword = new BasicAttribute("userPassword",
                         "{" + passwordEncryption + "}" + encryptedPassword);
 
-                /*
-                 * LanMgr-Passwort-Attribut ändern
-                 */
-                BasicAttribute lanmgrpassword = null;
-                try {
-                    lanmgrpassword = new BasicAttribute("sambaLMPassword",
-                            LdapUser.toHexString(LdapUser.lmHash(inNewPassword)));
-                    // TODO: Don't catch super class exception, make sure that
-                    // the password isn't logged here
-                } catch (Exception e) {
-                    logger.error(e);
-                }
+                // LanMgr-Passwort-Attribut ändern
+                BasicAttribute lanmgrPassword = proceedPassword("sambaLMPassword", inNewPassword, null);
 
-                /*
-                 * NTLM-Passwort-Attribut ändern
-                 */
-                BasicAttribute ntlmpassword = null;
-                try {
-                    byte[] hmm = digester.digest(inNewPassword.getBytes("UnicodeLittleUnmarked"));
-                    ntlmpassword = new BasicAttribute("sambaNTPassword", LdapUser.toHexString(hmm));
-                } catch (UnsupportedEncodingException e) {
-                    // TODO: Make sure that the password isn't logged here
-                    logger.error(e);
-                }
+                // NTLM-Passwort-Attribut ändern
+                BasicAttribute ntlmPassword = proceedPassword("sambaNTPassword", inNewPassword, digester);
 
                 BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
                         String.valueOf(System.currentTimeMillis() / 1000L));
 
                 ModificationItem[] mods = new ModificationItem[4];
-                mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userpassword);
-                mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
-                mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);
+                mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPassword);
+                mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrPassword);
+                mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmPassword);
                 mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
 
                 DirContext ctx = new InitialDirContext(env);
@@ -592,6 +553,23 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             }
         }
         return false;
+    }
+
+    private BasicAttribute proceedPassword(String identifier, String newPassword, JDKMessageDigest.MD4 digester) {
+        try {
+            byte[] hash;
+            if (Objects.isNull(digester)) {
+                hash = LdapUser.lmHash(newPassword);
+            } else {
+                hash = digester.digest(newPassword.getBytes("UnicodeLittleUnmarked"));
+            }
+            return new BasicAttribute(identifier, LdapUser.toHexString(hash));
+            // TODO: Don't catch super class exception, make sure that
+            // the password isn't logged here
+        } catch (Exception e) {
+            logger.error(e);
+            return null;
+        }
     }
 
     // TODO test if this methods works

@@ -336,7 +336,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             throw new ImportPluginException(e);
         }
-
     }
 
     /**
