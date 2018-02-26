@@ -1618,7 +1618,7 @@ public class Metadaten {
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        return ConfigCore.getTempImagesPath() + session.getId() + "_" + this.imageCounter + ".png";
+        return ConfigCore.imagesTemp + session.getId() + "_" + this.imageCounter + ".png";
     }
 
     public List<URI> getAllTifFolders() {
@@ -2576,14 +2576,6 @@ public class Metadaten {
 
     public void setAddSecondDocStructType(String addSecondDocStructType) {
         this.addSecondDocStructType = addSecondDocStructType;
-    }
-
-    public String getImageNumberToGo() {
-        return "";
-    }
-
-    public void setImageNumberToGo(String imageNumberToGo) {
-        this.imageNumberToGo = imageNumberToGo;
     }
 
     public boolean isModeOnlyRead() {
