@@ -162,14 +162,13 @@ public class XMLReader {
      *            be created but there is no local language tag
      * @param space
      *            whether or not to trim white space around the element
-     * @param documentNS
-     *            the namespace of the document
      * @param storage
      *            storage to read the XML into
      * @return the literal node
      */
     private static ObjectType parseLiteralElement(Element element, NodeReference type, String lang, Space space,
-            String documentNS, Storage storage) {
+            Storage storage) {
+
         String value = space.trim(element.getTextContent());
         if (!type.equals(RDF.LANG_STRING)) {
             return storage.createLiteral(value, type);
@@ -251,8 +250,8 @@ public class XMLReader {
                     result.replace(relation, parseRelationElement((Element) child, lang, space, documentNS, storage));
                 } else if (LITERAL_TYPES.containsKey(literalType)) {
                     // or a literal type
-                    result.replace(RDF.toURL(++count), wrapElementInSet(parseLiteralElement((Element) child,
-                        LITERAL_TYPES.get(literalType), lang, space, documentNS, storage)));
+                    result.replace(RDF.toURL(++count), wrapElementInSet(
+                        parseLiteralElement((Element) child, LITERAL_TYPES.get(literalType), lang, space, storage)));
                 } else {
                     // or the child is an ordered element (represents a node,
                     // linked by a numeric relation representing its element
@@ -373,7 +372,7 @@ public class XMLReader {
                 // text content
                 if (canCreateLiteralType && LITERAL_TYPES.containsKey(literalType)) {
                     result.add(parseLiteralElement((Element) child, LITERAL_TYPES.get(literalType), literalLang,
-                        literalSpace, documentNS, storage));
+                        literalSpace, storage));
 
                 } else {
                     // or a real node
