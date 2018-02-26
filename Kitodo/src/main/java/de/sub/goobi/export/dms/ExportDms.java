@@ -194,14 +194,10 @@ public class ExportDms extends ExportMets {
 
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
-        /*
-         * Metadaten validieren
-         */
-
-        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-            if (!serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
-                return false;
-            }
+        // validate metadata
+        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")
+                && !serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
+            return false;
         }
 
         /*

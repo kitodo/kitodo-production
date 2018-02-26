@@ -208,10 +208,9 @@ public class ProzessverwaltungForm extends BasisForm {
          * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
          */
         if (this.process != null && this.process.getTitle() != null) {
-            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null) {
-                if (!renameAfterProcessTitleChanged()) {
-                    return null;
-                }
+            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
+                    && !renameAfterProcessTitleChanged()) {
+                return null;
             }
 
             try {
@@ -233,10 +232,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String saveAndRedirect() {
         if (this.process != null && this.process.getTitle() != null) {
-            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null) {
-                if (!renameAfterProcessTitleChanged()) {
-                    return null;
-                }
+            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
+                    && !renameAfterProcessTitleChanged()) {
+                return null;
             }
 
             try {
@@ -306,11 +304,10 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             // process properties
             for (Property processProperty : this.process.getProperties()) {
-                if (processProperty != null && processProperty.getValue() != null) {
-                    if (processProperty.getValue().contains(this.process.getTitle())) {
-                        processProperty.setValue(processProperty.getValue()
-                                .replaceAll(this.process.getTitle(), this.newProcessTitle));
-                    }
+                if (processProperty != null && processProperty.getValue() != null
+                        && (processProperty.getValue().contains(this.process.getTitle()))) {
+                    processProperty.setValue(processProperty.getValue()
+                            .replaceAll(this.process.getTitle(), this.newProcessTitle));
                 }
             }
             // template properties

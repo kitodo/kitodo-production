@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -74,12 +75,10 @@ public class BatchHelper {
         if (processProperty.getTitle() != null) {
             boolean match = false;
             for (Property processPe : process.getProperties()) {
-                if (processPe.getTitle() != null) {
-                    if (processProperty.getTitle().equals(processPe.getTitle())) {
-                        processPe.setValue(processProperty.getValue());
-                        match = true;
-                        break;
-                    }
+                if (Objects.nonNull(processPe.getTitle()) && (processProperty.getTitle().equals(processPe.getTitle()))) {
+                    processPe.setValue(processProperty.getValue());
+                    match = true;
+                    break;
                 }
             }
             if (!match) {

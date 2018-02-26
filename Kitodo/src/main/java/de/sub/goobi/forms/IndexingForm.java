@@ -387,18 +387,16 @@ public class IndexingForm {
         long numberOfObjects = getNumberOfDatabaseObjects(currentType);
         long nrOfindexedObjects = getNumberOfIndexedObjects(currentType);
         int progress = numberOfObjects > 0 ? (int) ((nrOfindexedObjects / (float) numberOfObjects) * 100) : 0;
-        if (Objects.equals(currentIndexState, currentType)) {
-            if (numberOfObjects == 0 || progress == 100) {
-                lastIndexed.put(currentIndexState, LocalDateTime.now());
-                currentIndexState = ObjectType.NONE;
-                if (numberOfObjects == 0) {
-                    objectIndexingStates.put(currentType, IndexingStates.NO_STATE);
-                } else {
-                    objectIndexingStates.put(currentType, IndexingStates.INDEXING_SUCCESSFUL);
-                }
-                indexerThread.interrupt();
-                pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
+        if (Objects.equals(currentIndexState, currentType) && (numberOfObjects == 0 || progress == 100)) {
+            lastIndexed.put(currentIndexState, LocalDateTime.now());
+            currentIndexState = ObjectType.NONE;
+            if (numberOfObjects == 0) {
+                objectIndexingStates.put(currentType, IndexingStates.NO_STATE);
+            } else {
+                objectIndexingStates.put(currentType, IndexingStates.INDEXING_SUCCESSFUL);
             }
+            indexerThread.interrupt();
+            pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
         }
         return progress;
     }

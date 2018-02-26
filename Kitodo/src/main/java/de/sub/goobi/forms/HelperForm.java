@@ -179,10 +179,8 @@ public class HelperForm implements Serializable {
     public List<String> getFileFormatsInternalOnly() {
         ArrayList<String> ffs = new ArrayList<>();
         for (MetadataFormat ffh : MetadataFormat.values()) {
-            if (ffh.isUsableForInternal()) {
-                if (!ffh.equals(MetadataFormat.RDF)) {
-                    ffs.add(ffh.getName());
-                }
+            if (ffh.isUsableForInternal() && !ffh.equals(MetadataFormat.RDF)) {
+                ffs.add(ffh.getName());
             }
         }
         return ffs;
