@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -330,7 +331,7 @@ public class SRUClient {
         SRUResponse response = getResponseObject(xmlData);
         if (response == null) {
             logger.error("Unable to get results from response XML.");
-            return null;
+            return new ArrayList<>();
         }
 
         return response.getResults();
@@ -796,7 +797,7 @@ public class SRUClient {
         SRUResponse response = nlaGetResponseBySearch(search);
         if (response == null) {
             logger.error("Searching NLA failed!");
-            return null;
+            return new ArrayList<>();
         }
 
         // Process Identities

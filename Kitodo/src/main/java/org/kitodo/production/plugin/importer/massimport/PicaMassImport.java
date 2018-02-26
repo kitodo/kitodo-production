@@ -643,7 +643,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<DocstructElement> getCurrentDocStructs() {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -658,7 +658,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<String> getPossibleDocstructs() {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

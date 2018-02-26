@@ -334,11 +334,7 @@ public class NLAIdentity {
         try {
             return convertNodesToIdentities(nodes, false);
         } catch (SRUException ex) {
-            // Will never execute because 'false' is set above, but trapping
-            // this here allows users
-            // to call this method with greater ease, since they wan't need to
-            // trap.
-            return null;
+            return new ArrayList<>();
         }
     }
 

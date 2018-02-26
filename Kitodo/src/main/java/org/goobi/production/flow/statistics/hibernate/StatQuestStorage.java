@@ -69,7 +69,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
         List<Integer> idList = getIds(dataSource);
 
         if (idList == null || idList.size() == 0) {
-            return null;
+            return new ArrayList<>();
         }
 
         // TODO: filter results according to date without sql query

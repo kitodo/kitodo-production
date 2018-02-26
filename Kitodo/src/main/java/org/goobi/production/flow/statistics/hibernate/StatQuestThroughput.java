@@ -102,7 +102,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
         this.myIDlist = getIds(dataSource);
 
         if (myIDlist == null || myIDlist.size() == 0) {
-            return null;
+            return new ArrayList<>();
         }
 
         // a list of DataTables is expected as return Object, even if there is

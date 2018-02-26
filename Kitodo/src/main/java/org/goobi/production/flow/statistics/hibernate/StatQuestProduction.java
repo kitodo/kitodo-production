@@ -99,7 +99,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         // we have to build a query from scratch by reading the ID's
         List<Integer> idList = getIds(dataSource);
         if (idList == null || idList.size() == 0) {
-            return null;
+            return new ArrayList<>();
         }
         String natSQL;
         // adding time restrictions
