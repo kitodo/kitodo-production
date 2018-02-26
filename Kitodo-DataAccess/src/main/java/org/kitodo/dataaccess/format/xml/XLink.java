@@ -139,7 +139,7 @@ public enum XLink implements NodeReference {
 
         private String name;
 
-        private Actuate(String name) {
+        Actuate(String name) {
             this.name = name;
         }
 
@@ -212,7 +212,7 @@ public enum XLink implements NodeReference {
 
         private String name;
 
-        private Show(String name) {
+        Show(String name) {
             this.name = name;
         }
 
@@ -329,7 +329,7 @@ public enum XLink implements NodeReference {
 
         private String name;
 
-        private Type(String name) {
+        Type(String name) {
             this.name = name;
         }
 

@@ -34,11 +34,11 @@ public class SeveralElementsForSameIndexException extends IllegalStateException 
     /**
      * Creates a SeveralElementsForSameIndexException with a message string.
      *
-     * @param s
+     * @param message
      *            message
      */
-    public SeveralElementsForSameIndexException(String s) {
-        super(s);
+    public SeveralElementsForSameIndexException(String message) {
+        super(message);
     }
 
     /**
