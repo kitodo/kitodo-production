@@ -152,7 +152,7 @@ enum Space {
      * @param enumeratedValue
      *            String value as by specification
      */
-    private Space(String enumeratedValue) {
+    Space(String enumeratedValue) {
         this.enumeratedValue = enumeratedValue;
     }
 

@@ -61,7 +61,7 @@ public enum XML implements NodeReference {
      * @param identifier
      *            referenced URL
      */
-    private XML(String identifier) {
+    XML(String identifier) {
         this.identifier = identifier;
     }
 

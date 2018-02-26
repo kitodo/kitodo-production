@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.kitodo.dataaccess.IdentifiableNode;
@@ -85,7 +86,7 @@ public enum XLink implements NodeReference {
     TO("http://www.w3.org/1999/xlink#to"),
     TYPE("http://www.w3.org/1999/xlink#type");
 
-    public static enum Actuate {
+    public enum Actuate {
         /**
          * The behavior of an application traversing to the ending resource is
          * unconstrained by this specification. No other markup is present to
@@ -151,7 +152,7 @@ public enum XLink implements NodeReference {
         }
     }
 
-    public static enum Show {
+    public enum Show {
         /**
          * An application traversing to the ending resource should load its
          * presentation in place of the link into the presentation of the
@@ -224,7 +225,7 @@ public enum XLink implements NodeReference {
         }
     }
 
-    public static enum Type {
+    public enum Type {
         /**
          * {@code xlink:type="arc"}.
          *
@@ -550,7 +551,7 @@ public enum XLink implements NodeReference {
      * @param identifier
      *            referenced URL
      */
-    private XLink(String identifier) {
+    XLink(String identifier) {
         this.identifier = identifier;
     }
 
