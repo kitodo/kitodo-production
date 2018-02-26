@@ -18,14 +18,17 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.selenium.testframework.enums.BrowserType;
 import org.kitodo.selenium.testframework.helper.WebDriverProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -37,6 +40,7 @@ public class Browser {
     private static final String GECKO_DRIVER_VERSION = "0.19.1";
     private static final String CHROME_DRIVER_VERSION = "2.35";
     private static boolean onTravis = false;
+    private static BrowserType browserType = BrowserType.CHROME;
 
     private static int delayIndexing = 3000;
     private static int delayAfterSave = 3000;
@@ -50,15 +54,16 @@ public class Browser {
     /**
      * Provides the web driver, sets timeout and window size.
      */
-    static void Initialize() throws IOException {
-        String userDir = System.getProperty("user.dir");
+    public static void Initialize() throws IOException {
 
-        WebDriverProvider.provideChromeDriver(CHROME_DRIVER_VERSION, userDir + "/target/downloads/",
-            userDir + "/target/extracts/");
+        if (browserType.equals(BrowserType.CHROME)) {
+            provideChromeDriver();
+        }
+        if (browserType.equals(BrowserType.FIREFOX)) {
+            provideGeckoDriver();
+        }
 
-        webDriver = new ChromeDriver();
         actions = new Actions(webDriver);
-
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         goTo("");
         webDriver.manage().window().setSize(new Dimension(1280, 1024));
@@ -67,6 +72,40 @@ public class Browser {
             logger.debug("TRAVIS environment detected");
             onTravis = true;
         }
+    }
+
+    private static void provideChromeDriver() throws IOException {
+        String userDir = System.getProperty("user.dir");
+        String driverFilePath = System.getProperty("user.dir" + "/target/extracts/");
+        String driverFileName = "";
+        driverFileName = "chromedriver";
+        if (SystemUtils.IS_OS_WINDOWS) {
+            driverFileName = driverFileName.concat(".exe");
+        }
+        File driverFile = new File(driverFilePath + driverFileName);
+
+        if (!driverFile.exists()) {
+            logger.debug(driverFile.getAbsolutePath() + " does not exist, providing chrome driver now");
+            WebDriverProvider.provideChromeDriver(CHROME_DRIVER_VERSION, userDir + "/target/downloads/",
+                userDir + "/target/extracts/");
+        }
+        webDriver = new ChromeDriver();
+    }
+
+    private static void provideGeckoDriver() throws IOException {
+        String userDir = System.getProperty("user.dir");
+        String driverFilePath = userDir + "/target/extracts/";
+        String driverFileName = "";
+        driverFileName = "geckodriver";
+        if (SystemUtils.IS_OS_WINDOWS) {
+            driverFileName = driverFileName.concat(".exe");
+        }
+        File driverFile = new File(driverFilePath + driverFileName);
+        if (!driverFile.exists()) {
+            WebDriverProvider.provideGeckoDriver(GECKO_DRIVER_VERSION, userDir + "/target/downloads/",
+                userDir + "/target/extracts/");
+        }
+        webDriver = new FirefoxDriver();
     }
 
     /**

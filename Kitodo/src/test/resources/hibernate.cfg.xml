@@ -26,7 +26,7 @@
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"></property>
         <property name="hibernate.connection.url">
-            jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+            jdbc:h2:mem:test
         </property>
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">managed</property>
