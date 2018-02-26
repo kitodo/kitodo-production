@@ -12,6 +12,6 @@
 package org.kitodo.selenium.testframework.enums;
 
 public enum BrowserType {
-    FIREFOX,
-    CHROME
+    CHROME,
+    FIREFOX
 }
