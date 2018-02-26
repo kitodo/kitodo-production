@@ -37,9 +37,6 @@ import org.kitodo.data.elasticsearch.api.TypeInterface;
 public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterface<T> {
 
     @Override
-    public abstract HttpEntity createDocument(T baseIndexedBean);
-
-    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (T bean : baseIndexedBeans) {
