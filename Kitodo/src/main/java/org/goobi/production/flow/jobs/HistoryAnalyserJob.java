@@ -240,6 +240,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                         isDirty = true;
                     }
                     break;
+                default:
+                    break;
             }
 
             // check corrections timestamp this clearly only works on past

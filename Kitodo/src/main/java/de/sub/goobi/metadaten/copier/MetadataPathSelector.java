@@ -321,6 +321,9 @@ public class MetadataPathSelector extends MetadataSelector {
                 if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
                     return children.get(0);
                 }
+                break;
+            default:
+                break;
         }
 
         if (index == null) {

@@ -194,6 +194,13 @@ public class TaskSitter implements Runnable, ServletContextListener {
                             case DELETE_IMMEDIATELY:
                                 position.remove();
                                 break;
+                            case PREPARE_FOR_RESTART:
+                                EmptyTask replacement = task.replace();
+                                if (replacement != null) {
+                                    position.set(replacement);
+                                    launchableThreads.addLast(replacement);
+                                }
+                                break;
                             default: // case KEEP_FOR_A_WHILE
                                 boolean taskFinishedSuccessfully = task.getException() == null;
                                 Duration durationDead = task.getDurationDead();
@@ -208,13 +215,6 @@ public class TaskSitter implements Runnable, ServletContextListener {
                                     finishedThreads.add(task);
                                 } else {
                                     failedThreads.add(task);
-                                }
-                                break;
-                            case PREPARE_FOR_RESTART:
-                                EmptyTask replacement = task.replace();
-                                if (replacement != null) {
-                                    position.set(replacement);
-                                    launchableThreads.addLast(replacement);
                                 }
                                 break;
                         }

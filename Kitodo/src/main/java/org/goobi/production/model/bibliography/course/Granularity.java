@@ -62,7 +62,6 @@ public enum Granularity {
      *            date to format
      * @return an expression of the date in the given granularity
      */
-    @SuppressWarnings("incomplete-switch")
     public String format(LocalDate date) {
         switch (this) {
             case DAYS:
@@ -76,7 +75,8 @@ public enum Granularity {
                 return ISODateTimeFormat.weekyearWeek().print(date);
             case YEARS:
                 return ISODateTimeFormat.year().print(date);
+            default:
+                throw new NotImplementedException();
         }
-        throw new NotImplementedException();
     }
 }
