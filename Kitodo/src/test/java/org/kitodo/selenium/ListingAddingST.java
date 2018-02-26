@@ -22,7 +22,7 @@ import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.services.ServiceManager;
 
-public class SeleniumST extends BaseTestSelenium {
+public class ListingAddingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
 
