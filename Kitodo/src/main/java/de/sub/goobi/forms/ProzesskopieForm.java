@@ -769,8 +769,7 @@ public class ProzesskopieForm implements Serializable {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            logger.error(e);
-            logger.error("error on save: ", e);
+            Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("prozess") }, logger, e);
             return null;
         }
 
@@ -820,7 +819,7 @@ public class ProzesskopieForm implements Serializable {
                     populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName()
                             : null);
             } catch (UGHException catchAll) {
-                Helper.setFehlerMeldung(catchAll.getMessage());
+                Helper.setErrorMessage(catchAll.getMessage(), logger, catchAll);
             }
 
             for (AdditionalField field : this.additionalFields) {
@@ -832,8 +831,9 @@ public class ProzesskopieForm implements Serializable {
                         try {
                             tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(
-                                e.getMessage() + " The first child below the top structure could not be determined!");
+                            Helper.setErrorMessage(
+                                e.getMessage() + " The first child below the top structure could not be determined!",
+                                logger, e);
                         }
                     }
                     /*
@@ -844,7 +844,7 @@ public class ProzesskopieForm implements Serializable {
                         try {
                             tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(e);
+                            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
@@ -876,7 +876,7 @@ public class ProzesskopieForm implements Serializable {
                             }
                         }
                     } catch (Exception e) {
-                        Helper.setFehlerMeldung(e);
+                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                     }
                 }
             }
@@ -896,7 +896,8 @@ public class ProzesskopieForm implements Serializable {
                 colStruct = colStruct.getAllChildren().get(0);
                 addCollections(colStruct);
             } catch (RuntimeException e) {
-                logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
+                Helper.setErrorMessage(
+                    e.getMessage() + " The first child below the top structure could not be determined!", logger, e);
             }
 
             /*
@@ -932,16 +933,12 @@ public class ProzesskopieForm implements Serializable {
                 if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
                     serviceManager.getFileService().writeMetadataAsTemplateFile(this.rdf, this.prozessKopie);
                 }
-
             } catch (DocStructHasNoTypeException e) {
-                Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
-                logger.error("creation of new process throws an error: ", e);
+                Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
             } catch (UghHelperException e) {
-                Helper.setFehlerMeldung("UghHelperException", e.getMessage());
-                logger.error("creation of new process throws an error: ", e);
+                Helper.setErrorMessage("UghHelperException", logger, e);
             } catch (MetadataTypeNotAllowedException e) {
-                Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
-                logger.error("creation of new process throws an error: ", e);
+                Helper.setErrorMessage("MetadataTypeNotAllowedException", logger, e);
             }
 
         }
@@ -1038,7 +1035,9 @@ public class ProzesskopieForm implements Serializable {
                             try {
                                 enricher.addMetadata(higherElement.getValue());
                             } catch (UGHException didNotWork) {
-                                logger.info(didNotWork);
+                                Helper.setErrorMessage("errorAdding",
+                                    new Object[] {Helper.getTranslation("metadata") });
+                                logger.info(didNotWork.getStackTrace());
                             }
                         }
                     }
@@ -1070,7 +1069,7 @@ public class ProzesskopieForm implements Serializable {
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
             } catch (UghHelperException | DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
-                Helper.setFehlerMeldung(e.getMessage(), "");
+                Helper.setErrorMessage(e.getMessage(), logger, e);
             }
         }
     }
@@ -1090,8 +1089,7 @@ public class ProzesskopieForm implements Serializable {
                 }
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
-            Helper.setFehlerMeldung(e.getMessage(), "");
-            logger.error(e);
+            Helper.setErrorMessage(e.getMessage(), logger, e);
         }
     }
 
@@ -1153,12 +1151,10 @@ public class ProzesskopieForm implements Serializable {
                 ds.addChild(dsvolume);
                 this.rdf = ff;
             }
-
         } catch (TypeNotAllowedAsChildException | PreferencesException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (FileNotFoundException e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
         }
     }
 
@@ -1238,12 +1234,12 @@ public class ProzesskopieForm implements Serializable {
                         }
                     }
                 } catch (PreferencesException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
                 try {
                     fillFieldsFromMetadataFile();
                 } catch (PreferencesException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -1256,7 +1252,7 @@ public class ProzesskopieForm implements Serializable {
                 try {
                     newDocStruct.addMetadata(md);
                 } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -1265,7 +1261,7 @@ public class ProzesskopieForm implements Serializable {
                 try {
                     newDocStruct.addPerson(p);
                 } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -1413,8 +1409,7 @@ public class ProzesskopieForm implements Serializable {
                 }
             }
         } catch (JDOMException | IOException e1) {
-            logger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+            Helper.setErrorMessage("Error while parsing digital collections", logger, e1);
         }
 
         if (this.possibleDigitalCollection.size() == 0) {
@@ -1541,7 +1536,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             generateTitle(null);
         } catch (IOException e) {
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -1685,11 +1680,11 @@ public class ProzesskopieForm implements Serializable {
                 rueckgabe = df.format(bandint);
             } catch (NumberFormatException e) {
                 if (inFeldName.equals("Bandnummer")) {
-                    Helper.setFehlerMeldung(
-                        Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
+                    Helper.setErrorMessage(
+                        Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl", logger, e);
                 } else {
-                    Helper.setFehlerMeldung(
-                        Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
+                    Helper.setErrorMessage(
+                        Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number", logger, e);
                 }
             }
             if (rueckgabe != null && rueckgabe.length() < 4) {
@@ -1708,7 +1703,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
         String tifDefinition = cp.getParamString("tifheader." + this.docType, "intranda");
@@ -1775,7 +1770,7 @@ public class ProzesskopieForm implements Serializable {
                 String newTitle = title.substring(0, title.length() - toCut);
                 this.tifHeaderImageDescription = this.tifHeaderImageDescription.replace(title, newTitle);
             } catch (IndexOutOfBoundsException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
@@ -1789,8 +1784,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             serviceManager.getProcessService().downloadDocket(this.prozessKopie);
         } catch (IOException e) {
-            logger.error("Excetion thrown, when creating the docket", e.getMessage());
-            // TODO: Handle exceptions in Frontend
+            Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("docket") }, logger, e);
         }
         return "";
     }
@@ -1984,8 +1978,7 @@ public class ProzesskopieForm implements Serializable {
             // restart of the servlet container
             return false;
         } catch (FileNotFoundException e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
             return false;
         }
     }

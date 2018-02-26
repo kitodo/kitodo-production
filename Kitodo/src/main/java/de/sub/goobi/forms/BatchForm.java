@@ -103,8 +103,7 @@ public class BatchForm extends BasisForm {
             }
             currentProcesses = new ArrayList<>(processes);
         } catch (Exception e) { // NumberFormatException, DAOException
-            logger.error(e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen");
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
         }
     }
 
@@ -120,7 +119,7 @@ public class BatchForm extends BasisForm {
                 query = serviceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
                         false, false);
             } catch (DataException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         } else {
             query = serviceManager.getTemplateService().getQueryTemplate(false);
@@ -136,13 +135,13 @@ public class BatchForm extends BasisForm {
                         serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
             }
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         try {
             this.currentProcesses = serviceManager.getProcessService().convertDtosToBeans(processDTOS);
         } catch (DAOException e) {
             this.currentProcesses = new ArrayList<>();
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -254,8 +253,7 @@ public class BatchForm extends BasisForm {
                 serviceManager.getProcessService().downloadDocket(
                         serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("fehlerBeimEinlesen");
+                Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
                 return null;
             }
         } else {
@@ -280,8 +278,7 @@ public class BatchForm extends BasisForm {
             serviceManager.getBatchService().removeAll(ids);
             filterAll();
         } catch (DAOException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
         }
     }
 
@@ -311,11 +308,9 @@ public class BatchForm extends BasisForm {
                 }
             }
         } catch (DAOException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
+            Helper.setErrorMessage("fehlerNichtAktualisierbar", logger, e);
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("errorSaveList", e.getMessage());
+            Helper.setErrorMessage("errorSaveList", logger, e);
         }
     }
 
@@ -370,8 +365,7 @@ public class BatchForm extends BasisForm {
                     }
                 }
             } catch (DataException e) {
-                Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("fehlerNichtAktualisierbar", logger, e);
             }
         }
     }
@@ -429,8 +423,7 @@ public class BatchForm extends BasisForm {
                     this.batchHelper = new BatchProcessHelper(batch);
                     return "/pages/BatchProperties";
                 } catch (DAOException e) {
-                    logger.error(e);
-                    Helper.setFehlerMeldung("fehlerBeimEinlesen");
+                    Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
                     return null;
                 }
             } else {
@@ -503,8 +496,7 @@ public class BatchForm extends BasisForm {
                         throw new UnreachableCodeException("Complete switch statement");
                 }
             } catch (Exception e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("fehlerBeimEinlesen");
+                Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
                 return null;
             }
         }
@@ -549,8 +541,7 @@ public class BatchForm extends BasisForm {
                 }
             }
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen");
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
         }
     }
 }

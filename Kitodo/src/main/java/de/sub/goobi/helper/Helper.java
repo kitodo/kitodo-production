@@ -27,6 +27,7 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -113,6 +115,116 @@ public class Helper extends HibernateHelper implements Observer {
         setFehlerMeldung(control, message + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
     }
 
+    /**
+     * Set error message to message tag with given name 'title'. Substitute all
+     * placeholders in message tag with elements of given array 'parameters'.
+     *
+     * @param title
+     *            name of the message tag set as error message
+     * @param parameters
+     *            list of parameters used for string substitution in message tag
+     */
+    public static void setErrorMessage(String title, final Object[] parameters) {
+        if (Objects.nonNull(parameters) && parameters.length > 0) {
+            setFehlerMeldung(MessageFormat.format(getTranslation(title), parameters));
+        } else {
+            setFehlerMeldung(getTranslation(title));
+        }
+    }
+
+    /**
+     * Set error message to message tag with given name 'title'.
+     *
+     * <p>
+     * This method also accepts logger and exception instances to automatically log
+     * the exceptions message or stackTrace values to the given logger.
+     * </p>
+     *
+     * @param title
+     *            name of the message tag set as error message
+     * @param logger
+     *            Logger instance for error logging
+     * @param exception
+     *            Exception instance for error logging
+     */
+    public static void setErrorMessage(String title, Logger logger, Exception exception) {
+        setFehlerMeldung(title);
+        logger.error(exception.getStackTrace());
+    }
+
+    /**
+     * Set error message to message tag with given name 'title'. Substitute all
+     * placeholders in message tag with elements of given array 'parameters'.
+     *
+     * <p>
+     * This method also accepts logger and exception instances to automatically log
+     * the exceptions message or stackTrace values to the given logger.
+     * </p>
+     *
+     * @param title
+     *            name of the message tag set as error message
+     * @param parameters
+     *            list of parameters used for string substitution in message tag
+     * @param logger
+     *            Logger instance for error logging
+     * @param exception
+     *            Exception instance for error logging
+     */
+    public static void setErrorMessage(String title, final Object[] parameters, Logger logger, Exception exception) {
+        setErrorMessage(title, parameters);
+        logger.error(exception.getStackTrace());
+    }
+
+    /**
+     * Set error message to message tag with given name 'title'.
+     *
+     * <p>
+     * This method also accepts a description text and logger and exception
+     * instances to automatically log the exceptions message or stackTrace values to
+     * the given logger.
+     * </p>
+     *
+     * @param title
+     *            name of the message tag set as error message
+     * @param description
+     *            description text that will be displayed in the faces message
+     * @param logger
+     *            Logger instance for error logging
+     * @param exception
+     *            Exception instance for error logging
+     */
+    public static void setErrorMessage(String title, String description, Logger logger, Exception exception) {
+        setFehlerMeldung(title, description);
+        logger.error(exception.getStackTrace());
+    }
+
+    /**
+     * Set error message to message tag with given name 'title'. Substitute all
+     * placeholders in message tag with elements of given array 'parameters'.
+     *
+     * <p>
+     * This method also accepts a description text and logger and exception
+     * instances to automatically log the exceptions message or stackTrace values to
+     * the given logger.
+     * </p>
+     *
+     * @param title
+     *            name of the message tag set as error message
+     * @param description
+     *            description text that will be displayed in the faces message
+     * @param parameters
+     *            list of parameters used for string substitution in message tag
+     * @param logger
+     *            Logger instance for error logging
+     * @param exception
+     *            Exception instance for error logging
+     */
+    public static void setErrorMessage(String title, String description, final Object[] parameters, Logger logger,
+            Exception exception) {
+        setFehlerMeldung(title, description);
+        logger.error(exception.getStackTrace());
+    }
+
     private static String getExceptionMessage(Throwable e) {
         String message = e.getMessage();
         if (message == null) {
@@ -148,19 +260,19 @@ public class Helper extends HibernateHelper implements Observer {
         description = description.replaceAll("<", "&lt;");
         description = description.replaceAll(">", "&gt;");
 
-        String msg;
-        String descript;
         Locale language = Locale.ENGLISH;
         SpracheForm sf = (SpracheForm) Helper.getManagedBeanValue("#{SpracheForm}");
         if (sf != null) {
             language = sf.getLocale();
         }
 
+        String msg;
         try {
             msg = getString(language, message);
         } catch (RuntimeException e) {
             msg = message;
         }
+        String descript;
         try {
             descript = getString(language, description);
         } catch (RuntimeException e) {

@@ -108,7 +108,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 users = getUsers();
             }
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.page = new Page<>(0, users);
         return "/pages/BenutzerAlle";
@@ -151,8 +151,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-            logger.error(e);
+            Helper.setErrorMessage("Error, could not save", logger, e);
             return null;
         }
     }
@@ -187,7 +186,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 }
             }
         } catch (IOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return valid;
     }
@@ -207,8 +206,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             serviceManager.getUserService().remove(userObject);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-            logger.error(e);
+            Helper.setErrorMessage("Error, could not save", logger, e);
             return null;
         }
         return filterAll();
@@ -248,7 +246,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
             this.userObject.getUserGroups().add(usergroup);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            Helper.setErrorMessage("Error on reading database", logger, e);
             return null;
         }
         return null;
@@ -265,7 +263,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Project project = serviceManager.getProjectService().getById(projectId);
             this.userObject.getProjects().remove(project);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            Helper.setErrorMessage("Error on reading database", logger, e);
             return null;
         }
         return null;
@@ -287,7 +285,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
             this.userObject.getProjects().add(project);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            Helper.setErrorMessage("Error on reading database", logger, e);
             return null;
         }
         return null;
@@ -334,8 +332,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             try {
                 this.userObject.setLdapGroup(serviceManager.getLdapGroupService().getById(inAuswahl));
             } catch (DAOException e) {
-                Helper.setFehlerMeldung("Error on writing to database", "");
-                logger.error(e);
+                Helper.setErrorMessage("Error on writing to database", logger, e);
             }
         }
     }
@@ -359,10 +356,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             serviceManager.getLdapServerService().createNewUser(this.userObject, passwordEncoder.decrypt(this.userObject.getPassword()));
         } catch (Exception e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Could not generate ldap entry: " + e.getMessage());
-            }
-            Helper.setFehlerMeldung(e.getMessage());
+            Helper.setErrorMessage("Could not generate ldap entry", logger, e);
         }
         return null;
     }
@@ -391,7 +385,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 setUserObject(this.serviceManager.getUserService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving user with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("user"), id }, logger, e);
         }
     }
 
@@ -404,7 +398,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             return serviceManager.getProjectService().findAll(true);
         } catch (DataException e) {
-            logger.error("Unable to load projects: " + e.getMessage());
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projekte") }, logger, e);
             return new LinkedList<>();
         }
     }
@@ -418,7 +412,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            logger.error("Unable to load user groups: " + e.getMessage());
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("benutzergruppen") }, logger,
+                e);
             return new LinkedList<>();
         }
     }

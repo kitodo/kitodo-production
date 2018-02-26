@@ -43,8 +43,7 @@ public class StatistikForm {
         try {
             return serviceManager.getUserService().count();
         } catch (DataException e) {
-            logger.error("ElasticSearch problem: ", e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
             return null;
         }
     }
@@ -58,8 +57,7 @@ public class StatistikForm {
         try {
             return serviceManager.getUserGroupService().count();
         } catch (DataException e) {
-            logger.error("ElasticSearch problem: ", e);
-            Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
+            Helper.setErrorMessage(null, "fehlerBeimEinlesen", logger, e);
             return null;
         }
     }
@@ -73,8 +71,7 @@ public class StatistikForm {
         try {
             return serviceManager.getProcessService().count();
         } catch (DataException e) {
-            logger.error("ElasticSearch problem: ", e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
             return null;
         }
     }
@@ -88,8 +85,7 @@ public class StatistikForm {
         try {
             return serviceManager.getTaskService().count();
         } catch (DataException e) {
-            logger.error("ElasticSearch problem: ", e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
             return null;
         }
     }
@@ -103,8 +99,7 @@ public class StatistikForm {
         try {
             return serviceManager.getTemplateService().countTemplates();
         } catch (DataException e) {
-            logger.error("ElasticSearch problem: ", e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
             return null;
         }
     }
@@ -122,18 +117,17 @@ public class StatistikForm {
     }
 
     private int getAmountOfCurrentTasks(boolean open, boolean processing) {
-        Long amount = 0L;
         User user = Helper.getCurrentUser();
 
         if (user == null) {
             return 0;
         }
 
+        Long amount = 0L;
         try {
             amount = serviceManager.getTaskService().getAmountOfCurrentTasks(open, processing, user);
         } catch (DataException e) {
-            logger.error("ElasticSearch problem: ", e);
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
         }
         return amount.intValue();
     }

@@ -81,8 +81,7 @@ public class BasisForm implements Serializable {
             try {
                 this.user = serviceManager.getUserService().getAuthenticatedUser();
             } catch (DAOException e) {
-                Helper.setFehlerMeldung("noLoggedUser");
-                logger.error(e);
+                Helper.setErrorMessage("noLoggedUser", logger, e);
             }
         }
         return this.user;

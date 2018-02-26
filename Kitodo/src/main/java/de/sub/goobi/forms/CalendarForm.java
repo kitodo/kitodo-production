@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
  * enter the course of appearance of a newspaper.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @Named("CalendarForm")
@@ -795,11 +795,9 @@ public class CalendarForm implements Serializable {
             byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
             FacesUtils.sendDownload(data, "course.xml");
         } catch (TransformerException e) {
-            Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("granularity.download.error", "error.TransformerException", logger, e);
         } catch (IOException e) {
-            Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("granularity.download.error", "error.IOException", logger, e);
         } finally {
             if (granularityWasTemporarilyAdded) {
                 course.clearProcesses();
@@ -1018,7 +1016,7 @@ public class CalendarForm implements Serializable {
                 yearShowing = blockShowing.getFirstAppearance().getYear();
             }
         } catch (NullPointerException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -1098,7 +1096,7 @@ public class CalendarForm implements Serializable {
                     Helper.setMeldung("calendar.block." + input + ".swapped");
                     return swapped;
                 } catch (IllegalFieldValueException stillInvalid) {
-                    logger.error(stillInvalid);
+                    Helper.setErrorMessage(invalidDate.getLocalizedMessage(), logger, stillInvalid);
                 }
             }
         }
@@ -1221,7 +1219,7 @@ public class CalendarForm implements Serializable {
                 }
             }
         } catch (IllegalArgumentException e) {
-            Helper.setFehlerMeldung("calendar.block.firstAppearance.rejected");
+            Helper.setErrorMessage("calendar.block.firstAppearance.rejected", logger, e);
         }
     }
 
@@ -1286,7 +1284,7 @@ public class CalendarForm implements Serializable {
                 }
             }
         } catch (IllegalArgumentException e) {
-            Helper.setFehlerMeldung("calendar.block.lastAppearance.rejected");
+            Helper.setErrorMessage("calendar.block.lastAppearance.rejected", logger, e);
         } finally {
             firstAppearanceIsToChange = null;
         }
@@ -1332,24 +1330,19 @@ public class CalendarForm implements Serializable {
             Helper.removeManagedBean("GranularityForm");
             navigate();
         } catch (SAXException e) {
-            Helper.setFehlerMeldung("calendar.upload.error", "error.SAXException");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("calendar.upload.error", "error.SAXException", logger, e);
             neglectEmptyBlock();
         } catch (IOException e) {
-            Helper.setFehlerMeldung("calendar.upload.error", "error.IOException");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("calendar.upload.error", "error.IOException", logger, e);
             neglectEmptyBlock();
         } catch (IllegalArgumentException e) {
-            Helper.setFehlerMeldung("calendar.upload.overlappingDateRanges", e.getMessage());
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("calendar.upload.overlappingDateRanges", logger, e);
             neglectEmptyBlock();
         } catch (NoSuchElementException e) {
-            Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("calendar.upload.error", "calendar.upload.missingMandatoryElement", logger, e);
             neglectEmptyBlock();
         } catch (NullPointerException e) {
-            Helper.setFehlerMeldung("calendar.upload.missingMandatoryValue", e.getMessage());
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("calendar.upload.missingMandatoryValue", logger, e);
             neglectEmptyBlock();
         } finally {
             uploadedFile = null;

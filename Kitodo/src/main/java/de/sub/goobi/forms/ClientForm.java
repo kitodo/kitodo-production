@@ -54,7 +54,7 @@ public class ClientForm extends BasisForm {
             this.serviceManager.getClientService().save(this.client);
             return "/pages/clients?" + REDIRECT_PARAMETER;
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Error, could not save client", e.getMessage());
+            Helper.setErrorMessage("errorSaving", new String[] {Helper.getTranslation("client") }, logger, e);
             return null;
         }
     }
@@ -69,7 +69,8 @@ public class ClientForm extends BasisForm {
                 this.client = this.serviceManager.getClientService().getById(this.clientId);
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving client with ID '" + this.clientId + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("client"), this.clientId },
+                logger, e);
         }
     }
 
