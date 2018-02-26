@@ -235,65 +235,30 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 logicalDS.addMetadata(atstsl);
             }
 
-            {
-                Property prop = new Property();
-                prop.setTitle("Titel");
-                prop.setValue(currentTitle);
-                templateProperties.add(prop);
+            templateProperties.add(prepareProperty("Titel", currentTitle));
+
+            if (StringUtils.isNotBlank(volumeNumber) && multivolue) {
+                templateProperties.add(prepareProperty("Bandnummer", volumeNumber));
             }
-            {
-                if (StringUtils.isNotBlank(volumeNumber) && multivolue) {
-                    Property prop = new Property();
-                    prop.setTitle("Bandnummer");
-                    prop.setValue(volumeNumber);
-                    templateProperties.add(prop);
-                }
+
+            MetadataType identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
+            mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
+            if (mdList != null && mdList.size() > 0) {
+                String analog = mdList.get(0).getValue();
+                templateProperties.add(prepareProperty("Identifier", analog));
             }
-            {
-                MetadataType identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
-                mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
+
+            if (child != null) {
+                mdList = child.getAllMetadataByType(identifierType);
                 if (mdList != null && mdList.size() > 0) {
-                    String analog = mdList.get(0).getValue();
-
-                    Property prop = new Property();
-                    prop.setTitle("Identifier");
-                    prop.setValue(analog);
-                    templateProperties.add(prop);
-
+                    Metadata identifier = mdList.get(0);
+                    workpieceProperties.add(prepareProperty("Identifier Band", identifier.getValue()));
                 }
             }
 
-            {
-                if (child != null) {
-                    mdList = child.getAllMetadataByType(identifierType);
-                    if (mdList != null && mdList.size() > 0) {
-                        Metadata identifier = mdList.get(0);
-                        Property prop = new Property();
-                        prop.setTitle("Identifier Band");
-                        prop.setValue(identifier.getValue());
-                        workpieceProperties.add(prop);
-                    }
-
-                }
-            }
-            {
-                Property prop = new Property();
-                prop.setTitle("Artist");
-                prop.setValue(author);
-                workpieceProperties.add(prop);
-            }
-            {
-                Property prop = new Property();
-                prop.setTitle("ATS");
-                prop.setValue(ats);
-                workpieceProperties.add(prop);
-            }
-            {
-                Property prop = new Property();
-                prop.setTitle("Identifier");
-                prop.setValue(currentIdentifier);
-                workpieceProperties.add(prop);
-            }
+            workpieceProperties.add(prepareProperty("Artist", author));
+            workpieceProperties.add(prepareProperty("ATS", ats));
+            workpieceProperties.add(prepareProperty("Identifier", currentIdentifier));
 
             try {
                 // pathimagefiles
@@ -336,6 +301,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             throw new ImportPluginException(e);
         }
+    }
+
+    private Property prepareProperty(String title, String value) {
+        Property property = new Property();
+        property.setTitle(title);
+        property.setValue(value);
+        return property;
     }
 
     /**
