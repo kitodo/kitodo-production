@@ -496,16 +496,12 @@ public class ExportDms extends ExportMets {
                     } else {
                         throw new IOException("No logged user!");
                     }
+                } catch (IOException e) {
+                    handleException(e);
+                    throw e;
                 } catch (Exception e) {
-                    if (exportDmsTask != null) {
-                        exportDmsTask.setException(e);
-                    } else {
-                        Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
-                    }
+                    handleException(e);
                     logger.error("could not create destination directory", e);
-                    if (e instanceof IOException) {
-                        throw (IOException) e;
-                    }
                 }
             }
 
@@ -528,6 +524,15 @@ public class ExportDms extends ExportMets {
                 exportDmsTask.setWorkDetail(null);
             }
         }
+    }
+
+    private void handleException(Exception e) {
+        if (exportDmsTask != null) {
+            exportDmsTask.setException(e);
+        } else {
+            Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+        }
+        logger.error("could not create destination directory", e);
     }
 
     /**
