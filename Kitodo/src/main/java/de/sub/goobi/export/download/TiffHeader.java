@@ -84,29 +84,29 @@ public class TiffHeader {
      */
     public String getTiffAlles() {
         String lineBreak = "\r\n";
-        StringBuffer strBuf = new StringBuffer();
-        strBuf.append("#");
-        strBuf.append(lineBreak);
-        strBuf.append("# Configuration file for TIFFWRITER.pl");
-        strBuf.append(lineBreak);
-        strBuf.append("#");
-        strBuf.append(lineBreak);
-        strBuf.append("# - overwrites tiff-tags.");
-        strBuf.append(lineBreak);
-        strBuf.append("#");
-        strBuf.append(lineBreak);
-        strBuf.append("#");
-        strBuf.append(lineBreak);
-        strBuf.append("Artist=");
-        strBuf.append(this.artist);
-        strBuf.append(lineBreak);
-        strBuf.append("Documentname=");
-        strBuf.append(getDocumentName());
-        strBuf.append(lineBreak);
-        strBuf.append("ImageDescription=");
-        strBuf.append(getImageDescription());
-        strBuf.append(lineBreak);
-        return strBuf.toString();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("#");
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("# Configuration file for TIFFWRITER.pl");
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("#");
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("# - overwrites tiff-tags.");
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("#");
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("#");
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("Artist=");
+        stringBuilder.append(this.artist);
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("Documentname=");
+        stringBuilder.append(getDocumentName());
+        stringBuilder.append(lineBreak);
+        stringBuilder.append("ImageDescription=");
+        stringBuilder.append(getImageDescription());
+        stringBuilder.append(lineBreak);
+        return stringBuilder.toString();
     }
 
     /**
