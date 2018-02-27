@@ -63,13 +63,13 @@
                 <!-- digitale Kollektion -->
                 <p:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
                                value="#{msgs.digitaleKollektionen}"/>
-                <p:selectOneListbox id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
+                <p:selectManyMenu id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
                                      rendered="#{ProzesskopieForm.standardFields.collections}"
                                      value="#{ProzesskopieForm.digitalCollections}">
                     <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
                                    itemValue="#{step}"/>
                     <p:ajax event="change"/>
-                </p:selectOneListbox>
+                </p:selectManyMenu>
             </div>
 
             <div>
