@@ -61,16 +61,18 @@
         </p:column>
 
         <p:rowExpansion styleClass="expansion-class">
-            <p:panelGrid columns="2" columnClasses="label,value">
-                <h:outputText value="#{msgs.internesSpeicherformat}:"/>
-                <h:outputText value="#{item.fileFormatInternal}"/>
+            <div class="row-expansion-wrapper">
+                <p:panelGrid columns="2" columnClasses="label,value">
+                    <h:outputText value="#{msgs.internesSpeicherformat}:"/>
+                    <h:outputText value="#{item.fileFormatInternal}"/>
 
-                <h:outputText value="#{msgs.dmsExportformat}:"/>
-                <h:outputText value="#{item.fileFormatDmsExport}"/>
+                    <h:outputText value="#{msgs.dmsExportformat}:"/>
+                    <h:outputText value="#{item.fileFormatDmsExport}"/>
 
-                <h:outputText value="#{msgs.prozessvorlagen}:"/>
-                <h:outputText value="#{ProjekteForm.getProjectTemplateTitles(item.id)}"/>
-            </p:panelGrid>
+                    <h:outputText value="#{msgs.prozessvorlagen}:"/>
+                    <h:outputText value="#{ProjekteForm.getProjectTemplateTitles(item.id)}"/>
+                </p:panelGrid>
+            </div>
         </p:rowExpansion>
 
     </p:dataTable>
