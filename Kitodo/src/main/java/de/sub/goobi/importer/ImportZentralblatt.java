@@ -339,9 +339,6 @@ public class ImportZentralblatt {
     private void parseArticle(DocStruct docStruct, String left, String right, boolean isFirstTitle)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
 
-        Metadata md;
-        MetadataType mdt;
-
         // J: Zeitschrift
         // V: Band
         // I: Heft
@@ -363,103 +360,70 @@ public class ImportZentralblatt {
         // title
         if (left.equals("TI")) {
             if (isFirstTitle) {
-                mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
+                docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("TitleDocMain"), right));
             } else {
-                mdt = this.myPrefs.getMetadataTypeByName("MainTitleTranslated");
+                docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("MainTitleTranslated"), right));
             }
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
             return;
         }
 
         // language
         if (left.equals("LA")) {
-            mdt = this.myPrefs.getMetadataTypeByName("DocLanguage");
-            md = new Metadata(mdt);
-            md.setValue(right.toLowerCase());
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("DocLanguage"), right.toLowerCase()));
             return;
         }
 
         // ZBLIdentifier
         if (left.equals("AN")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLIdentifier");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLIdentifier"), right));
             return;
         }
 
         // ZBLPageNumber
         if (left.equals("P")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLPageNumber");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLPageNumber"), right));
             return;
         }
 
         // ZBLSource
         if (left.equals("SO")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLSource");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLSource"), right));
             return;
         }
 
         // ZBLAbstract
         if (left.equals("AB")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLAbstract");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLAbstract"), right));
             return;
         }
 
         // ZBLReviewAuthor
         if (left.equals("RV")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewAuthor");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLReviewAuthor"), right));
             return;
         }
 
         // ZBLCita
         if (left.equals("CI")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLCita");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLCita"), right));
             return;
         }
 
         // ZBLTempID
         if (left.equals("DE")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLTempID");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLTempID"), right));
             return;
         }
 
         // ZBLReviewLink
         if (left.equals("SI")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewLink");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLReviewLink"), right));
             return;
         }
 
         // ZBLIntern
         if (left.equals("XX")) {
-            mdt = this.myPrefs.getMetadataTypeByName("ZBLIntern");
-            md = new Metadata(mdt);
-            md.setValue(right);
-            docStruct.addMetadata(md);
+            docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ZBLIntern"), right));
             return;
         }
 
@@ -467,10 +431,8 @@ public class ImportZentralblatt {
         if (left.equals("KW")) {
             StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
-                md = new Metadata(this.myPrefs.getMetadataTypeByName("Keyword"));
-                String myTok = tokenizer.nextToken();
-                md.setValue(myTok.trim());
-                docStruct.addMetadata(md);
+                String token = tokenizer.nextToken();
+                docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("Keyword"), token.trim()));
             }
             return;
         }
@@ -507,8 +469,8 @@ public class ImportZentralblatt {
                             "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
                 }
 
-                p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
-                p.setFirstname(myTok.substring(myTok.indexOf(",") + 1, myTok.length()).trim());
+                p.setLastname(myTok.substring(0, myTok.indexOf(',')).trim());
+                p.setFirstname(myTok.substring(myTok.indexOf(',') + 1, myTok.length()).trim());
                 p.setRole("AuthorVariation");
                 docStruct.addPerson(p);
             }
@@ -519,12 +481,16 @@ public class ImportZentralblatt {
         if (left.equals("CC")) {
             StringTokenizer tokenizer = new StringTokenizer(right);
             while (tokenizer.hasMoreTokens()) {
-                md = new Metadata(this.myPrefs.getMetadataTypeByName("ClassificationMSC"));
-                String myTok = tokenizer.nextToken();
-                md.setValue(myTok.trim());
-                docStruct.addMetadata(md);
+                String token = tokenizer.nextToken();
+                docStruct.addMetadata(prepareMetadata(this.myPrefs.getMetadataTypeByName("ClassificationMSC"), token.trim()));
             }
         }
+    }
+
+    private Metadata prepareMetadata(MetadataType mdt, String right) throws MetadataTypeNotAllowedException {
+        Metadata metadata = new Metadata(mdt);
+        metadata.setValue(right);
+        return metadata;
     }
 
 }

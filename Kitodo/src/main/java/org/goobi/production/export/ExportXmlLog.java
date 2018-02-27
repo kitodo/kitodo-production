@@ -225,22 +225,8 @@ public class ExportXmlLog {
             processElements.add(batch);
         }
 
-        ArrayList<Element> processProperties = new ArrayList<>();
-        for (Property prop : process.getProperties()) {
-            Element property = new Element("property", xmlns);
-            property.setAttribute("propertyIdentifier", prop.getTitle());
-            if (prop.getValue() != null) {
-                property.setAttribute("value", replacer(prop.getValue()));
-            } else {
-                property.setAttribute("value", "");
-            }
+        List<Element> processProperties = prepareProperties(process.getProperties(), xmlns);
 
-            Element label = new Element("label", xmlns);
-
-            label.setText(prop.getTitle());
-            property.addContent(label);
-            processProperties.add(property);
-        }
         if (processProperties.size() != 0) {
             Element properties = new Element("properties", xmlns);
             properties.addContent(processProperties);
@@ -337,22 +323,8 @@ public class ExportXmlLog {
         Element dd = new Element("digitalDocument", xmlns);
         dd.setAttribute("digitalDocumentID", String.valueOf(process.getId()));
 
-        ArrayList<Element> docProperties = new ArrayList<>();
-        for (Property prop : process.getWorkpieces()) {
-            Element property = new Element("property", xmlns);
-            property.setAttribute("propertyIdentifier", prop.getTitle());
-            if (prop.getValue() != null) {
-                property.setAttribute("value", replacer(prop.getValue()));
-            } else {
-                property.setAttribute("value", "");
-            }
+        List<Element> docProperties = prepareProperties(process.getWorkpieces(), xmlns);
 
-            Element label = new Element("label", xmlns);
-
-            label.setText(prop.getTitle());
-            property.addContent(label);
-            docProperties.add(property);
-        }
         if (docProperties.size() != 0) {
             Element properties = new Element("properties", xmlns);
             properties.addContent(docProperties);
@@ -402,6 +374,26 @@ public class ExportXmlLog {
         }
         processElm.setContent(processElements);
         return doc;
+    }
+
+    private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
+        ArrayList<Element> preparedProperties = new ArrayList<>();
+        for (Property property : properties) {
+            Element propertyElement = new Element("property", xmlns);
+            propertyElement.setAttribute("propertyIdentifier", property.getTitle());
+            if (property.getValue() != null) {
+                propertyElement.setAttribute("value", replacer(property.getValue()));
+            } else {
+                propertyElement.setAttribute("value", "");
+            }
+
+            Element label = new Element("label", xmlns);
+
+            label.setText(property.getTitle());
+            propertyElement.addContent(label);
+            preparedProperties.add(propertyElement);
+        }
+        return preparedProperties;
     }
 
     private ArrayList<Element> prepareMetadataElements(ArrayList<Element> metadataElements, Map<String, String> fields,

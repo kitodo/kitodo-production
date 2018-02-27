@@ -27,9 +27,13 @@ public class WikiFieldHelper {
     private static final String TAG_INFO = "<font color=\"#0033CC\">";
     private static final String TAG_DEBUG = "<font color=\"#CCCCCC\">";
     private static final String TAG_USER = "<font color=\"#006600\">";
-    private static final String ENDTAG = "</font>";
+    private static final String TAG_END = "</font>";
 
     private static final String BREAK = "<br/>";
+
+    private WikiFieldHelper() {
+
+    }
 
     /**
      * Get wiki messages.
@@ -51,17 +55,7 @@ public class WikiFieldHelper {
             message += BREAK;
         }
 
-        if (type.equals("error")) {
-            message += TAG_ERROR;
-        } else if (type.equals("debug")) {
-            message += TAG_DEBUG;
-        } else if (type.equals("user")) {
-            message += TAG_USER;
-        } else if (type.equals("warn")) {
-            message += TAG_WARN;
-        } else {
-            message += TAG_INFO;
-        }
+        message += addMatchingTagMessage(type);
 
         String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
         String processName = "";
@@ -71,7 +65,7 @@ public class WikiFieldHelper {
         if (logger.isInfoEnabled()) {
             logger.info(timestamp + " " + processName + " " + value);
         }
-        message = message + timestamp + ": " + value + ENDTAG;
+        message = message + timestamp + ": " + value + TAG_END;
         return message;
     }
 
@@ -93,21 +87,35 @@ public class WikiFieldHelper {
             message += BREAK;
         }
 
-        if (type.equals("error")) {
-            message += TAG_ERROR;
-        } else if (type.equals("debug")) {
-            message += TAG_DEBUG;
-        } else if (type.equals("user")) {
-            message += TAG_USER;
-        } else if (type.equals("warn")) {
-            message += TAG_WARN;
-        } else {
-            message += TAG_INFO;
-        }
+        message += addMatchingTagMessage(type);
 
         String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
 
-        message = message + timestamp + ": " + value + ENDTAG;
+        message = message + timestamp + ": " + value + TAG_END;
+        return message;
+    }
+
+    private static String addMatchingTagMessage(String type) {
+        String message;
+
+        switch (type) {
+            case "error":
+                message = TAG_ERROR;
+                break;
+            case "debug":
+                message = TAG_DEBUG;
+                break;
+            case "user":
+                message = TAG_USER;
+                break;
+            case "warn":
+                message = TAG_WARN;
+                break;
+            default:
+                message = TAG_INFO;
+                break;
+        }
+
         return message;
     }
 }
