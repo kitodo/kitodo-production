@@ -439,7 +439,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     .substring(element.toString().indexOf('[') + 1, element.toString().indexOf(']')).trim();
 
             for (Task step : (Iterable<Task>) this.page.getCompleteList()) {
-                // nur wenn der Schritt bereits im Bearbeitungsmodus ist, abschliessen
+                // only when the task is already in edit mode, complete it
                 if (step.getProcess().getId() == Integer.parseInt(id)
                         && step.getProcessingStatusEnum() == TaskStatus.INWORK) {
                     this.mySchritt = step;

@@ -108,7 +108,7 @@ public class Multipage {
             response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             ServletOutputStream out = response.getOutputStream();
 
-            // die txt-Datei direkt in den Stream schreiben lassen
+            // let the txt file be written directly into the stream
             String filename = ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff";
             if (!(new File(filename)).exists()) {
                 create(process);
@@ -122,7 +122,7 @@ public class Multipage {
                 }
             }
 
-            // den Stream zurückgeben
+            // return the stream
             out.flush();
             facesContext.responseComplete();
         }

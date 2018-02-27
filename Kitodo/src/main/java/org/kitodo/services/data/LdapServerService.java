@@ -514,22 +514,19 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
             try {
-
-                /*
-                 * Encryption of password and Base64-Encoding
-                 */
+                // encryption of password and Base64-Encoding
                 MessageDigest md = MessageDigest.getInstance(passwordEncryption.getTitle());
                 md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
                 String encryptedPassword = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
 
-                // UserPasswort-Attribut ändern
+                // change attribute userPassword
                 BasicAttribute userPassword = new BasicAttribute("userPassword",
                         "{" + passwordEncryption + "}" + encryptedPassword);
 
-                // LanMgr-Passwort-Attribut ändern
+                // change attribute lanmgrPassword
                 BasicAttribute lanmgrPassword = proceedPassword("sambaLMPassword", inNewPassword, null);
 
-                // NTLM-Passwort-Attribut ändern
+                // change attribute ntlmPassword
                 BasicAttribute ntlmPassword = proceedPassword("sambaNTPassword", inNewPassword, digester);
 
                 BasicAttribute sambaPwdLastSet = new BasicAttribute("sambaPwdLastSet",
