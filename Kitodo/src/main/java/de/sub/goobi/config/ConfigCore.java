@@ -33,7 +33,7 @@ public class ConfigCore extends ConfigMain {
     private static ServiceManager serviceManager = new ServiceManager();
     private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
     private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
-    public static String imagesTemp = "/pages/imagesTemp/";
+    public static final String IMAGES_TEMP = "/pages/imagesTemp/";
 
     /**
      * Return the absolute path for the temporary images directory. Method

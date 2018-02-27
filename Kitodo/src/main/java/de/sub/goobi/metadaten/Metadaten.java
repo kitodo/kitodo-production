@@ -1618,7 +1618,7 @@ public class Metadaten {
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        return ConfigCore.imagesTemp + session.getId() + "_" + this.imageCounter + ".png";
+        return ConfigCore.IMAGES_TEMP + session.getId() + "_" + this.imageCounter + ".png";
     }
 
     public List<URI> getAllTifFolders() {
