@@ -23,6 +23,10 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
         <h3>
             <h:outputText value="#{msgs.ldapgruppeBearbeiten} (#{LdapGruppenForm.myLdapGruppe.title})"
                           rendered="#{not empty LdapGruppenForm.myLdapGruppe.title}"/>
@@ -30,13 +34,19 @@
                           rendered="#{empty LdapGruppenForm.myLdapGruppe.title}"/>
         </h3>
         <p:commandButton id="save"
+                         widgetVar="save"
                          value="#{msgs.speichern}"
                          action="#{LdapGruppenForm.Speichern}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          styleClass="button-filled-blue"
+                         disabled="#{LdapGruppenForm.saveDisabled}"
                          onclick="PF('notifications').renderMessage({'summary':'#{msgs.ldapgroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{LdapGruppenForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
         <p:button id="cancel" value="#{msgs.abbrechen}"
                   outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>

@@ -107,6 +107,7 @@ public class LdapGruppenForm extends BasisForm {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("ldapgruppe"), id }, logger,
                 e);
         }
+        setSaveDisabled(true);
     }
 
     /**
