@@ -18,65 +18,85 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <h:panelGrid columns="2" width="100%" border="0" style="font-size:12px;margin-left:30px" rowClasses="rowTop"
-             columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
+    <p:panelGrid layout="grid" columns="2">
+        <p:row>
+            <div>
+                <!-- Prozessvorlage -->
+                <p:outputLabel value="#{msgs.prozessvorlage}"/>
+                <h3><p:outputLabel value="#{ProzesskopieForm.prozessVorlage.title}"/></h3>
+            </div>
 
-        <!-- Prozessvorlage -->
-        <h:outputText value="#{msgs.prozessvorlage}"/>
-        <h:outputText value="#{ProzesskopieForm.prozessVorlage.title}"/>
+            <div>
+                <!-- ProzessTitel -->
+                <p:outputLabel for="processTitle" value="#{msgs.prozessTitel}"/>
+                <h:panelGroup>
+                    <p:inputText class="input" id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="prozessKopieFeldbreite"/>
+                    <p:commandLink action="#{ProzesskopieForm.calculateProcessTitle}" value="#{msgs.generieren}"/>
+                </h:panelGroup>
+            </div>
 
-        <!-- ProzessTitel -->
-        <h:outputText value="#{msgs.prozessTitel}"/>
-        <h:panelGroup>
-            <h:inputText value="#{ProzesskopieForm.prozessKopie.title}" styleClass="prozessKopieFeldbreite"/>
-            <h:commandLink action="#{ProzesskopieForm.calculateProcessTitle}" value="#{msgs.generieren}"/>
-        </h:panelGroup>
+            <div>
+                <!-- DocType -->
+                <p:outputLabel value="DocType" rendered="#{ProzesskopieForm.standardFields.doctype}"/>
+                <p:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.standardFields.doctype}"
+                                 onchange="submit()"
+                                 styleClass="prozessKopieFeldbreite">
+                    <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
+                                   itemValue="#{step.title}"/>
+                </p:selectOneMenu>
+            </div>
 
-        <!-- DocType -->
-        <h:outputText value="DocType" rendered="#{ProzesskopieForm.standardFields.doctype}"/>
-        <h:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.standardFields.doctype}"
-                         onchange="submit()"
-                         styleClass="prozessKopieFeldbreite">
-            <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
-                           itemValue="#{step.title}"/>
-        </h:selectOneMenu>
+            <div>
+                <!-- Preferences -->
+                <p:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.preferences}" value="#{msgs.regelsatz}"/>
+                <h:panelGroup rendered="#{ProzesskopieForm.standardFields.preferences}">
+                    <p:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
+                                     onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"
+                                     required="true">
+                        <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                    </p:selectOneMenu>
+                    <!--<t:message for="Regelsatz" style="color: red" replaceIdWithLabel="true"/>-->
+                </h:panelGroup>
+            </div>
 
-        <!-- Preferences -->
-        <h:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.preferences}" value="#{msgs.regelsatz}"/>
-        <h:panelGroup rendered="#{ProzesskopieForm.standardFields.preferences}">
-            <h:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
-                             onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"
-                             required="true">
-                <f:selectItems value="#{HelperForm.regelsaetze}"/>
-            </h:selectOneMenu>
-            <!--<t:message for="Regelsatz" style="color: red" replaceIdWithLabel="true"/>-->
-        </h:panelGroup>
+            <div>
+                <!-- digitale Kollektion -->
+                <p:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
+                               value="#{msgs.digitaleKollektionen}"/>
+                <p:selectOneListbox id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
+                                     rendered="#{ProzesskopieForm.standardFields.collections}"
+                                     value="#{ProzesskopieForm.digitalCollections}">
+                    <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
+                                   itemValue="#{step}"/>
+                    <p:ajax event="change"/>
+                </p:selectOneListbox>
+            </div>
 
-        <!-- digitale Kollektion -->
-        <h:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
-                       value="#{msgs.digitaleKollektionen}"/>
-        <h:selectManyListbox id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
-                             rendered="#{ProzesskopieForm.standardFields.collections}"
-                             value="#{ProzesskopieForm.digitalCollections}">
-            <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
-                           itemValue="#{step}"/>
-        </h:selectManyListbox>
+            <div>
+                <!-- Tifheader - Documentname -->
+                <p:outputLabel for="tifHeaderDocumentName" value="#{msgs.tifheaderdocumentname}"/>
+                <p:inputText class="input" id="tifHeaderDocumentName" value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
+            </div>
 
-        <!-- Tifheader - Documentname -->
-        <h:outputText value="#{msgs.tifheaderdocumentname}"/>
-        <h:inputText value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
+            <div>
+                <!-- Tifheader - Imagedescription -->
+                <p:outputLabel for="tifHeaderImageDescription" value="#{msgs.tifheaderimagedescription}"/>
+                <p:inputText class="input" id="tifHeaderImageDescription" value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
+            </div>
 
-        <!-- Tifheader - Imagedescription -->
-        <h:outputText value="#{msgs.tifheaderimagedescription}"/>
-        <h:inputText value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
+            <div>
+                <p:outputLabel for="useTemplates" value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}"/>
+                <p:selectBooleanCheckbox class="input" id="useTemplates" rendered="#{ProzesskopieForm.useTemplates}"
+                                         value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
+            </div>
 
-        <h:outputText value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}"/>
-        <h:selectBooleanCheckbox rendered="#{ProzesskopieForm.useTemplates}"
-                                 value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
+            <div>
+                <p:outputLabel for="guessImages" value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}"/>
+                <p:inputText class="input" id="guessImages" value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}"
+                             styleClass="prozessKopieFeldbreite"/>
+            </div>
 
-        <h:outputText value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}"/>
-        <h:inputText value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}"
-                     styleClass="prozessKopieFeldbreite"/>
+        </p:row>
 
-    </h:panelGrid>
+    </p:panelGrid>
 </ui:composition>

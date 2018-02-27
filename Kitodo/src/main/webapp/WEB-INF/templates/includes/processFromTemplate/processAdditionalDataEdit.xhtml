@@ -24,11 +24,14 @@
                 <div>
                     <p:outputLabel value="#{field.title}:"/>
                     <p:inputText value="#{field.value}" styleClass="prozessKopieFeldbreite"
-                                 rendered="#{field.selectList==null}" class="input" required="#{field.required}"/>
+                                 rendered="#{field.selectList==null}" class="input" required="#{field.required}">
+                        <p:ajax event="change"/>
+                    </p:inputText>
                     <p:selectOneListbox value="#{field.value}" styleClass="prozessKopieFeldbreite"
                                         rendered="#{field.selectList!=null}" class="input"
                                         required="#{field.required}">
                         <f:selectItems value="#{field.selectList}"/>
+                        <p:ajax event="change"/>
                     </p:selectOneListbox>
                 </div>
 

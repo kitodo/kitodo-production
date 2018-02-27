@@ -29,7 +29,7 @@
                     <h:outputText value="#{msgs.projektBearbeiten} (#{ProjekteForm.myProjekt.title})" rendered="#{not empty ProjekteForm.myProjekt.title}"/>
                     <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProjekteForm.myProjekt.title}"/>
                 </h3>
-                <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" iconPos="right" onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});" update="notifications"/>
+                <p:commandButton value="#{msgs.speichern}" action="#{ProzesskopieForm.createNewProcess}" icon="fa fa-floppy-o fa-lg" iconPos="right" onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});" update="notifications"/>
                 <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
             </p:panel>
             <p:tabView>
