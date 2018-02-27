@@ -22,7 +22,7 @@ import org.openqa.selenium.support.FindBy;
 public class UserGroupEditPage {
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:saveUserGroupButton")
+    @FindBy(id = "editForm:save")
     private WebElement saveUserGroupButton;
 
     @SuppressWarnings("unused")

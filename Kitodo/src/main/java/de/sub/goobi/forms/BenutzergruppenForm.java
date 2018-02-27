@@ -205,6 +205,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("benutzergruppe"), id },
                 logger, e);
         }
+        setSaveDisabled(true);
         initializeSelectedClient();
         initializeSelectedProject();
         userGroupClientAuthorityRelationsToDelete.clear();

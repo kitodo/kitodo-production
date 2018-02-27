@@ -23,15 +23,20 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
         <h3>
             <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
                           rendered="#{not empty BenutzergruppenForm.userGroup.title}"/>
             <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
                           rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
         </h3>
-        <p:commandButton value="#{msgs.speichern}"
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         value="#{msgs.speichern}"
                          action="#{BenutzergruppenForm.save}"
-                         id="saveUserGroupButton"
                          process="editForm:usergroupTabView:authoritiesGlobalPick,
                                   editForm:usergroupTabView:authoritiesClientPick,
                                   editForm:usergroupTabView:titleInput,
@@ -43,7 +48,12 @@
                                         'summary':'#{msgs.userGroupSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"
+                         disabled="#{BenutzergruppenForm.saveDisabled}"
                          update="notifications"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{BenutzergruppenForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
         <p:button id="cancel" value="#{msgs.abbrechen}"
                   outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
@@ -78,6 +88,7 @@
                                                 value="#{BenutzergruppenForm.authorities}"
                                                 converter="#{authorityConverter}"
                                                 var="authority" itemLabel="#{authority.title}"
+                                                onTransfer="jQuery('#editForm\\:saveButtonToggler').click()"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>
@@ -99,13 +110,18 @@
                                             <f:selectItems value="#{BenutzergruppenForm.clients}" var="client"
                                                            itemValue="#{client}"
                                                            itemLabel="#{client.name}"/>
-                                            <p:ajax event="change" update="authoritiesClientPick"/>
+                                            <p:ajax event="change"
+                                                    update="authoritiesClientPick"
+                                                    oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                                            />
                                         </p:selectOneMenu>
                                     </div>
                                     <p:pickList id="authoritiesClientPick"
                                                 value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
                                                 converter="#{authorityConverter}"
-                                                var="authority" itemLabel="#{authority.title}"
+                                                var="authority"
+                                                onTransfer="jQuery('#editForm\\:saveButtonToggler').click()"
+                                                itemLabel="#{authority.title}"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>
@@ -128,13 +144,17 @@
                                             <f:selectItems value="#{BenutzergruppenForm.projects}" var="project"
                                                            itemValue="#{project}"
                                                            itemLabel="#{project.title}"/>
-                                            <p:ajax event="change" update="authoritiesProjectPick"/>
+                                            <p:ajax event="change"
+                                                    update="authoritiesProjectPick"
+                                                    oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                                         </p:selectOneMenu>
                                     </div>
                                     <p:pickList id="authoritiesProjectPick"
                                                 value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
                                                 converter="#{authorityConverter}"
-                                                var="authority" itemLabel="#{authority.title}"
+                                                var="authority"
+                                                onTransfer="jQuery('#editForm\\:saveButtonToggler').click()"
+                                                itemLabel="#{authority.title}"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>
