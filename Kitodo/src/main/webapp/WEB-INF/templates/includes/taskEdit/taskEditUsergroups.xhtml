@@ -25,6 +25,7 @@
             <p:commandLink action="#{ProzessverwaltungForm.deleteUserGroup}"
                            id="deleteUsergroup"
                            immediate="true"
+                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                            update="editForm:tabs:usergroupTable"
                            title="#{msgs.removeUsergroup}">
                 <i class="fa fa-trash-o fa-lg"/>

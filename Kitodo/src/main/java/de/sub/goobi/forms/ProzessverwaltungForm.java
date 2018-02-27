@@ -2255,6 +2255,7 @@ public class ProzessverwaltungForm extends BasisForm {
             if (id != 0) {
                 setTask(this.serviceManager.getTaskService().getById(id));
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
                 logger, e);

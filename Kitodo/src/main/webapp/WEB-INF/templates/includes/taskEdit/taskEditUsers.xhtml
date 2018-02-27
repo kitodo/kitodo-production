@@ -26,6 +26,7 @@
                            id="deleteUser"
                            title="#{msgs.removeUser}"
                            immediate="true"
+                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                            update="editForm:tabs:userTable">
                 <i class="fa fa-trash-o fa-lg"/>
                 <f:param name="ID" value="#{user.id}"/>
