@@ -52,7 +52,6 @@
                 </h:link>
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadatenBearbeiten}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                    <f:param name="nurLesen" value="true"/>
                     <f:param name="ProzesseID" value="#{item.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
