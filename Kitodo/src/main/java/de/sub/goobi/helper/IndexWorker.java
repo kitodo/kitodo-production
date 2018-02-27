@@ -44,17 +44,17 @@ public class IndexWorker implements Runnable {
     @SuppressWarnings("unchecked")
     public void run() {
         this.indexedObjects = 0;
-        int offset = ConfigCore.getIntParameter("elasticsearch.batch", 1000);
+        int batchSize = ConfigCore.getIntParameter("elasticsearch.batch", 1000);
         try {
             int amountToIndex = searchService.countDatabaseRows().intValue();
-            if (amountToIndex < offset) {
+            if (amountToIndex < batchSize) {
                 for (Object object : searchService.getAll()) {
                     this.searchService.saveToIndex((BaseIndexedBean) object);
                     this.indexedObjects++;
                 }
             } else {
                 while (this.indexedObjects < amountToIndex) {
-                    List<Object> objectsToIndex = searchService.getAll(this.indexedObjects, this.indexedObjects + offset);
+                    List<Object> objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
                     for (Object object : objectsToIndex) {
                         this.searchService.saveToIndex((BaseIndexedBean) object);
                         this.indexedObjects++;
