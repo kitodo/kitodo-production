@@ -32,7 +32,10 @@
         <p:commandButton value="#{msgs.speichern}"
                          action="#{BenutzergruppenForm.save}"
                          id="saveUserGroupButton"
-                         process="usergroupTabView:authoritiesGlobalPick, usergroupTabView:authoritiesClientPick, usergroupTabView:titleInput, usergroupTabView:authoritiesProjectPick"
+                         process="editForm:usergroupTabView:authoritiesGlobalPick,
+                                  editForm:usergroupTabView:authoritiesClientPick,
+                                  editForm:usergroupTabView:titleInput,
+                                  editForm:usergroupTabView:authoritiesProjectPick"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          styleClass="button-filled-blue"
