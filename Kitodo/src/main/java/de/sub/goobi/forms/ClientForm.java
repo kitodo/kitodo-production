@@ -68,6 +68,7 @@ public class ClientForm extends BasisForm {
             if (!Objects.equals(this.clientId, 0)) {
                 this.client = this.serviceManager.getClientService().getById(this.clientId);
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("client"), this.clientId },
                 logger, e);
