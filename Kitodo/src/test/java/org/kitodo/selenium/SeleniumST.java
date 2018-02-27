@@ -32,6 +32,12 @@ public class SeleniumST extends BaseTestSelenium {
     private static final Logger logger = LogManager.getLogger(SeleniumST.class);
 
     @Test
+    public void securityAccessTest() throws Exception {
+        boolean expectedTrue = Pages.getTopNavigation().isShowingAdmin();
+        Assert.assertTrue("Top navigation is not showing that current user is admin", expectedTrue);
+    }
+
+    @Test
     public void listClientsTest() throws Exception {
         Pages.getClientsPage().goTo();
         int numberOfClientsInDatabase = serviceManager.getClientService().getAll().size();
