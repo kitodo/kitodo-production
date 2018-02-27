@@ -23,6 +23,10 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('userEditForm')};
+        </script>
         <p:panel styleClass="content-header">
             <h3>
                 <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
@@ -32,12 +36,18 @@
             </h3>
             <p:commandButton value="#{msgs.speichern}"
                              action="#{BenutzerverwaltungForm.save}"
-                             id="saveUserButton"
+                             id="save"
+                             widgetVar="save"
                              update="notifications"
                              icon="fa fa-floppy-o fa-lg"
                              iconPos="right"
+                             disabled="#{BenutzerverwaltungForm.saveDisabled}"
                              onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                              styleClass="button-filled-blue"/>
+            <p:commandButton id="saveButtonToggler"
+                             actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
+                             update="save"
+                             style="display:none;"/>
             <p:button id="cancel" value="#{msgs.abbrechen}" outcome="users"
                       icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
         </p:panel>
