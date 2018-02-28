@@ -755,6 +755,23 @@ footer {
     box-sizing: border-box;
 }
 
+.ui-helper-clearfix::after {
+    display: none;
+}
+
+.ui-picklist .ui-picklist-list {
+    width: 100%;
+}
+
+.ui-picklist .ui-picklist-buttons {
+    width: 30px;
+}
+
+.ui-panelgrid-cell .ui-picklist {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .ui-commandlink.button-blue,
 .button-blue .ui-icon {
     color: #0071bc;
@@ -776,6 +793,10 @@ footer {
     background: #fff;
     color: #0071bc;
     border-left: none !important;
+}
+
+.ui-selectonemenu {
+    min-width: 0 !important;
 }
 
 .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
