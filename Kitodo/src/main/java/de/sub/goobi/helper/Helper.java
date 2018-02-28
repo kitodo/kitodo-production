@@ -148,8 +148,8 @@ public class Helper extends HibernateHelper implements Observer {
      *            Exception instance for error logging
      */
     public static void setErrorMessage(String title, Logger logger, Exception exception) {
-        setFehlerMeldung(title);
         logger.error(title, exception);
+        setFehlerMeldung(title);
     }
 
     /**
@@ -171,8 +171,8 @@ public class Helper extends HibernateHelper implements Observer {
      *            Exception instance for error logging
      */
     public static void setErrorMessage(String title, final Object[] parameters, Logger logger, Exception exception) {
-        setErrorMessage(title, parameters);
         logger.error(title, exception);
+        setErrorMessage(title, parameters);
     }
 
     /**
@@ -194,8 +194,8 @@ public class Helper extends HibernateHelper implements Observer {
      *            Exception instance for error logging
      */
     public static void setErrorMessage(String title, String description, Logger logger, Exception exception) {
-        setFehlerMeldung(title, description);
         logger.error(title, exception);
+        setFehlerMeldung(title, description);
     }
 
     private static String getExceptionMessage(Throwable e) {

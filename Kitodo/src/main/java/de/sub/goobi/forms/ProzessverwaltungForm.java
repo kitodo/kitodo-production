@@ -327,8 +327,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 renameOcrDirectories();
                 renameDefinedDirectories();
             } catch (Exception e) {
-                Helper.setErrorMessage("errorRenaming", new String[] {Helper.getTranslation("directory") });
-                logger.warn(e.getStackTrace());
+                Helper.setErrorMessage("errorRenaming", new String[] {Helper.getTranslation("directory") }, logger, e);
             }
 
             this.process.setTitle(this.newProcessTitle);

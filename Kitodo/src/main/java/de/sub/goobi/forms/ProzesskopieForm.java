@@ -1036,8 +1036,7 @@ public class ProzesskopieForm implements Serializable {
                                 enricher.addMetadata(higherElement.getValue());
                             } catch (UGHException didNotWork) {
                                 Helper.setErrorMessage("errorAdding",
-                                    new Object[] {Helper.getTranslation("metadata") });
-                                logger.info(didNotWork.getStackTrace());
+                                    new Object[] {Helper.getTranslation("metadata") }, logger, didNotWork);
                             }
                         }
                     }

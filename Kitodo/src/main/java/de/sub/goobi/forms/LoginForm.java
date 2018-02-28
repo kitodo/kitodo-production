@@ -79,7 +79,6 @@ public class LoginForm implements Serializable {
                 Helper.setErrorMessage("ldap errror", logger, e);
             } catch (DataException e) {
                 Helper.setErrorMessage("could not insert to index", logger, e);
-                logger.error(e.getStackTrace());
             }
         }
         return null;
