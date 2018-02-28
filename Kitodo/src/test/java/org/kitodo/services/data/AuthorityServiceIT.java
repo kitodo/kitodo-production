@@ -93,16 +93,28 @@ public class AuthorityServiceIT {
     }
 
     @Test
-    public void shouldGetAllAuthorizations() {
+    public void shouldGetAllAuthorities() {
         List<Authority> authorities = authorityService.getAll();
         assertEquals("Authorizations were not found databse!", AUTHORITIES_COUNT, authorities.size());
     }
 
     @Test
-    public void shouldNotSaveAlreadyExistingAuthorization() throws DataException {
+    public void shouldNotSaveAlreadyExistinAuthorities() throws DataException {
         Authority adminAuthority = new Authority();
         adminAuthority.setTitle("admin");
         exception.expect(DataException.class);
         authorityService.save(adminAuthority);
+    }
+
+    @Test
+    public void shouldGetAllClientAssignableAuthorities() {
+        List<Authority> authorities = authorityService.getAllAssignableToClients();
+        assertEquals("Client assignable authorities were not found databse!", 4, authorities.size());
+    }
+
+    @Test
+    public void shouldGetAllProjectAssignableAuthorities() {
+        List<Authority> authorities = authorityService.getAllAssignableToProjects();
+        assertEquals("Project assignable authorities were not found databse!", 4, authorities.size());
     }
 }
