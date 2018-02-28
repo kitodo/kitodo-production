@@ -659,10 +659,6 @@ public class Metadaten {
         this.allPagesSelectionFirstPage = "";
         this.allPagesSelectionLastPage = "";
         this.result = Helper.getRequestParameter("zurueck");
-        String onlyRead = Helper.getRequestParameter("nurLesen");
-        if (onlyRead != null) {
-            this.modeOnlyRead = onlyRead.equals("true");
-        }
         this.neuesElementWohin = "1";
         this.treeNodeStruct = null;
         try {
