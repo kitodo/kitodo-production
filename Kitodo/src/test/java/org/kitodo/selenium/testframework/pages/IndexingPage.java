@@ -66,27 +66,66 @@ public class IndexingPage {
      * Clicks on "delete index" button and accept dialog.
      */
     public void deleteIndex() throws InterruptedException {
-        deleteIndexButton.click();
-        Thread.sleep(Browser.getDelayIndexing());
-        Alert javascriptconfirm = Browser.getDriver().switchTo().alert();
-        javascriptconfirm.accept();
-        Thread.sleep(Browser.getDelayIndexing());
+        int attempt = 1;
+        while (attempt <= 3) {
+            try {
+                deleteIndexButton.click();
+                Thread.sleep(Browser.getDelayIndexing());
+                Alert javascriptconfirm = Browser.getDriver().switchTo().alert();
+                javascriptconfirm.accept();
+                Thread.sleep(Browser.getDelayIndexing());
+                return;
+            } catch (StaleElementReferenceException e) {
+                logger.error("Delete index button is not accessible, retrying now, " + attempt);
+                attempt++;
+            }
+        }
+        if (attempt > 3) {
+            throw new StaleElementReferenceException("could not access delete index button");
+        }
     }
 
     /**
      * Clicks on "create mapping" button.
      */
     public void createMapping() throws InterruptedException {
-        createMappingButton.click();
-        Thread.sleep(Browser.getDelayIndexing());
+
+        int attempt = 1;
+        while (attempt <= 3) {
+            try {
+                createMappingButton.click();
+                Thread.sleep(Browser.getDelayIndexing());
+                return;
+            } catch (StaleElementReferenceException e) {
+                logger.error("Create index button is not accessible, retrying now, " + attempt);
+                attempt++;
+            }
+        }
+        if (attempt > 3) {
+            throw new StaleElementReferenceException("could not access create index button");
+        }
+
     }
 
     /**
      * Clicks on "start indexing all" button.
      */
     public void startIndexingAll() throws InterruptedException {
-        startIndexingAllButton.click();
-        Thread.sleep(Browser.getDelayIndexing());
+
+        int attempt = 1;
+        while (attempt <= 3) {
+            try {
+                startIndexingAllButton.click();
+                Thread.sleep(Browser.getDelayIndexing());
+                return;
+            } catch (StaleElementReferenceException e) {
+                logger.error("Start index button is not accessible, retrying now, " + attempt);
+                attempt++;
+            }
+        }
+        if (attempt > 3) {
+            throw new StaleElementReferenceException("could not access start index button");
+        }
     }
 
     /**
@@ -105,15 +144,15 @@ public class IndexingPage {
      *         is not readable.
      */
     public String getIndexingProgress() {
-        int attempt = 0;
-        while (attempt < 3) {
+        int attempt = 1;
+        while (attempt <= 3) {
             try {
                 List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
                 WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
                 return lastRow.findElement(By.className("ui-progressbar-label")).getText();
             } catch (StaleElementReferenceException e) {
+                logger.error("Indexing progress is not readable, retrying now, " + attempt);
                 attempt++;
-                logger.debug("Indexing progress is not readable, retrying now, " + attempt);
             }
         }
         logger.error("could not read indexing progress");

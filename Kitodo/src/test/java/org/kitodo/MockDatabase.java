@@ -1192,7 +1192,7 @@ public class MockDatabase {
         }
 
         session.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
-        transaction.commit();
         session.clear();
+        transaction.commit();
     }
 }

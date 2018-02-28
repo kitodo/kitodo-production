@@ -13,23 +13,18 @@ package org.kitodo.selenium;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
-import org.kitodo.selenium.testframework.helper.Timer;
 import org.kitodo.services.ServiceManager;
 
-public class SeleniumST extends BaseTestSelenium {
+public class ListingAddingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(SeleniumST.class);
 
     @Test
     public void securityAccessTest() throws Exception {
@@ -68,28 +63,6 @@ public class SeleniumST extends BaseTestSelenium {
         Pages.getLoginPage().performLogin(user);
 
         Assert.assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
-    }
-
-    @Test
-    public void reindexingTest() throws Exception {
-        final float MAXIMUM_TIME_SEC = 40;
-        String indexingProgress = "";
-        Pages.getIndexingPage().goTo().startReindexingAll();
-
-        Timer timer = new Timer();
-        timer.start();
-        while (!Pages.getIndexingPage().isIndexingComplete()
-                && timer.getElapsedTimeAfterStartSec() < MAXIMUM_TIME_SEC) {
-            indexingProgress = Pages.getIndexingPage().getIndexingProgress();
-            logger.debug("Indexing at: " + indexingProgress + "%");
-            Thread.sleep(Browser.getDelayIndexing());
-        }
-        timer.stop();
-        Thread.sleep(Browser.getDelayIndexing());
-
-        logger.info("Reindexing took: " + timer.getElapsedTimeSec() + " s");
-        Assert.assertTrue("Reindexing took to long. Maximum time reached at: " + indexingProgress,
-            timer.getElapsedTimeSec() < MAXIMUM_TIME_SEC);
     }
 
     @Test

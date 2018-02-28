@@ -26,7 +26,6 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.helper.MailSender;
 import org.kitodo.services.ServiceManager;
 import org.openqa.selenium.WebDriverException;
@@ -54,19 +53,15 @@ public class BaseTestSelenium {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        MockDatabase.stopDatabaseServer();
-        MockDatabase.stopNode();
-
         Browser.close();
+        MockDatabase.stopNode();
+        MockDatabase.stopDatabaseServer();
+        MockDatabase.cleanDatabase();
     }
 
     @Before
     public void login() throws Exception {
-        User user = serviceManager.getUserService().getById(1);
-        user.setPassword("test");
-
-        Pages.getLoginPage().goTo();
-        Pages.getLoginPage().performLogin(user);
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
     @After
