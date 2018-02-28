@@ -12,9 +12,9 @@
 /**
  * Kitodo - Data Access is an API for data access. It uses the Apache Jena
  * framework to read and write data in Linked Data formats such as RDF-XML or
- * Turtle, but is also extendible to read and write other data file formats,
- * such as plain XML. Each sub-package in this package is intended to provide a
- * different kind of data file format.
+ * Turtle, but is extendible to read and write other data file formats, that can
+ * be represented as linked data as well. Each sub-package in this package
+ * provides a different kind of data file format.
  *
  * <p>
  * Create a sub-package for every other data file format that you want to read

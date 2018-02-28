@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <mets:metsHdr CREATEDATE="2018-01-10T11:35:45">
+    <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
+      <mets:name>Kitodo Production Test Suite</mets:name>
+    </mets:agent>
+  </mets:metsHdr>
+  <mets:dmdSec ID="metadata">
+    <mets:mdWrap MDTYPE="MODS">
+      <mets:xmlData>
+        <mods:mods>
+          <mods:titleInfo>
+            <mods:title>Hello World!</mods:title>
+          </mods:titleInfo>
+        </mods:mods>
+      </mets:xmlData>
+    </mets:mdWrap>
+  </mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="DEFAULT">
+      <mets:file ID="image" MIMETYPE="image/jpeg">
+        <mets:FLocat LOCTYPE="URL" xlink:href="http://data.example.org/images/hello-world.jpg"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="LOGICAL">
+    <mets:div DMDID="metadata" ID="greeting" LABEL="Hello World!"/>
+  </mets:structMap>
+  <mets:structMap TYPE="PHYSICAL">
+    <mets:div TYPE="physSequence">
+      <mets:div ID="page" ORDER="1" ORDERLABEL=" - " TYPE="page">
+        <mets:fptr fileid="image"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structLink>
+    <mets:smLink xlink:from="greeting" xlink:to="page" xlink:type="arc"/>
+  </mets:structLink>
+</mets:mets>
