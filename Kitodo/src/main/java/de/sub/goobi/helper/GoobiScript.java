@@ -28,6 +28,15 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -35,18 +44,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 
 // TODO: Delete me, this should be part of the Plugins...
 // TODO: Break this up into multiple classes with a common interface
@@ -180,11 +180,11 @@ public class GoobiScript {
     private void updateContentFiles(List<Process> processes) {
         for (Process proz : processes) {
             try {
-                Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
+                FileformatInterface myRdf = serviceManager.getProcessService().readMetadataFile(proz);
                 myRdf.getDigitalDocument().addAllContentFiles();
                 serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ContentFiles updated: ", proz.getTitle());
-            } catch (ugh.exceptions.DocStructHasNoTypeException e) {
+            } catch (DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
 
             } catch (Exception e) {
@@ -248,7 +248,7 @@ public class GoobiScript {
 
     /**
      * Import the data from a directories of the given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -293,7 +293,7 @@ public class GoobiScript {
 
     /**
      * Set ruleset.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -325,7 +325,7 @@ public class GoobiScript {
 
     /**
      * Swap two tasks against each other.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -395,7 +395,7 @@ public class GoobiScript {
 
     /**
      * Delete task for the given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -430,7 +430,7 @@ public class GoobiScript {
 
     /**
      * Add tasks to the given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -473,7 +473,7 @@ public class GoobiScript {
 
     /**
      * Add ShellScript to task of the given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -519,7 +519,7 @@ public class GoobiScript {
 
     /**
      * Flag von Schritten setzen.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -603,7 +603,7 @@ public class GoobiScript {
 
     /**
      * Set task status for the given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -648,7 +648,7 @@ public class GoobiScript {
 
     /**
      * Schritte auf bestimmten Reihenfolge setzen.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -691,7 +691,7 @@ public class GoobiScript {
 
     /**
      * Add user to task of the given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -744,7 +744,7 @@ public class GoobiScript {
 
     /**
      * Add user group to the task of given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -796,7 +796,7 @@ public class GoobiScript {
 
     /**
      * Delete TiffHeader file from given processes.
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
@@ -818,28 +818,28 @@ public class GoobiScript {
 
     /**
      * Reset image path in the metadata (possibly delete existing ones first).
-     * 
+     *
      * @param processes
      *            list of Process objects
      */
     public void updateImagePath(List<Process> processes) {
         for (Process proz : processes) {
             try {
-                Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
-                MetadataType mdt = UghHelper.getMetadataType(proz, "pathimagefiles");
-                List<? extends ugh.dl.Metadata> allImagePaths = myRdf.getDigitalDocument().getPhysicalDocStruct()
+                FileformatInterface myRdf = serviceManager.getProcessService().readMetadataFile(proz);
+                MetadataTypeInterface mdt = UghHelper.getMetadataType(proz, "pathimagefiles");
+                List<? extends MetadataInterface> allImagePaths = myRdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
                 if (allImagePaths.size() > 0) {
-                    for (Metadata md : allImagePaths) {
+                    for (MetadataInterface md : allImagePaths) {
                         myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
                     }
                 }
-                Metadata newmd = new Metadata(mdt);
+                MetadataInterface newmd = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(proz) + proz.getTitle()
-                            + DIRECTORY_SUFFIX);
+                    newmd.setStringValue("file:/" + serviceManager.getFileService().getImagesDirectory(proz)
+                            + proz.getTitle() + DIRECTORY_SUFFIX);
                 } else {
-                    newmd.setValue("file://" + serviceManager.getFileService().getImagesDirectory(proz)
+                    newmd.setStringValue("file://" + serviceManager.getFileService().getImagesDirectory(proz)
                             + proz.getTitle() + DIRECTORY_SUFFIX);
                 }
                 myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);

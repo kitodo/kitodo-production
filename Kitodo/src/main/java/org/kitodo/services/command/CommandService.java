@@ -48,9 +48,9 @@ public class CommandService {
         }
         KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class,
                 ConfigCore.getParameter("moduleFolder"));
-        CommandInterface commandInterface = serviceLoader.loadModule();
+        CommandInterface command = serviceLoader.loadModule();
 
-        CommandResult commandResult = commandInterface.runCommand(generateId(), script);
+        CommandResult commandResult = command.runCommand(generateId(), script);
         List<String> commandResultMessages = commandResult.getMessages();
         if (commandResultMessages.size() > 0 && commandResultMessages.get(0).contains("IOException")) {
             throw new IOException(commandResultMessages.get(1));
@@ -80,12 +80,12 @@ public class CommandService {
 
     /**
      * Method executes a script file.
-     * 
+     *
      * @param scriptFile
      *            The script file.
-     * 
+     *
      * @return The CommandResult.
-     * 
+     *
      * @throws IOException
      *             an IOException
      */
@@ -161,13 +161,13 @@ public class CommandService {
 
     /**
      * Generates a String in the form of (filepath parameter1 parameter2 ...).
-     * 
+     *
      * @param file
      *            The file.
-     * 
+     *
      * @param parameter
      *            The parameters.
-     * 
+     *
      * @return The String.
      */
     private String generateScriptString(File file, List<String> parameter) {
@@ -180,7 +180,7 @@ public class CommandService {
 
     /**
      * Generates a random integer in the range of 0-1000000.
-     * 
+     *
      * @return The integer value.
      */
     private int generateId() {

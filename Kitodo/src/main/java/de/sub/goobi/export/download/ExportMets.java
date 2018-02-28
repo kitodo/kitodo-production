@@ -21,27 +21,27 @@ import java.net.URI;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
 
     private final FileService fileService = serviceManager.getFileService();
     protected Helper help = new Helper();
-    protected Prefs myPrefs;
+    protected PrefsInterface myPrefs;
 
     protected static final Logger logger = LogManager.getLogger(ExportMets.class);
 
@@ -79,7 +79,7 @@ public class ExportMets {
          */
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = process.getTitle();
-        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(process);
+        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
 
         if (!serviceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
             return false;
@@ -129,10 +129,11 @@ public class ExportMets {
      *            true or false
      * @return true or false
      */
-    protected boolean writeMetsFile(Process process, URI metaFile, Fileformat gdzfile, boolean writeLocalFileGroup)
+    protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile,
+            boolean writeLocalFileGroup)
             throws PreferencesException, WriteException, IOException, TypeNotAllowedForParentException {
 
-        MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
+        MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFileGroup);
         mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {

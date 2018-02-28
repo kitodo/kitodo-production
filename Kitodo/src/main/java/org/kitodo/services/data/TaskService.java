@@ -31,6 +31,11 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -50,12 +55,6 @@ import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
 
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
@@ -87,8 +86,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Creates and returns a query to retrieve tasks for which the currently logged
-     * in user is eligible.
+     * Creates and returns a query to retrieve tasks for which the currently
+     * logged in user is eligible.
      *
      * @param user
      *            currently logged in user
@@ -146,8 +145,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Method saves or removes dependencies with process, users and user's groups
-     * related to modified task.
+     * Method saves or removes dependencies with process, users and user's
+     * groups related to modified task.
      *
      * @param task
      *            object
@@ -443,7 +442,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
         taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
         taskDTO.setUserGroups(
-                convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+            convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
         return taskDTO;
     }
 
@@ -596,13 +595,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             return false;
         }
         script = script.replace("{", "(").replace("}", ")");
-        DigitalDocument dd = null;
+        DigitalDocumentInterface dd = null;
         Process po = task.getProcess();
 
-        Prefs prefs = serviceManager.getRulesetService().getPreferences(po.getRuleset());
+        PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(po.getRuleset());
 
         try {
-            dd = serviceManager.getProcessService().readMetadataFile(serviceManager.getFileService().getMetadataFilePath(po), prefs)
+            dd = serviceManager.getProcessService()
+                    .readMetadataFile(serviceManager.getFileService().getMetadataFilePath(po), prefs)
                     .getDigitalDocument();
         } catch (PreferencesException | ReadException | IOException e2) {
             logger.error(e2);
@@ -715,8 +715,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Find open tasks without correction for current user sorted according to sort
-     * query.
+     * Find open tasks without correction for current user sorted according to
+     * sort query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
@@ -834,8 +834,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get size of tasks for non template processes for given project id and ordered
-     * by ordering column in Task table.
+     * Get size of tasks for non template processes for given project id and
+     * ordered by ordering column in Task table.
      *
      * @param projectId
      *            as Integer
@@ -846,8 +846,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get average ordering of tasks for non template processes for given project id
-     * and ordered by ordering column in Task table.
+     * Get average ordering of tasks for non template processes for given
+     * project id and ordered by ordering column in Task table.
      *
      * @param projectId
      *            as Integer
@@ -873,8 +873,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get size of tasks for non template processes for given project id and ordered
-     * by ordering column in Task table.
+     * Get size of tasks for non template processes for given project id and
+     * ordered by ordering column in Task table.
      *
      * @param processingStatus
      *            as Integer
@@ -888,8 +888,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get amount of images of tasks for non template processes for given project id
-     * and ordered by ordering column in Task table.
+     * Get amount of images of tasks for non template processes for given
+     * project id and ordered by ordering column in Task table.
      *
      * @param processingStatus
      *            as Integer

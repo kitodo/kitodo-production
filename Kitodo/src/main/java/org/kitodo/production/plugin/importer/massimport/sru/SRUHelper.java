@@ -10,7 +10,7 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,20 +33,18 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.PicaPlusInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.fileformats.mets.XStream;
-import ugh.fileformats.opac.PicaPlus;
 
 public class SRUHelper {
     private static final Logger logger = LogManager.getLogger(SRUHelper.class);
@@ -157,17 +155,17 @@ public class SRUHelper {
      *            Prefs
      * @return Fileformat
      */
-    public static Fileformat parsePicaFormat(Node pica, Prefs prefs)
-            throws ReadException, PreferencesException, TypeNotAllowedForParentException {
+    public static FileformatInterface parsePicaFormat(Node pica, PrefsInterface prefs)
+            throws ReadException, PreferencesException {
 
-        PicaPlus pp = new PicaPlus(prefs);
+        PicaPlusInterface pp = UghImplementation.INSTANCE.createPicaPlus(prefs);
         pp.read(pica);
-        DigitalDocument dd = pp.getDigitalDocument();
-        Fileformat ff = new XStream(prefs);
+        DigitalDocumentInterface dd = pp.getDigitalDocument();
+        FileformatInterface ff = UghImplementation.INSTANCE.createXStream(prefs);
         ff.setDigitalDocument(dd);
         /* BoundBook hinzufügen */
-        DocStructType dst = prefs.getDocStrctTypeByName("BoundBook");
-        DocStruct dsBoundBook = dd.createDocStruct(dst);
+        DocStructTypeInterface dst = prefs.getDocStrctTypeByName("BoundBook");
+        DocStructInterface dsBoundBook = dd.createDocStruct(dst);
         dd.setPhysicalDocStruct(dsBoundBook);
         return ff;
     }

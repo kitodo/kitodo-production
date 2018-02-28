@@ -12,8 +12,7 @@
 package de.sub.goobi.metadaten.copier;
 
 import org.apache.commons.configuration.ConfigurationException;
-
-import ugh.dl.DocStruct;
+import org.kitodo.api.ugh.DocStructInterface;
 
 /**
  * Abstract base class that different types of metadata selectors are based on.
@@ -68,7 +67,7 @@ public abstract class MetadataSelector extends DataSelector {
      * @throws RuntimeException
      *             if the operation fails for unfulfilled dependencies
      */
-    protected abstract void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value);
+    protected abstract void createIfPathExistsOnly(CopierData data, DocStructInterface logicalNode, String value);
 
     /**
      * Checks if the document structure node the metadata selector is pointing
@@ -104,7 +103,7 @@ public abstract class MetadataSelector extends DataSelector {
      * @throws RuntimeException
      *             if the operation fails for unfulfilled dependencies
      */
-    protected abstract void createOrOverwrite(CopierData data, DocStruct logicalNode, String value);
+    protected abstract void createOrOverwrite(CopierData data, DocStructInterface logicalNode, String value);
 
     /**
      * Checks if the document structure node as named by the path is available,
@@ -144,7 +143,7 @@ public abstract class MetadataSelector extends DataSelector {
      *            Node of the logical document structure to work on
      * @return all metadata selectors the expression resolves to
      */
-    protected abstract Iterable<MetadataSelector> findAll(DocStruct logicalNode);
+    protected abstract Iterable<MetadataSelector> findAll(DocStructInterface logicalNode);
 
     /**
      * Returns the value of the metadata named by the path used to construct the
@@ -169,5 +168,5 @@ public abstract class MetadataSelector extends DataSelector {
      *            document structure node to examine, intended for recursion
      * @return the value the path points to, or null if absent
      */
-    protected abstract String findIn(DocStruct logicalNode);
+    protected abstract String findIn(DocStructInterface logicalNode);
 }

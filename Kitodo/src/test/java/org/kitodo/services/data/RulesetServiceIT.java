@@ -26,11 +26,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
+import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.DocStructType;
 
 /**
  * Tests for RulesetService class.
@@ -93,7 +92,7 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldGetAllRulesetsInGivenRange() throws Exception {
-        List<Ruleset> rulesets = rulesetService.getAll(1,10);
+        List<Ruleset> rulesets = rulesetService.getAll(1, 10);
         assertEquals("Not all rulesets were found in database!", 1, rulesets.size());
     }
 
@@ -184,7 +183,7 @@ public class RulesetServiceIT {
     @Test
     public void shouldGetPreferences() throws Exception {
         Ruleset ruleset = rulesetService.getById(1);
-        List<DocStructType> docStructTypes = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
+        List<DocStructTypeInterface> docStructTypes = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
 
         int actual = docStructTypes.size();
         assertEquals("Size of docstruct types in ruleset file is incorrect!", 2, actual);

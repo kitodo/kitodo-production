@@ -33,6 +33,7 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.w3c.dom.Node;
 
 import ugh.dl.DigitalDocument;
@@ -40,8 +41,6 @@ import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
@@ -233,7 +232,7 @@ public class PicaPlugin implements Plugin {
             /* von dem Treffer den Dokumententyp ermitteln */
             gattung = getGattung(myFirstHit);
             cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
-                    configuration.getTitle());
+                configuration.getTitle());
             if (cod == null) {
                 cod = ConfigOpac.getAllDoctypes().get(0);
                 gattung = cod.getMappings().get(0);
@@ -381,7 +380,7 @@ public class PicaPlugin implements Plugin {
      * DocType (Gattung) ermitteln.
      *
      * @param inHit
-     *          input element
+     *            input element
      * @return empty String
      */
     @SuppressWarnings("unchecked")
@@ -418,7 +417,7 @@ public class PicaPlugin implements Plugin {
      * 021A-9) ermitteln.
      *
      * @param inHit
-     *          input element
+     *            input element
      * @return PPN
      */
     @SuppressWarnings("unchecked")
@@ -495,7 +494,7 @@ public class PicaPlugin implements Plugin {
         // if (isMultivolume()) {
         if (cod.isMultiVolume()) {
             try {
-                topstructChild = topstruct.getAllChildren().get(0);
+                topstructChild = (DocStruct) topstruct.getAllChildren().get(0);
             } catch (RuntimeException e) {
                 logger.error(e);
             }
@@ -640,7 +639,7 @@ public class PicaPlugin implements Plugin {
                 DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
                 DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
                 topstruct.addChild(dsvolume);
-            } catch (TypeNotAllowedForParentException | TypeNotAllowedAsChildException e) {
+            } catch (TypeNotAllowedAsChildException e) {
                 e.printStackTrace();
             }
         }

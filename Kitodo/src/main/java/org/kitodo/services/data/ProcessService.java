@@ -62,6 +62,17 @@ import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
+import org.kitodo.api.ugh.ContentFileInterface;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.VirtualFileGroupInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
@@ -89,24 +100,11 @@ import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
-
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.dl.VirtualFileGroup;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.excel.RDFFile;
-import ugh.fileformats.mets.MetsMods;
-import ugh.fileformats.mets.MetsModsImportExport;
-import ugh.fileformats.mets.XStream;
 
 public class ProcessService extends TitleSearchService<Process, ProcessDTO, ProcessDAO> {
 
@@ -197,7 +195,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false, false);
+            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false,
+                false);
             if (!form.isShowClosedProcesses()) {
                 query.must(getQuerySortHelperStatus(false));
             }
@@ -259,8 +258,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Remove properties if process is removed, add properties if process is marked
-     * as indexed.
+     * Remove properties if process is removed, add properties if process is
+     * marked as indexed.
      *
      * @param process
      *            object
@@ -278,8 +277,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks from
-     * index, if other call saveOrRemoveTaskInIndex() method.
+     * Check IndexAction flag in for process object. If DELETE remove all tasks
+     * from index, if other call saveOrRemoveTaskInIndex() method.
      *
      * @param process
      *            object
@@ -296,8 +295,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Compare index and database, according to comparisons results save or remove
-     * tasks.
+     * Compare index and database, according to comparisons results save or
+     * remove tasks.
      *
      * @param process
      *            object
@@ -335,8 +334,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Remove template if process is removed, add template if process is marked as
-     * template.
+     * Remove template if process is removed, add template if process is marked
+     * as template.
      *
      * @param process
      *            object
@@ -354,8 +353,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Remove workpiece if process is removed, add workpiece if process is marked as
-     * workpiece.
+     * Remove workpiece if process is removed, add workpiece if process is
+     * marked as workpiece.
      *
      * @param process
      *            object
@@ -419,8 +418,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Count all SortHelperImages fields for project id. It is used for statistical
-     * purpose.
+     * Count all SortHelperImages fields for project id. It is used for
+     * statistical purpose.
      *
      * @param projectId
      *            as Integer
@@ -436,7 +435,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @param projectId
      *            as Integer
-     * @return sum of all values in SortHelperImages fields for project id as Double
+     * @return sum of all values in SortHelperImages fields for project id as
+     *         Double
      */
     public Double findSumForSortHelperImages(Integer projectId) throws DataException {
         return findSumAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
@@ -591,8 +591,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
     }
 
-    List<JSONObject> findBySort(boolean closed, boolean archived, boolean template, String sort,
-            Integer offset, Integer size) throws DataException {
+    List<JSONObject> findBySort(boolean closed, boolean archived, boolean template, String sort, Integer offset,
+            Integer size) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));
         query.must(getQueryProjectArchived(archived));
@@ -1052,8 +1052,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as
-     * readable text as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -1343,7 +1343,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return filer format
      */
-    public Fileformat readMetadataFile(Process process) throws ReadException, IOException, PreferencesException {
+    public FileformatInterface readMetadataFile(Process process)
+            throws ReadException, IOException, PreferencesException {
         URI metadataFileUri = serviceManager.getFileService().getMetadataFilePath(process);
         if (!checkForMetadataFile(process)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
@@ -1355,7 +1356,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             logger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
         }
 
-        Fileformat ff = determineFileFormat(type, process);
+        FileformatInterface ff = determineFileFormat(type, process);
         try {
             ff.read(serviceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (ReadException e) {
@@ -1368,22 +1369,26 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return ff;
     }
 
-    private Fileformat determineFileFormat(String type, Process process) throws PreferencesException {
-        Fileformat fileFormat;
+    private FileformatInterface determineFileFormat(String type, Process process) throws PreferencesException {
+        FileformatInterface fileFormat;
         RulesetService rulesetService = serviceManager.getRulesetService();
 
         switch (type) {
             case "metsmods":
-                fileFormat = new MetsModsImportExport(rulesetService.getPreferences(process.getRuleset()));
+                fileFormat = UghImplementation.INSTANCE
+                        .createMetsModsImportExport(rulesetService.getPreferences(process.getRuleset()));
                 break;
             case "mets":
-                fileFormat = new MetsMods(rulesetService.getPreferences(process.getRuleset()));
+                fileFormat = UghImplementation.INSTANCE
+                        .createMetsMods(rulesetService.getPreferences(process.getRuleset()));
                 break;
             case "xstream":
-                fileFormat = new XStream(rulesetService.getPreferences(process.getRuleset()));
+                fileFormat = UghImplementation.INSTANCE
+                        .createXStream(rulesetService.getPreferences(process.getRuleset()));
                 break;
             default:
-                fileFormat = new RDFFile(rulesetService.getPreferences(process.getRuleset()));
+                fileFormat = UghImplementation.INSTANCE
+                        .createRDFFile(rulesetService.getPreferences(process.getRuleset()));
                 break;
         }
         return fileFormat;
@@ -1400,7 +1405,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      * @return file format
      */
-    public Fileformat readMetadataAsTemplateFile(Process process)
+    public FileformatInterface readMetadataAsTemplateFile(Process process)
             throws ReadException, IOException, PreferencesException {
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         if (fileService.fileExist(processSubTypeURI)) {
@@ -1408,7 +1413,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (logger.isDebugEnabled()) {
                 logger.debug("current template.xml file type: " + type);
             }
-            Fileformat ff = determineFileFormat(type, process);
+            FileformatInterface ff = determineFileFormat(type, process);
             ff.read(processSubTypeURI.toString());
             return ff;
         } else {
@@ -1417,8 +1422,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Check whether the operation contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the operation contains tasks that are not assigned to a
+     * user or user group.
      *
      * @param process
      *            bean object
@@ -1438,8 +1443,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Check whether the operation contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the operation contains tasks that are not assigned to a
+     * user or user group.
      *
      * @param process
      *            DTO object
@@ -1541,7 +1546,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param processes
      *            The list of processes
      * @throws IOException
-     *             when xslt file could not be loaded, or write to output failed.
+     *             when xslt file could not be loaded, or write to output
+     *             failed.
      */
     public void downloadDocket(List<Process> processes) throws IOException {
         if (logger.isDebugEnabled()) {
@@ -1640,10 +1646,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
 
     /**
-     * The addMessageToWikiField() method is a helper method which composes the new
-     * wiki field using a StringBuilder. The message is encoded using HTML entities
-     * to prevent certain characters from playing merry havoc when the message box
-     * shall be rendered in a browser later.
+     * The addMessageToWikiField() method is a helper method which composes the
+     * new wiki field using a StringBuilder. The message is encoded using HTML
+     * entities to prevent certain characters from playing merry havoc when the
+     * message box shall be rendered in a browser later.
      *
      * @param message
      *            the message to append
@@ -1691,8 +1697,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The method addToWikiField() adds a message signed by the given user to the
-     * wiki field of the process.
+     * The method addToWikiField() adds a message signed by the given user to
+     * the wiki field of the process.
      *
      * @param user
      *            to sign the message with
@@ -1705,8 +1711,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The method createProcessDirs() starts creation of directories configured by
-     * parameter processDirs within kitodo_config.properties
+     * The method createProcessDirs() starts creation of directories configured
+     * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
@@ -1718,19 +1724,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * The function getDigitalDocument() returns the digital act of this process.
+     * The function getDigitalDocument() returns the digital act of this
+     * process.
      *
      * @return the digital act of this process
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available in
-     *             the rule set configured
+     *             if the no node corresponding to the file format is available
+     *             in the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws IOException
-     *             if creating the process directory or reading the meta data file
-     *             fails
+     *             if creating the process directory or reading the meta data
+     *             file fails
      */
-    public DigitalDocument getDigitalDocument(Process process) throws PreferencesException, ReadException, IOException {
+    public DigitalDocumentInterface getDigitalDocument(Process process)
+            throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
     }
 
@@ -1766,8 +1774,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Filter and sort after creation date list of process properties for correction
-     * and solution messages.
+     * Filter and sort after creation date list of process properties for
+     * correction and solution messages.
      *
      * @return list of ProcessProperty objects
      */
@@ -1812,7 +1820,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find amount of images for not templates processes and for given project id.
+     * Find amount of images for not templates processes and for given project
+     * id.
      * 
      * @param projectId
      *            as Integer
@@ -1832,23 +1841,23 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            The Preferences
      * @return The fileFormat.
      */
-    public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
+    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
             throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadatenHelper.getMetaFileType(metadataFile);
-        Fileformat ff;
+        FileformatInterface ff;
         switch (type) {
             case "metsmods":
-                ff = new MetsModsImportExport(prefs);
+                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
                 break;
             case "mets":
-                ff = new MetsMods(prefs);
+                ff = UghImplementation.INSTANCE.createMetsMods(prefs);
                 break;
             case "xstream":
-                ff = new XStream(prefs);
+                ff = UghImplementation.INSTANCE.createXStream(prefs);
                 break;
             default:
-                ff = new RDFFile(prefs);
+                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
                 break;
         }
         ff.read(metadataFile.getPath());
@@ -1861,29 +1870,33 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @param process
      *            object
-     * @param exportWithImages true or false
-     * @param exportFullText true or false
+     * @param exportWithImages
+     *            true or false
+     * @param exportFullText
+     *            true or false
      * @return true or false
      */
-    public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText) throws IOException,
-            PreferencesException, WriteException {
-        Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+
+    public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
+            throws IOException, PreferencesException, WriteException {
+        PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+
         Project project = process.getProject();
         String atsPpnBand = process.getTitle();
 
         // read document
-        Fileformat gdzfile;
-        Fileformat newfile;
+        FileformatInterface gdzfile;
+        FileformatInterface newfile;
         try {
             URI metadataPath = fileService.getMetadataFilePath(process);
             gdzfile = readMetadataFile(metadataPath, preferences);
             switch (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport())) {
                 case METS:
-                    newfile = new MetsModsImportExport(preferences);
+                    newfile = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
                     break;
                 case METS_AND_RDF:
                 default:
-                    newfile = new RDFFile(preferences);
+                    newfile = UghImplementation.INSTANCE.createRDFFile(preferences);
                     break;
             }
 
@@ -1956,8 +1969,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         /*
-         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den
-         * Import-Ordner oder ins Benutzerhome anschliessend den Import-Thread starten
+         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in
+         * den Import-Ordner oder ins Benutzerhome anschliessend den
+         * Import-Thread starten
          */
         if (project.isUseDmsImport()) {
             if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
@@ -1987,14 +2001,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Method for avoiding redundant code for exception handling.
-     * //TODO: should this exceptions be handled that way?
+     * Method for avoiding redundant code for exception handling. //TODO: should
+     * this exceptions be handled that way?
      *
-     * @param newFile as Fileformat
-     * @param process as Process object
+     * @param newFile
+     *            as Fileformat
+     * @param process
+     *            as Process object
      * @return true if no exception appeared
      */
-    public boolean handleExceptionsForConfiguration(Fileformat newFile, Process process) {
+    public boolean handleExceptionsForConfiguration(FileformatInterface newFile, Process process) {
         String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
@@ -2011,24 +2027,25 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Run through all metadata and children of given docStruct to trim the strings
-     * calls itself recursively.
+     * Run through all metadata and children of given docStruct to trim the
+     * strings calls itself recursively.
      *
-     * @param docStruct metadata to be trimmed
+     * @param docStruct
+     *            metadata to be trimmed
      */
-    private void trimAllMetadata(DocStruct docStruct) {
+    private void trimAllMetadata(DocStructInterface docStruct) {
         // trim all metadata values
         if (docStruct.getAllMetadata() != null) {
-            for (ugh.dl.Metadata md : docStruct.getAllMetadata()) {
+            for (MetadataInterface md : docStruct.getAllMetadata()) {
                 if (md.getValue() != null) {
-                    md.setValue(md.getValue().trim());
+                    md.setStringValue(md.getValue().trim());
                 }
             }
         }
 
         // run through all children of docStruct
         if (docStruct.getAllChildren() != null) {
-            for (DocStruct child : docStruct.getAllChildren()) {
+            for (DocStructInterface child : docStruct.getAllChildren()) {
                 trimAllMetadata(child);
             }
         }
@@ -2097,7 +2114,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param ordnerEndung
      *            String
      */
-    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung) throws IOException {
+    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
+            throws IOException {
 
         Project project = process.getProject();
         /*
@@ -2118,7 +2136,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 }
             } else {
                 /*
-                 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
+                 * wenn kein Agora-Import, dann den Ordner mit
+                 * Benutzerberechtigung neu anlegen
                  */
                 User user = Helper.getCurrentUser();
                 try {
@@ -2154,18 +2173,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
-    protected boolean writeMetsFile(Process process, String targetFileName, Fileformat gdzfile,
+    protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException {
-        Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();
-        MetsModsImportExport mm = new MetsModsImportExport(preferences);
+        MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
         File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
          */
-        DigitalDocument dd = gdzfile.getDigitalDocument();
+        DigitalDocumentInterface dd = gdzfile.getDigitalDocument();
         if (dd.getFileSet() == null) {
             Helper.setFehlerMeldung(process.getTitle() + ": digital document does not contain images; aborting");
             return false;
@@ -2175,8 +2194,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          * get the topstruct element of the digital document depending on anchor
          * property
          */
-        DocStruct topElement = dd.getLogicalDocStruct();
-        if (preferences.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
+        DocStructInterface topElement = dd.getLogicalDocStruct();
+        if (preferences.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
             if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
                 throw new PreferencesException(process.getTitle()
                         + ": the topstruct element is marked as anchor, but does not have any children for "
@@ -2195,7 +2214,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 Helper.setMeldung(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
-                for (DocStruct mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
+                for (DocStructInterface mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
                     topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
                 }
             } else {
@@ -2204,7 +2223,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        for (ContentFile cf : dd.getFileSet().getAllFiles()) {
+        for (ContentFileInterface cf : dd.getFileSet().getAllFiles()) {
             String location = cf.getLocation();
             // If the file's location string shoes no sign of any protocol,
             // use the file protocol.
@@ -2219,8 +2238,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         mm.setDigitalDocument(dd);
 
         /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur
-         * übernommen
+         * wenn Filegroups definiert wurden, werden diese jetzt in die
+         * Metsstruktur übernommen
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
@@ -2234,7 +2253,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     URI folder = new File(pfg.getFolder()).toURI();
                     if (fileService.fileExist(folder)
                             && serviceManager.getFileService().getSubUris(folder).size() > 0) {
-                        VirtualFileGroup v = new VirtualFileGroup();
+                        VirtualFileGroupInterface v = UghImplementation.INSTANCE.createVirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));
                         v.setMimetype(pfg.getMimeType());
@@ -2242,7 +2261,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                         mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
                     }
                 } else {
-                    VirtualFileGroup v = new VirtualFileGroup();
+
+                    VirtualFileGroupInterface v = UghImplementation.INSTANCE.createVirtualFileGroup();
                     v.setName(pfg.getName());
                     v.setPathToFiles(vp.replace(pfg.getPath()));
                     v.setMimetype(pfg.getMimeType());
@@ -2450,7 +2470,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find not closed and not archived processes sorted according to sort query.
+     * Find not closed and not archived processes sorted according to sort
+     * query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
@@ -2473,7 +2494,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find all processes, which are not a template sorted according to sort query.
+     * Find all processes, which are not a template sorted according to sort
+     * query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
@@ -2484,8 +2506,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find all not archived processes which are not a template sorted according to
-     * sort query.
+     * Find all not archived processes which are not a template sorted according
+     * to sort query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted

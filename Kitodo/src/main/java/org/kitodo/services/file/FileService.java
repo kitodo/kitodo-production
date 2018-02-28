@@ -34,22 +34,19 @@ import org.goobi.io.BackupFileRotation;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.RulesetService;
-
-import ugh.dl.Fileformat;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.excel.RDFFile;
-import ugh.fileformats.mets.MetsMods;
-import ugh.fileformats.mets.XStream;
 
 public class FileService {
 
@@ -120,7 +117,7 @@ public class FileService {
 
             CommandService commandService = serviceManager.getCommandService();
             List<String> commandParameter = Arrays.asList(userName, new File(dirName).getPath());
-            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirUserHome")),commandParameter);
+            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirUserHome")), commandParameter);
         }
     }
 
@@ -448,21 +445,21 @@ public class FileService {
      * @throws WriteException
      *             if error occurs
      */
-    public void writeMetadataFile(Fileformat gdzfile, Process process)
+    public void writeMetadataFile(FileformatInterface gdzfile, Process process)
             throws IOException, PreferencesException, WriteException {
         RulesetService rulesetService = serviceManager.getRulesetService();
-        Fileformat ff;
+        FileformatInterface ff;
 
         Ruleset ruleset = process.getRuleset();
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
             case METS:
-                ff = new MetsMods(rulesetService.getPreferences(ruleset));
+                ff = UghImplementation.INSTANCE.createMetsMods(rulesetService.getPreferences(ruleset));
                 break;
             case RDF:
-                ff = new RDFFile(rulesetService.getPreferences(ruleset));
+                ff = UghImplementation.INSTANCE.createRDFFile(rulesetService.getPreferences(ruleset));
                 break;
             default:
-                ff = new XStream(rulesetService.getPreferences(ruleset));
+                ff = UghImplementation.INSTANCE.createXStream(rulesetService.getPreferences(ruleset));
                 break;
         }
         // createBackupFile();
@@ -471,9 +468,9 @@ public class FileService {
 
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
         // ff.write(getMetadataFilePath());
-        boolean writeResult = ff.write(temporaryMetadataFileName);
+        ff.write(temporaryMetadataFileName);
         File temporaryMetadataFile = new File(temporaryMetadataFileName);
-        boolean backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
+        boolean backupCondition = temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
             renameFile(Paths.get(temporaryMetadataFileName).toUri(), metadataFileUri.getRawPath());
@@ -489,9 +486,9 @@ public class FileService {
             if (temporaryAnchorFile.isFile()
                     && FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
                 String anchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
-                        temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
+                    temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
                 temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
-                        temporaryAnchorFileName);
+                    temporaryAnchorFileName);
                 renameFile(Paths.get(temporaryAnchorFileName).toUri(), new File(anchorFileName).toURI().getRawPath());
             }
         }
@@ -657,7 +654,7 @@ public class FileService {
      * @return The URI of the requested location
      */
     public URI getProcessSubTypeURI(Integer processId, String processTitle, URI processDataDirectory,
-                                    ProcessSubType processSubType, String resourceName) throws DAOException {
+            ProcessSubType processSubType, String resourceName) throws DAOException {
 
         if (processDataDirectory == null) {
             Process process = serviceManager.getProcessService().getById(processId);
@@ -669,7 +666,7 @@ public class FileService {
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory, processTitle, processSubType,
-                resourceName);
+            resourceName);
     }
 
     /**
@@ -694,7 +691,7 @@ public class FileService {
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
-                resourceName);
+            resourceName);
     }
 
     /**
@@ -723,7 +720,7 @@ public class FileService {
 
     /**
      * Get part of the URI for specific process.
-     * 
+     *
      * @param filter
      *            FilenameFilter object
      * @param process
@@ -787,7 +784,7 @@ public class FileService {
         return Paths.get(ConfigCore.getParameter("dir_Users", "/usr/local/kitodo/users/")).toUri();
     }
 
-    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
+    public void writeMetadataAsTemplateFile(FileformatInterface inFile, Process process)
             throws WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }

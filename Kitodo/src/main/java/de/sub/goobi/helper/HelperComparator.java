@@ -14,9 +14,9 @@ package de.sub.goobi.helper;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import ugh.dl.DocStructType;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 
 public class HelperComparator implements Comparator<Object>, Serializable {
 
@@ -49,8 +49,8 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareMetadataTypes(Object firstObject, Object secondObject) {
-        MetadataType firstMetadata = (MetadataType) firstObject;
-        MetadataType secondMetadata = (MetadataType) secondObject;
+        MetadataTypeInterface firstMetadata = (MetadataTypeInterface) firstObject;
+        MetadataTypeInterface secondMetadata = (MetadataTypeInterface) secondObject;
 
         String language = Helper.getMetadataLanguageForCurrentUser();
 
@@ -66,25 +66,25 @@ public class HelperComparator implements Comparator<Object>, Serializable {
     }
 
     private int compareMetadata(Object firstObject, Object secondObject) {
-        Metadata firstMetadata = (Metadata) firstObject;
-        Metadata secondMetadata = (Metadata) secondObject;
+        MetadataInterface firstMetadata = (MetadataInterface) firstObject;
+        MetadataInterface secondMetadata = (MetadataInterface) secondObject;
 
         String language = Helper.getMetadataLanguageForCurrentUser();
 
-        String firstName = firstMetadata.getType().getNameByLanguage(language);
-        String secondName = secondMetadata.getType().getNameByLanguage(language);
+        String firstName = firstMetadata.getMetadataType().getNameByLanguage(language);
+        String secondName = secondMetadata.getMetadataType().getNameByLanguage(language);
         if (firstName == null) {
-            firstName = firstMetadata.getType().getName();
+            firstName = firstMetadata.getMetadataType().getName();
         }
         if (secondName == null) {
-            secondName = secondMetadata.getType().getName();
+            secondName = secondMetadata.getMetadataType().getName();
         }
         return firstName.compareToIgnoreCase(secondName);
     }
 
     private int compareDocStructTypes(Object firstObject, Object secondObject) {
-        DocStructType firstDocStructType = (DocStructType) firstObject;
-        DocStructType secondDocStructType = (DocStructType) secondObject;
+        DocStructTypeInterface firstDocStructType = (DocStructTypeInterface) firstObject;
+        DocStructTypeInterface secondDocStructType = (DocStructTypeInterface) secondObject;
 
         String language = Helper.getMetadataLanguageForCurrentUser();
 

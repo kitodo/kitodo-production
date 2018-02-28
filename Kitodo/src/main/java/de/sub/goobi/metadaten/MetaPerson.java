@@ -18,11 +18,10 @@ import java.util.ArrayList;
 import javax.faces.model.SelectItem;
 
 import org.goobi.production.constants.Parameters;
-
-import ugh.dl.DocStruct;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -32,16 +31,16 @@ import ugh.dl.Prefs;
  * @version 1.00 - 10.01.2005
  */
 public class MetaPerson {
-    private Person p;
+    private PersonInterface p;
     private int identifier;
-    private final Prefs myPrefs;
-    private final DocStruct myDocStruct;
+    private final PrefsInterface myPrefs;
+    private final DocStructInterface myDocStruct;
     private final MetadatenHelper mdh;
 
     /**
      * Allgemeiner Konstruktor().
      */
-    public MetaPerson(Person p, int inID, Prefs inPrefs, DocStruct inStruct) {
+    public MetaPerson(PersonInterface p, int inID, PrefsInterface inPrefs, DocStructInterface inStruct) {
         this.myPrefs = inPrefs;
         this.p = p;
         this.identifier = inID;
@@ -57,11 +56,11 @@ public class MetaPerson {
         this.identifier = identifier;
     }
 
-    public Person getP() {
+    public PersonInterface getP() {
         return this.p;
     }
 
-    public void setP(Person p) {
+    public void setP(PersonInterface p) {
         this.p = p;
     }
 
@@ -71,10 +70,10 @@ public class MetaPerson {
      * @return String
      */
     public String getVorname() {
-        if (this.p.getFirstname() == null) {
+        if (this.p.getFirstName() == null) {
             return "";
         }
-        return this.p.getFirstname();
+        return this.p.getFirstName();
     }
 
     /**
@@ -87,8 +86,8 @@ public class MetaPerson {
         if (inVorname == null) {
             inVorname = "";
         }
-        this.p.setFirstname(inVorname);
-        this.p.setDisplayname(getNachname() + ", " + getVorname());
+        this.p.setFirstName(inVorname);
+        this.p.setDisplayName(getNachname() + ", " + getVorname());
     }
 
     /**
@@ -97,10 +96,10 @@ public class MetaPerson {
      * @return String
      */
     public String getNachname() {
-        if (this.p.getLastname() == null) {
+        if (this.p.getLastName() == null) {
             return "";
         }
-        return this.p.getLastname();
+        return this.p.getLastName();
     }
 
     /**
@@ -113,8 +112,8 @@ public class MetaPerson {
         if (inNachname == null) {
             inNachname = "";
         }
-        this.p.setLastname(inNachname);
-        this.p.setDisplayname(getNachname() + ", " + getVorname());
+        this.p.setLastName(inNachname);
+        this.p.setDisplayName(getNachname() + ", " + getVorname());
     }
 
     /**
@@ -147,7 +146,7 @@ public class MetaPerson {
      */
     public void setRolle(String inRolle) {
         this.p.setRole(inRolle);
-        MetadataType mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
+        MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
         this.p.setType(mdt);
     }
 

@@ -28,26 +28,26 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.ContentFileInterface;
+import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.DocStructTypeInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.api.ugh.MetsModsImportExportInterface;
+import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.VirtualFileGroupInterface;
+import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
-
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.dl.VirtualFileGroup;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
  * Service for schema manipulations.
@@ -56,7 +56,7 @@ public class SchemaService {
 
     private static final Logger logger = LogManager.getLogger(SchemaService.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private List<DocStruct> docStructsWithoutPages = new ArrayList<>();
+    private List<DocStructInterface> docStructsWithoutPages = new ArrayList<>();
 
     /**
      * Temporal method for separate file conversion from ExportMets class
@@ -72,15 +72,15 @@ public class SchemaService {
      *            object
      * @return MetsModsImportExport object
      */
-    public <T extends ExportMets> MetsModsImportExport tempConvert(Fileformat gdzfile, T exportMets,
-            MetsModsImportExport metsMods, Prefs prefs, Process process)
+    public <T extends ExportMets> MetsModsImportExportInterface tempConvert(FileformatInterface gdzfile, T exportMets,
+            MetsModsImportExportInterface metsMods, PrefsInterface prefs, Process process)
             throws IOException, PreferencesException, TypeNotAllowedForParentException {
         URI imageFolder = serviceManager.getFileService().getImagesDirectory(process);
 
         /*
          * before creating mets file, change relative path to absolute -
          */
-        DigitalDocument digitalDocument = gdzfile.getDigitalDocument();
+        DigitalDocumentInterface digitalDocument = gdzfile.getDigitalDocument();
         if (digitalDocument.getFileSet() == null) {
             Helper.setMeldung(process.getTitle()
                     + ": digital document does not contain images; temporarily adding them for mets file creation");
@@ -92,8 +92,8 @@ public class SchemaService {
          * get the topstruct element of the digital document depending on anchor
          * property
          */
-        DocStruct topElement = digitalDocument.getLogicalDocStruct();
-        if (prefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
+        DocStructInterface topElement = digitalDocument.getLogicalDocStruct();
+        if (prefs.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
             if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
                 throw new PreferencesException(process.getTitle()
                         + ": the topstruct element is marked as anchor, but does not have any children for "
@@ -113,7 +113,7 @@ public class SchemaService {
                 Helper.setMeldung(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
-                for (DocStruct mySeitenDocStruct : digitalDocument.getPhysicalDocStruct().getAllChildren()) {
+                for (DocStructInterface mySeitenDocStruct : digitalDocument.getPhysicalDocStruct().getAllChildren()) {
                     topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
                 }
             } else {
@@ -128,7 +128,7 @@ public class SchemaService {
             }
         }
 
-        for (ContentFile cf : digitalDocument.getFileSet().getAllFiles()) {
+        for (ContentFileInterface cf : digitalDocument.getFileSet().getAllFiles()) {
             String location = cf.getLocation();
             // If the file's location string shows no sign of any protocol,
             // use the file protocol.
@@ -231,8 +231,9 @@ public class SchemaService {
         return metsMods;
     }
 
-    private VirtualFileGroup setVirtualFileGroup(ProjectFileGroup projectFileGroup, VariableReplacer variableReplacer) {
-        VirtualFileGroup virtualFileGroup = new VirtualFileGroup();
+    private VirtualFileGroupInterface setVirtualFileGroup(ProjectFileGroup projectFileGroup,
+            VariableReplacer variableReplacer) {
+        VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
 
         virtualFileGroup.setName(projectFileGroup.getName());
         virtualFileGroup.setPathToFiles(variableReplacer.replace(projectFileGroup.getPath()));
@@ -252,15 +253,16 @@ public class SchemaService {
      *            object
      * @param process
      *            object
-     * @param atsPpnBand as String
+     * @param atsPpnBand
+     *            as String
      */
-    public void tempConvertRusdml(DigitalDocument digitalDocument, Prefs prefs, Process process, String atsPpnBand)
-            throws ExportFileException, MetadataTypeNotAllowedException {
+    public void tempConvertRusdml(DigitalDocumentInterface digitalDocument, PrefsInterface prefs, Process process,
+            String atsPpnBand) throws ExportFileException, MetadataTypeNotAllowedException {
 
         /*
          * Run recursively through DocStruct and check the metadata
          */
-        DocStruct logicalTopStruct = digitalDocument.getLogicalDocStruct();
+        DocStructInterface logicalTopStruct = digitalDocument.getLogicalDocStruct();
 
         evaluateDocStructPages(logicalTopStruct, prefs);
         correctPathImageFiles(digitalDocument.getPhysicalDocStruct(), prefs, "./" + atsPpnBand + "_tif");
@@ -268,27 +270,30 @@ public class SchemaService {
     }
 
     /**
-     * Run through all structural elements recursively and assign the children's sides to the parent elements.
+     * Run through all structural elements recursively and assign the children's
+     * sides to the parent elements.
      *
      * @param inStruct
      *            DocStruct object
      * @param prefs
      *            object
      */
-    private void evaluateDocStructPages(DocStruct inStruct, Prefs prefs) throws MetadataTypeNotAllowedException {
+    private void evaluateDocStructPages(DocStructInterface inStruct, PrefsInterface prefs)
+            throws MetadataTypeNotAllowedException {
+
         dropRusdmlMetadata(inStruct, prefs);
         rusdmlDropPersons(inStruct);
         maskUmlauts(inStruct);
         checkMetadata(inStruct, prefs);
 
         // if the Docstruct has no pictures, it is taken into the list
-        if (inStruct.getAllToReferences().size() == 0 && inStruct.getType().getAnchorClass() == null) {
+        if (inStruct.getAllToReferences().size() == 0 && inStruct.getDocStructType().getAnchorClass() == null) {
             docStructsWithoutPages.add(inStruct);
         }
 
         // run through all children of the current DocStruct
         if (inStruct.getAllChildren() != null) {
-            for (DocStruct child : inStruct.getAllChildren()) {
+            for (DocStructInterface child : inStruct.getAllChildren()) {
                 evaluateDocStructPages(child, prefs);
             }
         }
@@ -302,69 +307,71 @@ public class SchemaService {
      * @param prefs
      *            object
      */
-    private void dropRusdmlMetadata(DocStruct inStruct, Prefs prefs) throws MetadataTypeNotAllowedException {
+    private void dropRusdmlMetadata(DocStructInterface inStruct, PrefsInterface prefs)
+            throws MetadataTypeNotAllowedException {
+
         String titleRu = "";
         String titleOther = "";
         String language = "";
 
         if (inStruct.getAllVisibleMetadata() != null) {
-            List<Metadata> copy = new ArrayList<>(inStruct.getAllMetadata());
-            for (Metadata meta : copy) {
+            List<MetadataInterface> copy = new ArrayList<>(inStruct.getAllMetadata());
+            for (MetadataInterface meta : copy) {
                 // now delete all unneeded metadata
-                if (meta.getType().getName().equals("RUSMainTitle")) {
+                if (meta.getMetadataType().getName().equals("RUSMainTitle")) {
                     titleRu = meta.getValue();
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("TitleDocMain")) {
+                if (meta.getMetadataType().getName().equals("TitleDocMain")) {
                     titleOther = meta.getValue();
                     inStruct.getAllMetadata().remove(meta);
                 }
 
-                if (meta.getType().getName().equals("DocLanguage")) {
-                    meta.setValue(meta.getValue().toLowerCase());
+                if (meta.getMetadataType().getName().equals("DocLanguage")) {
+                    meta.setStringValue(meta.getValue().toLowerCase());
                     language = meta.getValue();
                 }
 
-                if (meta.getType().getName().equals("RUSPublisher")) {
+                if (meta.getMetadataType().getName().equals("RUSPublisher")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("RUSPlaceOfPublication")) {
+                if (meta.getMetadataType().getName().equals("RUSPlaceOfPublication")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("RUSPublicationHouse")) {
+                if (meta.getMetadataType().getName().equals("RUSPublicationHouse")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
 
-                if (meta.getType().getName().equals("ZBLSource")) {
+                if (meta.getMetadataType().getName().equals("ZBLSource")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("ZBLIntern")) {
+                if (meta.getMetadataType().getName().equals("ZBLIntern")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("ZBLPageNumber")) {
+                if (meta.getMetadataType().getName().equals("ZBLPageNumber")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("ZBLReviewLink")) {
+                if (meta.getMetadataType().getName().equals("ZBLReviewLink")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("ZBLReviewAuthor")) {
+                if (meta.getMetadataType().getName().equals("ZBLReviewAuthor")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("ZBLCita")) {
+                if (meta.getMetadataType().getName().equals("ZBLCita")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
-                if (meta.getType().getName().equals("ZBLTempID")) {
+                if (meta.getMetadataType().getName().equals("ZBLTempID")) {
                     inStruct.getAllMetadata().remove(meta);
                 }
 
                 /*
                  * the abstract of the ZBL, but only the 255 first characters
                  */
-                if (meta.getType().getName().equals("ZBLAbstract")) {
-                    MetadataType mdt = prefs.getMetadataTypeByName("Abstract");
+                if (meta.getMetadataType().getName().equals("ZBLAbstract")) {
+                    MetadataTypeInterface mdt = prefs.getMetadataTypeByName("Abstract");
                     meta.setType(mdt);
                     if (meta.getValue().length() > 255) {
-                        meta.setValue(meta.getValue().substring(0, 254));
+                        meta.setStringValue(meta.getValue().substring(0, 254));
                     }
                 }
             }
@@ -374,16 +381,16 @@ public class SchemaService {
          * nachdem alle Metadaten durchlaufen wurden, jetzt abhängig vom
          * Sprachcode den richtigen MainTitle zuweisen
          */
-        MetadataType mdtOrg = prefs.getMetadataTypeByName("TitleDocMain");
-        Metadata metaOrg = new Metadata(mdtOrg);
-        MetadataType mdtTrans = prefs.getMetadataTypeByName("MainTitleTranslated");
-        Metadata metaTrans = new Metadata(mdtTrans);
+        MetadataTypeInterface mdtOrg = prefs.getMetadataTypeByName("TitleDocMain");
+        MetadataInterface metaOrg = UghImplementation.INSTANCE.createMetadata(mdtOrg);
+        MetadataTypeInterface mdtTrans = prefs.getMetadataTypeByName("MainTitleTranslated");
+        MetadataInterface metaTrans = UghImplementation.INSTANCE.createMetadata(mdtTrans);
         if (language.equals("ru")) {
-            metaOrg.setValue(titleRu);
-            metaTrans.setValue(titleOther);
+            metaOrg.setStringValue(titleRu);
+            metaTrans.setStringValue(titleOther);
         } else {
-            metaTrans.setValue(titleRu);
-            metaOrg.setValue(titleOther);
+            metaTrans.setStringValue(titleRu);
+            metaOrg.setStringValue(titleOther);
         }
 
         if (metaOrg.getValue() != null && metaOrg.getValue().length() > 0) {
@@ -400,11 +407,11 @@ public class SchemaService {
      * @param inStruct
      *            DocStruct object
      */
-    private void rusdmlDropPersons(DocStruct inStruct) {
+    private void rusdmlDropPersons(DocStructInterface inStruct) {
         if (inStruct.getAllPersons() != null) {
-            List<Person> copy = new ArrayList<>(inStruct.getAllPersons());
-            for (Person copyPerson : copy) {
-                if (copyPerson.getType().getName().equals("ZBLAuthor")) {
+            List<PersonInterface> copy = new ArrayList<>(inStruct.getAllPersons());
+            for (PersonInterface copyPerson : copy) {
+                if (copyPerson.getMetadataType().getName().equals("ZBLAuthor")) {
                     inStruct.getAllPersons().remove(copyPerson);
                 }
             }
@@ -419,19 +426,20 @@ public class SchemaService {
      * @param prefs
      *            object
      */
-    private void checkMetadata(DocStruct inStruct, Prefs prefs) {
-        if (inStruct.getType().getName().equals("Illustration")) {
-            DocStructType dst = prefs.getDocStrctTypeByName("Figure");
+    private void checkMetadata(DocStructInterface inStruct, PrefsInterface prefs) {
+        if (inStruct.getDocStructType().getName().equals("Illustration")) {
+            DocStructTypeInterface dst = prefs.getDocStrctTypeByName("Figure");
             inStruct.setType(dst);
         }
     }
 
-    private void correctPathImageFiles(DocStruct phys, Prefs prefs, String newValue) throws ExportFileException {
-        MetadataType mdTypeForPath = prefs.getMetadataTypeByName("pathimagefiles");
-        List<? extends Metadata> allMetadata = phys.getAllMetadataByType(mdTypeForPath);
+    private void correctPathImageFiles(DocStructInterface phys, PrefsInterface prefs, String newValue)
+            throws ExportFileException {
+        MetadataTypeInterface mdTypeForPath = prefs.getMetadataTypeByName("pathimagefiles");
+        List<? extends MetadataInterface> allMetadata = phys.getAllMetadataByType(mdTypeForPath);
         if (allMetadata.size() > 0) {
-            for (Metadata meta : allMetadata) {
-                meta.setValue(newValue);
+            for (MetadataInterface meta : allMetadata) {
+                meta.setStringValue(newValue);
             }
         } else {
             throw new ExportFileException("Export error: Image path not yet set");
@@ -448,7 +456,8 @@ public class SchemaService {
      * @param process
      *            Process object
      */
-    private void addMissingMetadata(DocStruct topStruct, Prefs prefs, Process process) throws ExportFileException {
+    private void addMissingMetadata(DocStructInterface topStruct, PrefsInterface prefs, Process process)
+            throws ExportFileException {
         String ppn = BeanHelper.determineWorkpieceProperty(process, "PPN digital");
         if (ppn.length() == 0) {
             throw new ExportFileException("Export error: No PPN digital present");
@@ -468,7 +477,7 @@ public class SchemaService {
      * @param ppn
      *            String
      */
-    private void addMissingMetadata(DocStruct inTopStruct, Prefs prefs, Process process, String ppn) {
+    private void addMissingMetadata(DocStructInterface inTopStruct, PrefsInterface prefs, Process process, String ppn) {
         /*
          * Get properties from the workpiece
          */
@@ -481,26 +490,26 @@ public class SchemaService {
         /*
          * Produce metadata
          */
-        Metadata mdVerlag = null;
-        Metadata mdPlace = null;
-        Metadata mdISSN = null;
-        Metadata mdPPN = null;
-        Metadata mdPPNBand = null;
-        Metadata mdSorting = null;
+        MetadataInterface mdVerlag = null;
+        MetadataInterface mdPlace = null;
+        MetadataInterface mdISSN = null;
+        MetadataInterface mdPPN = null;
+        MetadataInterface mdPPNBand = null;
+        MetadataInterface mdSorting = null;
         try {
-            mdVerlag = new Metadata(prefs.getMetadataTypeByName("PublisherName"));
-            mdVerlag.setValue(verlag);
-            mdPlace = new Metadata(prefs.getMetadataTypeByName("PlaceOfPublication"));
-            mdPlace.setValue(place);
-            mdISSN = new Metadata(prefs.getMetadataTypeByName("ISSN"));
-            mdISSN.setValue(ISSN);
-            mdPPN = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
-            mdPPN.setValue("PPN" + ppn);
-            mdPPNBand = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
-            mdPPNBand.setValue("PPN" + ppn + "_" + bandNumber);
-            mdSorting = new Metadata(prefs.getMetadataTypeByName("CurrentNoSorting"));
+            mdVerlag = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("PublisherName"));
+            mdVerlag.setStringValue(verlag);
+            mdPlace = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("PlaceOfPublication"));
+            mdPlace.setStringValue(place);
+            mdISSN = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("ISSN"));
+            mdISSN.setStringValue(ISSN);
+            mdPPN = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
+            mdPPN.setStringValue("PPN" + ppn);
+            mdPPNBand = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
+            mdPPNBand.setStringValue("PPN" + ppn + "_" + bandNumber);
+            mdSorting = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CurrentNoSorting"));
             int bandInt = Integer.parseInt(bandNumber) * 10;
-            mdSorting.setValue(String.valueOf(bandInt));
+            mdSorting.setStringValue(String.valueOf(bandInt));
         } catch (MetadataTypeNotAllowedException | NumberFormatException e) {
             logger.error(e);
         }
@@ -508,7 +517,7 @@ public class SchemaService {
         /*
          * assign magazine's metadata
          */
-        inTopStruct.getAllMetadataByType(prefs.getMetadataTypeByName("TitleDocMain")).get(0).setValue(title);
+        inTopStruct.getAllMetadataByType(prefs.getMetadataTypeByName("TitleDocMain")).get(0).setStringValue(title);
         try {
             inTopStruct = preventNullMetadataInsert(inTopStruct, mdVerlag);
             inTopStruct = preventNullMetadataInsert(inTopStruct, mdPlace);
@@ -521,7 +530,7 @@ public class SchemaService {
         /*
          * die Metadaten dem Band zuweisen
          */
-        DocStruct structBand = inTopStruct.getAllChildren().get(0);
+        DocStructInterface structBand = inTopStruct.getAllChildren().get(0);
         if (structBand != null) {
             try {
                 structBand = preventNullMetadataInsert(structBand, mdVerlag);
@@ -534,7 +543,9 @@ public class SchemaService {
         }
     }
 
-    private DocStruct preventNullMetadataInsert(DocStruct docStruct, Metadata metadata) throws MetadataTypeNotAllowedException {
+    private DocStructInterface preventNullMetadataInsert(DocStructInterface docStruct, MetadataInterface metadata)
+            throws MetadataTypeNotAllowedException {
+
         if (metadata != null) {
             docStruct.addMetadata(metadata);
         }
@@ -548,10 +559,10 @@ public class SchemaService {
      * @param inStruct
      *            DocStruct object
      */
-    private void maskUmlauts(DocStruct inStruct) {
-        List<Metadata> copy = inStruct.getAllMetadata();
+    private void maskUmlauts(DocStructInterface inStruct) {
+        List<MetadataInterface> copy = inStruct.getAllMetadata();
         if (copy != null) {
-            for (Metadata meta : copy) {
+            for (MetadataInterface meta : copy) {
                 maskUmlauts(meta);
             }
         }
@@ -563,7 +574,7 @@ public class SchemaService {
      * @param meta
      *            object
      */
-    private void maskUmlauts(Metadata meta) {
+    private void maskUmlauts(MetadataInterface meta) {
         String newValue = meta.getValue();
         if (newValue == null) {
             return;
@@ -703,6 +714,6 @@ public class SchemaService {
         newValue = newValue.replaceAll("\\\\~ ", " ");
         newValue = newValue.replaceAll("\\\\=", "");
 
-        meta.setValue(newValue);
+        meta.setStringValue(newValue);
     }
 }

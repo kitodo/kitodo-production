@@ -50,6 +50,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -57,8 +58,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-
-import ugh.dl.Prefs;
 
 @Named("MassImportForm")
 @SessionScoped
@@ -222,7 +221,7 @@ public class MassImportForm implements Serializable {
             Batch batch = null;
 
             // found list with ids
-            Prefs prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
+            PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
             String tempfolder = ConfigCore.getParameter("tempfolder");
             this.plugin.setImportFolder(tempfolder);
             this.plugin.setPrefs(prefs);
@@ -267,7 +266,7 @@ public class MassImportForm implements Serializable {
                 if (importFile != null) {
                     List<String> args = Arrays
                             .asList(new String[] {FilenameUtils.getBaseName(importFile.getAbsolutePath()),
-                                    DateTimeFormat.shortDateTime().print(new DateTime()) });
+                                                  DateTimeFormat.shortDateTime().print(new DateTime()) });
                     batch = new Batch(Helper.getTranslation("importedBatchLabel", args), Type.LOGISTIC);
                 } else {
                     batch = new Batch();
@@ -288,7 +287,7 @@ public class MassImportForm implements Serializable {
                             selectedFilenames.remove(importFileName.getRawPath());
                         }
                         Helper.setFehlerMeldung(
-                                "import failed for " + io.getProcessTitle() + ", process generation failed");
+                            "import failed for " + io.getProcessTitle() + ", process generation failed");
 
                     } else {
                         Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());

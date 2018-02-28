@@ -20,11 +20,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import ugh.dl.DocStruct;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 
 /**
  * A MetadataPathSelector provides methods to retrieve or modify document
@@ -140,11 +139,11 @@ public class MetadataPathSelector extends MetadataSelector {
      * @param value
      *            value to write if no metadatum is available at the path’s end
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(CopierData,
-     *      DocStruct, String)
+     *      DocStructInterface, String)
      */
     @Override
-    protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
-        DocStruct subnode = getSubnode(logicalNode);
+    protected void createIfPathExistsOnly(CopierData data, DocStructInterface logicalNode, String value) {
+        DocStructInterface subnode = getSubnode(logicalNode);
         if (subnode == null) {
             return;
         }
@@ -164,11 +163,11 @@ public class MetadataPathSelector extends MetadataSelector {
      * @param value
      *            value to write
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#createOrOverwrite(CopierData,
-     *      DocStruct, String)
+     *      DocStructInterface, String)
      */
     @Override
-    protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {
-        DocStruct subnode = getSubnode(logicalNode);
+    protected void createOrOverwrite(CopierData data, DocStructInterface logicalNode, String value) {
+        DocStructInterface subnode = getSubnode(logicalNode);
         if (subnode == null && !ANY_METADATA_TYPE_SYMBOL.equals(docStructType)) {
             try {
                 subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
@@ -178,7 +177,7 @@ public class MetadataPathSelector extends MetadataSelector {
                 // ignored
                 if (logger.isDebugEnabled()) {
                     logger.debug("Cannot create structural element " + docStructType + " as child of "
-                            + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
+                            + (logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type")
                             + " because it isn’t allowed by the rule set.");
                 }
                 return;
@@ -189,7 +188,7 @@ public class MetadataPathSelector extends MetadataSelector {
                 // copy rule failed, skip it
                 if (logger.isDebugEnabled()) {
                     logger.debug("Cannot create structural element " + docStructType + " as child of "
-                            + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
+                            + (logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type")
                             + ": Accessing the rule set failed with exception: "
                             + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
                 }
@@ -212,15 +211,15 @@ public class MetadataPathSelector extends MetadataSelector {
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
      */
     @Override
-    protected Iterable<MetadataSelector> findAll(DocStruct logicalNode) {
+    protected Iterable<MetadataSelector> findAll(DocStructInterface logicalNode) {
         LinkedList<MetadataSelector> result = new LinkedList<>();
-        List<DocStruct> children = logicalNode.getAllChildren();
+        List<DocStructInterface> children = logicalNode.getAllChildren();
         if (children == null) {
             children = Collections.emptyList();
         }
         int lastChild = children.size() - 1;
         int count = 0;
-        for (DocStruct child : children) {
+        for (DocStructInterface child : children) {
             if (typeCheck(child) && indexCheck(count, lastChild)) {
                 for (MetadataSelector cms : selector.findAll(child)) {
                     result.add(new MetadataPathSelector(ANY_METADATA_TYPE_SYMBOL, count, cms));
@@ -240,8 +239,8 @@ public class MetadataPathSelector extends MetadataSelector {
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
      */
     @Override
-    protected String findIn(DocStruct supernode) {
-        DocStruct subnode = getSubnode(supernode);
+    protected String findIn(DocStructInterface supernode) {
+        DocStructInterface subnode = getSubnode(supernode);
         if (subnode == null) {
             return null;
         } else {
@@ -308,8 +307,8 @@ public class MetadataPathSelector extends MetadataSelector {
      *             if there is more than one element matching but no index was
      *             given to chose among them
      */
-    private DocStruct getSubnode(DocStruct logicalNode) {
-        List<DocStruct> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
+    private DocStructInterface getSubnode(DocStructInterface logicalNode) {
+        List<DocStructInterface> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
                 ANY_METADATA_TYPE_SYMBOL);
         if (children == null) {
             children = Collections.emptyList();
@@ -425,7 +424,7 @@ public class MetadataPathSelector extends MetadataSelector {
      *            child whose type shall be checked
      * @return whether the child type is to be matched
      */
-    private boolean typeCheck(DocStruct child) {
-        return ANY_METADATA_TYPE_SYMBOL.equals(docStructType) || docStructType.equals(child.getType().getName());
+    private boolean typeCheck(DocStructInterface child) {
+        return ANY_METADATA_TYPE_SYMBOL.equals(docStructType) || docStructType.equals(child.getDocStructType().getName());
     }
 }

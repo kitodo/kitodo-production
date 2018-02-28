@@ -22,6 +22,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.JSONObject;
+import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
@@ -30,10 +32,8 @@ import org.kitodo.data.elasticsearch.index.type.RulesetType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.RulesetDTO;
+import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.data.base.TitleSearchService;
-
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
 
 public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
@@ -142,8 +142,8 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            object
      * @return preferences
      */
-    public Prefs getPreferences(Ruleset ruleset) {
-        Prefs myPreferences = new Prefs();
+    public PrefsInterface getPreferences(Ruleset ruleset) {
+        PrefsInterface myPreferences = UghImplementation.INSTANCE.createPrefs();
         try {
             myPreferences.loadPrefs(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile());
         } catch (PreferencesException e) {

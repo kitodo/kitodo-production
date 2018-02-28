@@ -16,15 +16,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-
-import ugh.dl.Metadata;
-import ugh.dl.MetadataGroup;
-import ugh.dl.MetadataType;
+import org.kitodo.api.ugh.MetadataGroupInterface;
+import org.kitodo.api.ugh.MetadataInterface;
+import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
  * Backing bean for a (multi-line) text input element to edit metadatum
  * renderable by JSF.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableLineEdit extends RenderableMetadatum
@@ -46,7 +45,7 @@ public class RenderableLineEdit extends RenderableMetadatum
 
     /**
      * Constructor. Creates a RenderableLineEdit.
-     * 
+     *
      * @param metadataType
      *            metadata type editable by this drop-down list
      * @param binding
@@ -55,10 +54,12 @@ public class RenderableLineEdit extends RenderableMetadatum
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public RenderableLineEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
+    public RenderableLineEdit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+            RenderableMetadataGroup container) {
+
         super(metadataType, binding, container);
         if (binding != null) {
-            for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
+            for (MetadataInterface data : binding.getMetadataByType(metadataType.getName())) {
                 addContent(data);
             }
         }
@@ -68,12 +69,12 @@ public class RenderableLineEdit extends RenderableMetadatum
      * Adds the data passed from the metadata element as content to the input.
      * If there is data already (shouldn’t be, but however) it is appended for
      * not being lost.
-     * 
+     *
      * @param data
      *            data to add
      */
     @Override
-    public void addContent(Metadata data) {
+    public void addContent(MetadataInterface data) {
         if (value == null) {
             value = new ArrayList<>(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
         } else {
@@ -83,7 +84,7 @@ public class RenderableLineEdit extends RenderableMetadatum
 
     /**
      * Returns the edit field value.
-     * 
+     *
      * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
      */
     @Override
@@ -97,7 +98,7 @@ public class RenderableLineEdit extends RenderableMetadatum
 
     /**
      * Saves the value entered by the user.
-     * 
+     *
      * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
      */
     @Override
@@ -108,13 +109,13 @@ public class RenderableLineEdit extends RenderableMetadatum
 
     /**
      * Returns the value of this edit component as metadata element
-     * 
+     *
      * @return a list with one metadata element with the value of this component
      * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
      */
     @Override
-    public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<>(1);
+    public List<MetadataInterface> toMetadata() {
+        List<MetadataInterface> result = new ArrayList<>(1);
         result.add(getMetadata(StringUtils.join(value, METADATA_LINE_SEPARATOR)));
         return result;
     }
