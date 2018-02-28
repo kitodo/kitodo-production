@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +27,7 @@ public class URIConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(URIConverter.class);
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value == null || value.length() == 0) {
             return null;
         } else {
@@ -42,7 +41,7 @@ public class URIConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object object) throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object object) {
         if (object != null) {
             return String.valueOf(((URI) object).getPath());
         } else {

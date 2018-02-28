@@ -449,7 +449,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
                 return "/pages/userEdit?" + REDIRECT_PARAMETER;
             } else {
@@ -470,7 +470,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("userEdit.jsf")) {
                 return "/pages/users?" + REDIRECT_PARAMETER;
             } else {

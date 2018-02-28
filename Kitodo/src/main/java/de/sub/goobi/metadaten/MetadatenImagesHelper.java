@@ -536,7 +536,7 @@ public class MetadatenImagesHelper {
                 return dataList;
             }
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 

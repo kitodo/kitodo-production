@@ -208,10 +208,9 @@ public class ProzessverwaltungForm extends BasisForm {
          * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
          */
         if (this.process != null && this.process.getTitle() != null) {
-            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null) {
-                if (!renameAfterProcessTitleChanged()) {
-                    return null;
-                }
+            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
+                    && !renameAfterProcessTitleChanged()) {
+                return null;
             }
 
             try {
@@ -233,10 +232,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String saveAndRedirect() {
         if (this.process != null && this.process.getTitle() != null) {
-            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null) {
-                if (!renameAfterProcessTitleChanged()) {
-                    return null;
-                }
+            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
+                    && !renameAfterProcessTitleChanged()) {
+                return null;
             }
 
             try {
@@ -306,11 +304,10 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             // process properties
             for (Property processProperty : this.process.getProperties()) {
-                if (processProperty != null && processProperty.getValue() != null) {
-                    if (processProperty.getValue().contains(this.process.getTitle())) {
-                        processProperty.setValue(processProperty.getValue()
-                                .replaceAll(this.process.getTitle(), this.newProcessTitle));
-                    }
+                if (processProperty != null && processProperty.getValue() != null
+                        && (processProperty.getValue().contains(this.process.getTitle()))) {
+                    processProperty.setValue(processProperty.getValue()
+                            .replaceAll(this.process.getTitle(), this.newProcessTitle));
                 }
             }
             // template properties
@@ -329,46 +326,9 @@ public class ProzessverwaltungForm extends BasisForm {
             }
 
             try {
-                {
-                    // renaming image directories
-                    URI imageDirectory = fileService.getImagesDirectory(process);
-                    if (fileService.isDirectory(imageDirectory)) {
-                        ArrayList<URI> subDirs = fileService.getSubUris(imageDirectory);
-                        for (URI imageDir : subDirs) {
-                            if (fileService.isDirectory(imageDir)) {
-                                fileService.renameFile(imageDir, fileService.getFileName(imageDir)
-                                        .replace(process.getTitle(), newProcessTitle));
-                            }
-                        }
-                    }
-                }
-                {
-                    // renaming ocr directories
-                    URI ocrDirectory = fileService.getOcrDirectory(process);
-                    if (fileService.isDirectory(ocrDirectory)) {
-                        ArrayList<URI> subDirs = fileService.getSubUris(ocrDirectory);
-                        for (URI imageDir : subDirs) {
-                            if (fileService.isDirectory(imageDir)) {
-                                fileService.renameFile(imageDir,
-                                        imageDir.toString().replace(process.getTitle(), newProcessTitle));
-                            }
-                        }
-                    }
-                }
-                {
-                    // renaming defined directories
-                    String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
-                    for (String processDir : processDirs) {
-                        // TODO: check it out
-                        URI processDirAbsolute = serviceManager.getProcessService().getProcessDataDirectory(process)
-                                .resolve(processDir.replace("(processtitle)", process.getTitle()));
-
-                        File dir = new File(processDirAbsolute);
-                        if (dir.isDirectory()) {
-                            dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
-                        }
-                    }
-                }
+                renameImageDirectories();
+                renameOcrDirectories();
+                renameDefinedDirectories();
             } catch (Exception e) {
                 logger.warn("could not rename folder", e);
             }
@@ -376,7 +336,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.process.setTitle(this.newProcessTitle);
 
             if (!this.process.isTemplate()) {
-                /* Tiffwriter-Datei löschen */
+                // remove Tiffwriter file
                 GoobiScript gs = new GoobiScript();
                 ArrayList<Process> pro = new ArrayList<>();
                 pro.add(this.process);
@@ -385,6 +345,42 @@ public class ProzessverwaltungForm extends BasisForm {
             }
         }
         return true;
+    }
+
+    private void renameImageDirectories() throws IOException {
+        URI imageDirectory = fileService.getImagesDirectory(process);
+        renameDirectories(imageDirectory);
+    }
+
+    private void renameOcrDirectories() throws IOException {
+        URI ocrDirectory = fileService.getOcrDirectory(process);
+        renameDirectories(ocrDirectory);
+    }
+
+    private void renameDirectories(URI directory) throws IOException {
+        if (fileService.isDirectory(directory)) {
+            ArrayList<URI> subDirs = fileService.getSubUris(directory);
+            for (URI imageDir : subDirs) {
+                if (fileService.isDirectory(imageDir)) {
+                    fileService.renameFile(imageDir, fileService.getFileName(imageDir)
+                            .replace(process.getTitle(), newProcessTitle));
+                }
+            }
+        }
+    }
+
+    private void renameDefinedDirectories() {
+        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
+        for (String processDir : processDirs) {
+            // TODO: check it out
+            URI processDirAbsolute = serviceManager.getProcessService().getProcessDataDirectory(process)
+                    .resolve(processDir.replace("(processtitle)", process.getTitle()));
+
+            File dir = new File(processDirAbsolute);
+            if (dir.isDirectory()) {
+                dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+            }
+        }
     }
 
     private void deleteMetadataDirectory() {
@@ -2316,7 +2312,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty()
                     && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf")
                             || callerViewId.contains("processEdit.jsf"))) {
@@ -2341,7 +2337,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("processEdit.jsf")) {
                 return TASK_EDIT_PATH + urlParameters;
             } else {

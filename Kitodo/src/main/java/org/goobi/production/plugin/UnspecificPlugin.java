@@ -114,7 +114,7 @@ public abstract class UnspecificPlugin {
      * @throws NoSuchMethodException
      *             if a required method is not found on the plug-in
      */
-    protected UnspecificPlugin(Object implementation) throws SecurityException, NoSuchMethodException {
+    protected UnspecificPlugin(Object implementation) throws NoSuchMethodException {
         plugin = implementation;
 
         configure = getOptionalMethod("configure", Map.class, Void.TYPE);
@@ -143,8 +143,7 @@ public abstract class UnspecificPlugin {
      * @throws NoSuchMethodException
      *             if a required method is not found on the plugin
      */
-    static UnspecificPlugin create(PluginType type, Object implementation)
-            throws SecurityException, NoSuchMethodException {
+    static UnspecificPlugin create(PluginType type, Object implementation) throws NoSuchMethodException {
         switch (type) {
             case COMMAND:
                 // return new CommandPlugin(implementation);
@@ -197,8 +196,7 @@ public abstract class UnspecificPlugin {
      * @throws NoSuchMethodException
      *             if a matching method is not found
      */
-    protected final Method getDeclaredMethod(String name, Class<?> resultType)
-            throws SecurityException, NoSuchMethodException {
+    protected final Method getDeclaredMethod(String name, Class<?> resultType) throws NoSuchMethodException {
         return getDeclaredMethod(name, NO_ARGS, resultType);
     }
 
@@ -228,7 +226,7 @@ public abstract class UnspecificPlugin {
      *             if a matching method is not found
      */
     protected final Method getDeclaredMethod(String name, Class<?> parameterType, Class<?> resultType)
-            throws SecurityException, NoSuchMethodException {
+            throws NoSuchMethodException {
         return getDeclaredMethod(name, new Class[] {parameterType }, resultType);
     }
 
@@ -258,7 +256,7 @@ public abstract class UnspecificPlugin {
      *             if a matching method is not found
      */
     protected final Method getDeclaredMethod(String name, Class<?>[] parameterTypes, Class<?> resultType)
-            throws SecurityException, NoSuchMethodException {
+            throws NoSuchMethodException {
         Method result = plugin.getClass().getDeclaredMethod(name, parameterTypes);
         if (!resultType.isAssignableFrom(result.getReturnType())) {
             throw new NoSuchMethodException("Bad return type of method " + result.toString() + " ("
@@ -310,7 +308,7 @@ public abstract class UnspecificPlugin {
      *             checkPackageAccess() denies access to the package of this
      *             class.
      */
-    protected final Method getOptionalMethod(String name, Class<?> resultType) throws SecurityException {
+    protected final Method getOptionalMethod(String name, Class<?> resultType) {
         return getOptionalMethod(name, NO_ARGS, resultType);
     }
 
@@ -338,8 +336,7 @@ public abstract class UnspecificPlugin {
      *             checkPackageAccess() denies access to the package of this
      *             class.
      */
-    protected final Method getOptionalMethod(String name, Class<?> parameterType, Class<?> resultType)
-            throws SecurityException {
+    protected final Method getOptionalMethod(String name, Class<?> parameterType, Class<?> resultType) {
         return getOptionalMethod(name, new Class[] {parameterType }, resultType);
     }
 
@@ -367,8 +364,7 @@ public abstract class UnspecificPlugin {
      *             checkPackageAccess() denies access to the package of this
      *             class.
      */
-    protected final Method getOptionalMethod(String name, Class<?>[] parameterTypes, Class<?> resultType)
-            throws SecurityException {
+    protected final Method getOptionalMethod(String name, Class<?>[] parameterTypes, Class<?> resultType) {
         try {
             return getDeclaredMethod(name, parameterTypes, resultType);
         } catch (NoSuchMethodException e) {

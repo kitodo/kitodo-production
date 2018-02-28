@@ -14,7 +14,6 @@ package org.kitodo.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -33,7 +32,7 @@ public class StatisticsCalculationUnitConverter implements Converter {
      * Convert String to CalculationUnit.
      */
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value == null) {
             return CalculationUnit.volumes;
         } else {
@@ -45,7 +44,7 @@ public class StatisticsCalculationUnitConverter implements Converter {
      * Convert ResultOutput to String.
      */
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
         if (value == null || !(value instanceof CalculationUnit)) {
             return CalculationUnit.volumes.getId();
         } else {

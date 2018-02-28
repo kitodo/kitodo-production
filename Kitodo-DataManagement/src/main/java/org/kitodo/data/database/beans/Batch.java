@@ -279,30 +279,22 @@ public class Batch extends BaseIndexedBean {
     public String toString() {
         try {
             StringBuilder result = new StringBuilder(this.getTitle() != null ? this.getTitle().length() + 20 : 30);
-            try {
-                if (this.getTitle() != null) {
-                    result.append(this.getTitle());
-                } else if (this.getId() != null) {
-                    result.append("Batch");
-                    result.append(' ');
-                    result.append(this.getId());
-                } else {
-                    result.append('−');
-                }
-                result.append(" (");
-                String extent = "{0} processes";
-                String size = Integer.toString(this.getProcesses().size());
-                result.append(extent.replaceFirst("\\{0\\}", size));
-            } catch (RuntimeException unexpected) {
-                result.setLength(0);
-                result.append(this.getTitle() != null ? this.getTitle() : this.getId());
-                result.append(" (");
-                result.append(this.getProcesses().size());
+            if (this.getTitle() != null) {
+                result.append(this.getTitle());
+            } else if (this.getId() != null) {
+                result.append("Batch");
+                result.append(' ');
+                result.append(this.getId());
+            } else {
+                result.append('−');
             }
+            result.append(" (");
+            String extent = "{0} processes";
+            String size = Integer.toString(this.getProcesses().size());
+            result.append(extent.replaceFirst("\\{0\\}", size));
             result.append(')');
             if (this.getType() != null) {
                 result.append(" [");
-                // TODO: check out method
                 result.append(this.getType().toString());
                 result.append(']');
             }

@@ -236,10 +236,13 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null)
                     ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
                             Arrays.asList(new String[] {currentTitle }))
-                    : e.getClass().getSimpleName() + (currentTitle != null ? " while creating " + currentTitle
-                            : " in CreateNewspaperProcessesTask");
+                    : e.getClass().getSimpleName() + getMessagePart(currentTitle);
             setException(new RuntimeException(message + ": " + e.getMessage(), e));
         }
+    }
+
+    private String getMessagePart(String currentTitle) {
+        return currentTitle != null ? " while creating " + currentTitle : " in CreateNewspaperProcessesTask";
     }
 
     /**

@@ -164,11 +164,7 @@ public class StatisticsManager implements Serializable {
 
             // picking up users input regarding loop Options
             if (isRenderLoopOption()) {
-                try {
-                    ((StatQuestThroughput) question).setIncludeLoops(includeLoops);
-                } catch (Exception e) { // just in case -> shouldn't happen
-                    logger.debug("unexpected Exception, wrong class loaded", e);
-                }
+                ((StatQuestThroughput) question).setIncludeLoops(includeLoops);
             }
             if (targetTimeUnit != null) {
                 question.setTimeUnit(targetTimeUnit);
@@ -179,14 +175,10 @@ public class StatisticsManager implements Serializable {
             renderingElements = new ArrayList<>();
             List<DataTable> myDataTables = question.getDataTables(dataSource);
 
-            /*
-             * if DataTables exist analyze them
-             */
+            // if DataTables exist analyze them
             if (myDataTables != null) {
 
-                /*
-                 * localize time frame for gui
-                 */
+                // localize time frame for gui
                 StringBuilder subname = new StringBuilder();
                 if (calculatedStartDate != null) {
                     subname.append(DateFormat.getDateInstance(DateFormat.SHORT, myLocale).format(calculatedStartDate));
@@ -199,9 +191,7 @@ public class StatisticsManager implements Serializable {
                     subname = new StringBuilder();
                 }
 
-                /*
-                 * run through all DataTables
-                 */
+                // run through all DataTables
                 for (DataTable dt : myDataTables) {
                     dt.setSubname(subname.toString());
                     StatisticsRenderingElement sre = new StatisticsRenderingElement(dt, question);

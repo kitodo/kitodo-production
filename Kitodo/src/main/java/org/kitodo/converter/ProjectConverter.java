@@ -14,7 +14,6 @@ package org.kitodo.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,8 +29,7 @@ public class ProjectConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(ProjectConverter.class);
 
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value)
-            throws ConverterException {
+    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
 
         try {
             return serviceManager.getProjectService().getById(Integer.parseInt(value));
@@ -42,8 +40,7 @@ public class ProjectConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object)
-            throws ConverterException {
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object) {
         if (object instanceof String) {
             return (String) object;
         }

@@ -95,10 +95,10 @@ public class FileManipulation {
                 baseName = baseName.substring(1);
             }
             if (baseName.contains("/")) {
-                baseName = baseName.substring(baseName.lastIndexOf("/") + 1);
+                baseName = baseName.substring(baseName.lastIndexOf('/') + 1);
             }
             if (baseName.contains("\\")) {
-                baseName = baseName.substring(baseName.lastIndexOf("\\") + 1);
+                baseName = baseName.substring(baseName.lastIndexOf('\\') + 1);
             }
 
             if (StringUtils.isNotBlank(uploadedFileName)) {
@@ -313,14 +313,14 @@ public class FileManipulation {
 
         int imageOrder = Integer.parseInt(imageSelection);
         DocStruct page = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
-        String imagename = page.getImageName();
-        String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
+        String imageName = page.getImageName();
+        String filenamePrefix = imageName.substring(0, imageName.lastIndexOf('.'));
         URI processSubTypeURI = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
                 ProcessSubType.IMAGE, currentFolder);
         ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
         for (URI currentFile : filesInFolder) {
             String currentFileName = fileService.getFileName(currentFile);
-            String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
+            String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf('.'));
             if (filenamePrefix.equals(currentFileNamePrefix)) {
                 downloadFile = currentFile;
                 break;
@@ -541,7 +541,7 @@ public class FileManipulation {
             List<URI> importedFileNames) throws IOException {
         if (fileService.getFileName(subFolder).contains("_")) {
             String folderSuffix = fileService.getFileName(subFolder)
-                    .substring(fileService.getFileName(subFolder).lastIndexOf("_") + 1);
+                    .substring(fileService.getFileName(subFolder).lastIndexOf('_') + 1);
             URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix, currentProcess);
             if (folderName != null) {
                 ArrayList<URI> objectInFolder = fileService.getSubUris(subFolder);

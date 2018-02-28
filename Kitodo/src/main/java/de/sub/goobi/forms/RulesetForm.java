@@ -158,7 +158,7 @@ public class RulesetForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
                 return "/pages/rulesetEdit?" + REDIRECT_PARAMETER;
             } else {
@@ -179,7 +179,7 @@ public class RulesetForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("rulesetEdit.jsf")) {
                 return "/pages/projects.jsf?id=" + projectForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
             } else {

@@ -178,7 +178,7 @@ public class Course extends ArrayList<Block> {
      * @throws NullPointerException
      *             if a mandatory element is absent
      */
-    public Course(Document xml) throws NoSuchElementException {
+    public Course(Document xml) {
         super();
         processesAreVolatile = false;
         Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);

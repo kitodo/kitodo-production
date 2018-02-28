@@ -126,7 +126,7 @@ public class Paginator {
      * @throws IllegalArgumentException
      *             Thrown if invalid config parameters have been set.
      */
-    public void run() throws IllegalArgumentException {
+    public void run() {
 
         assertSelectionIsNotNull();
         assertValidPaginationStartValue();

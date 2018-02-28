@@ -75,9 +75,9 @@ public class ConfigOpac {
                 String title = getConfig().getString("catalogue(" + i + ")[@title]");
                 myList.add(title);
             }
-        } catch (Throwable t) {
-            logger.error("Error while reading von opac-config", t);
-            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while reading von opac-config", e);
+            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
         }
         return myList;
     }
@@ -93,9 +93,9 @@ public class ConfigOpac {
                 String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
                 myList.add(title);
             }
-        } catch (Throwable t) {
-            logger.error("Error while reading von opac-config", t);
-            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while reading von opac-config", e);
+            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
         }
         return myList;
     }
@@ -111,9 +111,9 @@ public class ConfigOpac {
             for (String title : getAllDoctypeTitles()) {
                 myList.add(getDoctypeByName(title));
             }
-        } catch (Throwable t) {
-            logger.error("Error while reading von opac-config", t);
-            Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while reading von opac-config", e);
+            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
         }
         return myList;
     }

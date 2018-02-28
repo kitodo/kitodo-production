@@ -424,7 +424,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws NumberFormatException, DataException, IOException {
+    public String uploadFromHomeAlle() throws DataException, IOException {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<URI> geprueft = new ArrayList<>();
         /*
@@ -435,14 +435,12 @@ public class AktuelleSchritteForm extends BasisForm {
             filterAll();
         }
         for (URI element : fertigListe) {
-            String myID = element.toString()
-                    .substring(element.toString().indexOf("[") + 1, element.toString().indexOf("]")).trim();
+            String id = element.toString()
+                    .substring(element.toString().indexOf('[') + 1, element.toString().indexOf(']')).trim();
 
             for (Task step : (Iterable<Task>) this.page.getCompleteList()) {
-                /*
-                 * nur wenn der Schritt bereits im Bearbeitungsmodus ist, abschliessen
-                 */
-                if (step.getProcess().getId() == Integer.parseInt(myID)
+                // only when the task is already in edit mode, complete it
+                if (step.getProcess().getId() == Integer.parseInt(id)
                         && step.getProcessingStatusEnum() == TaskStatus.INWORK) {
                     this.mySchritt = step;
                     if (!schrittDurchBenutzerAbschliessen().isEmpty()) {
@@ -701,7 +699,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @throws DAOException
      *             , NumberFormatException
      */
-    private void schrittPerParameterLaden() throws DAOException, NumberFormatException {
+    private void schrittPerParameterLaden() throws DAOException {
         String param = Helper.getRequestParameter("myid");
         if (param != null && !param.equals("")) {
             /*
@@ -989,7 +987,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && (callerViewId.contains("tasks.jsf") || callerViewId.contains("editCurrentTasks.jsf"))) {
                 return CURRENT_TASK_EDIT_PATH + urlParameters;
             } else {
@@ -1010,7 +1008,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("editCurrentTasks.jsf")) {
                 return CURRENT_TASK_LIST_PATH + "?" + REDIRECT_PARAMETER;
             } else {

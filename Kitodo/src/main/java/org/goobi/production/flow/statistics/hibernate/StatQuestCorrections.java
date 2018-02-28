@@ -82,7 +82,7 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
         // gathering IDs from the filter passed by dataSource
         List<Integer> idList = getIds(dataSource);
         if (idList == null || idList.size() == 0) {
-            return null;
+            return new ArrayList<>();
         }
 
         //TODO: replace it with some other solution

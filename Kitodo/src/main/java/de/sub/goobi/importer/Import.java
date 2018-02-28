@@ -72,32 +72,24 @@ public class Import {
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, PreferencesException,
             WriteException {
         logger.debug("Einlesen() - start");
-        BufferedReader reader = null;
-        try {
-            // Russian import
-            if (this.task.isTypeImportFileUpload() && this.task.isTypeExportRussian()) {
-                String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.UTF_16LE);
-                reader = new BufferedReader(new StringReader(fileContent));
+
+        // Russian import
+        if (this.task.isTypeImportFileUpload() && this.task.isTypeExportRussian()) {
+            String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.UTF_16LE);
+            try (BufferedReader reader = new BufferedReader(new StringReader(fileContent))) {
                 ImportRussland importRussland = new ImportRussland();
                 importRussland.parse(reader, this.task.getProcess());
                 this.importMessage = "Der russische Import wurde erfolgreich abgeschlossen";
             }
+        }
 
-            // Zentralblatt import
-            if (this.task.isTypeImportFileUpload() && !this.task.isTypeExportRussian()) {
-                String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.ISO_8859_1);
-                reader = new BufferedReader(new StringReader(fileContent));
+        // Zentralblatt import
+        if (this.task.isTypeImportFileUpload() && !this.task.isTypeExportRussian()) {
+            String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.ISO_8859_1);
+            try (BufferedReader reader = new BufferedReader(new StringReader(fileContent))) {
                 ImportZentralblatt importZentralblatt = new ImportZentralblatt();
                 importZentralblatt.parse(reader, this.task.getProcess());
                 this.importMessage = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
-            }
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    logger.error("Die Datei kann nicht geschlossen werden", e);
-                }
             }
         }
 

@@ -29,7 +29,7 @@ public class RulesetConverter implements Converter {
     private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value == null) {
             return null;
         } else {
@@ -43,7 +43,7 @@ public class RulesetConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
         if (value == null) {
             return null;
         } else if (value instanceof Ruleset) {

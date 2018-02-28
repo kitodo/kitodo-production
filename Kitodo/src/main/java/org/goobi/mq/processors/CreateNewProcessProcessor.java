@@ -156,7 +156,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * @throws IllegalArgumentException
      *             if no suitable template is found
      */
-    public static ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
+    public static ProzesskopieForm newProcessFromTemplate(String templateTitle) {
         ProzesskopieForm result = new ProzesskopieForm();
 
         Process selectedTemplate = getTemplateByTitle(templateTitle);
@@ -176,7 +176,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             is thrown, if there is no template matching the given
      *             templateTitle
      */
-    private static Process getTemplateByTitle(String templateTitle) throws IllegalArgumentException {
+    private static Process getTemplateByTitle(String templateTitle) {
         List<Process> response = serviceManager.getProcessService().getProcessTemplatesWithTitle(templateTitle);
 
         if (response.size() > 0) {
@@ -201,9 +201,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             in case that the given collection isn’t a valid subset of the
      *             digitalCollections possible here
      */
-    private static List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process)
-            throws IllegalArgumentException {
-
+    private static List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process) {
         HashSet<String> possibleCollections = new HashSet<>(process.getPossibleDigitalCollections());
         if (!possibleCollections.containsAll(collections)) {
             throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not "
@@ -226,7 +224,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             if a docType is not applicable to the template or the docType
      *             isn’t valid
      */
-    private static boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) throws IllegalArgumentException {
+    private static boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) {
         Boolean fieldIsUsed = dialog.getStandardFields().get("doctype");
         if (fieldIsUsed == null || fieldIsUsed.equals(Boolean.FALSE)) {
             throw new IllegalArgumentException(
@@ -259,7 +257,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             in case that no field with a matching title was found in the
      *             ProzesskopieForm object
      */
-    private static void setUserFields(ProzesskopieForm form, Map<String, String> userFields) throws RuntimeException {
+    private static void setUserFields(ProzesskopieForm form, Map<String, String> userFields) {
         for (String key : userFields.keySet()) {
             form.setAdditionalField(key, userFields.get(key), true);
         }
@@ -288,8 +286,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * @throws RuntimeException
      *             is thrown if the search didn’t bring any results
      */
-    private static void getBibliorgaphicData(ProzesskopieForm inputForm, String opac, String field, String value)
-            throws RuntimeException {
+    private static void getBibliorgaphicData(ProzesskopieForm inputForm, String opac, String field, String value) {
 
         inputForm.setOpacKatalog(opac);
         inputForm.setOpacSuchfeld(field);

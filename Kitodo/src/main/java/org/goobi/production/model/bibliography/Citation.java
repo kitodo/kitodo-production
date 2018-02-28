@@ -752,23 +752,23 @@ public class Citation {
      * @return the name formatted in HTML
      */
     private String formatName(String name, boolean colon) {
-        String lastname = name;
-        String firstname = "";
+        String lastName = name;
+        String firstName = "";
         if (name.contains(",")) {
-            lastname = name.substring(0, name.indexOf(",")).trim();
-            firstname = name.substring(name.indexOf(",") + 1).trim();
+            lastName = name.substring(0, name.indexOf(',')).trim();
+            firstName = name.substring(name.indexOf(',') + 1).trim();
         }
         StringBuilder result = new StringBuilder();
-        if (!colon && firstname.length() > 0) {
-            result.append(firstname);
+        if (!colon && firstName.length() > 0) {
+            result.append(firstName);
             result.append(' ');
         }
         result.append("<span style=\"font-variant: small-caps; \">");
-        result.append(lastname);
+        result.append(lastName);
         result.append("</span>");
-        if (colon && firstname.length() > 0) {
+        if (colon && firstName.length() > 0) {
             result.append(", ");
-            result.append(firstname);
+            result.append(firstName);
         }
         return result.toString();
     }

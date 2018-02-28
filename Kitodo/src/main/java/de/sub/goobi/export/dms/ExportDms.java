@@ -194,14 +194,10 @@ public class ExportDms extends ExportMets {
 
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
-        /*
-         * Metadaten validieren
-         */
-
-        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-            if (!serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
-                return false;
-            }
+        // validate metadata
+        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")
+                && !serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
+            return false;
         }
 
         /*
@@ -430,7 +426,7 @@ public class ExportDms extends ExportMets {
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
                         && fileService.getFileName(dir).contains("_")) {
                     String suffix = fileService.getFileName(dir)
-                            .substring(fileService.getFileName(dir).lastIndexOf("_"));
+                            .substring(fileService.getFileName(dir).lastIndexOf('_'));
                     URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
                     if (!fileService.fileExist(destination)) {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);
@@ -500,16 +496,12 @@ public class ExportDms extends ExportMets {
                     } else {
                         throw new IOException("No logged user!");
                     }
+                } catch (IOException e) {
+                    handleException(e);
+                    throw e;
                 } catch (Exception e) {
-                    if (exportDmsTask != null) {
-                        exportDmsTask.setException(e);
-                    } else {
-                        Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
-                    }
+                    handleException(e);
                     logger.error("could not create destination directory", e);
-                    if (e instanceof IOException) {
-                        throw (IOException) e;
-                    }
                 }
             }
 
@@ -532,6 +524,15 @@ public class ExportDms extends ExportMets {
                 exportDmsTask.setWorkDetail(null);
             }
         }
+    }
+
+    private void handleException(Exception e) {
+        if (exportDmsTask != null) {
+            exportDmsTask.setException(e);
+        } else {
+            Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+        }
+        logger.error("could not create destination directory", e);
     }
 
     /**

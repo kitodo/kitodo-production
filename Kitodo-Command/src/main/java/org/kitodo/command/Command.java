@@ -89,16 +89,11 @@ public class Command implements CommandInterface {
      */
     private static ArrayList<String> inputStreamArrayToList(InputStream myInputStream) {
         ArrayList<String> result = new ArrayList<>();
-        Scanner inputLines = null;
-        try {
-            inputLines = new Scanner(myInputStream, CHARSET);
+
+        try (Scanner inputLines = new Scanner(myInputStream, CHARSET)) {
             while (inputLines.hasNextLine()) {
                 String myLine = inputLines.nextLine();
                 result.add(myLine);
-            }
-        } finally {
-            if (inputLines != null) {
-                inputLines.close();
             }
         }
         return result;

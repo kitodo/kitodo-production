@@ -171,7 +171,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      * @throws NoSuchMethodException
      *             if a required method is not found on the plug-in
      */
-    public CataloguePlugin(Object implementation) throws SecurityException, NoSuchMethodException {
+    public CataloguePlugin(Object implementation) throws NoSuchMethodException {
         super(implementation);
         find = getDeclaredMethod("find", new Class[] {String.class, long.class }, Object.class);
         getHit = getDeclaredMethod("getHit", new Class[] {Object.class, long.class, long.class }, Map.class);

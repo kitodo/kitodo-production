@@ -82,7 +82,7 @@ public class WebDav implements Serializable {
             }
             if (data.toString().contains("/")) {
                 //TODO: check what happens here
-                data = URI.create(dataString.substring(dataString.lastIndexOf("/")));
+                data = URI.create(dataString.substring(dataString.lastIndexOf('/')));
             }
         }
         return files;

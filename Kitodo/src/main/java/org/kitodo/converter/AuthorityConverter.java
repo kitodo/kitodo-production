@@ -14,7 +14,6 @@ package org.kitodo.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +29,7 @@ public class AuthorityConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(AuthorityConverter.class);
 
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) throws ConverterException {
+    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
         try {
             return serviceManager.getAuthorityService().getById(Integer.parseInt(s));
         } catch (DAOException e) {
@@ -40,7 +39,7 @@ public class AuthorityConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) throws ConverterException {
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
         return ((Authority) o).getId().toString();
     }
 }

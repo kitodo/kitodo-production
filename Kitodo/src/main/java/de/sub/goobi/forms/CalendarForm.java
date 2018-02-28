@@ -1209,11 +1209,9 @@ public class CalendarForm implements Serializable {
         }
         try {
             if (blockShowing != null) {
-                if (blockChangerUnchanged) {
-                    if (blockShowing.getFirstAppearance() == null
-                            || !blockShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
-                        firstAppearanceIsToChange = newFirstAppearance;
-                    }
+                if (blockChangerUnchanged && (Objects.isNull(blockShowing.getFirstAppearance())
+                        || !blockShowing.getFirstAppearance().isEqual(newFirstAppearance))) {
+                    firstAppearanceIsToChange = newFirstAppearance;
                 }
             } else {
                 if (newFirstAppearance != null) {

@@ -108,30 +108,21 @@ public class Multipage {
             response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             ServletOutputStream out = response.getOutputStream();
 
-            /*
-             * die txt-Datei direkt in den Stream schreiben lassen
-             */
+            // let the txt file be written directly into the stream
             String filename = ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff";
             if (!(new File(filename)).exists()) {
                 create(process);
             }
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(filename);
+
+            try (FileInputStream fis = new FileInputStream(filename)) {
                 byte[] buf = new byte[4 * 1024]; // 4K buffer //how about 4096?
                 int bytesRead;
                 while ((bytesRead = fis.read(buf)) != -1) {
                     out.write(buf, 0, bytesRead);
                 }
-            } finally {
-                if (fis != null) {
-                    fis.close();
-                }
             }
 
-            /*
-             * den Stream zurückgeben
-             */
+            // return the stream
             out.flush();
             facesContext.responseComplete();
         }

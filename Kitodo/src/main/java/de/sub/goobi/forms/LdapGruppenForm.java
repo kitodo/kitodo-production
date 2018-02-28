@@ -132,7 +132,7 @@ public class LdapGruppenForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
                 return "/pages/ldapgroupEdit?" + REDIRECT_PARAMETER;
             } else {
@@ -153,7 +153,7 @@ public class LdapGruppenForm extends BasisForm {
         try {
             String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
                     .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf("/") + 1);
+            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty() && callerViewId.contains("ldapgroupEdit.jsf")) {
                 return "/pages/users?" + userForm.getActiveTabIndex() + REDIRECT_PARAMETER;
             } else {

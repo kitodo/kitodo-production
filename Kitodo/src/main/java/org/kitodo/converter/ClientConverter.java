@@ -14,7 +14,6 @@ package org.kitodo.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,8 +29,7 @@ public class ClientConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(ClientConverter.class);
 
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value)
-            throws ConverterException {
+    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
         if (value.equals("noClient")) {
             // we need to return null if we want to write null value to database
             return null;
@@ -46,8 +44,7 @@ public class ClientConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object)
-            throws ConverterException {
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object) {
         if (object instanceof String) {
             return (String) object;
         }

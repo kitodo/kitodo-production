@@ -227,8 +227,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     if (isInterrupted()) {
                         return;
                     }
-                    MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(), collectedYears,
-                            aggregation);
+                    process = processesIterator.next();
+                    MetsMods extendedData = buildExportableMetsMods(process, collectedYears,aggregation);
                     setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
                     new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true))
@@ -297,8 +297,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws NumberFormatException
      *             if the value cannot be parsed to int
      */
-    private static int getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName)
-            throws NoSuchElementException, NumberFormatException {
+    private static int getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName) {
         List<MetadataType> metadataTypes = structureTypeName.getType().getAllMetadataTypes();
         for (MetadataType metadataType : metadataTypes) {
             if (metaDataTypeName.equals(metadataType.getName())) {

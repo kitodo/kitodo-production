@@ -240,6 +240,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                         isDirty = true;
                     }
                     break;
+                default:
+                    break;
             }
 
             // check corrections timestamp this clearly only works on past
@@ -377,25 +379,30 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                 if (logger.isDebugEnabled()) {
                     logger.debug("updating history entries for " + process.getTitle());
                 }
-                try {
-                    // commit transaction every 50 items
-                    if (!it.hasNext() || i % 50 == 0) {
-                        session.flush();
-                        session.beginTransaction().commit();
-                        session.clear();
-                    }
-                } catch (HibernateException e) {
-                    logger.error("HibernateException occurred while scheduled storage calculation", e);
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("An error occurred while scheduled storage calculation", e);
-                    logger.error("ServletException occurred while scheduled storage calculation", e);
-                }
+                commitTransaction(it, i, session);
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Another Exception occurred while scheduled storage calculation", e);
             logger.error("Another Exception occurred while scheduled storage calculation", e);
         }
         logger.info("end history updating for all processes");
+    }
+
+    // TODO: does it actually commit anything? begin and commit in one statement...
+    private void commitTransaction(Iterator it, int i, Session session) {
+        try {
+            // commit transaction every 50 items
+            if (!it.hasNext() || i % 50 == 0) {
+                session.flush();
+                session.beginTransaction().commit();
+                session.clear();
+            }
+        } catch (HibernateException e) {
+            logger.error("HibernateException occurred while scheduled storage calculation", e);
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("An error occurred while scheduled storage calculation", e);
+            logger.error("ServletException occurred while scheduled storage calculation", e);
+        }
     }
 
     /**

@@ -52,10 +52,8 @@ public class CommandService {
 
         CommandResult commandResult = commandInterface.runCommand(generateId(), script);
         List<String> commandResultMessages = commandResult.getMessages();
-        if (commandResultMessages.size() > 0) {
-            if (commandResultMessages.get(0).contains("IOException")) {
-                throw new IOException(commandResultMessages.get(1));
-            }
+        if (commandResultMessages.size() > 0 && commandResultMessages.get(0).contains("IOException")) {
+            throw new IOException(commandResultMessages.get(1));
         }
         return commandResult;
     }

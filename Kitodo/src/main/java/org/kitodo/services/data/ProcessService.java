@@ -1002,10 +1002,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
 
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
-                    && process.getSortHelperStatus() != null) {
-                if (process.getSortHelperStatus().equals("100000000")) {
-                    fileService.createDirectory(result, origDirectory.getRawPath());
-                }
+                    && process.getSortHelperStatus() != null && process.getSortHelperStatus().equals("100000000")) {
+                fileService.createDirectory(result, origDirectory.getRawPath());
             }
             return origDirectory;
         } else {
@@ -1623,7 +1621,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         try {
             URI folder = this.getImagesTifDirectory(false, process);
             String folderName = fileService.getFileName(folder);
-            folderName = folderName.substring(0, folderName.lastIndexOf("_"));
+            folderName = folderName.substring(0, folderName.lastIndexOf('_'));
             folderName = folderName + "_" + methodName;
             folder = fileService.renameFile(folder, folderName);
             if (fileService.fileExist(folder)) {
@@ -1904,10 +1902,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
         // validate metadata
-        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-            if (!serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
-                return false;
-            }
+        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")
+                && !serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
+            return false;
         }
 
         // prepare place for save and download
@@ -1979,13 +1976,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
 
-            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
+            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")
+                    && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
-                if (project.isDmsImportCreateProcessFolder()) {
-                    File successFile = new File(
-                            project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-                    fileService.delete(successFile.toURI());
-                }
+                File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+                fileService.delete(successFile.toURI());
             }
         }
         return true;
@@ -2072,7 +2067,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
                         && fileService.getFileName(dir).contains("_")) {
                     String suffix = fileService.getFileNameWithExtension(dir)
-                            .substring(fileService.getFileNameWithExtension(dir).lastIndexOf("_"));
+                            .substring(fileService.getFileNameWithExtension(dir).lastIndexOf('_'));
                     URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
                     if (!fileService.fileExist(destination)) {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);

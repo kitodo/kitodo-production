@@ -40,7 +40,7 @@ public class HibernateSessionLong implements Serializable {
      * @return an appropriate Session object
      */
     @SuppressWarnings("deprecation")
-    public Session getSession() throws HibernateException {
+    public Session getSession() {
 
         if (this.sess == null) {
             if (factory == null) {

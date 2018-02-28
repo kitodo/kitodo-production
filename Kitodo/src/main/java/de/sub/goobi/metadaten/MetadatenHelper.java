@@ -90,8 +90,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @return DocStruct object
      */
     public DocStruct changeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
-            throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException,
-            TypeNotAllowedForParentException {
+            throws MetadataTypeNotAllowedException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
         // inOldDocstruct.getType().getName()
         // + " soll werden zu " + inNewType);
         DocStructType dst = this.prefs.getDocStrctTypeByName(inNewType);
@@ -669,8 +668,8 @@ public class MetadatenHelper implements Comparator<Object> {
         String firstString = (String) firstObject;
         String secondString = (String) secondObject;
         // comparing only prefixes of files:
-        firstString = firstString.substring(0, firstString.lastIndexOf("."));
-        secondString = secondString.substring(0, secondString.lastIndexOf("."));
+        firstString = firstString.substring(0, firstString.lastIndexOf('.'));
+        secondString = secondString.substring(0, secondString.lastIndexOf('.'));
 
         if (imageSorting.equalsIgnoreCase("number")) {
             try {

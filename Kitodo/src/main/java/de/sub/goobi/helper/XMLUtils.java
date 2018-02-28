@@ -75,7 +75,7 @@ public class XMLUtils {
      * @throws NoSuchElementException
      *             if no child node with that name can be found
      */
-    public static Element getFirstChildWithTagName(Node data, String tagName) throws NoSuchElementException {
+    public static Element getFirstChildWithTagName(Node data, String tagName) {
         for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling()) {
             if (!(element instanceof Element)) {
                 continue;
