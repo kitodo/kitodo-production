@@ -31,7 +31,7 @@ import org.kitodo.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
-    private final int AUTHORITIES_COUNT = 6;
+    private final int EXPECTED_AUTHORITIES_COUNT = 6;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -56,19 +56,20 @@ public class AuthorityServiceIT {
     @Test
     public void shouldCountAllAuthorities() throws Exception {
         Long amount = authorityService.count();
-        assertEquals("Authorizations were not counted correctly!", Long.valueOf(AUTHORITIES_COUNT), amount);
+        assertEquals("Authorizations were not counted correctly!", Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount);
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForAuthorities() throws Exception {
         Long amount = authorityService.countDatabaseRows();
-        assertEquals("Authorizations were not counted correctly!", Long.valueOf(AUTHORITIES_COUNT), amount);
+        assertEquals("Authorizations were not counted correctly!", Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount);
     }
 
     @Test
     public void shouldFindAllAuthorities() throws Exception {
         List<AuthorityDTO> authorizations = authorityService.findAll();
-        assertEquals("Not all authorizations were found in database!", AUTHORITIES_COUNT, authorizations.size());
+        assertEquals("Not all authorizations were found in database!", EXPECTED_AUTHORITIES_COUNT,
+            authorizations.size());
     }
 
     @Test
@@ -95,7 +96,7 @@ public class AuthorityServiceIT {
     @Test
     public void shouldGetAllAuthorities() {
         List<Authority> authorities = authorityService.getAll();
-        assertEquals("Authorizations were not found databse!", AUTHORITIES_COUNT, authorities.size());
+        assertEquals("Authorizations were not found databse!", EXPECTED_AUTHORITIES_COUNT, authorities.size());
     }
 
     @Test
