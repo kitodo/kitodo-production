@@ -367,13 +367,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetHistorySize() throws Exception {
-        Process process = processService.getById(1);
-        int actual = processService.getHistorySize(process);
-        assertEquals("History's size is incorrect!", 1, actual);
-    }
-
-    @Test
     public void shouldGetPropertiesSize() throws Exception {
         Process process = processService.getById(1);
         int actual = processService.getPropertiesSize(process);

@@ -32,7 +32,7 @@ public class StatisticsRenderingElementTest {
 
     private Locale locale = new Locale("GERMAN");
     private List testFilter = new ArrayList();
-    private StatisticsManager testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
+    private StatisticsManager testManager = new StatisticsManager(StatisticsMode.USERGROUPS, testFilter, locale);
     private DataTable inDataTable = new DataTable("testTable");
     private IStatisticalQuestion inQuestion = testManager.getStatisticMode().getStatisticalQuestion();
     private StatisticsRenderingElement testElement = new StatisticsRenderingElement(inDataTable, inQuestion);

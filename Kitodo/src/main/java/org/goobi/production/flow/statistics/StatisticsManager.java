@@ -33,7 +33,6 @@ import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.ResultOutput;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.goobi.production.flow.statistics.hibernate.StatQuestThroughput;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultValueDataset;
 
@@ -162,10 +161,6 @@ public class StatisticsManager implements Serializable {
         try {
             setTimeFrameToStatisticalQuestion(question);
 
-            // picking up users input regarding loop Options
-            if (isRenderLoopOption()) {
-                ((StatQuestThroughput) question).setIncludeLoops(includeLoops);
-            }
             if (targetTimeUnit != null) {
                 question.setTimeUnit(targetTimeUnit);
             }
