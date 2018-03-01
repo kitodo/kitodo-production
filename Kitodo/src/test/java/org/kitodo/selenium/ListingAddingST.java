@@ -73,8 +73,10 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getUsersPage().goTo().switchToTabByIndex(1).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
                 .assignAllGlobalAuthorities().assignAllClientAuthorities().assignAllProjectAuthorities().save();
 
+        Pages.getStartPage().goTo();
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
+
         List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
                 .getListOfUserGroupTitles();
         Assert.assertTrue("New user group was not saved", listOfUserGroupTitles.contains(userGroup.getTitle()));
