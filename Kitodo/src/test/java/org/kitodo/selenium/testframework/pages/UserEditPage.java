@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -67,7 +68,14 @@ public class UserEditPage {
 
     public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
         saveUserButton.click();
-        Thread.sleep(Browser.getDelayAfterSave());
+        int attempt = 1;
+        while (Pages.getUsersPage().isNotAt() && attempt <= 5) {
+            Thread.sleep(Browser.getDelayAfterSave());
+            attempt++;
+        }
+        if (attempt > 5) {
+            throw new TimeoutException("Could not save user!");
+        }
         return Pages.getUsersPage();
     }
 

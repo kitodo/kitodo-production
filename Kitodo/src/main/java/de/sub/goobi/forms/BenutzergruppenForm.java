@@ -195,7 +195,7 @@ public class BenutzergruppenForm extends BasisForm {
      * and projects are initialized as well.
      *
      * @param id
-     *            ID of the usergroup to load
+     *            ID of the user group to load
      */
     public void loadUserGroup(int id) {
         try {
@@ -205,10 +205,10 @@ public class BenutzergruppenForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error retrieving user group with ID '" + id + "'; ", e.getMessage());
         }
-
         initializeSelectedClient();
         initializeSelectedProject();
         userGroupClientAuthorityRelationsToDelete.clear();
+        userGroupProjectAuthorityRelationsToDelete.clear();
     }
 
     /**
@@ -267,7 +267,7 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public DualListModel<Authority> getAuthoritiesByCurrentClient() {
         List<Authority> assignedAuthorities = this.userGroup.getAuthoritiesByClient(this.selectedClient);
-        List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
+        List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients();
         availableAuthorities.removeAll(assignedAuthorities);
         return new DualListModel<>(availableAuthorities, assignedAuthorities);
     }
@@ -362,7 +362,7 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public DualListModel<Authority> getAuthoritiesByCurrentProject() {
         List<Authority> assignedAuthorities = this.userGroup.getAuthoritiesByProject(this.selectedProject);
-        List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
+        List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects();
         availableAuthorities.removeAll(assignedAuthorities);
         return new DualListModel<>(availableAuthorities, assignedAuthorities);
     }

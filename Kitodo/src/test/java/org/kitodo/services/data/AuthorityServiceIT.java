@@ -31,6 +31,7 @@ import org.kitodo.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
+    private final int EXPECTED_AUTHORITIES_COUNT = 6;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -53,29 +54,30 @@ public class AuthorityServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllAuthorizations() throws Exception {
+    public void shouldCountAllAuthorities() throws Exception {
         Long amount = authorityService.count();
-        assertEquals("Authorizations were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Authorizations were not counted correctly!", Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount);
     }
 
     @Test
-    public void shouldCountAllDatabaseRowsForAuthorizations() throws Exception {
+    public void shouldCountAllDatabaseRowsForAuthorities() throws Exception {
         Long amount = authorityService.countDatabaseRows();
-        assertEquals("Authorizations were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Authorizations were not counted correctly!", Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount);
     }
 
     @Test
-    public void shouldFindAllAuthorizations() throws Exception {
+    public void shouldFindAllAuthorities() throws Exception {
         List<AuthorityDTO> authorizations = authorityService.findAll();
-        assertEquals("Not all authorizations were found in database!", 3, authorizations.size());
+        assertEquals("Not all authorizations were found in database!", EXPECTED_AUTHORITIES_COUNT,
+            authorizations.size());
     }
 
     @Test
     public void shouldFindById() throws Exception {
-        AuthorityDTO authorization = authorityService.findById(2);
-        String actual = authorization.getTitle();
+        AuthorityDTO authority = authorityService.findById(2);
+        String actual = authority.getTitle();
         String expected = "manager";
-        assertEquals("User group was not found in index!", expected, actual);
+        assertEquals("Authority was not found in index!", expected, actual);
     }
 
     @Test
@@ -92,16 +94,28 @@ public class AuthorityServiceIT {
     }
 
     @Test
-    public void shouldGetAllAuthorizations() {
+    public void shouldGetAllAuthorities() {
         List<Authority> authorities = authorityService.getAll();
-        assertEquals("Authorizations were not found databse!", 3, authorities.size());
+        assertEquals("Authorizations were not found databse!", EXPECTED_AUTHORITIES_COUNT, authorities.size());
     }
 
     @Test
-    public void shouldNotSaveAlreadyExistingAuthorization() throws DataException {
+    public void shouldNotSaveAlreadyExistinAuthorities() throws DataException {
         Authority adminAuthority = new Authority();
         adminAuthority.setTitle("admin");
         exception.expect(DataException.class);
         authorityService.save(adminAuthority);
+    }
+
+    @Test
+    public void shouldGetAllClientAssignableAuthorities() {
+        List<Authority> authorities = authorityService.getAllAssignableToClients();
+        assertEquals("Client assignable authorities were not found databse!", 4, authorities.size());
+    }
+
+    @Test
+    public void shouldGetAllProjectAssignableAuthorities() {
+        List<Authority> authorities = authorityService.getAllAssignableToProjects();
+        assertEquals("Project assignable authorities were not found databse!", 4, authorities.size());
     }
 }

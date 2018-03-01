@@ -30,6 +30,15 @@ public class Authority extends BaseIndexedBean {
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
+    @Column(name = "globalAssignable")
+    private boolean globalAssignable = true;
+
+    @Column(name = "clientAssignable")
+    private boolean clientAssignable = true;
+
+    @Column(name = "projectAssignable")
+    private boolean projectAssignable = true;
+
     @ManyToMany(mappedBy = "authorities", cascade = CascadeType.PERSIST)
     private List<UserGroup> userGroups;
 
@@ -52,10 +61,67 @@ public class Authority extends BaseIndexedBean {
      * Sets the title.
      *
      * @param title
-     *            The titel.
+     *            The title.
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * Gets globalAssignable.
+     *
+     * @return True if the authority is global assignable.
+     */
+    public boolean isGlobalAssignable() {
+        return globalAssignable;
+    }
+
+    /**
+     * Sets globalAssignable.
+     *
+     * @param globalAssignable
+     *            The globalAssignable.
+     */
+    public void setGlobalAssignable(boolean globalAssignable) {
+        this.globalAssignable = globalAssignable;
+    }
+
+    /**
+     * Gets clientAssignable.
+     *
+     * @return True if the authority is assignable to any client.
+     */
+    public boolean isClientAssignable() {
+        return clientAssignable;
+    }
+
+    /**
+     * Sets clientAssignable.
+     *
+     * @param clientAssignable
+     *            The clientAssignable.
+     */
+    public void setClientAssignable(boolean clientAssignable) {
+        this.clientAssignable = clientAssignable;
+    }
+
+    /**
+     * Gets projectAssignable.
+     *
+     * @return True if the authority is assignable to any project.
+     */
+    public boolean isProjectAssignable() {
+        return projectAssignable;
+    }
+
+    /**
+     * Sets projectAssignable.
+     *
+     * @param projectAssignable
+     *            The projectAssignable.
+     */
+    public void setProjectAssignable(boolean projectAssignable) {
+        this.projectAssignable = projectAssignable;
     }
 
     /**

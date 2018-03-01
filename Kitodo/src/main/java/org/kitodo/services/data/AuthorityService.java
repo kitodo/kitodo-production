@@ -152,6 +152,24 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         }
     }
 
+    /**
+     * Gets all authorities which are assignable for any client.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> getAllAssignableToClients() {
+        return getByQuery("FROM Authority WHERE clientAssignable = 1");
+    }
+
+    /**
+     * Gets all authorities which are assignable for any project.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> getAllAssignableToProjects() {
+        return getByQuery("FROM Authority WHERE projectAssignable = 1");
+    }
+
     @Override
     public AuthorityDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
         AuthorityDTO authorityDTO = new AuthorityDTO();
