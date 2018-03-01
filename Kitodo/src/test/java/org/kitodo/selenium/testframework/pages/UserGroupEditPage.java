@@ -16,6 +16,7 @@ import java.util.List;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -113,8 +114,33 @@ public class UserGroupEditPage {
 
     public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
         saveUserGroupButton.click();
-        Thread.sleep(Browser.getDelayAfterSave());
+        int attempt = 1;
+        while (Pages.getUsersPage().isNotAt() && attempt <= 5) {
+            Thread.sleep(Browser.getDelayAfterSave());
+            attempt++;
+        }
+        if (attempt > 5) {
+            throw new TimeoutException("Could not save user group!");
+        }
         return Pages.getUsersPage();
+    }
+
+    /**
+     * Checks if the browser is currently at user group edit page.
+     *
+     * @return True if browser is at user group edit page.
+     */
+    public boolean isAt() {
+        return Browser.getCurrentUrl().contains("usergroupEdit");
+    }
+
+    /**
+     * Checks if the browser is currently not at user group edit page.
+     *
+     * @return True if browser is not at user group edit page.
+     */
+    public boolean isNotAt() {
+        return !isAt();
     }
 
     public int countAssignedGlobalAuthorities() {

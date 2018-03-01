@@ -89,14 +89,12 @@ public class ListingAddingST extends BaseTestSelenium {
         Assert.assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
 
         int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
-        int assignedClientAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
-                .countAssignedClientAuthorities();
+        int assignedClientAuthorities = Pages.getUserGroupEditPage().countAssignedClientAuthorities();
         Assert.assertEquals("Assigned client authorities of the new user group were not saved!",
             availableClientAuthorities, assignedClientAuthorities);
 
         int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
-        int assignedProjectAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
-                .countAssignedProjectAuthorities();
+        int assignedProjectAuthorities = Pages.getUserGroupEditPage().countAssignedProjectAuthorities();
         Assert.assertEquals("Assigned project authorities of the new user group were not saved!",
             availableProjectAuthorities, assignedProjectAuthorities);
 

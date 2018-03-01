@@ -43,7 +43,7 @@ public class Browser {
     private static BrowserType browserType = BrowserType.CHROME;
 
     private static int delayIndexing = 3000;
-    private static int delayAfterSave = 3000;
+    private static int delayAfterSave = 2000;
     private static int delayAfterLogin = 2000;
     private static int delayAfterLogout = 3000;
     private static int delayAfterLinkClick = 500;
