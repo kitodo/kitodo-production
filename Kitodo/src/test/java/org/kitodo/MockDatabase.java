@@ -53,7 +53,6 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.Process;
@@ -67,7 +66,6 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -149,7 +147,6 @@ public class MockDatabase {
         insertTemplateProperties();
         insertUserFilters();
         insertTasks();
-        insertHistory();
         insertUserGroupClientAuthorityRelations();
         insertUserGroupProjectAuthorityRelations();
     }
@@ -170,7 +167,6 @@ public class MockDatabase {
         insertTemplateProperties();
         insertUserFilters();
         insertTasksForWorkflow();
-        insertHistory();
     }
 
     public static void insertUserGroupsFull() throws DAOException, DataException {
@@ -383,20 +379,6 @@ public class MockDatabase {
         secondDocket.setTitle("second");
         secondDocket.setFile("docket.xsl");
         serviceManager.getDocketService().save(secondDocket);
-    }
-
-    private static void insertHistory() throws DAOException, DataException {
-        History firstHistory = new History();
-        Process firstProcess = serviceManager.getProcessService().getById(1);
-        firstHistory.setNumericValue(2.0);
-        firstHistory.setStringValue("History");
-        firstHistory.setHistoryType(HistoryTypeEnum.color);
-        LocalDate localDate = new LocalDate(2017, 1, 14);
-        firstHistory.setDate(localDate.toDate());
-        firstHistory.setProcess(firstProcess);
-        serviceManager.getHistoryService().save(firstHistory);
-        firstProcess.getHistory().add(firstHistory);
-        serviceManager.getProcessService().save(firstProcess);
     }
 
     private static void insertLdapServers() throws DAOException {
