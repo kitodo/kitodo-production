@@ -1593,11 +1593,6 @@ public class ProzessverwaltungForm extends BasisForm {
                 FacesContext.getCurrentInstance().getViewRoot().getLocale());
     }
 
-    public void setStatisticsTroughput() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-    }
-
     /**
      * Project's statistics.
      */

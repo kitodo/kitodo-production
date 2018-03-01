@@ -41,13 +41,11 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
-import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
@@ -267,8 +265,6 @@ public class AktuelleSchritteForm extends BasisForm {
                     Date myDate = new Date();
                     s.setProcessingBegin(myDate);
                 }
-                s.getProcess().getHistory().add(new History(s.getProcessingBegin(), s.getOrdering().doubleValue(),
-                        s.getTitle(), HistoryTypeEnum.taskInWork, s.getProcess()));
 
                 if (s.isTypeImagesRead() || s.isTypeImagesWrite()) {
                     try {

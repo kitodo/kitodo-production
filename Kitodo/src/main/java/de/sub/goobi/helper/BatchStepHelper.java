@@ -27,7 +27,6 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -556,14 +555,6 @@ public class BatchStepHelper extends BatchHelper {
     public String batchDurchBenutzerAbschliessen() throws DAOException, DataException, IOException {
         for (Task s : this.steps) {
             boolean error = false;
-
-            if (s.isTypeImagesWrite()) {
-                try {
-                    HistoryAnalyserJob.updateHistory(s.getProcess());
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("Error while calculation of storage and images", e);
-                }
-            }
 
             if (s.isTypeCloseVerify()) {
                 if (s.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {

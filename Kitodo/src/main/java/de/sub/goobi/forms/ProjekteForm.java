@@ -11,8 +11,6 @@
 
 package de.sub.goobi.forms;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
@@ -46,9 +44,7 @@ import org.goobi.production.chart.ProjectStatusDraw;
 import org.goobi.production.chart.WorkflowProjectTaskList;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.StatisticsRenderingElement;
-import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
-import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
@@ -81,12 +77,9 @@ public class ProjekteForm extends BasisForm {
     private List<Integer> deletedFileGroups = new ArrayList<>();
 
     private StatisticsManager statisticsManagerForProduction = null;
-    private StatisticsManager statisticsManagerForThroughput = null;
     private StatisticsManager statisticsManagerForCorrections = null;
     private StatisticsManager statisticsManagerForStorage = null;
-    private final StatQuestProjectProgressData projectProgressData = new StatQuestProjectProgressData();
 
-    private String projectProgressImage;
     private String projectStatImages;
     private String projectStatVolumes;
     private boolean showStatistics;
@@ -146,7 +139,6 @@ public class ProjekteForm extends BasisForm {
         this.newFileGroups = new ArrayList<>();
         // resetting the List of fileGroups marked for deletion
         this.deletedFileGroups = new ArrayList<>();
-        this.projectProgressImage = null;
         this.projectStatImages = null;
         this.projectStatVolumes = null;
         return redirectToList("");
@@ -378,20 +370,6 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Get statistic manager for throughput.
-     *
-     * @return instance of {@link StatisticsMode#THROUGHPUT}
-     *         {@link StatisticsManager}
-     */
-    public StatisticsManager getStatisticsManagerForThroughput() {
-        if (this.statisticsManagerForThroughput == null) {
-            this.statisticsManagerForThroughput = new StatisticsManager(StatisticsMode.THROUGHPUT,
-                    getProcessesForStatistics(), FacesContext.getCurrentInstance().getViewRoot().getLocale());
-        }
-        return this.statisticsManagerForThroughput;
-    }
-
-    /**
      * Get statistic manager for corrections.
      *
      * @return instance of {@link StatisticsMode#CORRECTIONS}
@@ -602,82 +580,6 @@ public class ProjekteForm extends BasisForm {
      */
     public Integer getCalcPagesPerDay() {
         return Math.round(this.getThroughputPagesPerDay().floatValue());
-    }
-
-    /**
-     * Get project progress interface.
-     *
-     * @return a StatQuestThroughputCommonFlow for the generation of project
-     *         progress data
-     */
-    public StatQuestProjectProgressData getProjectProgressInterface() {
-        synchronized (this.projectProgressData) {
-            try {
-                this.projectProgressData
-                        .setCommonWorkflow(serviceManager.getProjectService().getWorkFlow(this.myProjekt));
-                this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
-                this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
-                this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(),
-                    this.getMyProjekt().getEndDate());
-                this.projectProgressData.setDataSource(getProcessesForStatistics());
-
-                if (this.projectProgressImage == null) {
-                    this.projectProgressImage = "";
-                }
-            } catch (Exception e) {
-                // this.projectProgressData = null;
-            }
-        }
-        return this.projectProgressData;
-    }
-
-    /**
-     * Get progress calculated.
-     *
-     * @return true if calculation is finished
-     */
-
-    public Boolean getIsProgressCalculated() {
-        if (this.projectProgressData == null) {
-            return false;
-        }
-        return this.projectProgressData.isDataComplete();
-    }
-
-    /**
-     * Get project progress image.
-     *
-     * @return path to rendered image of statistics
-     */
-    public String getProjectProgressImage() {
-
-        if (this.projectProgressImage == null || this.projectProgressData == null
-                || this.projectProgressData.hasChanged()) {
-            try {
-                calcProgressCharts();
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("noImageRendered");
-            }
-        }
-        return this.projectProgressImage;
-    }
-
-    private void calcProgressCharts() {
-        if (this.getProjectProgressInterface().isDataComplete()) {
-            ChartRenderer cr = new ChartRenderer();
-            cr.setChartType(ChartType.LINE);
-            cr.setDataTable(this.projectProgressData.getSelectedTable());
-            BufferedImage bi = (BufferedImage) cr.getRendering();
-            this.projectProgressImage = System.currentTimeMillis() + ".png";
-            URI localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
-
-            File outputfile = new File(localImagePath.resolve(this.projectProgressImage));
-            try {
-                ImageIO.write(bi, "png", outputfile);
-            } catch (IOException e) {
-                logger.debug("couldn't write project progress chart to file", e);
-            }
-        }
     }
 
     /**
