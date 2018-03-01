@@ -47,15 +47,6 @@ public class UserEditPage {
     @FindBy(id = "userEditForm:userTabView:metaDataLanguage")
     private WebElement metaDataLanguageInput;
 
-    /**
-     * Goes to users page.
-     *
-     * @return The users page.
-     */
-    public void goTo() throws Exception {
-        Pages.getUsersPage().createNewUser();
-    }
-
     public UserEditPage insertUserData(User user) throws InterruptedException {
         firstNameInput.sendKeys(user.getName());
         lastNameInput.sendKeys(user.getSurname());
