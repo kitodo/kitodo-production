@@ -980,8 +980,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 Helper.setErrorMessage("ExportError", logger, e);
             }
         }
-        Helper.setMeldung(null, "ExportFinished", "");
         logger.info(Helper.getTranslation("ExportFinished"));
+        Helper.setMeldung(null, "ExportFinished", "");
     }
 
     /**
