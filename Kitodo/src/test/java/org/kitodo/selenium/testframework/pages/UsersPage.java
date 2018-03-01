@@ -74,12 +74,21 @@ public class UsersPage {
     }
 
     /**
+     * Checks if the browser is currently not at users page.
+     *
+     * @return True if browser is not at users page.
+     */
+    public boolean isNotAt() {
+        return !isAt();
+    }
+
+    /**
      * Counts rows of users table.
      * 
      * @return The number of rows of users table.
      */
     public int countListedUsers() throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
         }
         List<WebElement> listOfRows = getRowsOfTable(usersTableData);
@@ -92,7 +101,7 @@ public class UsersPage {
      * @return The number of rows of user groups table.
      */
     public int countListedUserGroups() throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
             switchToTabByIndex(1);
         }
@@ -106,7 +115,7 @@ public class UsersPage {
      * @return The user edit page.
      */
     public UserEditPage createNewUser() throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
         }
         newElementButton.click();
@@ -124,7 +133,7 @@ public class UsersPage {
      * @return The users page.
      */
     public UsersPage switchToTabByIndex(int index) throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
         }
         List<WebElement> listTabs = usersTabView.findElements(By.tagName("li"));
@@ -139,7 +148,7 @@ public class UsersPage {
      * @return The user group edit page.
      */
     public UserGroupEditPage createNewUserGroup() throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
         }
         newElementButton.click();
@@ -158,9 +167,9 @@ public class UsersPage {
      * @return The user group edit page.
      */
     public UserGroupEditPage editUserGroup(UserGroup userGroup) throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
-            switchToTabByIndex(0);
+            switchToTabByIndex(1);
         }
 
         WebElement userGroupEditLink = Browser.getDriver()
@@ -177,17 +186,16 @@ public class UsersPage {
      * @return The user group edit page.
      */
     public UserGroupEditPage editUserGroup(String userGroupTitle) throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
             switchToTabByIndex(1);
         }
 
-        WebElement userGroupEditLink = null;
         List<WebElement> tableRows = getRowsOfTable(userGroupsTable);
 
         for (WebElement tableRow : tableRows) {
             if (Browser.getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
-                userGroupEditLink = tableRow.findElement(By.tagName("a"));
+                WebElement userGroupEditLink = userGroupEditLink = tableRow.findElement(By.tagName("a"));
                 userGroupEditLink.click();
                 Thread.sleep(Browser.getDelayAfterLinkClick());
                 return Pages.getUserGroupEditPage();
@@ -203,7 +211,7 @@ public class UsersPage {
      * @return The list of user group titles
      */
     public List<String> getListOfUserGroupTitles() throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
             switchToTabByIndex(1);
         }
