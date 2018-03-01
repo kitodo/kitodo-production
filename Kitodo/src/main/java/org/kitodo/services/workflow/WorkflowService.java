@@ -30,14 +30,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -207,16 +204,6 @@ public class WorkflowService {
      * @return closed Task
      */
     public Task closeTaskByUser(Task task) throws DataException, IOException {
-
-        // if step allows writing of images, then count all images here
-        if (task.isTypeImagesWrite()) {
-            try {
-                HistoryAnalyserJob.updateHistory(task.getProcess());
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("Error while calculation of storage and images", e);
-            }
-        }
-
         // if the result of the task is to be verified first, then if necessary, cancel
         // the completion
         if (task.isTypeCloseVerify()) {
@@ -261,10 +248,6 @@ public class WorkflowService {
         serviceManager.getTaskService().save(task);
         automaticTasks = new ArrayList<>();
         tasksToFinish = new ArrayList<>();
-
-        History history = new History(new Date(), task.getOrdering(), task.getTitle(), HistoryTypeEnum.taskDone,
-                task.getProcess());
-        serviceManager.getHistoryService().save(history);
 
         // check if there are tasks that take place in parallel but are not yet
         // completed
@@ -314,9 +297,6 @@ public class WorkflowService {
                 if (task.getProcessingBegin() == null) {
                     task.setProcessingBegin(new Date());
                 }
-                task.getProcess().getHistory()
-                        .add(new History(task.getProcessingBegin(), task.getOrdering().doubleValue(), task.getTitle(),
-                                HistoryTypeEnum.taskInWork, task.getProcess()));
 
                 updateProcessSortHelperStatus(task.getProcess());
 
@@ -410,8 +390,6 @@ public class WorkflowService {
         currentTask.getProcess().setWikiField(prepareProblemWikiField(currentTask.getProcess(), correctionTask));
 
         serviceManager.getTaskService().save(correctionTask);
-        currentTask.getProcess().getHistory().add(new History(date, correctionTask.getOrdering().doubleValue(),
-                correctionTask.getTitle(), HistoryTypeEnum.taskError, correctionTask.getProcess()));
 
         closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
 
@@ -588,10 +566,6 @@ public class WorkflowService {
                     task.setProcessingStatus(1);
                     task.setProcessingTime(new Date());
                     task.setEditType(4);
-
-                    History historyOpen = new History(new Date(), task.getOrdering(), task.getTitle(),
-                            HistoryTypeEnum.taskOpen, task.getProcess());
-                    serviceManager.getHistoryService().save(historyOpen);
 
                     // if it is an automatic task with script
                     if (task.isTypeAutomatic()) {
