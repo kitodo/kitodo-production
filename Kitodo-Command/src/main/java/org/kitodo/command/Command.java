@@ -11,7 +11,6 @@
 
 package org.kitodo.command;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -45,23 +44,23 @@ public class Command implements CommandInterface {
 
         try {
             process = new ProcessBuilder(callSequence).start();
-            ArrayList<String> outputMessage = inputStreamArrayToList(process.getInputStream());
-            ArrayList<String> errorMessage = inputStreamArrayToList(process.getErrorStream());
-            int errCode = process.waitFor();
+            try (InputStream inputStream = process.getInputStream();
+                    InputStream errorInputStream = process.getErrorStream()) {
+                ArrayList<String> outputMessage = inputStreamArrayToList(inputStream);
+                ArrayList<String> errorMessage = inputStreamArrayToList(errorInputStream);
+                int errCode = process.waitFor();
 
-            outputMessage.addAll(errorMessage);
+                outputMessage.addAll(errorMessage);
 
-            commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
-            if (!commandResult.isSuccessful()) {
-                logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
-                        + " failed!: " + commandResult.getMessages());
-            }
-
-            if (commandResult.isSuccessful()) {
-                logger.info("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
+                commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
+                if (!commandResult.isSuccessful()) {
+                    logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
+                            + " failed!: " + commandResult.getMessages());
+                } else {
+                    logger.info("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
                         + " was succesfull!: " + commandResult.getMessages());
+                }
             }
-
         } catch (IOException | InterruptedException exception) {
             ArrayList<String> errorMessages = new ArrayList<>();
             errorMessages.add(exception.getCause().toString());
@@ -70,12 +69,6 @@ public class Command implements CommandInterface {
             logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
                     + " failed!: " + commandResult.getMessages());
             return commandResult;
-        } finally {
-            if (process != null) {
-                closeStream(process.getInputStream());
-                closeStream(process.getOutputStream());
-                closeStream(process.getErrorStream());
-            }
         }
         return commandResult;
     }
@@ -83,36 +76,19 @@ public class Command implements CommandInterface {
     /**
      * The method reads an InputStream and returns it as a ArrayList.
      *
-     * @param myInputStream
+     * @param inputStream
      *            The Stream to convert.
      * @return A ArrayList holding the single lines.
      */
-    private static ArrayList<String> inputStreamArrayToList(InputStream myInputStream) {
+    private static ArrayList<String> inputStreamArrayToList(InputStream inputStream) {
         ArrayList<String> result = new ArrayList<>();
 
-        try (Scanner inputLines = new Scanner(myInputStream, CHARSET)) {
+        try (Scanner inputLines = new Scanner(inputStream, CHARSET)) {
             while (inputLines.hasNextLine()) {
                 String myLine = inputLines.nextLine();
                 result.add(myLine);
             }
         }
         return result;
-    }
-
-    /**
-     * This behaviour was already implemented. I can’t say if it’s necessary.
-     *
-     * @param inputStream
-     *            A stream to close.
-     */
-    private static void closeStream(Closeable inputStream) {
-        if (inputStream == null) {
-            return;
-        }
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            logger.warn("Could not close stream.", e);
-        }
     }
 }
