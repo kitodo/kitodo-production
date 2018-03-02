@@ -13,7 +13,7 @@
 
 # Client
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewAllCients', '1', '0', '0');
+VALUES ('viewAllClients', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('viewClient', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
@@ -71,9 +71,21 @@ VALUES ('editProcess', '1', '1', '1');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('deleteProcess', '1', '1', '1');
 
+# Task
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('viewAllTasks', '1', '1', '1');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('viewTask', '1', '1', '1');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('addTask', '1', '1', '1');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('editTask', '1', '1', '1');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('deleteTask', '1', '1', '1');
+
 # Template
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewAllTemplate', '1', '1', '1');
+VALUES ('viewAllTemplates', '1', '1', '1');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('viewTemplate', '1', '1', '1');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
