@@ -87,18 +87,76 @@ public class UserGroupEditPage {
         return this;
     }
 
+    public UserGroupEditPage assignAllClientAuthorities() throws InterruptedException {
+        getAddAllElementsButtonByPicklist(clientAuthoritiesPickList).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        return this;
+    }
+
+    public UserGroupEditPage removeAllClientAuthorities() throws InterruptedException {
+        getRemoveAllElementsButtonByPicklist(clientAuthoritiesPickList).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        return this;
+    }
+
+    public UserGroupEditPage assignAllProjectAuthorities() throws InterruptedException {
+        getAddAllElementsButtonByPicklist(projectAuthoritiesPickList).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        return this;
+    }
+
+    public UserGroupEditPage removeAllProjectAuthorities() throws InterruptedException {
+        getRemoveAllElementsButtonByPicklist(projectAuthoritiesPickList).click();
+        Thread.sleep(Browser.getDelayAfterPickListClick());
+        return this;
+    }
+
     public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
         saveUserGroupButton.click();
         Thread.sleep(Browser.getDelayAfterSave());
         return Pages.getUsersPage();
     }
 
+    /**
+     * Checks if the browser is currently at user group edit page.
+     *
+     * @return True if browser is at user group edit page.
+     */
+    public boolean isAt() {
+        return Browser.getCurrentUrl().contains("usergroupEdit");
+    }
+
+    /**
+     * Checks if the browser is currently not at user group edit page.
+     *
+     * @return True if browser is not at user group edit page.
+     */
+    public boolean isNotAt() {
+        return !isAt();
+    }
+
     public int countAssignedGlobalAuthorities() {
         return getTargetItemsFromPickList(globalAuthoritiesPickList).size();
     }
 
+    public int countAssignedClientAuthorities() {
+        return getTargetItemsFromPickList(clientAuthoritiesPickList).size();
+    }
+
+    public int countAssignedProjectAuthorities() {
+        return getTargetItemsFromPickList(projectAuthoritiesPickList).size();
+    }
+
     public int countAvailableGlobalAuthorities() {
         return getSourceItemsFromPickList(globalAuthoritiesPickList).size();
+    }
+
+    public int countAvailableClientAuthorities() {
+        return getSourceItemsFromPickList(clientAuthoritiesPickList).size();
+    }
+
+    public int countAvailablePrjectAuthorities() {
+        return getSourceItemsFromPickList(projectAuthoritiesPickList).size();
     }
 
     public UserGroupEditPage setUserGroupTitle(String newTitle) {

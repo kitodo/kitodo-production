@@ -350,6 +350,22 @@ public class MockDatabase {
         Authority userAuthority = new Authority();
         userAuthority.setTitle("user");
         serviceManager.getAuthorityService().save(userAuthority);
+
+        Authority globalAuthority = new Authority();
+        globalAuthority.setTitle("globalAuthority");
+        globalAuthority.setClientAssignable(false);
+        globalAuthority.setProjectAssignable(false);
+        serviceManager.getAuthorityService().save(globalAuthority);
+
+        Authority clientAuthority = new Authority();
+        clientAuthority.setTitle("clientAuthority");
+        clientAuthority.setProjectAssignable(false);
+        serviceManager.getAuthorityService().save(clientAuthority);
+
+        Authority projectAuthority = new Authority();
+        projectAuthority.setTitle("projectAuthority");
+        projectAuthority.setClientAssignable(false);
+        serviceManager.getAuthorityService().save(projectAuthority);
     }
 
     private static void insertBatches() throws DataException {

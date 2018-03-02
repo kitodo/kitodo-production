@@ -71,10 +71,12 @@ public class ListingAddingST extends BaseTestSelenium {
         userGroup.setTitle("MockUserGroup");
 
         Pages.getUsersPage().goTo().switchToTabByIndex(1).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
-                .assignAllGlobalAuthorities().save();
+                .assignAllGlobalAuthorities().assignAllClientAuthorities().assignAllProjectAuthorities().save();
 
+        Pages.getStartPage().goTo();
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
+
         List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
                 .getListOfUserGroupTitles();
         Assert.assertTrue("New user group was not saved", listOfUserGroupTitles.contains(userGroup.getTitle()));
@@ -82,10 +84,21 @@ public class ListingAddingST extends BaseTestSelenium {
         int availableAuthorities = serviceManager.getAuthorityService().getAll().size();
         int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
                 .countAssignedGlobalAuthorities();
-        Assert.assertEquals("Assigned authorities of the new user group was not saved!", availableAuthorities,
+        Assert.assertEquals("Assigned authorities of the new user group were not saved!", availableAuthorities,
             assignedGlobalAuthorities);
 
         String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
         Assert.assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
+
+        int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
+        int assignedClientAuthorities = Pages.getUserGroupEditPage().countAssignedClientAuthorities();
+        Assert.assertEquals("Assigned client authorities of the new user group were not saved!",
+            availableClientAuthorities, assignedClientAuthorities);
+
+        int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
+        int assignedProjectAuthorities = Pages.getUserGroupEditPage().countAssignedProjectAuthorities();
+        Assert.assertEquals("Assigned project authorities of the new user group were not saved!",
+            availableProjectAuthorities, assignedProjectAuthorities);
+
     }
 }
