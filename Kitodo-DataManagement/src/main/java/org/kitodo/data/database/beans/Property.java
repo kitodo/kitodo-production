@@ -60,7 +60,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      */
     public Property() {
         this.obligatory = false;
-        this.dataType = PropertyType.String.getId();
+        this.dataType = PropertyType.STRING.getId();
         this.creationDate = new Date();
     }
 
@@ -192,7 +192,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      */
     public PropertyType getType() {
         if (this.dataType == null) {
-            this.dataType = PropertyType.String.getId();
+            this.dataType = PropertyType.STRING.getId();
         }
         return PropertyType.getById(this.dataType);
     }

@@ -570,7 +570,7 @@ public class MockDatabase {
         firstProcessProperty.setTitle("Process Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
-        firstProcessProperty.setType(PropertyType.general);
+        firstProcessProperty.setType(PropertyType.STRING);
         firstProcessProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
@@ -581,7 +581,7 @@ public class MockDatabase {
         secondProcessProperty.setTitle("Korrektur notwendig");
         secondProcessProperty.setValue("second value");
         secondProcessProperty.setObligatory(false);
-        secondProcessProperty.setType(PropertyType.CommandLink);
+        secondProcessProperty.setType(PropertyType.MESSAGE_ERROR);
         secondProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
@@ -592,7 +592,7 @@ public class MockDatabase {
         thirdProcessProperty.setTitle("Korrektur notwendig");
         thirdProcessProperty.setValue("fix it");
         thirdProcessProperty.setObligatory(false);
-        thirdProcessProperty.setType(PropertyType.CommandLink);
+        thirdProcessProperty.setType(PropertyType.MESSAGE_ERROR);
         thirdProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         thirdProcessProperty.setCreationDate(localDate.toDate());
@@ -604,7 +604,7 @@ public class MockDatabase {
         fourthProcessProperty.setTitle("Korrektur notwendig");
         fourthProcessProperty.setValue("improved ids");
         fourthProcessProperty.setObligatory(false);
-        fourthProcessProperty.setType(PropertyType.CommandLink);
+        fourthProcessProperty.setType(PropertyType.MESSAGE_ERROR);
         fourthProcessProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 7, 15);
         fourthProcessProperty.setCreationDate(localDate.toDate());
@@ -1027,7 +1027,7 @@ public class MockDatabase {
         firstTemplateProperty.setTitle("firstTemplate title");
         firstTemplateProperty.setValue("first value");
         firstTemplateProperty.setObligatory(true);
-        firstTemplateProperty.setType(PropertyType.general);
+        firstTemplateProperty.setType(PropertyType.STRING);
         firstTemplateProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
@@ -1038,7 +1038,7 @@ public class MockDatabase {
         secondTemplateProperty.setTitle("template");
         secondTemplateProperty.setValue("second");
         secondTemplateProperty.setObligatory(false);
-        secondTemplateProperty.setType(PropertyType.CommandLink);
+        secondTemplateProperty.setType(PropertyType.STRING);
         secondTemplateProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 15);
         secondTemplateProperty.setCreationDate(localDate.toDate());
@@ -1153,7 +1153,7 @@ public class MockDatabase {
         firstWorkpieceProperty.setTitle("FirstWorkpiece Property");
         firstWorkpieceProperty.setValue("first value");
         firstWorkpieceProperty.setObligatory(true);
-        firstWorkpieceProperty.setType(PropertyType.general);
+        firstWorkpieceProperty.setType(PropertyType.STRING);
         firstWorkpieceProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
@@ -1164,7 +1164,7 @@ public class MockDatabase {
         secondWorkpieceProperty.setTitle("workpiece");
         secondWorkpieceProperty.setValue("second");
         secondWorkpieceProperty.setObligatory(false);
-        secondWorkpieceProperty.setType(PropertyType.CommandLink);
+        secondWorkpieceProperty.setType(PropertyType.STRING);
         secondWorkpieceProperty.setChoice("chosen");
         localDate = new LocalDate(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(localDate.toDate());

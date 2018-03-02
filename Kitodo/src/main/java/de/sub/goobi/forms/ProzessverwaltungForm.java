@@ -657,7 +657,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.templates = new ArrayList<>();
         }
         Property property = new Property();
-        property.setType(PropertyType.String);
+        property.setType(PropertyType.STRING);
         this.templates.add(property);
         this.templateProperty = property;
     }
@@ -670,7 +670,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.workpieces = new ArrayList<>();
         }
         Property property = new Property();
-        property.setType(PropertyType.String);
+        property.setType(PropertyType.STRING);
         this.workpieces.add(property);
         this.workpieceProperty = property;
     }
@@ -2140,7 +2140,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.properties = new ArrayList<>();
         }
         Property property = new Property();
-        property.setType(PropertyType.String);
+        property.setType(PropertyType.STRING);
         this.properties.add(property);
         this.property = property;
     }
