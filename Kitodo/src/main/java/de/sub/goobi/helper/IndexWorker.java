@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -48,21 +49,30 @@ public class IndexWorker implements Runnable {
         try {
             int amountToIndex = searchService.countDatabaseRows().intValue();
             if (amountToIndex < batchSize) {
-                for (Object object : searchService.getAll()) {
-                    this.searchService.saveToIndex((BaseIndexedBean) object);
-                    this.indexedObjects++;
-                }
+                indexObjects(searchService.getAll());
             } else {
                 while (this.indexedObjects < amountToIndex) {
-                    List<Object> objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
-                    for (Object object : objectsToIndex) {
-                        this.searchService.saveToIndex((BaseIndexedBean) object);
-                        this.indexedObjects++;
-                    }
+                    indexChunks(batchSize);
                 }
             }
         } catch (CustomResponseException | DAOException | IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void indexChunks(int batchSize) throws CustomResponseException, DAOException, IOException {
+        Session session = Helper.getHibernateSession();
+        List<Object> objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
+        indexObjects(objectsToIndex);
+        session.clear();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, IOException {
+        for (Object object : objectsToIndex) {
+            this.searchService.saveToIndex((BaseIndexedBean) object);
+            this.indexedObjects++;
         }
     }
 
