@@ -74,7 +74,7 @@ public class SchemaService {
      */
     public <T extends ExportMets> MetsModsImportExportInterface tempConvert(FileformatInterface gdzfile, T exportMets,
             MetsModsImportExportInterface metsMods, PrefsInterface prefs, Process process)
-            throws IOException, PreferencesException, TypeNotAllowedForParentException {
+            throws IOException, PreferencesException {
         URI imageFolder = serviceManager.getFileService().getImagesDirectory(process);
 
         /*

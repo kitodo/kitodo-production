@@ -712,11 +712,7 @@ public class Metadaten {
                 && (this.digitalDocument.getPhysicalDocStruct() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
-            try {
-                createPagination();
-            } catch (TypeNotAllowedForParentException e) {
-                logger.error(e);
-            }
+            createPagination();
         }
 
         if (this.digitalDocument.getPhysicalDocStruct().getAllMetadata() != null
@@ -1308,7 +1304,7 @@ public class Metadaten {
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
-    public String createPagination() throws TypeNotAllowedForParentException, IOException {
+    public String createPagination() throws IOException {
         this.imageHelper.createPagination(this.process, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1652,7 +1648,7 @@ public class Metadaten {
             try {
                 createPagination();
                 dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
-            } catch (IOException | TypeNotAllowedForParentException e) {
+            } catch (IOException e) {
                 logger.error(e);
             }
         }
