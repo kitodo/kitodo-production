@@ -2253,21 +2253,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     URI folder = new File(pfg.getFolder()).toURI();
                     if (fileService.fileExist(folder)
                             && serviceManager.getFileService().getSubUris(folder).size() > 0) {
-                        VirtualFileGroupInterface v = UghImplementation.INSTANCE.createVirtualFileGroup();
-                        v.setName(pfg.getName());
-                        v.setPathToFiles(vp.replace(pfg.getPath()));
-                        v.setMimetype(pfg.getMimeType());
-                        v.setFileSuffix(pfg.getSuffix());
-                        mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
+                        mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
                     }
                 } else {
-
-                    VirtualFileGroupInterface v = UghImplementation.INSTANCE.createVirtualFileGroup();
-                    v.setName(pfg.getName());
-                    v.setPathToFiles(vp.replace(pfg.getPath()));
-                    v.setMimetype(pfg.getMimeType());
-                    v.setFileSuffix(pfg.getSuffix());
-                    mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
+                    mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
                 }
             }
         }
@@ -2329,6 +2318,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         mm.write(targetFileName);
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
         return true;
+    }
+
+    private VirtualFileGroupInterface prepareVirtualFileGroup(ProjectFileGroup pfg, VariableReplacer variableReplacer) {
+        VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
+        virtualFileGroup.setName(pfg.getName());
+        virtualFileGroup.setPathToFiles(variableReplacer.replace(pfg.getPath()));
+        virtualFileGroup.setMimetype(pfg.getMimeType());
+        virtualFileGroup.setFileSuffix(pfg.getSuffix());
+        return virtualFileGroup;
     }
 
     /**
