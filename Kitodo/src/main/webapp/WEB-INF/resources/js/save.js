@@ -16,6 +16,7 @@ function checkForm(form) {
     inputs = document.querySelectorAll('#' + form + ' .ui-inputtext');
     inputs.forEach(function (element) {
         values.push(element.value);
+        element.addEventListener('input', function () {compareForm(form)});
     });
 }
 

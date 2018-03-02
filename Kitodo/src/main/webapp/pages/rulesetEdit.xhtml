@@ -41,6 +41,7 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         disabled="#{RulesetForm.saveDisabled}"
                          styleClass="button-filled-blue"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{RulesetForm.setSaveDisabled(false)}"

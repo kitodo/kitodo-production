@@ -28,19 +28,19 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.titel}" />
                 <p:inputText id="title" placeholder="#{msgs.titel}" class="input" value="#{ProjekteForm.myProjekt.title}" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="blur" oncomplete="compareForm('projectEditForm')"/>
+                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />
                 <p:inputText id="pages" placeholder="10" class="input" value="#{ProjekteForm.myProjekt.numberOfPages}" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="blur" oncomplete="compareForm('projectEditForm')"/>
+                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="band" value="#{msgs.numberVolumes}" />
                 <p:inputText id="band" placeholder="1" class="input" value="#{ProjekteForm.myProjekt.numberOfVolumes}" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="blur" oncomplete="compareForm('projectEditForm')"/>
+                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>

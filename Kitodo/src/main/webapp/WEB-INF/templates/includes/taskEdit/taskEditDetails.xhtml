@@ -20,19 +20,19 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.titel}"/>
                 <p:inputText id="title" value="#{ProzessverwaltungForm.task.title}" required="true" class="input">
-                    <p:ajax event="blur" oncomplete="compareForm('taskEditForm')"/>
+                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="ordering" value="#{msgs.reihenfolge}"/>
                 <p:inputText id="ordering" value="#{ProzessverwaltungForm.task.ordering}" required="true" class="input">
-                    <p:ajax event="blur" oncomplete="compareForm('taskEditForm')"/>
+                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="priority" value="#{msgs.prioritaet}"/>
                 <p:inputText id="priority" value="#{ProzessverwaltungForm.task.priority}" required="true" class="input">
-                    <p:ajax event="blur" oncomplete="compareForm('taskEditForm')"/>
+                    <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>

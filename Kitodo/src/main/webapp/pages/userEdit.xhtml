@@ -27,6 +27,7 @@
         <script>
             window.onload = function () {checkForm('userEditForm')};
         </script>
+
         <p:panel styleClass="content-header">
             <h3>
                 <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
@@ -104,6 +105,7 @@
                                         class="input"
                                         placeholder="#{msgs.password}"
                                         value="#{BenutzerverwaltungForm.password}"
+                                        onblur="jQuery('#editForm\\:saveButtonToggler').click()"
                                         required="true"
                                         redisplay="true"/>
                         </div>
@@ -113,12 +115,14 @@
                                          class="input"
                                          placeholder="#{msgs.spracheFuerMetadaten}"
                                          value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
+                                         onchange="jQuery('#editForm\\:saveButtonToggler').click()"
                                          required="true"/>
                         </div>
                         <div>
                             <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
                             <p:selectBooleanCheckbox id="withMassDownload"
-                                                     value="#{BenutzerverwaltungForm.userObject.withMassDownload}"/>
+                                                     value="#{BenutzerverwaltungForm.userObject.withMassDownload}"
+                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
                     </p:row>
                 </p:panelGrid>
