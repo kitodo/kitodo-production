@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -2906,12 +2907,7 @@ public class Metadaten {
      * @return boolean
      */
     public boolean getIsNotRootElement() {
-        if (this.docStruct != null) {
-            if (this.docStruct.getParent() == null) {
-                return false;
-            }
-        }
-        return true;
+        return !(Objects.nonNull(this.docStruct) && Objects.isNull(this.docStruct.getParent()));
     }
 
     public boolean getFictitious() {

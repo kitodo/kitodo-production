@@ -101,11 +101,6 @@ public class SecurityUserDetails extends User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return super.getPassword();
-    }
-
-    @Override
     public String getUsername() {
         return super.getLogin();
     }
