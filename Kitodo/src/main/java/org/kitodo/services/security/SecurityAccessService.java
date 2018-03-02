@@ -104,4 +104,21 @@ public class SecurityAccessService {
         return hasAuthority(authorityTitle + "_GLOBAL");
     }
 
+    /**
+     * Checks if the current user has a specified authority globally, for any client
+     * oder for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasGlobalOrClientOrProjectAuthority(String authorityTitle) {
+        if (hasAuthority(authorityTitle + "_GLOBAL")) {
+            return true;
+        }
+        if (hasAuthority(authorityTitle + "_ANYCLIENT")) {
+            return true;
+        }
+        return hasAuthority(authorityTitle + "_ANYPROJECT");
+    }
 }

@@ -61,4 +61,16 @@ public class SecurityAccessController {
         return securityAccessService.hasGlobalAuthority(authorityTitle);
     }
 
+    /**
+     * Checks if the current user has a specified authority globally, for any client
+     * oder for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasAuthority(String authorityTitle) {
+        return securityAccessService.hasGlobalOrClientOrProjectAuthority(authorityTitle);
+    }
+
 }
